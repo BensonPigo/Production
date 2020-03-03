@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
@@ -82,11 +84,37 @@ namespace Sci.Production.Planning
         }
 
         /// <summary>
+        /// ClickSavePost
+        /// </summary>
+        /// <returns>true</returns>
+        protected override DualResult ClickSavePost()
+        {
+            this.gridArtworkType.ValidateControl();
+            var listUpdateStyle_Artwork = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(s => s.RowState == DataRowState.Modified);
+            if (listUpdateStyle_Artwork.Any())
+            {
+                string updSql;
+                DualResult result;
+                foreach (DataRow itemStyle_Artwork in listUpdateStyle_Artwork)
+                {
+                    updSql = $@"update Style_Artwork set ActStitch = {itemStyle_Artwork["ActStitch"]} where Ukey = {itemStyle_Artwork["Ukey"]} ";
+                    result = DBProxy.Current.Execute(null, updSql);
+                    if (!result)
+                    {
+                        return result;
+                    }
+                }
+            }
+
+            return base.ClickSavePost();
+        }
+
+        /// <summary>
         /// ClickSaveAfter
         /// </summary>
         protected override void ClickSaveAfter()
         {
-            this.Filter_detailgrid();
+            this.Filter_detailgrid(this.gridArtworkType.GetSelectedRowIndex());
             base.ClickSaveAfter();
         }
 
@@ -202,15 +230,16 @@ order by ID
             this.Helper.Controls.Grid.Generator(this.gridArtworkType)
             .Text("artworktypeid", header: "Artwork Type", width: Widths.AnsiChars(16), iseditingreadonly: true)
             .Text("article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("artworkid", header: "Artwork", width: Widths.AnsiChars(10))
-            .Text("artworkname", header: "Artwork Name", width: Widths.AnsiChars(20))
-            .Text("patterncode", header: "Cut Part", width: Widths.AnsiChars(6))
-            .Text("patterndesc", header: "Cut Part Name", width: Widths.AnsiChars(20))
-            .Numeric("tms", header: "TMS", width: Widths.AnsiChars(8), integer_places: 10)
-            .Numeric("qty", header: "QTY", width: Widths.AnsiChars(8), integer_places: 10)
-            .Text("unit", header: "Unit", width: Widths.AnsiChars(10))
-            .Numeric("cost", header: "Cost", width: Widths.AnsiChars(8), decimal_places: 4, integer_places: 10)
-            .Text("remark", header: "Remark", width: Widths.AnsiChars(20))
+            .Text("artworkid", header: "Artwork", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("artworkname", header: "Artwork Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("patterncode", header: "Cut Part", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("patterndesc", header: "Cut Part Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Numeric("tms", header: "TMS", width: Widths.AnsiChars(8), integer_places: 10, iseditingreadonly: true)
+            .Numeric("qty", header: "QTY", width: Widths.AnsiChars(8), integer_places: 10, iseditingreadonly: true)
+            .Text("unit", header: "Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Numeric("ActStitch", header: "Act. Stitch", width: Widths.AnsiChars(10), decimal_places: 0, iseditingreadonly: false)
+            .Numeric("cost", header: "Cost", width: Widths.AnsiChars(8), decimal_places: 4, integer_places: 10, iseditingreadonly: true)
+            .Text("remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true)
             ;
 
             #endregion 欄位設定
@@ -249,19 +278,49 @@ LEFT JOIN ArtworkType B WITH (NOLOCK) ON t.ArtworkTypeID=B.ID where styleukey={0
             this.listControlBindingSource1.DataSource = null;
             this.listControlBindingSource1.DataSource = this.style_artwork;
             this.gridArtworkType.AutoResizeColumns();
+            this.GridArtworkTypeCellFormat();
         }
 
-        private void Grid1_SelectionChanged(object sender, EventArgs e)
+        private void Filter_detailgrid(int rowIndex)
         {
-            this.Filter_detailgrid();
-        }
-
-        private void Filter_detailgrid()
-        {
-            if (this.gridArtworkType.GetSelectedRowIndex() >= 0)
+            if (rowIndex >= 0)
             {
-                this.detailgridbs.Filter = "ukey=" + this.gridArtworkType.GetDataRow(this.gridArtworkType.GetSelectedRowIndex())["ukey"].ToString();
+                this.detailgridbs.Filter = "ukey=" + this.gridArtworkType.GetDataRow(rowIndex)["ukey"].ToString();
             }
+        }
+
+        private void GridArtworkTypeCellFormat()
+        {
+            if (!this.EditMode)
+            {
+                return;
+            }
+
+            foreach (DataGridViewRow item in this.gridArtworkType.Rows)
+            {
+                string unit = item.Cells["unit"].Value.ToString();
+
+                if (unit == "STITCH")
+                {
+                    item.Cells["ActStitch"].ReadOnly = false;
+                    item.Cells["ActStitch"].Style.ForeColor = System.Drawing.Color.Red;
+                }
+                else
+                {
+                    item.Cells["ActStitch"].ReadOnly = true;
+                    item.Cells["ActStitch"].Style.ForeColor = System.Drawing.Color.Black;
+                }
+            }
+        }
+
+        private void GridArtworkType_Sorted(object sender, EventArgs e)
+        {
+            this.GridArtworkTypeCellFormat();
+        }
+
+        private void GridArtworkType_RowSelecting(object sender, Ict.Win.UI.DataGridViewRowSelectingEventArgs e)
+        {
+            this.Filter_detailgrid(e.RowIndex);
         }
     }
 }
