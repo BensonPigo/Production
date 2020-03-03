@@ -95,17 +95,16 @@ from (
             , c.BuyerDelivery 
             , orderByCTNStartNo = TRY_CONVERT(int, CTNStartNo)
             , b.SCICtnNo
-    from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) 
-    where b.OrderId = c.Id 
-    and a.Id = b.Id 
+    from PackingList a WITH (NOLOCK)
+    inner join PackingList_Detail b WITH (NOLOCK) on a.Id = b.Id 
+    left join Orders c WITH (NOLOCK) on b.OrderId = c.Id 
+    left join Country d WITH (NOLOCK) on c.Dest = d.ID 
+    where b.CTNStartNo != ''  
     and b.PackErrTransferDate is null
-    and b.DisposeFromClog= 0
-    and b.CTNStartNo != '' 
+    and b.DisposeFromClog= 0 
     and ((b.ReturnDate is null and b.TransferDate is null and b.DRYReceiveDate is null and b.PackErrTransferDate is null) or b.ReturnDate is not null) 
-    and c.Dest = d.ID 
     and a.MDivisionID = '{0}' 
-    and (a.Type = 'B' or a.Type = 'L') 
-    and c.MDivisionID = '{0}'
+    and (a.Type = 'B' or a.Type = 'L')
 	and b.CTNQty=1
 ", Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtSP.Text))
@@ -215,11 +214,11 @@ ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
                                         @"
 select  pd.OrderID
         , pd.OrderShipmodeSeq  
-        , o.MDivisionID
+        , p.MDivisionID
         , pd.TransferDate
         , pd.SCICtnNo
 from    PackingList_Detail pd WITH (NOLOCK) 
-inner join Orders o on pd.OrderID = o.id
+inner join PackingList p WITH (NOLOCK) on pd.id = p.id
 where   pd.ID = '{0}' 
         and pd.CTNStartNo = '{1}' 
         and pd.CTNQty > 0 
@@ -272,14 +271,10 @@ where   a.ID = '{0}'",
                                         dr["CustPONo"] = seekData["CustPONo"].ToString().Trim();
                                         dr["Alias"] = seekData["Alias"].ToString().Trim();
                                         dr["BuyerDelivery"] = seekData["BuyerDelivery"];
+                                    }
 
-                                        selectDataTable.Rows.Add(dr);
-                                        insertCount++;
-                                    }
-                                    else
-                                    {
-                                        notFoundErr.Rows.Add(dr.ItemArray);
-                                    }
+                                    selectDataTable.Rows.Add(dr);
+                                    insertCount++;
                                 }
                                 else
                                 {
@@ -292,12 +287,12 @@ where   a.ID = '{0}'",
                                         sqlCmd = $@"
 select  pd.OrderID
         , pd.OrderShipmodeSeq  
-        , o.MDivisionID
+        , p.MDivisionID
         , pd.TransferDate
 		,pd.id,pd.CTNStartNo
         ,pd.SCICtnNo
 from    PackingList_Detail pd WITH (NOLOCK) 
-inner join Orders o on pd.OrderID = o.id
+inner join PackingList p WITH (NOLOCK) on pd.id = p.id
 where   pd.CustCTN= '{dr["CustCTN"]}' 
         and pd.CTNQty > 0 
         and pd.DisposeFromClog= 0
@@ -350,14 +345,10 @@ where   a.ID = '{0}'",
                                                 dr["BuyerDelivery"] = seekData["BuyerDelivery"];
                                                 dr["packinglistid"] = packinglistid.Trim();
                                                 dr["CTNStartNo"] = CTNStartNo.Trim();
+                                            }
 
-                                                selectDataTable.Rows.Add(dr);
-                                                insertCount++;
-                                            }
-                                            else
-                                            {
-                                                notFoundErr.Rows.Add(dr.ItemArray);
-                                            }
+                                            selectDataTable.Rows.Add(dr);
+                                            insertCount++;
                                         }
                                         else
                                         {
@@ -381,13 +372,13 @@ where   a.ID = '{0}'",
                                     sqlCmd = $@"
 select  pd.OrderID
         , pd.OrderShipmodeSeq  
-        , o.MDivisionID
+        , p.MDivisionID
         , pd.TransferDate
         , pd.TransferDate
 		,pd.id,pd.CTNStartNo
         ,pd.SCICtnNo
 from    PackingList_Detail pd WITH (NOLOCK) 
-inner join Orders o on pd.OrderID = o.id
+inner join PackingList p WITH (NOLOCK) on pd.id = p.id
 where   pd.CustCTN= '{dr["CustCTN"]}' 
         and pd.CTNQty > 0 
         and pd.DisposeFromClog= 0
@@ -440,14 +431,10 @@ where   a.ID = '{0}'",
                                             dr["BuyerDelivery"] = seekData["BuyerDelivery"];
                                             dr["packinglistid"] = packinglistid.Trim();
                                             dr["CTNStartNo"] = CTNStartNo.Trim();
+                                        }
 
-                                            selectDataTable.Rows.Add(dr);
-                                            insertCount++;
-                                        }
-                                        else
-                                        {
-                                            notFoundErr.Rows.Add(dr.ItemArray);
-                                        }
+                                        insertCount++;
+                                        selectDataTable.Rows.Add(dr);
                                     }
                                     else
                                     {

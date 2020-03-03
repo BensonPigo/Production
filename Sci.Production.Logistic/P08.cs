@@ -132,7 +132,7 @@ select distinct
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
-inner join orders o WITH (NOLOCK) on o.id	= p2.orderid
+left join orders o WITH (NOLOCK) on o.id	= p2.orderid
 left join Country c WITH (NOLOCK) on c.id=o.dest
 outer apply(
 	select OrderID = stuff((
@@ -255,7 +255,7 @@ outer apply (
 	and CTNStartNo=p2.CTNStartNo
 	order by AddDate desc
 )ToCfa
-inner join orders o WITH (NOLOCK) on o.id	= p2.orderid
+left join orders o WITH (NOLOCK) on o.id	= p2.orderid
 left join Country c WITH (NOLOCK) on c.id=o.dest
 outer apply(
 	select OrderID = stuff((
@@ -323,7 +323,7 @@ outer apply (
 	and CTNStartNo=p2.CTNStartNo
 	order by AddDate desc
 )ToCfa
-inner join orders o WITH (NOLOCK) on o.id	= p2.orderid
+left join orders o WITH (NOLOCK) on o.id	= p2.orderid
 left join Country c WITH (NOLOCK) on c.id=o.dest
 outer apply(
 	select OrderID = stuff((
@@ -396,7 +396,7 @@ outer apply (
 	and CTNStartNo=p2.CTNStartNo
 	order by AddDate desc
 )ToCfa
-inner join orders o WITH (NOLOCK) on o.id	= p2.orderid
+left join orders o WITH (NOLOCK) on o.id	= p2.orderid
 left join Country c WITH (NOLOCK) on c.id=o.dest
 outer apply(
 	select OrderID = stuff((

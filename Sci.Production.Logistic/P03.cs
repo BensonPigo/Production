@@ -185,8 +185,8 @@ from (
 			, b.ScanName
     from PackingList a WITH (NOLOCK) 
     INNER JOIN  PackingList_Detail b WITH (NOLOCK)  ON a.Id = b.Id 
-    INNEr JOIN  Orders c WITH (NOLOCK) ON b.OrderId = c.Id 
-    INNER JOIN  Country d WITH (NOLOCK) ON  c.Dest = d.ID 
+    LEFT JOIN  Orders c WITH (NOLOCK) ON b.OrderId = c.Id 
+    LEFT JOIN  Country d WITH (NOLOCK) ON  c.Dest = d.ID 
 	OUTER APPLY (
 		SELECT [Value]=SUM(pd.ScanQty) 
 		FROM PackingList_Detail pd
@@ -202,8 +202,7 @@ from (
             and b.CFAReturnClogDate is null
             and b.DisposeFromClog= 0
             and a.MDivisionID = '{0}' 
-            and (a.Type = 'B' or a.Type = 'L') 
-            and c.MDivisionID = '{0}'
+            and (a.Type = 'B' or a.Type = 'L')
 ", Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
