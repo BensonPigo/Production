@@ -81,11 +81,11 @@ SET
 	a.DutyStatusUpdate= b.DutyStatusUpdate,
 	a.RMtlAmt= b.RMtlAmt,
 	a.EstFreight= b.EstFreight,
-	--a.ActFreight= b.ActFreight,
+	a.ActFreight= b.EstFreight,
 	a.OtherAmt= b.OtherAmt,
 	a.RMtlAmtUSD= ROUND(b.RMtlAmt * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2),
 	a.EstFreightUSD= ROUND(b.EstFreight * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2),
-	--a.ActFreightUSD= ROUND(b.ActFreight * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2),
+	a.ActFreightUSD= ROUND(b.EstFreight * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2),
 	a.OtherAmtUSD= ROUND(b.OtherAmt * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2),
 	a.Exchange= b.Exchange,
 	a.IrregularPOCostID= b.IrregularPOCostID,
@@ -124,11 +124,11 @@ INSERT INTO Production.dbo.ICR
       ,[DutyStatusUpdate]
       ,[RMtlAmt]
       ,[EstFreight]
-      --,[ActFreight]
+      ,[ActFreight]
       ,[OtherAmt]
       ,[RMtlAmtUSD]
       ,[EstFreightUSD]
-      --,[ActFreightUSD]
+      ,[ActFreightUSD]
       ,[OtherAmtUSD]
       ,[Exchange]
       ,[IrregularPOCostID]
@@ -162,11 +162,11 @@ SELECT
       ,[DutyStatusUpdate]
       ,[RMtlAmt]
       ,[EstFreight]
-      --,[ActFreight]
+      ,[EstFreight]
       ,[OtherAmt]
       ,ROUND(RMtlAmt * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2)
 	  ,ROUND(EstFreight * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2)
-	  --,ROUND(ActFreight * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2)
+	  ,ROUND(EstFreight * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2)
 	  ,ROUND(OtherAmt * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2)
       ,[Exchange]
       ,[IrregularPOCostID]
