@@ -170,8 +170,22 @@ order by p2.ID,p2.CTNStartNo";
             {
                 // 先將Grid的結構給開出來
                 string selectCommand = @"
-Select distinct  0 as selected, b.ID , b.OrderID, 
-b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, d.Alias, c.BuyerDelivery,'' [Returnto], '' as Remark,b.SCICtnNo 
+Select 0 as selected
+	, b.ID 
+	, b.CTNStartNo
+	, b.OrderID
+	, c.CustPONo
+	, c.StyleID
+	, c.SeasonID
+	, c.BrandID
+	, d.Alias
+	, c.BuyerDelivery
+	, '' [Returnto]
+	, '' as Remark
+	, b.SCICtnNo 
+	, b.ScanQty
+	, b.ScanName
+    , b.ScanEditDate
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
 
                 DualResult selectResult;
@@ -209,19 +223,22 @@ from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c
                             {
                                 string sqlCmd = $@"
 select distinct
-[selected] = 1
-,p2.ID
-,p2.CTNStartNo
-,o1.OrderID 
-,o.CustPONo
-,o.StyleID
-,o.SeasonID
-,o.BrandID
-,c.Alias
-,o.BuyerDelivery
-,[Returnto] = '' 
-,p2.remark
-,p2.SCICtnNo
+    [selected] = 1
+    ,p2.ID
+    ,p2.CTNStartNo
+    ,o1.OrderID 
+    ,o.CustPONo
+    ,o.StyleID
+    ,o.SeasonID
+    ,o.BrandID
+    ,c.Alias
+    ,o.BuyerDelivery
+    ,[Returnto] = '' 
+    ,p2.remark
+    ,p2.SCICtnNo
+    ,p2.ScanQty
+    ,p2.ScanName
+    ,p2.ScanEditDate
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -261,6 +278,9 @@ order by p2.ID,p2.CTNStartNo
                                     dr["Alias"] = seekData["Alias"];
                                     dr["BuyerDelivery"] = seekData["BuyerDelivery"];
                                     dr["remark"] = seekData["remark"];
+                                    dr["ScanQty"] = seekData["ScanQty"];
+                                    dr["ScanName"] = seekData["ScanName"];
+                                    dr["ScanEditDate"] = seekData["ScanEditDate"];
                                     selectDataTable.Rows.Add(dr);
                                     insertCount++;
                                 }
@@ -268,19 +288,22 @@ order by p2.ID,p2.CTNStartNo
                                 {
                                     sqlCmd = $@"
 select distinct
-[selected] = 1
-,p2.ID
-,p2.CTNStartNo
-,o1.OrderID 
-,o.CustPONo
-,o.StyleID
-,o.SeasonID
-,o.BrandID
-,c.Alias
-,o.BuyerDelivery
-,[Returnto] = '' 
-,p2.remark
-,p2.SCICtnNo
+    [selected] = 1
+    ,p2.ID
+    ,p2.CTNStartNo
+    ,o1.OrderID 
+    ,o.CustPONo
+    ,o.StyleID
+    ,o.SeasonID
+    ,o.BrandID
+    ,c.Alias
+    ,o.BuyerDelivery
+    ,[Returnto] = '' 
+    ,p2.remark
+    ,p2.SCICtnNo
+    ,p2.ScanQty
+    ,p2.ScanName
+    ,p2.ScanEditDate
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -319,6 +342,9 @@ order by p2.ID,p2.CTNStartNo
                                         dr["Alias"] = seekData["Alias"];
                                         dr["BuyerDelivery"] = seekData["BuyerDelivery"];
                                         dr["remark"] = seekData["remark"];
+                                        dr["ScanQty"] = seekData["ScanQty"];
+                                        dr["ScanName"] = seekData["ScanName"];
+                                        dr["ScanEditDate"] = seekData["ScanEditDate"];
                                         selectDataTable.Rows.Add(dr);
                                         insertCount++;
                                     }
@@ -332,19 +358,22 @@ order by p2.ID,p2.CTNStartNo
                             {
                                string sqlCmd = $@"
 select distinct
-[selected] = 1
-,p2.ID
-,p2.CTNStartNo
-,o1.OrderID 
-,o.CustPONo
-,o.StyleID
-,o.SeasonID
-,o.BrandID
-,c.Alias
-,o.BuyerDelivery
-,[Returnto] = '' 
-,p2.remark
-,p2.SCICtnNo
+    [selected] = 1
+    ,p2.ID
+    ,p2.CTNStartNo
+    ,o1.OrderID 
+    ,o.CustPONo
+    ,o.StyleID
+    ,o.SeasonID
+    ,o.BrandID
+    ,c.Alias
+    ,o.BuyerDelivery
+    ,[Returnto] = '' 
+    ,p2.remark
+    ,p2.SCICtnNo
+    ,p2.ScanQty
+    ,p2.ScanName
+    ,p2.ScanEditDate
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -383,6 +412,9 @@ order by p2.ID,p2.CTNStartNo
                                     dr["Alias"] = seekData["Alias"];
                                     dr["BuyerDelivery"] = seekData["BuyerDelivery"];
                                     dr["remark"] = seekData["remark"];
+                                    dr["ScanQty"] = seekData["ScanQty"];
+                                    dr["ScanName"] = seekData["ScanName"];
+                                    dr["ScanEditDate"] = seekData["ScanEditDate"];
                                     selectDataTable.Rows.Add(dr);
                                     insertCount++;
                                 }
