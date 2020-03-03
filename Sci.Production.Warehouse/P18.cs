@@ -259,6 +259,13 @@ where a.id = @ID", pars, out dtDetail);
                         + Environment.NewLine);
                 }
 
+                // 檢查Stock Type是否為空、且資料是否正確(B、I)
+                if (row["Stocktype"].ToString() != "B" && row["Stocktype"].ToString() != "I")
+                {
+                    MyUtility.Msg.WarningBox("Detail <Stock Type> can only be [Bulk] or [Inventory]");
+                    return false;
+                }
+
                 if (MyUtility.Check.Empty(row["Qty"]))
                 {
                     warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Transfer In Qty can't be empty"
@@ -1010,7 +1017,7 @@ where   (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - 
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3}  Dyelot#: {3}'s balance: {4} is less than In qty: {5}" + Environment.NewLine
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3}  Dyelot#: {6}'s balance: {4} is less than In qty: {5}" + Environment.NewLine
                             , tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
                     }
                     MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
