@@ -2940,8 +2940,8 @@ DROP TABLE #tmpOrders ,#tmp ,#ExistsB03
             string cmd = $@"
 UPDATE sd
 SET sd.Image=@Image
-FROM ShippingMarkPic s
-INNER JOIN ShippingMarkPic_Detail sd ON s.Ukey=sd.ShippingMarkPicUkey
+FROM ShippingMarkPic_Detail sd 
+INNER JOIN ShippingMarkPic s WITH(NOLOCK) ON s.Ukey=sd.ShippingMarkPicUkey
 WHERE sd.FileName=@FileName
                     ";
             if (!MyUtility.Check.Empty(side))
@@ -2952,16 +2952,16 @@ WHERE sd.FileName=@FileName
             // 抓該檔名最新增的 P24來修改
             cmd += @"AND s.AddDate = (
     SELECT TOP 1 s2.AddDate 
-    FROM ShippingMarkPic s2
-    INNER JOIN ShippingMarkPic_Detail sd2 ON s2.Ukey=sd2.ShippingMarkPicUkey
+    FROM ShippingMarkPic s2 WITH(NOLOCK)
+    INNER JOIN ShippingMarkPic_Detail sd2 WITH(NOLOCK) ON s2.Ukey=sd2.ShippingMarkPicUkey
     WHERE sd2.FileName = @FileName AND s2.Side = s.Side AND s2.Seq = s.Seq  AND s2.PackingListID = s.PackingListID
     ORDER BY s2.AddDate  DESC 
 )";
             cmd += $@"
 UPDATE s
 SET s.EditDate=GETDATE() , s.EditName='{Sci.Env.User.UserID}'
-FROM ShippingMarkPic s
-INNER JOIN ShippingMarkPic_Detail sd ON s.Ukey=sd.ShippingMarkPicUkey
+FROM ShippingMarkPic s WITH(NOLOCK)
+INNER JOIN ShippingMarkPic_Detail sd WITH(NOLOCK) ON s.Ukey=sd.ShippingMarkPicUkey
 WHERE sd.FileName=@FileName
 ";
             if (!MyUtility.Check.Empty(side))
