@@ -172,7 +172,7 @@ namespace Sci.Production.Warehouse
 
             if (!MyUtility.Check.Empty(this.txtRoll.Text))
             {
-                sqlWhere += $" and rd.roll = '{this.txtRoll.Text}'";
+                sqlWhere += $" and rd.roll like '%{this.txtRoll.Text}%'";
             }
 
             if (!MyUtility.Check.Empty(this.txtDyelot.Text))
