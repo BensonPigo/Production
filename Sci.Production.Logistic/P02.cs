@@ -166,8 +166,8 @@ from (
 	  from PackingList a WITH (NOLOCK) 
 	  inner join #tmp_TransferToClog t WITH (NOLOCK) on a.id = t.PackingListID
 	  inner join PackingList_Detail b WITH (NOLOCK) on a.Id = b.Id
-	  inner join Orders c WITH (NOLOCK) on b.OrderId = c.Id 
-  	  inner join Country d WITH (NOLOCK) on c.Dest = d.ID 
+	  left join Orders c WITH (NOLOCK) on b.OrderId = c.Id 
+  	  left join Country d WITH (NOLOCK) on c.Dest = d.ID 
       where a.MDivisionID = '{0}'
             -- PackingList ID --
             {1}
