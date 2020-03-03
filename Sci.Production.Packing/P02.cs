@@ -2439,7 +2439,7 @@ ELSE
                 return;
             }
 
-            string sqlchk = $@"select ShipQty=sum(ShipQty) from PackingList_Detail where OrderID = '{this.CurrentMaintain["OrderID"]}' ";
+            string sqlchk = $@"select ShipQty=sum(ShipQty) from PackingList_Detail where OrderID = '{this.CurrentMaintain["OrderID"]}' and OrderShipmodeSeq = '{this.CurrentMaintain["OrderShipmodeSeq"]}' ";
 
             int shipQty = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlchk));
             if (shipQty >= this.numOrderQty.Value)
