@@ -89,6 +89,7 @@ namespace Sci.Production.Planning
         /// <returns>true</returns>
         protected override DualResult ClickSavePost()
         {
+            this.gridArtworkType.ValidateControl();
             var listUpdateStyle_Artwork = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(s => s.RowState == DataRowState.Modified);
             if (listUpdateStyle_Artwork.Any())
             {
@@ -290,6 +291,11 @@ LEFT JOIN ArtworkType B WITH (NOLOCK) ON t.ArtworkTypeID=B.ID where styleukey={0
 
         private void GridArtworkTypeCellFormat()
         {
+            if (!this.EditMode)
+            {
+                return;
+            }
+
             foreach (DataGridViewRow item in this.gridArtworkType.Rows)
             {
                 string unit = item.Cells["unit"].Value.ToString();
