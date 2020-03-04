@@ -169,9 +169,10 @@ namespace Sci.Production.PPIC
                 if (e.RowIndex == -1) return; //沒東西 return
                 if (oldvalue.Equals(newvalue)) return;
                 //if (MyUtility.Check.Empty(e.FormattedValue)) return;
-                decimal? amt = this.numTotalAmt.Value
+                decimal? amt = Math.Round(
+                    (decimal)this.numTotalAmt.Value
                     * (newvalue
-                    / 100);
+                    / 100), 2);
                 dr["Amount"] = amt;
                 dr["Percentage"] = newvalue;
                 dr.EndEdit();
@@ -189,10 +190,12 @@ namespace Sci.Production.PPIC
                     }
                 }
 
+                // 分配Amount 尾差
                 if (curPercentage == 100 && curAmount != this.numTotalAmt.Value)
                 {
                     dr["Amount"] = MyUtility.Convert.GetDecimal(dr["Amount"]) + (this.numTotalAmt.Value - curAmount);
                     curAmount = MyUtility.Convert.GetDecimal(this.numTotalAmt.Value);
+                    dr.EndEdit();
                 }
 
                 this.numAmount.Value = curAmount;
@@ -224,7 +227,7 @@ namespace Sci.Production.PPIC
                 {
                     perct = Math.Round(
                         (decimal)useValue / (decimal)this.numTotalAmt.Value * 100,
-                        2);
+                        0);
                 }
 
                 dr["Percentage"] = perct;
@@ -244,6 +247,14 @@ namespace Sci.Production.PPIC
                     }
                 }
 
+                // 分配%尾差
+                if (curAmount == this.numTotalAmt.Value && curPercentage != 100)
+                {
+                    dr["Percentage"] = MyUtility.Convert.GetDecimal(dr["Percentage"]) + (100 - curPercentage);
+                    curPercentage = 100;
+                    dr.EndEdit();
+                }
+
                 this.numAmount.Value = curAmount;
                 this.numPercentage.Value = curPercentage;
             };
@@ -251,7 +262,7 @@ namespace Sci.Production.PPIC
             this.Helper.Controls.Grid.Generator(this.grid)
                 .Text("FactoryID", "Factory", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: col_Factory)
                 .Text("DepartmentID", "Dept.", width: Widths.AnsiChars(21), iseditingreadonly: false, settings: col_Dept)
-                .Numeric("Percentage", header: "%", width: Widths.AnsiChars(10), iseditingreadonly: false, decimal_places: 2, integer_places: 10, settings: col_Percentage)
+                .Numeric("Percentage", header: "%", width: Widths.AnsiChars(10), iseditingreadonly: false, decimal_places: 0, integer_places: 10, settings: col_Percentage)
                 .Numeric("Amount", header: "Amt", width: Widths.AnsiChars(13), iseditingreadonly: false, decimal_places: 2, integer_places: 10, settings: col_Amt)
                 ;
             return true;
@@ -318,7 +329,7 @@ where ICR.id = '{this.ID}'
  ";
             }
 
-            if (MyUtility.Check.Seek(sqlcmd,out drMaster))
+            if (MyUtility.Check.Seek(sqlcmd, out drMaster))
             {
                 this.numTotalAmt.Value = MyUtility.Convert.GetDecimal(drMaster["TotalAmt"]);
                 this.numPercentage.Value = MyUtility.Convert.GetDecimal(drMaster["Percentage"]);

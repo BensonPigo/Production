@@ -264,33 +264,37 @@ from Production.dbo.Export_ShareAmount as a
 left join Trade_To_Pms.dbo.Export_ShareAmount as b
 on a.id = b.id 
 where b.id is null
-
+AND EXISTS(
+	select 1 
+	from Trade_To_Pms.dbo.Export t 
+	where t.ID = a.Id
+)
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣
 UPDATE a
 SET 
-	a.Id= b.Id,
-	a.ShipPlanID= b.ShipPlanID,
-	a.SuppID= b.SuppID,
-	a.SMR= b.SMR,
-	a.Handle= b.Handle,
-	a.PCHandle= b.PCHandle,
-	a.DutyID= b.DutyID,
-	a.Duty= b.Duty,
-	a.Freight= b.Freight,
-	a.Insurance= b.Insurance,
-	a.Tax= b.Tax,
-	a.GW= b.GW,
-	a.Remark= b.Remark,
-	a.Status= b.Status,
-	a.StatusUpdate= b.StatusUpdate,
-	a.AddName= b.AddName,
-	a.AddDate= b.AddDate,
-	a.EditName= b.EditName,
-	a.EditDate= b.EditDate,
-	a.ShareGW= b.ShareGW,
-	a.GWUpdateDate= b.GWUpdateDate,
-	a.Mailed= b.Mailed,
-	a.POID= b.POID
+	a.Id			= ISNULL(b.Id,''),
+	a.ShipPlanID	= ISNULL(b.ShipPlanID,''),
+	a.SuppID		= ISNULL(b.SuppID,''),
+	a.SMR			= ISNULL(b.SMR,''),
+	a.Handle		= ISNULL(b.Handle,''),
+	a.PCHandle		= ISNULL(b.PCHandle,''),
+	a.DutyID		= ISNULL(b.DutyID,''),
+	a.Duty			= ISNULL(b.Duty,''),
+	a.Freight		= ISNULL(b.Freight,0),
+	a.Insurance		= ISNULL(b.Insurance,0),
+	a.Tax			= ISNULL(b.Tax,0),
+	a.GW			= ISNULL(b.GW,0),
+	a.Remark		= ISNULL(b.Remark,''),
+	a.Status		= ISNULL(b.Status,''),
+	a.StatusUpdate	= b.StatusUpdate,
+	a.AddName		= ISNULL(b.AddName,''),
+	a.AddDate		= b.AddDate,
+	a.EditName		= ISNULL(b.EditName,''),
+	a.EditDate		= b.EditDate,
+	a.ShareGW		= ISNULL(b.ShareGW,0),
+	a.GWUpdateDate	= b.GWUpdateDate,
+	a.Mailed		= ISNULL(b.Mailed,0),
+	a.POID			= ISNULL(b.POID,'')
 from Production.dbo.Export_ShareAmount as a 
 inner join Trade_To_Pms.dbo.Export_ShareAmount as b on b.ukey = a.ukey
 
@@ -325,30 +329,29 @@ INSERT INTO Production.dbo.Export_ShareAmount
 )
 SELECT 
 	 Ukey
-	,Id
-	,ShipPlanID
-	,SuppID
-	,SMR
-	,Handle
-	,PCHandle
-	,DutyID
-	,Duty
-	,Freight
-	,Insurance
-	,Tax
-	,GW
-	,Remark
-	,Status
+	,ISNULL(Id,'')
+	,ISNULL(ShipPlanID,'')
+	,ISNULL(SuppID,'')
+	,ISNULL(SMR,'')
+	,ISNULL(Handle,'')
+	,ISNULL(PCHandle,'')
+	,ISNULL(DutyID,'')
+	,ISNULL(Duty,'')
+	,ISNULL(Freight,0)
+	,ISNULL(Insurance,0)
+	,ISNULL(Tax,0)
+	,ISNULL(GW,0)
+	,ISNULL(Remark,'')
+	,ISNULL(Status,'')
 	,StatusUpdate
-	,AddName
+	,ISNULL(AddName,'')
 	,AddDate
-	,EditName
+	,ISNULL(EditName,'')
 	,EditDate
-	,ShareGW
+	,ISNULL(ShareGW,0)
 	,GWUpdateDate
-	,Mailed
-	,POID
-
+	,ISNULL(Mailed,0)
+	,ISNULL(POID,'')
 from Trade_To_Pms.dbo.Export_ShareAmount as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Export_ShareAmount as a WITH (NOLOCK) 
 where a.Ukey = b.Ukey)
