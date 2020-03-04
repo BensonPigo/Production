@@ -2457,6 +2457,8 @@
     <Build Include="dbo\Tables\MtlCertificate.sql" />
     <Build Include="dbo\Tables\MtlCertificate_Detail.sql" />
     <Build Include="dbo\Tables\FormType.sql" />
+    <Build Include="dbo\Tables\SubProcessSeq_Detail.sql" />
+    <Build Include="dbo\Tables\SubProcessSeq.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
