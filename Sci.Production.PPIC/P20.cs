@@ -498,7 +498,7 @@ select os.*,Qty=isnull(x.Qty,0),r.Name,o.AddName,o.EditName
 from OrderChangeApplication_Seq os
 inner join OrderChangeApplication o on o.id = os.ID
 left join Reason r WITH (NOLOCK) on r.ReasonTypeID = '{this.reasonTypeID}'  and r.ID = os.ReasonID
-outer apply(select qty=sum(qty) from OrderChangeApplication_Detail oq where  oq.Id  = os.id and oq.Seq = os.NewSeq)x
+outer apply(select qty=sum(qty) from OrderChangeApplication_Detail oq where  oq.Id  = os.id and oq.Seq = os.Seq)x
 where os.id = '{this.CurrentMaintain["ID"]}'
 order by os.Seq,Ukey";
 
