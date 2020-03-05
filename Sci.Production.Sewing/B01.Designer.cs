@@ -33,6 +33,7 @@
             this.txtID = new Sci.Win.UI.TextBox();
             this.txtDescription = new Sci.Win.UI.TextBox();
             this.chkJunk = new Sci.Win.UI.CheckBox();
+            this.chkForDQSCheck = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -43,6 +44,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkForDQSCheck);
             this.detailcont.Controls.Add(this.chkJunk);
             this.detailcont.Controls.Add(this.txtDescription);
             this.detailcont.Controls.Add(this.txtID);
@@ -98,6 +100,18 @@
             this.chkJunk.Text = "Junk";
             this.chkJunk.UseVisualStyleBackColor = true;
             // 
+            // chkForDQSCheck
+            // 
+            this.chkForDQSCheck.AutoSize = true;
+            this.chkForDQSCheck.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ForDQSCheck", true));
+            this.chkForDQSCheck.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkForDQSCheck.Location = new System.Drawing.Point(509, 41);
+            this.chkForDQSCheck.Name = "chkForDQSCheck";
+            this.chkForDQSCheck.Size = new System.Drawing.Size(117, 21);
+            this.chkForDQSCheck.TabIndex = 6;
+            this.chkForDQSCheck.Text = "ForDQSCheck";
+            this.chkForDQSCheck.UseVisualStyleBackColor = true;
+            // 
             // B01
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -133,5 +147,6 @@
         private Win.UI.Label label1;
         private Win.UI.TextBox txtDescription;
         private Win.UI.CheckBox chkJunk;
+        private Win.UI.CheckBox chkForDQSCheck;
     }
 }
