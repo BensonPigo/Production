@@ -2183,7 +2183,7 @@
             this.IsSupportDelete = false;
             this.IsSupportJunk = true;
             this.IsSupportUncheck = true;
-            this.IsSupportUnconfirm = true;
+            this.IsSupportUnconfirm = false;
             this.JunkChkValue = "New";
             this.Name = "P01";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
