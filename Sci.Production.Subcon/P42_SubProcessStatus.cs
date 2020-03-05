@@ -95,20 +95,28 @@ namespace Sci.Production.Subcon
                 where2 = $@"where o.ID = '{this.DataRow["OrderID"]}' and oq.Article ='{this.DataRow["Article"]}' and oq.SizeCode ='{this.DataRow["SizeCode"]}'";
             }
 
-            sqlcmd += $@"
-select oq.ID,oq.Article,oq.SizeCode,
+            sqlcmd = $@"
+select Orderid = oq.ID,oq.Article,oq.SizeCode,oq.Qty, InStartDate = Null,InEndDate = Null,OutStartDate = Null,OutEndDate = Null
+into #enn
+from Order_Qty oq  with(nolock)
+{where}
+";
+
+            string[] subprocessIDs = new string[] { "Loading", };
+            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#enn", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
+
+            sqlcmd += qtyBySetPerSubprocess + $@"
+select oq.Orderid,oq.Article,oq.SizeCode,
 	oq.Qty,
 	[Accu. Ready Qty]=a.InQtyBySet,
 	[Ready - to Load Qty]=a.InQtyBySet-a.OutQtyBySet,
 	[Loading Follow-up Qty]=oq.Qty-a.InQtyBySet,
 	a.OutQtyBySet
 into #tmp
-from Order_Qty oq  with(nolock)
-left join dbo.[QtyBySetPerSubprocess]('{this.DataRow["OrderID"]}','Loading',default,default,default,default,1,default)a
-on oq.id = a.OrderID and oq.Article = a.Article and oq.SizeCode = a.SizeCode
-{where}
+from #enn oq
+left join #QtyBySetPerSubprocessLoading a on oq.Orderid = a.OrderID and oq.Article = a.Article and oq.SizeCode = a.SizeCode
 
-;with SewQty as (
+; with SewQty as (
 	select	oq.Article
 			, oq.SizeCode
 			, oq.Qty
@@ -179,7 +187,6 @@ drop table #tmp,#tmp2
         {
             string sqlcmd = $@"
 select bda.SubProcessID
-into #tmpSubProcessID
 from Bundle b with(nolock)
 inner join orders o with(nolock) on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
 inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
@@ -187,9 +194,32 @@ inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = bd.bundleno
 where o.ID ='{this.DataRow["OrderID"]}'
 union
 select ID from SubProcess s where s.IsRFIDProcess=1 and s.IsRFIDDefault=1
-
-declare @AllSubprocess nvarchar(max)=(select STUFF((select concat(',',s.SubProcessID) from #tmpSubProcessID s for xml path('')),1,1,''))
 ";
+
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            if (!result)
+            {
+                ShowErr(result);
+                return;
+            }
+
+            sqlcmd = $@"
+select OrderID = '{this.DataRow["OrderID"]}', InStartDate = Null,InEndDate = Null,OutStartDate = Null,OutEndDate = Null into #enn
+";
+            string[] subprocessIDs = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SubProcessID"])).ToArray();
+            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#enn", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
+            sqlcmd += qtyBySetPerSubprocess;
+
+            List<string> sqlJ = new List<string>();
+            foreach (string subprocessID in subprocessIDs)
+            {
+                string subprocessIDtmp = subprocessID.Replace("-", string.Empty); // 把PAD-PRT為PADPRT, #table名稱用
+                sqlJ.Add($@"
+    select SubprocessId='{subprocessID}',FinishedQtyBySet from #QtyBySetPerSubprocess{subprocessID} a
+    where oq.id = a.OrderID and oq.Article = a.Article and oq.SizeCode = a.SizeCode
+");
+            }
 
             if (this.SummarType == 0)
             {
@@ -198,12 +228,13 @@ select a.SubprocessId,
 	FinishedQtyBySet=sum(a.FinishedQtyBySet),
 	Preparation =FORMAT(iif(sum(oq.Qty)=0,0,cast(sum(a.FinishedQtyBySet) as decimal)/sum(oq.Qty)),'P')
 from Order_Qty oq with(nolock)
-inner join dbo.[QtyBySetPerSubprocess]('{this.DataRow["OrderID"]}',@AllSubprocess,default,default,default,default,1,default)a
-	on oq.id = a.OrderID and oq.Article = a.Article and oq.SizeCode = a.SizeCode
+cross apply ( 
+{string.Join("union all", sqlJ)}
+) a
 inner join SubProcess s with(nolock)on s.Id = a.SubprocessId
 where oq.id = '{this.DataRow["OrderID"]}'
-group by SubprocessId, s.ShowSeq
-order by s.ShowSeq,SubprocessId
+group by a.SubprocessId, s.ShowSeq
+order by s.ShowSeq,a.SubprocessId
 
 drop table #tmpSubProcessID
 ";
@@ -215,8 +246,9 @@ select a.SubprocessId,
 	a.FinishedQtyBySet,
 	Preparation =FORMAT(iif(oq.Qty=0,0,cast(a.FinishedQtyBySet as decimal)/oq.Qty),'P')
 from Order_Qty oq  with(nolock)
-left join dbo.[QtyBySetPerSubprocess]('{this.DataRow["OrderID"]}', @AllSubprocess,default,default,default,default,1,default)a
-	on oq.id = a.OrderID and oq.Article = a.Article and oq.SizeCode = a.SizeCode
+cross apply ( 
+{string.Join("union all", sqlJ)}
+) a
 inner join SubProcess s with(nolock)on s.Id = a.SubprocessId
 where oq.id = '{this.DataRow["OrderID"]}' and oq.Article ='{this.DataRow["Article"]}' and oq.SizeCode ='{this.DataRow["SizeCode"]}'
 order by s.ShowSeq,s.Id
@@ -224,8 +256,7 @@ drop table #tmpSubProcessID
 ";
             }
 
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (!result)
             {
                 ShowErr(result);

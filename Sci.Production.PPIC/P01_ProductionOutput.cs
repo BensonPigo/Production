@@ -308,17 +308,24 @@ order by oa.Seq,os.Seq", string.Format("o.ID = '{0}'", MyUtility.Convert.GetStri
             this.numSewingQty.Value = MyUtility.Convert.GetInt(sewingData.Compute("sum(SewQty)", string.Empty));  // Sewing Q'ty
             this.numCuttingQty.Value = MyUtility.Convert.GetDecimal(cuttingData.Compute("sum(CutQty)", string.Empty));  // Cutting Q'ty
 
-            sqlCmd = string.Format(
-                @"
+            sqlCmd = $"select OrderID = '{this.masterData["ID"]}', InStartDate = Null,InEndDate = Null,OutStartDate = Null,OutEndDate = Null into #enn ";
+            string[] subprocessIDs = new string[] { "Loading" };
+            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#enn", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
+            sqlCmd += qtyBySetPerSubprocess + $@"
 select oq.ID,oq.SizeCode,oq.Qty,AccuInCome=a.InQtyBySet,oq.Article,oq.SizeCode
 from Order_Qty oq 
-left join dbo.[QtyBySetPerSubprocess]('{0}','Loading',default,default,default,default,1,default)a
-on oq.id = a.OrderID and oq.Article = a.Article and oq.SizeCode = a.SizeCode
-where oq.id = '{0}'
-", MyUtility.Convert.GetString(this.masterData["ID"]));
+left join #QtyBySetPerSubprocessLoading a on a.OrderID = oq.ID and a.Article = oq.Article and a.SizeCode = oq.SizeCode
+where oq.id = '{this.masterData["ID"]}'
+";
 
             DataTable loadingoutput;
             result = DBProxy.Current.Select(null, sqlCmd, out loadingoutput);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
             this.numLoadingQty.Value = MyUtility.Convert.GetInt(loadingoutput.Compute("sum(AccuInCome)", string.Empty));  // Sewing Q'ty
 
             this.listControlBindingSource1.DataSource = sewingData;

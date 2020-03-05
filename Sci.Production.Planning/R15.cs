@@ -345,6 +345,7 @@ namespace Sci.Production.Planning
                            , InspResult = case when o.InspResult = 'P' then 'Pass' when o.InspResult = 'F' then 'Fail' end
                            , InspHandle = o.InspHandle +'-'+ Pass1.Name
                            , O.Junk,DryCTN=isnull(o.DryCTN,0),CFACTN=isnull(o.CFACTN,0)
+                           , InStartDate = Null,InEndDate = Null,OutStartDate = Null,OutEndDate = Null
                     into #cte 
                     from dbo.Orders o WITH (NOLOCK) 
                     left join Pass1 WITH (NOLOCK) on Pass1.ID = O.InspHandle
