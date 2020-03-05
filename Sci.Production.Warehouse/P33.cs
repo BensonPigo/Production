@@ -26,6 +26,8 @@ namespace Sci.Production.Warehouse
         bool Ismatrix_Reload = true; //是否需要重新抓取資料庫資料
         string poid = "";
 
+        P33_Detail subform = new P33_Detail();
+
         public P33(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -80,16 +82,20 @@ namespace Sci.Production.Warehouse
             DoSubForm = new P33_Detail();
         }
 
+        #region Form事件
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
         }
 
-        #region Form事件
 
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+
+            //this.labelConfirmed.Visible = MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? false : true;
+
+            labelConfirmed.Text = CurrentMaintain["status"].ToString();
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["IssueDate"]))
             {
@@ -98,15 +104,22 @@ namespace Sci.Production.Warehouse
 
             string OrderID = this.CurrentMaintain["OrderID"].ToString();
             this.displayPOID.Text = MyUtility.GetValue.Lookup($"SELECT POID FROm Orders WHERE ID='{OrderID}' ");
-//            this.displayLineNo.Text = MyUtility.GetValue.Lookup($@"SELECT t.SewLine + ',' 
-//FROM (
-//	SELECT DISTINCT o.SewLine 
-//	FROM dbo.Issue_Detail a WITH (nolock) 
-//	INNER JOIN dbo.Orders o WITH (nolock) ON a.POID = o.POID  
-//	WHERE  a.Id = '{CurrentMaintain["ID"]}' AND
-//	o.SewLine != ''
-//) t 
-//FOR xml path('')' ");
+            this.displayLineNo.Text= MyUtility.GetValue.Lookup($@"
+SELECT t.sewline + ',' 
+FROM(SELECT DISTINCT o.sewline FROM dbo.issue_detail a WITH (nolock) 
+INNER JOIN dbo.orders o WITH (nolock) ON a.poid = o.poid  
+WHERE  a.id = '{CurrentMaintain["ID"] }' AND o.sewline != '') t FOR xml path('')
+");
+
+            #region -- matrix breakdown
+            RenewData();
+            DualResult result;
+            if (!(result = matrix_Reload()))
+            {
+                ShowErr(result);
+            }
+            #endregion
+
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -114,99 +127,102 @@ namespace Sci.Production.Warehouse
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
             this.DetailSelectCommand = $@"
-SELECT    psd.SCIRefno
-        , psd.Refno
+
+SELECT   iis.SCIRefno
+        , [Refno]=Refno.Refno
 		, iis.SuppColor
 		, f.DescDetail
-		, [@Qty]=''
-		, [AccuIssued]=AccuIssued.Val
+		, [@Qty]= ThreadUsedQtyByBOT.Val
+		, [AccuIssued] = (
+					select isnull(sum([IS].qty),0)
+					from dbo.issue I2 WITH (NOLOCK) 
+					inner join dbo.Issue_Summary [IS] WITH (NOLOCK) on I2.id = [IS].Id 
+					where I2.type = 'E' and I2.Status = 'Confirmed' 
+					and [IS].Poid=iis.POID AND [IS].SCIRefno=iis.SCIRefno AND [IS].SuppColor=iis.SuppColor and i2.[EditDate]>I.AddDate
+				)
 		, [IssueQty]=iis.Qty
-		, [Use Qty By Stock Unit]=''--'[Output Qty (Garment)] * [@Qty]/100,並轉換為Stock Unit'
-		, [StockUnit]=StockUnit.StockUnit
-		, [Use Qty By Use Unit]= ''--'[Output Qty (Garment)] * [@Qty]'
+		, [Use Qty By Stock Unit] = CEILING(Garment.Qty *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) ) 
+		, [Stock Unit]=StockUnit.StockUnit
+
 		, [Use Unit]='CM'
+		, [Use Qty By Use Unit]= (Garment.Qty *  ThreadUsedQtyByBOT.Val  )
+
 		, [Stock Unit Desc.]=StockUnit.Description
-		, [OutputQty]=''  ----Output Qty (Garment)
-		, [Balance (Stock Unit)]= fi.InQty - fi.OutQty + fi.AdjustQty
-		, [Location] = ''
-        , [POID]=psd.ID
+		, [OutputQty] = Garment.Qty
+		, [Balance(Stock Unit)]= ISNULL( fi.InQty - fi.OutQty + fi.AdjustQty ,0)
+		, [Location]=Location.MtlLocationID
+        , [POID]=iis.POID
+        , i.MDivisionID
+        , i.ID
+        , iis.Ukey
 FROM Issue i 
 INNER JOIN Issue_Summary iis ON i.ID= iis.Id
-INNER JOIN Issue_Detail isd ON isd.Issue_SummaryUkey=iis.Ukey
-INNER JOIN PO_Supp_Detail psd ON psd.ID = iis.POID
-INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
-INNER JOIN FtyInventory fi ON fi.Ukey = isd.FtyInventoryUkey
-OUTEr APPLY(
-	SELECT [Val] = ISNULL(iis2.Qty,0)
-	FROM Issue i2 WITH (NOLOCK) 
-	INNER JOIN Issue_Summary iis2 WITH (NOLOCK) ON i2.ID=iis2.ID
-	WHERE i2.Type='E' AND i2.Status='Confirmed' AND iis2.POID=iis.Poid AND iis2.SCIRefno=psd.SCIRefno
-	AND iis2.SuppColor=iis.SuppColor AND i2.EditDate < i.AddDate
-)AccuIssued
+LEFT JOIN Issue_Detail isd ON isd.Issue_SummaryUkey=iis.Ukey
+LEFT JOIN FtyInventory fi ON fi.Ukey = isd.FtyInventoryUkey
+LEFT JOIN Fabric f ON f.SCIRefno = iis.SCIRefno
 OUTER APPLY(
-	SELECT TOP 1 PSD.StockUnit ,u.Description
+	SELECT DISTINCT Refno
+	FROM PO_Supp_Detail psd
+	WHERE psd.ID = iis.POID AND psd.SCIRefno = iis.SCIRefno 
+	AND psd.SuppColor=iis.SuppColor
+)Refno
+OUTER APPLY(
+	SELECT Val=SUM((SeamLength * Frequency * UseRatio) + Allowance)
+	FROM dbo.GetThreadUsedQtyByBOT(iis.POID)
+	WHERE SCIRefNo = iis.SCIRefno AND SuppColor = iis.SuppColor
+)ThreadUsedQtyByBOT
+OUTER APPLY(
+	SELECT   [MtlLocationID] = STUFF(
+	(
+		SELECT DISTINCT ',' +fid.MtlLocationID 
+		FROM Issue_Detail 
+		INNER JOIN FtyInventory FI ON FI.POID=Issue_Detail.POID AND FI.Seq1=Issue_Detail.Seq1 AND FI.Seq2=Issue_Detail.Seq2
+		INNER JOIN FtyInventory_Detail FID ON FID.Ukey= FI.Ukey
+		WHERE Issue_Detail.ID = i.ID AND  FI.StockType='B' AND  fid.MtlLocationID  <> ''
+		FOR XML PATH('')
+	), 1, 1, '') 
+)Location
+OUTER APPLY(
+	SELECT SCIRefNo,SuppColor,[Qty]=SUM(Qty)
+	FROM(
+		SELECT DISTINCT  O.POID	, tcd.SCIRefNo, tcd.SuppColor,tcd.Article ,  t.Qty
+		From dbo.Orders as o
+		INNER JOIN dbo.Style as s On s.Ukey = o.StyleUkey
+		INNER JOIN dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
+		INNER JOIN dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
+		INNER JOIN Issue_Breakdown t ON  t.Article = tcd.Article AND t.Id=i.ID and t.OrderID=iis.Poid
+		WHERE O.ID= iis.POID	AND tcd.SCIRefNo= iis.SCIRefNo AND tcd.SuppColor = iis.SuppColor
+	)A
+	GROUP BY  SCIRefNo, SuppColor
+)Garment
+OUTER APPLY(
+	SELECT TOP 1 psd2.StockUnit ,u.Description
 	FROM PO_Supp_Detail psd2
 	LEFT JOIN Unit u ON u.ID = psd2.StockUnit
 	WHERE psd2.ID = i.OrderId 
 	AND psd2.SCIRefno = iis.SCIRefno 
 	AND psd2.SuppColor = iis.SuppColor
 )StockUnit
-WHERE i.ID='PM1IC19110288' -- Head ID
+OUTER APPLY(
+	SELECT RateValue
+	FROM Unit_Rate
+	WHERE UnitFrom='M' and  UnitTo = StockUnit.StockUnit
+)UnitRate
+WHERE i.ID='{masterID}' 
+AND iis.SuppColor <> ''
+--AND Garment.Qty IS NOT NULL
 ";
 
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        protected override DualResult OnSubDetailSelectCommandPrepare(PrepareSubDetailSelectCommandEventArgs e)
+
+        protected override DualResult ConvertSubDetailDatasFromDoSubForm(SubDetailConvertFromEventArgs e)
         {
-            string masterID = (e.Detail == null) ? "" : e.Detail["ID"].ToString();
-            string ukey = (e.Detail == null || MyUtility.Check.Empty(e.Detail["ukey"])) ? "0" : e.Detail["ukey"].ToString();
-            this.SubDetailSelectCommand = string.Format(@"
-;with aaa as(
-    select  
-         a.SizeCode
-        , b.Id
-        , Issue_DetailUkey =  '{2}'
-        , QTY = isnull(b.Qty,0)
-        , isvirtual = IIF(b.Qty IS NULL , 1 ,0)
-        , seq
-    --into #tmp
-    from  dbo.Issue_Size b WITH (NOLOCK) 
-    inner join dbo.Order_SizeCode a WITH (NOLOCK) on b.SizeCode = a.SizeCode
-    outer apply(select poid from dbo.cutplan WITH (NOLOCK) where id='{0}' and mdivisionid = '{3}')poid1
-    outer apply(select orders.poid from dbo.orders WITH (NOLOCK) left join dbo.Factory on orders.FtyGroup=Factory.ID where orders.id='{4}' and Factory.mdivisionid = '{3}')poid2
-    where a.id= iif(isnull(poid1.POID,'')='',poid2.POID,poid1.poid)
-    and b.id = '{1}' and b.Issue_DetailUkey = {2}
-)"
-            , CurrentMaintain["cutplanid"].ToString(), masterID, ukey, Sci.Env.User.Keyword, CurrentMaintain["orderid"].ToString());
-            //if (!MyUtility.Check.Empty(CurrentMaintain["cutplanid"]))
-            //{
-            SubDetailSelectCommand += $@"
-,bbb as(
-	select distinct os.sizecode,ID = '{CurrentMaintain["orderid"]}',Issue_DetailUkey = '{ukey}',QTY=0,isvirtual = 1,seq
-	from dbo.Order_SizeCode os WITH(NOLOCK)
-	inner join orders o WITH(NOLOCK) on o.POID = os.Id
-	inner join dbo.Order_Qty oq WITH(NOLOCK) on o.id = oq.ID and os.SizeCode = oq.SizeCode
-	where o.POID = '{this.poid}' 
-	and not exists(select SizeCode from aaa where aaa.SizeCode = os.sizecode)
-)
-select SizeCode,Id,Issue_DetailUkey,QTY,isvirtual
-from(
-	select * from aaa
-	union all
-	select * from bbb
-)ccc
-order by seq
-";
-            //}
-            //else
-            //{
-            //    SubDetailSelectCommand += " select SizeCode, Id, Issue_DetailUkey, QTY, isvirtual from aaa order by seq ";
-            //}
+            sum_subDetail(e.Detail, e.SubDetails);
 
-            return base.OnSubDetailSelectCommandPrepare(e);
+            return base.ConvertSubDetailDatasFromDoSubForm(e);
         }
-
 
         protected override void OnDetailGridSetup()
         {
@@ -222,7 +238,7 @@ order by seq
 		 , [SuppColor]=psd.SuppColor
 		 , [MtlType]=fc.MtlTypeID
 		 , [Desc]=fc.DescDetail
-		 , [StockUnit]=StockUnit.Val
+		 , [Stock Unit]=StockUnit.Val
 		 , [UnitDesc]=StockUnit.Description
 		 , [BulkQty]=BulkQty.Val
 		 , [InventoryQty]=InventoryQty.Val
@@ -259,9 +275,9 @@ order by seq
 
 
                     Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(bulkItems
-                            , "Refno,SuppColor,MtlType,Desc,StockUnit,UnitDesc,BulkQty,InventoryQty"
+                            , "Refno,SuppColor,MtlType,Desc,Stock Unit,UnitDesc,BulkQty,InventoryQty"
                             , "15,5,10,45,5,15,10,10", CurrentDetailData["Refno"].ToString()
-                            , "Refno,SuppColor,MtlType,Desc,StockUnit,UnitDesc,BulkQty,InventoryQty");
+                            , "Refno,SuppColor,MtlType,Desc,Stock Unit,UnitDesc,BulkQty,InventoryQty");
                     selepoitem.Width = 1250;
                     DialogResult result = selepoitem.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -287,7 +303,7 @@ order by seq
 		 , [SuppColor]=psd.SuppColor
 		 , [MtlType]=fc.MtlTypeID
 		 , [Desc]=fc.DescDetail
-		 , [StockUnit]=StockUnit.Val
+		 , [Stock Unit]=StockUnit.Val
 		 , [UnitDesc]=StockUnit.Description
 		 , [BulkQty]=BulkQty.Val
 		 , [InventoryQty]=InventoryQty.Val
@@ -338,7 +354,7 @@ order by seq
 		 , [SuppColor]=psd.SuppColor
 		 , [MtlType]=fc.MtlTypeID
 		 , [Desc]=fc.DescDetail
-		 , [StockUnit]=StockUnit.Val
+		 , [Stock Unit]=StockUnit.Val
 		 , [UnitDesc]=StockUnit.Description
 		 , [BulkQty]=BulkQty.Val
 		 , [InventoryQty]=InventoryQty.Val
@@ -376,9 +392,9 @@ order by seq
 
                     Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(bulkItems
                             //, "Type,SCIRefno,MtlTypeID,IssueType,Poid,Seq1,Seq2,inqty,outqty,adjustqty,ukey"
-                            , "Refno,SuppColor,MtlType,Desc,StockUnit,UnitDesc,BulkQty,InventoryQty"
+                            , "Refno,SuppColor,MtlType,Desc,Stock Unit,UnitDesc,BulkQty,InventoryQty"
                             , "15,5,10,45,5,15,10,10", CurrentDetailData["Refno"].ToString()
-                            , "Refno,SuppColor,MtlType,Desc,StockUnit,UnitDesc,BulkQty,InventoryQty");
+                            , "Refno,SuppColor,MtlType,Desc,Stock Unit,UnitDesc,BulkQty,InventoryQty");
                     selepoitem.Width = 1250;
                     DialogResult result = selepoitem.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -404,7 +420,7 @@ order by seq
 		 , [SuppColor]=psd.SuppColor
 		 , [MtlType]=fc.MtlTypeID
 		 , [Desc]=fc.DescDetail
-		 , [StockUnit]=StockUnit.Val
+		 , [Stock Unit]=StockUnit.Val
 		 , [UnitDesc]=StockUnit.Description
 		 , [BulkQty]=BulkQty.Val
 		 , [InventoryQty]=InventoryQty.Val
@@ -447,6 +463,35 @@ order by seq
             Ict.Win.DataGridViewGeneratorNumericColumnSettings issueQty = new DataGridViewGeneratorNumericColumnSettings();
             issueQty.CellMouseDoubleClick += (s, e) =>
             {
+                if (!this.EditMode)
+                {
+                    return;
+                }
+                if (dtIssueBreakDown == null)
+                {
+                    MyUtility.Msg.WarningBox("IssueBreakdown data no data!", "Warning");
+                    return;
+                }
+
+
+                Decimal sum = 0;
+                foreach (DataRow dr in dtIssueBreakDown.Rows)
+                {
+                    foreach (DataColumn dc in dtIssueBreakDown.Columns)
+                    {
+                        if (Object.ReferenceEquals(sum.GetType(), dr[dc].GetType()))
+                            sum += (Decimal)dr[dc];
+                    }
+                }
+
+                if (sum == 0)
+                {
+                    MyUtility.Msg.WarningBox("IssueBreakdown data no data!", "Warning");
+                    return;
+                }
+
+
+                subform.dtIssueBreakDown = this.dtIssueBreakDown;
                 DoSubForm.IsSupportUpdate = false;
                 OpenSubDetailPage();
             };
@@ -456,17 +501,17 @@ order by seq
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), settings: RefnoSet) 
             .Text("SuppColor", header: "Color", width: Widths.AnsiChars(15),  settings: ColorSet) 
-            .EditText("Desc.", header: "Desc.", width: Widths.AnsiChars(7), iseditingreadonly: true) 
-            .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)  
-            .Text("Accu. Issued", header: "Accu. Issued"+Environment.NewLine+"(Stock Unit)", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Numeric("IssueQty", header: "Issue Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6), settings: issueQty, iseditingreadonly: true)
-            .Numeric("Use Qty By Stock Unit", header: "Use Qty" + Environment.NewLine + "By Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .EditText("DescDetail", header: "Desc.", width: Widths.AnsiChars(7), iseditingreadonly: true) 
+            .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true)  
+            .Text("AccuIssued", header: "Accu. Issued"+Environment.NewLine+"(Stock Unit)", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Numeric("IssueQty", header: "Issue Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6),decimal_places:2 , settings: issueQty, iseditingreadonly: true)
+            .Numeric("Use Qty By Stock Unit", header: "Use Qty" + Environment.NewLine + "By Stock Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
             .Text("Stock Unit", header: "Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Numeric("Use Qty By Use Unit", header: "Use Qty" + Environment.NewLine + "By Use Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Numeric("Use Qty By Use Unit", header: "Use Qty" + Environment.NewLine + "By Use Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
             .Text("Use Unit", header: "Use Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("Stock Unit Desc.", header: "Stock Unit Desc.", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Numeric("OutputQty", header: "Output Qty" + Environment.NewLine + "(Garment)", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Numeric("Balance", header: "Balance" + Environment.NewLine + "(Garment)", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Numeric("OutputQty", header: "Output Qty" + Environment.NewLine + "(Garment)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
+            .Numeric("Balance(Stock Unit)", header: "Balance" + Environment.NewLine + "(Garment)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
             .Text("Location", header: "Location", width: Widths.AnsiChars(6), iseditingreadonly: true) 
             ;
             #endregion 欄位設定
@@ -479,6 +524,10 @@ order by seq
             #endregion 可編輯欄位變色
         }
 
+        protected override void OpenSubDetailPage()
+        {
+            base.OpenSubDetailPage();
+        }
 
         #endregion
 
@@ -496,12 +545,12 @@ order by seq
                 MyUtility.Msg.WarningBox("Get document ID fail!!");
                 return;
             }
-            //CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            //CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            //CurrentMaintain["Status"] = "New";
-            //CurrentMaintain["Type"] = "B";
-            //CurrentMaintain["issuedate"] = DateTime.Now;
-            //CurrentMaintain["combo"] = 0;
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            CurrentMaintain["Status"] = "New";
+            CurrentMaintain["Type"] = "E";
+            CurrentMaintain["issuedate"] = DateTime.Now;
+            CurrentMaintain["combo"] = 0;
             dtIssueBreakDown = null;
             gridIssueBreakDown.DataSource = null;
             txtOrderID.IsSupportEditMode = true;
@@ -509,6 +558,7 @@ order by seq
             //txtOrderID.ReadOnly = false;
             //txtRequest.ReadOnly = false;
         }
+
         protected override bool ClickEditBefore()
         {
             string Status = this.CurrentMaintain["Status"].ToString();
@@ -522,6 +572,8 @@ order by seq
 
         protected override bool ClickSaveBefore()
         {
+            DataTable result = null;
+
             #region 檢查不可為空
 
             string OrderID = this.CurrentMaintain["OrderID"].ToString();
@@ -533,14 +585,442 @@ order by seq
                 return false;
             }
 
-            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            foreach (DataRow dr in DetailDatas)
             {
-                //dr["PPICReasonID"] = string.Empty;
-                //dr["PPICReasonDesc"] = string.Empty;
+                if (MyUtility.Check.Empty(dr["IssueQty"]) || MyUtility.Check.Empty(dr["SCIRefNo"]) || MyUtility.Check.Empty(dr["SuppColor"]))
+                {
+                    MyUtility.Msg.InfoBox("[RefNo] , [Color] , [Issue Qty] can't be empty !!");
+                    return false;
+                }
             }
             #endregion
 
+            //取單號
+            if (this.IsDetailInserting)
+            {
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IC", "Issue", (DateTime)CurrentMaintain["IssueDate"]);
+                if (MyUtility.Check.Empty(tmpId))
+                {
+                    MyUtility.Msg.WarningBox("Get document ID fail!!");
+                    return false;
+                }
+                CurrentMaintain["id"] = tmpId;
+
+                //assign 給detail table ID
+                DataTable tmp = (DataTable)detailgridbs.DataSource;
+
+                foreach (DataRow row in tmp.Rows)
+                {
+                    row.SetField("ID", tmpId);
+                }
+
+            }
+
+
+
+            if (dtSizeCode != null && dtSizeCode.Rows.Count != 0)
+            {
+                if (checkByCombo.Checked == false)
+                {
+                    foreach (DataRow data in dtIssueBreakDown.ToList())
+                    {
+                        if (data.ItemArray[0].ToString() != txtOrderID.Text)
+                            dtIssueBreakDown.Rows.Remove(data);
+                    }
+                }
+                string sqlcmd;
+                sqlcmd = string.Format(@";delete from dbo.issue_breakdown where id='{0}'
+;WITH UNPIVOT_1
+AS
+(
+SELECT * FROM #tmp
+UNPIVOT
+(
+QTY
+FOR SIZECODE IN ({1})
+)
+AS PVT
+)
+MERGE INTO DBO.ISSUE_BREAKDOWN T
+USING UnPivot_1 S
+ON T.ID = '{0}' AND T.ORDERID= S.OrderID AND T.ARTICLE = S.ARTICLE AND T.SIZECODE = S.SIZECODE
+WHEN MATCHED THEN
+UPDATE
+SET QTY = S.QTY
+WHEN NOT MATCHED THEN
+INSERT (ID,ORDERID,ARTICLE,SIZECODE,QTY)
+VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
+;delete from dbo.issue_breakdown where id='{0}' and qty = 0; ", CurrentMaintain["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1));
+
+                string aaa = sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1).Replace("[", "").Replace("]", "");
+
+                ProcessWithDatatable2(dtIssueBreakDown, "OrderID,Article," + aaa
+                    , sqlcmd, out result, "#tmp");
+            }
+
+            // 取BarcodeNo
+            IList<DataRow> listSubDetail = new List<DataRow>();
+            DataTable dtTmp;
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                this.GetSubDetailDatas(dr, out dtTmp);
+
+                foreach (DataRow subDr in dtTmp.Rows)
+                {
+                    listSubDetail.Add(subDr);
+                }
+            }
+
+            DualResult resultBarcodeNo = Prgs.FillIssueDetailBarcodeNo(listSubDetail);
+
+            if (!resultBarcodeNo)
+            {
+                return ShowErr(resultBarcodeNo);
+            }
+
+            //將Issue_Detail的數量更新Issue_Summary
+            DataTable subDetail;
+            foreach (DataRow detailRow in this.DetailDatas)
+            {
+                this.GetSubDetailDatas(detailRow, out subDetail);
+                if (subDetail.Rows.Count == 0)
+                {
+                    detailRow["Qty"] = 0;
+                }
+                else
+                {
+                    decimal detailQty = subDetail.AsEnumerable().Sum(s => s.RowState != DataRowState.Deleted ? (decimal)s["Qty"] : 0);
+                }
+            }
+            /*
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                string SCIRefno = dr["SCIRefno"].ToString();
+                string SuppColor = dr["SuppColor"].ToString();
+
+                if (MyUtility.Check.Seek($@"SELECT 1 FROM Issue_Summary WITH(NOLOCK) WHERE ID = '{CurrentMaintain["ID"]}' AND SCIRefno='{SCIRefno}' AND SuppColor='{SuppColor}' "))
+                {
+                    DBProxy.Current.Execute(null, $@"DELETE FROM Issue_Detail WHERE ID = '{CurrentMaintain["ID"]}' --AND SCIRefno='{SCIRefno}' AND SuppColor='{SuppColor}'");
+                    DBProxy.Current.Execute(null, $@"DELETE FROM Issue_Summary WHERE ID = '{CurrentMaintain["ID"]}'-- AND SCIRefno='{SCIRefno}' AND SuppColor='{SuppColor}'");
+                    //this.GetSubDetailDatas(dr, out subDetail);
+
+                    //foreach (DataRow subRow in subDetail.Rows)
+                    //{
+
+                    //}
+                    //dr.RejectChanges();
+                    //dr.SetModified();
+
+                }
+            }*/
+
             return base.ClickSaveBefore();
+        }
+
+        protected override void ClickDeleteAfter()
+        {
+            base.ClickDeleteAfter();
+        }
+
+        protected override void ClickConfirm()
+        {
+            base.ClickConfirm();
+            if (DetailDatas.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
+                return;
+            }
+
+            var dr = this.CurrentMaintain;
+            if (null == dr) return;
+
+
+            StringBuilder sqlupd2 = new StringBuilder();
+            String sqlcmd = "", sqlupd3 = "", ids = "";
+            DualResult result, result2;
+            DataTable datacheck;
+            string sqlupd2_FIO = "";
+            StringBuilder sqlupd2_B = new StringBuilder();
+
+            #region 檢查庫存項lock
+            sqlcmd = $@"
+
+SELECT   psd.Refno
+		,psd.SuppColor
+		,d.Seq1
+		,d.seq2
+FROM Issue i
+INNER JOIN Issue_Summary s ON i.ID = s.ID 
+INNER JOIN Issue_Detail d ON s.id=d.id AND s.Ukey = d.Issue_SummaryUkey
+INNER JOIN FtyInventory f ON f.POID=s.Poid AND f.Seq1=d.Seq1 AND f.Seq2=d.Seq2
+INNER JOIN PO_Supp_Detail psd ON psd.ID = s.Poid AND psd.SCIRefno = s.SCIRefno AND psd.SCIRefno = s.SCIRefno AND psd.SEQ1=d.Seq1 AND psd.Seq2=d.Seq2
+WHERE i.Id = '{CurrentMaintain["id"]}' AND  f.lock = 1 
+";
+
+            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+            {
+                ShowErr(sqlcmd, result2);
+                return;
+            }
+            else
+            {
+                if (datacheck.Rows.Count > 0)
+                {
+                    //foreach (DataRow tmp in datacheck.Rows)
+                    //{
+                    //    ids += $@"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} is locked!!" + Environment.NewLine;
+                    //}
+                    //MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
+
+                    var m = MyUtility.Msg.ShowMsgGrid(datacheck, "The following Thread has been Locked. can't confirm!!", "Material Locked");
+
+                    m.Width = 850;
+                    m.grid1.Columns[0].Width = 300;
+                    m.grid1.Columns[1].Width = 100;
+                    m.TopMost = true;
+                    return;
+                }
+            }
+            #endregion
+
+            #region 檢查負數庫存
+
+            sqlcmd = string.Format(@"
+
+
+SELECT   psd.Refno
+		,psd.SuppColor
+		,d.Seq1
+		,d.seq2
+		,[BulkQty]=isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) 
+		,[IssueQty]=ISNULL(d.Qty ,0)
+		,[Balance]=isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty
+FROM Issue i
+INNER JOIN Issue_Summary s ON i.ID = s.ID 
+INNER JOIN Issue_Detail d ON s.id=d.id AND s.Ukey = d.Issue_SummaryUkey
+INNER JOIN FtyInventory f ON f.POID=s.Poid AND f.Seq1=d.Seq1 AND f.Seq2=d.Seq2
+INNER JOIN PO_Supp_Detail psd ON psd.ID = s.Poid AND psd.SCIRefno = s.SCIRefno AND psd.SCIRefno = s.SCIRefno AND psd.SEQ1=d.Seq1 AND psd.Seq2=d.Seq2
+WHERE i.Id = '{0}'
+AND(isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - ISNULL(d.Qty, 0)) < 0
+", CurrentMaintain["id"]);
+
+            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+            {
+                ShowErr(sqlcmd, result2);
+                return;
+            }
+            else
+            {
+                if (datacheck.Rows.Count > 0)
+                {
+                    //foreach (DataRow tmp in datacheck.Rows)
+                    //{
+                    //    ids += $@"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} is less than issue Qty: {tmp["qty"]}" + Environment.NewLine;
+                    //}
+                    //MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
+
+                    var m = MyUtility.Msg.ShowMsgGrid(datacheck, "The following bulk stock is insufficient, can't confirm!!", "Balacne Qty is not enough");
+
+                    m.Width = 850;
+                    m.grid1.Columns[0].Width = 300;
+                    m.grid1.Columns[1].Width = 100;
+                    m.TopMost = true;
+                    return;
+                }
+            }
+
+            #endregion 檢查負數庫存
+
+            #region 更新表頭狀態資料
+
+            sqlupd3 = string.Format(@"
+update Issue 
+set status = 'Confirmed'
+    , ApvName = '{0}' 
+    , ApvDate  = GETDATE()
+    , editname = '{0}' 
+    , editdate = GETDATE()
+where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+
+            #endregion 更新表頭狀態資料
+
+            #region 更新庫存數量  ftyinventory
+            sqlcmd = string.Format(@"select * from issue_detail WITH (NOLOCK) where id='{0}'", CurrentMaintain["id"]);
+            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+            {
+                ShowErr(sqlcmd, result2);
+                return;
+            }
+            #region -- 更新mdivisionpodetail B倉數 --
+            var bs1 = (from b in datacheck.AsEnumerable()
+                       group b by new
+                       {
+                           poid = b.Field<string>("poid"),
+                           seq1 = b.Field<string>("seq1"),
+                           seq2 = b.Field<string>("seq2"),
+                           stocktype = b.Field<string>("stocktype")
+                       } into m
+                       select new Prgs_POSuppDetailData
+                       {
+                           poid = m.First().Field<string>("poid"),
+                           seq1 = m.First().Field<string>("seq1"),
+                           seq2 = m.First().Field<string>("seq2"),
+                           stocktype = m.First().Field<string>("stocktype"),
+                           qty = m.Sum(w => w.Field<decimal>("qty"))
+                       }).ToList();
+            sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, true));
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
+            #endregion
+            #endregion
+
+
+            TransactionScope _transactionscope = new TransactionScope();
+            using (_transactionscope)
+            {
+                try
+                {
+                    DataTable resulttb;
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B.ToString(), out resulttb, "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
+                        return;
+                    }
+                    if (!(result = MyUtility.Tool.ProcessWithDatatable
+                        (datacheck, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
+                        return;
+                    }
+                    if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(sqlupd3, result);
+                        return;
+                    }
+
+                    _transactionscope.Complete();
+                    _transactionscope.Dispose();
+                    MyUtility.Msg.InfoBox("Confirmed successful");
+                }
+                catch (Exception ex)
+                {
+                    _transactionscope.Dispose();
+                    ShowErr("Commit transaction error.", ex);
+                    return;
+                }
+            }
+            _transactionscope.Dispose();
+            _transactionscope = null;
+        }
+
+        protected override void ClickUnconfirm()
+        {
+            base.ClickUnconfirm();
+            DataTable datacheck;
+            DataTable dt = (DataTable)detailgridbs.DataSource;
+
+            DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unconfirme it?");
+            if (dResult == DialogResult.No) return;
+            var dr = this.CurrentMaintain; if (null == dr) return;
+            StringBuilder sqlupd2 = new StringBuilder();
+            string sqlcmd = "", sqlupd3 = "", ids = "";
+            DualResult result, result2;
+            string sqlupd2_FIO = "";
+            StringBuilder sqlupd2_B = new StringBuilder();
+
+
+            #region 更新表頭狀態資料
+
+            sqlupd3 = string.Format(@"update Issue set status='New', ApvName = '' , ApvDate  = NULL, editname = '{0}' , editdate = GETDATE()
+                                where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+
+            #endregion 更新表頭狀態資料
+
+
+            #region 更新庫存數量  ftyinventory
+            sqlcmd = string.Format(@"select * from issue_detail WITH (NOLOCK) where id='{0}'", CurrentMaintain["id"]);
+            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+            {
+                ShowErr(sqlcmd, result2);
+                return;
+            }
+
+            var bsfio = (from m in datacheck.AsEnumerable()
+                         select new
+                         {
+                             poid = m.Field<string>("poid"),
+                             seq1 = m.Field<string>("seq1"),
+                             seq2 = m.Field<string>("seq2"),
+                             stocktype = m.Field<string>("stocktype"),
+                             qty = -(m.Field<decimal>("qty")),
+                             roll = m.Field<string>("roll"),
+                             dyelot = m.Field<string>("dyelot"),
+                         }).ToList();
+
+            var bs1 = (from b in datacheck.AsEnumerable()
+                       group b by new
+                       {
+                           poid = b.Field<string>("poid"),
+                           seq1 = b.Field<string>("seq1"),
+                           seq2 = b.Field<string>("seq2"),
+                           stocktype = b.Field<string>("stocktype")
+                       } into m
+                       select new Prgs_POSuppDetailData
+                       {
+                           poid = m.First().Field<string>("poid"),
+                           seq1 = m.First().Field<string>("seq1"),
+                           seq2 = m.First().Field<string>("seq2"),
+                           stocktype = m.First().Field<string>("stocktype"),
+                           qty = -(m.Sum(w => w.Field<decimal>("qty")))
+                       }).ToList();
+            sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, false));
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
+            #endregion
+
+            TransactionScope _transactionscope = new TransactionScope();
+            using (_transactionscope)
+            {
+                try
+                {
+                    DataTable resulttb;
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B.ToString(), out resulttb, "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
+                        return;
+                    }
+
+                    if (!(result = MyUtility.Tool.ProcessWithObject
+                        (bsfio, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
+                        return;
+                    }
+
+                    if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(sqlupd3, result);
+                        return;
+                    }
+
+                    _transactionscope.Complete();
+                    _transactionscope.Dispose();
+                    MyUtility.Msg.InfoBox("UnConfirmed successful");
+                }
+                catch (Exception ex)
+                {
+                    _transactionscope.Dispose();
+                    ShowErr("Commit transaction error.", ex);
+                    return;
+                }
+            }
+            _transactionscope.Dispose();
+            _transactionscope = null;
+
         }
         #endregion
 
@@ -638,8 +1118,6 @@ order by seq
             frm.ShowDialog(this);
             this.OnDetailEntered();
         }
-        #endregion
-
 
         private void checkByCombo_CheckedChanged(object sender, EventArgs e)
         {
@@ -652,64 +1130,28 @@ order by seq
             {
                 dtIssueBreakDown.DefaultView.RowFilter = string.Format("OrderID='{0}'", this.txtOrderID.Text);
             }
-            string sql = string.Empty;
 
-            if (CurrentMaintain == null)
-            {
-                return;
-            }
-            if (EditMode)
-            {
-                if (checkByCombo.Checked)
-                {
-                    sql = $@"
-select distinct seq,os.sizecode
-from dbo.Order_SizeCode os WITH(NOLOCK)
-inner join orders o WITH(NOLOCK) on o.POID = os.Id
-inner join dbo.Order_Qty oq WITH(NOLOCK) on o.id = oq.ID and os.SizeCode = oq.SizeCode
-where o.POID = '{this.poid}'
-";
-                }
-                else
-                {
-                    sql = $@"
-select distinct seq,os.sizecode
-from dbo.Order_SizeCode os WITH (NOLOCK) 
-inner join orders o WITH (NOLOCK) on o.POID = os.Id
-inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID and os.SizeCode = oq.SizeCode
-where  o.id ='{CurrentMaintain["orderid"]}'
-";
-                }
-                DataTable sizecodeDt;
-                DBProxy.Current.Select(null, sql, out sizecodeDt);
+            this.HideNullColumn(gridIssueBreakDown);
+            //if (sender != null && e != null)
+            //{
+            //    DataTable _subDetail;
+            //    foreach (DataRow dr in DetailDatas)
+            //    {
+            //        if (GetSubDetailDatas(dr, out _subDetail))
+            //        {
+            //            _subDetail.Rows.Clear();
+            //        }
 
-                foreach (DataRow dr in DetailDatas)
-                {
-                    if (dr.RowState != DataRowState.Deleted)
-                    {
-                        DataTable subDt;
-                        GetSubDetailDatas(dr, out subDt);
-                        foreach (DataRow subdr in subDt.Rows)
-                        {
-                            if (!sizecodeDt.AsEnumerable().Any(r => r["Sizecode"].ToString() == MyUtility.Convert.GetString(subdr["sizecode"])))
-                            {
-                                subdr["Qty"] = 0;
-                            }
-                        }
-                        //dr["OutputQty"] = string.Join(", ",
-                        //        subDt.AsEnumerable()
-                        //             .Where(row => !MyUtility.Check.Empty(row["Qty"]))
-                        //             .Select(row => row["SizeCode"].ToString() + "*" + Convert.ToDecimal(row["qty"]).ToString("0.00"))
-                        //    );
-                        //dr["@Qty"] = Math.Round(subDt.AsEnumerable()
-                        //                            .Where(row => !MyUtility.Check.Empty(row["Qty"]))
-                        //                            .Sum(row => Convert.ToDouble(row["Qty"].ToString()))
-                        //                            , 2);
+            //        //刪除SubDetail資料
+            //        ((DataTable)detailgridbs.DataSource).Rows.Remove(dr);
+            //        dr.Delete();
+            //        dr.EndEdit();
+            //        _subDetail.AcceptChanges();
+            //    }
 
-                    }
-                }
-            }
+            //}
         }
+
 
         private void btnAutoPick_Click(object sender, EventArgs e)
         {
@@ -730,45 +1172,131 @@ where  o.id ='{CurrentMaintain["orderid"]}'
                         }
                     }
                 }
-
-                var tmp = dtIssueBreakDown.AsEnumerable().Select(o => new { OrderID = o["OrderID"].ToString(), Article = o["Article"].ToString() }).ToList();
-
-                foreach (var obj in tmp)
-                {
-
-                    foreach (DataRow tempRow in dtIssueBreakDown.Rows)
-                    {
-                        if (tempRow["OrderID"].ToString() == obj.OrderID && tempRow["Article"].ToString() == obj.Article)
-                        {
-                            IssueQtyBreakdown m = new IssueQtyBreakdown()
-                            {
-                                OrderID = obj.OrderID,
-                                Article = obj.Article
-                            };
-
-                            int totalQty = 0;
-                            foreach (DataColumn col in dtIssueBreakDown.Columns)
-                            {
-                                if ("Decimal" == tempRow[col].GetType().Name)
-                                {
-                                    totalQty += Convert.ToInt32(tempRow[col]);
-                                }
-                            }
-                            m.Qty = totalQty;
-                            modelList.Add(m);
-                        }
-                    }
-                    //dtIssueBreakDown.AsEnumerable().Where(o => o["OrderID"].ToString() == obj.OrderID && o["Article"].ToString() == obj.Article).Sum( o => o[Q])
-                }
-
             }
 
+            var tmp = dtIssueBreakDown.AsEnumerable().Select(o => new { OrderID = o["OrderID"].ToString(), Article = o["Article"].ToString() }).ToList();
+
+            foreach (var obj in tmp)
+            {
+
+                foreach (DataRow tempRow in dtIssueBreakDown.Rows)
+                {
+                    if (tempRow["OrderID"].ToString() == obj.OrderID && tempRow["Article"].ToString() == obj.Article)
+                    {
+                        IssueQtyBreakdown m = new IssueQtyBreakdown()
+                        {
+                            OrderID = obj.OrderID,
+                            Article = obj.Article
+                        };
+
+                        int totalQty = 0;
+                        foreach (DataColumn col in dtIssueBreakDown.Columns)
+                        {
+                            if ("Decimal" == tempRow[col].GetType().Name)
+                            {
+                                totalQty += Convert.ToInt32(tempRow[col]);
+                            }
+                        }
+                        m.Qty = totalQty;
+                        modelList.Add(m);
+                    }
+                }
+                //dtIssueBreakDown.AsEnumerable().Where(o => o["OrderID"].ToString() == obj.OrderID && o["Article"].ToString() == obj.Article).Sum( o => o[Q])
+            }
 
             var frm = new Sci.Production.Warehouse.P33_AutoPick(CurrentMaintain["id"].ToString(), this.poid, txtOrderID.Text.ToString(), dtIssueBreakDown, sbSizecode, checkByCombo.Checked , modelList);
             DialogResult result = frm.ShowDialog(this);
 
+            if (result == DialogResult.OK)
+            {
+                DataTable _detail, _subDetail;
+                _detail = (DataTable)detailgridbs.DataSource;
+
+
+                //刪除表身重新匯入
+                foreach (DataRow del in DetailDatas)
+                {
+                    del.Delete();
+                }
+
+                foreach (DataRow key in frm.importRows)
+                {
+                    string POID = key["POID"].ToString();
+                    string SCIRefno = key["SCIRefno"].ToString();
+                    string SuppColor = key["SuppColor"].ToString();
+                    string Refno = key["Refno"].ToString();
+                    string DescDetail = key["DescDetail"].ToString();
+                    string @Qty = key["@Qty"].ToString();
+                    string UseQtyByStockUnit = key["Use Qty By Stock Unit"].ToString();
+                    string StockUnit = key["Stock Unit"].ToString();
+                    string UseQtyByUseUnit = key["Use Qty By Use Unit"].ToString();
+                    string UseUnit = key["Use Unit"].ToString();
+                    string StockUnitDesc = key["Stock Unit Desc."].ToString();
+                    string OutputQty = key["Output Qty(Garment)"].ToString();
+                    decimal balance = (decimal)key["Bulk Balance(Stock Unit)"];
+                    string AccuIssued = "0.00";
+
+                    DataRow nRow = _detail.NewRow();
+                    nRow["ID"] = CurrentMaintain["ID"];
+
+                    nRow["POID"] = POID;
+                    nRow["SCIRefno"] = SCIRefno;
+                    nRow["Refno"] = Refno;
+                    nRow["SuppColor"] = SuppColor;
+                    nRow["DescDetail"] = DescDetail;
+                    nRow["@Qty"] =Convert.ToDecimal(Qty);
+                    nRow["Use Qty By Stock Unit"] = Convert.ToDecimal(UseQtyByStockUnit);
+                    nRow["Stock Unit"] = StockUnit;
+                    nRow["Use Qty By Use Unit"] = Convert.ToDecimal(UseQtyByUseUnit);
+                    nRow["Use Unit"] = UseUnit;
+                    nRow["Stock Unit Desc."] = StockUnitDesc;
+                    nRow["OutputQty"] = OutputQty;
+                    nRow["Balance(Stock Unit)"] = balance;
+
+                    if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
+                    {
+                        nRow["AccuIssued"] = 0.00;
+                    }
+                    else
+                    {
+                        AccuIssued = MyUtility.GetValue.Lookup($@"
+select isnull(sum([IS].qty),0)
+from dbo.issue I WITH (NOLOCK) 
+inner join dbo.Issue_Summary [IS] WITH (NOLOCK) on I.id = [IS].Id 
+where I.type = 'E' and I.Status = 'Confirmed' 
+and [IS].Poid='{POID}' AND [IS].SCIRefno='{SCIRefno}' AND [IS].SuppColor='{SuppColor}' and i.[EditDate]>'{Convert.ToDateTime(CurrentMaintain["AddDate"]).ToShortDateString()}'
+");
+
+                        nRow["AccuIssued"] = Convert.ToDecimal(AccuIssued);
+                    }
+
+                    _detail.Rows.Add(nRow);
+                    decimal totalQty = 0;
+                    if (GetSubDetailDatas(_detail.Rows[_detail.Rows.Count - 1], out _subDetail))
+                    {
+                        List<DataRow> issuedList = PublicPrg.Prgs.Thread_AutoPick(key, Convert.ToDecimal(AccuIssued));
+                        foreach (var issued in issuedList)
+                        {
+                            totalQty += (decimal)issued["Qty"];
+                            issued.AcceptChanges();
+                            issued.SetAdded();
+                            _subDetail.ImportRow(issued);
+                        }
+                        sum_subDetail(_detail.Rows[_detail.Rows.Count - 1], _subDetail);
+                    }
+                    //_subDetail.AcceptChanges();
+                    _detail.Rows[_detail.Rows.Count - 1]["IssueQty"] = totalQty;
+                }
+
+                detailgrid.SelectRowToNext();
+                detailgrid.SelectRowToPrev();
+            }
+
         }
 
+        #endregion
+
+        #region 自訂事件
         private void Get_Issue_Breakdown_Grid(string POID)
         {
 
@@ -786,18 +1314,24 @@ where  o.id ='{CurrentMaintain["orderid"]}'
             DataTable subData;
             DualResult result;
 
-            string POID = MyUtility.GetValue.Lookup($"SELECT POID FROM Orders WHERE ID ='{ this.txtOrderID.Text}' ");
+            string POID = this.poid;
 
             // 回採購單找資料
             string sql = $@"
 
-SELECT  
+SELECT  DISTINCT
   psd.SCIRefno
 , psd.Refno
 , psd.SuppColor
 , f.DescDetail
 , [@Qty]=BOT.Val
-, [AccuIssued]=0.00
+, [AccuIssued] = (
+					select isnull(sum([IS].qty),0)
+					from dbo.issue I WITH (NOLOCK) 
+					inner join dbo.Issue_Summary [IS] WITH (NOLOCK) on I.id = [IS].Id 
+					where I.type = 'E' and I.Status = 'Confirmed' 
+					and [IS].Poid=psd.id AND [IS].SCIRefno=PSD.SCIRefno AND [IS].SuppColor=PSD.SuppColor and i.[EditDate]>getdate()
+				)
 , [IssueQty]=0.00
 , [Use Qty By Stock Unit]=0.00
 , [Stock Unit]=''
@@ -805,12 +1339,14 @@ SELECT
 , [Use Unit]='CM'
 , [Stock Unit Desc.]=''
 , [OutputQty]=0.00
-, [Balance (Stock Unit)]= 0.00
+, [Balance(Stock Unit)]= 0.00
 , [Location] = ''
-,[POID]=psd.ID 
+, [POID]=psd.ID 
+, o.MDivisionID
 FROM PO_Supp_Detail psd
 INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
 INNER JOIN MtlType m ON m.id= f.MtlTypeID
+INNER JOIN Orders o ON psd.ID = o.ID
 OUTER APPLY(
 	SELECT Val=SUM((SeamLength * Frequency * UseRatio) + Allowance)
 	FROM dbo.GetThreadUsedQtyByBOT(psd.ID)
@@ -828,58 +1364,107 @@ ORDER BY psd.SCIRefno,psd.SuppColor
             if (subData.Rows.Count == 0)
             {
                 txtOrderID.Text = "";
-                return Result.F("No PO Data !");
+                return Result.F("No Issue Thread Data !");
             }
 
             foreach (DataRow dr in subData.Rows)
             {
                 DataTable detailDt = (DataTable)this.detailgridbs.DataSource;
-                DataRow ndr = detailDt.NewRow();
-
-                ndr["SCIRefno"] = dr["SCIRefno"];
-                ndr["Refno"] = dr["Refno"];
-                ndr["SuppColor"] = dr["SuppColor"];
-                ndr["POID"] = dr["POID"];
-                ndr["DescDetail"] = dr["DescDetail"];
-                ndr["@Qty"] = dr["@Qty"];
-                ndr["Use Unit"] = dr["Use Unit"];
-
-                detailDt.Rows.Add(ndr);
-
-                /*
-                DataTable sizeRange, subDetails;
-                if (GetSubDetailDatas(ndr, out subDetails))
+                if (detailDt!=null)
                 {
-                    sql = $@"
-select  a.SizeCode
-        , b.Id
-        , b.Issue_DetailUkey
-        , isnull(b.Qty,0) QTY 
-from dbo.Order_SizeCode a WITH (NOLOCK) 
-left join dbo.Issue_Size b WITH (NOLOCK) on b.SizeCode = a.SizeCode 
-                                            and b.id = '{CurrentMaintain["id"]}'
-                                            --and b.Issue_DetailUkey = {ndr["ukey"]}
-where   a.id = '{POID}' 
-order by Seq 
-";
-                    DBProxy.Current.Select(null, sql, out sizeRange);
-                    if (sizeRange == null)
-                        continue;
+                    DataRow ndr = detailDt.NewRow();
 
-                    foreach (DataRow drr in sizeRange.Rows)
-                    {
-                        drr.AcceptChanges();
-                        drr.SetAdded();
-                        subDetails.ImportRow(drr);
-                    }
+                    ndr["SCIRefno"] = dr["SCIRefno"];
+                    ndr["Refno"] = dr["Refno"];
+                    ndr["SuppColor"] = dr["SuppColor"];
+                    ndr["POID"] = dr["POID"];
+                    ndr["DescDetail"] = dr["DescDetail"];
+                    ndr["@Qty"] = dr["@Qty"];
+                    ndr["Use Unit"] = dr["Use Unit"];
+                    ndr["AccuIssued"] = dr["AccuIssued"];
+
+                    detailDt.Rows.Add(ndr);
                 }
-                */
 
             }
 
             return Result.True;
         }
 
+        private DualResult matrix_Reload()
+        {
+            if (EditMode == true && Ismatrix_Reload == false)
+                return Result.True;
+
+            Ismatrix_Reload = false;
+            string sqlcmd;
+            StringBuilder sbIssueBreakDown;
+            DualResult result;
+
+            string OrderID = txtOrderID.Text;
+
+            sqlcmd = string.Format(@"select sizecode from dbo.order_sizecode WITH (NOLOCK) 
+where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by seq", OrderID);
+
+            if (!(result = DBProxy.Current.Select(null, sqlcmd, out dtSizeCode)))
+            {
+                ShowErr(sqlcmd, result);
+                return Result.True;
+            }
+            if (dtSizeCode.Rows.Count == 0)
+            {
+                //MyUtility.Msg.WarningBox(string.Format("Becuase there no sizecode data belong this OrderID {0} , can't show data!!", CurrentDataRow["orderid"]));               
+                dtIssueBreakDown = null;
+                gridIssueBreakDown.DataSource = null;
+                return Result.True;
+            }
+
+
+            sbSizecode = new StringBuilder();
+            sbSizecode2 = new StringBuilder();
+            sbSizecode.Clear();
+            sbSizecode2.Clear();
+            for (int i = 0; i < dtSizeCode.Rows.Count; i++)
+            {
+                sbSizecode.Append(string.Format(@"[{0}],", dtSizeCode.Rows[i]["sizecode"].ToString().TrimEnd()));
+                sbSizecode2.Append(string.Format(@"{0},", dtSizeCode.Rows[i]["sizecode"].ToString().TrimEnd()));
+            }
+            sbIssueBreakDown = new StringBuilder();
+            sbIssueBreakDown.Append(string.Format(@";with Bdown as 
+            (select a.ID [orderid],a.Article,a.SizeCode,a.Qty from dbo.order_qty a WITH (NOLOCK) 
+            inner join dbo.orders b WITH (NOLOCK) on b.id = a.id
+            where b.POID=(select poid from dbo.orders WITH (NOLOCK) where id = '{0}')
+            )
+            ,Issue_Bdown as
+            (
+            	select isnull(Bdown.orderid,ib.OrderID) [OrderID],isnull(Bdown.Article,ib.Article) Article,isnull(Bdown.SizeCode,ib.sizecode) sizecode,isnull(ib.Qty,0) qty
+            	from Bdown full outer join (select * from dbo.Issue_Breakdown WITH (NOLOCK) where id='{1}') ib
+            	on Bdown.orderid = ib.OrderID and Bdown.Article = ib.Article and Bdown.SizeCode = ib.SizeCode
+            )
+            select * from Issue_Bdown
+            pivot
+            (
+            	sum(qty)
+            	for sizecode in ({2})
+            )as pvt
+            order by [OrderID],[Article]", OrderID, CurrentMaintain["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));//.Replace("[", "[_")
+            strsbIssueBreakDown = sbIssueBreakDown;//多加一個變數來接 不改變欄位
+            if (!(result = DBProxy.Current.Select(null, sbIssueBreakDown.ToString(), out dtIssueBreakDown)))
+            {
+                ShowErr(sqlcmd, result);
+                return Result.True;
+            }
+
+            gridIssueBreakDown.AutoGenerateColumns = true;
+            gridIssueBreakDownBS.DataSource = dtIssueBreakDown;
+            gridIssueBreakDown.DataSource = gridIssueBreakDownBS;
+            gridIssueBreakDown.IsEditingReadOnly = true;
+            gridIssueBreakDown.ReadOnly = true;
+
+            checkByCombo_CheckedChanged(null, null);
+
+            return Result.True;
+        }
 
         private DualResult IssueBreakDown_Reload()
         {
@@ -920,24 +1505,6 @@ where id = (select poid from dbo.orders WITH (NOLOCK) where id='{OrderID}') orde
                 sbSizecode2.Append($@"{dtSizeCode.Rows[i]["sizecode"].ToString().TrimEnd()},");
             }
             sbIssueBreakDown = new StringBuilder();
-            //sbIssueBreakDown.Append(string.Format(@";with Bdown as 
-            //(select a.ID [orderid],a.Article,a.SizeCode,a.Qty from dbo.order_qty a WITH (NOLOCK) 
-            //inner join dbo.orders b WITH (NOLOCK) on b.id = a.id
-            //where b.POID=(select poid from dbo.orders WITH (NOLOCK) where id = '{0}')
-            //)
-            //,Issue_Bdown as
-            //(
-            //	select isnull(Bdown.orderid,ib.OrderID) [OrderID],isnull(Bdown.Article,ib.Article) Article,isnull(Bdown.SizeCode,ib.sizecode) sizecode,isnull(ib.Qty,0) qty
-            //	from Bdown full outer join (select * from dbo.Issue_Breakdown WITH (NOLOCK) where id='{1}') ib
-            //	on Bdown.orderid = ib.OrderID and Bdown.Article = ib.Article and Bdown.SizeCode = ib.SizeCode
-            //)
-            //select * from Issue_Bdown
-            //pivot
-            //(
-            //	sum(qty)
-            //	for sizecode in ({2})
-            //)as pvt
-            //order by [OrderID],[Article]", OrderID, CurrentMaintain["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));//.Replace("[", "[_")
 
             sbIssueBreakDown.Append($@"
 ;with Bdown as 
@@ -977,9 +1544,144 @@ order by [OrderID],[Article]
 
             checkByCombo_CheckedChanged(null, null);
 
+
             return Result.True;
         }
 
+        private void HideNullColumn(Win.UI.Grid grid)
+        {
+
+            List<string> nullCol = new List<string>();
+            foreach (DataGridViewColumn Column in grid.Columns)
+            {
+                Column.Visible = true;
+                int rowCount = 0;
+                int nullCount = 0;
+                string ColumnName = Column.Name;
+                if (ColumnName != "Selected" && ColumnName != "Article" && ColumnName != "OrderID")
+                {
+                    foreach (DataGridViewRow Row in grid.Rows)
+                    {
+                        string val = Row.Cells[ColumnName].Value.ToString();
+                        if (MyUtility.Check.Empty(val))
+                        {
+                            nullCount++;
+                        }
+                        rowCount++;
+                    }
+                    if (rowCount == nullCount)
+                    {
+                        nullCol.Add(ColumnName);
+                    }
+                }
+            }
+
+            foreach (var col in nullCol)
+            {
+                grid.Columns[col].Visible = false;
+            }
+        }
+
+        public static void ProcessWithDatatable2(DataTable source, string tmp_columns, string sqlcmd, out DataTable result, string temptablename = "#tmp")
+        {
+            result = null;
+            StringBuilder sb = new StringBuilder();
+            if (temptablename.TrimStart().StartsWith("#"))
+            {
+                sb.Append(string.Format("create table {0} (", temptablename));
+            }
+            else
+            {
+                sb.Append(string.Format("create table #{0} (", temptablename));
+            }
+            string[] cols = tmp_columns.Split(',');
+            for (int i = 0; i < cols.Length; i++)
+            {
+                if (MyUtility.Check.Empty(cols[i])) continue;
+                switch (Type.GetTypeCode(source.Columns[cols[i]].DataType))
+                {
+                    case TypeCode.Boolean:
+                        sb.Append(string.Format("[{0}] bit", cols[i]));
+                        break;
+
+                    case TypeCode.Char:
+                        sb.Append(string.Format("[{0}] varchar(1)", cols[i]));
+                        break;
+
+                    case TypeCode.DateTime:
+                        sb.Append(string.Format("[{0}] datetime", cols[i]));
+                        break;
+
+                    case TypeCode.Decimal:
+                        sb.Append(string.Format("[{0}] numeric(24,8)", cols[i]));
+                        break;
+
+                    case TypeCode.Int32:
+                        sb.Append(string.Format("[{0}] int", cols[i]));
+                        break;
+
+                    case TypeCode.String:
+                        sb.Append(string.Format("[{0}] varchar(max)", cols[i]));
+                        break;
+
+                    case TypeCode.Int64:
+                        sb.Append(string.Format("[{0}] bigint", cols[i]));
+                        break;
+                    default:
+                        break;
+                }
+                if (i < cols.Length - 1) { sb.Append(","); }
+            }
+            sb.Append(")");
+
+            System.Data.SqlClient.SqlConnection conn;
+            DBProxy.Current.OpenConnection(null, out conn);
+
+            try
+            {
+                DualResult result2 = DBProxy.Current.ExecuteByConn(conn, sb.ToString());
+                if (!result2) { MyUtility.Msg.ShowException(null, result2); return; }
+                using (System.Data.SqlClient.SqlBulkCopy bulkcopy = new System.Data.SqlClient.SqlBulkCopy(conn))
+                {
+                    bulkcopy.BulkCopyTimeout = 60;
+                    if (temptablename.TrimStart().StartsWith("#"))
+                    {
+                        bulkcopy.DestinationTableName = temptablename.Trim();
+                    }
+                    else
+                    {
+                        bulkcopy.DestinationTableName = string.Format("#{0}", temptablename.Trim());
+                    }
+
+                    for (int i = 0; i < cols.Length; i++)
+                    {
+                        bulkcopy.ColumnMappings.Add(cols[i], cols[i]);
+                    }
+                    bulkcopy.WriteToServer(source);
+                    bulkcopy.Close();
+                }
+                result2 = DBProxy.Current.SelectByConn(conn, sqlcmd, out result);
+                if (!result2) { MyUtility.Msg.ShowException(null, result2); return; }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
+
+        static void sum_subDetail(DataRow target, DataTable source)
+        {
+
+            target["Qty"] = (source.Rows.Count == 0) ? 0m : source.AsEnumerable().Where(r => r.RowState != DataRowState.Deleted)
+                .Sum(r => r.Field<decimal>("Qty"));
+
+        }
+        #endregion
     }
 
     public class IssueQtyBreakdown

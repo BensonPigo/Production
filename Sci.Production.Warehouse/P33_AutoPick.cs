@@ -19,6 +19,7 @@ namespace Sci.Production.Warehouse
         StringBuilder sbSizecode;
         string poid, issueid,  orderid;
         public DataTable BOA, BOA_Orderlist, BOA_PO, BOA_PO_Size, dtIssueBreakDown;
+        public DataRow[] importRows;
         public List<IssueQtyBreakdown> _IssueQtyBreakdownList = new List<IssueQtyBreakdown>();
         bool combo;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
@@ -83,12 +84,15 @@ namespace Sci.Production.Warehouse
 
             foreach (var model in _IssueQtyBreakdownList)
             {
-                DataRow newDr = IssueBreakDown_Dt.NewRow();
-                newDr["OrderID"] = model.OrderID;
-                newDr["Article"] = model.Article;
-                newDr["Qty"] = model.Qty;
+                if (model.Qty > 0)
+                {
+                    DataRow newDr = IssueBreakDown_Dt.NewRow();
+                    newDr["OrderID"] = model.OrderID;
+                    newDr["Article"] = model.Article;
+                    newDr["Qty"] = model.Qty;
 
-                IssueBreakDown_Dt.Rows.Add(newDr);
+                    IssueBreakDown_Dt.Rows.Add(newDr);
+                }
             }
 
             string sqlcmd;
@@ -136,23 +140,29 @@ WHERE OrderID IS NOT NULL
 --------------取得哪些要打勾--------------
 
 
-SELECT   [Selected] = IIF(   EXISTS(SELECT 1 FROM #SelectList1 WHERE SCIRefno =psd.SCIRefno AND SuppColor=psd.SuppColor) OR
-						EXISTS(SELECT 1 FROM #SelectList2 WHERE SCIRefno =psd.SCIRefno AND SuppColor=psd.SuppColor) ,1 ,0)
+SELECT  --DISTINCT 
+		[Selected] = IIF(   EXISTS(SELECT 1 FROM #SelectList1 WHERE SCIRefno =psd.SCIRefno AND SuppColor=psd.SuppColor) OR
+							EXISTS(SELECT 1 FROM #SelectList2 WHERE SCIRefno =psd.SCIRefno AND SuppColor=psd.SuppColor)
+						,1 ,0)
 		, psd.SCIRefno 
         , psd.Refno
 		, psd.SuppColor
 		, f.DescDetail
 		, [@Qty]= ThreadUsedQtyByBOT.Val/*(SELECT dbo.[GetThreadUsedQtyByBOT] (psd.ID,psd.SCIRefno,psd.SuppColor))*/
-		, [Use Qty By Stock Unit] = Garment.Qty *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) --並轉換為Stock Unit
+		, [Use Qty By Stock Unit] = CEILING(Garment.Qty *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) ) --並轉換為Stock Unit
 		, [Stock Unit]=StockUnit.StockUnit
 		, [Use Qty By Use Unit]= (Garment.Qty *  ThreadUsedQtyByBOT.Val  )
 		, [Use Unit]='CM'
 		, [Stock Unit Desc.]=StockUnit.Description
 		, [Output Qty(Garment)] = Garment.Qty
-		, [Bulk Balance(Stock Unit)]= ( Fty.InQty-Fty.OutQty + Fty.AdjustQty )
+		, [Bulk Balance(Stock Unit)]= BulkBalance.val--( Fty.InQty-Fty.OutQty + Fty.AdjustQty )
+        , [POID]=psd.ID
+		, psd.SEQ1
+		, psd.SEQ2
+INTO #final
 FROM PO_Supp_Detail psd
 INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
-LEFT JOIN FtyInventory Fty ON Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
+--LEFT JOIN FtyInventory Fty ON Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
 OUTER APPLY(
 	SELECT TOP 1 a.StockUnit ,u.Description
 	FROM PO_Supp_Detail a
@@ -178,6 +188,11 @@ OUTER APPLY(
 	GROUP BY  SCIRefNo, SuppColor
 )Garment
 OUTER APPLY(
+	SELECT val = SUM(( Fty.InQty-Fty.OutQty + Fty.AdjustQty ))
+	FROM FtyInventory Fty 
+	WHERE Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
+)BulkBalance
+OUTER APPLY(
 	SELECT [Val]=SUM(((SeamLength  * Frequency * UseRatio ) + Allowance))
 	FROM dbo.GetThreadUsedQtyByBOT(psd.ID)
 	WHERE SCIRefNo = psd.SCIRefNo AND SuppColor = psd.SuppColor
@@ -192,11 +207,39 @@ AND EXISTS(
 	AND m.IsThread=1 
 )
 AND psd.SuppColor <> ''
---AND psd.SCIRefNo='AD-EPIC-TEX24-2.5K-A00001' 
---AND psd.SuppColor ='23CTA'
+AND Garment.Qty IS NOT NULL
 
 
-DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2
+SELECT  [Selected] 
+		, SCIRefno 
+        , Refno
+		, SuppColor
+		, DescDetail
+		, [@Qty]
+		, [Use Qty By Stock Unit]
+		, [Stock Unit]
+		, [Use Qty By Use Unit]
+		, [Use Unit]
+		, [Stock Unit Desc.]
+		, [Output Qty(Garment)]
+		, [Bulk Balance(Stock Unit)] = SUM([Bulk Balance(Stock Unit)])
+        , [POID]
+FROM #final
+GROUP BY [Selected] 
+		, SCIRefno 
+        , Refno
+		, SuppColor
+		, DescDetail
+		, [@Qty]
+		, [Use Qty By Stock Unit]
+		, [Stock Unit]
+		, [Use Qty By Use Unit]
+		, [Use Unit]
+		, [Stock Unit Desc.]
+		, [Output Qty(Garment)]
+        , [POID]
+
+DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final
 
 ";
             #endregion
@@ -210,7 +253,7 @@ DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2
                 if (!dualResult) ShowErr(dualResult);
                 if (!dualResult) return;
 
-
+                BOA_PO = result;
                 this.listControlBindingSource1.DataSource = result;
 
             }
@@ -316,6 +359,7 @@ DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2
                 MyUtility.Msg.InfoBox("Please select rows first!", "Warnning");
                 return;
             }
+            importRows = dr2;
             DialogResult = System.Windows.Forms.DialogResult.OK;
         }
 

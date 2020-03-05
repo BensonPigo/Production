@@ -18,20 +18,23 @@ namespace Sci.Production.Warehouse
         DataRow dr_master;
         DataTable dt_detail;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        public decimal _AccuIssued = 0;
+        public decimal _RequestQty = 0;
         protected DataTable dtFtyinventory;
 
-        public P33_Detail_Detail(DataRow master, DataTable detail)
+        public P33_Detail_Detail(DataRow master, DataTable detail ,string AccuIssued ,string RequestQty)
         {
             InitializeComponent();
             dr_master = master;
             dt_detail = detail;
+            _AccuIssued = MyUtility.Check.Empty(AccuIssued) ? 0 : Convert.ToDecimal(AccuIssued);
+            _RequestQty = MyUtility.Check.Empty(RequestQty) ? 0 : Convert.ToDecimal(RequestQty);
         }
 
         private void sum_checkedqty()
         {
             listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-            //Object localPrice = dt.Compute("Sum(IssueQty)", "selected = 1");
 
             this.numIssueQty.Value = Convert.ToDecimal(dt.Compute("Sum(Qty)", "selected = 1"));        
         }
@@ -39,13 +42,17 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            Ict.DualResult result;
 
             this.displayRefno.Text = dr_master["refno"].ToString();
             this.displaySPNo.Text = dr_master["poid"].ToString();
             this.displayColorID.Text = dr_master["SuppColor"].ToString();
             this.editDesc.Text = dr_master["DescDetail"].ToString();
+            this.numAccuIssue.Value = _AccuIssued;
+            this.numRequestQty.Value = _RequestQty;
 
             StringBuilder strSQLCmd = new StringBuilder();
+
             #region -- sqlcmd query -- 
 
             strSQLCmd.Append($@"
@@ -56,6 +63,8 @@ SELECT 0 as selected
        , [BulkQty] =ISNULL( a.inqty - a.outqty + a.adjustqty,0.00)
 	   , [Qty]=0.00
 	   , [BulkLocation]=ISNULL(FTYD.MtlLocationID,'')
+       , a.stocktype
+       , [POID]='{ dr_master["poid"].ToString()}'
 FROM dbo.PO_Supp_Detail psd   WITH (NOLOCK) 
 LEFT JOIN FtyInventory a on a.POID = psd.id AND a.seq1=psd.seq1 AND a.seq2=psd.seq2
 LEFT JOIN FtyInventory_Detail FTYD WITH (NOLOCK)  ON FTYD.Ukey= a.Ukey
@@ -68,15 +77,18 @@ AND (a.stocktype = 'B' OR a.stocktype IS NULL)
             #endregion
 
             P33_Detail.ShowWaitMessage("Data Loading....");
-            Ict.DualResult result;
+
             if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out dtFtyinventory))
             {
                 if (dtFtyinventory.Rows.Count == 0)
                 { MyUtility.Msg.WarningBox("Data not found!!"); }
                 listControlBindingSource1.DataSource = dtFtyinventory;
-                //dtFtyinventory.DefaultView.Sort = "dyelot,balanceqty desc";
             }
-            else { ShowErr(strSQLCmd.ToString(), result); }
+            else
+            {
+                ShowErr(strSQLCmd.ToString(), result);
+            }
+
             P33_Detail.HideWaitMessage();
 
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
@@ -84,27 +96,27 @@ AND (a.stocktype = 'B' OR a.stocktype IS NULL)
             {
                 if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    decimal oldValue = Convert.ToDecimal(gridRollNo.GetDataRow(gridRollNo.GetSelectedRowIndex())["IssueQty"]);
-                    if (Convert.ToDecimal(gridRollNo.GetDataRow(gridRollNo.GetSelectedRowIndex())["BulkQty"]) < Convert.ToDecimal(e.FormattedValue))
+                    decimal oldValue = Convert.ToDecimal(gridSeq.GetDataRow(gridSeq.GetSelectedRowIndex())["Qty"]);
+                    if (Convert.ToDecimal(gridSeq.GetDataRow(gridSeq.GetSelectedRowIndex())["BulkQty"]) < Convert.ToDecimal(e.FormattedValue))
                     {
                         MyUtility.Msg.InfoBox("Can't over [Bulk Qty]!!");
-                        gridRollNo.GetDataRow(gridRollNo.GetSelectedRowIndex())["IssueQty"] = oldValue;
-                        gridRollNo.GetDataRow(gridRollNo.GetSelectedRowIndex())["selected"] = false;
+                        gridSeq.GetDataRow(gridSeq.GetSelectedRowIndex())["Qty"] = oldValue;
+                        gridSeq.GetDataRow(gridSeq.GetSelectedRowIndex())["selected"] = false;
 
                         return;
                     }
 
-                    gridRollNo.GetDataRow(gridRollNo.GetSelectedRowIndex())["IssueQty"] = e.FormattedValue;
-                    gridRollNo.GetDataRow(gridRollNo.GetSelectedRowIndex())["selected"] = true;
+                    gridSeq.GetDataRow(gridSeq.GetSelectedRowIndex())["Qty"] = e.FormattedValue;
+                    gridSeq.GetDataRow(gridSeq.GetSelectedRowIndex())["selected"] = true;
                     this.sum_checkedqty();
                 }
             };
             
-            this.gridRollNo.CellValueChanged += (s, e) =>
+            this.gridSeq.CellValueChanged += (s, e) =>
             {
-                if (gridRollNo.Columns[e.ColumnIndex].Name == col_chk.Name)
+                if (gridSeq.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
-                    DataRow dr = gridRollNo.GetDataRow(e.RowIndex);
+                    DataRow dr = gridSeq.GetDataRow(e.RowIndex);
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["Qty"].ToString()) == 0)
                     {
                         dr["Qty"] = dr["BulkQty"];
@@ -118,9 +130,9 @@ AND (a.stocktype = 'B' OR a.stocktype IS NULL)
                 }
             };
             
-            this.gridRollNo.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridRollNo.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridRollNo)
+            this.gridSeq.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridSeq.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridSeq)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("seq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(6))
@@ -129,7 +141,7 @@ AND (a.stocktype = 'B' OR a.stocktype IS NULL)
                 .Text("BulkLocation", header: "Bulk Location", iseditingreadonly: true) 
                 ;
 
-            this.gridRollNo.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridSeq.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
 
         }
 
@@ -140,39 +152,38 @@ AND (a.stocktype = 'B' OR a.stocktype IS NULL)
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            //listControlBindingSource1.EndEdit();
-            gridRollNo.ValidateControl();
-            DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
-            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
 
-            DataRow[] dr2 = dtGridBS1.Select("Selected = 1");
+            gridSeq.ValidateControl();
+
+            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+
+            if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return;
+
+            DataRow[] dr2 = dt.Select("Selected = 1");
             if (dr2.Length == 0)
             {
                 MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
                 return;
             }
 
-            dr2 = dtGridBS1.Select("Qty = 0 and Selected = 1");
+            dr2 = dt.Select("Qty = 0 and Selected = 1");
             if (dr2.Length > 0)
             {
                 MyUtility.Msg.WarningBox("Issue Qty of selected row can't be zero!", "Warning");
                 return;
             }
 
-            dr2 = dtGridBS1.Select("Qty > BulkQty and Selected = 1");
+            dr2 = dt.Select("Qty > BulkQty and Selected = 1");
             if (dr2.Length > 0)
             {
                 MyUtility.Msg.WarningBox("Issue Qty of selected row can't be more then Bulk Qty !", "Warning");
                 return;
             }
 
-            dr2 = dtGridBS1.Select("Qty <> 0 and Selected = 1");
+            dr2 = dt.Select("Qty <> 0 and Selected = 1");
             foreach (DataRow tmp in dr2)
             {
-                //DataRow[] findrow = dt_detail.Select(string.Format("ftyinventoryukey = {0}" , tmp["ftyinventoryukey"]));
-                //DataRow[] findrow = dt_detail.Select(string.Format("poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and roll = '{3}' and dyelot = '{4}'",
-                //    tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString(), tmp["roll"].ToString(), tmp["dyelot"].ToString()));
-                DataRow[] findrow = dt_detail.Select($"poid = '{tmp["ID"]}' and seq1 = '{tmp["seq1"]}' and seq2 = '{tmp["seq2"]}'");
+                DataRow[] findrow = dt_detail.Select($" seq1 = '{tmp["seq1"]}' and seq2 = '{tmp["seq2"]}'");
                 if (findrow.Length > 0)
                 {
                     findrow[0]["Qty"] = tmp["Qty"];
@@ -185,7 +196,6 @@ AND (a.stocktype = 'B' OR a.stocktype IS NULL)
                     dt_detail.ImportRow(tmp);
                 }
             }
-
 
             this.Close();
         }

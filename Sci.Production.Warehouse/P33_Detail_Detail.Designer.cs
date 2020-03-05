@@ -37,9 +37,6 @@
             this.displayTotalQty = new Sci.Win.UI.DisplayBox();
             this.labelTotalQty = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.panel1 = new Sci.Win.UI.Panel();
-            this.gridRollNo = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.groupBox3 = new Sci.Win.UI.GroupBox();
             this.numIssueQty = new Sci.Win.UI.NumericBox();
             this.numAccuIssue = new Sci.Win.UI.NumericBox();
@@ -56,13 +53,16 @@
             this.displaySPNo = new Sci.Win.UI.DisplayBox();
             this.labelRefno = new Sci.Win.UI.Label();
             this.displayRefno = new Sci.Win.UI.DisplayBox();
+            this.panel1 = new Sci.Win.UI.Panel();
+            this.gridSeq = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridRollNo)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridSeq)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // btnCancel
@@ -161,40 +161,6 @@
             this.groupBox1.Size = new System.Drawing.Size(1008, 202);
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.gridRollNo);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 202);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 275);
-            this.panel1.TabIndex = 20;
-            // 
-            // gridRollNo
-            // 
-            this.gridRollNo.AllowUserToAddRows = false;
-            this.gridRollNo.AllowUserToDeleteRows = false;
-            this.gridRollNo.AllowUserToResizeRows = false;
-            this.gridRollNo.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridRollNo.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.gridRollNo.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridRollNo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridRollNo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridRollNo.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridRollNo.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridRollNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridRollNo.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridRollNo.Location = new System.Drawing.Point(0, 0);
-            this.gridRollNo.Name = "gridRollNo";
-            this.gridRollNo.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridRollNo.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridRollNo.RowTemplate.Height = 24;
-            this.gridRollNo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridRollNo.ShowCellToolTips = false;
-            this.gridRollNo.Size = new System.Drawing.Size(1008, 275);
-            this.gridRollNo.TabIndex = 0;
-            this.gridRollNo.TabStop = false;
             // 
             // groupBox3
             // 
@@ -387,6 +353,40 @@
             this.displayRefno.Size = new System.Drawing.Size(124, 23);
             this.displayRefno.TabIndex = 104;
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.gridSeq);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 202);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(1008, 275);
+            this.panel1.TabIndex = 20;
+            // 
+            // gridSeq
+            // 
+            this.gridSeq.AllowUserToAddRows = false;
+            this.gridSeq.AllowUserToDeleteRows = false;
+            this.gridSeq.AllowUserToResizeRows = false;
+            this.gridSeq.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridSeq.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.gridSeq.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridSeq.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridSeq.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridSeq.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridSeq.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridSeq.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridSeq.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridSeq.Location = new System.Drawing.Point(0, 0);
+            this.gridSeq.Name = "gridSeq";
+            this.gridSeq.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridSeq.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridSeq.RowTemplate.Height = 24;
+            this.gridSeq.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridSeq.ShowCellToolTips = false;
+            this.gridSeq.Size = new System.Drawing.Size(1008, 275);
+            this.gridSeq.TabIndex = 0;
+            this.gridSeq.TabStop = false;
+            // 
             // P33_Detail_Detail
             // 
             this.ClientSize = new System.Drawing.Size(1008, 530);
@@ -395,17 +395,17 @@
             this.Controls.Add(this.groupBox2);
             this.Name = "P33_Detail_Detail";
             this.OnLineHelpID = "Sci.Win.Subs.Base";
-            this.Text = "Roll#";
+            this.Text = "P33. Append Thread";
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.gridRollNo)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridSeq)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -417,7 +417,7 @@
         private Win.UI.GroupBox groupBox2;
         private Win.UI.GroupBox groupBox1;
         private Win.UI.Panel panel1;
-        private Win.UI.Grid gridRollNo;
+        private Win.UI.Grid gridSeq;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.DisplayBox displayTotalQty;
         private Win.UI.Label labelTotalQty;

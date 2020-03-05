@@ -38,7 +38,6 @@
             this.txtRemark = new Sci.Win.UI.TextBox();
             this.labelRemark = new Sci.Win.UI.Label();
             this.btnAutoPick = new Sci.Win.UI.Button();
-            this.label25 = new Sci.Win.UI.Label();
             this.btnBreakDown = new Sci.Win.UI.Button();
             this.displayPOID = new Sci.Win.UI.DisplayBox();
             this.labelPOID = new Sci.Win.UI.Label();
@@ -48,6 +47,7 @@
             this.gridIssueBreakDown = new Sci.Win.UI.Grid();
             this.gridIssueBreakDownBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.checkByCombo = new Sci.Win.UI.CheckBox();
+            this.labelConfirmed = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -67,13 +67,13 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.labelConfirmed);
             this.masterpanel.Controls.Add(this.checkByCombo);
             this.masterpanel.Controls.Add(this.txtOrderID);
             this.masterpanel.Controls.Add(this.labelOrderID);
             this.masterpanel.Controls.Add(this.displayPOID);
             this.masterpanel.Controls.Add(this.labelPOID);
             this.masterpanel.Controls.Add(this.btnBreakDown);
-            this.masterpanel.Controls.Add(this.label25);
             this.masterpanel.Controls.Add(this.btnAutoPick);
             this.masterpanel.Controls.Add(this.txtRemark);
             this.masterpanel.Controls.Add(this.labelRemark);
@@ -94,13 +94,13 @@
             this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAutoPick, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label25, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnBreakDown, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPOID, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayPOID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelOrderID, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtOrderID, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkByCombo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelConfirmed, 0);
             // 
             // detailpanel
             // 
@@ -110,7 +110,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.gridicon.Location = new System.Drawing.Point(2375, 111);
+            this.gridicon.Location = new System.Drawing.Point(2428, 111);
             // 
             // refresh
             // 
@@ -250,18 +250,6 @@
             this.btnAutoPick.UseVisualStyleBackColor = true;
             this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);
             // 
-            // label25
-            // 
-            this.label25.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label25.BackColor = System.Drawing.Color.Transparent;
-            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label25.Location = new System.Drawing.Point(879, 8);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(115, 23);
-            this.label25.TabIndex = 44;
-            this.label25.Text = "Not Approve";
-            this.label25.TextStyle.Color = System.Drawing.Color.Red;
-            // 
             // btnBreakDown
             // 
             this.btnBreakDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -352,6 +340,19 @@
             this.checkByCombo.UseVisualStyleBackColor = true;
             this.checkByCombo.CheckedChanged += new System.EventHandler(this.checkByCombo_CheckedChanged);
             // 
+            // labelConfirmed
+            // 
+            this.labelConfirmed.BackColor = System.Drawing.Color.Transparent;
+            this.labelConfirmed.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
+            this.labelConfirmed.Location = new System.Drawing.Point(843, 3);
+            this.labelConfirmed.Name = "labelConfirmed";
+            this.labelConfirmed.Size = new System.Drawing.Size(148, 25);
+            this.labelConfirmed.TabIndex = 59;
+            this.labelConfirmed.Text = "status";
+            this.labelConfirmed.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.labelConfirmed.TextStyle.BorderColor = System.Drawing.Color.Red;
+            this.labelConfirmed.TextStyle.Color = System.Drawing.Color.Red;
+            // 
             // P33
             // 
             this.ApvChkValue = "New";
@@ -359,16 +360,18 @@
             this.DefaultControlForEdit = "checkByCombo";
             this.DefaultOrder = "issuedate,id";
             this.ExpressQuery = true;
-            this.GridAlias = "Issue_Detail";
+            this.GridAlias = "Issue_Summary";
             this.GridNew = 0;
-            this.GridUniqueKey = "POID,Seq1,Seq2,MDivisionID";
+            this.GridUniqueKey = "SCIRefno,SuppColor";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "id";
             this.Name = "P33";
             this.OnLineHelpID = "Sci.Win.Tems.Input8";
-            this.SubGridAlias = "Issue_size";
+            this.SubDetailKeyField1 = "id";
+            this.SubDetailKeyField2 = "Issue_SummaryUkey";
+            this.SubGridAlias = "Issue_Detail";
             this.Text = "P33. Issue Thread";
             this.UnApvChkValue = "Confirmed";
             this.WorkAlias = "Issue";
@@ -406,7 +409,6 @@
         private Win.UI.DateBox dateIssueDate;
         private Win.UI.Label labelIssueDate;
         private Win.UI.Button btnAutoPick;
-        private Win.UI.Label label25;
         private Win.UI.Button btnBreakDown;
         private Win.UI.DisplayBox displayPOID;
         private Win.UI.Label labelPOID;
@@ -416,5 +418,6 @@
         private Win.UI.Grid gridIssueBreakDown;
         private Win.UI.ListControlBindingSource gridIssueBreakDownBS;
         private Win.UI.CheckBox checkByCombo;
+        private Win.UI.Label labelConfirmed;
     }
 }

@@ -15,6 +15,8 @@ namespace Sci.Production.Warehouse
 {
     public partial class P33_Detail : Sci.Win.Subs.Input8A
     {
+        public DataTable dtIssueBreakDown { get; set; }
+
         public P33_Detail()
         {
             InitializeComponent();
@@ -24,7 +26,7 @@ namespace Sci.Production.Warehouse
         ///Issue_Detail
         protected override void OnSubDetailInsert(int index = -1)
         {
-            var frm = new Sci.Production.Warehouse.P33_Detail_Detail(CurrentDetailData, (DataTable)gridbs.DataSource);
+            var frm = new Sci.Production.Warehouse.P33_Detail_Detail(CurrentDetailData, (DataTable)gridbs.DataSource , CurrentDetailData["AccuIssued"].ToString() , CurrentDetailData["Use Qty By Stock Unit"].ToString());
             frm.P33_Detail = this;
             frm.ShowDialog(this);
             sum_checkedqty();
@@ -35,8 +37,9 @@ namespace Sci.Production.Warehouse
         protected override void OnAttached()
         {
             base.OnAttached();
+
             DataTable temp =(DataTable)gridbs.DataSource;
-            if (!temp.Columns.Contains("balanceqty"))
+            if (!temp.Columns.Contains("BulkQty"))
             {
                 DataTable dtFtyinventory;
                 Ict.DualResult result;
@@ -46,12 +49,20 @@ namespace Sci.Production.Warehouse
 select t.poid
        , t.Seq1
        , t.Seq2
-	   , [BulkQty]=FTY.InQty-FTY.OutQty+ FTY.AdjustQty
+	   , [BulkQty]= ISNULL(FTY.InQty-FTY.OutQty+ FTY.AdjustQty ,0)
+	   , [BulkLocation]= ISNULL(FTYD.MtlLocationID,'')
 	   , t.Qty
-	   , [BulkLocation]=FTYD.MtlLocationID
+       , t.ID
+       , t.Issue_SummaryUkey
+       , t.FtyInventoryUkey
+       , t.StockType
+       , t.ukey
+       , t.BarcodeNo
+       , t.ukey
 from #tmp t    ---- #tmp = Issue_Detail
-Left join dbo.FtyInventory FTY WITH (NOLOCK) on t.FtyInventoryUkey=FTY.Ukey AND FTY.StockType = 'B'
+Left join dbo.FtyInventory FTY WITH (NOLOCK) on t.POID = FTY.POID AND t.Seq1 = FTY.Seq1 AND t.Seq2 = FTY.Seq2 
 Left JOIN FtyInventory_Detail FTYD WITH (NOLOCK)  ON FTYD.Ukey= FTY.Ukey
+WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
 ", out dtFtyinventory, "#tmp")))
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
@@ -68,8 +79,15 @@ Left JOIN FtyInventory_Detail FTYD WITH (NOLOCK)  ON FTYD.Ukey= FTY.Ukey
 
             this.numAccuIssue.Text = CurrentDetailData["AccuIssued"].ToString();
             this.numRequestQty.Text = CurrentDetailData["Use Qty By Stock Unit"].ToString();
-       
-            //this.numIssueQty.Text = //Sum([表身][Issue Qty])
+
+            if (MyUtility.Check.Empty(CurrentDetailData["Use Qty By Stock Unit"]))
+            {
+                this.btnAutoPick.EditMode = Win.UI.AdvEditModes.DisableOnEdit;
+            }
+            else
+            {
+                this.btnAutoPick.EditMode = Win.UI.AdvEditModes.EnableOnEdit;
+            }
 
         }
 
@@ -90,6 +108,7 @@ Left JOIN FtyInventory_Detail FTYD WITH (NOLOCK)  ON FTYD.Ukey= FTY.Ukey
                 if (Convert.ToDecimal(row["BulkQty"]) < Convert.ToDecimal(e.FormattedValue))
                 {
                     MyUtility.Msg.InfoBox("[Issue Qty] Can't over [Bulk Qty]!!");
+                    row["Qty"] = row["Qty"];
                     return;
                 }
 
@@ -119,10 +138,10 @@ Left JOIN FtyInventory_Detail FTYD WITH (NOLOCK)  ON FTYD.Ukey= FTY.Ukey
                 MyUtility.Msg.WarningBox("Issue Qty of selected row can't be zero!", "Warning");
                 return false;
             }
-            var dr2_ba = ((DataTable)gridbs.DataSource).Select("qty > balanceqty");
+            var dr2_ba = ((DataTable)gridbs.DataSource).Select("qty > BulkQty");
             if (dr2_ba.Length > 0)
             {
-                MyUtility.Msg.WarningBox("Issue Qty of selected row can't be more then balance qty!", "Warning");
+                MyUtility.Msg.WarningBox("Issue Qty of selected row can't be more then Bulk qty!", "Warning");
                 return false;
             }
             return base.OnSaveBefore();
@@ -130,8 +149,10 @@ Left JOIN FtyInventory_Detail FTYD WITH (NOLOCK)  ON FTYD.Ukey= FTY.Ukey
 
         private void btnAutoPick_Click(object sender, EventArgs e)
         {
-            var issued = PublicPrg.Prgs.autopick(CurrentDetailData);
-            if (issued == null)
+            decimal AccuIssued = MyUtility.Check.Empty(CurrentDetailData["AccuIssued"]) ? 0 : Convert.ToDecimal(CurrentDetailData["AccuIssued"]);
+            List<DataRow> issuedList = PublicPrg.Prgs.Thread_AutoPick(CurrentDetailData, AccuIssued);
+
+            if (issuedList == null)
             {
                 return;
             }
@@ -141,7 +162,7 @@ Left JOIN FtyInventory_Detail FTYD WITH (NOLOCK)  ON FTYD.Ukey= FTY.Ukey
             foreach (DataRow temp in subDT.ToList()) temp.Delete();
                 
             //subDT.Clear();
-            foreach (DataRow dr2 in issued)
+            foreach (DataRow dr2 in issuedList)
             {
                 dr2.AcceptChanges();
                 dr2.SetAdded();
@@ -157,7 +178,7 @@ Left JOIN FtyInventory_Detail FTYD WITH (NOLOCK)  ON FTYD.Ukey= FTY.Ukey
             Object SumIssueQTY = subDT.Compute("Sum(Qty)", "");
             this.numIssueQty.Text = SumIssueQTY.ToString();
             //this.numVariance.Value = this.numBalanceQty.Value - this.numIssueQty.Value;
-
+            CurrentDetailData["IssueQty"] = MyUtility.Check.Empty(subDT.Compute("Sum(Qty)", "")) ? 0 : (decimal)subDT.Compute("Sum(Qty)", "");
         }
 
         private void delete_Click(object sender, EventArgs e)

@@ -86,10 +86,12 @@
             // next
             // 
             this.next.Location = new System.Drawing.Point(783, 5);
+            this.next.Visible = false;
             // 
             // prev
             // 
             this.prev.Location = new System.Drawing.Point(728, 5);
+            this.prev.Visible = false;
             // 
             // labelSPNo
             // 
@@ -301,7 +303,7 @@
             this.Controls.Add(this.groupBox1);
             this.Name = "P33_Detail";
             this.OnLineHelpID = "Sci.Win.Subs.Input8A";
-            this.Text = "P33. Append Thread";
+            this.Text = "P33. Issue Thread Detail";
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
             this.Controls.SetChildIndex(this.groupBox1, 0);
