@@ -111,7 +111,7 @@ namespace Sci.Production.Centralized
 
             if (!MyUtility.Check.Empty(this.Factory))
             {
-                where += $@" and o.FtyGroup = '{this.Factory}'";
+                where += $@" and o.FactoryID = '{this.Factory}'";
             }
 
             if (this.ExcludeSampleFactory)
@@ -120,14 +120,99 @@ namespace Sci.Production.Centralized
             }
 
             #endregion
+
+            #region Source Type Where
+            List<string> listWhereSource = new List<string>();
+            if (this.Order)
+            {
+                listWhereSource.Add(" (Qty > 0  And Category in ('B','S')  and (localorder = 0 or SubconInType=2)) ");
+            }
+
+            if (this.Forecast)
+            {
+                listWhereSource.Add(" (Qty > 0 AND IsForecast = 1 and (localorder = 0 or SubconInType=2)) ");
+            }
+
+            if (this.FtyLocalOrder)
+            {
+                listWhereSource.Add(" (LocalOrder = 1 and SubconInType=3) ");
+            }
+
+            string whereSource = listWhereSource.JoinToString("or");
+            #endregion
+
             #region sqlcmd
             string sqlCmd = $@"
+select
+o.ID,
+[Date]=format(iif('{this.Date}'='1',dateadd(day,-7,o.SciDelivery),o.BuyerDelivery),'yyyyMM'),
+[OutputDate] = FORMAT(s.OutputDate,'yyyyMM'),
+[OrderCPU] = isnull(o.CPU,0) * isnull(o.Qty,0),
+[SewingOutput] = isnull(sum(isnull(sdd.QAQty,0)),0),
+[SewingOutputCPU] = isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) * o.CPU / 100,
+o.Junk,
+o.Qty,
+o.Category,
+o.SubconInType,
+o.IsForecast,
+o.LocalOrder,
+o.FtyGroup,
+f.IsProduceFty
+into #tmpBase
+from Orders o with(nolock)
+inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
+left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
+left join SewingOutput_Detail_Detail sdd with (nolock) on o.ID = sdd.OrderId
+left join SewingOutput s with (nolock) on sdd.ID = s.ID
+left join Order_Location ol with (nolock) on ol.OrderId = sdd.OrderId and ol.Location = sdd.ComboType
+left join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey and sl.Location = sdd.ComboType
+where   1=1
+        {where}
+group by o.ID,
+o.SciDelivery,
+o.BuyerDelivery,
+FORMAT(s.OutputDate,'yyyyMM'), 
+o.CPU, 
+o.Qty,
+o.Junk,
+o.Qty,
+o.Category,
+o.SubconInType,
+o.IsForecast,
+o.LocalOrder,
+o.FtyGroup,
+f.IsProduceFty
+
+select  ID,
+        FtyGroup,
+        Date,
+        OutputDate,
+        OrderCPU,
+        SewingOutput,
+        SewingOutputCPU,
+        IsProduceFty,
+        [isNormalOrderCanceled] = iif(Junk = 1 and Qty > 0  And Category in ('B','S')  and (localorder = 0 or SubconInType=2),1,0)
+into #tmpBaseBySource
+from #tmpBase
+where {whereSource}
+
+select
+ID,
+Date,
+OrderCPU,
+[SewingOutput] = SUM(SewingOutput),
+[SewingOutputCPU] = SUM(SewingOutputCPU)
+into #tmpBaseByOrderID
+from #tmpBaseBySource
+group by ID,Date,OrderCPU
+
+
 select
 	o.MDivisionID,
 	o.FtyGroup,
 	o.BuyerDelivery,
 	o.SciDelivery,
-	[Date]=format(iif('{this.Date}'='1',dateadd(day,-7,o.SciDelivery),o.BuyerDelivery),'yyyyMM'),
+	tb.Date,
 	o.ID,
 	Category =case when o.Category='B' then 'Bulk'
 				when o.Category='S' then 'Sample'
@@ -141,97 +226,35 @@ select
 	o.CPU,
 	o.Qty,
 	o.FOCQty,
-	TotalCPU=isnull(o.CPU,0) * isnull(o.Qty,0),
-	TotalSewingOutput=isnull(s.QAQty,0),
-	BalanceQty=isnull(o.Qty,0)-isnull(s.QAQty,0),
-	BalanceCPU=(isnull(o.Qty,0)-isnull(s.QAQty,0))* isnull(o.CPU,0),
+	tb.OrderCPU,
+	tb.SewingOutput,
+	BalanceQty=isnull(o.Qty,0)-isnull(tb.SewingOutput,0),
+	BalanceCPU= isnull(tb.OrderCPU,0) - isnull(tb.SewingOutputCPU,0),
 	o.SewLine,
 	o.Dest,
 	o.OrderTypeID,
 	o.ProgramID,
 	o.CdCodeID,
 	CDCode.ProductionFamilyID
-from Orders o with(nolock)
-inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
-left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
+from #tmpBaseByOrderID tb with(nolock)
+inner join Orders o with(nolock) on o.id = tb.ID
 left join CDCode with(nolock) on CDCode.ID = o.CdCodeID
-outer apply(select QAQty = dbo.getMinCompleteSewQty(o.ID,null,null) )s
-where 1=1
-{where}
-";
-            string sqlCmd2 = $@"
-select
-	o.FtyGroup,
-	[Date]=format(iif('{this.Date}'='1',dateadd(day,-7,o.SciDelivery),o.BuyerDelivery),'yyyyMM'),
-	o.ID,
-	TotalCPU=isnull(o.CPU,0) * isnull(o.Qty,0),
-	s.OutputDate,
-	OutputCPU=isnull(s.QAQty,0)*isnull(o.CPU,0)
-from Orders o with(nolock)
-inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
-left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
-left join CDCode with(nolock) on CDCode.ID = o.CdCodeID
-outer apply(
-	select OutputDate=format(x.OutputDate,'yyyyMM'),QAQty=sum(x.QAQty)
-	from dbo.[getMinCompleteSewQtyByDate] (o.id,null,null,1)x
-	group by format(x.OutputDate,'yyyyMM')
-)s
-where 1=1
-and f.IsProduceFty = 1
-{where}
-";
-            string sqlCmd3 = $@"
-select j.FtyGroup,j.OutputDate,OutputCPU=sum(j.OutputCPU)
-from(
-	select
-		o.FtyGroup,
-		s.OutputDate,
-		OutputCPU=isnull(s.QAQty,0)*isnull(o.CPU,0)*(-1)
-	from Orders o with(nolock)
-    inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
-	left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
-	left join CDCode with(nolock) on CDCode.ID = o.CdCodeID
-	outer apply(
-		select OutputDate=format(x.OutputDate,'yyyyMM'),QAQty=sum(x.QAQty)
-		from dbo.[getMinCompleteSewQtyByDate] (o.id,null,null,1)x
-		group by format(x.OutputDate,'yyyyMM')
-	)s
-	where o.Junk=1
-	and OutputDate is not null
-	{where}
-)j
-group by j.FtyGroup,j.OutputDate
+
+select  FtyGroup,
+        [Date] = SUBSTRING(Date,1,4)+'/'+SUBSTRING(Date,5,6),
+        ID,
+        OutputDate,
+        [OrderCPU] = iif(isNormalOrderCanceled = 1,0, OrderCPU),
+        SewingOutput,
+        SewingOutputCPU
+from    #tmpBaseBySource
+
+select  FtyGroup,OutputDate,[SewingOutputCPU] = sum(SewingOutputCPU) * -1
+from    #tmpBase
+where   Junk=1 and OutputDate is not null group by FtyGroup,OutputDate
 ";
             #endregion
 
-            string sqlOrder = sqlCmd + " And o.Junk = 0 and o.Qty > 0  And o.Category in ('B','S')  and (o.localorder = 0 or o.SubconInType=2)";
-            string sqlForecast = sqlCmd + "And o.Qty > 0 AND o.IsForecast = 1 and (o.localorder = 0 or o.SubconInType=2)";
-            string sqlFtyLocalOrder = sqlCmd + " AND o.LocalOrder = 1 ";
-            string sqlOrder2 = sqlCmd2 + " And o.Junk = 0 and o.Qty > 0  And o.Category in ('B','S')  and (o.localorder = 0 or o.SubconInType=2)";
-            string sqlForecast2 = sqlCmd2 + "And o.Qty > 0 AND o.IsForecast = 1 and (o.localorder = 0 or o.SubconInType=2)";
-            string sqlFtyLocalOrder2 = sqlCmd2 + " AND o.LocalOrder = 1 and o.SubconInType=3 ";
-            List<string> sqlCmdlist = new List<string>();
-            List<string> sqlCmdlist2 = new List<string>();
-
-            if (this.Order)
-            {
-                sqlCmdlist.Add(sqlOrder);
-                sqlCmdlist2.Add(sqlOrder2);
-            }
-
-            if (this.Forecast)
-            {
-                sqlCmdlist.Add(sqlForecast);
-                sqlCmdlist2.Add(sqlForecast2);
-            }
-
-            if (this.FtyLocalOrder)
-            {
-                sqlCmdlist.Add(sqlFtyLocalOrder);
-                sqlCmdlist2.Add(sqlFtyLocalOrder2);
-            }
-
-            string sql = string.Join(" union all ", sqlCmdlist) + string.Join(" union all ", sqlCmdlist2) + sqlCmd3;
 
             #region --由 appconfig 抓各個連線路徑
             this.SetLoadingText("Load connections... ");
@@ -261,7 +284,7 @@ group by j.FtyGroup,j.OutputDate
                 using (conn = new SqlConnection(conString))
                 {
                     conn.Open();
-                    result = DBProxy.Current.SelectByConn(conn, sql, null, out this.printData);
+                    result = DBProxy.Current.SelectByConn(conn, sqlCmd, null, out this.printData);
                     if (!result)
                     {
                         DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -298,13 +321,13 @@ group by j.FtyGroup,j.OutputDate
 
                 #region summary
                 string sqlsum = $@"
-select Date,ID,TotalCPU,BalanceCPU=TotalCPU-sum(OutputCPU)
+select Date,ID,OrderCPU,BalanceCPU=OrderCPU-sum(SewingOutputCPU)
 into #tmp2_0
 from #tmp
 where Ftygroup = '{fty}'
-group by Date,ID,TotalCPU
+group by Date,ID,OrderCPU
 
-select Date,TotalCPU=sum(TotalCPU),BalanceCPU=sum(BalanceCPU)
+select Date,OrderCPU=sum(OrderCPU),BalanceCPU=sum(BalanceCPU)
 into #tmp2
 from #tmp2_0
 group by Date
@@ -334,8 +357,8 @@ for xml path('')
 ),1,1,''))
 
 declare @sql nvarchar(max)=N'
-select Date=SUBSTRING(t2.Date,1,4)+''/''+SUBSTRING(t2.Date,5,6),
-	Loading=t2.TotalCPU,Balance=t2.BalanceCPU,
+select t2.Date,
+	Loading=t2.OrderCPU,Balance=t2.BalanceCPU,
 	'+@col+N'
 into #tmp3
 from #tmp2 t2
@@ -344,14 +367,14 @@ inner join
 	select*
 	from(
 		select
-		Date=SUBSTRING(t.Date,1,4)+''/''+SUBSTRING(t.Date,5,6),
-		OutputCPU,
+		Date,
+		SewingOutputCPU,
 		OutputDate
 		from #tmp t
         where Ftygroup = ''{fty}''
 	)x
-	pivot(sum(OutputCPU) for OutputDate in('+@col+N'))xx
-)xxx on SUBSTRING(t2.Date,1,4)+''/''+SUBSTRING(t2.Date,5,6)=xxx.Date
+	pivot(sum(SewingOutputCPU) for OutputDate in('+@col+N'))xx
+)xxx on t2.Date=xxx.Date
 order by t2.Date
 
 select*from #tmp3
@@ -368,7 +391,7 @@ end
 drop table #tmp,#tmp2,#tmp2_0
 ";
                 DataTable ftySummarydt;
-                DualResult dual = MyUtility.Tool.ProcessWithDatatable(this.dtAllData[1], "FtyGroup,Date,ID,TotalCPU,OutputCPU,OutputDate", sqlsum, out ftySummarydt);
+                DualResult dual = MyUtility.Tool.ProcessWithDatatable(this.dtAllData[1], "FtyGroup,Date,ID,OrderCPU,SewingOutputCPU,OutputDate", sqlsum, out ftySummarydt);
                 if (!dual)
                 {
                     return dual;
@@ -395,12 +418,12 @@ outer apply (
 	select*
 	from(
 		select
-			OutputCPU,
+			SewingOutputCPU,
 			OutputDate
 		from #tmp t
         where Ftygroup = ''{fty}''
 	)x
-	pivot(sum(OutputCPU) for OutputDate in('+@col+N'))xx
+	pivot(sum(SewingOutputCPU) for OutputDate in('+@col+N'))xx
 )b
 
 select*from #tmp3_junk
