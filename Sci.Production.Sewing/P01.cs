@@ -1399,6 +1399,7 @@ order by a.OrderId,os.Seq",
             #endregion
 
             #region 檢查表身不為0的資料, 是否與DQS相同， 若不同必須輸入SewingReason
+            List<string> msg = new List<string>();
             foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).AsEnumerable().
                 Where(w => w.RowState != DataRowState.Deleted && MyUtility.Convert.GetDecimal(w["QAQty"]) != 0))
             {
@@ -1426,8 +1427,8 @@ and Article = '{dr["Article"]}'
                 {
                     if (MyUtility.Check.Empty(dr["SewingReasonID"]) || !MyUtility.Check.Seek(sqlChksewingReason + $"and ID = '{dr["SewingReasonID"]}'"))
                     {
-                        MyUtility.Msg.WarningBox("Reason cannot be empty or not found!");
-                        return false;
+                        msg.Add($"Order: <{dr["OrderID"]}> ComboType: <{dr["ComboType"]}> Article: <{dr["Article"]}> ");
+                        continue;
                     }
                 }
                 else
@@ -1456,8 +1457,7 @@ and Article = '{dr["Article"]}'
                         {
                             if (MyUtility.Check.Empty(dr["SewingReasonID"]) || !MyUtility.Check.Seek(sqlChksewingReason + $"and ID = '{dr["SewingReasonID"]}'"))
                             {
-                                MyUtility.Msg.WarningBox("Reason cannot be empty or not found!");
-                                return false;
+                                msg.Add($"Order: <{dr["OrderID"]}> ComboType: <{dr["ComboType"]}> Article: <{dr["Article"]}> ");
                             }
                         }
                     }
@@ -1474,14 +1474,19 @@ and Article = '{dr["Article"]}'
                         {
                             if (MyUtility.Check.Empty(dr["SewingReasonID"]) || !MyUtility.Check.Seek(sqlChksewingReason + $"and ID = '{dr["SewingReasonID"]}'"))
                             {
-                                MyUtility.Msg.WarningBox("Reason cannot be empty or not found!");
-                                return false;
+                                msg.Add($"Order: <{dr["OrderID"]}> ComboType: <{dr["ComboType"]}> Article: <{dr["Article"]}> ");
                             }
                         }
                     }
                 }
             }
             #endregion
+            if (msg.Count > 0)
+            {
+                var x = msg.Distinct().ToList();
+                MyUtility.Msg.WarningBox("Please Input Reason if Output data not equal to DQS output data !\r\n" + string.Join("\r\n", x));
+                return false;
+            }
 
             this.CalculateManHour();
 
