@@ -3149,14 +3149,16 @@ when matched then
        sr.AddName = tsr.AddName,
        sr.AddDate = tsr.AddDate,
        sr.EditName = tsr.EditName,
-       sr.EditDate = tsr.EditDate
+       sr.EditDate = tsr.EditDate,
+       sr.ForDQSCheck = tsr.ForDQSCheck
+
 when not matched by target then
       insert (
             Type , ID  , Description  , Junk  , AddName    , AddDate
-            , EditName   , EditDate    
+            , EditName   , EditDate   , ForDQSCheck  
       ) values (
             tsr.Type , tsr.ID  , tsr.Description  , tsr.Junk  , tsr.AddName    , tsr.AddDate
-            , tsr.EditName   , tsr.EditDate    
+            , tsr.EditName   , tsr.EditDate		  , tsr.ForDQSCheck  
       )
 when not matched by source then 
       delete;     
