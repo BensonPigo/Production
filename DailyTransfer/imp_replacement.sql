@@ -24,7 +24,11 @@ BEGIN
 		t.TPECFMDate =s.TPECFMDate,
 		t.TPEEditName=s.EditName,
 		t.TPEEditDate=s.EditDate,
-		t.Status = s.Status
+		t.Status = s.Status,
+		t.RMtlAmt = s.RMtlAmt,
+		t.ActFreight = s.ActFreight,
+		t.EstFreight = s.EstFreight,
+		t.SurchargeAmt = s.SurchargeAmt
 	output inserted.id into @tReplace;
 
 	--Merge Replace2
@@ -40,7 +44,11 @@ BEGIN
 		t.NarrowRequest = s.NarrowRequest, 
 		t.TotalRequest = s.TotalRequest, 
 		t.AfterCuttingRequest = s.AfterCuttingRequest,
-		t.Junk = s.Junk;
+		t.Junk = s.Junk,
+		t.NewSeq1 = s.NewSeq1,
+		t.NewSeq2 = s.NewSeq2,
+		t.PurchaseID = s.PurchaseID
+		;
 
 	Merge Production.dbo.Clip as t
 	Using Trade_To_Pms.dbo.Clip as s

@@ -39,4 +39,3 @@
     [VoucherDate]       DATE            NULL,
     PRIMARY KEY CLUSTERED ([Id] ASC)
 );
-
