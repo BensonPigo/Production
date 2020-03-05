@@ -942,6 +942,14 @@ from #tmpupdate t
 inner join SewingOutput_Detail_Detail sodd on sodd.ID = t.ID
 	and sodd.OrderId = t.OrderId and sodd.ComboType = t.ComboType and sodd.Article = t.Article and sodd.SizeCode = t.SizeCode
 where t.TransferredQty > 0
+
+update sod set
+    sod.AutoSplit=1
+from #tmpupdate t
+inner join SewingOutput_Detail_Detail sodd on sodd.ID = t.ID
+	and sodd.OrderId = t.OrderId and sodd.ComboType = t.ComboType and sodd.Article = t.Article and sodd.SizeCode = t.SizeCode
+inner join SewingOutput_Detail sod on sodd.SewingOutput_DetailUKey = sod.Ukey
+where t.TransferredQty > 0 -- 找到有更新第3層對應第2層更新
 ";
             result = MyUtility.Tool.ProcessWithDatatable(fromDt, string.Empty, sqlcmd, out dto);
             if (!result)
@@ -998,10 +1006,11 @@ Declare @SewingOutput_Detail table(
 	[AutoCreate] [bit] NULL,
 	[SewingReasonID] [varchar](5) NOT NULL,
 	[Remark] [nvarchar](1000) NULL,
-	[ImportFromDQS] [bit] NOT NULL
+	[ImportFromDQS] [bit] NOT NULL,
+    [AutoSplit] [bit] NULL
 )
 INSERT INTO [dbo].[SewingOutput_Detail]
-([ID],[OrderId],[ComboType],[Article],[Color],[TMS],[HourlyStandardOutput],[WorkHour],[QAQty],[DefectQty],[InlineQty],[OldDetailKey],[AutoCreate],[SewingReasonID],[Remark],[ImportFromDQS])
+([ID],[OrderId],[ComboType],[Article],[Color],[TMS],[HourlyStandardOutput],[WorkHour],[QAQty],[DefectQty],[InlineQty],[OldDetailKey],[AutoCreate],[SewingReasonID],[Remark],[ImportFromDQS],[AutoSplit])
 OUTPUT INSERTED.* into @SewingOutput_Detail  -- 取得寫入的資料,ukey欄位
 select t.ID,t.ToOrderID,t.ToComboType,t.ToArticle,
 	Color = (select top 1 ColorID from View_OrderFAColor where Id = t.ToOrderID and Article = t.ToArticle),--※Sewing_P01
@@ -1015,7 +1024,8 @@ select t.ID,t.ToOrderID,t.ToComboType,t.ToArticle,
 	[AutoCreate] = 0,
 	[SewingReasonID] = '',
 	[Remark] = '',
-	[ImportFromDQS] = 0
+	[ImportFromDQS] = 0,
+    AutoSplit = 1
 from #tmp t
 inner join orders o WITH (NOLOCK) on o.id = t.ToOrderID
 inner join SewingOutput so WITH (NOLOCK) on so.ID = t.ID
@@ -1040,6 +1050,15 @@ from #tmp t
 inner join @SewingOutput_Detail s on s.ID = t.ID and s.OrderId = t.ToOrderID and s.ComboType = t.ToComboType and s.Article = t.ToArticle
 where t.WillTransferQty > 0
 group by s.ID,s.UKey,s.OrderId,s.ComboType,s.Article,t.ToSizeCode
+
+--以上第3層都寫入後
+update sod set
+    sod.AutoSplit=1
+from #tmpupdate t
+inner join SewingOutput_Detail_Detail sodd with(nolock) on sodd.ID = t.ID 
+	and sodd.OrderId = t.ToOrderID and sodd.ComboType = t.ToComboType and sodd.Article = t.ToArticle and sodd.SizeCode = t.ToSizeCode
+inner join SewingOutput_Detail sod with(nolock) on sodd.SewingOutput_DetailUKey = sod.Ukey
+where t.WillTransferQty > 0 -- 找到有更新/新增第3層, 對應第2層
 
 --更新表頭
 update so set

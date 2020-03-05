@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[Export_ShareAmount] (
+    [Ukey]         BIGINT          DEFAULT ((0)) NOT NULL,
+    [Id]           VARCHAR (13)    DEFAULT ('') NOT NULL,
+    [ShipPlanID]   VARCHAR (13)    DEFAULT ('') NOT NULL,
+    [SuppID]       VARCHAR (6)     DEFAULT ('') NOT NULL,
+    [SMR]          VARCHAR (10)    DEFAULT ('') NOT NULL,
+    [Handle]       VARCHAR (10)    DEFAULT ('') NOT NULL,
+    [PCHandle]     VARCHAR (10)    DEFAULT ('') NOT NULL,
+    [DutyID]       VARCHAR (13)    DEFAULT ('') NOT NULL,
+    [Duty]         VARCHAR (1)     DEFAULT ('') NOT NULL,
+    [Freight]      NUMERIC (10, 2) DEFAULT ((0)) NOT NULL,
+    [Insurance]    NUMERIC (10, 2) DEFAULT ((0)) NOT NULL,
+    [Tax]          NUMERIC (10, 2) DEFAULT ((0)) NOT NULL,
+    [GW]           NUMERIC (7, 2)  DEFAULT ((0)) NOT NULL,
+    [Remark]       NVARCHAR (60)   DEFAULT ('') NOT NULL,
+    [Status]       VARCHAR (15)    DEFAULT ('') NOT NULL,
+    [StatusUpdate] DATETIME        NULL,
+    [AddName]      VARCHAR (10)    DEFAULT ('') NOT NULL,
+    [AddDate]      DATETIME        NULL,
+    [EditName]     VARCHAR (10)    DEFAULT ('') NOT NULL,
+    [EditDate]     DATETIME        NULL,
+    [ShareGW]      NUMERIC (7, 2)  DEFAULT ((0)) NOT NULL,
+    [GWUpdateDate] DATETIME        NULL,
+    [Mailed]       BIT             DEFAULT ((0)) NOT NULL,
+    [POID]         VARCHAR (13)    DEFAULT ('') NOT NULL,
+    PRIMARY KEY CLUSTERED ([Ukey] ASC)
+);
+

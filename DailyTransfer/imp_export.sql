@@ -255,6 +255,108 @@ Te2.InvoiceNo)
 					  AND ec.Container=pms.Container	
 			)--不存在Trade轉出的Container
 	;
+
+
+-- Export_ShareAmount
+
+--刪除主TABLE多的資料
+Delete Production.dbo.Export_ShareAmount
+from Production.dbo.Export_ShareAmount as a 
+left join Trade_To_Pms.dbo.Export_ShareAmount as b
+on a.id = b.id 
+where b.id is null
+AND EXISTS(
+	select 1 
+	from Trade_To_Pms.dbo.Export t 
+	where t.ID = a.Id
+)
+---------------------------UPDATE 主TABLE跟來源TABLE 為一樣
+UPDATE a
+SET 
+	a.Id			= ISNULL(b.Id,''),
+	a.ShipPlanID	= ISNULL(b.ShipPlanID,''),
+	a.SuppID		= ISNULL(b.SuppID,''),
+	a.SMR			= ISNULL(b.SMR,''),
+	a.Handle		= ISNULL(b.Handle,''),
+	a.PCHandle		= ISNULL(b.PCHandle,''),
+	a.DutyID		= ISNULL(b.DutyID,''),
+	a.Duty			= ISNULL(b.Duty,''),
+	a.Freight		= ISNULL(b.Freight,0),
+	a.Insurance		= ISNULL(b.Insurance,0),
+	a.Tax			= ISNULL(b.Tax,0),
+	a.GW			= ISNULL(b.GW,0),
+	a.Remark		= ISNULL(b.Remark,''),
+	a.Status		= ISNULL(b.Status,''),
+	a.StatusUpdate	= b.StatusUpdate,
+	a.AddName		= ISNULL(b.AddName,''),
+	a.AddDate		= b.AddDate,
+	a.EditName		= ISNULL(b.EditName,''),
+	a.EditDate		= b.EditDate,
+	a.ShareGW		= ISNULL(b.ShareGW,0),
+	a.GWUpdateDate	= b.GWUpdateDate,
+	a.Mailed		= ISNULL(b.Mailed,0),
+	a.POID			= ISNULL(b.POID,'')
+from Production.dbo.Export_ShareAmount as a 
+inner join Trade_To_Pms.dbo.Export_ShareAmount as b on b.ukey = a.ukey
+
+-------------------------- INSERT INTO 抓
+INSERT INTO Production.dbo.Export_ShareAmount
+ (
+	 Ukey
+	,Id
+	,ShipPlanID
+	,SuppID
+	,SMR
+	,Handle
+	,PCHandle
+	,DutyID
+	,Duty
+	,Freight
+	,Insurance
+	,Tax
+	,GW
+	,Remark
+	,Status
+	,StatusUpdate
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+	,ShareGW
+	,GWUpdateDate
+	,Mailed
+	,POID
+
+)
+SELECT 
+	 Ukey
+	,ISNULL(Id,'')
+	,ISNULL(ShipPlanID,'')
+	,ISNULL(SuppID,'')
+	,ISNULL(SMR,'')
+	,ISNULL(Handle,'')
+	,ISNULL(PCHandle,'')
+	,ISNULL(DutyID,'')
+	,ISNULL(Duty,'')
+	,ISNULL(Freight,0)
+	,ISNULL(Insurance,0)
+	,ISNULL(Tax,0)
+	,ISNULL(GW,0)
+	,ISNULL(Remark,'')
+	,ISNULL(Status,'')
+	,StatusUpdate
+	,ISNULL(AddName,'')
+	,AddDate
+	,ISNULL(EditName,'')
+	,EditDate
+	,ISNULL(ShareGW,0)
+	,GWUpdateDate
+	,ISNULL(Mailed,0)
+	,ISNULL(POID,'')
+from Trade_To_Pms.dbo.Export_ShareAmount as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Export_ShareAmount as a WITH (NOLOCK) 
+where a.Ukey = b.Ukey)
+
 drop table #TExport;
 
 -----------------------MtlCertificate-----------------------------
