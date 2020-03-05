@@ -22,6 +22,7 @@ namespace Sci.Production.Planning
         private DataTable gdtPullOut;
         private DataTable gdtSP;
         private DataTable gdtSDP;
+        private string KpiDate;
 
         /// <summary>
         /// R17
@@ -30,7 +31,6 @@ namespace Sci.Production.Planning
         {
             this.InitializeComponent();
         }
-        
 
         /// <summary>
         /// R17
@@ -74,6 +74,7 @@ namespace Sci.Production.Planning
                 return false;
             }
 
+            this.KpiDate = MyUtility.Convert.GetString(this.comboDropDownList1.SelectedValue);
             return base.ValidateInput();
         }
 
@@ -145,14 +146,24 @@ and (isnull(ot.IsGMTMaster,0) = 0 or o.OrderTypeID = '') ";
                     strSQL += " AND o.Category = 'G'";
                 }
 
+                string kpiDate = string.Empty;
+                if (this.KpiDate == "1")
+                {
+                    kpiDate = "FtyKPI";
+                }
+                else
+                {
+                    kpiDate = "BuyerDelivery";
+                }
+
                 if (this.dateFactoryKPIDate.Value1 != null)
                 {
-                    strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
+                    strSQL += $" AND Order_QS.{kpiDate} >= '{this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd")}'";
                 }
 
                 if (this.dateFactoryKPIDate.Value2 != null)
                 {
-                    strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                    strSQL += $" AND Order_QS.{kpiDate} <= '{this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd")}'";
                 }
 
                 if (this.txtFactory.Text != string.Empty)
@@ -176,8 +187,8 @@ into #tmp_Pullout_Detail_pd
 From Pullout_Detail pd  with (nolock)
 inner join #tmp_main t on pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.Seq
 inner join Pullout_Detail_Detail pdd with (nolock) on pd.Ukey = pdd.Pullout_DetailUKey
-Outer apply (Select Qty = IIF(pd.pulloutdate <= iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.FtyKPI, DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI)), pdd.shipqty, 0)) rA --On Time
-Outer apply (Select Qty = IIF(pd.pulloutdate >  iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.FtyKPI, DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI)), pdd.shipqty, 0)) rB --Fail
+Outer apply (Select Qty = IIF(pd.pulloutdate <= iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), pdd.shipqty, 0)) rA --On Time
+Outer apply (Select Qty = IIF(pd.pulloutdate >  iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), pdd.shipqty, 0)) rB --Fail
 group by pd.OrderID, pd.OrderShipmodeSeq
 
 select max(p.PulloutDate)PulloutDate ,pd.OrderID,pd.OrderShipmodeSeq
@@ -283,7 +294,7 @@ SELECT
 		,t.BrandID
 		,BuyerDelivery = convert(varchar(10),t.BuyerDelivery,111)--G
 		,FtyKPI= convert(varchar(10),t.FtyKPI,111)
-		,Extension = convert(varchar(10),iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.FtyKPI, DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI)), 111)--I
+		,Extension = convert(varchar(10),iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), 111)--I
 		,DeliveryByShipmode = t.ShipmodeID
 		,t.OrderQty 
         ,OnTimeQty = CASE WHEN t.GMTComplete = 'S' and p.PulloutDate is null THEN Cast(0 as int) --[IST20190675] 若為短交且PullOutDate是空的,不算OnTime也不算Fail,直接給0
@@ -357,7 +368,7 @@ SELECT
     ,t.BrandID  
     , BuyerDelivery = convert(varchar(10),t.BuyerDelivery,111)
     , FtyKPI = convert(varchar(10),t.FtyKPI,111)
-    , Extension = convert(varchar(10),iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.FtyKPI, DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI)), 111)
+    , Extension = convert(varchar(10),iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), 111)
     , DeliveryByShipmode = t.ShipmodeID
     , OrderQty = 0
     , OnTimeQty =  0
@@ -515,12 +526,12 @@ Where Order_QS.ID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.
 
                 if (this.dateFactoryKPIDate.Value1 != null)
                 {
-                    strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
+                    strSQL += $" AND Order_QS.{kpiDate} >= '{this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd")}' ";
                 }
 
                 if (this.dateFactoryKPIDate.Value2 != null)
                 {
-                    strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                    strSQL += $" AND Order_QS.{kpiDate} <= '{this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd")}' ";
                 }
 
                 if (this.txtFactory.Text != string.Empty)
@@ -565,12 +576,12 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
 
                 if (this.dateFactoryKPIDate.Value1 != null)
                 {
-                    strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
+                    strSQL += $" AND Order_QS.{kpiDate} >= '{this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd")}' ";
                 }
 
                 if (this.dateFactoryKPIDate.Value2 != null)
                 {
-                    strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                    strSQL += $" AND Order_QS.{kpiDate} <= '{this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd")}' ";
                 }
 
                 if (this.txtFactory.Text != string.Empty)
@@ -634,7 +645,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     // SDP(%)
                     // drSDP["SDP"] = drSDP["OrderQty"].ToString() == "0" ? 0 : Convert.ToDecimal(drSDP["OnTimeQty"].ToString()) / Convert.ToDecimal(drSDP["OrderQty"].ToString()) * 100;
                     drSDP["SDP"] = (Convert.ToDecimal(drSDP["OnTimeQty"].ToString()) + Convert.ToDecimal(drSDP["FailQty"].ToString())) == 0 ?
-                        0 : Convert.ToDecimal(drSDP["OnTimeQty"].ToString()) / (Convert.ToDecimal(drSDP["OnTimeQty"].ToString()) + Convert.ToDecimal(drSDP["FailQty"].ToString())) * 100;
+                        0 : Convert.ToDecimal(drSDP["OnTimeQty"].ToString()) / (Convert.ToDecimal(drSDP["OnTimeQty"].ToString()) + Convert.ToDecimal(drSDP["FailQty"].ToString()));
 
                     #endregion Calc SDP Data
 
@@ -863,7 +874,6 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
 
                 #region 匯出SDP
                 List<string> MSummaryRow = new List<string>();
-
                 for (int i = 0; i < intRowsCount; i += 1)
                 {
                     DataRow dr = this.gdtSDP.Rows[i];
@@ -904,7 +914,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                         rownum++;
 
                         // objArray[0, 5] = "=" + string.Format("D{0}/IF(C{0}=0, 1,C{0})*100", rownum + i);
-                        objArray[0, 5] = "=" + string.Format("D{0}/IF(D{0}+E{0}=0, 1,D{0}+E{0})*100", rownum + i);
+                        objArray[0, 5] = "=" + string.Format("D{0}/IF(D{0}+E{0}=0, 1,D{0}+E{0})", rownum + i);
 
                         objArray[0, 6] = (decimal)dr["SDP"] >= 97 ? "PASS" : "FAIL";
                         worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Value2 = objArray;
@@ -920,6 +930,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 {
                     worksheet.Range[string.Format("A{0}:A{0}", rownum + intRowsCount)].Value2 = "G. TTL.";
                     worksheet.Range[string.Format("A{0}:A{0}", rownum + intRowsCount + 2)].Value2 = "* SDP=On time Qty / (On time Qty+Delay Qty)";
+                    worksheet.Range[string.Format("A{0}:G{0}", rownum + intRowsCount + 2)].Merge(false);
                     worksheet.Range[string.Format("C{0}:C{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("C{0}:C{1}", 2, rownum + intRowsCount - 1) + ")";
                     worksheet.Range[string.Format("D{0}:D{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("D{0}:D{1}", 2, rownum + intRowsCount - 1) + ")";
                     worksheet.Range[string.Format("E{0}:E{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("E{0}:E{1}", 2, rownum + intRowsCount - 1) + ")";
@@ -929,7 +940,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     worksheet.Range[string.Format("E{0}:E{0}", rownum + intRowsCount)].Formula = "=E" + MSummaryRow.JoinToString("+E");
 
                     // worksheet.Range[string.Format("F{0}:F{0}", rownum + intRowsCount)].Formula = "=" + string.Format("D{0}/IF(C{0}=0, 1,C{0})*100", rownum + intRowsCount);
-                    worksheet.Range[string.Format("F{0}:F{0}", rownum + intRowsCount)].Formula = "=" + string.Format("D{0}/IF(D{0}+E{0}=0, 1,D{0}+E{0})*100", rownum + intRowsCount);
+                    worksheet.Range[string.Format("F{0}:F{0}", rownum + intRowsCount)].Formula = "=" + string.Format("D{0}/IF(D{0}+E{0}=0, 1,D{0}+E{0})", rownum + intRowsCount);
 
                     worksheet.Cells[rownum + intRowsCount, 7] = $"=IF(F{rownum + intRowsCount}>=97,\"PASS\",\"FAIL\")";
                     worksheet.Range[string.Format("A{0}:G{0}", rownum + intRowsCount)].Borders[Excel.XlBordersIndex.xlEdgeTop].LineStyle = 1;
@@ -940,7 +951,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
 
                 worksheet.Range[string.Format("G1:G{0}", rownum + intRowsCount)].Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = 1;
                 worksheet.Range[string.Format("G1:G{0}", rownum + intRowsCount)].Borders[Excel.XlBordersIndex.xlEdgeRight].LineStyle = 1;
-                worksheet.Range[string.Format("G1:G{0}", rownum + intRowsCount)].Interior.Color = Color.FromArgb(254, 255, 146);
+                worksheet.Range[string.Format("G1:G{0}", rownum + intRowsCount - 1)].Interior.Color = Color.FromArgb(254, 255, 146);
                 worksheet.Columns.AutoFit();
                 #endregion
 

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.radioBulk = new Sci.Win.UI.RadioButton();
             this.radioSample = new Sci.Win.UI.RadioButton();
             this.dateFactoryKPIDate = new Sci.Win.UI.DateRange();
@@ -37,6 +38,8 @@
             this.labelType = new Sci.Win.UI.Label();
             this.radioGarment = new Sci.Win.UI.RadioButton();
             this.txtFactory = new Sci.Production.Class.txtfactory();
+            this.label1 = new Sci.Win.UI.Label();
+            this.comboDropDownList1 = new Sci.Production.Class.comboDropDownList(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -157,17 +160,43 @@
             // txtFactory
             // 
             this.txtFactory.BackColor = System.Drawing.Color.White;
+            this.txtFactory.boolFtyGroupList = true;
             this.txtFactory.FilteMDivision = false;
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory.IsProduceFty = false;
             this.txtFactory.IssupportJunk = true;
             this.txtFactory.Location = new System.Drawing.Point(96, 91);
+            this.txtFactory.MDivision = null;
             this.txtFactory.Name = "txtFactory";
             this.txtFactory.Size = new System.Drawing.Size(66, 23);
             this.txtFactory.TabIndex = 4;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(18, 124);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 107;
+            this.label1.Text = "SDP";
+            // 
+            // comboDropDownList1
+            // 
+            this.comboDropDownList1.BackColor = System.Drawing.Color.White;
+            this.comboDropDownList1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDropDownList1.FormattingEnabled = true;
+            this.comboDropDownList1.IsSupportUnselect = true;
+            this.comboDropDownList1.Location = new System.Drawing.Point(96, 124);
+            this.comboDropDownList1.Name = "comboDropDownList1";
+            this.comboDropDownList1.OldText = "";
+            this.comboDropDownList1.Size = new System.Drawing.Size(121, 24);
+            this.comboDropDownList1.TabIndex = 108;
+            this.comboDropDownList1.Type = "SDP";
+            // 
             // R17
             // 
-            this.ClientSize = new System.Drawing.Size(543, 149);
+            this.ClientSize = new System.Drawing.Size(543, 189);
+            this.Controls.Add(this.comboDropDownList1);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.radioGarment);
             this.Controls.Add(this.labelType);
             this.Controls.Add(this.labelFactoryKPIDate);
@@ -180,7 +209,11 @@
             this.DefaultControl = "dateFactoryKPIDate";
             this.DefaultControlForEdit = "dateFactoryKPIDate";
             this.Name = "R17";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R17. SDP Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -193,6 +226,8 @@
             this.Controls.SetChildIndex(this.labelFactoryKPIDate, 0);
             this.Controls.SetChildIndex(this.labelType, 0);
             this.Controls.SetChildIndex(this.radioGarment, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.comboDropDownList1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -209,5 +244,7 @@
         private Win.UI.Label labelFactoryKPIDate;
         private Win.UI.Label labelType;
         private Win.UI.RadioButton radioGarment;
+        private Win.UI.Label label1;
+        private Class.comboDropDownList comboDropDownList1;
     }
 }
