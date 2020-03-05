@@ -7,6 +7,7 @@
     [AddDate]     DATETIME      NULL,
     [EditName]    VARCHAR (10)  DEFAULT ('') NULL,
     [EditDate]    DATETIME      NULL,
+    [ForDQSCheck] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_SewingReason] PRIMARY KEY CLUSTERED ([Type] ASC, [ID] ASC)
 );
 

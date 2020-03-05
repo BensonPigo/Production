@@ -16,6 +16,7 @@
     [SewingReasonID]       VARCHAR (5)     DEFAULT ('') NOT NULL,
     [Remark]               NVARCHAR (1000) DEFAULT ('') NULL,
     [ImportFromDQS]        BIT             DEFAULT ((0)) NOT NULL,
+    [AutoSplit] BIT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_SewingOutput_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
 
