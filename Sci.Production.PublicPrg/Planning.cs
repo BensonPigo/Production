@@ -165,10 +165,25 @@ from Order_qty oq WITH (NOLOCK)
 inner join Orders o WITH (NOLOCK) on o.ID=oq.ID
 inner join Order_ColorCombo occ WITH (NOLOCK) on o.poid = occ.id and occ.Article = oq.Article
 inner join order_Eachcons cons WITH (NOLOCK) on occ.id = cons.id and cons.FabricCombo = occ.PatternPanel and cons.CuttingPiece='0'
-left join Bundle B WITH (NOLOCK) on o.ID=b.Orderid and cons.FabricCombo=b.PatternPanel and cons.FabricPanelCode= b.FabricPanelCode and oq.Article=b.Article and oq.SizeCode=b.Sizecode
-left join Bundle_Detail BD WITH (NOLOCK) on B.ID=BD.Id
+left join Bundle B WITH (NOLOCK) on o.ID=b.Orderid and cons.FabricCombo=b.PatternPanel and cons.FabricPanelCode= b.FabricPanelCode and oq.Article=b.Article
+left join Bundle_Detail BD WITH (NOLOCK) on B.ID=BD.Id and oq.SizeCode=bd.Sizecode
 where occ.FabricCode !='' and occ.FabricCode is not null 
-and exists (select 1 from {tempTable} t where t.OrderID = o.ID)
+and exists (select 1 from {tempTable} t where t.OrderID = o.ID and o.LocalOrder = 0) --非local單
+
+union all
+select	distinct
+		bun.Orderid
+		, bun.POID
+		, bun.PatternPanel
+		, bun.FabricPanelCode
+		, bun.Article
+		, bd.Sizecode
+		, bd.Patterncode
+from Bundle_Detail bd
+inner join Bundle bun on bun.id = bd.id
+inner join Orders o on bun.Orderid = o.ID and  bun.MDivisionID = o.MDivisionID
+and exists (select 1 from {tempTable} t where t.OrderID = o.ID and o.LocalOrder = 1) --Local單
+
 
 select distinct bunD.ID
 		, bunD.BundleGroup

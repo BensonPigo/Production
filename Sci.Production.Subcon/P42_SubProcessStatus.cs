@@ -216,7 +216,7 @@ select OrderID = '{this.DataRow["OrderID"]}', InStartDate = Null,InEndDate = Nul
             {
                 string subprocessIDtmp = subprocessID.Replace("-", string.Empty); // 把PAD-PRT為PADPRT, #table名稱用
                 sqlJ.Add($@"
-    select SubprocessId='{subprocessID}',FinishedQtyBySet from #QtyBySetPerSubprocess{subprocessID} a
+    select SubprocessId='{subprocessID}',FinishedQtyBySet from #QtyBySetPerSubprocess{subprocessIDtmp} a
     where oq.id = a.OrderID and oq.Article = a.Article and oq.SizeCode = a.SizeCode
 ");
             }

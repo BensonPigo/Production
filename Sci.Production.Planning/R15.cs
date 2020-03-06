@@ -517,7 +517,7 @@ where IsTMS =1 or IsPrice = 1
             }
             #endregion
 
-            string[] subprocessIDs = new string[] { "Sorting", "Loading", "Emb", "BO", "PRT", "AT", "PAD-PRT", "SubCONEMB", "HT" };
+            string[] subprocessIDs = new string[] { "Sorting", "Loading", "Emb", "BO", "PRT", "AT", "PAD-PRT", "SubCONEMB", "HT", "SewingLine" };
             string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#cte", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
 
             #region SummaryBy SP#
@@ -693,6 +693,7 @@ select t.MDivisionID
        , #cte2.first_cut_date
        , #cte2.cut_qty
        , [RFID Cut Qty] = #SORTING.OutQtyBySet
+       , [RFID SewingLine In Qty] = #SewingLine.InQtyBySet
        , [RFID Loading Qty] = #loading.InQtyBySet
        , [RFID Emb Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBROIDERY')),ISNULL( #Emb.InQtyBySet ,0) ,#Emb.InQtyBySet)
        , [RFID Emb Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBROIDERY')),ISNULL( #Emb.OutQtyBySet ,0) ,#Emb.OutQtyBySet)
@@ -711,6 +712,7 @@ select t.MDivisionID
         , SubProcessStatus=
 			case when t.Junk = 1 then null 
                  when #SORTING.OutQtyBySet is null and #loading.InQtyBySet is null 
+                    and #SewingLine.InQtyBySet is null
                     and #Emb.InQtyBySet is null and #Emb.OutQtyBySet is null
                     and #BO.InQtyBySet is null and #BO.OutQtyBySet  is null 
                     and #prt.InQtyBySet  is null and #prt.OutQtyBySet  is null 
@@ -720,6 +722,7 @@ select t.MDivisionID
                     and #HT.InQtyBySet is null and #HT.OutQtyBySet is null                
                 then null
 				 when SORTINGStatus.v = 1 and loadingStatus.v = 1 --判斷有做加工段的數量=訂單qty,則為1,全部為1才為Y
+					and SewingLineStatus.v = 1
 					and Emb_i.v = 1 and Emb_o.v = 1
 					and BO_i.v = 1 and BO_o.v = 1
 					and prt_i.v = 1 and prt_o.v = 1
@@ -801,6 +804,7 @@ outer apply (
           and t.KPIChangeReason is not null 
 ) KPIChangeReason 
 left join #Sorting on #Sorting.OrderID = t.OrderID
+left join #SewingLine on #SewingLine.OrderID = t.OrderID
 left join #Loading on #Loading.OrderID = t.OrderID
 left join #Emb on #Emb.OrderID = t.OrderID
 left join #BO on #BO.OrderID = t.OrderID
@@ -810,6 +814,7 @@ left join #PADPRT on #PADPRT.OrderID = t.OrderID
 left join #SUBCONEMB on #SUBCONEMB.OrderID = t.OrderID
 left join #HT on #HT.OrderID = t.OrderID
 outer apply(select v = case when #SORTING.OutQtyBySet is null or #SORTING.OutQtyBySet >= t.Qty then 1 else 0 end)SORTINGStatus--null即不用判斷此加工段 標記1, 數量=訂單數 標記1
+outer apply(select v = case when #SewingLine.InQtyBySet is null or #SewingLine.InQtyBySet >= t.Qty then 1 else 0 end)SewingLineStatus
 outer apply(select v = case when #loading.InQtyBySet is null or #loading.InQtyBySet >= t.Qty then 1 else 0 end)loadingStatus
 outer apply(select v = case when #Emb.InQtyBySet is null or #Emb.InQtyBySet >= t.Qty then 1 else 0 end)Emb_i
 outer apply(select v = case when #Emb.OutQtyBySet is null or #Emb.OutQtyBySet >= t.Qty then 1 else 0 end)Emb_o
@@ -931,6 +936,7 @@ select o.MDivisionID       , o.FactoryID  , o.SciDelivery     , O.CRDDate       
        , InspHandle = o.InspHandle +'-'+ Pass1.Name
        , O.Junk,DryCTN=isnull(o.DryCTN,0),CFACTN=isnull(o.CFACTN,0)
 	   , oq.Article,oq.SizeCode
+       , InStartDate = Null,InEndDate = Null,OutStartDate = Null,OutEndDate = Null
 into #cte 
 from dbo.Orders o WITH (NOLOCK) 
 left join Pass1 WITH (NOLOCK) on Pass1.ID = O.InspHandle
@@ -1097,7 +1103,7 @@ pivot
                     this.artworktypes.ToString().Substring(0, this.artworktypes.ToString().Length - 1)));
             }
             #endregion
-            string[] subprocessIDs = new string[] { "Sorting", "Loading", "Emb", "BO", "PRT", "AT", "PAD-PRT", "SubCONEMB", "HT" };
+            string[] subprocessIDs = new string[] { "Sorting", "Loading", "Emb", "BO", "PRT", "AT", "PAD-PRT", "SubCONEMB", "HT", "SewingLine" };
             string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#cte", bySP: false, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
             #region SummaryBy Acticle/Size
             sqlCmd.Append($@"
@@ -1273,6 +1279,7 @@ select t.MDivisionID
        , #cte2.first_cut_date
        , #cte2.cut_qty
        , [RFID Cut Qty] = SORTING.OutQtyBySet
+       , [RFID SewingLine In Qty] = SewingLine.InQtyBySet
        , [RFID Loading Qty] = loading.InQtyBySet
        , [RFID Emb Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBROIDERY')),ISNULL( Emb.InQtyBySet ,0) ,Emb.InQtyBySet)
        , [RFID Emb Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBROIDERY')),ISNULL( Emb.OutQtyBySet ,0) ,Emb.OutQtyBySet)
@@ -1292,6 +1299,7 @@ select t.MDivisionID
         , SubProcessStatus=
 			case when t.Junk = 1 then null
                  when SORTING.OutQtyBySet is null and loading.InQtyBySet is null 
+                    and SewingLine.InQtyBySet is null                    
                     and Emb.InQtyBySet is null and Emb.OutQtyBySet is null
                     and BO.InQtyBySet is null and BO.OutQtyBySet  is null 
                     and prt.InQtyBySet  is null and prt.OutQtyBySet  is null 
@@ -1301,6 +1309,7 @@ select t.MDivisionID
                     and HT.InQtyBySet is null and HT.OutQtyBySet is null                
                 then null
 				 when SORTINGStatus.v = 1 and loadingStatus.v = 1 --判斷有做加工段的數量=訂單qty,則為1,全部為1才為Y
+                    and SewingLineStatus.v = 1 
 					and Emb_i.v = 1 and Emb_o.v = 1
 					and BO_i.v = 1 and BO_o.v = 1
 					and prt_i.v = 1 and prt_o.v = 1
@@ -1382,6 +1391,7 @@ outer apply (
           and t.KPIChangeReason is not null 
 ) KPIChangeReason 
 left join #QtyBySetPerSubprocessSorting Sorting on Sorting.OrderID = t.OrderID and Sorting.Article = t.Article and Sorting.Sizecode = t.SizeCode
+left join #QtyBySetPerSubprocessSewingLine SewingLine on SewingLine.OrderID = t.OrderID and SewingLine.Article = t.Article and SewingLine.Sizecode = t.SizeCode
 left join #QtyBySetPerSubprocessLoading Loading on Loading.OrderID = t.OrderID and Loading.Article = t.Article and Loading.Sizecode = t.SizeCode
 left join #QtyBySetPerSubprocessEmb Emb on Emb.OrderID = t.OrderID and Emb.Article = t.Article and Emb.Sizecode = t.SizeCode
 left join #QtyBySetPerSubprocessBO BO on BO.OrderID = t.OrderID and BO.Article = t.Article and BO.Sizecode = t.SizeCode
@@ -1391,6 +1401,7 @@ left join #QtyBySetPerSubprocessPADPRT PADPRT on PADPRT.OrderID = t.OrderID and 
 left join #QtyBySetPerSubprocessSUBCONEMB SUBCONEMB on SUBCONEMB.OrderID = t.OrderID and SUBCONEMB.Article = t.Article and SUBCONEMB.Sizecode = t.SizeCode
 left join #QtyBySetPerSubprocessHT HT on HT.OrderID = t.OrderID and HT.Article = t.Article and HT.Sizecode = t.SizeCode
 outer apply(select v = case when SORTING.OutQtyBySet is null or SORTING.OutQtyBySet >= t.Qty then 1 else 0 end)SORTINGStatus--null即不用判斷此加工段 標記1, 數量=訂單數 標記1
+outer apply(select v = case when SewingLine.InQtyBySet is null or loading.InQtyBySet >= t.Qty then 1 else 0 end)SewingLineStatus
 outer apply(select v = case when loading.InQtyBySet is null or loading.InQtyBySet >= t.Qty then 1 else 0 end)loadingStatus
 outer apply(select v = case when Emb.InQtyBySet is null or Emb.InQtyBySet >= t.Qty then 1 else 0 end)Emb_i
 outer apply(select v = case when Emb.OutQtyBySet is null or Emb.OutQtyBySet >= t.Qty then 1 else 0 end)Emb_o

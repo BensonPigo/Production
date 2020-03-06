@@ -326,7 +326,7 @@ where oq.id = '{this.masterData["ID"]}'
                 return;
             }
 
-            this.numLoadingQty.Value = MyUtility.Convert.GetInt(loadingoutput.Compute("sum(AccuInCome)", string.Empty));  // Sewing Q'ty
+            this.numLoadingQty.Value = MyUtility.Convert.GetDecimal(loadingoutput.Compute("sum(AccuInCome)", string.Empty));  // Sewing Q'ty
 
             this.listControlBindingSource1.DataSource = sewingData;
             this.listControlBindingSource2.DataSource = cuttingData;
