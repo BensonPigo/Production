@@ -287,6 +287,9 @@ DECLARE @LINE2 VARCHAR(10) = '{this.line2}'
 SELECT [date] = cast([date] as date) 
 into #daterange 
 FROM cte
+option (maxrecursion 0) -- 突破遞迴100筆資料限制
+
+
 --WorkHour table
 select FactoryID,SewingLineID,Date,Hours,Holiday
 into #workhourtmp
