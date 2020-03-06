@@ -88,7 +88,6 @@ namespace Sci.Production.Warehouse
             base.OnFormLoaded();
         }
 
-
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -126,6 +125,7 @@ WHERE  a.id = '{CurrentMaintain["ID"] }' AND o.sewline != '') t FOR xml path('')
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
+            Ismatrix_Reload = true;
             this.DetailSelectCommand = $@"
 
 SELECT   iis.SCIRefno
@@ -185,13 +185,18 @@ OUTER APPLY(
 OUTER APPLY(
 	SELECT SCIRefNo,SuppColor,[Qty]=SUM(Qty)
 	FROM(
-		SELECT DISTINCT  O.POID	, tcd.SCIRefNo, tcd.SuppColor,tcd.Article ,  t.Qty
+		SELECT DISTINCT  O.POID ,t.OrderID , tcd.SCIRefNo, tcd.SuppColor,tcd.Article ,  t.Qty
 		From dbo.Orders as o
 		INNER JOIN dbo.Style as s On s.Ukey = o.StyleUkey
 		INNER JOIN dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
 		INNER JOIN dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
-		INNER JOIN Issue_Breakdown t ON  t.Article = tcd.Article AND t.Id=i.ID and t.OrderID=iis.Poid
-		WHERE O.ID= iis.POID	AND tcd.SCIRefNo= iis.SCIRefNo AND tcd.SuppColor = iis.SuppColor
+        INNER JOIN (
+				        SElECT OrderID ,Article ,[Qty]=SUM(Qty)   ----這裡等同於表身下方Grid的總和(不分Size)
+				        FROM Issue_Breakdown
+				        WHERE ID='{masterID}'
+				        GROUP BY OrderID ,Article
+			        ) t ON  t.Article = tcd.Article AND t.OrderID= o.ID
+		WHERE tcd.SCIRefNo= iis.SCIRefNo AND tcd.SuppColor = iis.SuppColor 
 	)A
 	GROUP BY  SCIRefNo, SuppColor
 )Garment
@@ -216,10 +221,18 @@ AND iis.SuppColor <> ''
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-
         protected override DualResult ConvertSubDetailDatasFromDoSubForm(SubDetailConvertFromEventArgs e)
         {
-            sum_subDetail(e.Detail, e.SubDetails);
+            //sum_subDetail(e.Detail, e.SubDetails);
+
+            DataTable dt;
+            foreach (DataRow dr in DetailDatas)
+            {
+                if (GetSubDetailDatas(dr, out dt))
+                {
+                    sum_subDetail(dr, dt);
+                }
+            }
 
             return base.ConvertSubDetailDatasFromDoSubForm(e);
         }
@@ -327,7 +340,7 @@ AND iis.SuppColor <> ''
 	INNER JOIN FtyInventory F ON F.POID=psd2.ID AND F.SEQ1= psd2.SEQ1 AND F.SEQ2 = psd2.SEQ2
 	WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.SuppColor=psd.SuppColor AND F.StockType='I' AND psd2.SuppColor='{CurrentDetailData["SuppColor"]}'
  )InventoryQty
- WHERE psd.ID='{this.poid}' AND psd.SuppColor='{CurrentDetailData["SuppColor"]}' AND psd.Refno='{e.FormattedValue}'", out row, null))
+ WHERE psd.ID='{this.poid}' AND psd.SuppColor<>'{CurrentDetailData["SuppColor"]}' AND psd.Refno='{e.FormattedValue}'", out row, null))
                         {
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data not found!", "Refno");
@@ -444,7 +457,7 @@ AND iis.SuppColor <> ''
 	INNER JOIN FtyInventory F ON F.POID=psd2.ID AND F.SEQ1= psd2.SEQ1 AND F.SEQ2 = psd2.SEQ2
 	WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.SuppColor=psd.SuppColor AND F.StockType='I' AND psd2.SuppColor='{e.FormattedValue}'
  )InventoryQty
- WHERE psd.ID='{this.poid}' AND psd.Refno='{CurrentDetailData["Refno"]}'  AND psd.SuppColor='{e.FormattedValue}'", out row, null))
+ WHERE psd.ID='{this.poid}' AND psd.Refno<>'{CurrentDetailData["Refno"]}'  AND psd.SuppColor='{e.FormattedValue}'", out row, null))
                         {
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data not found!", "SuppColor");
@@ -500,19 +513,19 @@ AND iis.SuppColor <> ''
             #region -- 欄位設定 --
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), settings: RefnoSet) 
-            .Text("SuppColor", header: "Color", width: Widths.AnsiChars(15),  settings: ColorSet) 
-            .EditText("DescDetail", header: "Desc.", width: Widths.AnsiChars(7), iseditingreadonly: true) 
-            .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true)  
+            .Text("SuppColor", header: "Color", width: Widths.AnsiChars(7),  settings: ColorSet) 
+            .EditText("DescDetail", header: "Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true) 
+            .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(15), decimal_places: 2, integer_places: 10, iseditingreadonly: true)  
             .Text("AccuIssued", header: "Accu. Issued"+Environment.NewLine+"(Stock Unit)", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("IssueQty", header: "Issue Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6),decimal_places:2 , settings: issueQty, iseditingreadonly: true)
             .Numeric("Use Qty By Stock Unit", header: "Use Qty" + Environment.NewLine + "By Stock Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
             .Text("Stock Unit", header: "Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Use Qty By Use Unit", header: "Use Qty" + Environment.NewLine + "By Use Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
             .Text("Use Unit", header: "Use Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Text("Stock Unit Desc.", header: "Stock Unit Desc.", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("Stock Unit Desc.", header: "Stock Unit Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Numeric("OutputQty", header: "Output Qty" + Environment.NewLine + "(Garment)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
             .Numeric("Balance(Stock Unit)", header: "Balance" + Environment.NewLine + "(Garment)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
-            .Text("Location", header: "Location", width: Widths.AnsiChars(6), iseditingreadonly: true) 
+            .Text("Location", header: "Location", width: Widths.AnsiChars(10), iseditingreadonly: true) 
             ;
             #endregion 欄位設定
 
@@ -1022,6 +1035,178 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             _transactionscope = null;
 
         }
+
+        protected override bool ClickPrint()
+        {
+            labelConfirmed.Text = CurrentMaintain["status"].ToString();
+            if (labelConfirmed.Text.ToUpper() != "CONFIRMED")
+            {
+                MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
+                return false;
+            }
+            //--------------------------------------------------------------------------------------------//
+
+            DataRow issue = this.CurrentMaintain;
+
+            //上方欄位
+            string ID = issue["ID"].ToString();
+            string IssueDate = Convert.ToDateTime(issue["IssueDate"]).ToString("yyyy/MM/dd");
+            string OrderID = this.txtOrderID.Text;
+            string Line = this.displayLineNo.Text;
+            string Remark = issue["Remark"].ToString();
+            string poID = this.displayPOID.Text;
+
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", ID));
+            pars.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
+            pars.Add(new SqlParameter("@OrderID", OrderID));
+
+            #region Title
+            DataTable dt;
+            DBProxy.Current.Select("", @"
+select NameEN 
+from MDivision 
+where id = @MDivision", pars, out dt);
+            string RptTitle = dt.Rows[0]["NameEN"].ToString();
+
+            #endregion
+
+            #region Body
+
+            DataTable dtBody;
+            DualResult result;
+
+            string cmd = $@"
+SELECT f.Refno
+		,iis.SCIRefno 
+		,iis.SuppColor 
+		,[Seq]=iid.Seq1 +'-'+iid.Seq2
+		,[Desc]=f.DescDetail
+		,[Issue_Detail_Qty]=Cast( iid.Qty as int)
+		,[Issue_Summary_Qty]=Cast( iis.Qty as int)
+		,[Unit]=Unit.StockUnit
+		,[UnitDesc]=Unit.Description
+		,[Location]=ftd.MtlLocationID
+INTO #tmp
+FROM Issue_Summary iis WITH(NOLOCK)
+INNER JOIN Issue_Detail iid WITH(NOLOCK) ON iis.Id = iid.Id AND iis.Ukey = iid.Issue_SummaryUkey
+INNER JOIN Fabric f WITH(NOLOCK) ON f.SCIRefno = iis.SCIRefno
+LEFT JOIN FtyInventory_Detail ftd WITH(NOLOCK) ON ftd.Ukey= iid.FtyInventoryUkey
+OUTER APPLY(
+	SELECT TOP 1 PSD.StockUnit  ,u.Description
+	FROM PO_Supp_Detail PSD 
+	INNER JOIN Unit u ON u.ID = PSD.StockUnit
+	WHERE PSD.ID ='{poID}' AND PSD.SCIRefno=iis.SCIRefno AND PSD.SuppColor = iis.SuppColor
+)Unit
+WHERE iis.ID='{ID}'
+
+
+SELECT [Refno]
+/*
+[Refno]=IIF( Seq <>
+				(
+					SELECT TOP 1 Seq
+					FROM #tmp
+					WHERE Refno=t.Refno AND SuppColor=t.SuppColor
+					ORDER BY Seq
+				), '' ,Refno )*/
+		,SuppColor
+		,Seq
+		,[Desc]=IIF( Seq <>
+				(
+					SELECT TOP 1 Seq
+					FROM #tmp
+					WHERE Refno=t.Refno AND SuppColor=t.SuppColor
+					ORDER BY Seq
+				), '' ,t.[Desc] )
+		,Issue_Detail_Qty
+		,[Issue_Summary_Qty]=IIF( Seq <>
+				(
+					SELECT TOP 1 Seq
+					FROM #tmp
+					WHERE Refno=t.Refno AND SuppColor=t.SuppColor
+					ORDER BY Seq
+				) OR Issue_Detail_Qty = Issue_Summary_Qty, '' ,'= '+Cast(t.Issue_Summary_Qty as char))
+		
+		,[Unit]=IIF( Seq <>
+				(
+					SELECT TOP 1 Seq
+					FROM #tmp
+					WHERE Refno=t.Refno AND SuppColor=t.SuppColor
+					ORDER BY Seq
+				), '' , t.Unit)
+		
+		,[UnitDesc]=IIF( Seq <>
+				(
+					SELECT TOP 1 Seq
+					FROM #tmp
+					WHERE Refno=t.Refno AND SuppColor=t.SuppColor
+					ORDER BY Seq
+				), '' , t.UnitDesc)
+		,[Location]=IIF( Seq <>
+				(
+					SELECT TOP 1 Seq
+					FROM #tmp
+					WHERE Refno=t.Refno AND SuppColor=t.SuppColor
+					ORDER BY Seq
+				), '' , t.Location)
+FROM #tmp t
+
+DROP TABLE #tmp
+";
+            result = DBProxy.Current.Select("", cmd, out dtBody);
+            #endregion
+
+            #region RDLC
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", ID));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("IssueDate", IssueDate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("OrderID", OrderID));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Line", Line));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
+            //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("poID", poID));
+
+
+            List<P33_PrintData> PrintDatas = dtBody.AsEnumerable().Select(o => new P33_PrintData()
+            {
+                RefNo = o["RefNo"].ToString().Trim(),
+                Color = o["SuppColor"].ToString().Trim(),
+                Seq = o["Seq"].ToString().Trim(),
+                Desc = o["Desc"].ToString().Trim(),
+                Issue_Detail_Qty = o["Issue_Detail_Qty"].ToString().Trim(),
+                Issue_Summary_Qty = o["Issue_Summary_Qty"].ToString().Trim(),
+                Unit = o["Unit"].ToString().Trim(),
+                UnitDesc = o["UnitDesc"].ToString().Trim(),
+                Location = o["Location"].ToString().Trim()
+            }).ToList();
+
+            report.ReportDataSource = PrintDatas;
+
+
+            Type ReportResourceNamespace = typeof(P33_PrintData);
+            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            string ReportResourceName = "P33_Print.rdlc";
+
+
+            IReportResource reportresource;
+            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            {
+                //this.ShowException(result);
+                return false;
+            }
+
+            report.ReportResource = reportresource;
+
+
+            // 開啟 report view
+            var frm = new Sci.Win.Subs.ReportView(report);
+            frm.MdiParent = MdiParent;
+            frm.Show();
+            #endregion
+
+            return base.ClickPrint();   
+        }
         #endregion
 
         #region 控制項事件
@@ -1132,24 +1317,6 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             }
 
             this.HideNullColumn(gridIssueBreakDown);
-            //if (sender != null && e != null)
-            //{
-            //    DataTable _subDetail;
-            //    foreach (DataRow dr in DetailDatas)
-            //    {
-            //        if (GetSubDetailDatas(dr, out _subDetail))
-            //        {
-            //            _subDetail.Rows.Clear();
-            //        }
-
-            //        //刪除SubDetail資料
-            //        ((DataTable)detailgridbs.DataSource).Rows.Remove(dr);
-            //        dr.Delete();
-            //        dr.EndEdit();
-            //        _subDetail.AcceptChanges();
-            //    }
-
-            //}
         }
 
 
@@ -1201,7 +1368,6 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
                         modelList.Add(m);
                     }
                 }
-                //dtIssueBreakDown.AsEnumerable().Where(o => o["OrderID"].ToString() == obj.OrderID && o["Article"].ToString() == obj.Article).Sum( o => o[Q])
             }
 
             var frm = new Sci.Production.Warehouse.P33_AutoPick(CurrentMaintain["id"].ToString(), this.poid, txtOrderID.Text.ToString(), dtIssueBreakDown, sbSizecode, checkByCombo.Checked , modelList);
@@ -1234,6 +1400,7 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
                     string StockUnitDesc = key["Stock Unit Desc."].ToString();
                     string OutputQty = key["Output Qty(Garment)"].ToString();
                     decimal balance = (decimal)key["Bulk Balance(Stock Unit)"];
+                    string FtyInventoryUkey = key["FtyInventoryUkey"].ToString();
                     string AccuIssued = "0.00";
 
                     DataRow nRow = _detail.NewRow();

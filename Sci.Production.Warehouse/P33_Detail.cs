@@ -60,7 +60,7 @@ select t.poid
        , t.BarcodeNo
        , t.ukey
 from #tmp t    ---- #tmp = Issue_Detail
-Left join dbo.FtyInventory FTY WITH (NOLOCK) on t.POID = FTY.POID AND t.Seq1 = FTY.Seq1 AND t.Seq2 = FTY.Seq2 
+Left join dbo.FtyInventory FTY WITH (NOLOCK) on  t.FtyInventoryUkey=FTY.Ukey  ----t.POID = FTY.POID AND t.Seq1 = FTY.Seq1 AND t.Seq2 = FTY.Seq2 
 Left JOIN FtyInventory_Detail FTYD WITH (NOLOCK)  ON FTYD.Ukey= FTY.Ukey
 WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
 ", out dtFtyinventory, "#tmp")))

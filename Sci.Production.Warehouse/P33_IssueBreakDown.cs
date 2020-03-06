@@ -135,6 +135,14 @@ order by [OrderID], [Article]", Master["orderid"], sbSizecode.ToString().Substri
                         }
                     }
                 }
+                if (ColumnName == "Selected")
+                {
+
+                    foreach (DataGridViewRow Row in gridIssueBreakDown.Rows)
+                    {
+                        Row.Cells[ColumnName].Style.BackColor = Color.Pink;
+                    }
+                }
             }
         }
 
@@ -149,7 +157,10 @@ order by [OrderID], [Article]", Master["orderid"], sbSizecode.ToString().Substri
             DtIssueBreakDown.Clear();
             foreach (DataRow dr in DtModifyIssueBDown.Rows)
             {
-                DtIssueBreakDown.ImportRow(dr);
+                if ((bool)dr["Selected"])
+                {
+                    DtIssueBreakDown.ImportRow(dr);
+                }
             }
             this.Dispose();
             return;

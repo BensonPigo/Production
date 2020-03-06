@@ -155,14 +155,15 @@ SELECT  --DISTINCT
 		, [Use Unit]='CM'
 		, [Stock Unit Desc.]=StockUnit.Description
 		, [Output Qty(Garment)] = Garment.Qty
-		, [Bulk Balance(Stock Unit)]= BulkBalance.val--( Fty.InQty-Fty.OutQty + Fty.AdjustQty )
+		, [Bulk Balance(Stock Unit)] = ( Fty.InQty-Fty.OutQty + Fty.AdjustQty )-- BulkBalance.val--
+		, [FtyInventoryUkey]=Fty.Ukey
         , [POID]=psd.ID
 		, psd.SEQ1
 		, psd.SEQ2
 INTO #final
 FROM PO_Supp_Detail psd
 INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
---LEFT JOIN FtyInventory Fty ON Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
+LEFT JOIN FtyInventory Fty ON Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
 OUTER APPLY(
 	SELECT TOP 1 a.StockUnit ,u.Description
 	FROM PO_Supp_Detail a
@@ -177,21 +178,21 @@ OUTER APPLY(
 OUTER APPLY(
 	SELECT SCIRefNo,SuppColor,[Qty]=SUM(Qty)
 	FROM(
-		SELECT DISTINCT  O.POID	, tcd.SCIRefNo, tcd.SuppColor,tcd.Article ,  t.Qty
+		SELECT DISTINCT O.POID	,t.OrderID ,tcd.SCIRefNo, tcd.SuppColor,tcd.Article ,  t.Qty
 		From dbo.Orders as o
 		INNER JOIN dbo.Style as s On s.Ukey = o.StyleUkey
 		INNER JOIN dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
 		INNER JOIN dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
-		INNER JOIN #tmp t ON  t.Article = tcd.Article
-		WHERE O.ID= psd.ID	AND tcd.SCIRefNo= psd.SCIRefNo AND tcd.SuppColor = psd.SuppColor
+		INNER JOIN #tmp t ON  t.Article = tcd.Article  AND o.ID = t.OrderID
+		WHERE tcd.SCIRefNo= psd.SCIRefNo AND tcd.SuppColor = psd.SuppColor
 	)A
 	GROUP BY  SCIRefNo, SuppColor
 )Garment
-OUTER APPLY(
-	SELECT val = SUM(( Fty.InQty-Fty.OutQty + Fty.AdjustQty ))
-	FROM FtyInventory Fty 
-	WHERE Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
-)BulkBalance
+--OUTER APPLY(
+--	SELECT val = SUM(( Fty.InQty-Fty.OutQty + Fty.AdjustQty ))
+--	FROM FtyInventory Fty 
+--	WHERE Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
+--)BulkBalance
 OUTER APPLY(
 	SELECT [Val]=SUM(((SeamLength  * Frequency * UseRatio ) + Allowance))
 	FROM dbo.GetThreadUsedQtyByBOT(psd.ID)
@@ -224,6 +225,7 @@ SELECT  [Selected]
 		, [Output Qty(Garment)]
 		, [Bulk Balance(Stock Unit)] = SUM([Bulk Balance(Stock Unit)])
         , [POID]
+		, [FtyInventoryUkey]
 FROM #final
 GROUP BY [Selected] 
 		, SCIRefno 
@@ -238,6 +240,7 @@ GROUP BY [Selected]
 		, [Stock Unit Desc.]
 		, [Output Qty(Garment)]
         , [POID]
+		, [FtyInventoryUkey]
 
 DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final
 
@@ -268,35 +271,9 @@ DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final
                 sqlConnection.Close();
             }
 
-            //this.listControlBindingSource1.DataSource = BOA_PO;
             this.gridAutoPick.DataSource = listControlBindingSource1;
 
             this.gridAutoPick.AutoResizeColumns();
-
-            #region --Pick Qty 開窗--
-            //Ict.Win.DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
-            //ns.CellMouseDoubleClick += (s, e) =>
-            //{
-            //    BOA_PO.AcceptChanges();//先做初始設定，再透過Detail來控制UNDO OR SAVE
-            //    var dr = this.gridAutoPick.GetDataRow<DataRow>(e.RowIndex);
-            //    if (null == dr) return;
-            //    var frm = new Sci.Production.Warehouse.P33_AutoPick_Detail(combo, poid, orderid, BOA_PO, e.RowIndex, e.ColumnIndex, this);
-
-            //    dictionaryDatasAcceptChanges();
-
-            //    DialogResult DResult = frm.ShowDialog(this);
-            //};
-            //Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
-            //ns2.CellValidating += (s, e) =>
-            //{
-            //    var dr = this.gridAutoPick.GetDataRow<DataRow>(e.RowIndex);
-            //    if (null == dr) return;
-            //    if (Convert.ToDecimal(e.FormattedValue) == Convert.ToDecimal(dr["qty"])) return;
-            //    dr["qty"] = e.FormattedValue;
-            //    if (Convert.ToDecimal(dr["qty"]) > 0 && Convert.ToDecimal(dr["Balanceqty"]) >= Convert.ToDecimal(dr["qty"])) dr["Selected"] = 1;
-            //    else dr["Selected"] = 0;
-            //};
-            #endregion
 
             #region --設定Grid1的顯示欄位--
 
@@ -304,9 +281,9 @@ DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final
             this.gridAutoPick.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridAutoPick)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
-                 .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                 .Text("SuppColor", header: "SuppColor", width: Widths.AnsiChars(23), iseditingreadonly: true)
-                 .Text("DescDetail", header: "Desc.", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                 .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                 .Text("SuppColor", header: "SuppColor", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                 .Text("DescDetail", header: "Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(15),decimal_places:2, iseditingreadonly: true)
                  .Numeric("Use Qty By Stock Unit", header: "Use Qty\r\nBy Stock Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
                  .Text("Stock Unit", header: "Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)

@@ -1110,6 +1110,7 @@ select   [POID]=psd.ID
     , [BulkQty] =ISNULL( a.inqty - a.outqty + a.adjustqty,0.00)
 	, [Qty]=0.00
 	, [BulkLocation]=ISNULL(FTYD.MtlLocationID,'')
+    , [FtyInventoryUkey]=a.Ukey
 from dbo.FtyInventory a WITH (NOLOCK) 
 LEFT JOIN FtyInventory_Detail FTYD WITH (NOLOCK)  ON FTYD.Ukey= a.Ukey
 inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on  psd.id = a.POID 

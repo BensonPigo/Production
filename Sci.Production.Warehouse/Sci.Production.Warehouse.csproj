@@ -230,6 +230,7 @@
     <Compile Include="P05.Designer.cs">
       <DependentUpon>P05.cs</DependentUpon>
     </Compile>
+    <Compile Include="P33_PrintData.cs" />
     <Compile Include="P33_Detail_Detail.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1930,9 +1931,11 @@
   <ItemGroup>
     <EmbeddedResource Include="P10_RelaxationSticker_Print.rdlc" />
     <EmbeddedResource Include="P14_Print.rdlc" />
+    <EmbeddedResource Include="P33_Print.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <None Include="Properties\DataSources\P10_PrintBarcodeData.datasource" />
     <None Include="Properties\DataSources\P10_RelaxationSticker_Data.datasource" />
-    <None Include="Properties\DataSources\P11_Print.datasource" />
     <None Include="Properties\DataSources\P11_PrintData.datasource" />
     <None Include="Properties\DataSources\P13_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P13_PrintData.datasource" />
@@ -1941,6 +1944,9 @@
     <None Include="Properties\DataSources\P19_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P22_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P23_FabricSticker_PrintData.datasource" />
+    <None Include="Properties\DataSources\P33_PrintData.datasource">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\DataSources\P61_PrintData.datasource" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
