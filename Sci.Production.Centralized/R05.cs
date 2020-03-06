@@ -148,7 +148,7 @@ o.ID,
 [Date]=format(iif('{this.Date}'='1',dateadd(day,-7,o.SciDelivery),o.BuyerDelivery),'yyyyMM'),
 [OutputDate] = FORMAT(s.OutputDate,'yyyyMM'),
 [OrderCPU] = isnull(o.CPU,0) * isnull(o.Qty,0),
-[SewingOutput] = isnull(sum(isnull(sdd.QAQty,0)),0),
+[SewingOutput] = isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) / 100,
 [SewingOutputCPU] = isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) * o.CPU / 100,
 o.Junk,
 o.Qty,
@@ -252,6 +252,8 @@ from    #tmpBaseBySource
 select  FtyGroup,OutputDate,[SewingOutputCPU] = sum(SewingOutputCPU) * -1
 from    #tmpBase
 where   Junk=1 and OutputDate is not null group by FtyGroup,OutputDate
+
+drop table #tmpBase,#tmpBaseBySource,#tmpBaseByOrderID
 ";
             #endregion
 
@@ -379,7 +381,7 @@ order by t2.Date
 
 select*from #tmp3
 union all
-select ''Total'' ,null, sum(Balance),'+@col2+' from #tmp3
+select ''Total'' ,sum(Loading), sum(Balance),'+@col2+' from #tmp3
 '
 exec (@sql)
 
