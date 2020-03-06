@@ -264,7 +264,7 @@ left join (select NULL FarmInDate,0 FarmInQty,FarmOut.IssueDate FarmOutDate,Farm
             if (this.checkIncludeFarmOutInDate.Checked)
             {
                 sqlCmd.Append(@"select k.FactoryID,k.ID,k.SewLine,k.StyleID,k.stitch,k.ArtworkTypeID,k.PatternCode+'-'+k.PatternDesc pattern
-,k.supplier,k.articles,k.poqty,k.stitch*k.poqty total_stitch,k.MTLETA,k.SciDelivery,BuyerDelivery
+,k.supplier,k.articles,k.poqty,k.stitch*k.poqty total_stitch,k.MTLETA,k.SciDelivery,k.BuyerDelivery
 ,iif(k.oven='1900-01-01','1',convert(varchar,k.oven)) as Oven
 ,iif(k.Wash='1900-01-01','1',convert(varchar,k.Wash)) as Wash
 ,iif(k.Wash='1900-01-01','1',convert(varchar,k.Wash)) as Wash
@@ -292,6 +292,12 @@ order by k.FactoryID,k.ID");
 
             DBProxy.Current.DefaultTimeout = 1800;
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
+            if (!result)
+            {
+                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                return failResult;
+            }
+
             this.totalpoqty = 0;
             this.totalpartsqty = 0;  // 初始化
             foreach (DataRow dr in this.printData.Rows)
@@ -303,12 +309,6 @@ order by k.FactoryID,k.ID");
             }
 
             DBProxy.Current.DefaultTimeout = 0;
-            if (!result)
-            {
-                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
-                return failResult;
-            }
-
             return Result.True;
         }
 
