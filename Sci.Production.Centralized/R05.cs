@@ -147,9 +147,10 @@ select
 o.ID,
 [Date]=format(iif('{this.Date}'='1',dateadd(day,-7,o.SciDelivery),o.BuyerDelivery),'yyyyMM'),
 [OutputDate] = FORMAT(s.OutputDate,'yyyyMM'),
-[OrderCPU] = isnull(o.CPU,0) * isnull(o.Qty,0),
+[OrderCPU] = o.Qty * gcRate.CpuRate * o.CPU,
+[OrderShortageCPU] = iif(o.GMTComplete = 'S' ,(o.Qty - GetPulloutData.Qty)  * gcRate.CpuRate * o.CPU ,0),
 [SewingOutput] = isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) / 100,
-[SewingOutputCPU] = isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) * o.CPU / 100,
+[SewingOutputCPU] = isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) * gcRate.CpuRate * o.CPU / 100,
 o.Junk,
 o.Qty,
 o.Category,
@@ -166,7 +167,9 @@ left join SewingOutput_Detail_Detail sdd with (nolock) on o.ID = sdd.OrderId
 left join SewingOutput s with (nolock) on sdd.ID = s.ID
 left join Order_Location ol with (nolock) on ol.OrderId = sdd.OrderId and ol.Location = sdd.ComboType
 left join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey and sl.Location = sdd.ComboType
-where   1=1
+outer apply (select CpuRate from GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'O') ) gcRate
+outer apply (select Qty=sum(shipQty) from Pullout_Detail where orderid = o.id) GetPulloutData
+where   IsProduceFty = 1
         {where}
 group by o.ID,
 o.SciDelivery,
@@ -181,13 +184,17 @@ o.SubconInType,
 o.IsForecast,
 o.LocalOrder,
 o.FtyGroup,
-f.IsProduceFty
+f.IsProduceFty,
+gcRate.CpuRate,
+GetPulloutData.Qty,
+o.GMTComplete
 
 select  ID,
         FtyGroup,
         Date,
         OutputDate,
         OrderCPU,
+        OrderShortageCPU,
         SewingOutput,
         SewingOutputCPU,
         IsProduceFty,
@@ -200,11 +207,12 @@ select
 ID,
 Date,
 OrderCPU,
+OrderShortageCPU,
 [SewingOutput] = SUM(SewingOutput),
 [SewingOutputCPU] = SUM(SewingOutputCPU)
 into #tmpBaseByOrderID
 from #tmpBaseBySource
-group by ID,Date,OrderCPU
+group by ID,Date,OrderCPU,OrderShortageCPU
 
 
 select
@@ -226,6 +234,7 @@ select
 	o.CPU,
 	o.Qty,
 	o.FOCQty,
+    tb.OrderShortageCPU,
 	tb.OrderCPU,
 	tb.SewingOutput,
 	BalanceQty=isnull(o.Qty,0)-isnull(tb.SewingOutput,0),
@@ -244,7 +253,7 @@ select  FtyGroup,
         [Date] = SUBSTRING(Date,1,4)+'/'+SUBSTRING(Date,5,6),
         ID,
         OutputDate,
-        [OrderCPU] = iif(isNormalOrderCanceled = 1,0, OrderCPU),
+        [OrderCPU] = iif(isNormalOrderCanceled = 1,0, OrderCPU - OrderShortageCPU),
         SewingOutput,
         SewingOutputCPU
 from    #tmpBaseBySource
@@ -256,7 +265,6 @@ where   Junk=1 and OutputDate is not null group by FtyGroup,OutputDate
 drop table #tmpBase,#tmpBaseBySource,#tmpBaseByOrderID
 ";
             #endregion
-
 
             #region --由 appconfig 抓各個連線路徑
             this.SetLoadingText("Load connections... ");
