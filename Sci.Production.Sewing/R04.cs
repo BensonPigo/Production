@@ -114,8 +114,8 @@ select s.id
     ,s.SubconOutFty
     ,s.SubConOutContractNumber
     ,o.SubconInType
-    ,[SewingReasonDesc]=isnull(sr.SewingReasonDesc,'')
-	,[Remark]= ssd.SewingOutputRemark
+    ,[SewingReasonDesc] = isnull(sr.SewingReasonDesc,'')
+	,[Remark] = isnull(ssd.SewingOutputRemark,'')
     ,o.SciDelivery 
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
@@ -137,7 +137,9 @@ outer apply
 		select concat(',',sr.ID+'-'+sr.Description)
 		from SewingReason sr WITH (NOLOCK)
 		inner join SewingOutput_Detail sd2 WITH (NOLOCK) on sd2.SewingReasonID=sr.ID
-		where sr.Type='SO' and sd2.id = s.id
+		where sr.Type='SO' 
+		and sd2.id = sd.id 
+		and sd2.OrderId = sd.OrderId
 		for xml path('')
 	),1,1,'')
 )sr
@@ -147,6 +149,8 @@ outer apply
 		select concat(',',ssd.Remark)
 		from SewingOutput_Detail ssd WITH (NOLOCK) 
 		where ssd.ID = sd.ID
+		and ssd.OrderId = sd.OrderId
+		and isnull(ssd.Remark ,'') <> ''
 		for xml path('')
 	),1,1,'')
 )ssd
