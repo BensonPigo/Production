@@ -933,6 +933,21 @@ and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
 and Line = '{this.CurrentMaintain["SewingLineID"]}'
 and Team = '{this.CurrentMaintain["Team"]}'
 and Shift = '{shift}'
+";
+            // 先判斷此表頭組合, 是否有任何一筆DQS, 若無則不用限制
+            if (!MyUtility.Check.Seek(checkDQSexists, "ManufacturingExecution"))
+            {
+                return true;
+            }
+
+            checkDQSexists = $@"
+select 1
+from inspection ins WITH (NOLOCK)
+where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
+and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
+and Line = '{this.CurrentMaintain["SewingLineID"]}'
+and Team = '{this.CurrentMaintain["Team"]}'
+and Shift = '{shift}'
 and OrderID = '{dr["OrderID"]}'
 and Location = '{dr["ComboType"]}'
 and Article = '{dr["Article"]}'
