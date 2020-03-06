@@ -2183,12 +2183,10 @@
             this.IsSupportDelete = false;
             this.IsSupportJunk = true;
             this.IsSupportUncheck = true;
-            this.IsSupportUnconfirm = true;
             this.JunkChkValue = "New";
             this.Name = "P01";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "P01. Air Pre-Paid";
-            this.UnApvChkValue = "Approved";
             this.UncheckChkValue = "Checked";
             this.UniqueExpress = "ID";
             this.WorkAlias = "AirPP";
