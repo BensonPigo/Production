@@ -1281,57 +1281,6 @@ values ('{0}','Status','Checked','Approved','{1}',GetDate())",
             this.SendMail(true);
         }
 
-        /// <inheritdoc/>
-        protected override void ClickUnconfirm()
-        {
-            if (!Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["FtyMgr"])))
-            {
-                MyUtility.Msg.WarningBox("Sorry, you don't have permission to unconfirm this data. ");
-                return;
-            }
-
-            Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("Air_Prepaid_unApprove");
-            DialogResult dResult = callReason.ShowDialog(this);
-            if (dResult == System.Windows.Forms.DialogResult.OK)
-            {
-                string insertCmd = string.Format(
-                    @"insert into AirPP_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
-values ('{0}','Status','Approved','Checked','{1}','{2}','{3}',GetDate())",
-                    MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                    callReason.ReturnReason,
-                    callReason.ReturnRemark,
-                    Sci.Env.User.UserID);
-
-                string updateCmd = string.Format(@"update AirPP set Status = 'Checked', FtyMgr = '',FtyMgrApvDate = null, EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-
-                using (TransactionScope transactionScope = new TransactionScope())
-                {
-                    try
-                    {
-                        DualResult result = DBProxy.Current.Execute(null, insertCmd);
-                        DualResult result2 = DBProxy.Current.Execute(null, updateCmd);
-
-                        if (result && result2)
-                        {
-                            transactionScope.Complete();
-                        }
-                        else
-                        {
-                            transactionScope.Dispose();
-                            MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
-                            return;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        transactionScope.Dispose();
-                        this.ShowErr("Commit transaction error.", ex);
-                        return;
-                    }
-                }
-            }
-        }
-
         // Status update history
         private void BtnStatusUpdateHistory_Click(object sender, EventArgs e)
         {
