@@ -2457,6 +2457,16 @@
     <Build Include="dbo\Tables\MtlCertificate.sql" />
     <Build Include="dbo\Tables\MtlCertificate_Detail.sql" />
     <Build Include="dbo\Tables\FormType.sql" />
+    <Build Include="dbo\Tables\SubProcessSeq_Detail.sql" />
+    <Build Include="dbo\Tables\SubProcessSeq.sql" />
+    <Build Include="dbo\Stored Procedures\CheckNikeCustCD.sql" />
+    <Build Include="dbo\Tables\ICR_ResponsibilityDept.sql" />
+    <Build Include="dbo\Tables\ICR_ReplacementReport.sql" />
+    <Build Include="dbo\Tables\ICR_Detail.sql" />
+    <Build Include="dbo\Tables\Export_ShareAmount.sql" />
+    <Build Include="dbo\Tables\ICR.sql" />
+    <Build Include="dbo\Functions\GetAmount.sql" />
+    <Build Include="dbo\Functions\GetAmountByUnit.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

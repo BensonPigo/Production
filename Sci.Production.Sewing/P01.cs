@@ -700,11 +700,20 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                     {
                         // 取得正在異動的這筆Row
                         DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                        string whereForDQSCheck = string.Empty;
+                        DualResult result;
 
+                        if (MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]) != "O")
+                        {
+                            if (!this.IsSameDQS(dr))
+                            {
+                                whereForDQSCheck = $@" and isnull(ForDQSCheck, 0) = 1";
+                            }
+                        }
                         // 查詢視窗資料來源
-                        string sqlCmd = "SELECT DISTINCT ID,Description FROM SewingReason WHERE Type='SO' AND Junk=0  -- SO代表SewingOutput";
+                        string sqlCmd = $"SELECT DISTINCT ID,Description FROM SewingReason WHERE Type='SO' AND isnull(Junk, 0) = 0 {whereForDQSCheck} -- SO代表SewingOutput";
                         DataTable reasonDatas;
-                        DualResult result = DBProxy.Current.Select(null, sqlCmd, out reasonDatas);
+                        result = DBProxy.Current.Select(null, sqlCmd, out reasonDatas);
 
                         // 寬度可以用逗號區隔開來
                         Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,40", MyUtility.Convert.GetString(dr["SewingReasonID"]), headercaptions: "ID,Description");
@@ -727,30 +736,50 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                             dr["ReasonDescription"] = string.Empty;
                         }
 
+                        dr.EndEdit();
                     }
                 }
             };
 
             this.SewingReasonID.CellValidating += (s, e) =>
             {
-                // 表示資料ID沒變，不需要動
-                if (this.CurrentDetailData["SewingReasonID"].EqualString(e.FormattedValue) == false)
+                if (MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    string sqlCmd = $"SELECT DISTINCT ID,Description FROM SewingReason WHERE Type='SO' AND Junk=0 AND ID ='{e.FormattedValue}'  -- SO代表SewingOutput";
-                    DataTable reasonDatas;
-                    DualResult result = DBProxy.Current.Select(null, sqlCmd, out reasonDatas);
-                    if (reasonDatas.Rows.Count > 0)
+                    this.CurrentDetailData["SewingReasonID"] = string.Empty;
+                    this.CurrentDetailData["ReasonDescription"] = string.Empty;
+                    this.CurrentDetailData.EndEdit();
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                string whereForDQSCheck = string.Empty;
+                DualResult result;
+
+                if (MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]) != "O")
+                {
+                    if (!this.IsSameDQS(dr))
                     {
-                        this.CurrentDetailData["SewingReasonID"] = reasonDatas.Rows[0]["ID"].ToString();
-                        this.CurrentDetailData["ReasonDescription"] = reasonDatas.Rows[0]["Description"].ToString();
-                    }
-                    else
-                    {
-                        MyUtility.Msg.WarningBox("Data not found!!!");
-                        this.CurrentDetailData["SewingReasonID"] = string.Empty;
-                        this.CurrentDetailData["ReasonDescription"] = string.Empty;
+                        whereForDQSCheck = $@" and isnull(ForDQSCheck, 0) = 1";
                     }
                 }
+
+                string sqlCmd = $"SELECT DISTINCT ID,Description FROM SewingReason WHERE Type='SO' AND Junk=0 AND ID ='{e.FormattedValue}' {whereForDQSCheck}  -- SO代表SewingOutput";
+                DataTable reasonDatas;
+                result = DBProxy.Current.Select(null, sqlCmd, out reasonDatas);
+                if (reasonDatas.Rows.Count > 0)
+                {
+                    this.CurrentDetailData["SewingReasonID"] = reasonDatas.Rows[0]["ID"].ToString();
+                    this.CurrentDetailData["ReasonDescription"] = reasonDatas.Rows[0]["Description"].ToString();
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox("Data not found!!!");
+                    this.CurrentDetailData["SewingReasonID"] = string.Empty;
+                    this.CurrentDetailData["ReasonDescription"] = string.Empty;
+                    e.Cancel = true;
+                }
+
+                this.CurrentDetailData.EndEdit();
             };
             #endregion
 
@@ -890,6 +919,99 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
             }
 
             return base.ConvertSubDetailDatasFromDoSubForm(e);
+        }
+
+        private bool IsSameDQS(DataRow dr)
+        {
+            // 先看此筆是否有對應DQS OrderID,ComboType,Article
+            string shift = this.CurrentMaintain["Shift"].EqualString("D") ? "Day" : this.CurrentMaintain["Shift"].EqualString("N") ? "Night" : string.Empty;
+            string checkDQSexists = $@"
+select 1
+from inspection ins WITH (NOLOCK)
+where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
+and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
+and Line = '{this.CurrentMaintain["SewingLineID"]}'
+and Team = '{this.CurrentMaintain["Team"]}'
+and Shift = '{shift}'
+";
+            // 先判斷此表頭組合, 是否有任何一筆DQS, 若無則不用限制
+            if (!MyUtility.Check.Seek(checkDQSexists, "ManufacturingExecution"))
+            {
+                return true;
+            }
+
+            checkDQSexists = $@"
+select 1
+from inspection ins WITH (NOLOCK)
+where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
+and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
+and Line = '{this.CurrentMaintain["SewingLineID"]}'
+and Team = '{this.CurrentMaintain["Team"]}'
+and Shift = '{shift}'
+and OrderID = '{dr["OrderID"]}'
+and Location = '{dr["ComboType"]}'
+and Article = '{dr["Article"]}'
+";
+            bool hasDQS = MyUtility.Check.Seek(checkDQSexists, "ManufacturingExecution");
+
+            // 第2層QAQty為0且有DQS
+            if (hasDQS && MyUtility.Convert.GetDecimal(dr["QAQty"]) == 0)
+            {
+                return false;
+            }
+
+            // 第2層QAQty不為0
+            if (MyUtility.Convert.GetDecimal(dr["QAQty"]) != 0)
+            {
+                // 第2層沒有對應DQS
+                if (!hasDQS)
+                {
+                    return false;
+                }
+                else
+                {
+                    // 有對應DQS第2層才比較第3層是否一樣
+                    DataTable subDetailData;
+                    this.GetSubDetailDatas(dr, out subDetailData); // 取得此筆第3層
+
+                    DataTable sewDt2;
+                    DualResult result = this.GetDQSDataForDetail_Detail(dr, out sewDt2); // 取得DQS For 第3層
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                    }
+
+                    // 判斷每筆DQS是否在現有第3層且Qty相等, 若無則SewingReason帶出資料限制
+                    foreach (DataRow dqsRow_Size in sewDt2.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
+                    {
+                        if (!subDetailData.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Any(row =>
+                            MyUtility.Convert.GetString(row["OrderID"]).EqualString(MyUtility.Convert.GetString(dqsRow_Size["OrderID"]))
+                            && MyUtility.Convert.GetString(row["ComboType"]).EqualString(MyUtility.Convert.GetString(dqsRow_Size["ComboType"]))
+                            && MyUtility.Convert.GetString(row["Article"]).EqualString(MyUtility.Convert.GetString(dqsRow_Size["Article"]))
+                            && MyUtility.Convert.GetString(row["SizeCode"]).EqualString(MyUtility.Convert.GetString(dqsRow_Size["SizeCode"]))
+                            && MyUtility.Convert.GetDecimal(row["QAQty"]).Equals(MyUtility.Convert.GetDecimal(dqsRow_Size["DQSQAQty"]))))
+                        {
+                            return false;
+                        }
+                    }
+
+                    // 反過來檢查,主要是看表身有沒有多出來, DQS卻沒有的
+                    foreach (DataRow Row_Size in subDetailData.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
+                    {
+                        if (!sewDt2.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Any(row =>
+                            MyUtility.Convert.GetString(row["OrderID"]).EqualString(MyUtility.Convert.GetString(Row_Size["OrderID"]))
+                            && MyUtility.Convert.GetString(row["ComboType"]).EqualString(MyUtility.Convert.GetString(Row_Size["ComboType"]))
+                            && MyUtility.Convert.GetString(row["Article"]).EqualString(MyUtility.Convert.GetString(Row_Size["Article"]))
+                            && MyUtility.Convert.GetString(row["SizeCode"]).EqualString(MyUtility.Convert.GetString(Row_Size["SizeCode"]))
+                            && MyUtility.Convert.GetDecimal(row["DQSQAQty"]).Equals(MyUtility.Convert.GetDecimal(Row_Size["QAQty"]))))
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
         }
 
         // 計算表身Grid的TMS
@@ -1241,6 +1363,32 @@ order by a.OrderId,os.Seq",
                     !MyUtility.Check.Seek($@"select 1 from SewingReason where id = '{strReasonID}' and Type='SO' AND Junk=0"))
                 {
                     MyUtility.Msg.WarningBox($@"<Reason ID: {strReasonID}> not found");
+                    return false;
+                }
+            }
+            #endregion
+
+            #region 檢查表身不為0的資料, 是否與DQS相同， 若不同必須輸入SewingReason
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]) != "O")
+            {
+                List<string> msg = new List<string>();
+                foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
+                {
+                    string sqlChksewingReason = $@"SELECT DISTINCT ID,Description FROM SewingReason WHERE Type='SO' AND isnull(Junk, 0) = 0 and ForDQSCheck = 1 ";
+                    if (!this.IsSameDQS(dr))
+                    {
+                        if (MyUtility.Check.Empty(dr["SewingReasonID"]) || !MyUtility.Check.Seek(sqlChksewingReason + $"and ID = '{dr["SewingReasonID"]}'"))
+                        {
+                            msg.Add($"Order: <{dr["OrderID"]}> ComboType: <{dr["ComboType"]}> Article: <{dr["Article"]}> ");
+                            continue;
+                        }
+                    }
+                }
+
+                if (msg.Count > 0)
+                {
+                    var x = msg.Distinct().ToList();
+                    MyUtility.Msg.WarningBox("Please Input Reason if Output data not equal to DQS output data !\r\n" + string.Join("\r\n", x));
                     return false;
                 }
             }
@@ -3572,24 +3720,8 @@ Hi all,
             MyUtility.Msg.InfoBox("Lock data successfully!");
         }
 
-        private void FromDQS()
+        private DualResult GetDQSDataForDetail(out DataTable sewDt1)
         {
-            if (this.CurrentMaintain == null || !this.EditMode || !this.IsDetailInserting)
-            {
-                return;
-            }
-
-            this.CurrentMaintain.EndEdit();
-
-            if (MyUtility.Check.Empty(this.CurrentMaintain["OutputDate"]) ||
-                MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]) ||
-                MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]) ||
-                MyUtility.Check.Empty(this.CurrentMaintain["Team"]) ||
-                MyUtility.Check.Empty(this.CurrentMaintain["Shift"]))
-            {
-                return;
-            }
-
             string shift = this.CurrentMaintain["Shift"].EqualString("D") ? "Day" : this.CurrentMaintain["Shift"].EqualString("N") ? "Night" : string.Empty;
             string frommes = $@"
 select
@@ -3612,17 +3744,15 @@ and Team = '{this.CurrentMaintain["Team"]}'
 and Shift = '{shift}'
 group by InspectionDate, FactoryID, Line, Shift, Team, OrderId, Article, Location
 ";
-            DataTable sewDt1;
             DualResult result = DBProxy.Current.Select("ManufacturingExecution", frommes, out sewDt1);
             if (!result)
             {
-                this.ShowErr(result);
-                return;
+                return result;
             }
 
             if (sewDt1.Rows.Count == 0)
             {
-                return;
+                return Result.F("DQS Data not found!");
             }
 
             string sqlcmd = $@"
@@ -3675,37 +3805,16 @@ outer apply(
             result = MyUtility.Tool.ProcessWithDatatable(sewDt1, string.Empty, sqlcmd, out sewDt1);
             if (!result)
             {
-                this.ShowErr(result);
-                return;
+                return result;
             }
 
-            // 先用刪除原本表身下的第3層, 不用.Clear()
-            DataTable subDetailData;
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                this.GetSubDetailDatas(dr, out subDetailData);
-                for (int i = subDetailData.Rows.Count - 1; i >= 0; i--)
-                {
-                    subDetailData.Rows[i].Delete();
-                }
-            }
+            return Result.True;
+        }
 
-            // 刪除表身, 不用.Clear()
-            for (int i = this.DetailDatas.Count - 1; i >= 0; i--)
-            {
-                this.DetailDatas[i].Delete();
-            }
-
-            // 加入表身
-            foreach (DataRow row in sewDt1.Rows)
-            {
-                ((DataTable)this.detailgridbs.DataSource).ImportRow(row);
-            }
-
-            List<string> remarkList = new List<string>();
-            foreach (DataRow item in this.DetailDatas)
-            {
-                frommes = $@"
+        private DualResult GetDQSDataForDetail_Detail(DataRow item, out DataTable sewDt2)
+        {
+            string shift = this.CurrentMaintain["Shift"].EqualString("D") ? "Day" : this.CurrentMaintain["Shift"].EqualString("N") ? "Night" : string.Empty;
+            string frommes = $@"
 select
     ID = '{this.CurrentMaintain["ID"]}'
     , SewingOutput_DetailUKey='{item["ukey"]}'
@@ -3725,15 +3834,13 @@ and Location = '{item["ComboType"]}'
 and OrderId = '{item["OrderId"]}'
 group by InspectionDate, FactoryID, Line, Shift, Team, OrderId, Article, Location,Size
 ";
-                DataTable sewDt2;
-                result = DBProxy.Current.Select("ManufacturingExecution", frommes, out sewDt2);
-                if (!result)
-                {
-                    this.ShowErr(result);
-                    return;
-                }
+            DualResult result = DBProxy.Current.Select("ManufacturingExecution", frommes, out sewDt2);
+            if (!result)
+            {
+                return result;
+            }
 
-                sqlcmd = $@"
+            string sqlcmd = $@"
 with AllQty as (
     select 
             ID = '{this.CurrentMaintain["ID"]}'
@@ -3781,7 +3888,73 @@ outer apply(select OrderQtyUpperlimit=iif(b.value is not null,round(cast(a.Order
 outer apply(select QAQty=iif(OrderQty.OrderQtyUpperlimit - a.AccumQty < a.QAQty, OrderQty.OrderQtyUpperlimit - a.AccumQty, a.QAQty))Last
 order by a.OrderId,os.Seq
 ";
-                result = MyUtility.Tool.ProcessWithDatatable(sewDt2, string.Empty, sqlcmd, out sewDt2);
+            result = MyUtility.Tool.ProcessWithDatatable(sewDt2, string.Empty, sqlcmd, out sewDt2);
+            if (!result)
+            {
+                return result;
+            }
+
+            return Result.True;
+        }
+
+        private void FromDQS()
+        {
+            if (this.CurrentMaintain == null || !this.EditMode || !this.IsDetailInserting)
+            {
+                return;
+            }
+
+            this.CurrentMaintain.EndEdit();
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OutputDate"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["Team"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["Shift"]))
+            {
+                return;
+            }
+
+            DataTable sewDt1;
+            DualResult result = this.GetDQSDataForDetail(out sewDt1);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            string frommes = string.Empty;
+            string sqlcmd = string.Empty;
+            string shift = this.CurrentMaintain["Shift"].EqualString("D") ? "Day" : this.CurrentMaintain["Shift"].EqualString("N") ? "Night" : string.Empty;
+
+            // 先用刪除原本表身下的第3層, 不用.Clear()
+            DataTable subDetailData;
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                this.GetSubDetailDatas(dr, out subDetailData);
+                for (int i = subDetailData.Rows.Count - 1; i >= 0; i--)
+                {
+                    subDetailData.Rows[i].Delete();
+                }
+            }
+
+            // 刪除表身, 不用.Clear()
+            for (int i = this.DetailDatas.Count - 1; i >= 0; i--)
+            {
+                this.DetailDatas[i].Delete();
+            }
+
+            // 加入表身
+            foreach (DataRow row in sewDt1.Rows)
+            {
+                ((DataTable)this.detailgridbs.DataSource).ImportRow(row);
+            }
+
+            List<string> remarkList = new List<string>();
+            foreach (DataRow item in this.DetailDatas)
+            {
+                DataTable sewDt2;
+                result = this.GetDQSDataForDetail_Detail(item, out sewDt2);
                 if (!result)
                 {
                     this.ShowErr(result);
@@ -3805,7 +3978,8 @@ order by a.OrderId,os.Seq
                 this.GetSubDetailDatas(item, out subDetailData);
                 foreach (DataRow ddr in sewDt2.Rows)
                 {
-                    if (!subDetailData.AsEnumerable().Any(row => row["ID"].EqualString(ddr["ID"])
+                    if (!subDetailData.AsEnumerable().AsEnumerable().Where(w => w.RowState != DataRowState.Deleted)
+                                                               .Any(row => row["ID"].EqualString(ddr["ID"])
                                                                 && row["SewingOutput_DetailUkey"].EqualString(ddr["SewingOutput_DetailUkey"])
                                                                 && row["OrderID"].EqualString(ddr["OrderID"])
                                                                 && row["ComboType"].EqualString(ddr["ComboType"])
@@ -3858,6 +4032,21 @@ order by a.OrderId,os.Seq
                 if (remarkList2.Count > 0)
                 {
                     remark = string.Join("\r\n", remarkList2) + "\r\n" + "DQS Pass Q'ty is more than balance, please inform related team";
+                    string sewingReasonID = "00012";
+                    string sqlCmd = $"SELECT DISTINCT ID,Description FROM SewingReason WHERE Type='SO' AND Junk=0 AND ID ='{sewingReasonID}'  -- SO代表SewingOutput";
+                    DataTable reasonDatas;
+                    result = DBProxy.Current.Select(null, sqlCmd, out reasonDatas);
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                    }
+
+                    if (reasonDatas.Rows.Count > 0)
+                    {
+                        item["SewingReasonID"] = sewingReasonID;
+                        item["ReasonDescription"] = reasonDatas.Rows[0]["Description"];
+                    }
+
                     if (remark.Length > 1000)
                     {
                         item["remark"] = remark.Substring(0, 1000);

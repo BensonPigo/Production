@@ -19,6 +19,8 @@
     [TradeUkey]     BIGINT         CONSTRAINT [DF_Style_Artwork_TradeUkey] DEFAULT ((0)) NULL,
     [SMNoticeID] VARCHAR(10) NULL DEFAULT (''), 
     [PatternVersion] VARCHAR(3) NULL DEFAULT (''), 
+    [ActStitch] INT NOT NULL CONSTRAINT [DF_Style_Artwork_ActStitch] DEFAULT ((0)), 
+    [PPU]          NUMERIC (8, 3)  NOT NULL DEFAULT (0) ,
     CONSTRAINT [PK_Style_Artwork] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

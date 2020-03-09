@@ -97,15 +97,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(923, 532);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(917, 486);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(917, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -163,10 +163,13 @@
             this.gridArtworkType.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridArtworkType.RowTemplate.Height = 24;
             this.gridArtworkType.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridArtworkType.ShowCellToolTips = false;
             this.gridArtworkType.Size = new System.Drawing.Size(918, 233);
+            this.gridArtworkType.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridArtworkType.TabIndex = 1;
             this.gridArtworkType.TabStop = false;
-            this.gridArtworkType.SelectionChanged += new System.EventHandler(this.Grid1_SelectionChanged);
+            this.gridArtworkType.RowSelecting += new System.EventHandler<Ict.Win.UI.DataGridViewRowSelectingEventArgs>(this.GridArtworkType_RowSelecting);
+            this.gridArtworkType.Sorted += new System.EventHandler(this.GridArtworkType_Sorted);
             // 
             // displayBrand
             // 
@@ -180,7 +183,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(16, 10);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(75, 23);
@@ -189,7 +191,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(234, 10);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(75, 23);
@@ -208,7 +209,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(489, 10);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(75, 23);
@@ -227,7 +227,6 @@
             // 
             // labelStyleName
             // 
-            this.labelStyleName.Lines = 0;
             this.labelStyleName.Location = new System.Drawing.Point(16, 39);
             this.labelStyleName.Name = "labelStyleName";
             this.labelStyleName.Size = new System.Drawing.Size(75, 23);
@@ -257,6 +256,7 @@
             this.KeyField1 = "Ukey";
             this.KeyField2 = "styleukey";
             this.Name = "B03";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "B03. Local Quotation";
             this.UniqueExpress = "ID,BRANDID,SEASONID";
             this.WorkAlias = "style";
@@ -292,7 +292,7 @@
         private Win.UI.DisplayBox displayStyle;
         private Win.UI.Label labelBrand;
         private Win.UI.DisplayBox displayBrand;
-        private Win.UI.Grid gridArtworkType;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        public Win.UI.Grid gridArtworkType;
     }
 }

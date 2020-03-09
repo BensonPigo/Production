@@ -135,25 +135,44 @@ begin
 
 	set @StartInLine =  DATEADD(day, 1, @StartInLine) 
 end 
+"
+                , (SP.Empty()) ? "" : "and o.id = @SP"
+                , (Factory.Empty()) ? "" : "and f.ID = @FactoryID"
+                , Category);
+
+            strSQL += $@"
+select distinct t.orderID,
+    InStartDate = Null,
+    InEndDate = cast(cb.SewDate as datetime)+cast('23:59:59' as datetime),
+    OutStartDate = Null,
+    OutEndDate = Null
+into #enn
+from #tsp t
+cross join #CBDate cb
+";
 
 
+            string[] subprocessIDs = new string[] { "Loading", };
+            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#enn", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
 
-/*
-*	準備好要印的資料
-*/
+            strSQL += qtyBySetPerSubprocess + @"
+
+            /*
+            *	準備好要印的資料
+            */
 
 select
-t.FactoryID,
-[SP] = t.orderID,
-t.StyleID,
-[SewingDate] =  cb.SewDate,
-[Line] = t.SewLine,
-[AccuLoad] = AccuLoad.val,
-OrderQty
+    t.FactoryID,
+    [SP] = t.orderID,
+    t.StyleID,
+    [SewingDate] = cb.SewDate,
+    [Line] = t.SewLine,
+    [AccuLoad] = sub.FinishedQtyBySet,
+    OrderQty
 into #print0
 from #tsp t
 cross join #CBDate cb
-outer apply(SELECT val = isnull(sum(FinishedQtyBySet),0) FROM DBO.QtyBySetPerSubprocess(t.orderID,'LOADING',DEFAULT ,cast(cb.SewDate as datetime)+cast('23:59:59' as datetime),DEFAULT,DEFAULT,1,1)) as AccuLoad
+left join #Loading sub on sub.orderID = t.orderID and sub.InEndDate = cast(cb.SewDate as datetime)+cast('23:59:59' as datetime) -- 此處有相同orderID不同InEndDate
 
 select FactoryID
 		, SP
@@ -221,11 +240,7 @@ drop table #tsp
 drop table #print
 drop table #CBDate
 DROP TABLE #print0
-
-"
-                , (SP.Empty()) ? "" : "and o.id = @SP"
-                , (Factory.Empty()) ? "" : "and f.ID = @FactoryID"
-                , Category);
+";
             #endregion
 
             DualResult result = DBProxy.Current.Select(null, strSQL, sqlParameter, out printData);

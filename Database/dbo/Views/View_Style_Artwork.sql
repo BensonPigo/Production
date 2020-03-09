@@ -12,6 +12,7 @@ SELECT 	sArtwork.[ArtworkTypeID]
 		,sArtwork.[StyleUkey]
 		,sArtwork.TMS
 		, [StyleArtworkUkey] = sArtwork.[Ukey]
+		,sArtwork.ActStitch
 FROM [dbo].[Style_Artwork] sArtwork
 inner join Style_Article sArticle on sArtwork.StyleUkey = sArticle.StyleUkey
 where sArtwork.Article = '----'
@@ -28,6 +29,7 @@ SELECT 	sArtwork.[ArtworkTypeID]
 		,sArtwork.[StyleUkey]
 		,sArtwork.TMS
 		, [StyleArtworkUkey] = sArtwork.[Ukey]
+		,sArtwork.ActStitch
 FROM [dbo].[Style_Artwork] sArtwork
 inner join Style_Article sArticle on sArtwork.StyleUkey = sArticle.StyleUkey
 									 and sArtwork.Article = sArticle.Article

@@ -16,6 +16,7 @@
     [AddDate]       DATETIME       NULL,
     [EditName]      VARCHAR (10)   CONSTRAINT [DF_Order_Artwork_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME       NULL,
+    [PPU]           NUMERIC (8, 3)  NOT NULL DEFAULT (0) ,
     CONSTRAINT [PK_Order_Artwork] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

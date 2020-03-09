@@ -224,7 +224,19 @@ from
 where Category = 'B' and Junk = 0 
 {where1}
 
+select distinct 
+    orderid = id
+    ,InStartDate = Null
+    ,InEndDate = WorkTime
+    ,OutStartDate = Null
+    ,OutEndDate = WorkTime
+into #enn
+from #orders_tmp
+";
 
+            string[] subprocessIDs = new string[] { "Emb", "BO", "PRT", "AT", "PAD-PRT", "SUBCONEMB", "HT", "Loading", "SORTING" };
+            string qtyBySetPerSubprocess = PublicPrg.Prgs.QtyBySetPerSubprocess(subprocessIDs, "#enn", bySP: true, isNeedCombinBundleGroup: true, isMorethenOrderQty: "1");
+            this.tsql += qtyBySetPerSubprocess + $@"
 --抓取subprocess in
 select	[M] = o.MDivisionID,
 		[Factory] = o.FtyGroup,
@@ -233,9 +245,23 @@ select	[M] = o.MDivisionID,
 		[FinishedQtyBySet] = subporcessQty.FinishedQtyBySet
 into #tmpInOut
 from #orders_tmp o
-outer apply ( select SubprocessId
-					,[FinishedQtyBySet] = SUM(FinishedQtyBySet)  
-					from dbo.QtyBySetPerSubprocess(o.ID,'Emb,BO,PRT,AT,PAD-PRT,SUBCONEMB,HT,Loading,SORTING',null,o.WorkTime,null,o.WorkTime,1,1) group by SubprocessId) subporcessQty
+outer apply ( 
+    select SubprocessId='Emb',FinishedQtyBySet from #Emb t where t.OrderID = o.ID
+    union all
+    select SubprocessId='BO',FinishedQtyBySet from #BO t where t.OrderID = o.ID
+    union all
+    select SubprocessId='PRT',FinishedQtyBySet from #PRT t where t.OrderID = o.ID
+    union all
+    select SubprocessId='AT',FinishedQtyBySet from #AT t where t.OrderID = o.ID
+    union all
+    select SubprocessId='PAD-PRT',FinishedQtyBySet from #PADPRT t where t.OrderID = o.ID
+    union all
+    select SubprocessId='SUBCONEMB',FinishedQtyBySet from #SUBCONEMB t where t.OrderID = o.ID
+    union all
+    select SubprocessId='HT',FinishedQtyBySet from #HT t where t.OrderID = o.ID
+    union all
+    select SubprocessId='Loading',FinishedQtyBySet from #Loading t where t.OrderID = o.ID
+) subporcessQty
 
 select *
 into #tmpInOutFin

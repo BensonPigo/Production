@@ -388,7 +388,7 @@ select  Selected = 0
 		, o.SewInLIne
 		, o.SciDelivery
 		, [ArtworkID] = oa.ArtworkID
-		, stitch = 1
+		, [Stitch] = iif(isnull(vsa.ActStitch,0) > 0, vsa.ActStitch, 1)
 		, PatternCode = isnull(oa.PatternCode,'') 
 		, PatternDesc = isnull(oa.PatternDesc,'')
 		, [qtygarment] = 1
@@ -436,7 +436,7 @@ and o.MDivisionID='{Sci.Env.User.Keyword}'
 and o.Junk=0
 {sqlWhere}
 group by o.ID,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
-            ,oa.PatternDesc, o.StyleID, o.StyleID, o.POID,PoQty.value,ReqQty.value  {tmpGroupby}
+            ,oa.PatternDesc, o.StyleID, o.StyleID, o.POID,PoQty.value,ReqQty.value,vsa.ActStitch  {tmpGroupby}
 ";
 
             return strSQLCmd;

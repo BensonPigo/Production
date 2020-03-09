@@ -111,7 +111,15 @@ BEGIN
 	inner join Factory on Orders.FactoryID = Factory.ID
 	left Join Order_TmsCost on @CalArtWorkType != 'CPU' and Orders.ID = Order_TmsCost.ID And Order_TmsCost.ArtworkTypeID = @ArtWorkType
 	left join ArtworkType on ArtworkType.Id = Order_TmsCost.ArtworkTypeID
-	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Order_TmsCost.Qty / 1000, iif(ArtworkType.ProductionUnit = 'Qty', Order_TmsCost.Qty, Order_TmsCost.Tms / 60 )) as cTms) amt
+	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Order_TmsCost.Qty / 1000
+							, IIF( ArtworkType.ArtworkUnit = 'PPU' 
+									,Order_TmsCost.Price 
+									,iif(ArtworkType.ProductionUnit = 'Qty'
+											, Order_TmsCost.Qty
+											, Order_TmsCost.Tms / 60 
+											)
+								)
+						) as cTms) amt
 	outer apply (select iif(@CalArtWorkType = 'CPU', Orders.CPU, cTms) as cCPU) ccpu
 	outer apply (select iif(@isSCIDelivery = 0, Orders.BuyerDelivery, Orders.SCIDelivery) as OrderDate) odd	
 	outer apply (select format(dateadd(day,iif(@isSCIDelivery = 0, 0, -7),OrderDate),'yyyyMM') as Date1) odd1	
@@ -190,7 +198,12 @@ BEGIN
 	left join Style on Style.Ukey = FactoryOrder.StyleUkey
 	left join Style_TmsCost on @CalArtWorkType != 'CPU' and Style.UKey = Style_TMSCost.StyleUkey And Style_TmsCost.ArtworkTypeID = @ArtWorkType
 	left join ArtworkType on ArtworkType.Id = Style_TmsCost.ArtworkTypeID
-	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Style_TMSCost.Qty / 1000, iif(ArtworkType.ProductionUnit = 'Qty', Style_TMSCost.Qty, CONVERT(numeric,Style_TMSCost.Tms) / 60 )) as cTms) amt
+	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Style_TMSCost.Qty / 1000
+								, IIF(ArtworkType.ArtworkUnit = 'PPU'
+										,Style_TMSCost.Price
+										,iif(ArtworkType.ProductionUnit = 'Qty', Style_TMSCost.Qty, CONVERT(numeric,Style_TMSCost.Tms) / 60 )
+										)
+							) as cTms) amt
 	outer apply (select iif(@CalArtWorkType = 'CPU', FactoryOrder.CPU, cTms) as cCPU) ccpu
 	outer apply (select 1 as CpuRate ) gcRate
 	outer apply (select iif(@isSCIDelivery = 0, FactoryOrder.BuyerDelivery, FactoryOrder.SCIDelivery) as OrderDate) odd
@@ -255,7 +268,12 @@ BEGIN
 	left join Style on Style.Ukey = Orders.StyleUkey
 	left join Style_TmsCost on @CalArtWorkType != 'CPU' and Style.UKey = Style_TMSCost.StyleUkey And Style_TmsCost.ArtworkTypeID = @ArtWorkType
 	left join ArtworkType on ArtworkType.Id = Style_TmsCost.ArtworkTypeID
-	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Style_TMSCost.Qty / 1000, iif(ArtworkType.ProductionUnit = 'Qty', Style_TMSCost.Qty, CONVERT(numeric,Style_TMSCost.Tms) / 60 )) as cTms) amt
+	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Style_TMSCost.Qty / 1000
+								, IIF(ArtworkType.ArtworkUnit = 'PPU'
+										,Style_TMSCost.Price
+										,iif(ArtworkType.ProductionUnit = 'Qty', Style_TMSCost.Qty, CONVERT(numeric,Style_TMSCost.Tms) / 60 )
+										)
+							) as cTms) amt
 	outer apply (select iif(@CalArtWorkType = 'CPU', IIF(Orders.Category = 'B', Style.CPU, Orders.CPU), cTms) as cCPU) ccpu
 	outer apply (select CpuRate from dbo.GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'S') ) gcRate
 	outer apply (select format(dateadd(day,iif(@isSCIDelivery = 0, 0, -7),Orders.BuyerDelivery),'yyyyMM') as Date1) odd1

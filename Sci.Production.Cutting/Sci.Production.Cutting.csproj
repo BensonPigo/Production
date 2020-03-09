@@ -167,17 +167,29 @@
     <Compile Include="B04.Designer.cs">
       <DependentUpon>B04.cs</DependentUpon>
     </Compile>
+    <Compile Include="B11.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B11.Designer.cs">
+      <DependentUpon>B11.cs</DependentUpon>
+    </Compile>
     <Compile Include="B09.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="B09.Designer.cs">
       <DependentUpon>B09.cs</DependentUpon>
-	</Compile>
+    </Compile>
     <Compile Include="B10.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="B10.Designer.cs">
       <DependentUpon>B10.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B11_Batch Create.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B11_Batch Create.Designer.cs">
+      <DependentUpon>B11_Batch Create.cs</DependentUpon>
     </Compile>
     <Compile Include="P01_BundleCard.cs">
       <SubType>Form</SubType>
@@ -493,11 +505,17 @@
     <EmbeddedResource Include="B04.resx">
       <DependentUpon>B04.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B11.resx">
+      <DependentUpon>B11.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="B09.resx">
       <DependentUpon>B09.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B10.resx">
       <DependentUpon>B10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B11_Batch Create.resx">
+      <DependentUpon>B11_Batch Create.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01_BundleCard.resx">
       <DependentUpon>P01_BundleCard.cs</DependentUpon>

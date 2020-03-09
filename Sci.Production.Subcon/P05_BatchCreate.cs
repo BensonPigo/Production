@@ -465,7 +465,7 @@ select Selected = 0
 		, o.SewInLIne
 		, o.SciDelivery
 		, [ArtworkID] = oa.ArtworkID
-		, stitch = 1
+		, stitch = iif(isnull(vsa.ActStitch,0) > 0, vsa.ActStitch, 1)
 		, [PatternCode] = isnull(oa.PatternCode,'')
 		, [PatternDesc] = isnull(oa.PatternDesc,'')
 		, [qtygarment] = CONVERT(decimal, 1)
@@ -513,7 +513,7 @@ and o.Junk=0
 and sao.LocalSuppId is not null
 {sqlWhere}
 group by o.ID,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
-            ,oa.PatternDesc, o.StyleID, o.StyleID, o.POID,PoQty.value,ReqQty.value,o.FTYGroup
+            ,oa.PatternDesc, o.StyleID, o.StyleID, o.POID,PoQty.value,ReqQty.value,o.FTYGroup,vsa.ActStitch
 		" ;
 
 
