@@ -647,7 +647,7 @@ OUTER APPLY(
 	select [DiffQty]=isnull(DiffQty,0) 
 	from InvAdjust_Qty iq WITH (NOLOCK) 
 	inner join InvAdjust i WITH (NOLOCK) on iq.ID = i.id 
-	where i.orderid =  p.OrderID AND iq.Article= p.Article AND iq.Article= p.Article  AND iq.SizeCode= p.SizeCode 
+	where i.orderid = p.OrderID AND iq.Article= p.Article AND iq.SizeCode= p.SizeCode 
 )TPEAdjust ----出貨數必須加上台北端財務可能調整出貨數量，因此必須納入考量(若是減少則是負數，因此用加法即可)
 where isnull(p.ShipQty,0) + TpeAdjust.DiffQty > isnull(oqd.Qty,0)
 ";
@@ -659,7 +659,7 @@ OUTER APPLY(
 	select [DiffQty]=isnull(DiffQty,0) 
 	from InvAdjust_Qty iq WITH (NOLOCK) 
 	inner join InvAdjust i WITH (NOLOCK) on iq.ID = i.id 
-	where i.orderid =  p.OrderID AND iq.Article= p.Article AND iq.Article= p.Article  AND iq.SizeCode= p.SizeCode 
+	where i.orderid = p.OrderID AND iq.Article= p.Article AND iq.SizeCode= p.SizeCode 
 )TpeAdjust  ----出貨數必須加上台北端財務可能調整出貨數量，因此必須納入考量(若是減少則是負數，因此用加法即可)
 where isnull(p.ShipQty,0) + TpeAdjust.DiffQty < isnull(oqd.Qty,0)
 ";
