@@ -160,6 +160,13 @@ SELECT  --DISTINCT
         , [POID]=psd.ID
 		, psd.SEQ1
 		, psd.SEQ2
+		, [AccuIssued] = (
+					select isnull(sum([IS].qty),0)
+					from dbo.issue I2 WITH (NOLOCK) 
+					inner join dbo.Issue_Summary [IS] WITH (NOLOCK) on I2.id = [IS].Id 
+					where I2.type = 'E' and I2.Status = 'Confirmed' 
+					and [IS].Poid=psd.ID AND [IS].SCIRefno=psd.SCIRefno AND [IS].SuppColor=psd.SuppColor and i2.[EditDate]<GETDATE()
+				)
 INTO #final
 FROM PO_Supp_Detail psd
 INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
@@ -226,6 +233,7 @@ SELECT  [Selected]
 		, [Bulk Balance(Stock Unit)] = SUM([Bulk Balance(Stock Unit)])
         , [POID]
 		, [FtyInventoryUkey]
+		, [AccuIssued]
 FROM #final
 GROUP BY [Selected] 
 		, SCIRefno 
@@ -241,6 +249,7 @@ GROUP BY [Selected]
 		, [Output Qty(Garment)]
         , [POID]
 		, [FtyInventoryUkey]
+		, [AccuIssued]
 
 DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final
 

@@ -36,7 +36,7 @@ namespace Sci.Production.Warehouse
             listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
 
-            this.numIssueQty.Value = Convert.ToDecimal(dt.Compute("Sum(Qty)", "selected = 1"));        
+            this.numIssueQty.Value = MyUtility.Check.Empty(dt.Compute("Sum(Qty)", "selected = 1")) ? 0 : Convert.ToDecimal(dt.Compute("Sum(Qty)", "selected = 1"));        
         }
 
         protected override void OnFormLoaded()

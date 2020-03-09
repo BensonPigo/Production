@@ -96,6 +96,17 @@ namespace Sci.Production.Warehouse
 
             labelConfirmed.Text = CurrentMaintain["status"].ToString();
 
+            if (!MyUtility.Check.Empty(CurrentMaintain["ID"]))
+            {
+                this.txtOrderID.IsSupportEditMode = false;
+                this.txtOrderID.ReadOnly = true;
+            }
+            else
+            {
+                this.txtOrderID.IsSupportEditMode = true;
+                this.txtOrderID.ReadOnly = false;
+            }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["IssueDate"]))
             {
                 this.CurrentMaintain["IssueDate"] = DateTime.Now;
@@ -138,7 +149,7 @@ SELECT   iis.SCIRefno
 					from dbo.issue I2 WITH (NOLOCK) 
 					inner join dbo.Issue_Summary [IS] WITH (NOLOCK) on I2.id = [IS].Id 
 					where I2.type = 'E' and I2.Status = 'Confirmed' 
-					and [IS].Poid=iis.POID AND [IS].SCIRefno=iis.SCIRefno AND [IS].SuppColor=iis.SuppColor and i2.[EditDate]>I.AddDate
+					and [IS].Poid=iis.POID AND [IS].SCIRefno=iis.SCIRefno AND [IS].SuppColor=iis.SuppColor and i2.[EditDate]<I.AddDate AND i2.ID <> i.ID
 				)
 		, [IssueQty]=iis.Qty
 		, [Use Qty By Stock Unit] = CEILING(Garment.Qty *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) ) 
@@ -223,7 +234,7 @@ AND iis.SuppColor <> ''
 
         protected override DualResult ConvertSubDetailDatasFromDoSubForm(SubDetailConvertFromEventArgs e)
         {
-            //sum_subDetail(e.Detail, e.SubDetails);
+            sum_subDetail(e.Detail, e.SubDetails);
 
             DataTable dt;
             foreach (DataRow dr in DetailDatas)
@@ -507,6 +518,17 @@ AND iis.SuppColor <> ''
                 subform.dtIssueBreakDown = this.dtIssueBreakDown;
                 DoSubForm.IsSupportUpdate = false;
                 OpenSubDetailPage();
+
+
+                DataTable dt;
+                foreach (DataRow dr in DetailDatas)
+                {
+                    if (GetSubDetailDatas(dr, out dt))
+                    {
+                        sum_subDetail(dr, dt);
+                    }
+                }
+
             };
             #endregion
 

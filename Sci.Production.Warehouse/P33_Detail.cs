@@ -96,9 +96,15 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
-                DataTable subDT = (DataTable)gridbs.DataSource;
-
+                // 先排除被刪掉的Row
+                DataTable subDT = ((DataTable)gridbs.DataSource).AsEnumerable().Where(o=>o.RowState != DataRowState.Deleted).CopyToDataTable();
+                
                 DataRow row = subDT.Rows[e.RowIndex];
+
+                if (row.RowState == DataRowState.Deleted)
+                {
+                    return;
+                }
 
                 if (MyUtility.Check.Empty(row["BulkQty"]))
                 {
