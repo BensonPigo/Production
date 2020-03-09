@@ -225,7 +225,7 @@ select
 into #tmpReceiveDate1
 from #tmp_main t
 inner join PackingList_Detail pd on pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.Seq
-inner join ClogReceive cr on (cr.PackingListID = pd.ID and cr.OrderID = pd.OrderID and cr.CTNStartNo = pd.CTNStartNo)
+inner join ClogReceive cr on (cr.PackingListID = pd.ID and cr.OrderID = pd.OrderID and cr.CTNStartNo = pd.CTNStartNo and pd.SCICtnNo <>'')
 where pd.OrderID = t.OrderID
 and pd.OrderShipmodeSeq = t.Seq
 and not exists(select 1 
@@ -244,7 +244,7 @@ select
 into #tmpReceiveDate2
 from #tmp_main t
 inner join PackingList_Detail pd on pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.Seq
-inner join ClogReceive cr on cr.SCICtnNo = pd.SCICtnNo
+inner join ClogReceive cr on cr.SCICtnNo = pd.SCICtnNo and pd.SCICtnNo <>''
 where pd.OrderID = t.OrderID
 and pd.OrderShipmodeSeq = t.Seq
 and not exists(select 1 
@@ -305,7 +305,8 @@ SELECT
              End
         ,pullOutDate = iif(isnull(t.isDevSample,0) = 1, CONVERT(char(10), pd2.PulloutDate, 20), CONVERT(char(10), p.PulloutDate, 111))
 		,Shipmode = t.ShipmodeID
-		,P = Cast(isnull(op.PulloutDate,0) as int)  --未出貨,出貨次數=0
+		,P = (select ctP = count(ID) from Pullout_Detail p2 where p2.OrderID = t.OrderID and p2.OrderShipmodeSeq = t.Seq and p2.ShipQty > 0)  --未出貨,出貨次數=0
+            --與trade撈取方式不同,count有幾筆Pullout_Detail為出貨次數, 此處先by OrderID和OrderShipmodeSeq 且ShipQty,因#tmp_main資料準備時,OrderShipmodeSeq 不一定會撈全部, 下方匯出Excel時會再只by OrderID 加總
 		,t.GMTComplete 
 		,t.ReasonID
 		,t.ReasonName   
@@ -427,7 +428,7 @@ FROM #tmp t
 INNER JOIN Factory f ON t.KPICode=f.id
 ORDER BY  t.OrderID, t.seq, t.KpiCode
 
-drop table #tmp_Pullout_Detail_p,#tmp_Pullout_Detail_pd,#tmp_Pullout_Detail,#tmp_SewingOutput,#tmp_ClogReceive,#tmp,#tmp_main,#getQtyBySeq
+drop table #tmp_Pullout_Detail_p,#tmp_Pullout_Detail_pd,#tmp_Pullout_Detail,#tmp_SewingOutput,#tmp_ClogReceive,#tmp,#tmp_main,#getQtyBySeq,#maxReceiveDate,#tmpReceiveDate1,#tmpReceiveDate2
 ";
 
                 result = DBProxy.Current.Select(null, strSQL, null, out this.gdtOrderDetail);

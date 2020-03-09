@@ -99,14 +99,14 @@
             this.dateFactoryKPIDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateFactoryKPIDate.DateBox2.TabIndex = 1;
             this.dateFactoryKPIDate.IsRequired = false;
-            this.dateFactoryKPIDate.Location = new System.Drawing.Point(139, 55);
+            this.dateFactoryKPIDate.Location = new System.Drawing.Point(96, 78);
             this.dateFactoryKPIDate.Name = "dateFactoryKPIDate";
             this.dateFactoryKPIDate.Size = new System.Drawing.Size(280, 23);
-            this.dateFactoryKPIDate.TabIndex = 2;
+            this.dateFactoryKPIDate.TabIndex = 4;
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(18, 91);
+            this.labelFactory.Location = new System.Drawing.Point(18, 107);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(75, 23);
             this.labelFactory.TabIndex = 98;
@@ -116,7 +116,7 @@
             // 
             this.checkExportDetailData.AutoSize = true;
             this.checkExportDetailData.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkExportDetailData.Location = new System.Drawing.Point(278, 90);
+            this.checkExportDetailData.Location = new System.Drawing.Point(18, 136);
             this.checkExportDetailData.Name = "checkExportDetailData";
             this.checkExportDetailData.Size = new System.Drawing.Size(141, 21);
             this.checkExportDetailData.TabIndex = 6;
@@ -125,15 +125,15 @@
             // 
             // labelFactoryKPIDate
             // 
-            this.labelFactoryKPIDate.Location = new System.Drawing.Point(18, 55);
+            this.labelFactoryKPIDate.Location = new System.Drawing.Point(18, 78);
             this.labelFactoryKPIDate.Name = "labelFactoryKPIDate";
             this.labelFactoryKPIDate.RectStyle.BorderColor = System.Drawing.Color.Black;
             this.labelFactoryKPIDate.RectStyle.BorderWidth = 1F;
             this.labelFactoryKPIDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelFactoryKPIDate.RectStyle.ExtBorderWidth = 1F;
-            this.labelFactoryKPIDate.Size = new System.Drawing.Size(118, 23);
+            this.labelFactoryKPIDate.Size = new System.Drawing.Size(75, 23);
             this.labelFactoryKPIDate.TabIndex = 103;
-            this.labelFactoryKPIDate.Text = "Factory KPI Date";
+            this.labelFactoryKPIDate.Text = "Date Range";
             this.labelFactoryKPIDate.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.labelFactoryKPIDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
@@ -152,7 +152,7 @@
             this.radioGarment.Location = new System.Drawing.Point(247, 17);
             this.radioGarment.Name = "radioGarment";
             this.radioGarment.Size = new System.Drawing.Size(81, 21);
-            this.radioGarment.TabIndex = 106;
+            this.radioGarment.TabIndex = 2;
             this.radioGarment.TabStop = true;
             this.radioGarment.Text = "Garment";
             this.radioGarment.UseVisualStyleBackColor = true;
@@ -165,15 +165,15 @@
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtFactory.IsProduceFty = false;
             this.txtFactory.IssupportJunk = true;
-            this.txtFactory.Location = new System.Drawing.Point(96, 91);
+            this.txtFactory.Location = new System.Drawing.Point(96, 107);
             this.txtFactory.MDivision = null;
             this.txtFactory.Name = "txtFactory";
             this.txtFactory.Size = new System.Drawing.Size(66, 23);
-            this.txtFactory.TabIndex = 4;
+            this.txtFactory.TabIndex = 5;
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(18, 124);
+            this.label1.Location = new System.Drawing.Point(18, 48);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
             this.label1.TabIndex = 107;
@@ -185,16 +185,16 @@
             this.comboDropDownList1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboDropDownList1.FormattingEnabled = true;
             this.comboDropDownList1.IsSupportUnselect = true;
-            this.comboDropDownList1.Location = new System.Drawing.Point(96, 124);
+            this.comboDropDownList1.Location = new System.Drawing.Point(96, 48);
             this.comboDropDownList1.Name = "comboDropDownList1";
             this.comboDropDownList1.OldText = "";
             this.comboDropDownList1.Size = new System.Drawing.Size(121, 24);
-            this.comboDropDownList1.TabIndex = 108;
+            this.comboDropDownList1.TabIndex = 3;
             this.comboDropDownList1.Type = "SDP";
             // 
             // R17
             // 
-            this.ClientSize = new System.Drawing.Size(543, 189);
+            this.ClientSize = new System.Drawing.Size(543, 186);
             this.Controls.Add(this.comboDropDownList1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.radioGarment);
