@@ -209,7 +209,7 @@ namespace Sci.Production.Planning
                     int artWorkStart = 2;
 
 #if DEBUG
-                    sxrc.ExcelApp.Visible = true;
+                    sxrc.ExcelApp.Visible = false;
 #endif
 
                     foreach (string art in artworkLis)

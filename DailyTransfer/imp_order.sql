@@ -1248,6 +1248,7 @@ BEGIN
 				t.Price			= s.Price,
 				t.Cost			= s.Cost,
 				t.Remark		= s.Remark,
+				t.PPU			= s.PPU,
 				t.AddName		= s.AddName,
 				t.AddDate		= s.AddDate,
 				t.EditName		= s.EditName,
@@ -1257,12 +1258,12 @@ BEGIN
 				ID				, ArtworkTypeID		, Article	, PatternCode	, PatternDesc
 				, ArtworkID		, ArtworkName		, Qty		, TMS			, Price
 				, Cost			, Remark			, Ukey		, AddName		, AddDate
-				, EditName		, EditDate
+				, PPU			, EditName		, EditDate
 			) values (
 				s.ID			, s.ArtworkTypeID	, s.Article	, s.PatternCode	, s.PatternDesc
 				, s.ArtworkID	, s.ArtworkName		, s.Qty		, s.TMS			, s.Price
 				, s.Cost		, s.Remark			, s.Ukey	, s.AddName		, s.AddDate
-				, s.EditName	, s.EditDate
+				, s.PPU	, s.EditName	, s.EditDate
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
