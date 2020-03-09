@@ -144,9 +144,7 @@ outer apply(
 	and isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) = 0
 )FOC
 outer apply(
-	select QAQty=sum(sdd.QAQty)
-	from SewingOutput_Detail_Detail sdd WITH (NOLOCK)
-	where  sdd.OrderId = o.ID
+	select QAQty = ISNULL(dbo.getMinCompleteSewQty(o.ID,null,null),0)
 )sew
 outer apply(
 	select OrderQty=sum(pd.ShipQty)
