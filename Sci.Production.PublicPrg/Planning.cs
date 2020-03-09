@@ -141,6 +141,11 @@ WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,C
         /// <param name="isNeedCombinBundleGroup">是否要依照 BundleGroup 算成衣件數 true/false</param>
         /// <param name="isMorethenOrderQty">回傳Qty值是否超過訂單數, (生產有可能超過) </param>
         /// <returns>回傳字串, 提供接下去的Sql指令使用#temp Table</returns>
+        ///非常重要 更新此處一定要把此dll檔案更新到MES
+        ///非常重要 更新此處一定要把此dll檔案更新到MES
+        ///非常重要 更新此處一定要把此dll檔案更新到MES
+        ///非常重要 更新此處一定要把此dll檔案更新到MES
+        ///非常重要 更新此處一定要把此dll檔案更新到MES
         public static string QtyBySetPerSubprocess(
             string[] subprocessIDs,
             string tempTable = "#cte",
