@@ -254,6 +254,7 @@ select  FtyGroup,
         ID,
         OutputDate,
         [OrderCPU] = iif(isNormalOrderCanceled = 1,0, OrderCPU - OrderShortageCPU),
+        OrderShortageCPU,
         SewingOutput,
         SewingOutputCPU
 from    #tmpBaseBySource
@@ -331,13 +332,13 @@ drop table #tmpBase,#tmpBaseBySource,#tmpBaseByOrderID
 
                 #region summary
                 string sqlsum = $@"
-select Date,ID,OrderCPU,BalanceCPU=OrderCPU-sum(SewingOutputCPU)
+select Date,ID,OrderCPU,BalanceCPU=OrderCPU-sum(SewingOutputCPU),OrderShortageCPU
 into #tmp2_0
 from #tmp
 where Ftygroup = '{fty}'
-group by Date,ID,OrderCPU
+group by Date,ID,OrderCPU,OrderShortageCPU
 
-select Date,OrderCPU=sum(OrderCPU),BalanceCPU=sum(BalanceCPU)
+select Date,OrderCPU=sum(OrderCPU),BalanceCPU=sum(BalanceCPU),[OrderShortageCPU] = sum(OrderShortageCPU)
 into #tmp2
 from #tmp2_0
 group by Date
@@ -368,7 +369,7 @@ for xml path('')
 
 declare @sql nvarchar(max)=N'
 select t2.Date,
-	Loading=t2.OrderCPU,Balance=t2.BalanceCPU,
+	Loading=t2.OrderCPU,[Shortage] = t2.OrderShortageCPU,Balance=t2.BalanceCPU,
 	'+@col+N'
 into #tmp3
 from #tmp2 t2
@@ -389,19 +390,19 @@ order by t2.Date
 
 select*from #tmp3
 union all
-select ''Total'' ,sum(Loading), sum(Balance),'+@col2+' from #tmp3
+select ''Total'' ,sum(Loading),sum(Shortage), sum(Balance),'+@col2+' from #tmp3
 '
 exec (@sql)
 
 if @sql is null
 begin
-	select Date='',Loading=null,Balance=null,[ ]=''
+	select Date='',Loading=null,Shortage = null,Balance=null,[ ]=''
 end
 
 drop table #tmp,#tmp2,#tmp2_0
 ";
                 DataTable ftySummarydt;
-                DualResult dual = MyUtility.Tool.ProcessWithDatatable(this.dtAllData[1], "FtyGroup,Date,ID,OrderCPU,SewingOutputCPU,OutputDate", sqlsum, out ftySummarydt);
+                DualResult dual = MyUtility.Tool.ProcessWithDatatable(this.dtAllData[1], "FtyGroup,Date,ID,OrderCPU,SewingOutputCPU,OutputDate,OrderShortageCPU", sqlsum, out ftySummarydt);
                 if (!dual)
                 {
                     return dual;
@@ -423,7 +424,7 @@ for xml path('')
 declare @sql nvarchar(max)=N'
 select  a.*,'+@col+N'
 into #tmp3_junk
-from(select Date=''Cancel order'',Loading=null,Balance=null)a
+from(select Date=''Cancel order'',Loading=null,Shortage = null,Balance=null)a
 outer apply (
 	select*
 	from(
@@ -441,7 +442,7 @@ select*from #tmp3_junk
 exec (@sql)
 if @sql is null
 begin
-	select Date='Cancel order',Loading=null,Balance=null
+	select Date='Cancel order',Loading=null,Shortage = null,Balance=null
 end
 drop table #tmp
 ";
@@ -514,7 +515,7 @@ drop table #tmp
                 int i = 1;
                 foreach (DataColumn col in this.Summarydt[j - 1].Columns)
                 {
-                    if (i > 3)
+                    if (i > 4)
                     {
                         worksheet.Cells[4, i] = col.ColumnName;
                     }
@@ -523,7 +524,7 @@ drop table #tmp
                 }
 
                 i--;
-                worksheet.get_Range((Excel.Range)worksheet.Cells[3, 4], (Excel.Range)worksheet.Cells[3, i]).Merge(false);
+                worksheet.get_Range((Excel.Range)worksheet.Cells[3, 5], (Excel.Range)worksheet.Cells[3, i]).Merge(false);
                 worksheet.get_Range((Excel.Range)worksheet.Cells[3, 1], (Excel.Range)worksheet.Cells[this.Summarydt[j - 1].Rows.Count + 4, i]).Borders.Weight = 3; // 設定全框線
 
                 MyUtility.Excel.CopyToXls(this.Detaildt[j - 1], string.Empty, xltfile: excelFile, headerRow: 1, excelApp: excelApp, wSheet: excelApp.Sheets[j * 2], showExcel: false, DisplayAlerts_ForSaveFile: true);
@@ -549,15 +550,16 @@ drop table #tmp
                 worksheet.Columns[14].ColumnWidth = 13.38;
                 worksheet.Columns[15].ColumnWidth = 11.88;
                 worksheet.Columns[16].ColumnWidth = 15.25;
-                worksheet.Columns[17].ColumnWidth = 25.75;
-                worksheet.Columns[18].ColumnWidth = 16.38;
-                worksheet.Columns[19].ColumnWidth = 17.5;
-                worksheet.Columns[20].ColumnWidth = 18.13;
-                worksheet.Columns[21].ColumnWidth = 8;
-                worksheet.Columns[22].ColumnWidth = 22;
-                worksheet.Columns[23].ColumnWidth = 16.38;
-                worksheet.Columns[24].ColumnWidth = 6.5;
-                worksheet.Columns[25].ColumnWidth = 19.88;
+                worksheet.Columns[17].ColumnWidth = 15.25;
+                worksheet.Columns[18].ColumnWidth = 25.75;
+                worksheet.Columns[19].ColumnWidth = 16.38;
+                worksheet.Columns[20].ColumnWidth = 17.5;
+                worksheet.Columns[21].ColumnWidth = 18.13;
+                worksheet.Columns[22].ColumnWidth = 8;
+                worksheet.Columns[23].ColumnWidth = 22;
+                worksheet.Columns[24].ColumnWidth = 16.38;
+                worksheet.Columns[25].ColumnWidth = 6.5;
+                worksheet.Columns[26].ColumnWidth = 19.88;
             }
 
             excelApp.Visible = true;
