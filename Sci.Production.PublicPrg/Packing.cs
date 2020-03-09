@@ -643,13 +643,25 @@ inner join Order_QtyShip_Detail oqd with(nolock) on oqd.ID = x.OrderID and oqd.S
 select distinct msg = concat(oqd.ID, ' (', oqd.Seq, ')')
 from #tmpPacking p
 left join #tmpOrderShip oqd with(nolock) on oqd.id = p.OrderID and oqd.Seq = p.OrderShipmodeSeq and p.Article = oqd.Article and p.SizeCode = oqd.SizeCode
-where isnull(p.ShipQty,0) > isnull(oqd.Qty,0)
+OUTER APPLY(
+	select [DiffQty]=isnull(DiffQty,0) 
+	from InvAdjust_Qty iq WITH (NOLOCK) 
+	inner join InvAdjust i WITH (NOLOCK) on iq.ID = i.id 
+	where i.orderid =  p.OrderID AND iq.Article= p.Article AND iq.Article= p.Article  AND iq.SizeCode= p.SizeCode 
+)TPEAdjust ----出貨數必須加上台北端財務可能調整出貨數量，因此必須納入考量(若是減少則是負數，因此用加法即可)
+where isnull(p.ShipQty,0) + TpeAdjust.DiffQty > isnull(oqd.Qty,0)
 ";
             string sqlB = sqlCmd + $@"
 select distinct msg = concat(oqd.ID, ' (', oqd.Seq, ')')
 from #tmpOrderShip oqd
 left join #tmpPacking p with(nolock) on oqd.id = p.OrderID and oqd.Seq = p.OrderShipmodeSeq and p.Article = oqd.Article and p.SizeCode = oqd.SizeCode
-where isnull(p.ShipQty,0) < isnull(oqd.Qty,0)
+OUTER APPLY(
+	select [DiffQty]=isnull(DiffQty,0) 
+	from InvAdjust_Qty iq WITH (NOLOCK) 
+	inner join InvAdjust i WITH (NOLOCK) on iq.ID = i.id 
+	where i.orderid =  p.OrderID AND iq.Article= p.Article AND iq.Article= p.Article  AND iq.SizeCode= p.SizeCode 
+)TpeAdjust  ----出貨數必須加上台北端財務可能調整出貨數量，因此必須納入考量(若是減少則是負數，因此用加法即可)
+where isnull(p.ShipQty,0) + TpeAdjust.DiffQty < isnull(oqd.Qty,0)
 ";
 
             DataTable dt;
