@@ -71,27 +71,40 @@
             this.btmcont.Controls.SetChildIndex(this.prev, 0);
             this.btmcont.Controls.SetChildIndex(this.btnAutoPick, 0);
             // 
+            // append
+            // 
+            this.append.TabIndex = 1;
+            // 
             // save
             // 
             this.save.Location = new System.Drawing.Point(838, 5);
+            this.save.TabIndex = 7;
             this.save.Click += new System.EventHandler(this.save_Click);
             // 
             // undo
             // 
             this.undo.Location = new System.Drawing.Point(918, 5);
+            this.undo.TabIndex = 8;
+            // 
+            // revise
+            // 
+            this.revise.TabIndex = 2;
             // 
             // delete
             // 
+            this.delete.TabIndex = 3;
             this.delete.Click += new System.EventHandler(this.delete_Click);
             // 
             // next
             // 
             this.next.Location = new System.Drawing.Point(783, 5);
+            this.next.TabIndex = 6;
             this.next.Visible = false;
             // 
             // prev
             // 
             this.prev.Location = new System.Drawing.Point(728, 5);
+            this.prev.TabIndex = 5;
             this.prev.Visible = false;
             // 
             // labelSPNo
@@ -292,7 +305,7 @@
             this.btnAutoPick.Location = new System.Drawing.Point(642, 5);
             this.btnAutoPick.Name = "btnAutoPick";
             this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
-            this.btnAutoPick.TabIndex = 97;
+            this.btnAutoPick.TabIndex = 4;
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
             this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);

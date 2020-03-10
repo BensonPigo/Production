@@ -136,7 +136,7 @@
             this.btnCopyQTY.Location = new System.Drawing.Point(12, 10);
             this.btnCopyQTY.Name = "btnCopyQTY";
             this.btnCopyQTY.Size = new System.Drawing.Size(93, 30);
-            this.btnCopyQTY.TabIndex = 2;
+            this.btnCopyQTY.TabIndex = 1;
             this.btnCopyQTY.Text = "Copy QTY";
             this.btnCopyQTY.UseVisualStyleBackColor = true;
             this.btnCopyQTY.Click += new System.EventHandler(this.btnSet_Click);
@@ -147,7 +147,7 @@
             this.btnCancel.Location = new System.Drawing.Point(692, 10);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 30);
-            this.btnCancel.TabIndex = 1;
+            this.btnCancel.TabIndex = 3;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -158,7 +158,7 @@
             this.btnSave.Location = new System.Drawing.Point(606, 10);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 30);
-            this.btnSave.TabIndex = 0;
+            this.btnSave.TabIndex = 2;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
