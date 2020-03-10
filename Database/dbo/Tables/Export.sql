@@ -68,6 +68,11 @@
     [NonDeclare]          BIT             DEFAULT ((0)) NOT NULL,
     [FormE]               BIT             DEFAULT ((0)) NOT NULL,
     [SQCS]                BIT             DEFAULT ((0)) NOT NULL,
+    [FtyTruckFee] NUMERIC(10, 2) NOT NULL DEFAULT ((0)), 
+    [FtyTrucker] VARCHAR(6) NOT NULL DEFAULT (''), 
+    [CustomOT] BIT NOT NULL DEFAULT ((0)), 
+    [CustomOTRespFty1] VARCHAR(8) NOT NULL DEFAULT (''), 
+    [CustomOTRespFty2] VARCHAR(8) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Export] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
