@@ -521,7 +521,7 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty",
             }
             #endregion
 
-            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            foreach (DataRow dr in this.DetailDatas)
             {
                 #region 刪除表身Qty為空白的資料
                 if (MyUtility.Check.Empty(dr["ShipQty"]))
