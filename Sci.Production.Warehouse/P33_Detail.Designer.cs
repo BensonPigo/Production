@@ -74,6 +74,7 @@
             // save
             // 
             this.save.Location = new System.Drawing.Point(838, 5);
+            this.save.Click += new System.EventHandler(this.save_Click);
             // 
             // undo
             // 

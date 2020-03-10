@@ -16,6 +16,7 @@ namespace Sci.Production.Warehouse
     public partial class P33_Detail : Sci.Win.Subs.Input8A
     {
         public DataTable dtIssueBreakDown { get; set; }
+        public bool combo, isSave;
 
         public P33_Detail()
         {
@@ -151,7 +152,15 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
                 return false;
             }
             return base.OnSaveBefore();
-        } 
+        }
+
+        protected override bool OnUndo()
+        {
+            this.isSave = false;
+            return base.OnUndo();
+        }
+
+        
 
         private void btnAutoPick_Click(object sender, EventArgs e)
         {
@@ -185,6 +194,11 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
             this.numIssueQty.Text = SumIssueQTY.ToString();
             //this.numVariance.Value = this.numBalanceQty.Value - this.numIssueQty.Value;
             CurrentDetailData["IssueQty"] = MyUtility.Check.Empty(subDT.Compute("Sum(Qty)", "")) ? 0 : (decimal)subDT.Compute("Sum(Qty)", "");
+        }
+
+        private void save_Click(object sender, EventArgs e)
+        {
+            this.isSave = true;
         }
 
         private void delete_Click(object sender, EventArgs e)

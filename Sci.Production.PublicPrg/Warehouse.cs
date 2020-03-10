@@ -1095,7 +1095,7 @@ where   poid = '{1}'
             decimal UseQtyByStockUnit = MyUtility.Check.Empty(material["Use Qty By Stock Unit"]) ? 0 : decimal.Parse(material["Use Qty By Stock Unit"].ToString());
 
             // 需求量 - 已發累計量 = 待發的量
-            request = UseQtyByStockUnit - AccuIssued;
+            request = UseQtyByStockUnit;// - AccuIssued;
 
 
             // 取得所有項次號(欄位名稱跟Issue_Detail一樣)

@@ -517,18 +517,60 @@ AND iis.SuppColor <> ''
 
                 subform.dtIssueBreakDown = this.dtIssueBreakDown;
                 DoSubForm.IsSupportUpdate = false;
-                OpenSubDetailPage();
 
-
-                DataTable dt;
+                #region keep SubDt
+                /*
+                 * 如果要實現 Reject 第三層
+                 * 必須先 keep 原始資料
+                 */
+                Dictionary<DataRow, DataTable> originSub = new Dictionary<DataRow, DataTable>();
                 foreach (DataRow dr in DetailDatas)
                 {
-                    if (GetSubDetailDatas(dr, out dt))
+                    if (dr.RowState != DataRowState.Deleted)
                     {
-                        sum_subDetail(dr, dt);
+                        DataTable subDt;
+                        GetSubDetailDatas(dr, out subDt);
+                        //if (subDt == null)
+                        //{
+                        //    return;
+                        //}
+                        DataTable keepDt = subDt.Clone();
+
+                        foreach (DataRow subDr in subDt.Rows)
+                        {
+                            keepDt.ImportRow(subDr);
+                        }
+                        originSub.Add(dr, keepDt);
                     }
                 }
+                #endregion
 
+                OpenSubDetailPage();
+
+                DataTable FinalSubDt;
+                GetSubDetailDatas(out FinalSubDt);
+                if (!subform.isSave)
+                {
+                }
+
+                DataTable detail = (DataTable)detailgridbs.DataSource;
+                foreach (DataRow dr in detail.Rows)
+                {
+                    if (dr.RowState != DataRowState.Deleted)
+                    {
+                        GetSubDetailDatas(dr, out FinalSubDt);
+
+                        dr["Qty"]= Math.Round(FinalSubDt.AsEnumerable()
+                                                    .Where(row => row.RowState!=DataRowState.Deleted && !MyUtility.Check.Empty(row["Qty"]))
+                                                    .Sum(row => Convert.ToDouble(row["Qty"].ToString()))
+                                                    , 2);
+                        dr["IssueQty"] = Math.Round(FinalSubDt.AsEnumerable()
+                                                    .Where(row => row.RowState != DataRowState.Deleted && !MyUtility.Check.Empty(row["Qty"]))
+                                                    .Sum(row => Convert.ToDouble(row["Qty"].ToString()))
+                                                    , 2);
+
+                    }
+                }
             };
             #endregion
 
@@ -715,39 +757,23 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
 
             //將Issue_Detail的數量更新Issue_Summary
             DataTable subDetail;
-            foreach (DataRow detailRow in this.DetailDatas)
+            DataTable detail = (DataTable)detailgridbs.DataSource;
+            foreach (DataRow detailRow in detail.Rows)
             {
+
                 this.GetSubDetailDatas(detailRow, out subDetail);
                 if (subDetail.Rows.Count == 0)
                 {
                     detailRow["Qty"] = 0;
+                    detailRow["IssueQty"] = 0;
                 }
                 else
                 {
                     decimal detailQty = subDetail.AsEnumerable().Sum(s => s.RowState != DataRowState.Deleted ? (decimal)s["Qty"] : 0);
+                    detailRow["IssueQty"] = detailQty;
+                    detailRow["Qty"] = detailQty;
                 }
             }
-            /*
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                string SCIRefno = dr["SCIRefno"].ToString();
-                string SuppColor = dr["SuppColor"].ToString();
-
-                if (MyUtility.Check.Seek($@"SELECT 1 FROM Issue_Summary WITH(NOLOCK) WHERE ID = '{CurrentMaintain["ID"]}' AND SCIRefno='{SCIRefno}' AND SuppColor='{SuppColor}' "))
-                {
-                    DBProxy.Current.Execute(null, $@"DELETE FROM Issue_Detail WHERE ID = '{CurrentMaintain["ID"]}' --AND SCIRefno='{SCIRefno}' AND SuppColor='{SuppColor}'");
-                    DBProxy.Current.Execute(null, $@"DELETE FROM Issue_Summary WHERE ID = '{CurrentMaintain["ID"]}'-- AND SCIRefno='{SCIRefno}' AND SuppColor='{SuppColor}'");
-                    //this.GetSubDetailDatas(dr, out subDetail);
-
-                    //foreach (DataRow subRow in subDetail.Rows)
-                    //{
-
-                    //}
-                    //dr.RejectChanges();
-                    //dr.SetModified();
-
-                }
-            }*/
 
             return base.ClickSaveBefore();
         }
@@ -1423,7 +1449,7 @@ DROP TABLE #tmp
                     string OutputQty = key["Output Qty(Garment)"].ToString();
                     decimal balance = (decimal)key["Bulk Balance(Stock Unit)"];
                     string FtyInventoryUkey = key["FtyInventoryUkey"].ToString();
-                    string AccuIssued = "0.00";
+                    string AccuIssued = key["AccuIssued"].ToString();
 
                     DataRow nRow = _detail.NewRow();
                     nRow["ID"] = CurrentMaintain["ID"];
@@ -1441,10 +1467,11 @@ DROP TABLE #tmp
                     nRow["Stock Unit Desc."] = StockUnitDesc;
                     nRow["OutputQty"] = OutputQty;
                     nRow["Balance(Stock Unit)"] = balance;
+                    nRow["AccuIssued"] = AccuIssued;
 
                     if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
                     {
-                        nRow["AccuIssued"] = 0.00;
+                        //nRow["AccuIssued"] = 0.00;
                     }
                     else
                     {
@@ -1453,7 +1480,7 @@ select isnull(sum([IS].qty),0)
 from dbo.issue I WITH (NOLOCK) 
 inner join dbo.Issue_Summary [IS] WITH (NOLOCK) on I.id = [IS].Id 
 where I.type = 'E' and I.Status = 'Confirmed' 
-and [IS].Poid='{POID}' AND [IS].SCIRefno='{SCIRefno}' AND [IS].SuppColor='{SuppColor}' and i.[EditDate]>'{Convert.ToDateTime(CurrentMaintain["AddDate"]).ToShortDateString()}'
+and [IS].Poid='{POID}' AND [IS].SCIRefno='{SCIRefno}' AND [IS].SuppColor='{SuppColor}' and i.[EditDate]<'{Convert.ToDateTime(CurrentMaintain["AddDate"]).ToShortDateString()}'
 ");
 
                         nRow["AccuIssued"] = Convert.ToDecimal(AccuIssued);
@@ -1475,6 +1502,7 @@ and [IS].Poid='{POID}' AND [IS].SCIRefno='{SCIRefno}' AND [IS].SuppColor='{SuppC
                     }
                     //_subDetail.AcceptChanges();
                     _detail.Rows[_detail.Rows.Count - 1]["IssueQty"] = totalQty;
+                    _detail.Rows[_detail.Rows.Count - 1]["Qty"] = totalQty;
                 }
 
                 detailgrid.SelectRowToNext();
@@ -1519,7 +1547,7 @@ SELECT  DISTINCT
 					from dbo.issue I WITH (NOLOCK) 
 					inner join dbo.Issue_Summary [IS] WITH (NOLOCK) on I.id = [IS].Id 
 					where I.type = 'E' and I.Status = 'Confirmed' 
-					and [IS].Poid=psd.id AND [IS].SCIRefno=PSD.SCIRefno AND [IS].SuppColor=PSD.SuppColor and i.[EditDate]>getdate()
+					and [IS].Poid=psd.id AND [IS].SCIRefno=PSD.SCIRefno AND [IS].SuppColor=PSD.SuppColor and i.[EditDate]<GETDATE()
 				)
 , [IssueQty]=0.00
 , [Use Qty By Stock Unit]=0.00
