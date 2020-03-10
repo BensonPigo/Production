@@ -2439,10 +2439,25 @@ ELSE
                 return;
             }
 
-            string sqlchk = $@"select ShipQty=sum(ShipQty) from PackingList_Detail where OrderID = '{this.CurrentMaintain["OrderID"]}' and OrderShipmodeSeq = '{this.CurrentMaintain["OrderShipmodeSeq"]}' ";
-
+            string sqlchk = $@"
+select ShipQty =
+isnull((select sum(QtyPerCTN)
+from PackingList_Detail with (nolock) where OrderID = '{this.CurrentMaintain["OrderID"].ToString()}' and ID <> '{this.CurrentMaintain["ID"].ToString()}' ),0)
++
+isnull((select sum(iq.DiffQty)
+FROm InvAdjust i
+INNER JOIN InvAdjust_Qty iq ON i.ID = iq.ID
+where OrderID = '{this.CurrentMaintain["OrderID"].ToString()}'),0)
+";
             int shipQty = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlchk));
-            if (shipQty >= this.numOrderQty.Value)
+
+            sqlchk = $@"
+select Qty=isnull(sum(Qty),0)
+from Order_QtyShip_Detail with (nolock) where ID = '{this.CurrentMaintain["OrderID"].ToString()}'
+";
+            int orderQty = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlchk));
+
+            if (shipQty >= orderQty)
             {
                 string pdids = MyUtility.GetValue.Lookup($"select id = stuff((select concat(',',id)from (select distinct id from PackingList_Detail where OrderID = '{this.CurrentMaintain["OrderID"]}') a for xml path('')),1,1,'')");
                 MyUtility.Msg.WarningBox($"SP# {this.CurrentMaintain["OrderID"]} ship QTY can not more than total Qrder QTY! PackingList ID {pdids}");
@@ -2459,8 +2474,8 @@ from PackingList_Detail with (nolock) where OrderID = '{this.CurrentMaintain["Or
                                             OrderShipmodeSeq = '{this.CurrentMaintain["OrderShipmodeSeq"].ToString()}' and
                                             ID <> '{this.CurrentMaintain["ID"].ToString()}' 
 
-select @shipQty = Qty
-from Order_QtyShip with (nolock) where ID = '{this.CurrentMaintain["OrderID"].ToString()}' and Seq = '{this.CurrentMaintain["OrderShipmodeSeq"].ToString()}'
+select @shipQty = sum (Qty)
+from Order_QtyShip_Detail with (nolock) where ID = '{this.CurrentMaintain["OrderID"].ToString()}' and Seq = '{this.CurrentMaintain["OrderShipmodeSeq"].ToString()}'
 
 select [PKQty] = @PKQty,[shipQty] = @shipQty
 
