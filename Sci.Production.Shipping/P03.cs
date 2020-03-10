@@ -407,5 +407,37 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
         {
             new P03_COInformation(this.CurrentMaintain["ID"].ToString()).ShowDialog();
         }
+
+        private void TxtCustomOTRespFty1_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.EditMode)
+            {
+                this.CustomOTCheck();
+            }
+        }
+
+        private void TxtCustomOTRespFty2_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.EditMode)
+            {
+                this.CustomOTCheck();
+            }
+        }
+
+        private void CustomOTCheck()
+        {
+            /*
+             * 在寫入CurrentMaintain當下 會觸發TextboxChanged 導致原值被改變。
+             * 只好先將原值存下，並且寫回CurrentMaintain。
+             */
+            bool chkChecked = !MyUtility.Check.Empty(this.txtCustomOTRespFty1.Text) ||
+                              !MyUtility.Check.Empty(this.txtCustomOTRespFty2.Text);
+            string customOTRespFty1 = this.txtCustomOTRespFty1.Text;
+            string customOTRespFty2 = this.txtCustomOTRespFty2.Text;
+            this.CurrentMaintain["CustomOTRespFty1"] = customOTRespFty1;
+            this.CurrentMaintain["CustomOTRespFty2"] = customOTRespFty2;
+            this.CurrentMaintain["CustomOT"] = chkChecked;
+            this.CurrentMaintain.EndEdit();
+        }
     }
 }
