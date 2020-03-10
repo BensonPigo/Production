@@ -104,7 +104,7 @@ namespace Sci.Production.Packing
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' AND Type = 'B' and QueryDate >= dateadd(year,-1,getdate())";
+            this.DefaultFilter = "QueryDate >= dateadd(year,-1,getdate()) AND MDivisionID = '" + Sci.Env.User.Keyword + "' AND Type = 'B'";
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
             this.ReloadTimeoutSeconds = 900;
@@ -216,7 +216,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                     }
                     else
                     {
-                        this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' AND Type = 'B' and QueryDate >= dateadd(year,-1,getdate())";
+                        this.DefaultFilter = "QueryDate >= dateadd(year,-1,getdate()) AND MDivisionID = '" + Sci.Env.User.Keyword + "' AND Type = 'B'";
                     }
 
                     break;
