@@ -305,8 +305,7 @@ SELECT
              End
         ,pullOutDate = iif(isnull(t.isDevSample,0) = 1, CONVERT(char(10), pd2.PulloutDate, 20), CONVERT(char(10), p.PulloutDate, 111))
 		,Shipmode = t.ShipmodeID
-		,P = (select ctP = count(ID) from Pullout_Detail p2 where p2.OrderID = t.OrderID and p2.OrderShipmodeSeq = t.Seq and p2.ShipQty > 0)  --未出貨,出貨次數=0
-            --與trade撈取方式不同,count有幾筆Pullout_Detail為出貨次數, 此處先by OrderID和OrderShipmodeSeq 且ShipQty,因#tmp_main資料準備時,OrderShipmodeSeq 不一定會撈全部, 下方匯出Excel時會再只by OrderID 加總
+		,P = (select count(1)from(select distinct ID,OrderID,OrderShipmodeSeq from Pullout_Detail p2 where p2.OrderID = t.OrderID and p2.ShipQty > 0)x )  --未出貨,出貨次數=0 --不論這OrderID的OrderShipmodeSeq有沒有被撈出來, 都要計算
 		,t.GMTComplete 
 		,t.ReasonID
 		,t.ReasonName   
@@ -603,13 +602,13 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     PullQty = row.Field<int>("OnTimeQty"),
                     FailQty = row.Field<int>("FailQty"),
                     P = row.Field<int>("P")
-                }).GroupBy(group => group.PoId).Select(g => new
+                }).GroupBy(group => new { group.PoId, group.P }).Select(g => new
                 {
-                    PoID = g.Key,
+                    PoID = g.Key.PoId,
                     sumOrderQty = g.Sum(r => r.OrderQty),
                     sumPullQty = g.Sum(r => r.PullQty),
                     sumFailQty = g.Sum(r => r.FailQty),
-                    sumP = g.Sum(r => r.P)
+                    sumP = g.Key.P // 出貨次數, 在SQL撈取時改為OrderID去計算次數, 不論OrderShipmodeSeq有沒有被撈出來
                 }).ToArray();
 
                 IDictionary<string, IList<DataRow>> dictionary_TradeHis_OrderIDs = dtTradeHis_Order.ToDictionaryList((x) => x.Val<string>("ID"));
