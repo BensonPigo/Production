@@ -99,10 +99,10 @@
             this.btnCOInfo = new Sci.Win.UI.Button();
             this.chkCustomOT = new Sci.Win.UI.CheckBox();
             this.lbTruckFee = new Sci.Win.UI.Label();
-            this.displayTruckFree = new Sci.Win.UI.DisplayBox();
             this.lbRespFty = new Sci.Win.UI.Label();
             this.txtCustomOTRespFty1 = new Sci.Production.Class.txtfactory();
             this.txtCustomOTRespFty2 = new Sci.Production.Class.txtfactory();
+            this.numFtyTruckFee = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -119,10 +119,10 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.numFtyTruckFee);
             this.masterpanel.Controls.Add(this.txtCustomOTRespFty2);
             this.masterpanel.Controls.Add(this.txtCustomOTRespFty1);
             this.masterpanel.Controls.Add(this.lbRespFty);
-            this.masterpanel.Controls.Add(this.displayTruckFree);
             this.masterpanel.Controls.Add(this.lbTruckFee);
             this.masterpanel.Controls.Add(this.chkCustomOT);
             this.masterpanel.Controls.Add(this.btnCOInfo);
@@ -265,10 +265,10 @@
             this.masterpanel.Controls.SetChildIndex(this.btnCOInfo, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkCustomOT, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbTruckFee, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayTruckFree, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbRespFty, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCustomOTRespFty1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCustomOTRespFty2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numFtyTruckFee, 0);
             // 
             // detailpanel
             // 
@@ -1113,16 +1113,6 @@
             this.lbTruckFee.TabIndex = 69;
             this.lbTruckFee.Text = "Truck Fee";
             // 
-            // displayTruckFree
-            // 
-            this.displayTruckFree.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayTruckFree.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FtyTruckFee", true));
-            this.displayTruckFree.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayTruckFree.Location = new System.Drawing.Point(864, 195);
-            this.displayTruckFree.Name = "displayTruckFree";
-            this.displayTruckFree.Size = new System.Drawing.Size(118, 23);
-            this.displayTruckFree.TabIndex = 71;
-            // 
             // lbRespFty
             // 
             this.lbRespFty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -1163,6 +1153,29 @@
             this.txtCustomOTRespFty2.Size = new System.Drawing.Size(76, 23);
             this.txtCustomOTRespFty2.TabIndex = 70;
             this.txtCustomOTRespFty2.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCustomOTRespFty2_Validating);
+            // 
+            // numFtyTruckFee
+            // 
+            this.numFtyTruckFee.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numFtyTruckFee.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FtyTruckFee", true));
+            this.numFtyTruckFee.DecimalPlaces = 2;
+            this.numFtyTruckFee.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numFtyTruckFee.IsSupportEditMode = false;
+            this.numFtyTruckFee.Location = new System.Drawing.Point(864, 195);
+            this.numFtyTruckFee.Name = "numFtyTruckFee";
+            this.numFtyTruckFee.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numFtyTruckFee.ReadOnly = true;
+            this.numFtyTruckFee.Size = new System.Drawing.Size(100, 23);
+            this.numFtyTruckFee.TabIndex = 71;
+            this.numFtyTruckFee.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // P03
             // 
@@ -1277,11 +1290,11 @@
         private Win.UI.Label labelFormE;
         private Win.UI.CheckBox chkSQCS;
         private Win.UI.Button btnCOInfo;
-        private Win.UI.DisplayBox displayTruckFree;
         private Win.UI.Label lbTruckFee;
         private Win.UI.CheckBox chkCustomOT;
         private Win.UI.Label lbRespFty;
         private Class.txtfactory txtCustomOTRespFty2;
         private Class.txtfactory txtCustomOTRespFty1;
+        private Win.UI.NumericBox numFtyTruckFee;
     }
 }
