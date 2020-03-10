@@ -157,7 +157,7 @@ o.Category,
 o.SubconInType,
 o.IsForecast,
 o.LocalOrder,
-o.FtyGroup,
+o.FactoryID,
 f.IsProduceFty
 into #tmpBase
 from Orders o with(nolock)
@@ -183,14 +183,14 @@ o.Category,
 o.SubconInType,
 o.IsForecast,
 o.LocalOrder,
-o.FtyGroup,
+o.FactoryID,
 f.IsProduceFty,
 gcRate.CpuRate,
 GetPulloutData.Qty,
 o.GMTComplete
 
 select  ID,
-        FtyGroup,
+        FactoryID,
         Date,
         OutputDate,
         OrderCPU,
@@ -217,7 +217,7 @@ group by ID,Date,OrderCPU,OrderShortageCPU
 
 select
 	o.MDivisionID,
-	o.FtyGroup,
+	o.FactoryID,
 	o.BuyerDelivery,
 	o.SciDelivery,
 	tb.Date,
@@ -249,7 +249,7 @@ from #tmpBaseByOrderID tb with(nolock)
 inner join Orders o with(nolock) on o.id = tb.ID
 left join CDCode with(nolock) on CDCode.ID = o.CdCodeID
 
-select  FtyGroup,
+select  FactoryID,
         [Date] = SUBSTRING(Date,1,4)+'/'+SUBSTRING(Date,5,6),
         ID,
         OutputDate,
@@ -259,9 +259,9 @@ select  FtyGroup,
         SewingOutputCPU
 from    #tmpBaseBySource
 
-select  FtyGroup,OutputDate,[SewingOutputCPU] = sum(SewingOutputCPU) * -1
+select  FactoryID,OutputDate,[SewingOutputCPU] = sum(SewingOutputCPU) * -1
 from    #tmpBase
-where   Junk=1 and OutputDate is not null group by FtyGroup,OutputDate
+where   Junk=1 and OutputDate is not null group by FactoryID,OutputDate
 
 drop table #tmpBase,#tmpBaseBySource,#tmpBaseByOrderID
 ";
@@ -323,11 +323,11 @@ drop table #tmpBase,#tmpBaseBySource,#tmpBaseByOrderID
                 return Result.F("Data not found!");
             }
 
-            List<string> ftys = this.dtAllData[0].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["FtyGroup"])).Select(s => MyUtility.Convert.GetString(s["FtyGroup"])).Distinct().ToList();
+            List<string> ftys = this.dtAllData[0].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["FactoryID"])).Select(s => MyUtility.Convert.GetString(s["FactoryID"])).Distinct().ToList();
 
             foreach (string fty in ftys)
             {
-                DataTable detail = this.dtAllData[0].Select($"FtyGroup = '{fty}'").CopyToDataTable();
+                DataTable detail = this.dtAllData[0].Select($"FactoryID = '{fty}'").CopyToDataTable();
                 this.Detaildt.Add(detail);
 
                 #region summary
@@ -335,7 +335,7 @@ drop table #tmpBase,#tmpBaseBySource,#tmpBaseByOrderID
 select Date,ID,OrderCPU,BalanceCPU=OrderCPU-sum(SewingOutputCPU),OrderShortageCPU
 into #tmp2_0
 from #tmp
-where Ftygroup = '{fty}'
+where FactoryID = '{fty}'
 group by Date,ID,OrderCPU,OrderShortageCPU
 
 select Date,OrderCPU=sum(OrderCPU),BalanceCPU=sum(BalanceCPU),[OrderShortageCPU] = sum(OrderShortageCPU)
@@ -349,7 +349,7 @@ from(
 	select distinct OutputDate
 	from #tmp
 	where OutputDate<>''
-    and Ftygroup = '{fty}'
+    and FactoryID = '{fty}'
 )x
 order by OutputDate
 for xml path('')
@@ -361,7 +361,7 @@ from(
 	select distinct OutputDate
 	from #tmp
 	where OutputDate<>''
-    and Ftygroup = '{fty}'
+    and FactoryID = '{fty}'
 )x
 order by OutputDate
 for xml path('')
@@ -382,7 +382,7 @@ inner join
 		SewingOutputCPU,
 		OutputDate
 		from #tmp t
-        where Ftygroup = ''{fty}''
+        where FactoryID = ''{fty}''
 	)x
 	pivot(sum(SewingOutputCPU) for OutputDate in('+@col+N'))xx
 )xxx on t2.Date=xxx.Date
@@ -402,7 +402,7 @@ end
 drop table #tmp,#tmp2,#tmp2_0
 ";
                 DataTable ftySummarydt;
-                DualResult dual = MyUtility.Tool.ProcessWithDatatable(this.dtAllData[1], "FtyGroup,Date,ID,OrderCPU,SewingOutputCPU,OutputDate,OrderShortageCPU", sqlsum, out ftySummarydt);
+                DualResult dual = MyUtility.Tool.ProcessWithDatatable(this.dtAllData[1], "FactoryID,Date,ID,OrderCPU,SewingOutputCPU,OutputDate,OrderShortageCPU", sqlsum, out ftySummarydt);
                 if (!dual)
                 {
                     return dual;
@@ -415,7 +415,7 @@ from(
 	select distinct OutputDate
 	from #tmp
 	where OutputDate<>''
-    and Ftygroup = '{fty}'
+    and FactoryID = '{fty}'
 )x
 order by OutputDate
 for xml path('')
@@ -432,7 +432,7 @@ outer apply (
 			SewingOutputCPU,
 			OutputDate
 		from #tmp t
-        where Ftygroup = ''{fty}''
+        where FactoryID = ''{fty}''
 	)x
 	pivot(sum(SewingOutputCPU) for OutputDate in('+@col+N'))xx
 )b
@@ -508,9 +508,9 @@ drop table #tmp
             for (int j = 1; j <= this.Detaildt.Count; j++)
             {
                 worksheet = excelApp.ActiveWorkbook.Worksheets[j * 2 - 1];
-                worksheet.Name = MyUtility.Convert.GetString(this.Detaildt[j - 1].Rows[0]["FtyGroup"]) + "-Summary";
+                worksheet.Name = MyUtility.Convert.GetString(this.Detaildt[j - 1].Rows[0]["FactoryID"]) + "-Summary";
                 MyUtility.Excel.CopyToXls(this.Summarydt[j - 1], string.Empty, xltfile: excelFile, headerRow: 4, excelApp: excelApp, wSheet: excelApp.Sheets[j * 2 - 1], showExcel: false, DisplayAlerts_ForSaveFile: true);
-                worksheet.Cells[1, 1] = "Fty:" + MyUtility.Convert.GetString(this.Detaildt[j - 1].Rows[0]["FtyGroup"]);
+                worksheet.Cells[1, 1] = "Fty:" + MyUtility.Convert.GetString(this.Detaildt[j - 1].Rows[0]["FactoryID"]);
 
                 int i = 1;
                 foreach (DataColumn col in this.Summarydt[j - 1].Columns)
@@ -533,7 +533,7 @@ drop table #tmp
                 worksheet.Columns[1].ColumnWidth = 12;
 
                 worksheet = excelApp.ActiveWorkbook.Worksheets[j * 2]; // 取得工作表
-                worksheet.Name = MyUtility.Convert.GetString(this.Detaildt[j - 1].Rows[0]["FtyGroup"]) + "-Balance Detail";
+                worksheet.Name = MyUtility.Convert.GetString(this.Detaildt[j - 1].Rows[0]["FactoryID"]) + "-Balance Detail";
                 worksheet.Columns[1].ColumnWidth = 5.5;
                 worksheet.Columns[2].ColumnWidth = 11.13;
                 worksheet.Columns[3].ColumnWidth = 11.88;
