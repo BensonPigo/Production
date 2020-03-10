@@ -48,17 +48,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(435, 12);
-            this.print.TabIndex = 4;
+            this.print.TabIndex = 10;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(435, 48);
-            this.toexcel.TabIndex = 5;
+            this.toexcel.TabIndex = 11;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(435, 84);
-            this.close.TabIndex = 6;
+            this.close.TabIndex = 12;
             // 
             // buttonCustomized
             // 
@@ -93,7 +93,7 @@
             this.radioZ.Location = new System.Drawing.Point(3, 58);
             this.radioZ.Name = "radioZ";
             this.radioZ.Size = new System.Drawing.Size(35, 21);
-            this.radioZ.TabIndex = 1;
+            this.radioZ.TabIndex = 3;
             this.radioZ.TabStop = true;
             this.radioZ.Text = "Z";
             this.radioZ.UseVisualStyleBackColor = true;
@@ -105,7 +105,7 @@
             this.radioU_Left.Location = new System.Drawing.Point(3, 4);
             this.radioU_Left.Name = "radioU_Left";
             this.radioU_Left.Size = new System.Drawing.Size(73, 21);
-            this.radioU_Left.TabIndex = 0;
+            this.radioU_Left.TabIndex = 1;
             this.radioU_Left.TabStop = true;
             this.radioU_Left.Text = "U - Left";
             this.radioU_Left.UseVisualStyleBackColor = true;
@@ -125,7 +125,7 @@
             this.radioPanel2.Location = new System.Drawing.Point(181, 102);
             this.radioPanel2.Name = "radioPanel2";
             this.radioPanel2.Size = new System.Drawing.Size(111, 58);
-            this.radioPanel2.TabIndex = 1;
+            this.radioPanel2.TabIndex = 4;
             // 
             // radioAnnotation
             // 
@@ -134,7 +134,7 @@
             this.radioAnnotation.Location = new System.Drawing.Point(3, 30);
             this.radioAnnotation.Name = "radioAnnotation";
             this.radioAnnotation.Size = new System.Drawing.Size(94, 21);
-            this.radioAnnotation.TabIndex = 1;
+            this.radioAnnotation.TabIndex = 6;
             this.radioAnnotation.TabStop = true;
             this.radioAnnotation.Text = "Annotation";
             this.radioAnnotation.UseVisualStyleBackColor = true;
@@ -146,7 +146,7 @@
             this.radioDescription.Location = new System.Drawing.Point(3, 2);
             this.radioDescription.Name = "radioDescription";
             this.radioDescription.Size = new System.Drawing.Size(97, 21);
-            this.radioDescription.TabIndex = 0;
+            this.radioDescription.TabIndex = 5;
             this.radioDescription.TabStop = true;
             this.radioDescription.Text = "Description";
             this.radioDescription.UseVisualStyleBackColor = true;
@@ -157,7 +157,7 @@
             this.chkpage.Location = new System.Drawing.Point(16, 173);
             this.chkpage.Name = "chkpage";
             this.chkpage.Size = new System.Drawing.Size(162, 21);
-            this.chkpage.TabIndex = 98;
+            this.chkpage.TabIndex = 7;
             this.chkpage.Text = "Change page 2 at No";
             this.chkpage.UseVisualStyleBackColor = true;
             // 
@@ -178,7 +178,7 @@
             0,
             0});
             this.numpage.Size = new System.Drawing.Size(53, 23);
-            this.numpage.TabIndex = 2;
+            this.numpage.TabIndex = 8;
             this.numpage.Value = new decimal(new int[] {
             1,
             0,
@@ -195,7 +195,7 @@
             this.comboLanguage.Name = "comboLanguage";
             this.comboLanguage.OldText = "";
             this.comboLanguage.Size = new System.Drawing.Size(121, 24);
-            this.comboLanguage.TabIndex = 3;
+            this.comboLanguage.TabIndex = 9;
             // 
             // labLanguage
             // 
