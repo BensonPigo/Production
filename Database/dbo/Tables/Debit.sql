@@ -11,11 +11,11 @@
     [LCFNO]          VARCHAR (20)    CONSTRAINT [DF_Debit_LCFNO] DEFAULT ('') NULL,
     [LCFDate]        DATE            NULL,
     [EstPayDate]     DATE            NULL,
-    [Title]          NVARCHAR(30)    CONSTRAINT [DF_Debit_Title] DEFAULT ('') NULL,
-    [SendFrom]       NVARCHAR(40)    CONSTRAINT [DF_Debit_SendFrom] DEFAULT ('') NULL,
-    [Attn]           NVARCHAR(40)    CONSTRAINT [DF_Debit_Attn] DEFAULT ('') NULL,
-    [CC]             NVARCHAR(40)    CONSTRAINT [DF_Debit_CC] DEFAULT ('') NULL,
-    [Subject]        NVARCHAR(100)   CONSTRAINT [DF_Debit_Subject] DEFAULT ('') NULL,
+    [Title]          NVARCHAR (30)   CONSTRAINT [DF_Debit_Title] DEFAULT ('') NULL,
+    [SendFrom]       NVARCHAR (40)   CONSTRAINT [DF_Debit_SendFrom] DEFAULT ('') NULL,
+    [Attn]           NVARCHAR (40)   CONSTRAINT [DF_Debit_Attn] DEFAULT ('') NULL,
+    [CC]             NVARCHAR (40)   CONSTRAINT [DF_Debit_CC] DEFAULT ('') NULL,
+    [Subject]        NVARCHAR (100)  CONSTRAINT [DF_Debit_Subject] DEFAULT ('') NULL,
     [Handle]         VARCHAR (10)    CONSTRAINT [DF_Debit_Handle] DEFAULT ('') NULL,
     [SMR]            VARCHAR (10)    CONSTRAINT [DF_Debit_SMR] DEFAULT ('') NULL,
     [VoucherID]      VARCHAR (16)    CONSTRAINT [DF_Debit_TransID] DEFAULT ('') NULL,
@@ -48,9 +48,12 @@
     [EditName]       VARCHAR (10)    CONSTRAINT [DF_Debit_EditName] DEFAULT ('') NULL,
     [EditDate]       DATETIME        NULL,
     [SysDate]        DATETIME        NULL,
-    [ResponFTY] VARCHAR(8) NOT NULL DEFAULT (''), 
+    [ResponFTY]      VARCHAR (8)     DEFAULT ('') NOT NULL,
+    [SubName]        NVARCHAR (20)   DEFAULT ('') NULL,
     CONSTRAINT [PK_Debit] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -267,4 +270,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票編�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠傳票號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Debit', @level2type = N'COLUMN', @level2name = N'VoucherFactory';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'外發廠商名稱', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Debit', @level2type = N'COLUMN', @level2name = N'SubName';
 
