@@ -43,9 +43,9 @@ Begin try
 			into #tmp_Bundle_Detail_Art
 			from Bundle_Detail_Art bdr
 			where exists (select 1 from #tmp_Bundle where id = bdr.ID)
-
-			insert into Bundle_Detail_Art_History([Bundleno], [SubprocessId], [PatternCode], [ID])
-			select [Bundleno], [SubprocessId], [PatternCode], [ID]
+			
+			insert into Bundle_Detail_Art_History([Bundleno], [SubprocessId], [PatternCode], [ID],[PostSewingSubProcess],[NoBundleCardAfterSubprocess])
+			select [Bundleno], [SubprocessId], [PatternCode], [ID],[PostSewingSubProcess],[NoBundleCardAfterSubprocess]
 			from #tmp_Bundle_Detail_Art
 
 			delete from bdr
