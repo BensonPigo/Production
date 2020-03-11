@@ -145,6 +145,7 @@ namespace Sci.Production.Warehouse
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["FabricType"] = "A";
             CurrentMaintain["IssueDate"] = DateTime.Now;
+            this.txtLocalSupp1.TextBox1.ReadOnly = true;
         }
 
         // delete前檢查
@@ -167,6 +168,12 @@ namespace Sci.Production.Warehouse
                 return false;
             }
             return base.ClickEditBefore();
+        }
+
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            this.txtLocalSupp1.TextBox1.ReadOnly = true;
         }
 
         // Print - subreport
