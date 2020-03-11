@@ -638,18 +638,32 @@ from(
 	where 1=1 {where}
 )x
 inner join Order_QtyShip_Detail oqd with(nolock) on oqd.ID = x.OrderID and oqd.Seq =x.OrderShipmodeSeq
+
+----先將台北調整GROUP BY加總
+SELECT  i.orderid ,iq.Article ,iq.SizeCode ,i.OrderShipmodeSeq ,[DiffQty]=SUM(ISNULL(DiffQty,0) )
+INTO #TPEAdjust
+FROM InvAdjust i WITH (NOLOCK)
+INNER JOIN InvAdjust_Qty iq WITH (NOLOCK)  ON  iq.ID = i.id 
+WHERE EXISTS(
+	select oqd.ID, oqd.Article , oqd.SizeCode
+	from #tmpOrderShip oqd
+	WHERE i.orderid = oqd.Id AND iq.Article= oqd.Article AND iq.SizeCode= oqd.SizeCode AND i.OrderShipmodeSeq = oqd.Seq 
+)
+GROUP BY i.orderid ,iq.Article ,iq.SizeCode ,i.OrderShipmodeSeq
 ";
             string sqlA = sqlCmd + $@"
 select distinct msg = concat(oqd.ID, ' (', oqd.Seq, ')')
 from #tmpPacking p
 left join #tmpOrderShip oqd with(nolock) on oqd.id = p.OrderID and oqd.Seq = p.OrderShipmodeSeq and p.Article = oqd.Article and p.SizeCode = oqd.SizeCode
-where isnull(p.ShipQty,0) > isnull(oqd.Qty,0)
+lEFT JOIN #TPEAdjust t ON t.OrderID= oqd.id AND t.OrderShipmodeSeq = oqd.Seq AND t.Article=oqd.Article AND t.SizeCode=oqd.SizeCode  ----出貨數必須加上台北端財務可能調整出貨數量，因此必須納入考量(若是減少則是負數，因此用加法即可)
+where isnull(p.ShipQty,0) + ISNULL(t.DiffQty,0) > isnull(oqd.Qty,0)
 ";
             string sqlB = sqlCmd + $@"
 select distinct msg = concat(oqd.ID, ' (', oqd.Seq, ')')
 from #tmpOrderShip oqd
 left join #tmpPacking p with(nolock) on oqd.id = p.OrderID and oqd.Seq = p.OrderShipmodeSeq and p.Article = oqd.Article and p.SizeCode = oqd.SizeCode
-where isnull(p.ShipQty,0) < isnull(oqd.Qty,0)
+lEFT JOIN #TPEAdjust t ON t.OrderID= oqd.id AND t.OrderShipmodeSeq = oqd.Seq AND t.Article=oqd.Article AND t.SizeCode=oqd.SizeCode  ----出貨數必須加上台北端財務可能調整出貨數量，因此必須納入考量(若是減少則是負數，因此用加法即可)
+where isnull(p.ShipQty,0) + ISNULL(t.DiffQty,0) < isnull(oqd.Qty,0)
 ";
 
             DataTable dt;
