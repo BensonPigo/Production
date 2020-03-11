@@ -49,10 +49,10 @@
             this.label7 = new Sci.Win.UI.Label();
             this.displayApvDate = new Sci.Win.UI.DisplayBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.displayBoxSubconName = new Sci.Win.UI.DisplayBox();
             this.displayBoxShift = new Sci.Win.UI.DisplayBox();
             this.labelSubconName = new Sci.Win.UI.Label();
             this.labelshift = new Sci.Win.UI.Label();
+            this.txtLocalSupp1 = new Sci.Production.Class.txtLocalSupp();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -69,7 +69,7 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.displayBoxSubconName);
+            this.masterpanel.Controls.Add(this.txtLocalSupp1);
             this.masterpanel.Controls.Add(this.displayBoxShift);
             this.masterpanel.Controls.Add(this.labelSubconName);
             this.masterpanel.Controls.Add(this.labelshift);
@@ -118,7 +118,7 @@
             this.masterpanel.Controls.SetChildIndex(this.labelshift, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSubconName, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBoxShift, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBoxSubconName, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtLocalSupp1, 0);
             // 
             // detailpanel
             // 
@@ -392,15 +392,6 @@
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
             this.comboBox1.TabIndex = 2;
             // 
-            // displayBoxSubconName
-            // 
-            this.displayBoxSubconName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBoxSubconName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxSubconName.Location = new System.Drawing.Point(765, 45);
-            this.displayBoxSubconName.Name = "displayBoxSubconName";
-            this.displayBoxSubconName.Size = new System.Drawing.Size(66, 23);
-            this.displayBoxSubconName.TabIndex = 78;
-            // 
             // displayBoxShift
             // 
             this.displayBoxShift.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -426,6 +417,15 @@
             this.labelshift.TabIndex = 75;
             this.labelshift.Text = "Shift";
             // 
+            // txtLocalSupp1
+            // 
+            this.txtLocalSupp1.DisplayBox1Binding = "";
+            this.txtLocalSupp1.Location = new System.Drawing.Point(765, 45);
+            this.txtLocalSupp1.Name = "txtLocalSupp1";
+            this.txtLocalSupp1.Size = new System.Drawing.Size(230, 23);
+            this.txtLocalSupp1.TabIndex = 79;
+            this.txtLocalSupp1.TextBox1Binding = "";
+            // 
             // P16
             // 
             this.ApvChkValue = "New";
@@ -446,6 +446,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P16";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P16. Issue Fabric Lacking & Replacement";
             this.UnApvChkValue = "Confirmed";
             this.UncloseChkValue = "Closed";
@@ -494,9 +495,9 @@
         private Win.UI.Label label7;
         private Win.UI.Label label6;
         private Win.UI.TextBox txtRequestNo;
-        private Win.UI.DisplayBox displayBoxSubconName;
         private Win.UI.DisplayBox displayBoxShift;
         private Win.UI.Label labelSubconName;
         private Win.UI.Label labelshift;
+        private Class.txtLocalSupp txtLocalSupp1;
     }
 }

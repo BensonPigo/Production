@@ -262,14 +262,14 @@ namespace Sci.Production.Warehouse
                 {
                     this.displayApvDate.Text = ((DateTime)dr["apvdate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
                     this.displayBoxShift.Text = dr["Shift"].Equals("D") ? "Day" : dr["Shift"].Equals("N") ? "Night" : "Subcon-Out";
-                    this.displayBoxSubconName.Text = dr["SubconName"].ToString();
+                    this.txtLocalSupp1.TextBox1.Text = dr["SubconName"].ToString();
                 }
             }
             else
             {
                 this.displayApvDate.Text = "";
                 this.displayBoxShift.Text = "";
-                this.displayBoxSubconName.Text = "";
+                this.txtLocalSupp1.TextBox1.Text = "";
             }
         }
 
@@ -788,7 +788,7 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
             CurrentMaintain["type"] = dr["type"].ToString();
             this.displayApvDate.Text = ((DateTime)dr["apvdate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             this.displayBoxShift.Text = dr["Shift"].Equals("D") ? "Day" : dr["Shift"].Equals("N") ? "Night" : "Subcon-Out";
-            this.displayBoxSubconName.Text = dr["SubconName"].ToString();
+            this.txtLocalSupp1.TextBox1.Text = dr["SubconName"].ToString();
         }
 
         //Print
