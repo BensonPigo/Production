@@ -183,12 +183,13 @@ Begin
 		-- Clog P02 log 
 			-- Insert ClogReceive
 		Begin
-			insert into Production.dbo.ClogReceive(ReceiveDate, MDivisionID, PackingListID, OrderID, CTNStartNo, AddDate, OldID, AddName, SCICtnNo)
+			insert into Production.dbo.ClogReceive(ReceiveDate, MDivisionID, PackingListID, OrderID, CTNStartNo, ClogLocationID, AddDate, OldID, AddName, SCICtnNo)
 			select [ReceiveDate] = CONVERT(date, t.Time)
 				,[MDvisionID] = (select top 1 ID from Production.dbo.MDivision)
 				,[PackingListID] = pd.ID
 				,[OrderID] = pd.OrderID
 				,[CtnStartNo] = pd.CTNStartNo
+				,t.ClogLocationId
 				,t.Time
 				,null
 				,'SCIMIS'
