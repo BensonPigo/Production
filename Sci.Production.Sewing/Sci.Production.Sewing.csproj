@@ -321,6 +321,12 @@
     <Compile Include="R09.Designer.cs">
       <DependentUpon>R09.cs</DependentUpon>
     </Compile>
+    <Compile Include="R10.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R10.Designer.cs">
+      <DependentUpon>R10.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -409,6 +415,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R09.resx">
       <DependentUpon>R09.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R10.resx">
+      <DependentUpon>R10.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
