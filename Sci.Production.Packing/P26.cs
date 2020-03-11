@@ -2,8 +2,9 @@
 using Ict.Win;
 using org.apache.pdfbox.pdmodel;
 using org.apache.pdfbox.util;
-using PDFLibNet32;
 using Sci.Data;
+using Spire.Pdf;
+using Spire.Pdf.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -2326,7 +2327,6 @@ inner join #tmp{i} b on a.PackingListID = b.PackingListID
                         string custCTN = item.Value;
 
                         FileInfo file = new FileInfo(fileName);
-                        PDDocument doc = PDDocument.load(file.FullName);
                         this.ConvertPDF2Image(fileName, shippingMarkPath, custCTN, 1, 5, ImageFormat.Jpeg, Definition.One);
                     }
                 }
@@ -2842,72 +2842,53 @@ DROP TABLE #tmpOrders ,#tmp ,#ExistsB03
         /// <param name="definition">設定圖片的清晰度，數字越大越清晰</param>
         public void ConvertPDF2Image(string pdfInputPath, string imageOutputPath, string imageName, int startPageNum, int endPageNum, ImageFormat imageFormat, Definition definition)
         {
-            PDFWrapper pdfWrapper = new PDFWrapper();
+
+            PdfDocument doc = new PdfDocument();
+            doc.LoadFromFile(pdfInputPath);
+
+            // 提高解析度
+            Image bmp = doc.SaveAsImage(0, PdfImageType.Bitmap, 300, 300);
+
+            // bmp.Save(imageOutputPath + imageName + "_tmpOri.bmp");
+
             byte[] data = null;
 
-            pdfWrapper.LoadPDF(pdfInputPath);
-            pdfWrapper.ZoomIN();
             if (!System.IO.Directory.Exists(imageOutputPath))
             {
                 Directory.CreateDirectory(imageOutputPath);
             }
 
-            // validate pageNum
-            if (startPageNum <= 0)
+            int picWidth = 1375;
+            int picHeight = 2150;
+
+            Bitmap pic = new Bitmap(picWidth, picHeight);
+
+            // 建立圖片
+            Graphics graphic = Graphics.FromImage(pic);
+
+            // 建立畫板
+            graphic.DrawImage(bmp,
+                     //將被切割的圖片畫在新圖片上面，第一個參數是被切割的原圖片
+                     new Rectangle(0, 0, picWidth, picHeight),
+                     //指定繪製影像的位置和大小，基本上是同pic大小
+                     new Rectangle(33, 110, picWidth, picHeight),
+                     //指定被切割的圖片要繪製的部分
+                     GraphicsUnit.Pixel);
+
+            // 準備要寫入DB的資料
+            using (var stream = new MemoryStream())
             {
-                startPageNum = 1;
+                pic.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                data = stream.ToArray();
             }
 
-            if (endPageNum > pdfWrapper.PageCount)
-            {
-                endPageNum = pdfWrapper.PageCount;
-            }
+            // 將切割後的圖片存檔
+            // pic.Save(imageOutputPath + imageName + "_Cut.bmp");
 
-            if (startPageNum > endPageNum)
-            {
-                int tempPageNum = startPageNum;
-                startPageNum = endPageNum;
-                endPageNum = startPageNum;
-            }
-
-            // start to convert each page
-            for (int i = startPageNum; i <= endPageNum; i++)
-            {
-                string tmpIMG = imageOutputPath + imageName + "_tmp.bmp";
-                pdfWrapper.ExportJpg(tmpIMG, i, i, 180, 80);//這裡可以設定輸出圖片的頁數、大小和圖片畫質
-                                                            //if (pdfWrapper.IsJpgBusy) { System.Threading.Thread.Sleep(500); }
-                System.Threading.Thread.Sleep(500);
-                Bitmap sourceImage = new Bitmap(tmpIMG);
-                int picWidth = 759;
-                int picHeight = 1207;
-
-                Bitmap pic = new Bitmap(picWidth, picHeight);
-                //建立圖片
-                Graphics graphic = Graphics.FromImage(pic);
-                //建立畫板
-
-                graphic.DrawImage(sourceImage,
-                         //將被切割的圖片畫在新圖片上面，第一個參數是被切割的原圖片
-                         new Rectangle(0, 0, picWidth, picHeight),
-                         //指定繪製影像的位置和大小，基本上是同pic大小
-                         new Rectangle(33, 110, picWidth, picHeight),
-                         //指定被切割的圖片要繪製的部分
-                         GraphicsUnit.Pixel);
-
-                using (var stream = new MemoryStream())
-                {
-                    pic.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                    data = stream.ToArray();
-                }
-
-                //pic.Save(imageOutputPath + imageName + ".bmp");
-                //graphic.Dispose();
-                //pic.Dispose();
-                //sourceImage.Dispose();
-                //File.Delete(tmpIMG);
-            }
-
-            pdfWrapper.Dispose();
+            doc.Dispose();
+            bmp.Dispose();
+            graphic.Dispose();
+            pic.Dispose();
 
             // 寫入DB
             this.InsertImageToDatabase(imageName, string.Empty, data);
