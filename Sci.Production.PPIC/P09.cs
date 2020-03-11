@@ -235,7 +235,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
 
             this.detailgrid.CellDoubleClick += (s, e) =>
             {
-                if (e.ColumnIndex == 1 && !MyUtility.Convert.GetBool(this.CurrentMaintain["SendToTrade"]))
+                if (e.ColumnIndex == 1)
                 {
                     Sci.Production.PPIC.P09_InputData callInputDataForm = new Sci.Production.PPIC.P09_InputData(this.CurrentMaintain);
                     callInputDataForm.Set(this.EditMode, this.DetailDatas, this.CurrentDetailData);
