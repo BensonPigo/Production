@@ -635,6 +635,22 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty",
                 return false;
             }
 
+            // Get表身 SCICtnNo
+            if (this.IsDetailInserting)
+            {
+                if (!PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), "IsDetailInserting"))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (!PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), ""))
+                {
+                    return false;
+                }
+            }
+
             return base.ClickSaveBefore();
         }
 
