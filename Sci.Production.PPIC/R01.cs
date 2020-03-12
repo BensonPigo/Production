@@ -669,7 +669,7 @@ drop table #tmpFinal_step1
                     int colCount = 2;
                     int rowcnt = 0;
                     int monthDays = ((TimeSpan)(MyUtility.Convert.GetDate(this.SewingDate2) - MyUtility.Convert.GetDate(this.SewingDate1))).Days;
-                    int colcnts = monthDays;
+                    int colcnts = monthDays + 1;
 
                     foreach (DataRow dr in dtGantt.Rows)
                     {
@@ -690,13 +690,18 @@ drop table #tmpFinal_step1
                                 // 從dtGanttSumery  填入Total StdQty,PPH, CPU
                                 if (!line.Empty())
                                 {
-                                    string strMaxDate = ((DateTime)dtGanttSumery[0].Compute("max([SewingDay])", $"sewinglineid = '{line}' and FactoryID = '{writeFty}'")).ToString("yyyy/MM/dd");
-                                    this.drSummary = dtGanttSumery[0].Select($@" SewingDay = '{strMaxDate}' and SewingLineID = '{line}' and FactoryID = '{writeFty}'");
-                                    if (this.drSummary.Length > 0)
+                                    // 對dtGanttSumery防錯誤用!
+                                    DataRow[] drCheck = dtGanttSumery[0].Select($"sewinglineid = '{line}' and FactoryID = '{writeFty}'");
+                                    if (drCheck.Length > 0)
                                     {
-                                        worksheet.Cells[intRowsStart + 1, monthDays + 4] = this.drSummary[0]["Total_StdOutput"];
-                                        worksheet.Cells[intRowsStart + 2, monthDays + 4] = this.drSummary[0]["PPH"];
-                                        worksheet.Cells[intRowsStart + 3, monthDays + 4] = this.drSummary[0]["CPU"];
+                                        string strMaxDate = ((DateTime)dtGanttSumery[0].Compute("max([SewingDay])", $"sewinglineid = '{line}' and FactoryID = '{writeFty}'")).ToString("yyyy/MM/dd");
+                                        this.drSummary = dtGanttSumery[0].Select($@" SewingDay = '{strMaxDate}' and SewingLineID = '{line}' and FactoryID = '{writeFty}'");
+                                        if (this.drSummary.Length > 0)
+                                        {
+                                            worksheet.Cells[intRowsStart + 1, monthDays + 4] = this.drSummary[0]["Total_StdOutput"];
+                                            worksheet.Cells[intRowsStart + 2, monthDays + 4] = this.drSummary[0]["PPH"];
+                                            worksheet.Cells[intRowsStart + 3, monthDays + 4] = this.drSummary[0]["CPU"];
+                                        }
                                     }
                                 }
 
@@ -771,13 +776,17 @@ drop table #tmpFinal_step1
                             // 從dtGanttSumery  填入Total StdQty,PPH, CPU
                             if (!line.Empty())
                             {
-                                string strMaxDate = ((DateTime)dtGanttSumery[0].Compute("max([SewingDay])", $"sewinglineid = '{line}' and FactoryID = '{dr["FactoryID"]}'")).ToString("yyyy/MM/dd");
-                                this.drSummary = dtGanttSumery[0].Select($@" SewingDay = '{strMaxDate}' and SewingLineID = '{line}' and FactoryID = '{dr["FactoryID"]}'");
-                                if (this.drSummary.Length > 0)
+                                DataRow[] drCheck = dtGanttSumery[0].Select($"sewinglineid = '{line}' and FactoryID = '{dr["FactoryID"]}'");
+                                if (drCheck.Length > 0)
                                 {
-                                    worksheet.Cells[intRowsStart - 3, monthDays + 4] = this.drSummary[0]["Total_StdOutput"];
-                                    worksheet.Cells[intRowsStart - 2, monthDays + 4] = this.drSummary[0]["PPH"];
-                                    worksheet.Cells[intRowsStart - 1, monthDays + 4] = this.drSummary[0]["CPU"];
+                                    string strMaxDate = ((DateTime)dtGanttSumery[0].Compute("max([SewingDay])", $"sewinglineid = '{line}' and FactoryID = '{dr["FactoryID"]}'")).ToString("yyyy/MM/dd");
+                                    this.drSummary = dtGanttSumery[0].Select($@" SewingDay = '{strMaxDate}' and SewingLineID = '{line}' and FactoryID = '{dr["FactoryID"]}'");
+                                    if (this.drSummary.Length > 0)
+                                    {
+                                        worksheet.Cells[intRowsStart - 3, monthDays + 4] = this.drSummary[0]["Total_StdOutput"];
+                                        worksheet.Cells[intRowsStart - 2, monthDays + 4] = this.drSummary[0]["PPH"];
+                                        worksheet.Cells[intRowsStart - 1, monthDays + 4] = this.drSummary[0]["CPU"];
+                                    }
                                 }
                             }
 
@@ -897,13 +906,17 @@ drop table #tmpFinal_step1
                     // 從dtGanttSumery  填入Total StdQty,PPH, CPU
                     if (!line.Empty())
                     {
-                        string strMaxDate = ((DateTime)dtGanttSumery[0].Compute("max([SewingDay])", $"sewinglineid = '{line}' and FactoryID = '{worksheet.Name}'")).ToString("yyyy/MM/dd");
-                        this.drSummary = dtGanttSumery[0].Select($@" SewingDay = '{strMaxDate}' and SewingLineID = '{line}' and FactoryID = '{worksheet.Name}'");
-                        if (this.drSummary.Length > 0)
+                        DataRow[] drCheck = dtGanttSumery[0].Select($"sewinglineid = '{line}' and FactoryID = '{worksheet.Name}'");
+                        if (drCheck.Length > 0)
                         {
-                            worksheet.Cells[(rowcnt * 4) + 2 - 3, monthDays + 4] = this.drSummary[0]["Total_StdOutput"];
-                            worksheet.Cells[(rowcnt * 4) + 2 - 2, monthDays + 4] = this.drSummary[0]["PPH"];
-                            worksheet.Cells[(rowcnt * 4) + 2 - 1, monthDays + 4] = this.drSummary[0]["CPU"];
+                            string strMaxDate = ((DateTime)dtGanttSumery[0].Compute("max([SewingDay])", $"sewinglineid = '{line}' and FactoryID = '{worksheet.Name}'")).ToString("yyyy/MM/dd");
+                            this.drSummary = dtGanttSumery[0].Select($@" SewingDay = '{strMaxDate}' and SewingLineID = '{line}' and FactoryID = '{worksheet.Name}'");
+                            if (this.drSummary.Length > 0)
+                            {
+                                worksheet.Cells[(rowcnt * 4) + 2 - 3, monthDays + 4] = this.drSummary[0]["Total_StdOutput"];
+                                worksheet.Cells[(rowcnt * 4) + 2 - 2, monthDays + 4] = this.drSummary[0]["PPH"];
+                                worksheet.Cells[(rowcnt * 4) + 2 - 1, monthDays + 4] = this.drSummary[0]["CPU"];
+                            }
                         }
                     }
 
