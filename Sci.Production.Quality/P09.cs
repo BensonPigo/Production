@@ -395,8 +395,6 @@ select distinct
 	sr.ContinuityCard,
 	sr.TPEContinuityCard,
 	fd.FirstDyelot,
-	/*TPEFirstDyelot = iif(fd.SeasonSCIID is null, 'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
-                ,iif(fd.TPEFirstDyelot is null and RibItem = 1,'RIB no need frist dye lot',format(fd.TPEFirstDyelot,'yyyy/MM/dd'))),*/
 	TPEFirstDyelot = IIF(fd.TPEFirstDyelot is null and RibItem = 1
                         ,'RIB no need first dye lot'
                         ,IIF(fd.SeasonSCIID is null
