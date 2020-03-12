@@ -64,6 +64,7 @@
             this.txtReason = new Sci.Win.UI.TextBox();
             this.txtFactorySuggested = new Sci.Win.UI.TextBox();
             this.numCostOccurred = new Sci.Win.UI.NumericBox();
+            this.lblReplacementUnit = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.SuspendLayout();
@@ -546,9 +547,21 @@
             0,
             0});
             // 
+            // lblReplacementUnit
+            // 
+            this.lblReplacementUnit.AutoSize = true;
+            this.lblReplacementUnit.BackColor = System.Drawing.Color.Transparent;
+            this.lblReplacementUnit.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ReplacementUnit", true));
+            this.lblReplacementUnit.Location = new System.Drawing.Point(483, 216);
+            this.lblReplacementUnit.Name = "lblReplacementUnit";
+            this.lblReplacementUnit.Size = new System.Drawing.Size(0, 0);
+            this.lblReplacementUnit.TabIndex = 157;
+            this.lblReplacementUnit.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // P09_InputData
             // 
             this.ClientSize = new System.Drawing.Size(874, 416);
+            this.Controls.Add(this.lblReplacementUnit);
             this.Controls.Add(this.numCostOccurred);
             this.Controls.Add(this.txtFactorySuggested);
             this.Controls.Add(this.txtReason);
@@ -626,6 +639,7 @@
             this.Controls.SetChildIndex(this.txtReason, 0);
             this.Controls.SetChildIndex(this.txtFactorySuggested, 0);
             this.Controls.SetChildIndex(this.numCostOccurred, 0);
+            this.Controls.SetChildIndex(this.lblReplacementUnit, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -671,5 +685,6 @@
         private Win.UI.TextBox txtReason;
         private Win.UI.TextBox txtFactorySuggested;
         private Win.UI.NumericBox numCostOccurred;
+        private Win.UI.Label lblReplacementUnit;
     }
 }

@@ -115,6 +115,7 @@ ID
 ,OldFabricVer
 ,Junk
 ,FinalNeedQty
+,ReplacementUnit
 from ReplacementReport_Detail where ID = '{replacementID}'
 ";
 

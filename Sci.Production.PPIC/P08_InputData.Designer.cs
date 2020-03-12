@@ -48,6 +48,7 @@
             this.label10 = new Sci.Win.UI.Label();
             this.label11 = new Sci.Win.UI.Label();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.lineShape16 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape15 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape14 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape13 = new Microsoft.VisualBasic.PowerPacks.LineShape();
@@ -102,9 +103,9 @@
             this.txtNoOfRollsOver50 = new Sci.Win.UI.TextBox();
             this.txtWidthNoOfRollsWith = new Sci.Win.UI.TextBox();
             this.numTotalDefectPoints = new Sci.Win.UI.NumericBox();
-            this.lineShape16 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.label1 = new Sci.Win.UI.Label();
             this.numFinalNeedQty = new Sci.Win.UI.NumericBox();
+            this.lblReplacementUnit = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.SuspendLayout();
@@ -432,6 +433,15 @@
             this.shapeContainer1.Size = new System.Drawing.Size(929, 672);
             this.shapeContainer1.TabIndex = 115;
             this.shapeContainer1.TabStop = false;
+            // 
+            // lineShape16
+            // 
+            this.lineShape16.BorderColor = System.Drawing.SystemColors.ControlDark;
+            this.lineShape16.Name = "lineShape16";
+            this.lineShape16.X1 = 7;
+            this.lineShape16.X2 = 921;
+            this.lineShape16.Y1 = 504;
+            this.lineShape16.Y2 = 504;
             // 
             // lineShape15
             // 
@@ -1198,15 +1208,6 @@
             0});
             this.numTotalDefectPoints.Validated += new System.EventHandler(this.numTotalDefectPoints_Validated);
             // 
-            // lineShape16
-            // 
-            this.lineShape16.BorderColor = System.Drawing.SystemColors.ControlDark;
-            this.lineShape16.Name = "lineShape16";
-            this.lineShape16.X1 = 7;
-            this.lineShape16.X2 = 921;
-            this.lineShape16.Y1 = 504;
-            this.lineShape16.Y2 = 504;
-            // 
             // label1
             // 
             this.label1.BackColor = System.Drawing.Color.Transparent;
@@ -1251,9 +1252,21 @@
             0,
             0});
             // 
+            // lblReplacementUnit
+            // 
+            this.lblReplacementUnit.AutoSize = true;
+            this.lblReplacementUnit.BackColor = System.Drawing.Color.Transparent;
+            this.lblReplacementUnit.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ReplacementUnit", true));
+            this.lblReplacementUnit.Location = new System.Drawing.Point(249, 480);
+            this.lblReplacementUnit.Name = "lblReplacementUnit";
+            this.lblReplacementUnit.Size = new System.Drawing.Size(0, 0);
+            this.lblReplacementUnit.TabIndex = 156;
+            this.lblReplacementUnit.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // P08_InputData
             // 
             this.ClientSize = new System.Drawing.Size(929, 672);
+            this.Controls.Add(this.lblReplacementUnit);
             this.Controls.Add(this.numFinalNeedQty);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.numTotalDefectPoints);
@@ -1382,6 +1395,7 @@
             this.Controls.SetChildIndex(this.numTotalDefectPoints, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.numFinalNeedQty, 0);
+            this.Controls.SetChildIndex(this.lblReplacementUnit, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -1468,5 +1482,6 @@
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape16;
         private Win.UI.Label label1;
         private Win.UI.NumericBox numFinalNeedQty;
+        private Win.UI.Label lblReplacementUnit;
     }
 }
