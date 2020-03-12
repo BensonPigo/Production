@@ -163,6 +163,64 @@ OUTER APPLY(
 
 where s.Status = 'Approved'");
             }
+            else if (this.radioByAPP.Checked)
+            {
+                sqlCmd.Append(@"
+select
+        s.Type,
+        s.SubType,
+		Supplier = s.LocalSuppID+'-'+ISNULL(ls.Abb,''),
+		s.ID,
+		s.VoucherID,
+        s.VoucherDate,
+		[APDate]=s.CDate,
+		s.[ApvDate],
+		s.[MDivisionID],
+		s.[CurrencyID],
+		[APAmt]=s.[Amount],
+		s.[BLNo],
+		s.[Remark],
+		[Invoice ]= s.InvNo,
+		[ExportINV] =  case
+                            when sh.WKNo = '' and sh.InvNo != '' then sh.InvNo
+                            when sh.WKNo != '' and sh.InvNo = '' then sh.WKNo
+                            when sh.WKNo != '' and sh.InvNo != '' then Concat (sh.WKNo, '/', sh.InvNo)
+                            else ''
+                        end
+		,[CurrencyID]= ISNULL(sh.CurrencyID , ShippingAP_Deatai.CurrencyID)
+		,[Amount]= ISNULL(sh.Amount , ShippingAP_Deatai.Amount)
+		,[AccountID]= ISNULL(sh.AccountID , ShippingAP_Deatai.AccountID)
+		,[AccountName]= ISNULL(an.Name, ShippingAP_Deatai.AccountName)
+        ,[SPNO] = air.OrderID
+        ,[AirNO] = sp.AirPPID
+		,[ShipQty] = PackingList_Detail.ShipQty
+		,[NW] = sp.NW
+		,[shipMode] = p.ShipModeID
+from ShippingAP s WITH (NOLOCK)
+left join ShareExpense sh WITH (NOLOCK) ON s.ID = sh.ShippingAPID
+                                           and sh.Junk != 1
+left join SciFMS_AccountNo an on an.ID = sh.AccountID 
+left join LocalSupp ls WITH (NOLOCK) on s.LocalSuppID = ls.ID
+left join ShareExpense_APP sp WITH (NOLOCK) on sh.ShippingAPID = sp.ShippingAPID and sh.AccountID = sp.AccountID
+left join AirPP air WITH (NOLOCK) on sp.AirPPID = air.ID
+left join PackingList p WITH (NOLOCK) on sp.PackingListID = p.ID
+OUTER APPLY (
+	SELECT se.AccountID,[AccountName]=a.Name,sd.CurrencyID,[Amount]=SUM(Amount)
+	FROM ShippingAP_Detail sd
+	left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
+	left join SciFMS_AccountNO a on a.ID = se.AccountID
+	WHERE sd.ID=s.ID
+	----若ShareExpense有資料，就不必取表身加總的值
+	AND NOT EXISTS (SELECT 1 FROM ShareExpense WHERE ShippingAPID=sd.ID and Junk != 1)
+	GROUP BY se.AccountID,a.Name,sd.CurrencyID
+)ShippingAP_Deatai
+OUTER APPLY (
+	select [ShipQty] = sum(ShipQty)
+	from PackingList_Detail
+	where ID = sp.PackingListID
+)PackingList_Detail
+where s.Status = 'Approved'");
+            }
             else
             {
                 sqlCmd.Append(@"
@@ -295,11 +353,15 @@ where s.Status = 'Approved'");
             }
             else if (this.radioSummary.Checked)
             {
-                strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentList.xltx";
+                strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByInvWK.xltx";
+            }
+            else if (this.radioByAPP.Checked)
+            {
+                strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByAPP.xltx";
             }
             else
             {
-                strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByInvWK.xltx";
+                strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentList.xltx";
             }
 
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
@@ -315,10 +377,14 @@ where s.Status = 'Approved'");
                 Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetail.xltx", excel);
                 com.WriteTable(this.printData, 2);
             }
-            else
-            if (this.radioByInvWK.Checked == true)
+            else if (this.radioByInvWK.Checked == true)
             {
                 Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByInvWK.xltx", excel);
+                com.WriteTable(this.printData, 2);
+            }
+            else if (this.radioByAPP.Checked == true)
+            {
+                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByAPP.xltx", excel);
                 com.WriteTable(this.printData, 2);
             }
             else
