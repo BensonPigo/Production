@@ -395,8 +395,15 @@ select distinct
 	sr.ContinuityCard,
 	sr.TPEContinuityCard,
 	fd.FirstDyelot,
-	TPEFirstDyelot = iif(fd.SeasonSCIID is null, 'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
-                ,iif(fd.TPEFirstDyelot is null and RibItem = 1,'RIB no need frist dye lot',format(fd.TPEFirstDyelot,'yyyy/MM/dd'))),
+	/*TPEFirstDyelot = iif(fd.SeasonSCIID is null, 'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
+                ,iif(fd.TPEFirstDyelot is null and RibItem = 1,'RIB no need frist dye lot',format(fd.TPEFirstDyelot,'yyyy/MM/dd'))),*/
+	TPEFirstDyelot = IIF(fd.TPEFirstDyelot is null and RibItem = 1
+                        ,'RIB no need first dye lot'
+                        ,IIF(fd.SeasonSCIID is null
+                                ,'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
+                                ,format(fd.TPEFirstDyelot,'yyyy/MM/dd')
+                            )
+                    ),
 	sr.T2InspYds,
 	sr.T2DefectPoint,
 	sr.T2Grade,
@@ -654,7 +661,7 @@ select distinct
     fd.SeasonSCIID,
     fd.Period,
 	fd.FirstDyelot  FirstDyelot,
-	TPEFirstDyelot=iif(fd.TPEFirstDyelot is null and RibItem = 1,'RIB no need frist dye lot',format(fd.TPEFirstDyelot,'yyyy/MM/dd'))
+	TPEFirstDyelot=iif(fd.TPEFirstDyelot is null and RibItem = 1,'RIB no need first dye lot',format(fd.TPEFirstDyelot,'yyyy/MM/dd'))
 into #tmp
 from Export_Detail ed with(nolock)
 inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
@@ -681,8 +688,15 @@ fty.TestDocFactoryGroup
 ,[SeasonSCIID] = iif(a.SeasonSCIID is null,b.SeasonSCIID,a.SeasonSCIID)
 ,[Period] = iif(a.Period is null, b.Period , a.Period)
 ,[FirstDyelot] = iif(a.FirstDyelot is null, b.FirstDyelot, a.FirstDyelot)
-,[TPEFirstDyelot] = iif(a.SeasonSCIID is null and b.SeasonSCIID is null, 'Still not received and under pushing T2. Please contact with PR if you need L/G first.',
-                        iif(a.TPEFirstDyelot is null,format(b.TPEFirstDyelot,'yyyy/MM/dd'),a.TPEFirstDyelot))
+/*,[TPEFirstDyelot] = iif(a.SeasonSCIID is null and b.SeasonSCIID is null, 'Still not received and under pushing T2. Please contact with PR if you need L/G first.',
+                        iif(a.TPEFirstDyelot is null,format(b.TPEFirstDyelot,'yyyy/MM/dd'),a.TPEFirstDyelot))*/
+,[TPEFirstDyelot] = iif(a.SeasonSCIID is null and b.SeasonSCIID is null
+                            , 'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
+                            ,iif(a.TPEFirstDyelot is null
+                                    ,format(b.TPEFirstDyelot,'yyyy/MM/dd')
+                                    ,a.TPEFirstDyelot
+                                )
+                        )
 from #tmp a
 inner join Factory fty with (nolock) on fty.ID = a.Consignee
 full join FirstDyelot b on fty.TestDocFactoryGroup = b.TestDocFactoryGroup
