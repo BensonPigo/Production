@@ -216,7 +216,7 @@
             this.Controls.Add(this.lbBuyerDelivery);
             this.Name = "R10";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
-            this.Text = "R10";
+            this.Text = "R10. Order Qty v.s. Sewing Output Qty";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
