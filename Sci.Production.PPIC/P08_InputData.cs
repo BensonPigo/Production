@@ -59,6 +59,14 @@ namespace Sci.Production.PPIC
                 return false;
             }
 
+            decimal finalNeedQty = this.CurrentData["FinalNeedQty"] == null ? 0 : MyUtility.Convert.GetDecimal(this.CurrentData["FinalNeedQty"]);
+
+            if (finalNeedQty <= 0)
+            {
+                MyUtility.Msg.WarningBox("<Final Needed Q'ty> Cannot be less than or equal to 0");
+                return false;
+            }
+
             return base.DoSave();
         }
 
@@ -387,5 +395,6 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
                 this.CalculateTotalRequest();
             }
         }
+
     }
 }
