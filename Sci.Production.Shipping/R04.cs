@@ -208,9 +208,9 @@ outer apply(
 outer apply(
 	select CTNQty=round(sum(l.CBM),4)
 	from packinglist_detail pd
-	inner join PackingList p on p.id = pd.id
 	inner join LocalItem l on l.refno = pd.refno
 	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+    and pd.CTNQty > 0
 )cbm
 
 outer apply(
