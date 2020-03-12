@@ -52,7 +52,7 @@ BEGIN
 		set a.MDivisionID = b.MDivisionID
 		from Production.dbo.Cutting a
 		inner join #TOrder b on a.ID = b.ID
-		where a.MDivisionID <> b.MDivisionID
+		where a.MDivisionID <> b.MDivisionID and b.MDivisionID in( select distinct MDivisionID from Production..Factory)
 
 		--轉單為Cutting母單時,覆寫CutPlan母子單的工廠欄位
 		Update a
