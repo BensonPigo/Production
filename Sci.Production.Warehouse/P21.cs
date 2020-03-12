@@ -109,10 +109,13 @@ namespace Sci.Production.Warehouse
                  .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
                  .Numeric("ActualWeight", header: "Act.(kg)", width: Widths.AnsiChars(8), decimal_places: 2, settings: cellActWeight)
                  .Numeric("Differential", header: "Differential", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
+                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(15))
+                 .DateTime("LastEditDate", header: "Last Edit Date", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  ;
 
             this.gridReceiving.Columns["Location"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["ActualWeight"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridReceiving.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void DifferentialColorChange(int rowIndex)
@@ -240,6 +243,8 @@ rd.ActualWeight,
 [FtyInventoryQty] = fi.InQty - fi.OutQty + fi.AdjustQty,
 rd.Seq1,
 rd.Seq2
+,[Remark]=''
+,[LastEditDate]=LastEditDate.Val
 from  Receiving r with (nolock)
 inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
 inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
@@ -251,6 +256,13 @@ inner join Ftyinventory  fi with (nolock) on    rd.POID = fi.POID and
                                                 rd.Dyelot  = fi.Dyelot and
                                                 rd.StockType = fi.StockType
 left join #tmpStockType st with (nolock) on st.ID = rd.StockType
+OUTER APPLY(
+	SELECT [Val]=MAX(lt.EditDate)
+	FROM LocationTrans lt
+	INNER JOIN LocationTrans_detail ltd ON lt.ID=ltd.ID
+	WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey=fi.Ukey 
+)LastEditDate
+
 where r.MDivisionID  = '{Env.User.Keyword}' {sqlWhere}
 ";
 
@@ -327,7 +339,8 @@ where r.MDivisionID  = '{Env.User.Keyword}' {sqlWhere}
                                                 s.Key.FtyInventoryQty,
                                                 s.Key.FtyInventoryUkey,
                                                 Location = s.Select(d => d["Location"].ToString()).Distinct().JoinToString(","),
-                                                OldLocation = s.Select(d => d["OldLocation"].ToString()).Distinct().JoinToString(",")
+                                                OldLocation = s.Select(d => d["OldLocation"].ToString()).Distinct().JoinToString(","),
+                                                Remark = s.Select(d => d["Remark"].ToString()).Distinct().JoinToString(",")
                                             });
 
             string sqlUpdateReceiving_Detail = string.Empty;
@@ -350,6 +363,20 @@ where r.MDivisionID  = '{Env.User.Keyword}' {sqlWhere}
 
             if (selectedReceivingSummary.Any())
             {
+                List<string> remarks = new List<string>();
+
+                foreach (var receivingItem in selectedReceivingSummary)
+                {
+                    remarks.Add(receivingItem.Remark);
+                }
+
+                string Remark = remarks.JoinToString(",");
+                if (Remark.Length >= (60-19))  // 預設要填入---Create from P21.，因此要扣掉這個文字長度
+                {
+                    MyUtility.Msg.WarningBox("Remark is too long!");
+                    return;
+                }
+
                 sqlInsertLocationTrans += $@"
 Insert into LocationTrans(ID,MDivisionID,FactoryID,IssueDate,Status,Remark,AddName,AddDate,EditName,EditDate)
             values( '{locationTransID}',
@@ -357,7 +384,7 @@ Insert into LocationTrans(ID,MDivisionID,FactoryID,IssueDate,Status,Remark,AddNa
                     '{Env.User.Factory}',
                     GetDate(),
                     'Confirmed',
-                    'Create from P21.',
+                    '{Remark}---Create from P21.',
                     '{Env.User.UserID}',
                     GetDate(),
                     '{Env.User.UserID}',
