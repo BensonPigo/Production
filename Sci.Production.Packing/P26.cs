@@ -292,7 +292,7 @@ namespace Sci.Production.Packing
                                 zPL_Objects.Add(
                                      new ZPL()
                                      {
-                                         CustCTN = tmppArray[CustCTN_Index].Replace("(", "").Replace(")", "").Replace(" ", "").Substring(2, 18),
+                                         CustCTN = tmppArray[CustCTN_Index].Replace("(", "").Replace(")", "").Replace(" ", ""),
                                          CustPONo = tmppArray[CustPONo_index],
                                          StyleID = tmppArray[Style_index].Split('-')[0],
                                          Article = tmppArray[Style_index].Split('-')[1],
@@ -317,7 +317,7 @@ namespace Sci.Production.Packing
                                 zPL_Objects.Add(
                                      new ZPL()
                                      {
-                                         CustCTN = tmppArray[CustCTN_Index].Replace("(", "").Replace(")", "").Replace(" ", "").Substring(2, 18),
+                                         CustCTN = tmppArray[CustCTN_Index].Replace("(", "").Replace(")", "").Replace(" ", ""),
                                          CustPONo = tmppArray[CustPONo_index],
                                          StyleID = tmppArray[Style_index].Split('-')[0],
                                          Article = tmppArray[Style_index].Split('-')[1],
