@@ -161,7 +161,7 @@ from
 			,o.BuyerDelivery
 			,o.SCIDelivery
 		 from Orders o WITH (NOLOCK) 
-		 where 1=1 
+		 where o.Category in ('B','S','G')
 		 {0}
 	)o
 	outer apply
@@ -180,6 +180,7 @@ from
 	)oq2
 )o 
 {1}
+order by o.MDivisionID, o.FactoryID, o.ID, o.Article, o.SizeCode
 
 IF object_id('tempdb..#tmp_sewingSP') IS NOT NULL drop table #tmp_sewingSP",
                 sqlWhere.ToString(),
