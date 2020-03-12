@@ -120,6 +120,8 @@ SELECT
 	,c.alias
 	,o.MDivisionID 
 	,o.localorder
+    , OutsdReason = rd.Name
+    , ReasonRemark = o.OutstandingRemark
 into #tmp_main
 FROM Orders o WITH (NOLOCK)
 LEFT JOIN OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
@@ -129,6 +131,7 @@ inner JOIN Order_QtyShip Order_QS on Order_QS.id = o.id
 LEFT JOIN PO ON o.POID = PO.ID
 LEFT JOIN Reason r on r.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery'          
 LEFT JOIN Reason rs on rs.id = Order_QS.ReasonID and rs.ReasonTypeID = 'Order_BuyerDelivery_sample'
+Left join Reason rd on rd.id = o.OutstandingReason and rd.ReasonTypeID = 'Delivery_OutStand'
 LEFT JOIN Brand b on o.BrandID = b.ID
 where o.Junk = 0  
 and (isnull(ot.IsGMTMaster,0) = 0 or o.OrderTypeID = '') ";
@@ -309,6 +312,10 @@ SELECT
 		,t.GMTComplete 
 		,t.ReasonID
 		,t.ReasonName   
+        ,SewLastDate = convert(varchar(10),sew.SewLastDate,111)
+		,ctnr.CTNLastReceiveDate
+        ,t.OutsdReason
+        ,t.ReasonRemark
 		,MR = dbo.getTPEPass1_ExtNo(t.MRHandle)
 		,SMR = dbo.getTPEPass1_ExtNo(t.SMR)
 		,POHandle = dbo.getTPEPass1_ExtNo(t.POHandle)
@@ -317,8 +324,6 @@ SELECT
 		,isDevSample = iif(t.isDevSample = 1, 'Y', '')
 		,sew.SewouptQty
 		, getQtyBySeq.FOC
-        , SewLastDate = convert(varchar(10),sew.SewLastDate,111)
-		,ctnr.CTNLastReceiveDate
 		,Order_QtyShipCount=iif(ps.ct>1,'Y','')
 		,t.Alias 
 		,t.MDivisionID
@@ -379,6 +384,10 @@ SELECT
     ,t.GMTComplete 
     ,t.ReasonID 
     ,t.ReasonName 
+    , SewLastDate = convert(varchar(10),sew.SewLastDate,111)
+    ,ctnr.CTNLastReceiveDate
+    ,t.OutsdReason
+    ,t.ReasonRemark
     ,MR = dbo.getTPEPass1_ExtNo(t.MRHandle)
     ,SMR = dbo.getTPEPass1_ExtNo(t.SMR)
     ,POHandle = dbo.getTPEPass1_ExtNo(t.POHandle)
@@ -387,8 +396,6 @@ SELECT
     ,isDevSample = iif(t.isDevSample = 1, 'Y', '')
     ,SewouptQty=sew.SewouptQty
     , getQtyBySeq.FOC
-    , SewLastDate = convert(varchar(10),sew.SewLastDate,111)
-    ,ctnr.CTNLastReceiveDate
     ,Order_QtyShipCount=iif(ps.ct>1,'Y','')
     ,t.Alias
     ,t.MDivisionID
@@ -475,6 +482,10 @@ SELECT  '' AS CountryID
 , '' AS GMTComplete
 , '' AS ReasonID
 , '' AS ReasonName
+, '' AS SewLastDate
+, '' AS CTNLastReceiveDate
+,OutsdReason = ''
+,ReasonRemark = ''
 , '' AS MR
 , '' AS SMR
 , '' AS POHandle 
@@ -483,8 +494,6 @@ SELECT  '' AS CountryID
 , '' AS isDevSample
 , '' AS SewouptQty
 , 0  AS FOC
-, '' AS SewLastDate
-, '' AS CTNLastReceiveDate
 , '' AS Order_QtyShipCount
 , '' AS Alias
 , '' AS MDivisionID
@@ -810,15 +819,17 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 Db_ExcelColumn.Add("R", "GMTComplete");
                 Db_ExcelColumn.Add("S", "ReasonID");
                 Db_ExcelColumn.Add("T", "ReasonName");
-                Db_ExcelColumn.Add("U", "MR");
-                Db_ExcelColumn.Add("V", "SMR");
-                Db_ExcelColumn.Add("W", "POHandle");
-                Db_ExcelColumn.Add("X", "POSMR");
-                Db_ExcelColumn.Add("Y", "OrderTypeID");
-                Db_ExcelColumn.Add("Z", "isDevSample");
-                Db_ExcelColumn.Add("AA", "FOC");
-                Db_ExcelColumn.Add("AB", "SewLastDate");
-                Db_ExcelColumn.Add("AC", "CTNLastReceiveDate");
+                Db_ExcelColumn.Add("U", "SewLastDate");
+                Db_ExcelColumn.Add("V", "CTNLastReceiveDate");
+                Db_ExcelColumn.Add("W", "OutsdReason");
+                Db_ExcelColumn.Add("X", "ReasonRemark");
+                Db_ExcelColumn.Add("Y", "MR");
+                Db_ExcelColumn.Add("Z", "SMR");
+                Db_ExcelColumn.Add("AA", "POHandle");
+                Db_ExcelColumn.Add("AB", "POSMR");
+                Db_ExcelColumn.Add("AC", "OrderTypeID");
+                Db_ExcelColumn.Add("AD", "isDevSample");
+                Db_ExcelColumn.Add("AE", "FOC");
 
                 OrderDetail_ExcelColumn.Add("A", "CountryID");
                 OrderDetail_ExcelColumn.Add("B", "KPICode");
@@ -960,7 +971,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 {
                     worksheet = excel.ActiveWorkbook.Worksheets[2];
                     worksheet.Name = "Fail Order List by SP";
-                    string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode ", "Order Qty", "On Time Qty", "Fail Qty", "Fail PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample", "FOC Qty", "Last Sewing Output Date", "Last Carton Received Date" };
+                    string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode ", "Order Qty", "On Time Qty", "Fail Qty", "Fail PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Last Sewing Output Date", "Last Carton Received Date", "Outstanding Reason", "Reason Remark", "Handle", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample", "FOC Qty" };
                     object[,] objArray_1 = new object[1, aryTitles.Length];
                     for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                     {
