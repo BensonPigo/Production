@@ -2465,7 +2465,7 @@ order by min(pd.seq)
         public static bool PackingP02CreateSCICtnNo(string id)
         {
             DataTable packinglist_detaildt;
-            string sqlpld = $@"select * from PackingList_Detail where id = '{id}' order by seq";
+            string sqlpld = $@"select Ukey,SCICtnNo,id,OrderID,OrderShipmodeSeq,CTNStartNo,Article,SizeCode from PackingList_Detail where id = '{id}' order by seq";
             DualResult result = DBProxy.Current.Select(null, sqlpld, out packinglist_detaildt);
             if (!result)
             {
@@ -2481,17 +2481,11 @@ order by min(pd.seq)
             string sqlCreateSCICtnNo = $@"
 update pd2 set 
 	SCICtnNo = pd.SCICtnNo
-from #tmp pd
-inner join PackingList_Detail pd2 on
- pd2.id					=pd.id					
-and pd2.[OrderID]			=pd.[OrderID]			
-and pd2.[OrderShipmodeSeq]	=pd.[OrderShipmodeSeq]	
-and pd2.[CTNStartNo]		=pd.[CTNStartNo]		
-and pd2.[Article]			=pd.[Article]			
-and pd2.[SizeCode]			=pd.[SizeCode]		
+from  PackingList_Detail pd2
+inner join #tmp pd  on pd2.Ukey	= pd.Ukey				
 ";
             DataTable dt;
-            result = MyUtility.Tool.ProcessWithDatatable(packinglist_detaildt, string.Empty, sqlCreateSCICtnNo, out dt);
+            result = MyUtility.Tool.ProcessWithDatatable(packinglist_detaildt, "SCICtnNo,Ukey", sqlCreateSCICtnNo, out dt);
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.ToString());
