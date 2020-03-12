@@ -85,13 +85,6 @@
             this.displaySendtoSCI = new Sci.Win.UI.DisplayBox();
             this.labelDescription = new Sci.Win.UI.Label();
             this.editDescription = new Sci.Win.UI.EditBox();
-            this.labelPayDate = new Sci.Win.UI.Label();
-            this.labelAmount = new Sci.Win.UI.Label();
-            this.labelInvNo = new Sci.Win.UI.Label();
-            this.datePayDate = new Sci.Win.UI.DateBox();
-            this.displayAmount = new Sci.Win.UI.DisplayBox();
-            this.numAmount = new Sci.Win.UI.NumericBox();
-            this.displayInvNo = new Sci.Win.UI.DisplayBox();
             this.txtCountryDestination = new Sci.Production.Class.txtcountry();
             this.txtUserManager = new Sci.Production.Class.txtuser();
             this.txtUserHandle = new Sci.Production.Class.txtuser();
@@ -104,6 +97,8 @@
             this.dispCarrierbyCustomer = new Sci.Win.UI.DisplayBox();
             this.disSuppabb = new Sci.Win.UI.DisplayBox();
             this.chkSpecialSending = new Sci.Win.UI.CheckBox();
+            this.btnPaymentDetail = new Sci.Win.UI.Button();
+            this.btnHistory = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -120,6 +115,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnHistory);
+            this.masterpanel.Controls.Add(this.btnPaymentDetail);
             this.masterpanel.Controls.Add(this.chkSpecialSending);
             this.masterpanel.Controls.Add(this.disSuppabb);
             this.masterpanel.Controls.Add(this.dispCarrierbyCustomer);
@@ -131,10 +128,6 @@
             this.masterpanel.Controls.Add(this.cmbPayer);
             this.masterpanel.Controls.Add(this.displaySendtoSCI);
             this.masterpanel.Controls.Add(this.labelSendtoSCI);
-            this.masterpanel.Controls.Add(this.displayStatupdate);
-            this.masterpanel.Controls.Add(this.labelStatupdate);
-            this.masterpanel.Controls.Add(this.editRemark);
-            this.masterpanel.Controls.Add(this.labelRemark);
             this.masterpanel.Controls.Add(this.txtInvoiceNo);
             this.masterpanel.Controls.Add(this.txtBLNo);
             this.masterpanel.Controls.Add(this.displayExpressAC);
@@ -184,7 +177,7 @@
             this.masterpanel.Controls.Add(this.dateETD);
             this.masterpanel.Controls.Add(this.dateETA);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(998, 370);
+            this.masterpanel.Size = new System.Drawing.Size(998, 296);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateETA, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateETD, 0);
@@ -234,10 +227,6 @@
             this.masterpanel.Controls.SetChildIndex(this.displayExpressAC, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtBLNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtInvoiceNo, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
-            this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelStatupdate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayStatupdate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSendtoSCI, 0);
             this.masterpanel.Controls.SetChildIndex(this.displaySendtoSCI, 0);
             this.masterpanel.Controls.SetChildIndex(this.cmbPayer, 0);
@@ -250,24 +239,26 @@
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.disSuppabb, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkSpecialSending, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnPaymentDetail, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnHistory, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 370);
-            this.detailpanel.Size = new System.Drawing.Size(998, 172);
+            this.detailpanel.Location = new System.Drawing.Point(0, 296);
+            this.detailpanel.Size = new System.Drawing.Size(998, 140);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(883, 335);
+            this.gridicon.Location = new System.Drawing.Point(883, 261);
             // 
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.refresh.Location = new System.Drawing.Point(7110, 8);
+            this.refresh.Location = new System.Drawing.Point(7322, 8);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(998, 172);
+            this.detailgridcont.Size = new System.Drawing.Size(998, 140);
             // 
             // detail2
             // 
@@ -283,39 +274,33 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(998, 668);
+            this.detail.Size = new System.Drawing.Size(998, 562);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(998, 542);
+            this.detailcont.Size = new System.Drawing.Size(998, 436);
             // 
             // detailbtm
             // 
-            this.detailbtm.Controls.Add(this.displayInvNo);
-            this.detailbtm.Controls.Add(this.numAmount);
-            this.detailbtm.Controls.Add(this.displayAmount);
-            this.detailbtm.Controls.Add(this.labelInvNo);
-            this.detailbtm.Controls.Add(this.labelAmount);
-            this.detailbtm.Controls.Add(this.labelPayDate);
             this.detailbtm.Controls.Add(this.editDescription);
             this.detailbtm.Controls.Add(this.labelDescription);
-            this.detailbtm.Controls.Add(this.datePayDate);
-            this.detailbtm.Location = new System.Drawing.Point(0, 542);
+            this.detailbtm.Controls.Add(this.editRemark);
+            this.detailbtm.Controls.Add(this.labelRemark);
+            this.detailbtm.Controls.Add(this.labelStatupdate);
+            this.detailbtm.Controls.Add(this.displayStatupdate);
+            this.detailbtm.Location = new System.Drawing.Point(0, 436);
             this.detailbtm.Size = new System.Drawing.Size(998, 126);
+            this.detailbtm.Controls.SetChildIndex(this.displayStatupdate, 0);
+            this.detailbtm.Controls.SetChildIndex(this.labelStatupdate, 0);
+            this.detailbtm.Controls.SetChildIndex(this.labelRemark, 0);
+            this.detailbtm.Controls.SetChildIndex(this.editRemark, 0);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
-            this.detailbtm.Controls.SetChildIndex(this.datePayDate, 0);
             this.detailbtm.Controls.SetChildIndex(this.labelDescription, 0);
             this.detailbtm.Controls.SetChildIndex(this.editDescription, 0);
-            this.detailbtm.Controls.SetChildIndex(this.labelPayDate, 0);
-            this.detailbtm.Controls.SetChildIndex(this.labelAmount, 0);
-            this.detailbtm.Controls.SetChildIndex(this.labelInvNo, 0);
-            this.detailbtm.Controls.SetChildIndex(this.displayAmount, 0);
-            this.detailbtm.Controls.SetChildIndex(this.numAmount, 0);
-            this.detailbtm.Controls.SetChildIndex(this.displayInvNo, 0);
             // 
             // browse
             // 
@@ -323,7 +308,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1006, 697);
+            this.tabs.Size = new System.Drawing.Size(1006, 591);
             // 
             // createby
             // 
@@ -553,7 +538,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(998, 370);
+            this.shapeContainer1.Size = new System.Drawing.Size(998, 296);
             this.shapeContainer1.TabIndex = 24;
             this.shapeContainer1.TabStop = false;
             // 
@@ -797,7 +782,7 @@
             // 
             // labelExpressAC
             // 
-            this.labelExpressAC.Location = new System.Drawing.Point(7, 288);
+            this.labelExpressAC.Location = new System.Drawing.Point(431, 180);
             this.labelExpressAC.Name = "labelExpressAC";
             this.labelExpressAC.Size = new System.Drawing.Size(90, 23);
             this.labelExpressAC.TabIndex = 42;
@@ -805,7 +790,7 @@
             // 
             // labelBLNo
             // 
-            this.labelBLNo.Location = new System.Drawing.Point(7, 315);
+            this.labelBLNo.Location = new System.Drawing.Point(431, 207);
             this.labelBLNo.Name = "labelBLNo";
             this.labelBLNo.Size = new System.Drawing.Size(90, 23);
             this.labelBLNo.TabIndex = 43;
@@ -813,7 +798,7 @@
             // 
             // labelInvoiceNo
             // 
-            this.labelInvoiceNo.Location = new System.Drawing.Point(7, 342);
+            this.labelInvoiceNo.Location = new System.Drawing.Point(431, 234);
             this.labelInvoiceNo.Name = "labelInvoiceNo";
             this.labelInvoiceNo.Size = new System.Drawing.Size(90, 23);
             this.labelInvoiceNo.TabIndex = 44;
@@ -846,7 +831,7 @@
             this.displayExpressAC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayExpressAC.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ExpressACNo", true));
             this.displayExpressAC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayExpressAC.Location = new System.Drawing.Point(102, 288);
+            this.displayExpressAC.Location = new System.Drawing.Point(526, 180);
             this.displayExpressAC.Name = "displayExpressAC";
             this.displayExpressAC.Size = new System.Drawing.Size(185, 23);
             this.displayExpressAC.TabIndex = 47;
@@ -856,7 +841,7 @@
             this.txtBLNo.BackColor = System.Drawing.Color.White;
             this.txtBLNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BLNo", true));
             this.txtBLNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBLNo.Location = new System.Drawing.Point(102, 315);
+            this.txtBLNo.Location = new System.Drawing.Point(526, 207);
             this.txtBLNo.Name = "txtBLNo";
             this.txtBLNo.Size = new System.Drawing.Size(185, 23);
             this.txtBLNo.TabIndex = 12;
@@ -867,14 +852,14 @@
             this.txtInvoiceNo.BackColor = System.Drawing.Color.White;
             this.txtInvoiceNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtyInvNo", true));
             this.txtInvoiceNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtInvoiceNo.Location = new System.Drawing.Point(100, 342);
+            this.txtInvoiceNo.Location = new System.Drawing.Point(524, 234);
             this.txtInvoiceNo.Name = "txtInvoiceNo";
             this.txtInvoiceNo.Size = new System.Drawing.Size(230, 23);
             this.txtInvoiceNo.TabIndex = 13;
             // 
             // labelRemark
             // 
-            this.labelRemark.Location = new System.Drawing.Point(431, 180);
+            this.labelRemark.Location = new System.Drawing.Point(571, 15);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(80, 23);
             this.labelRemark.TabIndex = 50;
@@ -885,7 +870,7 @@
             this.editRemark.BackColor = System.Drawing.Color.White;
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(515, 180);
+            this.editRemark.Location = new System.Drawing.Point(655, 15);
             this.editRemark.MaxLength = 100;
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
@@ -894,7 +879,7 @@
             // 
             // labelStatupdate
             // 
-            this.labelStatupdate.Location = new System.Drawing.Point(431, 235);
+            this.labelStatupdate.Location = new System.Drawing.Point(571, 70);
             this.labelStatupdate.Name = "labelStatupdate";
             this.labelStatupdate.Size = new System.Drawing.Size(80, 23);
             this.labelStatupdate.TabIndex = 52;
@@ -904,14 +889,14 @@
             // 
             this.displayStatupdate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayStatupdate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayStatupdate.Location = new System.Drawing.Point(515, 235);
+            this.displayStatupdate.Location = new System.Drawing.Point(655, 70);
             this.displayStatupdate.Name = "displayStatupdate";
             this.displayStatupdate.Size = new System.Drawing.Size(170, 23);
             this.displayStatupdate.TabIndex = 53;
             // 
             // labelSendtoSCI
             // 
-            this.labelSendtoSCI.Location = new System.Drawing.Point(431, 262);
+            this.labelSendtoSCI.Location = new System.Drawing.Point(431, 261);
             this.labelSendtoSCI.Name = "labelSendtoSCI";
             this.labelSendtoSCI.Size = new System.Drawing.Size(80, 23);
             this.labelSendtoSCI.TabIndex = 54;
@@ -921,7 +906,7 @@
             // 
             this.displaySendtoSCI.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displaySendtoSCI.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySendtoSCI.Location = new System.Drawing.Point(515, 262);
+            this.displaySendtoSCI.Location = new System.Drawing.Point(515, 261);
             this.displaySendtoSCI.Name = "displaySendtoSCI";
             this.displaySendtoSCI.Size = new System.Drawing.Size(170, 23);
             this.displaySendtoSCI.TabIndex = 55;
@@ -945,83 +930,6 @@
             this.editDescription.ReadOnly = true;
             this.editDescription.Size = new System.Drawing.Size(439, 57);
             this.editDescription.TabIndex = 4;
-            // 
-            // labelPayDate
-            // 
-            this.labelPayDate.Location = new System.Drawing.Point(658, 8);
-            this.labelPayDate.Name = "labelPayDate";
-            this.labelPayDate.Size = new System.Drawing.Size(62, 23);
-            this.labelPayDate.TabIndex = 5;
-            this.labelPayDate.Text = "Pay Date";
-            // 
-            // labelAmount
-            // 
-            this.labelAmount.Location = new System.Drawing.Point(658, 37);
-            this.labelAmount.Name = "labelAmount";
-            this.labelAmount.Size = new System.Drawing.Size(62, 23);
-            this.labelAmount.TabIndex = 6;
-            this.labelAmount.Text = "Amount";
-            // 
-            // labelInvNo
-            // 
-            this.labelInvNo.Location = new System.Drawing.Point(658, 67);
-            this.labelInvNo.Name = "labelInvNo";
-            this.labelInvNo.Size = new System.Drawing.Size(62, 23);
-            this.labelInvNo.TabIndex = 7;
-            this.labelInvNo.Text = "Inv No.";
-            // 
-            // datePayDate
-            // 
-            this.datePayDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PayDate", true));
-            this.datePayDate.IsSupportEditMode = false;
-            this.datePayDate.Location = new System.Drawing.Point(724, 8);
-            this.datePayDate.Name = "datePayDate";
-            this.datePayDate.ReadOnly = true;
-            this.datePayDate.Size = new System.Drawing.Size(110, 23);
-            this.datePayDate.TabIndex = 8;
-            // 
-            // displayAmount
-            // 
-            this.displayAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayAmount.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CurrencyID", true));
-            this.displayAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayAmount.Location = new System.Drawing.Point(724, 37);
-            this.displayAmount.Name = "displayAmount";
-            this.displayAmount.Size = new System.Drawing.Size(40, 23);
-            this.displayAmount.TabIndex = 9;
-            // 
-            // numAmount
-            // 
-            this.numAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numAmount.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Amount", true));
-            this.numAmount.DecimalPlaces = 2;
-            this.numAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numAmount.IsSupportEditMode = false;
-            this.numAmount.Location = new System.Drawing.Point(766, 37);
-            this.numAmount.Name = "numAmount";
-            this.numAmount.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numAmount.ReadOnly = true;
-            this.numAmount.Size = new System.Drawing.Size(70, 23);
-            this.numAmount.TabIndex = 10;
-            this.numAmount.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // displayInvNo
-            // 
-            this.displayInvNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayInvNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "InvNo", true));
-            this.displayInvNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayInvNo.Location = new System.Drawing.Point(724, 67);
-            this.displayInvNo.Name = "displayInvNo";
-            this.displayInvNo.Size = new System.Drawing.Size(230, 23);
-            this.displayInvNo.TabIndex = 11;
             // 
             // txtCountryDestination
             // 
@@ -1153,10 +1061,32 @@
             this.chkSpecialSending.Text = "Special Sending";
             this.chkSpecialSending.UseVisualStyleBackColor = true;
             // 
+            // btnPaymentDetail
+            // 
+            this.btnPaymentDetail.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnPaymentDetail.Location = new System.Drawing.Point(849, 133);
+            this.btnPaymentDetail.Name = "btnPaymentDetail";
+            this.btnPaymentDetail.Size = new System.Drawing.Size(140, 38);
+            this.btnPaymentDetail.TabIndex = 65;
+            this.btnPaymentDetail.Text = "Payment Detail";
+            this.btnPaymentDetail.UseVisualStyleBackColor = true;
+            this.btnPaymentDetail.Click += new System.EventHandler(this.BtnPaymentDetail_Click);
+            // 
+            // btnHistory
+            // 
+            this.btnHistory.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnHistory.Location = new System.Drawing.Point(849, 177);
+            this.btnHistory.Name = "btnHistory";
+            this.btnHistory.Size = new System.Drawing.Size(140, 38);
+            this.btnHistory.TabIndex = 66;
+            this.btnHistory.Text = "History";
+            this.btnHistory.UseVisualStyleBackColor = true;
+            this.btnHistory.Click += new System.EventHandler(this.BtnHistory_Click);
+            // 
             // P02
             // 
             this.ApvChkValue = "Sent";
-            this.ClientSize = new System.Drawing.Size(1006, 730);
+            this.ClientSize = new System.Drawing.Size(1006, 624);
             this.DefaultControl = "comboFrom";
             this.DefaultControlForEdit = "comboFrom";
             this.DefaultDetailOrder = "CTNNo,Seq1";
@@ -1260,13 +1190,6 @@
         private Win.UI.Label labelBLNo;
         private Win.UI.Label labelExpressAC;
         private Win.UI.Label labelCarrier;
-        private Win.UI.DisplayBox displayInvNo;
-        private Win.UI.NumericBox numAmount;
-        private Win.UI.DisplayBox displayAmount;
-        private Win.UI.DateBox datePayDate;
-        private Win.UI.Label labelInvNo;
-        private Win.UI.Label labelAmount;
-        private Win.UI.Label labelPayDate;
         private Win.UI.EditBox editDescription;
         private Win.UI.Label labelDescription;
         private Win.UI.ComboBox cmbPayer;
@@ -1278,5 +1201,7 @@
         private Win.UI.DisplayBox dispCarrierbyCustomer;
         private Win.UI.DisplayBox disSuppabb;
         private Win.UI.CheckBox chkSpecialSending;
+        private Win.UI.Button btnHistory;
+        private Win.UI.Button btnPaymentDetail;
     }
 }

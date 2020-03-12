@@ -182,6 +182,12 @@
     <Compile Include="P02_FTYRegularSendingSchedule.designer.cs">
       <DependentUpon>P02_FTYRegularSendingSchedule.cs</DependentUpon>
     </Compile>
+    <Compile Include="P02_History.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_History.Designer.cs">
+      <DependentUpon>P02_History.cs</DependentUpon>
+    </Compile>
     <Compile Include="P02_ImportFromBulkPackingList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -193,6 +199,12 @@
     </Compile>
     <Compile Include="P02_ImportFromSamplePackingList.Designer.cs">
       <DependentUpon>P02_ImportFromSamplePackingList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_PaymentDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_PaymentDetail.Designer.cs">
+      <DependentUpon>P02_PaymentDetail.cs</DependentUpon>
     </Compile>
     <Compile Include="P03_BatchUpload.cs">
       <SubType>Form</SubType>
@@ -904,11 +916,17 @@
     <EmbeddedResource Include="P02_FTYRegularSendingSchedule.resx">
       <DependentUpon>P02_FTYRegularSendingSchedule.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P02_History.resx">
+      <DependentUpon>P02_History.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P02_ImportFromBulkPackingList.resx">
       <DependentUpon>P02_ImportFromBulkPackingList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02_ImportFromSamplePackingList.resx">
       <DependentUpon>P02_ImportFromSamplePackingList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_PaymentDetail.resx">
+      <DependentUpon>P02_PaymentDetail.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P03_BatchUpload.resx">
       <DependentUpon>P03_BatchUpload.cs</DependentUpon>

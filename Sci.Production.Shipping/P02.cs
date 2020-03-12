@@ -599,11 +599,13 @@ FROM(
 		    END as CategoryName
 		    ,[DropDownListSeq]=dp.Seq
 			,[CategoryNameFromDD]=dp.Description
+            ,pl.PulloutID
 	    from Express_Detail ed WITH (NOLOCK) 
 	    left join PO_Supp_Detail p WITH (NOLOCK) on ed.OrderID = p.ID and ed.Seq1 = p.SEQ1 and ed.Seq2 = p.SEQ2
 	    left join Supp s WITH (NOLOCK) on ed.SuppID = s.ID
 	    left join Express_CTNData ec WITH (NOLOCK) on ed.ID = ec.ID and ed.CTNNo = ec.CTNNo
-        LEFT JOIN DropDownList dp ON dp.Type='Pms_Sort_HC_DHL_Cate' AND ed.Category = dp.ID
+        left join DropDownList dp ON dp.Type='Pms_Sort_HC_DHL_Cate' AND ed.Category = dp.ID
+		left join PackingList pl WITH (NOLOCK) on ed.PackingListID = pl.ID
 	    where ed.ID = '{0}'
     )ed
     outer apply(
@@ -670,6 +672,7 @@ Order by CTNNo,Seq1,Seq2", masterID);
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(5))
                 .Text("CategoryName", header: "Category", width: Widths.AnsiChars(14))
                 .Text("PackingListID", header: "PL#", width: Widths.AnsiChars(13))
+                .Text("PulloutID", header: "Pullout ID", width: Widths.AnsiChars(13))
                 .Text("AirPPno", header: "AirPP#", width: Widths.AnsiChars(13))
                 .Text("InChargeName", header: "In Charge", width: Widths.AnsiChars(25))
                 .Text("ReceiverName", header: "Receiver", width: Widths.AnsiChars(13))
@@ -1564,7 +1567,16 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
             }
 
             this.SendMail();
-            string updateCmd = string.Format("update Express set Status = 'Sent', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format(
+                @"
+insert into Express_History([ID], [OldValue], [NewValue], [AddName], [AddDate])
+select ID, Status, 'Sent', '{0}', GETDATE()
+from Express
+where ID = '{1}';
+
+update Express set Status = 'Sent', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'",
+                Sci.Env.User.UserID,
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -1577,7 +1589,16 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
         protected override void ClickRecall()
         {
             base.ClickRecall();
-            string updateCmd = string.Format("update Express set Status = 'New', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format(
+                @"
+insert into Express_History([ID], [OldValue], [NewValue], [AddName], [AddDate])
+select ID, Status, 'New', '{0}', GETDATE()
+from Express
+where ID = '{1}';
+
+update Express set Status = 'New', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}';",
+                Sci.Env.User.UserID,
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -1608,7 +1629,16 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
             }
 
             IList<string> updateCmds = new List<string>();
-            updateCmds.Add(string.Format("update Express set Status = 'Junk', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            updateCmds.Add(string.Format(
+                @"
+insert into Express_History([ID], [OldValue], [NewValue], [AddName], [AddDate])
+select ID, Status, 'Junk', '{0}', GETDATE()
+from Express
+where ID = '{1}';
+
+update Express set Status = 'Junk', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'",
+                Sci.Env.User.UserID,
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             updateCmds.Add(string.Format("update PackingList set pulloutdate=null where ExpressID = '{0}' and Type = 'F'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             updateCmds.Add(string.Format("update PackingList set ExpressID = '' where ExpressID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
@@ -1681,7 +1711,16 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
                 return;
             }
 
-            string updateCmd = string.Format("update Express set Status = 'Approved', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format(
+                @"
+insert into Express_History([ID], [OldValue], [NewValue], [AddName], [AddDate])
+select ID, Status, 'Approved', '{0}', GETDATE()
+from Express
+where ID = '{1}';
+
+update Express set Status = 'Approved', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}';",
+                Sci.Env.User.UserID,
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             string shipDate = MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? "NULL" : "'" + ((DateTime)this.CurrentMaintain["ShipDate"]).ToString("d") + "'";
             updateCmd += $" update PackingList set PulloutDate = {shipDate} where ExpressID = '{this.CurrentMaintain["ID"]}' and type = 'F'";
@@ -1715,9 +1754,22 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
             {
                 return;
             }
+            IList<string> updateCmds = new List<string>();
 
-            string updateCmd = string.Format("update Express set Status = 'Sent', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-            DualResult result = DBProxy.Current.Execute(null, updateCmd);
+            updateCmds.Add(string.Format(
+                @"
+insert into Express_History([ID], [OldValue], [NewValue], [AddName], [AddDate])
+select ID, Status, 'Sent', '{0}', GETDATE()
+from Express
+where ID = '{1}';
+
+update Express set Status = 'Sent', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'",
+                Sci.Env.User.UserID,
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+
+            updateCmds.Add(string.Format("update PackingList set pulloutdate=null where ExpressID = '{0}' and Type = 'F'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+
+            DualResult result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("Unapprove data faile.\r\n" + result.ToString());
@@ -1978,6 +2030,30 @@ and Dest='{this.CurrentMaintain["Dest"]}'
         private void CmbPayer_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.CarrierbyEnable();
+        }
+
+        private void BtnPaymentDetail_Click(object sender, EventArgs e)
+        {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
+            var frm = new P02_PaymentDetail(this.CurrentMaintain);
+            frm.ShowDialog(this);
+            frm.Dispose();
+        }
+
+        private void BtnHistory_Click(object sender, EventArgs e)
+        {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
+            var frm = new P02_History(this.CurrentMaintain["ID"].ToString());
+            frm.ShowDialog(this);
+            frm.Dispose();
         }
     }
 }
