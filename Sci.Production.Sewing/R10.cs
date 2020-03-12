@@ -144,26 +144,41 @@ select o.*
     ,[BalanceQty] = o.OrderQty - o.SewingOutputQty
 from 
 (
-    select distinct
-        o.MDivisionID
-        ,o.FactoryID
-        ,o.ID
-        ,o.StyleID
-        ,o.SeasonID
-        ,o.BrandID
-        ,o.BuyerDelivery
-        ,o.SCIDelivery
-        ,sdd.Article
-        ,sdd.SizeCode
-        ,[OrderQty] = oq.Qty
-        ,[SewingOutputQty] = dbo.getMinCompleteSewQty(sdd.OrderId, sdd.Article, sdd.SizeCode) 
-    from Orders o 
-    left join SewingOutput_Detail_Detail sdd on o.ID = sdd.OrderId
-    left join SewingOutput s on sdd.ID = s.ID
-    left join Order_Qty oq on oq.ID = sdd.OrderId and oq.Article = sdd.Article and oq.SizeCode = sdd.SizeCode
-    where 1=1
-    {0}
-)o
+	select distinct o.*
+		,[Article] = Coalesce(sdd.Article, oq2.Article, '')
+		,[SizeCode] = Coalesce(sdd.SizeCode, oq2.SizeCode, '')
+		,[OrderQty] = Coalesce(sdd.Qty, oq2.Qty, 0)
+		,[SewingOutputQty] = isnull(dbo.getMinCompleteSewQty(isnull(sdd.OrderId, oq2.ID), isnull(sdd.Article, oq2.Article), isnull(sdd.SizeCode, oq2.SizeCode)),0)
+	from 
+	(
+		select distinct
+			o.MDivisionID
+			,o.FactoryID
+			,o.ID
+			,o.StyleID
+			,o.SeasonID
+			,o.BrandID
+			,o.BuyerDelivery
+			,o.SCIDelivery
+		 from Orders o WITH (NOLOCK) 
+		 where 1=1 
+		 {0}
+	)o
+	outer apply
+	(
+		select distinct sdd.OrderId, sdd.Article, sdd.SizeCode, oq.Qty
+		from SewingOutput_Detail_Detail sdd WITH (NOLOCK) 		
+		left join Order_Qty oq WITH (NOLOCK) on oq.ID = sdd.OrderId and oq.Article = sdd.Article and oq.SizeCode = sdd.SizeCode
+		where o.ID = sdd.OrderId
+	)sdd
+	outer apply
+	(
+		select ID, Article, SizeCode, [Qty] = Sum(Qty)
+		from Order_Qty WITH (NOLOCK)
+		where ID = o.ID
+		group by ID, Article, SizeCode
+	)oq2
+)o 
 {1}
 
 IF object_id('tempdb..#tmp_sewingSP') IS NOT NULL drop table #tmp_sewingSP",
