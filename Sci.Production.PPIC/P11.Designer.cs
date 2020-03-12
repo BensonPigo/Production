@@ -58,9 +58,9 @@
             this.displayIssueLackDate = new Sci.Win.UI.DisplayBox();
             this.labelIssueLackDate = new Sci.Win.UI.Label();
             this.btnImport = new Sci.Win.UI.Button();
-            this.txtSubconName = new Sci.Production.Class.txtscifactory();
             this.labelSubconName = new Sci.Win.UI.Label();
             this.btnAutoOutputQuery = new Sci.Win.UI.Button();
+            this.txtLocalSupp1 = new Sci.Production.Class.txtLocalSupp();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -77,7 +77,7 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.txtSubconName);
+            this.masterpanel.Controls.Add(this.txtLocalSupp1);
             this.masterpanel.Controls.Add(this.labelSubconName);
             this.masterpanel.Controls.Add(this.btnImport);
             this.masterpanel.Controls.Add(this.displayIssueLackDate);
@@ -142,7 +142,7 @@
             this.masterpanel.Controls.SetChildIndex(this.displayIssueLackDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSubconName, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtSubconName, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtLocalSupp1, 0);
             // 
             // detailpanel
             // 
@@ -507,16 +507,6 @@
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
-            // txtSubconName
-            // 
-            this.txtSubconName.BackColor = System.Drawing.Color.White;
-            this.txtSubconName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SubconName", true));
-            this.txtSubconName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSubconName.Location = new System.Drawing.Point(103, 112);
-            this.txtSubconName.Name = "txtSubconName";
-            this.txtSubconName.Size = new System.Drawing.Size(66, 23);
-            this.txtSubconName.TabIndex = 43;
-            // 
             // labelSubconName
             // 
             this.labelSubconName.Location = new System.Drawing.Point(5, 112);
@@ -534,6 +524,16 @@
             this.btnAutoOutputQuery.Text = "Auto Output Query";
             this.btnAutoOutputQuery.UseVisualStyleBackColor = true;
             this.btnAutoOutputQuery.Click += new System.EventHandler(this.BtnAutoOutputQuery_Click);
+            // 
+            // txtLocalSupp1
+            // 
+            this.txtLocalSupp1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "SubconName", true));
+            this.txtLocalSupp1.DisplayBox1Binding = "";
+            this.txtLocalSupp1.Location = new System.Drawing.Point(103, 113);
+            this.txtLocalSupp1.Name = "txtLocalSupp1";
+            this.txtLocalSupp1.Size = new System.Drawing.Size(252, 23);
+            this.txtLocalSupp1.TabIndex = 43;
+            this.txtLocalSupp1.TextBox1Binding = "";
             // 
             // P11
             // 
@@ -611,8 +611,8 @@
         private Win.UI.DisplayBox displayIssueLackDate;
         private Win.UI.Label labelIssueLackDate;
         private Win.UI.Button btnImport;
-        private Class.txtscifactory txtSubconName;
         private Win.UI.Label labelSubconName;
         private Win.UI.Button btnAutoOutputQuery;
+        private Class.txtLocalSupp txtLocalSupp1;
     }
 }

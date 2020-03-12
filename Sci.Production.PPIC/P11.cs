@@ -828,11 +828,11 @@ where a.RequestQty > a.StockQty",
 
             if (this.CurrentMaintain["Shift"].Equals("O") && this.EditMode)
             {
-                this.txtSubconName.ReadOnly = false;
+                this.txtLocalSupp1.TextBox1.ReadOnly = false;
             }
             else
             {
-                this.txtSubconName.ReadOnly = true;
+                this.txtLocalSupp1.TextBox1.ReadOnly = true;
             }
 
             if (this.CurrentMaintain["Status"].EqualString("Confirmed") && !this.EditMode)
@@ -874,11 +874,11 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             {
                 if (this.comboShift.SelectedValue.Equals("O"))
                 {
-                    this.txtSubconName.ReadOnly = false;
+                    this.txtLocalSupp1.TextBox1.ReadOnly = false;
                 }
                 else
                 {
-                    this.txtSubconName.ReadOnly = true;
+                    this.txtLocalSupp1.TextBox1.ReadOnly = true;
                     this.CurrentMaintain["Shift"] = this.comboShift.SelectedValue;
                     this.CurrentMaintain["SubconName"] = string.Empty;
                 }

@@ -145,6 +145,7 @@ namespace Sci.Production.Warehouse
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["FabricType"] = "A";
             CurrentMaintain["IssueDate"] = DateTime.Now;
+            this.txtLocalSupp1.TextBox1.ReadOnly = true;
         }
 
         // delete前檢查
@@ -167,6 +168,12 @@ namespace Sci.Production.Warehouse
                 return false;
             }
             return base.ClickEditBefore();
+        }
+
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            this.txtLocalSupp1.TextBox1.ReadOnly = true;
         }
 
         // Print - subreport
@@ -270,14 +277,14 @@ namespace Sci.Production.Warehouse
                 {
                     this.displayApvDate.Text = ((DateTime)dr["apvdate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
                     this.displayBoxShift.Text = dr["Shift"].Equals("D") ? "Day" : dr["Shift"].Equals("N") ? "Night" : "Subcon-Out";
-                    this.displayBoxSubconName.Text = dr["SubconName"].ToString();
+                    this.txtLocalSupp1.TextBox1.Text = dr["SubconName"].ToString();
                 }
             }
             else
             {
                 this.displayApvDate.Text = "";
                 this.displayBoxShift.Text = "";
-                this.displayBoxSubconName.Text = "";
+                this.txtLocalSupp1.TextBox1.Text = "";
             }
             
         }
@@ -774,7 +781,7 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             CurrentMaintain["type"] = dr["type"].ToString();
             this.displayApvDate.Text = ((DateTime)dr["apvdate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             this.displayBoxShift.Text = dr["Shift"].Equals("D") ? "Day" : dr["Shift"].Equals("N") ? "Night" : "Subcon-Out";
-            this.displayBoxSubconName.Text = dr["SubconName"].ToString();
+            this.txtLocalSupp1.TextBox1.Text = dr["SubconName"].ToString();
         }
 
         protected override bool ClickPrint()
