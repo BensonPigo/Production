@@ -30,6 +30,7 @@
     [SharedAmtOther]   NUMERIC (12, 2) CONSTRAINT [DF_ShippingAP_SharedAmtOther] DEFAULT ((0)) NOT NULL,
     [APPExchageRate]   NUMERIC (11, 6) DEFAULT ((0)) NOT NULL,
     [VoucherEditDate] DATE NULL, 
+    [SisFtyAPID] VARCHAR(13) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_ShippingAP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

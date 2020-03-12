@@ -214,6 +214,7 @@ where sd.ID = '{0}'", masterID);
                                 listPara);
             string sql = "select top 1 Vessel from Export where blno = @blno";
             this.disVesselName.Text = this.CurrentMaintain["Type"].ToString().Equals("IMPORT") && !MyUtility.Check.Empty(this.CurrentMaintain["BLNo"]) ? MyUtility.GetValue.Lookup(sql, listPara) : string.Empty;
+            this.chkIncludeFoundry.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup(string.Format(" select top 1 'True' from GMTBooking where BLNo = '{0}' or BL2No = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"]))));
         }
 
         /// <inheritdoc/>
@@ -455,6 +456,25 @@ where sd.ID = '{0}'", masterID);
                 MyUtility.Msg.WarningBox("Supplier can't empty!!");
                 return false;
             }
+            else
+            {
+                // 如果為SCI工廠 Sis. Fty A/P# 就不可為空
+                sqlcmd = string.Format(
+                    @"
+select IsFactory = iif(IsFactory = 1, 'True', 'False')
+from LocalSupp
+where ID = '{0}'
+and Junk = 0",
+                    this.CurrentMaintain["LocalSuppID"]);
+
+                bool chkIsFactory = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup(sqlcmd));
+                if (chkIsFactory && MyUtility.Check.Empty(this.CurrentMaintain["SisFtyAPID"]))
+                {
+                    this.txtSisFtyAPID.Focus();
+                    MyUtility.Msg.WarningBox("Sis. Fty A/P# can't empty!!");
+                    return false;
+                }
+            }
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["PayTermID"]))
             {
@@ -490,6 +510,8 @@ where sd.ID = '{0}'", masterID);
                 MyUtility.Msg.WarningBox("Invoice# can't be empty!!");
                 return false;
             }
+
+
             #endregion
 
             #region 檢查LocalSupp_Bank
@@ -686,6 +708,15 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
                         return false;
                     }
                 }
+            }
+
+            // 系統單純提示訊息
+            if (this.chkIncludeFoundry.Checked)
+            {
+                MyUtility.Msg.WarningBox(
+                    @"This Account Payment includes both general and foundry's SP#,
+- Please be sure to separate the amount of foundry's SP# Payable at account code-3113
+- Please go to foundry's PMS to create an account payment, the Supplier must be the ""Shipper""");
             }
 
             return base.ClickSaveBefore();
