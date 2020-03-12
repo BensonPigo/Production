@@ -3744,7 +3744,6 @@ and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
 and Line = '{this.CurrentMaintain["SewingLineID"]}'
 and Team = '{this.CurrentMaintain["Team"]}'
 and Shift = '{shift}'
-and SunriseNid = 0
 group by InspectionDate, FactoryID, Line, Shift, Team, OrderId, Article, Location
 ";
             DualResult result = DBProxy.Current.Select("ManufacturingExecution", frommes, out sewDt1);
@@ -3826,6 +3825,7 @@ select
 	, Article
 	, SizeCode=Size
 	, [QAQty] = sum(iif(ins.Status in ('Pass','Fixed'),1,0))
+    , [ExistsSunriseNid] = sum(iif(ins.SunriseNid = 0,0,1))
 from inspection ins WITH (NOLOCK)
 where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
 and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
@@ -3835,7 +3835,6 @@ and Shift = '{shift}'
 and Article = '{item["Article"]}'
 and Location = '{item["ComboType"]}'
 and OrderId = '{item["OrderId"]}'
-and SunriseNid = 0
 group by InspectionDate, FactoryID, Line, Shift, Team, OrderId, Article, Location,Size
 ";
             DualResult result = DBProxy.Current.Select("ManufacturingExecution", frommes, out sewDt2);
@@ -3862,6 +3861,7 @@ with AllQty as (
                                       and Article = oq.Article 
                                       and SizeCode = oq.SizeCode
                                       and ID != '{this.CurrentMaintain["ID"]}'), 0) 
+           , [ExistsSunriseNid] = isnull(t.ExistsSunriseNid,0)
     from Order_Qty oq WITH (NOLOCK) 
     left join #tmp t on oq.id = t.Orderid and oq.Article = t.Article and oq.SizeCode = t.SizeCode
     where oq.ID = '{item["Orderid"]}'
@@ -3876,6 +3876,7 @@ select a.ID,a.SewingOutput_DetailUkey,a.OrderId,a.ComboType,a.Article,a.SizeCode
        , isnull(os.Seq,0) as Seq
        , OldDetailKey = ''
        , DQSQAQty = a.QAQty
+       , a.ExistsSunriseNid
 from AllQty a
 left join Orders o WITH (NOLOCK) on a.OrderId = o.ID
 left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID 
@@ -3971,9 +3972,16 @@ order by a.OrderId,os.Seq
                 {
                     int dQSQAQty = (int)MyUtility.Convert.GetDecimal(dataRow["DQSQAQty"]);
                     int qAQtyn = (int)MyUtility.Convert.GetDecimal(dataRow["QAQty"]);
+                    int existsSunriseNid = (int)MyUtility.Convert.GetDecimal(dataRow["ExistsSunriseNid"]);
+
                     if (dQSQAQty > qAQtyn)
                     {
                         remarkList.Add($@"SP#{dataRow["OrderId"]}, Size:{dataRow["SizeCode"]} / DQS Q'ty : {dQSQAQty} / Bal QA Q'ty : {qAQtyn}");
+                    }
+
+                    // 若有含非Endline資料就不做自動填入reason
+                    if (dQSQAQty > qAQtyn && existsSunriseNid == 0)
+                    {
                         remarkList2.Add($@"SP#{dataRow["OrderId"]}, Size:{dataRow["SizeCode"]} / DQS Q'ty : {dQSQAQty} / Bal QA Q'ty : {qAQtyn}");
                     }
                 }
