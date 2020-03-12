@@ -933,6 +933,7 @@ and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
 and Line = '{this.CurrentMaintain["SewingLineID"]}'
 and Team = '{this.CurrentMaintain["Team"]}'
 and Shift = '{shift}'
+and SunriseNid = 0
 ";
             // 先判斷此表頭組合, 是否有任何一筆DQS, 若無則不用限制
             if (!MyUtility.Check.Seek(checkDQSexists, "ManufacturingExecution"))
@@ -951,6 +952,7 @@ and Shift = '{shift}'
 and OrderID = '{dr["OrderID"]}'
 and Location = '{dr["ComboType"]}'
 and Article = '{dr["Article"]}'
+and SunriseNid = 0
 ";
             bool hasDQS = MyUtility.Check.Seek(checkDQSexists, "ManufacturingExecution");
 
@@ -1840,7 +1842,7 @@ select t.id
 	, Qty=count(*)
 from #tmp t
 inner join inspection i with(nolock) on t.Cdate = i.InspectionDate and t.FactoryID = i.FactoryID 
-	and t.SewinglineID = i.Line and t.Team = i.Team and t.Shift = iif(i.Shift='Day','D','N')and t.OrderId = i.OrderId
+	and t.SewinglineID = i.Line and t.Team = i.Team and t.Shift = iif(i.Shift='Day','D','N')and t.OrderId = i.OrderId and i.SunriseNid = 0
 inner join Inspection_Detail id with(nolock) on i.id= id.id
 where (i.Status <> 'Fixed'  or (i.Status = 'Fixed' and cast(i.AddDate as date) = i.InspectionDate))
 group by t.id,GarmentDefectTypeID, GarmentDefectCodeID
@@ -3742,6 +3744,7 @@ and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
 and Line = '{this.CurrentMaintain["SewingLineID"]}'
 and Team = '{this.CurrentMaintain["Team"]}'
 and Shift = '{shift}'
+and SunriseNid = 0
 group by InspectionDate, FactoryID, Line, Shift, Team, OrderId, Article, Location
 ";
             DualResult result = DBProxy.Current.Select("ManufacturingExecution", frommes, out sewDt1);
@@ -3832,6 +3835,7 @@ and Shift = '{shift}'
 and Article = '{item["Article"]}'
 and Location = '{item["ComboType"]}'
 and OrderId = '{item["OrderId"]}'
+and SunriseNid = 0
 group by InspectionDate, FactoryID, Line, Shift, Team, OrderId, Article, Location,Size
 ";
             DualResult result = DBProxy.Current.Select("ManufacturingExecution", frommes, out sewDt2);
@@ -4101,6 +4105,7 @@ outer apply(
            and ins.Location = t.ComboType
            and ins.OrderId = t.OrderId            
            and (ins.Status <> 'Fixed'  or (ins.Status = 'Fixed' and cast(ins.AddDate as date) = ins.InspectionDate))
+           and ins.SunriseNid = 0
 ) DefectData
 outer apply(
     -- 最後計算RFT 排除Fixed，但若同一天被Reject又被修好這時候也要抓進來並算reject。
@@ -4115,6 +4120,7 @@ outer apply(
            and ins.Location = t.ComboType
            and ins.OrderId = t.OrderId
            and not (ins.Status <> 'Fixed'  or (ins.Status = 'Fixed' and cast(ins.AddDate as date) = ins.InspectionDate))
+           and ins.SunriseNid = 0
 ) DiffInspectQty
 ";
 
