@@ -11,6 +11,7 @@ using Sci.Data;
 using Sci.Production.PublicPrg;
 using System.Runtime.InteropServices;
 using System.Data.SqlClient;
+using System.Transactions;
 
 namespace Sci.Production.Packing
 {
@@ -346,7 +347,7 @@ where o.ID = @orderid";
 
             // 檢查OrderID+Seq不可以重複建立
             DataRow existid;
-            if (MyUtility.Check.Seek(string.Format("select ID from PackingGuide WITH (NOLOCK) where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", this.CurrentMaintain["OrderID"].ToString(), this.CurrentMaintain["OrderShipmodeSeq"].ToString(), this.IsDetailInserting ? string.Empty : this.CurrentMaintain["ID"].ToString()),out existid))
+            if (MyUtility.Check.Seek(string.Format("select ID from PackingGuide WITH (NOLOCK) where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", this.CurrentMaintain["OrderID"].ToString(), this.CurrentMaintain["OrderShipmodeSeq"].ToString(), this.IsDetailInserting ? string.Empty : this.CurrentMaintain["ID"].ToString()), out existid))
             {
                 MyUtility.Msg.WarningBox($"SP No: {this.CurrentMaintain["OrderID"]}, Seq: {this.CurrentMaintain["OrderShipmodeSeq"]} already exists in packing guide {existid["ID"]}, can't be created again!");
                 return false;
@@ -2491,20 +2492,40 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
             #endregion
             string insertCmd = this.GetSwitchToPackingListSQL(((Button)sender).Name);
 
-            DualResult result = DBProxy.Current.Execute(null, insertCmd);
-            if (result)
+            using (TransactionScope transaction = new TransactionScope())
             {
-                // 存檔成功後，要再呼叫UpdateOrdersCTN, CreateOrderCTNData
-                bool prgResult = Prgs.UpdateOrdersCTN(this.CurrentMaintain["OrderID"].ToString());
-                prgResult = Prgs.CreateOrderCTNData(this.CurrentMaintain["ID"].ToString());
-                prgResult = Prgs.PackingP02CreateSCICtnNo(this.CurrentMaintain["ID"].ToString());
+                DualResult result = DBProxy.Current.Execute(null, insertCmd);
+                if (result)
+                {
+                    // 存檔成功後，要再呼叫UpdateOrdersCTN, CreateOrderCTNData
+                    bool prgResult = Prgs.UpdateOrdersCTN(this.CurrentMaintain["OrderID"].ToString());
+                    if (!prgResult)
+                    {
+                        return;
+                    }
 
-                MyUtility.Msg.InfoBox("Switch completed!");
-            }
-            else
-            {
-                MyUtility.Msg.WarningBox("Switch fail!\r\n" + result.ToString());
-                return;
+                    prgResult = Prgs.CreateOrderCTNData(this.CurrentMaintain["ID"].ToString());
+                    if (!prgResult)
+                    {
+                        return;
+                    }
+
+                    prgResult = Prgs.PackingP02CreateSCICtnNo(this.CurrentMaintain["ID"].ToString());
+                    if (!prgResult)
+                    {
+                        return;
+                    }
+
+                    transaction.Complete();
+                    transaction.Dispose();
+                    MyUtility.Msg.InfoBox("Switch completed!");
+                }
+                else
+                {
+                    transaction.Dispose();
+                    MyUtility.Msg.WarningBox("Switch fail!\r\n" + result.ToString());
+                    return;
+                }
             }
         }
 
