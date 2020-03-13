@@ -594,7 +594,10 @@ VALUES(s.ID, s.SCICtnNo,
 iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 , s.PulloutDate, s.OrderID, s.OrderShipmodeSeq, s.Article, s.SizeCode
 		, s.ShipQty, s.Barcode, s.GW, s.CtnRefno, s.CtnLength, s.CtnWidth, s.CtnHeight, s.CtnUnit
-	, s.Junk, s.CmdTime, s.SunriseUpdated, s.GenSongUpdated,s.PackingCTN ,s.IsMixPacking)	;
+	, s.Junk, s.CmdTime, s.SunriseUpdated, s.GenSongUpdated,s.PackingCTN ,s.IsMixPacking)
+WHEN NOT MATCHED BY SOURCE THEN
+	UPDATE SET
+	t.Junk = 1	;
 		
 		----寫入HTMLSetting和PicSetting
 		-- 如果FPS.dbo.PackingList.Junk=1， 則update FPS.dbo.PackingList_Detail
