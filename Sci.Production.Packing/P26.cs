@@ -282,6 +282,9 @@ namespace Sci.Production.Packing
                                 }
 
                                 int Qty_textindex = tmppArray.ToList().IndexOf("Qty:");
+                                int SSCC_textindex = tmppArray.ToList().IndexOf("SSCC");
+
+                                int CustCTN_Index = SSCC_textindex - 1;
                                 int CustPONo_index = Qty_textindex + 1;
                                 int Style_index = Qty_textindex + 2;
                                 int SizeCode_index = Qty_textindex + 4;
@@ -289,7 +292,7 @@ namespace Sci.Production.Packing
                                 zPL_Objects.Add(
                                      new ZPL()
                                      {
-                                         CustCTN = tmppArray[0].Split(' ')[1],
+                                         CustCTN = tmppArray[CustCTN_Index].Replace("(", "").Replace(")", "").Replace(" ", ""),
                                          CustPONo = tmppArray[CustPONo_index],
                                          StyleID = tmppArray[Style_index].Split('-')[0],
                                          Article = tmppArray[Style_index].Split('-')[1],
@@ -303,6 +306,9 @@ namespace Sci.Production.Packing
                             {
 
                                 int Qty_textindex = tmppArray.ToList().IndexOf("Qty:");
+                                int SSCC_textindex = tmppArray.ToList().IndexOf("SSCC");
+
+                                int CustCTN_Index = SSCC_textindex - 1;
                                 int CustPONo_index = Qty_textindex + 1;
                                 int Style_index = Qty_textindex + 2;
                                 int SizeCode_index = Qty_textindex + 4;
@@ -311,7 +317,7 @@ namespace Sci.Production.Packing
                                 zPL_Objects.Add(
                                      new ZPL()
                                      {
-                                         CustCTN = tmppArray[0].Split(' ')[1],
+                                         CustCTN = tmppArray[CustCTN_Index].Replace("(", "").Replace(")", "").Replace(" ", ""),
                                          CustPONo = tmppArray[CustPONo_index],
                                          StyleID = tmppArray[Style_index].Split('-')[0],
                                          Article = tmppArray[Style_index].Split('-')[1],
@@ -1048,7 +1054,7 @@ WHERE p.Type ='B'
     AND pd.CustCTN = ''
 	AND p.ID='{packingListID}'
 "));
-                                if (fileCount == ctn && totalFileCount == totalCount_DB)
+                                if (totalFileCount == totalCount_DB)
                                 {
                                     sameCount++;
                                     trueID = packingListID;
@@ -1070,7 +1076,12 @@ WHERE p.Type ='B'
                             }
                             else if (sameCount == 1)
                             {
-                                packingList_Detail_Ukeys.Add(mappingInfo[0].Rows[0]["PackingList_Ukey"].ToString());
+                                DataRow okRow = mappingInfo[0].AsEnumerable().Where(o =>
+                                o["PackingListID"].ToString() == iDList.FirstOrDefault()
+                                && !packingList_Detail_Ukeys.Contains(o["PackingList_Ukey"].ToString())).FirstOrDefault();
+
+                                packingList_Detail_Ukeys.Add(okRow["PackingList_Ukey"].ToString());
+
                                 // 04
                                 UpdateModel model = new UpdateModel()
                                 {
@@ -1082,7 +1093,7 @@ WHERE p.Type ='B'
                                     ShipQty = zPL.ShipQty,
                                     CustCTN = zPL.CustCTN,
                                     FileName = fileName,
-                                    SCICtnNo = mappingInfo[0].Rows[0]["SCICtnNo"].ToString()
+                                    SCICtnNo = okRow["SCICtnNo"].ToString()
                                 };
                                 upateModel_List.Add(model);
                             }
@@ -1889,314 +1900,6 @@ inner join #tmp{i} b on a.PackingListID = b.PackingListID
                 i++;
             }
 
-            #region NOTE
-//            foreach (List<UpdateModel> upateModels in upateModel_List)
-//            {
-//                if (upateModels.Count == 0)
-//                {
-//                    continue;
-//                }
-
-//                string fileName = upateModels.FirstOrDefault().FileName;
-//                fileNames.Add(fileName);
-
-//                var idList = upateModels.Select(o => new { o.PackingListID }).Distinct().ToList();
-
-//                foreach (var item in idList)
-//                {
-//                    string cmd = string.Empty;
-
-//                    if (uploadType == "ZPL")
-//                    {
-//                        #region SQL
-//                        cmd += $@"
-
-//SELECT pd.ID,pd.CTNStartNo ,o.BrandID ,pd.RefNo ,pd.SCICtnNo
-//INTO #tmp{i}
-//FROM PackingList p 
-//INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-//INNER JOIN Orders o ON o.ID = pd.OrderID
-//WHERE p.Type ='B' 
-//	AND p.ID='{item.PackingListID}'
-//    AND pd.CustCTN='' 
-
-
-//----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
-//IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{item.PackingListID}')
-//BEGIN
-//	INSERT INTO ShippingMarkPic
-//		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
-
-//	SELECT DISTINCT [PackingListID]=t.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
-//	FROM ShippingMarkPicture s
-//	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D'
-//    ;
-//	INSERT INTO ShippingMarkPic
-//		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
-
-//	SELECT DISTINCT [PackingListID]=t.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
-//	FROM ShippingMarkPicture s
-//	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='A'
-//    ;
-//END
-//ELSE
-//BEGIN
-//    UPDATE spc
-//    SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
-//    FROM ShippingMarkPic spc
-//	INNER JOIN ShippingMarkPicture s ON s.Seq = spc.Seq AND s.Side = spc.Side 
-//    INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D' AND t.ID = spc.PackingListID
-//    ;
-//    UPDATE spc
-//    SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
-//    FROM ShippingMarkPic spc
-//	INNER JOIN ShippingMarkPicture s ON s.Seq = spc.Seq AND s.Side = spc.Side 
-//    INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='A' AND t.ID = spc.PackingListID
-//END
-
-//DROP TABLE #tmp{i}
-//";
-//                        #endregion
-//                    }
-
-//                    if (uploadType == "PDF")
-//                    {
-//                        #region SQL
-//                        cmd += $@"
-
-//SELECT pd.ID,pd.CTNStartNo ,o.BrandID ,pd.RefNo ,pd.SCICtnNo
-//INTO #tmp{i}
-//FROM PackingList p 
-//INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-//INNER JOIN Orders o ON o.ID = pd.OrderID
-//WHERE p.Type ='B' 
-//	AND p.ID='{item.PackingListID}'
-//    AND pd.CustCTN='' 
-
-
-//----3. 寫入ShippingMarkPic、ShippingMarkPic_Detail資料
-//IF NOT EXISTS( SELECT 1 FROM ShippingMarkPic WHERE PackingListID='{item.PackingListID}')
-//BEGIN
-//	INSERT INTO ShippingMarkPic
-//		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
-
-//	SELECT DISTINCT [PackingListID]=t.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
-//	FROM ShippingMarkPicture s
-//	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo
-//    ;
-//END
-//ELSE
-//BEGIN
-//    UPDATE spc
-//    SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
-//    FROM ShippingMarkPic spc
-//	INNER JOIN ShippingMarkPicture s ON s.Seq = spc.Seq AND s.Side = spc.Side 
-//    INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND t.ID = spc.PackingListID
-//    ;
-//END
-
-//DROP TABLE #tmp{i}
-//";
-//                        #endregion
-//                    }
-
-//                    i++;
-
-//                    updateCmd += cmd + Environment.NewLine + "---------";
-
-//                    var sameIDList = upateModels.Where(o => o.PackingListID == item.PackingListID).ToList();
-
-//                    cmd = string.Empty;
-
-//                    int ii = 0;
-
-//                    foreach (var model in sameIDList)
-//                    {
-//                        if (uploadType == "ZPL")
-//                        {
-//                            #region SQL
-//                            cmd += $@"
-
-//SELECT ID ,StyleID ,POID
-//INTO #tmpOrders_{ii}
-//FROM Orders 
-//WHERE CustPONo='{model.CustPONO}' AND StyleID='{model.StyleID}'
-
-//SELECT TOP 1 [PackingListID]=pd.ID ,[PackingList_Ukey]=pd.Ukey ,o.CustPONo ,o.StyleID ,pd.Article  ,pd.SCICtnNo
-//,[SizeCode]='{model.ShipQty}' ,pd.ShipQty ,[CustCTN] ='{model.CustCTN}'
-//,o.BrandID , pd.RefNo 
-//INTO #tmp_{ii}
-//FROM PackingList p 
-//INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-//INNER JOIN Orders o ON o.ID = pd.OrderID
-//WHERE p.Type ='B' 
-//	AND p.ID='{model.PackingListID}'
-//    AND pd.OrderID IN (SELECT ID FROM #tmpOrders_{ii})
-//    AND pd.CustCTN = ''
-//    AND Article = '{model.Article}'
-//    AND pd.ShipQty={model.ShipQty}
-//    AND (
-//	        pd.SizeCode in
-//	        (
-//		        SELECT SizeCode 
-//		        FROM Order_SizeSpec 
-//		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmpOrders_{ii}) AND SizeSpec IN ('{model.SizeCode}')
-//	        ) 
-//	        OR 
-//	        pd.SizeCode='{model.SizeCode}'
-//        )
-//	AND NOT EXISTS( SELECT * FROM ShippingMarkPic_Detail WHERE FileName = '{model.CustCTN}') ----一箱只會寫一次P24表身，若混尺碼 為5筆一箱，則第一筆寫入即可
-//	AND NOT EXISTS( SELECT * FROM ShippingMarkPic_Detail WHERE SCICtnNo = pd.SCICtnNo)       
-//	ORDER BY CAST(CTNStartNo as int)
-
-//----ShippingMarkPic_Detail  (Side=D)
-//IF EXISTS(
-//    SELECT 1 FROM ShippingMarkPic_Detail 
-//    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{model.PackingListID}' AND Side='D' )
-//	AND SCICtnNo = (SELECT SCICtnNo FROM #tmp_{ii})
-//)
-//BEGIN
-//    DELETE FROM ShippingMarkPic_Detail 
-//    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{model.PackingListID}' AND Side='D' )
-//	AND SCICtnNo = (SELECT SCICtnNo FROM #tmp_{ii})
-//END
-
-//INSERT INTO [dbo].[ShippingMarkPic_Detail]
-//           ([ShippingMarkPicUkey]
-//           ,[SCICtnNo]
-//		   ,[FileName])
-//SELECT [ShippingMarkPicUkey]=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{model.PackingListID}' AND Side='D' )  
-//,pd.SCICtnNo
-//,[FileName]=pd.CustCTN
-//FROM #tmp_{ii} pd
-
-
-//----ShippingMarkPic_Detail  (Side=A)
-//IF EXISTS(
-//    SELECT 1 FROM ShippingMarkPic_Detail 
-//    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{model.PackingListID}' AND Side='A' )
-//	AND SCICtnNo = (SELECT SCICtnNo FROM #tmp_{ii})
-//)
-//BEGIN
-//    DELETE FROM ShippingMarkPic_Detail 
-//    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{model.PackingListID}' AND Side='A' )
-//	AND SCICtnNo = (SELECT SCICtnNo FROM #tmp_{ii})
-//END
-
-//INSERT INTO [dbo].[ShippingMarkPic_Detail]
-//           ([ShippingMarkPicUkey]
-//           ,[SCICtnNo]
-//		   ,[FileName])
-//SELECT [ShippingMarkPicUkey]=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{model.PackingListID}' AND Side='A' )  
-//,pd.SCICtnNo
-//,[FileName]=pd.CustCTN
-//FROM #tmp_{ii} pd
-
-//DROP TABLE #tmp_{ii}  ,#tmpOrders_{ii}
-//";
-//                            #endregion
-//                        }
-
-//                        if (uploadType == "PDF")
-//                        {
-//                            #region SQL
-//                            cmd += $@"
-
-
-//SELECT ID ,StyleID ,POID
-//INTO #tmpOrders_{ii}
-//FROM Orders 
-//WHERE CustPONo='{model.CustPONO}' AND StyleID='{model.StyleID}'
-
-//SELECT TOP 1 [PackingListID]=pd.ID ,[PackingList_Ukey]=pd.Ukey ,o.CustPONo ,o.StyleID ,pd.Article  ,pd.SCICtnNo
-//,[SizeCode]='{model.ShipQty}' ,pd.ShipQty ,[CustCTN] ='{model.CustCTN}'
-//,o.BrandID , pd.RefNo 
-//INTO #tmp_{ii}
-//FROM PackingList p 
-//INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-//INNER JOIN Orders o ON o.ID = pd.OrderID
-//WHERE p.Type ='B' 
-//	AND p.ID='{model.PackingListID}'
-//    AND pd.OrderID IN (SELECT ID FROM #tmpOrders_{ii})
-//    AND pd.CustCTN = ''
-//    AND Article = '{model.Article}'
-//    AND pd.ShipQty={model.ShipQty}
-//    AND (
-//	        pd.SizeCode in
-//	        (
-//		        SELECT SizeCode 
-//		        FROM Order_SizeSpec 
-//		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmpOrders_{ii}) AND SizeSpec IN ('{model.SizeCode}')
-//	        ) 
-//	        OR 
-//	        pd.SizeCode='{model.SizeCode}'
-//        )
-//	AND NOT EXISTS( SELECT * FROM ShippingMarkPic_Detail WHERE FileName = '{model.CustCTN}')----一箱只會寫一次P24表身，若混尺碼 為5筆一箱，則第一筆寫入即可
-//	AND NOT EXISTS( SELECT * FROM ShippingMarkPic_Detail WHERE SCICtnNo = pd.SCICtnNo)
-//	ORDER BY CAST(CTNStartNo as int)
-
-//----ShippingMarkPic_Detail 
-//IF EXISTS(
-//    SELECT 1 FROM ShippingMarkPic_Detail 
-//    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{model.PackingListID}')
-//	AND SCICtnNo = (SELECT SCICtnNo FROM #tmp_{ii})
-//)
-//BEGIN
-//    DELETE FROM ShippingMarkPic_Detail 
-//    WHERE ShippingMarkPicUkey=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{model.PackingListID}' )
-//	AND SCICtnNo = (SELECT SCICtnNo FROM #tmp_{ii})
-//END
-
-//INSERT INTO [dbo].[ShippingMarkPic_Detail]
-//           ([ShippingMarkPicUkey]
-//           ,[SCICtnNo]
-//		   ,[FileName])
-//SELECT [ShippingMarkPicUkey]=( SELECT Ukey FROM ShippingMarkPic WHERE PackingListID='{model.PackingListID}' )  
-//,pd.SCICtnNo
-//,[FileName]=pd.CustCTN
-//FROM #tmp_{ii} pd
-
-//DROP TABLE #tmp_{ii}  ,#tmpOrders_{ii}
-///*
-//----更新檔名
-//UPDATE t
-//SET t.FileName='{model.CustCTN}'
-//FROM ShippingMarkPic_Detail t
-//WHERE t.ShippingMarkPicUkey =(
-//	SELECT TOP 1 sd.ShippingMarkPicUkey
-//	FROM ShippingMarkPic s
-//	INNER JOIN ShippingMarkPic_Detail sd ON s.Ukey=sd.ShippingMarkPicUkey
-//	WHERE s.PackingListID = '{item.PackingListID}' AND sd.Image IS NULL AND sd.FileName = ''
-//	ORDER BY sd.SCICtnNo 
-//)
-//AND  t.SCICtnNo =(
-//	SELECT  TOP 1  sd.SCICtnNo
-//	FROM ShippingMarkPic s
-//	INNER JOIN ShippingMarkPic_Detail sd ON s.Ukey=sd.ShippingMarkPicUkey
-//	WHERE s.PackingListID = '{item.PackingListID}' AND sd.Image IS NULL AND sd.FileName = ''
-//	ORDER BY sd.SCICtnNo 
-//)
-//*/
-//";
-//                            #endregion
-//                        }
-
-//                        ii++;
-//                    }
-
-//                    updateCmd += cmd + Environment.NewLine + "---------";
-//                }
-//            }
-
-//            if (MyUtility.Check.Empty(updateCmd))
-//            {
-//                this.canConvert = false;
-//                return false;
-//            }
-
-            
-            #endregion
-
             using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
             {
                 try
@@ -2858,20 +2561,23 @@ DROP TABLE #tmpOrders ,#tmp ,#ExistsB03
                 Directory.CreateDirectory(imageOutputPath);
             }
 
-            int picWidth = 1375;
-            int picHeight = 2150;
+            int picWidth = 1200;
+            int picHeight = 2100;
 
             Bitmap pic = new Bitmap(picWidth, picHeight);
 
             // 建立圖片
             Graphics graphic = Graphics.FromImage(pic);
 
+            int cutWidth = 95;
+            int cutHeight = 160;
+
             // 建立畫板
             graphic.DrawImage(bmp,
                      //將被切割的圖片畫在新圖片上面，第一個參數是被切割的原圖片
                      new Rectangle(0, 0, picWidth, picHeight),
                      //指定繪製影像的位置和大小，基本上是同pic大小
-                     new Rectangle(33, 110, picWidth, picHeight),
+                     new Rectangle(cutWidth, cutHeight, picWidth, picHeight),
                      //指定被切割的圖片要繪製的部分
                      GraphicsUnit.Pixel);
 
