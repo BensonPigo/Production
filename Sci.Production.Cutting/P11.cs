@@ -32,10 +32,10 @@ namespace Sci.Production.Cutting
             string cmd_st = "Select 0 as sel,PatternCode,PatternDesc, '' as annotation,parts,'' as cutref,'' as poid, 0 as iden,ispair ,Location from Bundle_detail_allpart WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_st, out allpartTb);
 
-            string pattern_cmd = "Select patternCode,PatternDesc,Parts,'' as art,0 AS parts, '' as cutref,'' as poid, 0 as iden,ispair ,Location from Bundle_Detail WITH (NOLOCK) Where 1=0"; //左下的Table
+            string pattern_cmd = "Select patternCode,PatternDesc,Parts,'' as art,0 AS parts, '' as cutref,'' as poid, 0 as iden,ispair ,Location,NoBundleCardAfterSubprocess_String='',PostSewingSubProcess_String='' from Bundle_Detail WITH (NOLOCK) Where 1=0"; //左下的Table
             DBProxy.Current.Select(null, pattern_cmd, out patternTb);
 
-            string cmd_art = "Select PatternCode,subprocessid from Bundle_detail_art WITH (NOLOCK) where 1=0";
+            string cmd_art = "Select PatternCode,subprocessid,NoBundleCardAfterSubprocess_String='',PostSewingSubProcess_String='' from Bundle_detail_art WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_art, out artTb);
 
             string cmd_qty = "Select 0 as No,qty,'' as orderid,'' as cutref,'' as article, SizeCode, 0 as iden from Bundle_Detail_Qty WITH (NOLOCK) where 1=0";
@@ -64,6 +64,8 @@ namespace Sci.Production.Cutting
             DataGridViewGeneratorTextColumnSettings selectExcess = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings isPair = new DataGridViewGeneratorCheckBoxColumnSettings();
 
+            DataGridViewGeneratorTextColumnSettings NoBundleCardAfterSubprocess_String = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings PostSewingSubProcess_String = new DataGridViewGeneratorTextColumnSettings();
 
             selectExcess.EditingMouseDown += (s, e) =>
             {
@@ -295,8 +297,86 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
                     e.EditingControl.Text = subpro;
                     dr["art"] = subpro;
                     dr.EndEdit();
+
+                    string[] arts = MyUtility.Convert.GetString(dr["art"]).Split('+');
+                    string[] pssps = MyUtility.Convert.GetString(dr["PostSewingSubProcess_String"]).Split('+');
+                    string nbcass = MyUtility.Convert.GetString(dr["NoBundleCardAfterSubprocess_String"]);
+                    if (!arts.Contains(nbcass))
+                    {
+                        dr["NoBundleCardAfterSubprocess_String"] = string.Empty;
+                    }
+                    List<string> recordPS = new List<string>();
+                    foreach (var art in arts)
+                    {
+                        if (pssps.Contains(art))
+                        {
+                            recordPS.Add(art);
+                        }
+                    }
+                    dr["PostSewingSubProcess_String"] = string.Join("+", recordPS);
+                    dr.EndEdit();
                 }
             };
+            PostSewingSubProcess_String.EditingMouseDown += (s, e) =>
+            {
+                DataRow dr = gridCutpart.GetDataRow(e.RowIndex);
+                if (dr["PatternCode"].ToString() == "ALLPARTS") return;
+                if (MyUtility.Check.Empty(dr["art"])) return;
+                if (e.Button == MouseButtons.Right)
+                {
+                    string inArt = "'" + string.Join("','", MyUtility.Convert.GetString(dr["art"]).Split('+')) + "'";
+                    string sqlcmd = $"Select id from subprocess WITH (NOLOCK) where junk=0 and IsSelection=1 and id in({inArt})";
+                    SelectItem2 sele = new SelectItem2(sqlcmd, "Subprocess", "23", dr["PostSewingSubProcess_String"].ToString(), null, null, null);
+                    DialogResult result = sele.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+
+                    dr["PostSewingSubProcess_String"] = sele.GetSelectedString().Replace(",", "+"); ;
+                    dr.EndEdit();
+                }
+            };
+            PostSewingSubProcess_String.CellFormatting += (s, e) =>
+            {
+                DataRow dr = gridCutpart.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["art"]) || dr["PatternCode"].ToString() == "ALLPARTS")
+                {
+                    e.CellStyle.BackColor = Color.White;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+            NoBundleCardAfterSubprocess_String.EditingMouseDown += (s, e) =>
+            {
+                DataRow dr = gridCutpart.GetDataRow(e.RowIndex);
+                if (dr["PatternCode"].ToString() == "ALLPARTS") return;
+                if (MyUtility.Check.Empty(dr["art"])) return;
+                if (e.Button == MouseButtons.Right)
+                {
+                    string inArt = "'" + string.Join("','", MyUtility.Convert.GetString(dr["art"]).Split('+')) + "'";
+                    string sqlcmd = $"select id = '' union all Select id from subprocess WITH (NOLOCK) where IsBoundedProcess = 1 and id in({inArt})";
+                    SelectItem sele = new SelectItem(sqlcmd, "23", MyUtility.Convert.GetString(dr["NoBundleCardAfterSubprocess_String"]), "Subprocess");
+                    DialogResult result = sele.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+
+                    dr["NoBundleCardAfterSubprocess_String"] = sele.GetSelectedString();
+                    dr.EndEdit();
+                }
+            };
+            NoBundleCardAfterSubprocess_String.CellFormatting += (s, e) =>
+            {
+                DataRow dr = gridCutpart.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["art"]) || dr["PatternCode"].ToString() == "ALLPARTS")
+                {
+                    e.CellStyle.BackColor = Color.White;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+
+
             partQtyCell.CellValidating += (s, e) =>
             {
                 DataRow dr = gridCutpart.GetDataRow(e.RowIndex);
@@ -487,7 +567,10 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
             .Text("Location", header: "Location", iseditingreadonly: true, width: Widths.AnsiChars(5))
             .Text("art", header: "Artwork", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: subcell)
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partQtyCell)
-            .CheckBox("IsPair", header: "IsPair", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: isPair);
+            .CheckBox("IsPair", header: "IsPair", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: isPair)
+            .Text("PostSewingSubProcess_String", header: "Post Sewing\r\nSubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: PostSewingSubProcess_String)
+            .Text("NoBundleCardAfterSubprocess_String", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: NoBundleCardAfterSubprocess_String)
+            ;
             gridCutpart.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             gridCutpart.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             gridCutpart.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
@@ -1785,8 +1868,8 @@ values
                                 DataRow nBundleDetailArt_dr = Insert_Bundle_Detail_Art.NewRow();
                                 nBundleDetailArt_dr["Insert"] = string.Format(
                                     @"Insert into Bundle_Detail_art
-                                (ID,Bundleno,Subprocessid,PatternCode) Values
-                                ('{0}','{1}','{2}','{3}')",
+                                (ID,Bundleno,Subprocessid,PatternCode,PostSewingSubProcess,NoBundleCardAfterSubprocess) Values
+                                ('{0}','{1}','{2}','{3}',{4},{5})",
                                     id_list[idcount], bundleno_list[bundlenocount], ann[i], rowPat["PatternCode"]);
                                 Insert_Bundle_Detail_Art.Rows.Add(nBundleDetailArt_dr);
                             }
