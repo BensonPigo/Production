@@ -729,6 +729,7 @@ OPTION (RECOMPILE)"
                         pdata.item = dr["item"].ToString();
                         pdata.EXCESS1 = dr["IsEXCESS"].ToString();
                         pdata.CutRef = tmpCut;
+                        pdata.NoBundleCardAfterSubprocess1 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? "" : "(X)";
                     }
                     else if (j == 1)
                     {
@@ -755,6 +756,7 @@ OPTION (RECOMPILE)"
                         pdata.item2 = dr["item"].ToString();
                         pdata.EXCESS2 = dr["IsEXCESS"].ToString();
                         pdata.CutRef2 = tmpCut;
+                        pdata.NoBundleCardAfterSubprocess2 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? "" : "(X)";
                     }
                     else
                     {
@@ -781,6 +783,7 @@ OPTION (RECOMPILE)"
                         pdata.item3 = dr["item"].ToString();
                         pdata.EXCESS3 = dr["IsEXCESS"].ToString();
                         pdata.CutRef3 = tmpCut;
+                        pdata.NoBundleCardAfterSubprocess3 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? "" : "(X)";
                     }
                 }
                 
