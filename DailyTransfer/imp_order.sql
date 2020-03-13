@@ -1,4 +1,4 @@
--- =============================================
+ï»¿-- =============================================
 -- Author:		<Willy S01910>
 -- Create date: <2016/08/25>
 -- Description:	<import order>
@@ -9,10 +9,10 @@ BEGIN
 
 	SET NOCOUNT ON;
 
-	declare @OldDate date = (select max(UpdateDate) from Production.dbo.OrderComparisonList WITH (NOLOCK)) --³Ì«á¶×¤J¸ê®Æ¤é´Á
-	declare @dToDay date = CONVERT(date, GETDATE()) --¤µ¤Ñ¤é´Á
+	declare @OldDate date = (select max(UpdateDate) from Production.dbo.OrderComparisonList WITH (NOLOCK)) --æœ€å¾ŒåŒ¯å…¥è³‡æ–™æ—¥æœŸ
+	declare @dToDay date = CONVERT(date, GETDATE()) --ä»Šå¤©æ—¥æœŸ
 
-	--LEO·s¼W @OldDate(TransferDate)
+	--LEOæ–°å¢ @OldDate(TransferDate)
 	-- @dToDay(UpdateDate)
 	DELETE FROM Trade_To_Pms.dbo.DateInfo
 	WHERE NAME='imp_Order_OldDate' or NAME='imp_Order_dToDay'
@@ -23,7 +23,7 @@ BEGIN
 
 	declare @Odate_s datetime = (SELECT TOP 1 DateStart FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')
 	declare @Odate_e datetime = (SELECT TOP 1 DateEnd FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')
------------------¶×¤J­q³æÀË®Öªí------------------------
+-----------------åŒ¯å…¥è¨‚å–®æª¢æ ¸è¡¨------------------------
 	delete from Production.dbo.OrderComparisonList
 	where ISNULL(UpdateDate,'')='' and isnull(OrderId,'')='' and isnull(FactoryID,'')=''
 
@@ -46,14 +46,14 @@ BEGIN
 	inner join Production.dbo.Factory b on a.FactoryID=b.id
 	
 -------------------------------------------------------------------------Order
-		--Âà³æ¬°Cutting¥À³æ®É,¥ı§ó·sMDivisionID
+		--ï¿½ï¿½æ¬°Cuttingï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½sMDivisionID
 		Update a
 		set a.MDivisionID = b.MDivisionID
 		from Production.dbo.Cutting a
 		inner join #TOrder b on a.ID = b.ID
 		where a.MDivisionID <> b.MDivisionID and b.MDivisionID in( select distinct MDivisionID from Production..Factory)
 
-		--Âà³æ¬°Cutting¥À³æ®É,ÂĞ¼gCutPlan¥À¤l³æªº¤u¼tÄæ¦ì
+		--è½‰å–®ç‚ºCuttingæ¯å–®æ™‚,è¦†å¯«CutPlanæ¯å­å–®çš„å·¥å» æ¬„ä½ 
 		Update a
 		set a.FactoryID = b.FTY_Group
 			, a.MDivisionID = f.MDivisionID
@@ -73,12 +73,12 @@ BEGIN
 		where	a.qty > 0 
 				and a.IsForecast = '0'
 
-	--»İ¶ñ¤J Order.SDPDate = Buyer Delivery - ©ñ°²¤é(²î´Áªí)--
-		--¦pªG¶R®a¨ì³f¤é¤£¬O¤u¼t©ñ°²¤é,SDDate=BuyerDelivery
+	--éœ€å¡«å…¥ Order.SDPDate = Buyer Delivery - æ”¾å‡æ—¥(èˆ¹æœŸè¡¨)--
+		--å¦‚æœè²·å®¶åˆ°è²¨æ—¥ä¸æ˜¯å·¥å» æ”¾å‡æ—¥,SDDate=BuyerDelivery
 		update #TOrder
 		set SDPDate = BuyerDelivery	
 
-		--¦pªG¶R®a¨ì³f¤é­è¦n¹J¨ì°²¤é,SDDate´N´£«e¤@¤Ñ
+		--å¦‚æœè²·å®¶åˆ°è²¨æ—¥å‰›å¥½é‡åˆ°å‡æ—¥,SDDateå°±æå‰ä¸€å¤©
 		update a
 		set a.SDPDate = DATEADD(day,-1, a.BuyerDelivery) 
 		from #TOrder  a
@@ -87,7 +87,7 @@ BEGIN
 											   and c.HolidayDate=a.BuyerDelivery
 
 		
-		-- ½Õ¾ã#TOrder not matched
+		-- èª¿æ•´#TOrder not matched
 		update t
 		set		t.MCHandle = (select localMR 
 							  from Production.dbo.Style 
@@ -102,7 +102,7 @@ BEGIN
 		left join Production.dbo.Orders as s1 on t.ID=s1.ID
 		where s1.ID is null
 
-----------------¨ú±o BuyerDelivery & SciDelivery ¤é´Á¦b Trade µ¹ªº¤é´Á½d³ò¤¤ Orders ªº¸ê®Æ------------------------
+----------------å–å¾— BuyerDelivery & SciDelivery æ—¥æœŸåœ¨ Trade çµ¦çš„æ—¥æœŸç¯„åœä¸­ Orders çš„è³‡æ–™------------------------
 	select * 
 	into #tmpOrders 
 	from Production.dbo.Orders a WITH (NOLOCK)
@@ -113,8 +113,8 @@ BEGIN
 			and a.LocalOrder = 0
 				
 ---------------------OrderComparisonList (1.Insert, 2.Delete, 3.ChangeFactory, 4.ChangeData, 5.NoChange)-----------------
----------------------°£¤F Delete ¥Î°Ï¶¡¤ñ¹ï¡A¨ä¾lªº³£¥Î PMS Orders
-		----1.Insert °O¿ı Trade ¦³ PMS ¨S¦³ªº¸ê®Æ (NewOrder = 1) 
+---------------------é™¤äº† Delete ç”¨å€é–“æ¯”å°ï¼Œå…¶é¤˜çš„éƒ½ç”¨ PMS Orders
+		----1.Insert è¨˜éŒ„ Trade æœ‰ PMS æ²’æœ‰çš„è³‡æ–™ (NewOrder = 1) 
 		Merge Production.dbo.OrderComparisonList as t
 		Using (	select a.* 
 				from Trade_To_Pms.dbo.Orders a
@@ -133,8 +133,8 @@ BEGIN
 				, t.MDivisionID			= s.MDivisionID
 				, t.FactoryID			= s.FactoryID
 				, t.BrandID				= s.BrandID
-				, t.UpdateDate			= @dToDay--¼g¤J¨ìIMP MOCKUPORDER
-				, t.TransferDate		= @OldDate--¼g¤J¨ìIMP MOCKUPORDER
+				, t.UpdateDate			= @dToDay--å¯«å…¥åˆ°IMP MOCKUPORDER
+				, t.TransferDate		= @OldDate--å¯«å…¥åˆ°IMP MOCKUPORDER
 		when not matched by target then
 			insert (
 				NewOrder		, OrderID		, OriginalStyleID	, NewQty	, NewBuyerDelivery
@@ -146,7 +146,7 @@ BEGIN
 				, s.BrandID
 			);
 
-		----2.Delete °O¿ı Trade ¨S¦³ PMS ¦³ªº¸ê®Æ (DeleteOrder = 1)
+		----2.Delete è¨˜éŒ„ Trade æ²’æœ‰ PMS æœ‰çš„è³‡æ–™ (DeleteOrder = 1)
 		Merge Production.dbo.OrderComparisonList as t
 		Using (	select a.*
 				from #tmpOrders a
@@ -177,8 +177,8 @@ BEGIN
 				, s.BrandID
 			);
 
-		----3.ChangeFactory °O¿ı´«¤u¼t
-		--------3.1.Delete ÂÂ¤u¼tªº¸ê®Æ¡A¸ê®Æ±a¤J PMS.Orders
+		----3.ChangeFactory è¨˜éŒ„æ›å·¥å» 
+		--------3.1.Delete èˆŠå·¥å» çš„è³‡æ–™ï¼Œè³‡æ–™å¸¶å…¥ PMS.Orders
 		Merge Production.dbo.OrderComparisonList as t
 		Using (	select	a.*
 						, Transfer2Factroy = b.FactoryID
@@ -213,7 +213,7 @@ BEGIN
 				, @OldDate
 				, s.BrandID
 			);
-		--------3.1.2.Delete ÂÂ¤u¼tªº¸ê®Æ¡A¸ê®Æ±a¤J PMS.Orders(¸óM)
+		--------3.1.2.Delete èˆŠå·¥å» çš„è³‡æ–™ï¼Œè³‡æ–™å¸¶å…¥ PMS.Orders(è·¨M)
 		Merge Production.dbo.OrderComparisonList as t
 		Using (	
 			select c.*
@@ -233,7 +233,7 @@ BEGIN
 			, t.TransferDate			= @OldDate;
 
 
-		 -------3.2.New ·s¤u¼tªº¸ê®Æ¡A¸ê®Æ±a¤J Trade.Orders
+		 -------3.2.New æ–°å·¥å» çš„è³‡æ–™ï¼Œè³‡æ–™å¸¶å…¥ Trade.Orders
 	    Merge Production.dbo.OrderComparisonList as t
 		Using (	select b.*
 				from Production.dbo.Orders a
@@ -265,9 +265,9 @@ BEGIN
 				, s.BrandID
 			);
 
-		----4.ChangeData °O¿ı¸ê®Æ²§°Ê
-		-------IIF => ¦pªG PMS & Trade ¬Y¤@Äæ¦ì¬Û¦P¡A«h·sÂÂ³£¦s¤J Null ¥Nªí¨S¦³ÅÜ°Ê¡A
-		-------                                ¤£¦P¡A«h Trade ¦s¤J New¡APMS ¦s¤J Original
+		----4.ChangeData è¨˜éŒ„è³‡æ–™ç•°å‹•
+		-------IIF => å¦‚æœ PMS & Trade æŸä¸€æ¬„ä½ç›¸åŒï¼Œå‰‡æ–°èˆŠéƒ½å­˜å…¥ Null ä»£è¡¨æ²’æœ‰è®Šå‹•ï¼Œ
+		-------                                ä¸åŒï¼Œå‰‡ Trade å­˜å…¥ Newï¼ŒPMS å­˜å…¥ Original
 		Merge Production.dbo.OrderComparisonList as t
 		Using (select	ID					= A.ID
 						, FactoryID			= A.FactoryID
@@ -386,7 +386,7 @@ BEGIN
 			) values (
 				'No Change!'	, @dToDay		, @OldDate		, s.MDivisionID, s.ID
 			);
-		----------¤£ÅÜ°Ê¤W­±³W«h¡A¦A¸Éstyleid
+		----------ä¸è®Šå‹•ä¸Šé¢è¦å‰‡ï¼Œå†è£œstyleid
 		Merge Production.dbo.OrderComparisonList as t
 		Using (	select a.* 
 				from Trade_To_Pms.dbo.Orders a
@@ -455,7 +455,7 @@ BEGIN
 				t.SpecialCust			= s.SpecialCust ,
 				t.TissuePaper			= s.TissuePaper ,
 				t.Packing				= s.Packing ,
-				--t.SDPDate				= s.SDPDate, --¤u¼t¥æ´Á¥u»İ­nINSERT¶ñ¹w³]­È,¤£¶·UPDATE
+				--t.SDPDate				= s.SDPDate, --å·¥å» äº¤æœŸåªéœ€è¦INSERTå¡«é è¨­å€¼,ä¸é ˆUPDATE
 				t.MarkFront				= s.MarkFront ,
 				t.MarkBack				= s.MarkBack ,
 				t.MarkLeft				= s.MarkLeft ,
@@ -597,7 +597,7 @@ BEGIN
 			, s.LastProductionDate	, s.EstPODD				, s.AirFreightByBrand	, s.AllowanceComboID    , s.ChangeMemoDate
 			, s.BuyBack				, s.BuyBackOrderID		, s.ForecastCategory	, s.OnSiteSample
 		)
-		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --±Ninsert =1 , update =0 §â§ïÅÜ¹Lªºid output;
+		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --å°‡insert =1 , update =0 æŠŠæ”¹è®Šéçš„id output;
 
 	--------------Order_Qty--------------------------Qty BreakDown
 
@@ -681,7 +681,7 @@ BEGIN
 	when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 	delete;
 
-	-----------Order_QtyShip_Detail--------------------------½Õ¾ã: ¨Ó·½¤ñ¹ïProductionªíÀY¸ê®Æ 
+	-----------Order_QtyShip_Detail--------------------------èª¿æ•´: ä¾†æºæ¯”å°Productionè¡¨é ­è³‡æ–™ 
 		Merge Production.dbo.Order_QtyShip_detail as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_QtyShip_detail as a WITH (NOLOCK) inner join #TOrder b on a.id=b.id  ) as s
 		on t.ukey=s.ukey
@@ -796,8 +796,8 @@ BEGIN
 		where D.id is null
 	
 	
-		-----------------Order_SizeCode---------------------------¤Ø¤oªí Size Spec(¦s¤Ø¤o½X)
-		--20170110 willy ½Õ¾ã¶¶§Ç: §R°£>­×§ï>·s¼W
+		-----------------Order_SizeCode---------------------------å°ºå¯¸è¡¨ Size Spec(å­˜å°ºå¯¸ç¢¼)
+		--20170110 willy èª¿æ•´é †åº: åˆªé™¤>ä¿®æ”¹>æ–°å¢
 		Merge Production.dbo.Order_SizeCode as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_SizeCode a WITH (NOLOCK) inner join #TOrder b on a.id=b.id where a.sizecode is not null) as s
 		on t.id=s.id and t.sizecode=s.sizecode and t.ukey=s.ukey
@@ -814,7 +814,7 @@ BEGIN
 				s.Id	, s.Seq	, s.SizeGroup	, s.SizeCode	, s.ukey
 			);
 
-		----------------Order_Sizeitem------------------------------¤Ø¤oªí Size Spec(¦s¶qªk¸ê®Æ)
+		----------------Order_Sizeitem------------------------------å°ºå¯¸è¡¨ Size Spec(å­˜é‡æ³•è³‡æ–™)
 		Merge Production.dbo.Order_Sizeitem as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_Sizeitem a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.ukey=s.ukey
@@ -833,7 +833,7 @@ BEGIN
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 	
-		-------------Order_SizeSpec--------------------------------¤Ø¤oªí Size Spec(¦s¤Ø¤o½X)
+		-------------Order_SizeSpec--------------------------------å°ºå¯¸è¡¨ Size Spec(å­˜å°ºå¯¸ç¢¼)
 		Merge Production.dbo.Order_SizeSpec as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_SizeSpec a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on  t.ukey=s.ukey
@@ -874,7 +874,7 @@ BEGIN
 		when not matched by source and T.id in (Select ID From #Torder) then 
 			delete;
 
-		------------Order_ColorCombo---------------(¥D®Æ°t¦âªí)
+		------------Order_ColorCombo---------------(ä¸»æ–™é…è‰²è¡¨)
 		Merge Production.dbo.Order_ColorCombo as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_ColorCombo a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id=s.id and t.article=s.article and t.FabricPanelCode=s.FabricPanelCode
@@ -902,7 +902,7 @@ BEGIN
 			delete;
 			
 	
-		-------------Order_FabricCode------------------³¡¦ìvs¥¬§OvsQT
+		-------------Order_FabricCode------------------éƒ¨ä½vså¸ƒåˆ¥vsQT
 		Merge Production.dbo.Order_FabricCode as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_FabricCode a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id=s.id and t.FabricPanelCode=s.FabricPanelCode
@@ -990,7 +990,7 @@ BEGIN
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 
-		---------Order_Bof_Expend--------------Bill of Fabric -¥Î¶q®i¶}
+		---------Order_Bof_Expend--------------Bill of Fabric -ç”¨é‡å±•é–‹
 		Merge Production.dbo.Order_Bof_Expend as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_Bof_Expend a WITH (NOLOCK)
 		inner join #Torder b on a.id=b.id) as s
@@ -1112,7 +1112,7 @@ BEGIN
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;		
 						
-		-----------------Order_BOA_Expend----------------Bill of accessory -¥Î¶q®i¶}
+		-----------------Order_BOA_Expend----------------Bill of accessory -ç”¨é‡å±•é–‹
 		Merge Production.dbo.Order_BOA_Expend as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_Expend a WITH (NOLOCK)	
 		inner join #Torder b on a.id=b.id) as s
@@ -1286,7 +1286,7 @@ BEGIN
 				t.Seq					= s.Seq,
 				t.MarkerName			= s.MarkerName,
 				t.FabricCombo			= s.FabricCombo,
-				t.MarkerLength			= replace(s.MarkerLength,'¢ç','Y'),
+				t.MarkerLength			= replace(s.MarkerLength,'ï¼¹','Y'),
 				t.FabricPanelCode		= s.FabricPanelCode,
 				t.ConsPC				= s.ConsPC,
 				t.CuttingPiece			= s.CuttingPiece,
@@ -1355,7 +1355,7 @@ BEGIN
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then  
 			delete;
-	-------Order_EachCons_Article--------------------Each cons - ¥Î¶q®i¶}
+	-------Order_EachCons_Article--------------------Each cons - ç”¨é‡å±•é–‹
 	  Merge Production.dbo.Order_EachCons_Article as t
 	  Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_Article a WITH (NOLOCK) inner join #Torder b on a.id=b.id) as s
 	 on t.Order_EachConsUkey=s.Order_EachConsUkey and t.Article = s.Article
@@ -1376,7 +1376,7 @@ BEGIN
 	  )
 	  when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then  
 		delete;
-		-------Order_EachCons_Color--------------------Each cons - ¥Î¶q®i¶}
+		-------Order_EachCons_Color--------------------Each cons - ç”¨é‡å±•é–‹
 		Merge Production.dbo.Order_EachCons_Color as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_Color a WITH (NOLOCK) inner join #Torder b on a.id=b.id) as s
 		on t.Ukey=s.Ukey	
@@ -1403,7 +1403,7 @@ BEGIN
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then  
 			delete;
 		
-		---------Order_EachCons_Color_Article-------Each cons - ¥Î¶q®i¶}©ú²Ó
+		---------Order_EachCons_Color_Article-------Each cons - ç”¨é‡å±•é–‹æ˜ç´°
 		Merge Production.dbo.Order_EachCons_Color_Article as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_Color_Article a WITH (NOLOCK) inner join #Torder b on a.id=b.id) as s
 		on t.Ukey=s.Ukey	
@@ -1509,7 +1509,7 @@ BEGIN
 			delete;
 	
 
-		------------Order_BOA_CustCD----------Bill of Other - ¥Î¶q®i¶}
+		------------Order_BOA_CustCD----------Bill of Other - ç”¨é‡å±•é–‹
 		Merge Production.dbo.Order_BOA_CustCD as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_CustCD a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.Order_BOAUkey=s.Order_BOAUkey and t.ColumnValue=s.ColumnValue
@@ -1535,7 +1535,7 @@ BEGIN
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 
-		-----------------Order_PFHis-----------Pull forward¾ú¥v°O¿ı
+		-----------------Order_PFHis-----------Pull forwardæ­·å²è¨˜éŒ„
 		Merge Production.dbo.Order_PFHis as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_PFHis a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.Ukey=s.Ukey
@@ -1617,7 +1617,45 @@ BEGIN
 		values(s.[Id],s.[Order_MarkerlistUkey],s.[Article],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])
 	when not matched by source and t.id in (select id from #TOrder)then
 			delete;
-			
+
+	----------Order_BuyBack--------------
+	Merge Production.dbo.Order_BuyBack as t
+	using (select a.* from Trade_To_Pms.dbo.Order_BuyBack a WITH (NOLOCK) inner join #Torder b on a.id=b.id) as s
+	on t.ID = s.ID 
+	and t.OrderIDFrom = s.OrderIDFrom
+		when matched then 
+		update set
+			t.BuyBackReason	= s.BuyBackReason ,
+			t.AddName	    = s.AddName ,
+			t.AddDate		= s.AddDate ,
+			t.EditName		= s.EditName ,
+			t.EditDate		= s.EditDate 
+	when not matched by target then
+		insert  ([ID], [OrderIDFrom], [BuyBackReason], [AddName], [AddDate], [EditName], [EditDate]) 
+		values (s.[ID], s.[OrderIDFrom], s.[BuyBackReason], s.[AddName], s.[AddDate], s.[EditName], s.[EditDate])
+	when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
+	delete;
+
+	-----------Order_BuyBack_Qty------------------------ 
+	Merge Production.dbo.Order_BuyBack_Qty as t
+	Using (select a.* from Trade_To_Pms.dbo.Order_BuyBack_Qty as a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
+	on t.ID = s.ID  
+	and t.OrderIDFrom = s.OrderIDFrom
+	and t.Article = s.Article
+	and t.SizeCode = s.SizeCode
+	when matched then
+		update set
+			t.Qty		= s.Qty,
+			t.AddName	= s.AddName ,
+			t.AddDate	= s.AddDate ,
+			t.EditName	= s.EditName ,
+			t.EditDate	= s.EditDate 
+	when not matched by target then 
+		insert ([ID], [OrderIDFrom], [Article], [SizeCode], [Qty], [AddName], [AddDate], [EditName], [EditDate]) 
+		values (s.[ID], s.[OrderIDFrom], s.[Article], s.[SizeCode], s.[Qty], s.[AddName], s.[AddDate], s.[EditName], s.[EditDate]) 
+	when not matched by source  AND T.ID IN (SELECT ID FROM #Torder) then 
+	delete;
+		
 ----------------OrderChangeApplication-----------------
 update t set	
 	[Status]  =s.[Status]
@@ -1672,8 +1710,8 @@ where s.Status = 'Closed' and t.id is null
 
 ----------------ppaschedule-----------------
 
-----­Y¦³¸óMÂà¼tªº­q³æ(orders.mdivisionid¤£¦P)¡C(¨Ò:PM1 to PM2)
-----­Y³o¨Ç­q³æ½s¸¹¦s¦bppaschedule.orderid¤¤¡A«h§R°£¨äppaschedule, ppaschedule_detailªº¸ê®Æ¡C
+----è‹¥æœ‰è·¨Mè½‰å» çš„è¨‚å–®(orders.mdivisionidä¸åŒ)ã€‚(ä¾‹:PM1 to PM2)
+----è‹¥é€™äº›è¨‚å–®ç·¨è™Ÿå­˜åœ¨ppaschedule.orderidä¸­ï¼Œå‰‡åˆªé™¤å…¶ppaschedule, ppaschedule_detailçš„è³‡æ–™ã€‚
 	delete c
 	from #TOrder a 		
 	inner join Production.dbo.ppaschedule b on b.Orderid = a.id
@@ -1684,7 +1722,7 @@ where s.Status = 'Closed' and t.id is null
 	from #TOrder a 		
 	inner join Production.dbo.ppaschedule b on b.Orderid = a.id
 	where b.mdivisionid <> a.mdivisionid
-----¥Hppaschedule.AddDate©ÎEditDateªñ3­Ó¤ë¦³²§°Ê½d³ò,MDivisionID¡A­Y¤£¦P¡A«h§R°£¨äppaschedule, ppaschedule_detailªº¸ê®Æ¡C
+----ä»¥ppaschedule.AddDateæˆ–EditDateè¿‘3å€‹æœˆæœ‰ç•°å‹•ç¯„åœ,MDivisionIDï¼Œè‹¥ä¸åŒï¼Œå‰‡åˆªé™¤å…¶ppaschedule, ppaschedule_detailçš„è³‡æ–™ã€‚
 	delete c
 	from Production.dbo.orders a 		
 	inner join Production.dbo.ppaschedule b on b.Orderid = a.id
@@ -1697,14 +1735,14 @@ where s.Status = 'Closed' and t.id is null
 	where b.mdivisionid <> a.mdivisionid and (b.adddate > dateadd(day,90,getdate()) or b.editdate > dateadd(day,90,getdate()))
 
 
-----§ó·sªº§PÂ_¥²¶·­n¨Ì·Ó#Torderªº°Ï¶¡§@§ó·s
+----æ›´æ–°çš„åˆ¤æ–·å¿…é ˆè¦ä¾ç…§#Torderçš„å€é–“ä½œæ›´æ–°
 Update b set b.MDivisionId='',FactoryID=''
 from Production.dbo.WorkOrder b
 where id in (select id from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
 
 
-----§R°£ªº§PÂ_¥²¶·­n¨Ì·Ó#Torderªº°Ï¶¡§@§R°£
+----åˆªé™¤çš„åˆ¤æ–·å¿…é ˆè¦ä¾ç…§#Torderçš„å€é–“ä½œåˆªé™¤
 
 -------------------------------------Order_Article
 Delete b
@@ -1924,8 +1962,18 @@ Delete b
 from Production.dbo.CuttingTape_Detail b
 where POID in (select POID from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
+-------------------------------------Order_BuyBack
+Delete b
+from Production.dbo.Order_BuyBack b
+where id in (select id from #tmpOrders as t 
+where not exists(select 1 from #TOrder as s where t.id=s.ID))
+-------------------------------------Order_BuyBack_Qty
+Delete b
+from Production.dbo.Order_BuyBack_Qty b
+where id in (select id from #tmpOrders as t 
+where not exists(select 1 from #TOrder as s where t.id=s.ID))
 
-------------------------§R°£ªíÀY¦hªº¸ê®Æorder ³Ì«á§R°£
+------------------------åˆªé™¤è¡¨é ­å¤šçš„è³‡æ–™order æœ€å¾Œåˆªé™¤
 Delete a
 from Production.dbo.Orders as a 
 where a.id in (select id from #tmpOrders as t 
@@ -1935,7 +1983,7 @@ where not exists(select 1 from #TOrder as s where t.id=s.ID))
 drop table #tmpOrders
 drop table #TOrder
 
----- Âà¤J ¾ú¥v¸ê®Æ TradeHis_Order ¥²¶·»P Trade ¸ê®Æ¬Û¦P----
+---- è½‰å…¥ æ­·å²è³‡æ–™ TradeHis_Order å¿…é ˆèˆ‡ Trade è³‡æ–™ç›¸åŒ----
 Merge Production.dbo.TradeHis_Order as t
 Using (
 	select * 

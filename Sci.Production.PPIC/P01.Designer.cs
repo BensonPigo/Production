@@ -309,6 +309,7 @@
             this.dispBuyBackOrderID = new Sci.Win.UI.DisplayBox();
             this.labBBSP = new Sci.Win.UI.Label();
             this.chkOnSiteSample = new Sci.Win.UI.CheckBox();
+            this.chkBuyBack = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -330,6 +331,7 @@
             this.detailcont.Controls.Add(this.labBBSP);
             this.detailcont.Controls.Add(this.dispBuyBack);
             this.detailcont.Controls.Add(this.labBuyBack);
+            this.detailcont.Controls.Add(this.chkBuyBack);
             this.detailcont.Controls.Add(this.chkAFbyAdidas);
             this.detailcont.Controls.Add(this.comboSubconInType);
             this.detailcont.Controls.Add(this.txtdropdownlistCategory);
@@ -3424,39 +3426,35 @@
             // 
             // labBuyBack
             // 
-            this.labBuyBack.Location = new System.Drawing.Point(644, 166);
+            this.labBuyBack.Location = new System.Drawing.Point(0, 0);
             this.labBuyBack.Name = "labBuyBack";
-            this.labBuyBack.Size = new System.Drawing.Size(65, 21);
-            this.labBuyBack.TabIndex = 227;
-            this.labBuyBack.Text = "Buy Back";
+            this.labBuyBack.Size = new System.Drawing.Size(0, 0);
+            this.labBuyBack.TabIndex = 235;
             // 
             // dispBuyBack
             // 
             this.dispBuyBack.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dispBuyBack.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyBack", true));
             this.dispBuyBack.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dispBuyBack.Location = new System.Drawing.Point(712, 166);
+            this.dispBuyBack.Location = new System.Drawing.Point(0, 0);
             this.dispBuyBack.Name = "dispBuyBack";
-            this.dispBuyBack.Size = new System.Drawing.Size(110, 21);
-            this.dispBuyBack.TabIndex = 228;
+            this.dispBuyBack.Size = new System.Drawing.Size(100, 21);
+            this.dispBuyBack.TabIndex = 234;
             // 
             // dispBuyBackOrderID
             // 
             this.dispBuyBackOrderID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dispBuyBackOrderID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyBackOrderID", true));
             this.dispBuyBackOrderID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dispBuyBackOrderID.Location = new System.Drawing.Point(890, 166);
+            this.dispBuyBackOrderID.Location = new System.Drawing.Point(0, 0);
             this.dispBuyBackOrderID.Name = "dispBuyBackOrderID";
-            this.dispBuyBackOrderID.Size = new System.Drawing.Size(102, 21);
-            this.dispBuyBackOrderID.TabIndex = 230;
+            this.dispBuyBackOrderID.Size = new System.Drawing.Size(100, 21);
+            this.dispBuyBackOrderID.TabIndex = 232;
             // 
             // labBBSP
             // 
-            this.labBBSP.Location = new System.Drawing.Point(825, 166);
+            this.labBBSP.Location = new System.Drawing.Point(0, 0);
             this.labBBSP.Name = "labBBSP";
-            this.labBBSP.Size = new System.Drawing.Size(61, 21);
-            this.labBBSP.TabIndex = 229;
-            this.labBBSP.Text = "BB SP";
+            this.labBBSP.Size = new System.Drawing.Size(0, 0);
+            this.labBBSP.TabIndex = 233;
             // 
             // chkOnSiteSample
             // 
@@ -3471,6 +3469,19 @@
             this.chkOnSiteSample.TabIndex = 231;
             this.chkOnSiteSample.Text = "On Site";
             this.chkOnSiteSample.UseVisualStyleBackColor = true;
+            // 
+            // chkBuyBack
+            // 
+            this.chkBuyBack.AutoSize = true;
+            this.chkBuyBack.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkBuyBack.IsSupportEditMode = false;
+            this.chkBuyBack.Location = new System.Drawing.Point(181, 4);
+            this.chkBuyBack.Name = "chkBuyBack";
+            this.chkBuyBack.ReadOnly = true;
+            this.chkBuyBack.Size = new System.Drawing.Size(76, 19);
+            this.chkBuyBack.TabIndex = 227;
+            this.chkBuyBack.Text = "Buy Back";
+            this.chkBuyBack.UseVisualStyleBackColor = true;
             // 
             // P01
             // 
@@ -3784,5 +3795,6 @@
         private Win.UI.DisplayBox dispBuyBack;
         private Win.UI.Label labBuyBack;
         private Win.UI.CheckBox chkOnSiteSample;
+        private Win.UI.CheckBox chkBuyBack;
     }
 }
