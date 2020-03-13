@@ -77,3 +77,6 @@ GO
 CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
     ON [dbo].[Bundle_Detail]([Id] ASC);
 
+go
+CREATE NONCLUSTERED INDEX [IDX_Bundle_Detail_QtyBySetPerSubprocess]
+    ON [dbo].[Bundle_Detail]([Patterncode],[SizeCode] ASC);
