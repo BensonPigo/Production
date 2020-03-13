@@ -2467,6 +2467,8 @@
     <Build Include="dbo\Tables\ICR.sql" />
     <Build Include="dbo\Functions\GetAmount.sql" />
     <Build Include="dbo\Functions\GetAmountByUnit.sql" />
+    <Build Include="dbo\Tables\Order_BuyBack.sql" />
+    <Build Include="dbo\Tables\Order_BuyBack_Qty.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
