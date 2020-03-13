@@ -275,8 +275,8 @@ order by ArticleGroup", patternukey);
             DataTable detailAccept = detailTb.Copy();
             detailAccept.AcceptChanges();
             string BundleGroup = detailAccept.Rows[0]["BundleGroup"].ToString();
-            MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,PatternDesc,parts,subProcessid,BundleGroup,isPair,Location", string.Format(@"
-Select  PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location
+            MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,PatternDesc,parts,subProcessid,BundleGroup,isPair,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String", string.Format(@"
+Select  PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String
 from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             //需要使用上一層表身的值,不可重DB撈不然新增的資料就不會存回DB
             MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,SubProcessid,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String", "Select distinct PatternCode,SubProcessid,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String from #tmp WHERE PatternCode<>'ALLPARTS'", out artTb);
@@ -289,20 +289,9 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                 ndr["Location"] = dr["Location"];
                 ndr["Parts"] = dr["Parts"];
                 ndr["isPair"] = dr["isPair"];
-                ndr["art"] = MyUtility.Check.Empty(dr["SubProcessid"]) ? "" : dr["SubProcessid"].ToString().Substring(0, dr["SubProcessid"].ToString().Length - 1);
-                string art = "";
-                DataRow[] dray = artTb.Select(string.Format("PatternCode = '{0}'", dr["PatternCode"]));
-                if (dray.Length != 0)
-                {
-                    foreach (DataRow dr2 in dray)
-                    {
-                        if (art != "") art = art + "+" + dr2["Subprocessid"].ToString();
-                        else art = dr2["Subprocessid"].ToString();
-                        ndr["NoBundleCardAfterSubprocess_String"] = dr2["NoBundleCardAfterSubprocess_String"];
-                        ndr["PostSewingSubProcess_String"] = dr2["PostSewingSubProcess_String"];
-                    }
-                    ndr["art"] = art;
-                }
+                ndr["art"] =  dr["SubProcessid"].ToString();
+                ndr["NoBundleCardAfterSubprocess_String"] = dr["NoBundleCardAfterSubprocess_String"];
+                ndr["PostSewingSubProcess_String"] = dr["PostSewingSubProcess_String"];
                 patternTb.Rows.Add(ndr);
             }
 

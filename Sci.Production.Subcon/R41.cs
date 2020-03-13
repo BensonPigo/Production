@@ -214,6 +214,8 @@ Select
     [Artwork] = sub.sub,
     [Qty] = bd.Qty,
     [Sub-process] = s.Id,
+    [Post Sewing SubProcess]= iif(ps.sub = 1,N'✔',''),
+    [No Bundle Card After Subprocess]= iif(nbs.sub= 1,N'✔',''),
     bio.LocationID,
     b.Cdate,
     o.BuyerDelivery,
@@ -268,6 +270,18 @@ outer apply(
 		    for xml path('')
 	    ),1,1,'')
 ) as sub 
+outer apply(
+    select sub = 1
+    from Bundle_Detail_Art bda WITH (NOLOCK) 
+    where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.PostSewingSubProcess = 1
+    and bda.SubprocessId = s.ID
+) as ps
+outer apply(
+    select sub = 1
+    from Bundle_Detail_Art bda WITH (NOLOCK) 
+    where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.NoBundleCardAfterSubprocess = 1
+    and bda.SubprocessId = s.ID
+) as nbs 
 outer apply (
 select [Value] =  case when isnull(bio.RFIDProcessLocationID,'') = '' then Stuff((select distinct concat( ',',ls.Abb)
 	                                                            from ArtworkPO ap with (nolock)
@@ -353,6 +367,8 @@ select
     r.[Artwork],
     r.[Qty],
     r.[Sub-process],
+    r.[Post Sewing SubProcess],
+    r.[No Bundle Card After Subprocess],
     r.LocationID,
     r.Cdate,
     r.[BuyerDelivery],
