@@ -127,7 +127,7 @@
             this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSP.Location = new System.Drawing.Point(147, 91);
             this.txtSP.Name = "txtSP";
-            this.txtSP.Size = new System.Drawing.Size(66, 23);
+            this.txtSP.Size = new System.Drawing.Size(130, 23);
             this.txtSP.TabIndex = 3;
             // 
             // txtfactory

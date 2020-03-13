@@ -140,6 +140,20 @@ where 1=1
 
             sqlcmd.Append(string.Format(
                 @"
+select distinct
+o.MDivisionID
+,o.FactoryID
+,o.ID
+,o.StyleID
+,o.SeasonID
+,o.BrandID
+,o.BuyerDelivery
+,o.SCIDelivery
+into #tmp_orders
+from Orders o WITH (NOLOCK) 
+where o.Category in ('B','S','G')
+{0}
+
 select o.*
     ,[BalanceQty] = o.OrderQty - o.SewingOutputQty
 from 
@@ -149,21 +163,7 @@ from
 		,[SizeCode] = Coalesce(sdd.SizeCode, oq2.SizeCode, '')
 		,[OrderQty] = Coalesce(sdd.Qty, oq2.Qty, 0)
 		,[SewingOutputQty] = isnull(dbo.getMinCompleteSewQty(isnull(sdd.OrderId, oq2.ID), isnull(sdd.Article, oq2.Article), isnull(sdd.SizeCode, oq2.SizeCode)),0)
-	from 
-	(
-		select distinct
-			o.MDivisionID
-			,o.FactoryID
-			,o.ID
-			,o.StyleID
-			,o.SeasonID
-			,o.BrandID
-			,o.BuyerDelivery
-			,o.SCIDelivery
-		 from Orders o WITH (NOLOCK) 
-		 where o.Category in ('B','S','G')
-		 {0}
-	)o
+	from #tmp_orders o
 	outer apply
 	(
 		select distinct sdd.OrderId, sdd.Article, sdd.SizeCode, oq.Qty
@@ -182,12 +182,15 @@ from
 {1}
 order by o.MDivisionID, o.FactoryID, o.ID, o.Article, o.SizeCode
 
-IF object_id('tempdb..#tmp_sewingSP') IS NOT NULL drop table #tmp_sewingSP",
+IF object_id('tempdb..#tmp_sewingSP') IS NOT NULL drop table #tmp_sewingSP
+IF object_id('tempdb..#tmp_orders') IS NOT NULL drop table #tmp_orders",
                 sqlWhere.ToString(),
                 sqlWhereOutstanding.ToString()));
             #endregion
 
+            DBProxy.Current.DefaultTimeout = 900;  // timeout時間改為15分鐘
             DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd.ToString(), out this.printData);
+            DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
