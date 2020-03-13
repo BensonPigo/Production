@@ -2561,20 +2561,23 @@ DROP TABLE #tmpOrders ,#tmp ,#ExistsB03
                 Directory.CreateDirectory(imageOutputPath);
             }
 
-            int picWidth = 1375;
-            int picHeight = 2150;
+            int picWidth = 1200;
+            int picHeight = 2100;
 
             Bitmap pic = new Bitmap(picWidth, picHeight);
 
             // 建立圖片
             Graphics graphic = Graphics.FromImage(pic);
 
+            int cutWidth = 95;
+            int cutHeight = 160;
+
             // 建立畫板
             graphic.DrawImage(bmp,
                      //將被切割的圖片畫在新圖片上面，第一個參數是被切割的原圖片
                      new Rectangle(0, 0, picWidth, picHeight),
                      //指定繪製影像的位置和大小，基本上是同pic大小
-                     new Rectangle(33, 110, picWidth, picHeight),
+                     new Rectangle(cutWidth, cutHeight, picWidth, picHeight),
                      //指定被切割的圖片要繪製的部分
                      GraphicsUnit.Pixel);
 
