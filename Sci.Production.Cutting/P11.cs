@@ -1863,15 +1863,16 @@ values
                         {
                             #region Bundle_Detail_art
                             string[] ann = rowPat["art"].ToString().Split('+');
-
                             for (int i = 0; i < ann.Length; i++)
                             {
+                                int nb = MyUtility.Convert.GetString(rowPat["NoBundleCardAfterSubprocess_String"]).Split('+').ToList().Contains(ann[i].ToString()) ? 1 : 0;
+                                int ps = MyUtility.Convert.GetString(rowPat["PostSewingSubProcess_String"]).Split('+').ToList().Contains(ann[i].ToString()) ? 1 : 0;
                                 DataRow nBundleDetailArt_dr = Insert_Bundle_Detail_Art.NewRow();
                                 nBundleDetailArt_dr["Insert"] = string.Format(
                                     @"Insert into Bundle_Detail_art
                                 (ID,Bundleno,Subprocessid,PatternCode,PostSewingSubProcess,NoBundleCardAfterSubprocess) Values
                                 ('{0}','{1}','{2}','{3}',{4},{5})",
-                                    id_list[idcount], bundleno_list[bundlenocount], ann[i], rowPat["PatternCode"]);
+                                    id_list[idcount], bundleno_list[bundlenocount], ann[i], rowPat["PatternCode"], ps, nb);
                                 Insert_Bundle_Detail_Art.Rows.Add(nBundleDetailArt_dr);
                             }
                             #endregion
