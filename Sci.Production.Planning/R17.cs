@@ -134,7 +134,10 @@ LEFT JOIN Reason rs on rs.id = Order_QS.ReasonID and rs.ReasonTypeID = 'Order_Bu
 Left join Reason rd on rd.id = o.OutstandingReason and rd.ReasonTypeID = 'Delivery_OutStand'
 LEFT JOIN Brand b on o.BrandID = b.ID
 where o.Junk = 0  
-and (isnull(ot.IsGMTMaster,0) = 0 or o.OrderTypeID = '') ";
+and (isnull(ot.IsGMTMaster,0) = 0 or o.OrderTypeID = '') 
+and o.LocalOrder <> 1
+and o.IsForecast <> 1
+";
 
                 if (this.radioBulk.Checked)
                 {
