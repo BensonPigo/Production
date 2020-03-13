@@ -1863,6 +1863,7 @@ values
                         {
                             #region Bundle_Detail_art
                             string[] ann = rowPat["art"].ToString().Split('+');
+
                             for (int i = 0; i < ann.Length; i++)
                             {
                                 DataRow nBundleDetailArt_dr = Insert_Bundle_Detail_Art.NewRow();
