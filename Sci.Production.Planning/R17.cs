@@ -22,6 +22,7 @@ namespace Sci.Production.Planning
         private DataTable gdtPullOut;
         private DataTable gdtSP;
         private DataTable gdtSDP;
+        private string KpiDate;
 
         /// <summary>
         /// R17
@@ -30,7 +31,6 @@ namespace Sci.Production.Planning
         {
             this.InitializeComponent();
         }
-        
 
         /// <summary>
         /// R17
@@ -74,6 +74,7 @@ namespace Sci.Production.Planning
                 return false;
             }
 
+            this.KpiDate = MyUtility.Convert.GetString(this.comboDropDownList1.SelectedValue);
             return base.ValidateInput();
         }
 
@@ -119,6 +120,8 @@ SELECT
 	,c.alias
 	,o.MDivisionID 
 	,o.localorder
+    , OutsdReason = rd.Name
+    , ReasonRemark = o.OutstandingRemark
 into #tmp_main
 FROM Orders o WITH (NOLOCK)
 LEFT JOIN OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
@@ -128,9 +131,13 @@ inner JOIN Order_QtyShip Order_QS on Order_QS.id = o.id
 LEFT JOIN PO ON o.POID = PO.ID
 LEFT JOIN Reason r on r.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery'          
 LEFT JOIN Reason rs on rs.id = Order_QS.ReasonID and rs.ReasonTypeID = 'Order_BuyerDelivery_sample'
+Left join Reason rd on rd.id = o.OutstandingReason and rd.ReasonTypeID = 'Delivery_OutStand'
 LEFT JOIN Brand b on o.BrandID = b.ID
 where o.Junk = 0  
-and (isnull(ot.IsGMTMaster,0) = 0 or o.OrderTypeID = '') ";
+and (isnull(ot.IsGMTMaster,0) = 0 or o.OrderTypeID = '') 
+and o.LocalOrder <> 1
+and o.IsForecast <> 1
+";
 
                 if (this.radioBulk.Checked)
                 {
@@ -138,54 +145,37 @@ and (isnull(ot.IsGMTMaster,0) = 0 or o.OrderTypeID = '') ";
                 }
                 else if (this.radioSample.Checked)
                 {
-                    strSQL += " AND o.Category = 'S' AND f.Type = 'S'";
+                    strSQL += " AND o.Category = 'S' AND f.Type = 'S' and isnull(o.OnSiteSample,0) <> 1";
                 }
                 else
                 {
                     strSQL += " AND o.Category = 'G'";
                 }
 
+                string kpiDate = string.Empty;
+                if (this.KpiDate == "1")
+                {
+                    kpiDate = "FtyKPI";
+                }
+                else
+                {
+                    kpiDate = "BuyerDelivery";
+                }
+
                 if (this.dateFactoryKPIDate.Value1 != null)
                 {
-                    strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
+                    strSQL += $" AND Order_QS.{kpiDate} >= '{this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd")}'";
                 }
 
                 if (this.dateFactoryKPIDate.Value2 != null)
                 {
-                    strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                    strSQL += $" AND Order_QS.{kpiDate} <= '{this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd")}'";
                 }
 
                 if (this.txtFactory.Text != string.Empty)
                 {
                     strSQL += string.Format(" AND f.KPICode = '{0}' ", this.txtFactory.Text);
                 }
-
-                #region Select column
-                string selectColA = string.Empty;
-                string selectColB = string.Empty; // 未出貨
-                if (this.radioBulk.Checked || this.radioGarment.Checked)
-                {
-                    // Bulk, Garment
-                    selectColA = @", OnTimeQty = CASE WHEN t.GMTComplete = 'S' and p.PulloutDate is null THEN Cast(0 as int) --[IST20190675] 若為短交且PullOutDate是空的,不算OnTime也不算Fail,直接給0
-                                                 Else Cast(isnull(pd.Qty,0) as int)
-                                                 End
-                                   , FailQty = CASE WHEN t.GMTComplete = 'S' and p.PulloutDate is null THEN Cast(0 as int)
-                                               Else Cast(isnull(pd.FailQty,t.OrderQty) as int)
-                                               End";
-                    selectColB = ", FailQty = Cast(isnull(t.OrderQty - (pd.Qty + pd.FailQty),0) as int) --未出貨Qty";
-                }
-                else
-                {
-                    // Sample
-                    selectColA = @", OnTimeQty = CASE WHEN t.GMTComplete = 'S' and p.PulloutDate is null THEN Cast(0 as int) --[IST20190675] 若為短交且PullOutDate是空的,不算OnTime也不算Fail,直接給0
-                                                 Else Cast(isnull(pd.Qty,0) + GetFOCp.FOCOnTimeQty as int)
-                                                 End
-                                   , FailQty = CASE WHEN t.GMTComplete = 'S' and p.PulloutDate is null THEN Cast(0 as int)
-                                               Else Cast(isnull(pd.FailQty,getQtyBySeq.FOB) + GetFOCp.FOCFailQty as int)
-                                               End";
-                    selectColB = ", FailQty = Cast(isnull(getQtyBySeq.FOB - (pd.Qty + pd.FailQty),0) as int) --未出貨Qty";
-                }
-                #endregion
 
                 strSQL += $@"
 select COUNT(op.pulloutdate) PulloutDate ,op.OrderID,op.OrderShipmodeSeq
@@ -202,9 +192,9 @@ Select
 into #tmp_Pullout_Detail_pd
 From Pullout_Detail pd  with (nolock)
 inner join #tmp_main t on pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.Seq
-inner join Pullout_Detail_Detail pdd with (nolock) on pd.Ukey = pdd.Pullout_DetailUKey  {(this.radioSample.Checked ? "and dbo.GetPoPriceByArticleSize(t.OrderID,pdd.Article,pdd.SizeCode) > 0" : string.Empty)}
-Outer apply (Select Qty = IIF(pd.pulloutdate <= iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.FtyKPI, DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI)), pdd.shipqty, 0)) rA --On Time
-Outer apply (Select Qty = IIF(pd.pulloutdate >  iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.FtyKPI, DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI)), pdd.shipqty, 0)) rB --Fail
+inner join Pullout_Detail_Detail pdd with (nolock) on pd.Ukey = pdd.Pullout_DetailUKey
+Outer apply (Select Qty = IIF(pd.pulloutdate <= iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), pdd.shipqty, 0)) rA --On Time
+Outer apply (Select Qty = IIF(pd.pulloutdate >  iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), pdd.shipqty, 0)) rB --Fail
 group by pd.OrderID, pd.OrderShipmodeSeq
 
 select max(p.PulloutDate)PulloutDate ,pd.OrderID,pd.OrderShipmodeSeq
@@ -212,7 +202,7 @@ into #tmp_Pullout_Detail_p
 from Pullout_Detail pd with (nolock)
 inner join #tmp_main t on pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.Seq
 INNER JOIN Pullout p ON p.Id=pd.id AND p.PulloutDate=pd.PulloutDate 
-inner join Pullout_Detail_Detail pdd with (nolock) on pd.Ukey = pdd.Pullout_DetailUKey  {(this.radioSample.Checked ? "and dbo.GetPoPriceByArticleSize(t.OrderID,pdd.Article,pdd.SizeCode) > 0" : string.Empty)}
+inner join Pullout_Detail_Detail pdd with (nolock) on pd.Ukey = pdd.Pullout_DetailUKey
 where pd.OrderID = t.OrderID and pd.OrderShipmodeSeq =  t.Seq 
 group by pd.OrderID,pd.OrderShipmodeSeq
 
@@ -234,28 +224,60 @@ from(
 )x
 group by OrderID
 
+select 
+	 t.OrderID
+	,t.Seq
+	,ReceiveDate=max(cr.AddDate)
+into #tmpReceiveDate1
+from #tmp_main t
+inner join PackingList_Detail pd on pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.Seq
+inner join ClogReceive cr on (cr.PackingListID = pd.ID and cr.OrderID = pd.OrderID and cr.CTNStartNo = pd.CTNStartNo and pd.SCICtnNo <>'')
+where pd.OrderID = t.OrderID
+and pd.OrderShipmodeSeq = t.Seq
+and not exists(select 1 
+			from PackingList_Detail pdCheck
+			where pdCheck.OrderID =t.OrderID
+					and pdCheck.OrderShipmodeSeq = t.Seq
+					and CTNQty > 0
+					and pdCheck.ReceiveDate is null
+		)
+group by t.OrderID,t.Seq
+
+select
+	 t.OrderID
+	,t.Seq
+	,ReceiveDate=max(cr.AddDate)
+into #tmpReceiveDate2
+from #tmp_main t
+inner join PackingList_Detail pd on pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.Seq
+inner join ClogReceive cr on cr.SCICtnNo = pd.SCICtnNo and pd.SCICtnNo <>''
+where pd.OrderID = t.OrderID
+and pd.OrderShipmodeSeq = t.Seq
+and not exists(select 1 
+			from PackingList_Detail pdCheck
+			where pdCheck.OrderID =t.OrderID
+					and pdCheck.OrderShipmodeSeq = t.Seq
+					and CTNQty > 0
+					and pdCheck.ReceiveDate is null
+		)
+group by t.OrderID,t.Seq
+
+select  t.OrderID,t.Seq,ReceiveDate=max(t.ReceiveDate)
+into #maxReceiveDate
+from(
+	select *from #tmpReceiveDate1
+	union all
+	select *from #tmpReceiveDate2
+)t
+group by t.OrderID,t.Seq
+
 SELECT  
 	[orderid]= t.OrderID
-	,[ordershipmodeseq]= pd.ordershipmodeseq
-	,[CTNLastReceiveDate]= format(pd.ReceiveDate ,'yyyy/MM/dd')
+	,[ordershipmodeseq]= t.Seq
+	,[CTNLastReceiveDate]= format(r.ReceiveDate, 'yyyy/MM/dd HH:mm:ss')
 into #tmp_ClogReceive
 from #tmp_main t
-outer apply(
-	select  pd.OrderID
-            , pd.ordershipmodeseq
-            , ReceiveDate = max(pd.ReceiveDate) 
-	from PackingList_Detail pd
-	where pd.OrderID = t.OrderID
-          and pd.ordershipmodeseq = t.Seq
-	      and not exists (
-                select 1 
-                from PackingList_Detail pdCheck
-                where pd.OrderID = pdCheck.OrderID 
-					  and pd.OrderShipmodeSeq = pdCheck.OrderShipmodeSeq
-                      and pdCheck.ReceiveDate is null
-          )
-	group by pd.OrderID, pd.ordershipmodeseq 
-)pd 
+left join #maxReceiveDate r on t.OrderID = r.orderid and t.Seq = r.Seq
 
 Select  oqsD.ID,oqsD.Seq
         ,sum (case when dbo.GetPoPriceByArticleSize(oqsd.id,oqsD.Article,oqsD.SizeCode) > 0 then oqsD.Qty else 0 end) as FOB
@@ -278,16 +300,25 @@ SELECT
 		,t.BrandID
 		,BuyerDelivery = convert(varchar(10),t.BuyerDelivery,111)--G
 		,FtyKPI= convert(varchar(10),t.FtyKPI,111)
-		,Extension = convert(varchar(10),iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.FtyKPI, DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI)), 111)--I
+		,Extension = convert(varchar(10),iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), 111)--I
 		,DeliveryByShipmode = t.ShipmodeID
 		,t.OrderQty 
-		{selectColA}
-		,pullOutDate = CONVERT(char(10), p.PulloutDate, 111)
+        ,OnTimeQty = CASE WHEN t.GMTComplete = 'S' and p.PulloutDate is null THEN Cast(0 as int) --[IST20190675] 若為短交且PullOutDate是空的,不算OnTime也不算Fail,直接給0
+                Else iif(isnull(t.isDevSample,0) = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, 0, Cast(t.OrderQty as int)), Cast(isnull(pd.Qty,0) as int)) 
+              End
+        ,FailQty =  CASE WHEN t.GMTComplete = 'S' and p.PulloutDate is null THEN Cast(0 as int)
+                Else iif(isnull(t.isDevSample,0) = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, Cast(t.OrderQty as int), 0), Cast(isnull(pd.FailQty,t.OrderQty) as int)) 
+             End
+        ,pullOutDate = iif(isnull(t.isDevSample,0) = 1, CONVERT(char(10), pd2.PulloutDate, 20), CONVERT(char(10), p.PulloutDate, 111))
 		,Shipmode = t.ShipmodeID
-		,P = Cast(isnull(op.PulloutDate,0) as int)  --未出貨,出貨次數=0
+		,P = (select count(1)from(select distinct ID,OrderID,OrderShipmodeSeq from Pullout_Detail p2 where p2.OrderID = t.OrderID and p2.ShipQty > 0)x )  --未出貨,出貨次數=0 --不論這OrderID的OrderShipmodeSeq有沒有被撈出來, 都要計算
 		,t.GMTComplete 
 		,t.ReasonID
 		,t.ReasonName   
+        ,SewLastDate = convert(varchar(10),sew.SewLastDate,111)
+		,ctnr.CTNLastReceiveDate
+        ,t.OutsdReason
+        ,t.ReasonRemark
 		,MR = dbo.getTPEPass1_ExtNo(t.MRHandle)
 		,SMR = dbo.getTPEPass1_ExtNo(t.SMR)
 		,POHandle = dbo.getTPEPass1_ExtNo(t.POHandle)
@@ -296,11 +327,10 @@ SELECT
 		,isDevSample = iif(t.isDevSample = 1, 'Y', '')
 		,sew.SewouptQty
 		, getQtyBySeq.FOC
-        , SewLastDate = convert(varchar(10),sew.SewLastDate,111)
-		,ctnr.CTNLastReceiveDate
 		,Order_QtyShipCount=iif(ps.ct>1,'Y','')
 		,t.Alias 
 		,t.MDivisionID
+        ,Remark = '' -- trade Fail Detail 582行
 from #tmp_main t
 --出貨次數--
 left join #tmp_Pullout_Detail op on op.OrderID = t.OrderID and op.OrderShipmodeSeq = t.Seq 
@@ -319,13 +349,22 @@ outer apply(
 	from Order_QtyShip oq
 	where oq.id = t.OrderID
 )ps
+-----------isDevSample=1-----------
 outer apply (
-	select  FOCOnTimeQty = iif(DateDiff(day,sew.SewLastDate,t.FtyKPI) >= 0,  t.OrderQty - getQtyBySeq.FOB , 0)
-	       , FOCFailQty = iif(DateDiff(day,sew.SewLastDate,t.FtyKPI) < 0 or sew.SewLastDate is null,  t.OrderQty - getQtyBySeq.FOB , 0)
-) GetFOCp
+    Select top 1 iif(pd.PulloutDate > iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.FtyKPI, DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI)), 1, 0) isFail, pd.PulloutDate
+    From pullout p
+	inner join Pullout_Detail pd with (nolock) on p.ID  = pd.id
+    where pd.OrderID = t.OrderID
+    and pd.OrderShipmodeSeq = t.Seq
+    order by pd.PulloutDate ASC
+) pd2
+----------------End----------------
 where t.OrderQty > 0 
 -----End-------
 
+
+
+--部分未出貨Fail的自成一行,且ShipQty給0,避免在Excel整欄加總重覆計算
 UNION ALL ----------------------------------------------------
 SELECT 
 	CountryID = t.CountryID
@@ -337,17 +376,21 @@ SELECT
     ,t.BrandID  
     , BuyerDelivery = convert(varchar(10),t.BuyerDelivery,111)
     , FtyKPI = convert(varchar(10),t.FtyKPI,111)
-    , Extension = convert(varchar(10),iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.FtyKPI, DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI)), 111)
+    , Extension = convert(varchar(10),iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), 111)
     , DeliveryByShipmode = t.ShipmodeID
     , OrderQty = 0
     , OnTimeQty =  0
-    {selectColB}
+    , FailQty = Cast(isnull(t.OrderQty - (pd.Qty + pd.FailQty),0) as int) --未出貨Qty
     , pullOutDate = null
     , Shipmode = t.ShipModeID
     ,P =0 --未出貨,出貨次數=0
     ,t.GMTComplete 
     ,t.ReasonID 
     ,t.ReasonName 
+    , SewLastDate = convert(varchar(10),sew.SewLastDate,111)
+    ,ctnr.CTNLastReceiveDate
+    ,t.OutsdReason
+    ,t.ReasonRemark
     ,MR = dbo.getTPEPass1_ExtNo(t.MRHandle)
     ,SMR = dbo.getTPEPass1_ExtNo(t.SMR)
     ,POHandle = dbo.getTPEPass1_ExtNo(t.POHandle)
@@ -356,11 +399,10 @@ SELECT
     ,isDevSample = iif(t.isDevSample = 1, 'Y', '')
     ,SewouptQty=sew.SewouptQty
     , getQtyBySeq.FOC
-    , SewLastDate = convert(varchar(10),sew.SewLastDate,111)
-    ,ctnr.CTNLastReceiveDate
     ,Order_QtyShipCount=iif(ps.ct>1,'Y','')
     ,t.Alias
     ,t.MDivisionID
+    ,Remark = '' -- trade Fail Detail 582行
 From #tmp_main t 
 --是否有分批出貨
 outer apply (
@@ -385,7 +427,8 @@ outer apply(
 )ps
 -------End-------
 where t.GMTComplete != 'S' 
-and {(this.radioSample.Checked ? "getQtyBySeq.FOB" : "t.OrderQty")} - (pd.Qty + pd.FailQty) > 0
+and t.OrderQty - (pd.Qty + pd.FailQty) > 0
+and isnull(t.isDevSample,0) = 0 --isDevSample = 0 才需要看這邊的規則是否Fail
 )a
 
 
@@ -394,7 +437,7 @@ FROM #tmp t
 INNER JOIN Factory f ON t.KPICode=f.id
 ORDER BY  t.OrderID, t.seq, t.KpiCode
 
-drop table #tmp_Pullout_Detail_p,#tmp_Pullout_Detail_pd,#tmp_Pullout_Detail,#tmp_SewingOutput,#tmp_ClogReceive,#tmp,#tmp_main,#getQtyBySeq
+drop table #tmp_Pullout_Detail_p,#tmp_Pullout_Detail_pd,#tmp_Pullout_Detail,#tmp_SewingOutput,#tmp_ClogReceive,#tmp,#tmp_main,#getQtyBySeq,#maxReceiveDate,#tmpReceiveDate1,#tmpReceiveDate2
 ";
 
                 result = DBProxy.Current.Select(null, strSQL, null, out this.gdtOrderDetail);
@@ -442,6 +485,10 @@ SELECT  '' AS CountryID
 , '' AS GMTComplete
 , '' AS ReasonID
 , '' AS ReasonName
+, '' AS SewLastDate
+, '' AS CTNLastReceiveDate
+,OutsdReason = ''
+,ReasonRemark = ''
 , '' AS MR
 , '' AS SMR
 , '' AS POHandle 
@@ -450,11 +497,10 @@ SELECT  '' AS CountryID
 , '' AS isDevSample
 , '' AS SewouptQty
 , 0  AS FOC
-, '' AS SewLastDate
-, '' AS CTNLastReceiveDate
 , '' AS Order_QtyShipCount
 , '' AS Alias
 , '' AS MDivisionID
+, '' AS Remark
 FROM ORDERS
 WHERE 1 = 0 ";
                 result = DBProxy.Current.Select(null, strSQL, null, out this.gdtSP);
@@ -483,7 +529,7 @@ Where Order_QS.ID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.
                 }
                 else if (this.radioSample.Checked)
                 {
-                    strSQL += " AND o.Category = 'S' AND f.Type = 'S'";
+                    strSQL += " AND o.Category = 'S' AND f.Type = 'S' and isnull(o.OnSiteSample,0) <> 1";
                 }
                 else
                 {
@@ -492,12 +538,12 @@ Where Order_QS.ID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.
 
                 if (this.dateFactoryKPIDate.Value1 != null)
                 {
-                    strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
+                    strSQL += $" AND Order_QS.{kpiDate} >= '{this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd")}' ";
                 }
 
                 if (this.dateFactoryKPIDate.Value2 != null)
                 {
-                    strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                    strSQL += $" AND Order_QS.{kpiDate} <= '{this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd")}' ";
                 }
 
                 if (this.txtFactory.Text != string.Empty)
@@ -533,7 +579,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 }
                 else if (this.radioSample.Checked)
                 {
-                    strSQL += " AND o.Category = 'S' AND f.Type = 'S'";
+                    strSQL += " AND o.Category = 'S' AND f.Type = 'S' and o.OnSiteSample <> 1";
                 }
                 else
                 {
@@ -542,12 +588,12 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
 
                 if (this.dateFactoryKPIDate.Value1 != null)
                 {
-                    strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
+                    strSQL += $" AND Order_QS.{kpiDate} >= '{this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd")}' ";
                 }
 
                 if (this.dateFactoryKPIDate.Value2 != null)
                 {
-                    strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                    strSQL += $" AND Order_QS.{kpiDate} <= '{this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd")}' ";
                 }
 
                 if (this.txtFactory.Text != string.Empty)
@@ -568,17 +614,17 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     PullQty = row.Field<int>("OnTimeQty"),
                     FailQty = row.Field<int>("FailQty"),
                     P = row.Field<int>("P")
-                }).GroupBy(group => group.PoId).Select(g => new
+                }).GroupBy(group => new { group.PoId, group.P }).Select(g => new
                 {
-                    PoID = g.Key,
+                    PoID = g.Key.PoId,
                     sumOrderQty = g.Sum(r => r.OrderQty),
                     sumPullQty = g.Sum(r => r.PullQty),
                     sumFailQty = g.Sum(r => r.FailQty),
-                    sumP = g.Sum(r => r.P)
+                    sumP = g.Key.P // 出貨次數, 在SQL撈取時改為OrderID去計算次數, 不論OrderShipmodeSeq有沒有被撈出來
                 }).ToArray();
 
                 IDictionary<string, IList<DataRow>> dictionary_TradeHis_OrderIDs = dtTradeHis_Order.ToDictionaryList((x) => x.Val<string>("ID"));
-                #endregion  
+                #endregion
 
                 List<string> lstSDP = new List<string>();
                 List<string> lstSP = new List<string>();
@@ -611,7 +657,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     // SDP(%)
                     // drSDP["SDP"] = drSDP["OrderQty"].ToString() == "0" ? 0 : Convert.ToDecimal(drSDP["OnTimeQty"].ToString()) / Convert.ToDecimal(drSDP["OrderQty"].ToString()) * 100;
                     drSDP["SDP"] = (Convert.ToDecimal(drSDP["OnTimeQty"].ToString()) + Convert.ToDecimal(drSDP["FailQty"].ToString())) == 0 ?
-                        0 : Convert.ToDecimal(drSDP["OnTimeQty"].ToString()) / (Convert.ToDecimal(drSDP["OnTimeQty"].ToString()) + Convert.ToDecimal(drSDP["FailQty"].ToString())) * 100;
+                        0 : Convert.ToDecimal(drSDP["OnTimeQty"].ToString()) / (Convert.ToDecimal(drSDP["OnTimeQty"].ToString()) + Convert.ToDecimal(drSDP["FailQty"].ToString()));
 
                     #endregion Calc SDP Data
 
@@ -685,6 +731,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     , tmp.isDevSample
                     , tmp.FOC
                     , tmp.SewLastDate
+                    , tmp.CTNLastReceiveDate
                     From #tmp tmp
                     Where tmp.OnTimeQty <> 0
                     Order by tmp.OrderID, tmp.Seq";
@@ -747,7 +794,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 int preRowsStart = intRowsStart;
                 int rownum = intRowsStart; // 每筆資料匯入之位置
                 int intColumns = 7; // 匯入欄位數
-                string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE" ,"AF"};
+                string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH" };
                 object[,] objArray = new object[1, intColumns]; // 每列匯入欄位區間
                 #region 將資料放入陣列並寫入Excel範例檔
 
@@ -775,14 +822,17 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 Db_ExcelColumn.Add("R", "GMTComplete");
                 Db_ExcelColumn.Add("S", "ReasonID");
                 Db_ExcelColumn.Add("T", "ReasonName");
-                Db_ExcelColumn.Add("U", "MR");
-                Db_ExcelColumn.Add("V", "SMR");
-                Db_ExcelColumn.Add("W", "POHandle");
-                Db_ExcelColumn.Add("X", "POSMR");
-                Db_ExcelColumn.Add("Y", "OrderTypeID");
-                Db_ExcelColumn.Add("Z", "isDevSample");
-                Db_ExcelColumn.Add("AA", "FOC");
-                Db_ExcelColumn.Add("AB", "SewLastDate");
+                Db_ExcelColumn.Add("U", "SewLastDate");
+                Db_ExcelColumn.Add("V", "CTNLastReceiveDate");
+                Db_ExcelColumn.Add("W", "OutsdReason");
+                Db_ExcelColumn.Add("X", "ReasonRemark");
+                Db_ExcelColumn.Add("Y", "MR");
+                Db_ExcelColumn.Add("Z", "SMR");
+                Db_ExcelColumn.Add("AA", "POHandle");
+                Db_ExcelColumn.Add("AB", "POSMR");
+                Db_ExcelColumn.Add("AC", "OrderTypeID");
+                Db_ExcelColumn.Add("AD", "isDevSample");
+                Db_ExcelColumn.Add("AE", "FOC");
 
                 OrderDetail_ExcelColumn.Add("A", "CountryID");
                 OrderDetail_ExcelColumn.Add("B", "KPICode");
@@ -834,11 +884,10 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 Db_ExcelColumn2.Add("O", "isDevSample");
                 Db_ExcelColumn2.Add("P", "FOC");
                 Db_ExcelColumn2.Add("Q", "SewLastDate");
-
+                Db_ExcelColumn2.Add("R", "CTNLastReceiveDate");
 
                 #region 匯出SDP
                 List<string> MSummaryRow = new List<string>();
-
                 for (int i = 0; i < intRowsCount; i += 1)
                 {
                     DataRow dr = this.gdtSDP.Rows[i];
@@ -879,7 +928,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                         rownum++;
 
                         // objArray[0, 5] = "=" + string.Format("D{0}/IF(C{0}=0, 1,C{0})*100", rownum + i);
-                        objArray[0, 5] = "=" + string.Format("D{0}/IF(D{0}+E{0}=0, 1,D{0}+E{0})*100", rownum + i);
+                        objArray[0, 5] = "=" + string.Format("D{0}/IF(D{0}+E{0}=0, 1,D{0}+E{0})", rownum + i);
 
                         objArray[0, 6] = (decimal)dr["SDP"] >= 97 ? "PASS" : "FAIL";
                         worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Value2 = objArray;
@@ -895,6 +944,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 {
                     worksheet.Range[string.Format("A{0}:A{0}", rownum + intRowsCount)].Value2 = "G. TTL.";
                     worksheet.Range[string.Format("A{0}:A{0}", rownum + intRowsCount + 2)].Value2 = "* SDP=On time Qty / (On time Qty+Delay Qty)";
+                    worksheet.Range[string.Format("A{0}:G{0}", rownum + intRowsCount + 2)].Merge(false);
                     worksheet.Range[string.Format("C{0}:C{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("C{0}:C{1}", 2, rownum + intRowsCount - 1) + ")";
                     worksheet.Range[string.Format("D{0}:D{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("D{0}:D{1}", 2, rownum + intRowsCount - 1) + ")";
                     worksheet.Range[string.Format("E{0}:E{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("E{0}:E{1}", 2, rownum + intRowsCount - 1) + ")";
@@ -904,7 +954,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     worksheet.Range[string.Format("E{0}:E{0}", rownum + intRowsCount)].Formula = "=E" + MSummaryRow.JoinToString("+E");
 
                     // worksheet.Range[string.Format("F{0}:F{0}", rownum + intRowsCount)].Formula = "=" + string.Format("D{0}/IF(C{0}=0, 1,C{0})*100", rownum + intRowsCount);
-                    worksheet.Range[string.Format("F{0}:F{0}", rownum + intRowsCount)].Formula = "=" + string.Format("D{0}/IF(D{0}+E{0}=0, 1,D{0}+E{0})*100", rownum + intRowsCount);
+                    worksheet.Range[string.Format("F{0}:F{0}", rownum + intRowsCount)].Formula = "=" + string.Format("D{0}/IF(D{0}+E{0}=0, 1,D{0}+E{0})", rownum + intRowsCount);
 
                     worksheet.Cells[rownum + intRowsCount, 7] = $"=IF(F{rownum + intRowsCount}>=97,\"PASS\",\"FAIL\")";
                     worksheet.Range[string.Format("A{0}:G{0}", rownum + intRowsCount)].Borders[Excel.XlBordersIndex.xlEdgeTop].LineStyle = 1;
@@ -915,7 +965,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
 
                 worksheet.Range[string.Format("G1:G{0}", rownum + intRowsCount)].Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = 1;
                 worksheet.Range[string.Format("G1:G{0}", rownum + intRowsCount)].Borders[Excel.XlBordersIndex.xlEdgeRight].LineStyle = 1;
-                worksheet.Range[string.Format("G1:G{0}", rownum + intRowsCount)].Interior.Color = Color.FromArgb(254, 255, 146);
+                worksheet.Range[string.Format("G1:G{0}", rownum + intRowsCount - 1)].Interior.Color = Color.FromArgb(254, 255, 146);
                 worksheet.Columns.AutoFit();
                 #endregion
 
@@ -924,7 +974,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 {
                     worksheet = excel.ActiveWorkbook.Worksheets[2];
                     worksheet.Name = "Fail Order List by SP";
-                    string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode ", "Order Qty", "On Time Qty", "Fail Qty", "Fail PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample", "FOC Qty", "Last Sewing Output Date" };
+                    string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode ", "Order Qty", "On Time Qty", "Fail Qty", "Fail PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Last Sewing Output Date", "Last Carton Received Date", "Outstanding Reason", "Reason Remark", "Handle", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample", "FOC Qty" };
                     object[,] objArray_1 = new object[1, aryTitles.Length];
                     for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                     {
@@ -968,7 +1018,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[3];
                         worksheet.Name = "Order Detail";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "On Time Qty", "Fail Qty", "PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle  ", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample", "Sewing Qty", "FOC Qty", "Last sewing output date", "Last carton received date", "Partial shipment" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "On Time Qty", "Fail Qty", "PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle  ", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample", "Sewing Qty", "FOC Qty", "Last sewing output date", "Last Carton Received Date", "Partial shipment" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
@@ -1012,7 +1062,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[4];
                         worksheet.Name = "On time Order List by PullOut";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "PullOut Qty", "PullOut Date", "ShipMode", "Order Type", "Dev. Sample", "FOC Qty", "Last Sewing Output Date" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "PullOut Qty", "PullOut Date", "ShipMode", "Order Type", "Dev. Sample", "FOC Qty", "Last Sewing Output Date", "Last Carton Received Date" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
@@ -1071,16 +1121,18 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                                             ReasonID = data.Field<string>("ReasonID"),
                                             ReasonName = data.Field<string>("ReasonName"),
                                             MR = data.Field<string>("MR"),
+                                            Remark = data.Field<string>("Remark"),
                                             OrderTypeID = data.Field<string>("OrderTypeID"),
                                             isDevSample = data.Field<string>("isDevSample"),
                                             FOC = data.Field<int>("FOC"),
-                                            SewLastDate = data.Field<string>("SewLastDate")
+                                            SewLastDate = data.Field<string>("SewLastDate"),
+                                            CTNLastReceiveDate = data.Field<string>("CTNLastReceiveDate")
                                         };
                     if ((gdtFailDetail != null) && (gdtFailDetail.Count() > 0))
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[5];
                         worksheet.Name = "Fail Detail";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "Fail Qty", "PullOut Date", "ShipMode", "ReasonID", "Order Reason", "Handle", "Order Type", "Dev. Sample", "FOC Qty", "Last Sewing Output Date" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "Fail Qty", "PullOut Date", "ShipMode", "ReasonID", "Order Reason", "Handle", "Remark", "Order Type", "Dev. Sample", "FOC Qty", "Last Sewing Output Date", "Last Carton Received Date" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
@@ -1114,10 +1166,12 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                             objArray_1[0, 14] = dr.ReasonID;
                             objArray_1[0, 15] = dr.ReasonName;
                             objArray_1[0, 16] = dr.MR;
-                            objArray_1[0, 17] = dr.OrderTypeID;
-                            objArray_1[0, 18] = dr.isDevSample;
-                            objArray_1[0, 19] = dr.FOC;
-                            objArray_1[0, 20] = dr.SewLastDate;
+                            objArray_1[0, 17] = dr.Remark;
+                            objArray_1[0, 18] = dr.OrderTypeID;
+                            objArray_1[0, 19] = dr.isDevSample;
+                            objArray_1[0, 20] = dr.FOC;
+                            objArray_1[0, 21] = dr.SewLastDate;
+                            objArray_1[0, 22] = dr.CTNLastReceiveDate;
                             worksheet.Range[string.Format("A{0}:{1}{0}", i, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
                         }
 

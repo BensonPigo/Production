@@ -44,7 +44,6 @@ BEGIN
 			, MDivisionID=b.MDivisionID
 	from #TOrder a
 	inner join Production.dbo.Factory b on a.FactoryID=b.id
-
 	
 -------------------------------------------------------------------------Order
 		--轉單為Cutting母單時,先更新MDivisionID
@@ -535,7 +534,8 @@ BEGIN
 				t.ChangeMemoDate       = s.ChangeMemoDate,
 				t.BuyBack              = s.BuyBack,
 				t.BuyBackOrderID       = s.BuyBackOrderID,
-				t.ForecastCategory     = s.ForecastCategory
+				t.ForecastCategory     = s.ForecastCategory,
+				t.OnSiteSample		   = s.OnSiteSample
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -565,7 +565,7 @@ BEGIN
 			, KPICmpq				, KPIMNotice			, GFR					, SDPDate				, PulloutComplete		
 			, SewINLINE				, FtyGroup				, ForecastSampleGroup	, DyeingLoss			, SubconInType
 			, LastProductionDate	, EstPODD				, AirFreightByBrand		, AllowanceComboID      , ChangeMemoDate
-			, BuyBack				, BuyBackOrderID		, ForecastCategory
+			, BuyBack				, BuyBackOrderID		, ForecastCategory		, OnSiteSample
 
 		) values (
 			s.ID					, s.BrandID				, s.ProgramID			, s.StyleID				, s.SeasonID 
@@ -595,7 +595,7 @@ BEGIN
 			, s.KPICmpq 			, s.KPIMNotice			, s.GFR					, s.SDPDate				, s.PulloutComplete		
 			, s.SewINLINE           , s.FTY_Group			, s.ForecastSampleGroup , s.DyeingLoss          , '0'
 			, s.LastProductionDate	, s.EstPODD				, s.AirFreightByBrand	, s.AllowanceComboID    , s.ChangeMemoDate
-			, s.BuyBack				, s.BuyBackOrderID		, s.ForecastCategory
+			, s.BuyBack				, s.BuyBackOrderID		, s.ForecastCategory	, s.OnSiteSample
 		)
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 

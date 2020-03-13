@@ -159,6 +159,7 @@
     [BuyBack] VARCHAR(20) NULL, 
     [BuyBackOrderID] VARCHAR(13) NULL, 
     [ForecastCategory] VARCHAR NULL DEFAULT (''), 
+    [OnSiteSample] BIT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
