@@ -144,19 +144,20 @@ Begin
 		into #tmpTransferLocation
 		from TransferLocation s
 		outer apply(
-			select SCICtnNo, Time = max(Time)
+			select SCICtnNo, ID
+				, ROW_NUMBER() over(PARTITION BY SCICtnNo order by ID desc) r_ID
 			from TransferLocation t
 			where SCICtnNo = s.SCICtnNo
 			and SCIUpdate = s.SCIUpdate
-			group by SCICtnNo 
 		)t
 		where s.SCIUpdate = 0
-		and s.Time = t.Time
+		and t.r_ID = 1
+		and t.ID = s.ID
 		and (
 			exists (select 1 from  Production.dbo.PackingList_Detail where SCICtnNo= s.SCICtnNo and ReceiveDate is null)
 			or
 			exists (select 1 from  Production.dbo.PackingList_Detail where SCICtnNo= s.SCICtnNo and CFAReturnClogDate is not null)
-		)
+		) 
 
 		-- 加入@tmpPacking
 		insert into @tmpPackingList
