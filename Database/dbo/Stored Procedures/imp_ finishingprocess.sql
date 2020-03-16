@@ -145,9 +145,9 @@ Begin
 		from TransferLocation s
 		where s.SCIUpdate = 0
 		and (
-			exists (select 1 from  Production.dbo.PackingList_Detail t where SCICtnNo=t.SCICtnNo and ReceiveDate is null)
+			exists (select 1 from  Production.dbo.PackingList_Detail t where SCICtnNo= s.SCICtnNo and ReceiveDate is null)
 			or
-			exists (select 1 from  Production.dbo.PackingList_Detail t where SCICtnNo=t.SCICtnNo and CFAReturnClogDate is not null)
+			exists (select 1 from  Production.dbo.PackingList_Detail t where SCICtnNo= s.SCICtnNo and CFAReturnClogDate is not null)
 		)
 
 		-- 加入@tmpPacking
