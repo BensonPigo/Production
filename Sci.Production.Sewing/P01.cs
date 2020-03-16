@@ -3924,7 +3924,16 @@ order by a.OrderId,os.Seq
             DualResult result = this.GetDQSDataForDetail(out sewDt1);
             if (!result)
             {
-                this.ShowErr(result);
+
+                if (result.Messages.Count == 0)
+                {
+                    MyUtility.Msg.InfoBox("DQS Data not found!");
+                }
+                else
+                {
+                    this.ShowErr(result);
+                }
+
                 return;
             }
 
