@@ -2469,6 +2469,7 @@
     <Build Include="dbo\Functions\GetAmountByUnit.sql" />
     <Build Include="dbo\Tables\Order_BuyBack.sql" />
     <Build Include="dbo\Tables\Order_BuyBack_Qty.sql" />
+    <Build Include="dbo\Tables\Express_History.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
