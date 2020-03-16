@@ -557,6 +557,8 @@ drop table #tmp
                 worksheet.Columns[6].ColumnWidth = 17.75;
                 worksheet.Columns[7].ColumnWidth = 12.75;
                 worksheet.Columns[8].ColumnWidth = 14;
+                worksheet.Columns[9].ColumnWidth = 14;
+                worksheet.Columns[10].ColumnWidth = 15;
                 worksheet.Columns[11].ColumnWidth = 25;
                 worksheet.Columns[12].ColumnWidth = 11.13;
                 worksheet.Columns[13].ColumnWidth = 25.25;
