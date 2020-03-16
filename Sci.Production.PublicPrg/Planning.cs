@@ -435,7 +435,7 @@ outer  apply(
 )x
 outer apply(select v = iif(InComing is not null and (x.InStartDate is null or x.InStartDate <= InComing) and (x.InEndDate is null or InComing <= x.InEndDate),1,0))I_Judge
 outer apply(select v = iif(OutGoing is not null and (x.OutStartDate is null or x.OutStartDate <= OutGoing) and (x.OutEndDate is null or OutGoing <= x.OutEndDate),1,0))O_Judge
-outer apply(select M = iif(IsPair=1,IIF(m=1,2,m),1) )IsPair
+outer apply(select M = iif(IsPair=1,IIF(m=1,2,m),1) )IsPair--此處判斷後才放入group by 欄位中 
 group by OrderID, SubprocessId, InOutRule, BundleGroup, Size, PatternPanel, FabricPanelCode, Article, PatternCode,IsPair.m
     , InStartDate,InEndDate,OutStartDate,OutEndDate
 ";
