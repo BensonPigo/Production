@@ -143,11 +143,19 @@ Begin
 		select s.*
 		into #tmpTransferLocation
 		from TransferLocation s
+		outer apply(
+			select SCICtnNo, Time = max(Time)
+			from TransferLocation t
+			where SCICtnNo = s.SCICtnNo
+			and SCIUpdate = s.SCIUpdate
+			group by SCICtnNo 
+		)t
 		where s.SCIUpdate = 0
+		and s.Time = t.Time
 		and (
-			exists (select 1 from  Production.dbo.PackingList_Detail t where SCICtnNo= s.SCICtnNo and ReceiveDate is null)
+			exists (select 1 from  Production.dbo.PackingList_Detail where SCICtnNo= s.SCICtnNo and ReceiveDate is null)
 			or
-			exists (select 1 from  Production.dbo.PackingList_Detail t where SCICtnNo= s.SCICtnNo and CFAReturnClogDate is not null)
+			exists (select 1 from  Production.dbo.PackingList_Detail where SCICtnNo= s.SCICtnNo and CFAReturnClogDate is not null)
 		)
 
 		-- 加入@tmpPacking
