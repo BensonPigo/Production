@@ -111,7 +111,7 @@ namespace Sci.Production.Centralized
 
             if (!MyUtility.Check.Empty(this.Factory))
             {
-                where += $@" and o.FactoryID = '{this.Factory}'";
+                where += $@" and o.FtyGroup = '{this.Factory}'";
             }
 
             if (this.ExcludeSampleFactory)
@@ -158,6 +158,7 @@ o.SubconInType,
 o.IsForecast,
 o.LocalOrder,
 o.FactoryID,
+o.FtyGroup,
 f.IsProduceFty
 into #tmpBase
 from Orders o with(nolock)
@@ -184,6 +185,7 @@ o.SubconInType,
 o.IsForecast,
 o.LocalOrder,
 o.FactoryID,
+o.FtyGroup,
 f.IsProduceFty,
 gcRate.CpuRate,
 GetPulloutData.Qty,
@@ -191,6 +193,7 @@ o.GMTComplete
 
 select  ID,
         FactoryID,
+        FtyGroup,
         Date,
         OutputDate,
         OrderCPU,
@@ -214,6 +217,11 @@ into #tmpBaseByOrderID
 from #tmpBaseBySource
 group by ID,Date,OrderCPU,OrderShortageCPU
 
+select  oq.ID, [LastBuyerDelivery] = Max(oq.BuyerDelivery), [PartialShipment] = iif(count(1) > 1, 'Y', '')
+into #tmpOrder_QtyShip
+from    Order_QtyShip oq with (nolock)
+where exists (select 1 from #tmpBaseByOrderID tb where tb.ID = oq.ID)
+group by    oq.ID
 
 select
 	o.MDivisionID,
@@ -227,6 +235,8 @@ select
 				when o.Category='' then 'Forecast'
 				end,
 	Cancelled=iif(o.Junk=1,'Y',''),
+    toq.PartialShipment,
+    toq.LastBuyerDelivery,
 	o.StyleID,
 	o.SeasonID,
 	o.CustPONO,
@@ -244,12 +254,15 @@ select
 	o.OrderTypeID,
 	o.ProgramID,
 	o.CdCodeID,
-	CDCode.ProductionFamilyID
+	CDCode.ProductionFamilyID,
+    o.FtyGroup
 from #tmpBaseByOrderID tb with(nolock)
 inner join Orders o with(nolock) on o.id = tb.ID
+left join #tmpOrder_QtyShip toq on toq.ID = tb.ID
 left join CDCode with(nolock) on CDCode.ID = o.CdCodeID
 
-select  FactoryID,
+
+select  FtyGroup,
         [Date] = SUBSTRING(Date,1,4)+'/'+SUBSTRING(Date,5,6),
         ID,
         OutputDate,
@@ -259,11 +272,11 @@ select  FactoryID,
         SewingOutputCPU
 from    #tmpBaseBySource
 
-select  FactoryID,OutputDate,[SewingOutputCPU] = sum(SewingOutputCPU) * -1
+select  FtyGroup,OutputDate,[SewingOutputCPU] = sum(SewingOutputCPU) * -1
 from    #tmpBase
-where   Junk=1 and OutputDate is not null group by FactoryID,OutputDate
+where   Junk=1 and OutputDate is not null group by FtyGroup,OutputDate
 
-drop table #tmpBase,#tmpBaseBySource,#tmpBaseByOrderID
+drop table #tmpBase,#tmpBaseBySource,#tmpBaseByOrderID,#tmpOrder_QtyShip
 ";
             #endregion
 
@@ -323,11 +336,11 @@ drop table #tmpBase,#tmpBaseBySource,#tmpBaseByOrderID
                 return Result.F("Data not found!");
             }
 
-            List<string> ftys = this.dtAllData[0].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["FactoryID"])).Select(s => MyUtility.Convert.GetString(s["FactoryID"])).Distinct().ToList();
+            List<string> ftys = this.dtAllData[0].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["FtyGroup"])).Select(s => MyUtility.Convert.GetString(s["FtyGroup"])).Distinct().ToList();
 
             foreach (string fty in ftys)
             {
-                DataTable detail = this.dtAllData[0].Select($"FactoryID = '{fty}'").CopyToDataTable();
+                DataTable detail = this.dtAllData[0].Select($"FtyGroup = '{fty}'").CopyToDataTable();
                 this.Detaildt.Add(detail);
 
                 #region summary
@@ -335,7 +348,7 @@ drop table #tmpBase,#tmpBaseBySource,#tmpBaseByOrderID
 select Date,ID,OrderCPU,BalanceCPU=OrderCPU-sum(SewingOutputCPU),OrderShortageCPU
 into #tmp2_0
 from #tmp
-where FactoryID = '{fty}'
+where FtyGroup = '{fty}'
 group by Date,ID,OrderCPU,OrderShortageCPU
 
 select Date,OrderCPU=sum(OrderCPU),BalanceCPU=sum(BalanceCPU),[OrderShortageCPU] = sum(OrderShortageCPU)
@@ -349,7 +362,7 @@ from(
 	select distinct OutputDate
 	from #tmp
 	where OutputDate<>''
-    and FactoryID = '{fty}'
+    and FtyGroup = '{fty}'
 )x
 order by OutputDate
 for xml path('')
@@ -361,7 +374,7 @@ from(
 	select distinct OutputDate
 	from #tmp
 	where OutputDate<>''
-    and FactoryID = '{fty}'
+    and FtyGroup = '{fty}'
 )x
 order by OutputDate
 for xml path('')
@@ -382,7 +395,7 @@ inner join
 		SewingOutputCPU,
 		OutputDate
 		from #tmp t
-        where FactoryID = ''{fty}''
+        where FtyGroup = ''{fty}''
 	)x
 	pivot(sum(SewingOutputCPU) for OutputDate in('+@col+N'))xx
 )xxx on t2.Date=xxx.Date
@@ -402,7 +415,7 @@ end
 drop table #tmp,#tmp2,#tmp2_0
 ";
                 DataTable ftySummarydt;
-                DualResult dual = MyUtility.Tool.ProcessWithDatatable(this.dtAllData[1], "FactoryID,Date,ID,OrderCPU,SewingOutputCPU,OutputDate,OrderShortageCPU", sqlsum, out ftySummarydt);
+                DualResult dual = MyUtility.Tool.ProcessWithDatatable(this.dtAllData[1], "FtyGroup,Date,ID,OrderCPU,SewingOutputCPU,OutputDate,OrderShortageCPU", sqlsum, out ftySummarydt);
                 if (!dual)
                 {
                     return dual;
@@ -415,7 +428,7 @@ from(
 	select distinct OutputDate
 	from #tmp
 	where OutputDate<>''
-    and FactoryID = '{fty}'
+    and FtyGroup = '{fty}'
 )x
 order by OutputDate
 for xml path('')
@@ -432,7 +445,7 @@ outer apply (
 			SewingOutputCPU,
 			OutputDate
 		from #tmp t
-        where FactoryID = ''{fty}''
+        where FtyGroup = ''{fty}''
 	)x
 	pivot(sum(SewingOutputCPU) for OutputDate in('+@col+N'))xx
 )b
@@ -507,10 +520,12 @@ drop table #tmp
 
             for (int j = 1; j <= this.Detaildt.Count; j++)
             {
+                string ftyGroup = MyUtility.Convert.GetString(this.Detaildt[j - 1].Rows[0]["FtyGroup"]);
                 worksheet = excelApp.ActiveWorkbook.Worksheets[j * 2 - 1];
-                worksheet.Name = MyUtility.Convert.GetString(this.Detaildt[j - 1].Rows[0]["FactoryID"]) + "-Summary";
+                worksheet.Name = ftyGroup + "-Summary";
+                this.Detaildt[j - 1].Columns.Remove(this.Detaildt[j - 1].Columns["FtyGroup"]);
                 MyUtility.Excel.CopyToXls(this.Summarydt[j - 1], string.Empty, xltfile: excelFile, headerRow: 4, excelApp: excelApp, wSheet: excelApp.Sheets[j * 2 - 1], showExcel: false, DisplayAlerts_ForSaveFile: true);
-                worksheet.Cells[1, 1] = "Fty:" + MyUtility.Convert.GetString(this.Detaildt[j - 1].Rows[0]["FactoryID"]);
+                worksheet.Cells[1, 1] = "Fty:" + ftyGroup;
 
                 int i = 1;
                 foreach (DataColumn col in this.Summarydt[j - 1].Columns)
@@ -533,7 +548,7 @@ drop table #tmp
                 worksheet.Columns[1].ColumnWidth = 12;
 
                 worksheet = excelApp.ActiveWorkbook.Worksheets[j * 2]; // 取得工作表
-                worksheet.Name = MyUtility.Convert.GetString(this.Detaildt[j - 1].Rows[0]["FactoryID"]) + "-Balance Detail";
+                worksheet.Name = ftyGroup + "-Balance Detail";
                 worksheet.Columns[1].ColumnWidth = 5.5;
                 worksheet.Columns[2].ColumnWidth = 11.13;
                 worksheet.Columns[3].ColumnWidth = 11.88;
@@ -542,24 +557,24 @@ drop table #tmp
                 worksheet.Columns[6].ColumnWidth = 17.75;
                 worksheet.Columns[7].ColumnWidth = 12.75;
                 worksheet.Columns[8].ColumnWidth = 14;
-                worksheet.Columns[9].ColumnWidth = 25;
-                worksheet.Columns[10].ColumnWidth = 11.13;
-                worksheet.Columns[11].ColumnWidth = 25.25;
-                worksheet.Columns[12].ColumnWidth = 20;
-                worksheet.Columns[13].ColumnWidth = 7.63;
-                worksheet.Columns[14].ColumnWidth = 13.38;
-                worksheet.Columns[15].ColumnWidth = 11.88;
-                worksheet.Columns[16].ColumnWidth = 15.25;
-                worksheet.Columns[17].ColumnWidth = 15.25;
-                worksheet.Columns[18].ColumnWidth = 25.75;
-                worksheet.Columns[19].ColumnWidth = 16.38;
-                worksheet.Columns[20].ColumnWidth = 17.5;
-                worksheet.Columns[21].ColumnWidth = 18.13;
-                worksheet.Columns[22].ColumnWidth = 8;
-                worksheet.Columns[23].ColumnWidth = 22;
-                worksheet.Columns[24].ColumnWidth = 16.38;
-                worksheet.Columns[25].ColumnWidth = 6.5;
-                worksheet.Columns[26].ColumnWidth = 19.88;
+                worksheet.Columns[11].ColumnWidth = 25;
+                worksheet.Columns[12].ColumnWidth = 11.13;
+                worksheet.Columns[13].ColumnWidth = 25.25;
+                worksheet.Columns[14].ColumnWidth = 20;
+                worksheet.Columns[15].ColumnWidth = 7.63;
+                worksheet.Columns[16].ColumnWidth = 13.38;
+                worksheet.Columns[17].ColumnWidth = 11.88;
+                worksheet.Columns[18].ColumnWidth = 15.25;
+                worksheet.Columns[19].ColumnWidth = 15.25;
+                worksheet.Columns[20].ColumnWidth = 25.75;
+                worksheet.Columns[21].ColumnWidth = 16.38;
+                worksheet.Columns[22].ColumnWidth = 17.5;
+                worksheet.Columns[23].ColumnWidth = 18.13;
+                worksheet.Columns[24].ColumnWidth = 8;
+                worksheet.Columns[25].ColumnWidth = 22;
+                worksheet.Columns[26].ColumnWidth = 16.38;
+                worksheet.Columns[27].ColumnWidth = 6.5;
+                worksheet.Columns[28].ColumnWidth = 19.88;
             }
 
             excelApp.Visible = true;
