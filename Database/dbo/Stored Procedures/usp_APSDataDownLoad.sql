@@ -337,10 +337,10 @@ BEGIN
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		set @_i = 0
-		SET @workdate = GETDATE()
+		SET @workdate = DATEADD(DAY,-1, GETDATE())
 		WHILE (@_i < 160)
 		BEGIN
-		--	SET @workdate = DATEADD(DAY,1,@workdate)
+			SET @workdate = DATEADD(DAY,1,@workdate)
 			set @Holiday = (select COUNT(FactoryID) from Holiday where FactoryID = @factoryid and HolidayDate = @workdate)
 			SET @apsworkhour = null
 			SET @templateid = null
@@ -559,10 +559,10 @@ BEGIN
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		set @_i = 0
-		SET @workdate = GETDATE()
+		SET @workdate = DATEADD(DAY,-1, GETDATE())
 		WHILE (@_i < 160)
 		BEGIN
-		--	SET @workdate = DATEADD(DAY,1,@workdate)			
+			SET @workdate = DATEADD(DAY,1,@workdate)			
 			set @Holiday = (select COUNT(FactoryID) from Holiday where FactoryID = @factoryid and HolidayDate = @workdate)
 			SET @apsworkhour = null
 
