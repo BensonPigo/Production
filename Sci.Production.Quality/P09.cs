@@ -394,12 +394,12 @@ select distinct
 	sr.TPETestReport,
 	sr.ContinuityCard,
 	sr.TPEContinuityCard,
-	fd.FirstDyelot,
-	TPEFirstDyelot = IIF(fd.TPEFirstDyelot is null and RibItem = 1
+	FirstDyelot.FirstDyelot,
+	TPEFirstDyelot = IIF(FirstDyelot.TPEFirstDyelot is null and FirstDyelot.RibItem = 1
                         ,'RIB no need first dye lot'
-                        ,IIF(fd.SeasonSCIID is null
+                        ,IIF(FirstDyelot.SeasonSCIID is null
                                 ,'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
-                                ,format(fd.TPEFirstDyelot,'yyyy/MM/dd')
+                                ,format(FirstDyelot.TPEFirstDyelot,'yyyy/MM/dd')
                             )
                     ),
 	sr.T2InspYds,
@@ -422,8 +422,12 @@ left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
 left join Supp with(nolock) on Supp.ID = ps.SuppID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 left join Factory fty with (nolock) on fty.ID = Export.Consignee
-left join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup and fd.SeasonSCIID = s.SeasonSCIID
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
+OUTER APPLY(
+	SELECT FirstDyelot,TPEFirstDyelot,RibItem,SeasonSCIID
+	FROM FirstDyelot fd  with(nolock) 
+	WHERE fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
+)FirstDyelot
 outer apply(
 	select T1InspectedYards=sum(fp.ActualYds)
 	from fir f
