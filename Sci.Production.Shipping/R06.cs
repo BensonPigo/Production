@@ -167,41 +167,35 @@ where s.Status = 'Approved'");
             {
                 sqlCmd.Append(@"
 select
-        s.Type,
-        s.SubType,
-		Supplier = s.LocalSuppID+'-'+ISNULL(ls.Abb,''),
-		s.ID,
-		s.VoucherID,
-        s.VoucherDate,
-		[APDate]=s.CDate,
-		s.[ApvDate],
-		s.[MDivisionID],
-		s.[CurrencyID],
-		[APAmt]=s.[Amount],
-		s.[BLNo],
-		s.[Remark],
-		[Invoice ]= s.InvNo,
-		[ExportINV] =  case
-                            when sh.WKNo = '' and sh.InvNo != '' then sh.InvNo
-                            when sh.WKNo != '' and sh.InvNo = '' then sh.WKNo
-                            when sh.WKNo != '' and sh.InvNo != '' then Concat (sh.WKNo, '/', sh.InvNo)
-                            else ''
-                        end
-		,[CurrencyID]= ISNULL(sh.CurrencyID , ShippingAP_Deatai.CurrencyID)
-		,[Amount]= ISNULL(sh.Amount , ShippingAP_Deatai.Amount)
-		,[AccountID]= ISNULL(sh.AccountID , ShippingAP_Deatai.AccountID)
+        s.Type
+        ,s.SubType
+		,Supplier = s.LocalSuppID+'-'+ISNULL(ls.Abb,'')
+		,s.ID
+		,s.VoucherID
+        ,s.VoucherDate
+		,[APDate]=s.CDate
+		,s.[ApvDate]
+		,s.[MDivisionID]
+		,s.[CurrencyID]
+		,[APAmt]=s.[Amount]
+		,s.[BLNo]
+		,s.[Remark]
+		,[Invoice ]= s.InvNo
+		,[ExportINV] =  sp.InvNo
+		,[CurrencyID]= sp.CurrencyID
+		,[Amount]= isnull(sp.AmtFty,0) + isnull(sp.AmtOther,0)
+		,[AccountID]= ISNULL(sp.AccountID , ShippingAP_Deatai.AccountID)
 		,[AccountName]= ISNULL(an.Name, ShippingAP_Deatai.AccountName)
         ,[SPNO] = air.OrderID
         ,[AirNO] = sp.AirPPID
-		,[ShipQty] = PackingList_Detail.ShipQty
-		,[NW] = sp.NW
+		,[ShipQty] = isnull(PackingList_Detail.ShipQty,0)
+		,[NW] = isnull(sp.NW,0)
 		,[shipMode] = p.ShipModeID
 from ShippingAP s WITH (NOLOCK)
-left join ShareExpense sh WITH (NOLOCK) ON s.ID = sh.ShippingAPID
-                                           and sh.Junk != 1
-left join SciFMS_AccountNo an on an.ID = sh.AccountID 
 left join LocalSupp ls WITH (NOLOCK) on s.LocalSuppID = ls.ID
-left join ShareExpense_APP sp WITH (NOLOCK) on sh.ShippingAPID = sp.ShippingAPID and sh.AccountID = sp.AccountID
+left join ShareExpense_APP sp WITH (NOLOCK) on s.ID = sp.ShippingAPID
+											and sp.Junk != 1
+left join SciFMS_AccountNo an on an.ID = sp.AccountID 
 left join AirPP air WITH (NOLOCK) on sp.AirPPID = air.ID
 left join PackingList p WITH (NOLOCK) on sp.PackingListID = p.ID
 OUTER APPLY (
@@ -215,9 +209,10 @@ OUTER APPLY (
 	GROUP BY se.AccountID,a.Name,sd.CurrencyID
 )ShippingAP_Deatai
 OUTER APPLY (
-	select [ShipQty] = sum(ShipQty)
-	from PackingList_Detail
-	where ID = sp.PackingListID
+	select [ShipQty] = sum(pd.ShipQty)
+	from PackingList_Detail pd
+	where pd.ID = sp.PackingListID
+		and pd.OrderID = air.OrderID
 )PackingList_Detail
 where s.Status = 'Approved'");
             }
