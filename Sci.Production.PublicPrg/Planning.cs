@@ -184,9 +184,9 @@ select	distinct
 		, bun.Article
 		, bd.Sizecode
 		, bd.Patterncode
-from Bundle_Detail bd
-inner join Bundle bun on bun.id = bd.id
-inner join Orders o on bun.Orderid = o.ID and  bun.MDivisionID = o.MDivisionID
+from Bundle_Detail bd WITH (NOLOCK)
+inner join Bundle bun WITH (NOLOCK) on bun.id = bd.id
+inner join Orders o WITH (NOLOCK) on bun.Orderid = o.ID and  bun.MDivisionID = o.MDivisionID
 and exists (select 1 from {tempTable} t where t.OrderID = o.ID and o.LocalOrder = 1) --Local單
 
 
@@ -203,9 +203,9 @@ select distinct bunD.ID
 		, bunD.Qty
 		, bunD.IsPair
 into #tmp_Bundle_QtyBySubprocess
-from Bundle bun
-INNER JOIn Orders o ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID  /*2019/10/03 ISP20191382 */
-inner join Bundle_Detail bunD on bunD.Id = bun.ID
+from Bundle bun WITH (NOLOCK)
+INNER JOIn Orders o WITH (NOLOCK) ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID  /*2019/10/03 ISP20191382 */
+inner join Bundle_Detail bunD WITH (NOLOCK) on bunD.Id = bun.ID
 where exists (select 1 from  #AllOrders x0 where bun.Orderid = x0.Orderid
 		and bun.PatternPanel = x0.PatternPanel
 		and bun.FabricPanelCode = x0.FabricPanelCode
@@ -262,7 +262,7 @@ outer apply (
 					and bunD.Sizecode = x0.Sizecode
 				    and bunD.Patterncode = x0.Patterncode
 					and exists (select 1
-									from Bundle_Detail_Art BunDArt
+									from Bundle_Detail_Art BunDArt WITH (NOLOCK)
 									where BunDArt.Bundleno = bunD.BundleNo
 										and BunDArt.SubprocessId = '{subprocessID}')
 			order by bunD.AddDate desc
@@ -282,7 +282,7 @@ outer apply (
 			order by bunD.AddDate desc
 		)x2
 	) getGroupInfo
-	inner join Bundle_Detail bunD on getGroupInfo.Id = bunD.Id and getGroupInfo.BundleGroup = bunD.BundleGroup
+	inner join Bundle_Detail bunD WITH (NOLOCK) on getGroupInfo.Id = bunD.Id and getGroupInfo.BundleGroup = bunD.BundleGroup
 	outer apply (
 		select v = (select 1
 					where exists (select 1								  
@@ -329,7 +329,7 @@ select	st0.Orderid
 		, m=iif (sub.IsRFIDDefault = 1, st0.QtyBySet, st0.QtyBySubprocess)
 into #BundleInOutDetail{subprocessIDtmp}
 from #QtyBySetPerCutpart{subprocessIDtmp} st0
-inner join SubProcess sub on sub.ID = '{subprocessID}'
+inner join SubProcess sub WITH (NOLOCK) on sub.ID = '{subprocessID}'
 left join Order_SizeCode os with (nolock) on os.ID = st0.POID and os.SizeCode = st0.SizeCode
 left join #tmp_Bundle_QtyBySubprocess bund on bunD.Orderid = st0.Orderid 
 							and bunD.PatternPanel = st0.PatternPanel 
@@ -344,9 +344,9 @@ outer apply(
 			, bunD.BundleGroup
 			, bunD.BundleNo
 			, bunD.IsPair
-	from Bundle bun
-	INNER JOIn Orders o ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID 
-	inner join Bundle_Detail bunD on bunD.Id = bun.ID
+	from Bundle bun WITH (NOLOCK)
+	INNER JOIn Orders o WITH (NOLOCK) ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID 
+	inner join Bundle_Detail bunD WITH (NOLOCK) on bunD.Id = bun.ID
 	where bun.Orderid = st0.Orderid 
 		and bun.PatternPanel = st0.PatternPanel 
 		and bun.FabricPanelCode = st0.FabricPanelCode 
