@@ -199,7 +199,7 @@ namespace Sci.Production.Planning
                     // 列印動態欄位的表頭
                     for (int i = 0; i < this.dtArtworkType.Rows.Count; i++)
                     {
-                        objSheets.Cells[1, 81 + i] = this.dtArtworkType.Rows[i]["id"].ToString();
+                        objSheets.Cells[1, 89 + i] = this.dtArtworkType.Rows[i]["id"].ToString();
                     }
 
                     // 首列資料篩選
@@ -265,7 +265,7 @@ namespace Sci.Production.Planning
                     // 列印動態欄位的表頭
                     for (int i = 0; i < this.dtArtworkType.Rows.Count; i++)
                     {
-                        objSheets.Cells[1, 81 + i] = this.dtArtworkType.Rows[i]["id"].ToString();
+                        objSheets.Cells[1, 90 + i] = this.dtArtworkType.Rows[i]["id"].ToString();
                     }
 
                     // 首列資料篩選
@@ -480,7 +480,7 @@ namespace Sci.Production.Planning
 
             if (!MyUtility.Check.Empty(this.factory))
             {
-                sqlCmd.Append(@" and o.factoryid = @factory");
+                sqlCmd.Append(@" and o.FtyGroup = @factory");
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@factory", this.factory));
             }
 
@@ -660,10 +660,12 @@ select t.MDivisionID
        , t.SewOffLine
        , t.BrandID
        , t.OrderID
+	   , [Cancelled] = IIF(t.Junk=1 ,'Y' ,'')  ------------------
        , Dest = Country.Alias
        , t.StyleID
        , t.OrderTypeID
        , t.ShipModeList
+	   , [PartialShipping]=IIF( (SELECT COUNT(ID) FROM Order_QtyShip WHERE ID = t.OrderID) >=2 ,'Y' ,'')
        , [OrderNo] = t.Customize1
        , t.CustPONo
        , t.CustCDID
@@ -1067,7 +1069,7 @@ WHERE 1=1 "));
 
             if (!MyUtility.Check.Empty(this.factory))
             {
-                sqlCmd.Append(@" and o.factoryid = @factory");
+                sqlCmd.Append(@" and o.FtyGroup = @factory");
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@factory", this.factory));
             }
 
@@ -1250,10 +1252,12 @@ select t.MDivisionID
        , SewingSchedule2.Offline
        , t.BrandID
        , t.OrderID
+	   , [Cancelled] = IIF(t.Junk=1 ,'Y' ,'')  ------------------
        , Dest = Country.Alias
        , t.StyleID
        , t.OrderTypeID
        , t.ShipModeList
+	   , [PartialShipping]=IIF( (SELECT COUNT(ID) FROM Order_QtyShip WHERE ID = t.OrderID) >=2 ,'Y' ,'')
        , [OrderNo] = t.Customize1
        , t.CustPONo
        , t.CustCDID

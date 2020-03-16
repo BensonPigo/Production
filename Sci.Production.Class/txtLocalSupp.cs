@@ -60,6 +60,7 @@ namespace Sci.Production.Class
 select l.ID
 from dbo.LocalSupp l WITH (NOLOCK) 
 WHERE  l.ID = '{textValue}'
+and l.Junk=0 
 "))
                 {
                     this.textBox1.Text = "";

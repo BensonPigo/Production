@@ -97,6 +97,12 @@
             this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
             this.chkSQCS = new Sci.Win.UI.CheckBox();
             this.btnCOInfo = new Sci.Win.UI.Button();
+            this.chkCustomOT = new Sci.Win.UI.CheckBox();
+            this.lbTruckFee = new Sci.Win.UI.Label();
+            this.lbRespFty = new Sci.Win.UI.Label();
+            this.txtCustomOTRespFty1 = new Sci.Production.Class.txtfactory();
+            this.txtCustomOTRespFty2 = new Sci.Production.Class.txtfactory();
+            this.numFtyTruckFee = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -113,6 +119,12 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.numFtyTruckFee);
+            this.masterpanel.Controls.Add(this.txtCustomOTRespFty2);
+            this.masterpanel.Controls.Add(this.txtCustomOTRespFty1);
+            this.masterpanel.Controls.Add(this.lbRespFty);
+            this.masterpanel.Controls.Add(this.lbTruckFee);
+            this.masterpanel.Controls.Add(this.chkCustomOT);
             this.masterpanel.Controls.Add(this.btnCOInfo);
             this.masterpanel.Controls.Add(this.labelFormE);
             this.masterpanel.Controls.Add(this.chkSQCS);
@@ -181,7 +193,7 @@
             this.masterpanel.Controls.Add(this.dateArrivePortDate);
             this.masterpanel.Controls.Add(this.dateArriveWHDate);
             this.masterpanel.Controls.Add(this.dateDoxRcvDate);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 344);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 350);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDoxRcvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateArriveWHDate, 0);
@@ -251,15 +263,21 @@
             this.masterpanel.Controls.SetChildIndex(this.chkSQCS, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelFormE, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnCOInfo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkCustomOT, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbTruckFee, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbRespFty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtCustomOTRespFty1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtCustomOTRespFty2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numFtyTruckFee, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 344);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 218);
+            this.detailpanel.Location = new System.Drawing.Point(0, 350);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 223);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(882, 272);
+            this.gridicon.Location = new System.Drawing.Point(882, 278);
             // 
             // refresh
             // 
@@ -267,7 +285,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 218);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 223);
             // 
             // detail2
             // 
@@ -283,24 +301,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1000, 600);
+            this.detail.Size = new System.Drawing.Size(1000, 611);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 562);
+            this.detailcont.Size = new System.Drawing.Size(1000, 573);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 562);
+            this.detailbtm.Location = new System.Drawing.Point(0, 573);
             this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 600);
+            this.browse.Size = new System.Drawing.Size(1000, 611);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1008, 629);
+            this.tabs.Size = new System.Drawing.Size(1008, 640);
             // 
             // createby
             // 
@@ -888,7 +906,7 @@
             this.chkImportChange.AutoSize = true;
             this.chkImportChange.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NoImportCharges", true));
             this.chkImportChange.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkImportChange.Location = new System.Drawing.Point(567, 282);
+            this.chkImportChange.Location = new System.Drawing.Point(567, 279);
             this.chkImportChange.Name = "chkImportChange";
             this.chkImportChange.Size = new System.Drawing.Size(138, 21);
             this.chkImportChange.TabIndex = 55;
@@ -901,7 +919,7 @@
             this.chkReplacement.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Replacement", true));
             this.chkReplacement.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkReplacement.IsSupportEditMode = false;
-            this.chkReplacement.Location = new System.Drawing.Point(567, 306);
+            this.chkReplacement.Location = new System.Drawing.Point(567, 300);
             this.chkReplacement.Name = "chkReplacement";
             this.chkReplacement.Size = new System.Drawing.Size(110, 21);
             this.chkReplacement.TabIndex = 56;
@@ -914,7 +932,7 @@
             this.chkDelay.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Delay", true));
             this.chkDelay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkDelay.IsSupportEditMode = false;
-            this.chkDelay.Location = new System.Drawing.Point(721, 282);
+            this.chkDelay.Location = new System.Drawing.Point(711, 279);
             this.chkDelay.Name = "chkDelay";
             this.chkDelay.Size = new System.Drawing.Size(63, 21);
             this.chkDelay.TabIndex = 57;
@@ -1004,7 +1022,7 @@
             this.chkNonDeclare.AutoSize = true;
             this.chkNonDeclare.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NonDeclare", true));
             this.chkNonDeclare.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkNonDeclare.Location = new System.Drawing.Point(721, 307);
+            this.chkNonDeclare.Location = new System.Drawing.Point(711, 300);
             this.chkNonDeclare.Name = "chkNonDeclare";
             this.chkNonDeclare.Size = new System.Drawing.Size(106, 21);
             this.chkNonDeclare.TabIndex = 58;
@@ -1016,7 +1034,7 @@
             this.ChkDoortoDoorDelivery.AutoSize = true;
             this.ChkDoortoDoorDelivery.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.ChkDoortoDoorDelivery.IsSupportEditMode = false;
-            this.ChkDoortoDoorDelivery.Location = new System.Drawing.Point(828, 282);
+            this.ChkDoortoDoorDelivery.Location = new System.Drawing.Point(818, 279);
             this.ChkDoortoDoorDelivery.Name = "ChkDoortoDoorDelivery";
             this.ChkDoortoDoorDelivery.ReadOnly = true;
             this.ChkDoortoDoorDelivery.Size = new System.Drawing.Size(164, 21);
@@ -1054,7 +1072,7 @@
             this.chkSQCS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SQCS", true));
             this.chkSQCS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkSQCS.IsSupportEditMode = false;
-            this.chkSQCS.Location = new System.Drawing.Point(828, 306);
+            this.chkSQCS.Location = new System.Drawing.Point(818, 300);
             this.chkSQCS.Name = "chkSQCS";
             this.chkSQCS.ReadOnly = true;
             this.chkSQCS.Size = new System.Drawing.Size(65, 21);
@@ -1072,9 +1090,96 @@
             this.btnCOInfo.UseVisualStyleBackColor = true;
             this.btnCOInfo.Click += new System.EventHandler(this.BtnCOInfo_Click);
             // 
+            // chkCustomOT
+            // 
+            this.chkCustomOT.AutoSize = true;
+            this.chkCustomOT.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CustomOT", true));
+            this.chkCustomOT.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkCustomOT.IsSupportEditMode = false;
+            this.chkCustomOT.Location = new System.Drawing.Point(567, 323);
+            this.chkCustomOT.Name = "chkCustomOT";
+            this.chkCustomOT.ReadOnly = true;
+            this.chkCustomOT.Size = new System.Drawing.Size(98, 21);
+            this.chkCustomOT.TabIndex = 68;
+            this.chkCustomOT.Text = "Custom OT";
+            this.chkCustomOT.UseVisualStyleBackColor = true;
+            // 
+            // lbTruckFee
+            // 
+            this.lbTruckFee.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.lbTruckFee.Location = new System.Drawing.Point(796, 195);
+            this.lbTruckFee.Name = "lbTruckFee";
+            this.lbTruckFee.Size = new System.Drawing.Size(65, 23);
+            this.lbTruckFee.TabIndex = 69;
+            this.lbTruckFee.Text = "Truck Fee";
+            // 
+            // lbRespFty
+            // 
+            this.lbRespFty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.lbRespFty.Location = new System.Drawing.Point(668, 321);
+            this.lbRespFty.Name = "lbRespFty";
+            this.lbRespFty.Size = new System.Drawing.Size(65, 23);
+            this.lbRespFty.TabIndex = 71;
+            this.lbRespFty.Text = "Resp. Fty";
+            // 
+            // txtCustomOTRespFty1
+            // 
+            this.txtCustomOTRespFty1.BackColor = System.Drawing.Color.White;
+            this.txtCustomOTRespFty1.boolFtyGroupList = true;
+            this.txtCustomOTRespFty1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CustomOTRespFty1", true));
+            this.txtCustomOTRespFty1.FilteMDivision = false;
+            this.txtCustomOTRespFty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCustomOTRespFty1.IsProduceFty = false;
+            this.txtCustomOTRespFty1.IssupportJunk = false;
+            this.txtCustomOTRespFty1.Location = new System.Drawing.Point(736, 321);
+            this.txtCustomOTRespFty1.MDivision = null;
+            this.txtCustomOTRespFty1.Name = "txtCustomOTRespFty1";
+            this.txtCustomOTRespFty1.Size = new System.Drawing.Size(76, 23);
+            this.txtCustomOTRespFty1.TabIndex = 69;
+            this.txtCustomOTRespFty1.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCustomOTRespFty1_Validating);
+            // 
+            // txtCustomOTRespFty2
+            // 
+            this.txtCustomOTRespFty2.BackColor = System.Drawing.Color.White;
+            this.txtCustomOTRespFty2.boolFtyGroupList = true;
+            this.txtCustomOTRespFty2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CustomOTRespFty2", true));
+            this.txtCustomOTRespFty2.FilteMDivision = false;
+            this.txtCustomOTRespFty2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCustomOTRespFty2.IsProduceFty = false;
+            this.txtCustomOTRespFty2.IssupportJunk = false;
+            this.txtCustomOTRespFty2.Location = new System.Drawing.Point(818, 321);
+            this.txtCustomOTRespFty2.MDivision = null;
+            this.txtCustomOTRespFty2.Name = "txtCustomOTRespFty2";
+            this.txtCustomOTRespFty2.Size = new System.Drawing.Size(76, 23);
+            this.txtCustomOTRespFty2.TabIndex = 70;
+            this.txtCustomOTRespFty2.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCustomOTRespFty2_Validating);
+            // 
+            // numFtyTruckFee
+            // 
+            this.numFtyTruckFee.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numFtyTruckFee.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FtyTruckFee", true));
+            this.numFtyTruckFee.DecimalPlaces = 2;
+            this.numFtyTruckFee.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numFtyTruckFee.IsSupportEditMode = false;
+            this.numFtyTruckFee.Location = new System.Drawing.Point(864, 195);
+            this.numFtyTruckFee.Name = "numFtyTruckFee";
+            this.numFtyTruckFee.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numFtyTruckFee.ReadOnly = true;
+            this.numFtyTruckFee.Size = new System.Drawing.Size(100, 23);
+            this.numFtyTruckFee.TabIndex = 71;
+            this.numFtyTruckFee.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // P03
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 662);
+            this.ClientSize = new System.Drawing.Size(1008, 673);
             this.Controls.Add(this.btnBatchUpload);
             this.DefaultControl = "dateArrivePortDate";
             this.DefaultControlForEdit = "dateArrivePortDate";
@@ -1185,5 +1290,11 @@
         private Win.UI.Label labelFormE;
         private Win.UI.CheckBox chkSQCS;
         private Win.UI.Button btnCOInfo;
+        private Win.UI.Label lbTruckFee;
+        private Win.UI.CheckBox chkCustomOT;
+        private Win.UI.Label lbRespFty;
+        private Class.txtfactory txtCustomOTRespFty2;
+        private Class.txtfactory txtCustomOTRespFty1;
+        private Win.UI.NumericBox numFtyTruckFee;
     }
 }

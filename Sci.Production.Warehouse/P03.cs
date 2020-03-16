@@ -424,7 +424,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'",out dru
             .Text("FIR", header: "FIR", iseditingreadonly: true, settings: ts10)  //33
             .Text("WashLab", header: "WashLab Report", iseditingreadonly: true, settings: ts10)  //33
             .Text("Preshrink", header: "Preshrink", iseditingreadonly: true)  //34
-            .Text("Remark", header: "Remark", iseditingreadonly: true)  //35
+            .EditText("Remark", header: "Remark", iseditingreadonly: true)  //35
             ;
             #endregion
 

@@ -305,7 +305,7 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 
 	----------------RepairPO-------------------------
 	update a
-		set a.Status = case when b.Status = null and a.Status = 'Complete' then 'Confirmed'
+		set a.Status = case when b.Status is null and a.Status = 'Complete' then 'Confirmed'
 						when b.Status in ('Complete', 'Junk') then b.Status
 				   else a.Status
 				   end 

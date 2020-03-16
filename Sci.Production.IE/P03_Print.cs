@@ -53,7 +53,7 @@ namespace Sci.Production.IE
             this.InitializeComponent();
             this.masterData = masterData;
             this.styleCPU = styleCPU;
-            this.radioU.Checked = true;
+            this.radioU_Left.Checked = true;
             this.radioDescription.Checked = true;
             MyUtility.Tool.SetupCombox(this.comboLanguage, 2, 1, "en,English,cn,Chinese,vn,Vietnam,kh,Cambodia");
             this.comboLanguage.SelectedIndex = 0;
@@ -65,7 +65,19 @@ namespace Sci.Production.IE
         /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
-            this.display = this.radioU.Checked ? "U" : "Z";
+            if (this.radioU_Left.Checked)
+            {
+                this.display = "U_Left";
+            }
+            else if (this.radioU_Right.Checked)
+            {
+                this.display = "U_Right";
+            }
+            else
+            {
+                this.display = "Z";
+            }
+
             this.contentType = this.radioDescription.Checked ? "D" : "A";
             this.changp = MyUtility.Convert.GetDecimal(this.numpage.Value);
             this.strLanguage = this.comboLanguage.SelectedValue.ToString();
@@ -399,7 +411,7 @@ order by no
                 return false;
             }
 
-            // excel.Visible = true;
+            //excel.Visible = true;
             #region 第一頁
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             string factory = MyUtility.Convert.GetString(this.masterData["FactoryID"]);
@@ -734,12 +746,13 @@ order by no
 
             int norow = 17 + ((j - 2) * 5); // No格子上的位置Excel Y軸
             int nocolumn = 9;
+
             // 計錄各站點公式放入GCtime sheet資料來源
             List<GCTimeChartData> list_GCTimeChartData = new List<GCTimeChartData>();
             List<CycleTimeChart> list_CycleTimeChart = new List<CycleTimeChart>();
 
-            #region U字型列印
-            if (this.display == "U")
+            #region U_Left字型列印
+            if (this.display == "U_Left")
             {
                 int maxct = 3;
                 int di = nodist.Rows.Count;
@@ -874,8 +887,144 @@ order by no
                 }
             }
             #endregion
+            #region U_Right字型列印
+            if (this.display == "U_Right")
+            {
+                int maxct = 3;
+                int di = nodist.Rows.Count;
+                int addct = 0;
+                bool flag = true;
+                decimal dd = Math.Ceiling((decimal)di / 2);
+                List<int> max_ct = new List<int>();
+                for (int i = 0; i < dd; i++)
+                {
+                    int a = MyUtility.Convert.GetInt(nodist.Rows[i]["ct"]);
+                    int d = 0;
+                    if (di % 2 == 1 && flag)
+                    {
+                        flag = false;
+                    }
+                    else
+                    {
+                        if (di % 2 == 1)
+                        {
+                            d = MyUtility.Convert.GetInt(nodist.Rows[di - i]["ct"]);
+                        }
+                        else
+                        {
+                            d = MyUtility.Convert.GetInt(nodist.Rows[di - 1 - i]["ct"]);
+                        }
+                    }
+
+                    maxct = a > d ? a : d;
+                    maxct = maxct > 3 ? maxct : 3;
+                    max_ct.Add(maxct);
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(norow + 3)), Type.Missing).EntireRow;
+                    for (int k = 3; k < maxct; k++)
+                    {
+                        rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                        worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
+                        worksheet.get_Range(string.Format("T{0}:V{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
+
+                        if (i > 0)
+                        {
+                            addct++;
+                        }
+                    }
+
+                    // 將公式填入對應的格子中
+                    for (int q = 1; q <= maxct; q++)
+                    {
+                        this.AddLineMappingFormula(worksheet, norow + q + 1);
+                    }
+
+                    norow = norow - 5;
+                    maxct = 3;
+                }
+
+                bool rightDirection = true;
+                norow = 17 + ((j - 2) * 5) + addct;
+
+                // excel 範圍別名宣告 公式使用 for MACHINE INVENTORY計算用
+                string endRow = (norow + 5).ToString();
+                worksheet.Names.Add("MachineINV1", worksheet.Range["AA17", "AA" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV2", worksheet.Range["AB17", "AB" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["AC19", "AD" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["U17", "V" + endRow], Type.Missing);
+                worksheet.Names.Add("TtlTMS", $"=ROUND((SUM('{worksheet.Name}'!$B$17:$B${endRow})+SUM('{worksheet.Name}'!$X$17:$X${endRow}))/2,0)", Type.Missing);
+                worksheet.Names.Add("TtlGSD", $"=ROUND((SUM('{worksheet.Name}'!$C$17:$C${endRow})+SUM('{worksheet.Name}'!$W$17:$W${endRow}))/2,0)", Type.Missing);
+                worksheet.Names.Add("MaxTMS", $"=Max('{worksheet.Name}'!$B$17:$B${endRow},'{worksheet.Name}'!$X$17:$X${endRow})", Type.Missing);
+                int m = 0;
+
+                foreach (DataRow nodr in nodist.Rows)
+                {
+                    list_GCTimeChartData.Add(new GCTimeChartData()
+                    {
+                        OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
+                        TotalGSDFormula = $"='{worksheet.Name}'!{(rightDirection ? "W" : "C")}{norow}",
+                        TotalCycleFormula = $"='{worksheet.Name}'!{(rightDirection ? "X" : "B")}{norow}"
+                    });
+
+                    list_CycleTimeChart.Add(new CycleTimeChart()
+                    {
+                        OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
+                        ActCycleFormula = $"='{worksheet.Name}'!{(rightDirection ? "R" : "K")}{norow}",
+                        ActCycleTime = MyUtility.Convert.GetString(nodr["ActCycleTime(average)"]),
+                        TaktFormula = $"=E1"
+                    });
+
+                    if (rightDirection)
+                    {
+                        nocolumn = 17;
+                        worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
+                        worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
+                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
+                        int ridx = 2;
+                        string machinetype = string.Empty;
+                        string machinetypeL = string.Empty;
+                        int row = norow + ridx;
+                        foreach (DataRow item in nodrs)
+                        {
+                            worksheet.Cells[norow + ridx, nocolumn + 2] = item["rn"].ToString();
+
+                            ridx++;
+                        }
+
+                        m++;
+                        if (m == dd)
+                        {
+                            rightDirection = false;
+                            m--;
+                            continue;
+                        }
+
+                        norow = norow - 5 - (max_ct[m] - 3);
+                    }
+                    else
+                    {
+                        nocolumn = 10;
+                        worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
+                        worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
+                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
+                        int ridx = 2;
+                        string machinetype = string.Empty;
+                        string machinetypeL = string.Empty;
+                        int row = norow + ridx;
+                        foreach (DataRow item in nodrs)
+                        {
+                            worksheet.Cells[norow + ridx, nocolumn - 6] = item["rn"].ToString();
+
+                            ridx++;
+                        }
+
+                        norow = norow + 5 + (max_ct[m] - 3);
+                        m--;
+                    }
+                }
+            }
+            #endregion
             #region Z字型列印
-            else
+            if (this.display == "Z")
             {
                 int maxct = 3;
                 int ct = 0;

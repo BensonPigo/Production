@@ -308,6 +308,8 @@
             this.dispBuyBack = new Sci.Win.UI.DisplayBox();
             this.dispBuyBackOrderID = new Sci.Win.UI.DisplayBox();
             this.labBBSP = new Sci.Win.UI.Label();
+            this.chkOnSiteSample = new Sci.Win.UI.CheckBox();
+            this.chkBuyBack = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -317,12 +319,19 @@
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Location = new System.Drawing.Point(4, 24);
+            this.detail.Size = new System.Drawing.Size(1000, 661);
+            // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkOnSiteSample);
             this.detailcont.Controls.Add(this.dispBuyBackOrderID);
             this.detailcont.Controls.Add(this.labBBSP);
             this.detailcont.Controls.Add(this.dispBuyBack);
             this.detailcont.Controls.Add(this.labBuyBack);
+            this.detailcont.Controls.Add(this.chkBuyBack);
             this.detailcont.Controls.Add(this.chkAFbyAdidas);
             this.detailcont.Controls.Add(this.comboSubconInType);
             this.detailcont.Controls.Add(this.txtdropdownlistCategory);
@@ -457,16 +466,16 @@
             this.detailcont.Controls.Add(this.txtpaytermar1);
             this.detailcont.Controls.Add(this.txtcurrency1);
             this.detailcont.Controls.Add(this.txtcountry1);
-            this.detailcont.Controls.Add(this.txtuser2);
             this.detailcont.Controls.Add(this.txtuser1);
-            this.detailcont.Controls.Add(this.txttpeuser2);
+            this.detailcont.Controls.Add(this.txtuser2);
             this.detailcont.Controls.Add(this.txttpeuser1);
-            this.detailcont.Size = new System.Drawing.Size(897, 395);
+            this.detailcont.Controls.Add(this.txttpeuser2);
+            this.detailcont.Size = new System.Drawing.Size(1000, 661);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 395);
-            this.detailbtm.Size = new System.Drawing.Size(897, 0);
+            this.detailbtm.Location = new System.Drawing.Point(0, 661);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 0);
             // 
             // browse
             // 
@@ -626,10 +635,10 @@
             this.tabPage1.Controls.Add(this.txttpeuser3);
             this.tabPage1.Controls.Add(this.txttpeuser4);
             this.tabPage1.Controls.Add(this.txttpeuser5);
-            this.tabPage1.Location = new System.Drawing.Point(4, 24);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1000, 661);
+            this.tabPage1.Size = new System.Drawing.Size(897, 395);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
             // 
@@ -1788,7 +1797,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(994, 655);
+            this.shapeContainer2.Size = new System.Drawing.Size(990, 649);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -2245,7 +2254,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape3});
-            this.shapeContainer1.Size = new System.Drawing.Size(992, 655);
+            this.shapeContainer1.Size = new System.Drawing.Size(1000, 661);
             this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
             // 
@@ -3417,39 +3426,62 @@
             // 
             // labBuyBack
             // 
-            this.labBuyBack.Location = new System.Drawing.Point(644, 166);
+            this.labBuyBack.Location = new System.Drawing.Point(0, 0);
             this.labBuyBack.Name = "labBuyBack";
-            this.labBuyBack.Size = new System.Drawing.Size(65, 21);
-            this.labBuyBack.TabIndex = 227;
-            this.labBuyBack.Text = "Buy Back";
+            this.labBuyBack.Size = new System.Drawing.Size(0, 0);
+            this.labBuyBack.TabIndex = 235;
             // 
             // dispBuyBack
             // 
             this.dispBuyBack.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dispBuyBack.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyBack", true));
             this.dispBuyBack.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dispBuyBack.Location = new System.Drawing.Point(712, 166);
+            this.dispBuyBack.Location = new System.Drawing.Point(0, 0);
             this.dispBuyBack.Name = "dispBuyBack";
-            this.dispBuyBack.Size = new System.Drawing.Size(110, 21);
-            this.dispBuyBack.TabIndex = 228;
+            this.dispBuyBack.Size = new System.Drawing.Size(100, 21);
+            this.dispBuyBack.TabIndex = 234;
             // 
             // dispBuyBackOrderID
             // 
             this.dispBuyBackOrderID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dispBuyBackOrderID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyBackOrderID", true));
             this.dispBuyBackOrderID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dispBuyBackOrderID.Location = new System.Drawing.Point(890, 166);
+            this.dispBuyBackOrderID.Location = new System.Drawing.Point(0, 0);
             this.dispBuyBackOrderID.Name = "dispBuyBackOrderID";
-            this.dispBuyBackOrderID.Size = new System.Drawing.Size(102, 21);
-            this.dispBuyBackOrderID.TabIndex = 230;
+            this.dispBuyBackOrderID.Size = new System.Drawing.Size(100, 21);
+            this.dispBuyBackOrderID.TabIndex = 232;
             // 
             // labBBSP
             // 
-            this.labBBSP.Location = new System.Drawing.Point(825, 166);
+            this.labBBSP.Location = new System.Drawing.Point(0, 0);
             this.labBBSP.Name = "labBBSP";
-            this.labBBSP.Size = new System.Drawing.Size(61, 21);
-            this.labBBSP.TabIndex = 229;
-            this.labBBSP.Text = "BB SP";
+            this.labBBSP.Size = new System.Drawing.Size(0, 0);
+            this.labBBSP.TabIndex = 233;
+            // 
+            // chkOnSiteSample
+            // 
+            this.chkOnSiteSample.AutoSize = true;
+            this.chkOnSiteSample.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OnSiteSample", true));
+            this.chkOnSiteSample.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkOnSiteSample.IsSupportEditMode = false;
+            this.chkOnSiteSample.Location = new System.Drawing.Point(707, 311);
+            this.chkOnSiteSample.Name = "chkOnSiteSample";
+            this.chkOnSiteSample.ReadOnly = true;
+            this.chkOnSiteSample.Size = new System.Drawing.Size(66, 19);
+            this.chkOnSiteSample.TabIndex = 231;
+            this.chkOnSiteSample.Text = "On Site";
+            this.chkOnSiteSample.UseVisualStyleBackColor = true;
+            // 
+            // chkBuyBack
+            // 
+            this.chkBuyBack.AutoSize = true;
+            this.chkBuyBack.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkBuyBack.IsSupportEditMode = false;
+            this.chkBuyBack.Location = new System.Drawing.Point(181, 4);
+            this.chkBuyBack.Name = "chkBuyBack";
+            this.chkBuyBack.ReadOnly = true;
+            this.chkBuyBack.Size = new System.Drawing.Size(76, 19);
+            this.chkBuyBack.TabIndex = 227;
+            this.chkBuyBack.Text = "Buy Back";
+            this.chkBuyBack.UseVisualStyleBackColor = true;
             // 
             // P01
             // 
@@ -3762,5 +3794,7 @@
         private Win.UI.Label labBBSP;
         private Win.UI.DisplayBox dispBuyBack;
         private Win.UI.Label labBuyBack;
+        private Win.UI.CheckBox chkOnSiteSample;
+        private Win.UI.CheckBox chkBuyBack;
     }
 }
