@@ -55,7 +55,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
         protected override bool ValidateInput()
         {
             if ((!this.dateRangeCDate.Value1.HasValue || !this.dateRangeCDate.Value2.HasValue) &&
-                (!MyUtility.Check.Empty(this.txtSP1.Text) || !MyUtility.Check.Empty(this.txtSP2.Text)))
+                (MyUtility.Check.Empty(this.txtSP1.Text) && MyUtility.Check.Empty(this.txtSP2.Text)))
             {
                 MyUtility.Msg.WarningBox("Date, Affected Sp# can't empty!!");
                 return false;
@@ -183,6 +183,8 @@ where 1=1
 
             strExcelName.OpenFile();
             #endregion
+
+            this.HideWaitMessage();
             return true;
         } 
     }
