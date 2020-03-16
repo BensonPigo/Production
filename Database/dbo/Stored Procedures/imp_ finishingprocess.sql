@@ -170,14 +170,15 @@ Begin
 		Begin
 			insert into Production.dbo.TransferToClog(TransferDate, MDivisionID, PackingListID, OrderID, CTNStartNo, AddDate, OldID, TransferSlipNo, AddName, SCICtnNo)
 			select [TransferDate] = CONVERT(date, t.Time)
-			,MDvisionID = (select top 1 ID from Production.dbo.MDivision)
-			,[PackingListID] = pd.ID
-			,[OrderID] = pd.OrderID
-			,[CtnStartNo] = pd.CTNStartNo
-			,t.Time,null,null,'SCIMIS'
-			,pd.SCICtnNo
+				,MDvisionID = (select top 1 ID from Production.dbo.MDivision)
+				,[PackingListID] = pd.ID
+				,[OrderID] = pd.OrderID
+				,[CtnStartNo] = pd.CTNStartNo
+				,t.Time,null,null,'SCIMIS'
+				,pd.SCICtnNo
 			from #tmpTransferLocation t
 			inner join Production.dbo.PackingList_Detail pd on t.SCICtnNo=pd.SCICtnNo
+			where pd.ReceiveDate is null
 		END
 
 		-- Clog P02 log 
