@@ -1142,27 +1142,42 @@ where   ShippingAPID = '{3}'
                 {
                     DataTable tmp = (DataTable)this.listControlBindingSource1.DataSource;
                     DataTable dt;
-                    string sqlGBchk = $@"
+                    string sqlGBchk;
+                    DualResult dualResult;
+                    string msgs = string.Empty;
+
+                    sqlGBchk = string.Format(
+                        @"
+select IsFactory = iif(IsFactory = 1, 'True', 'False')
+from LocalSupp
+where ID = '{0}'
+and Junk = 0",
+                       this.LocalSuppID);
+
+                    // 當AP-Supplier 如果是SCI的工廠 跳過此判斷
+                    bool chkIsFactory = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup(sqlGBchk));
+                    if (!chkIsFactory)
+                    {
+                        sqlGBchk = $@"
 select distinct g.Forwarder,g.id
 from GMTBooking g
 inner join #tmp t on g.id=t.InvNo
 ";
-                    DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(tmp, string.Empty, sqlGBchk, out dt);
-                    if (!dualResult)
-                    {
-                        this.ShowErr(dualResult);
-                    }
+                        dualResult = MyUtility.Tool.ProcessWithDatatable(tmp, string.Empty, sqlGBchk, out dt);
+                        if (!dualResult)
+                        {
+                            this.ShowErr(dualResult);
+                        }
 
-                    string msgs = string.Empty;
-                    List<string> listID = dt.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["Forwarder"]) != this.LocalSuppID).Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().ToList();
-                    if (listID.Count > 0)
-                    {
-                        string gid = string.Join(",", listID);
-                        msgs += $@"Garment Booking : {gid}
+                        List<string> listID = dt.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["Forwarder"]) != this.LocalSuppID).Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().ToList();
+                        if (listID.Count > 0)
+                        {
+                            string gid = string.Join(",", listID);
+                            msgs += $@"Garment Booking : {gid}
 ";
-                    }
+                        }
 
-                    sqlGBchk = $@"
+                        sqlGBchk = $@"
 select distinct AirPP.Forwarder,p.id
 from GMTBooking g with(nolock)
 inner join #tmp t on g.id=t.InvNo
@@ -1170,24 +1185,25 @@ inner join PackingList p with(nolock) on p.INVNo = g.id
 inner join PackingList_Detail pd with(nolock) on pd.id = p.id
 inner join AirPP with(nolock) on AirPP.OrderID = pd.OrderID and AirPP.OrderShipmodeSeq = pd.OrderShipmodeSeq
 ";
-                    dualResult = MyUtility.Tool.ProcessWithDatatable(tmp, string.Empty, sqlGBchk, out dt);
-                    if (!dualResult)
-                    {
-                        this.ShowErr(dualResult);
-                    }
+                        dualResult = MyUtility.Tool.ProcessWithDatatable(tmp, string.Empty, sqlGBchk, out dt);
+                        if (!dualResult)
+                        {
+                            this.ShowErr(dualResult);
+                        }
 
-                    List<string> packingListID = dt.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["Forwarder"]) != this.LocalSuppID).Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().ToList();
-                    if (packingListID.Count > 0)
-                    {
-                        string pid = string.Join(",", packingListID);
-                        msgs += $@"Packing List : {pid}";
-                    }
+                        List<string> packingListID = dt.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["Forwarder"]) != this.LocalSuppID).Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().ToList();
+                        if (packingListID.Count > 0)
+                        {
+                            string pid = string.Join(",", packingListID);
+                            msgs += $@"Packing List : {pid}";
+                        }
 
-                    if (!MyUtility.Check.Empty(msgs))
-                    {
-                        msgs = @"Forwarder is different from APP request, please double check.
+                        if (!MyUtility.Check.Empty(msgs))
+                        {
+                            msgs = @"Forwarder is different from APP request, please double check.
 " + msgs;
-                        MyUtility.Msg.WarningBox(msgs);
+                            MyUtility.Msg.WarningBox(msgs);
+                        }
                     }
                 }
 
