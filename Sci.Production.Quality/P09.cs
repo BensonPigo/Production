@@ -394,9 +394,14 @@ select distinct
 	sr.TPETestReport,
 	sr.ContinuityCard,
 	sr.TPEContinuityCard,
-	fd.FirstDyelot,
-	TPEFirstDyelot = iif(fd.SeasonSCIID is null, 'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
-                ,iif(fd.TPEFirstDyelot is null and RibItem = 1,'RIB no need frist dye lot',format(fd.TPEFirstDyelot,'yyyy/MM/dd'))),
+	FirstDyelot.FirstDyelot,
+	TPEFirstDyelot = IIF(FirstDyelot.TPEFirstDyelot is null and FirstDyelot.RibItem = 1
+                        ,'RIB no need first dye lot'
+                        ,IIF(FirstDyelot.SeasonSCIID is null
+                                ,'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
+                                ,format(FirstDyelot.TPEFirstDyelot,'yyyy/MM/dd')
+                            )
+                    ),
 	sr.T2InspYds,
 	sr.T2DefectPoint,
 	sr.T2Grade,
@@ -417,8 +422,12 @@ left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
 left join Supp with(nolock) on Supp.ID = ps.SuppID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 left join Factory fty with (nolock) on fty.ID = Export.Consignee
-left join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup and fd.SeasonSCIID = s.SeasonSCIID
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
+OUTER APPLY(
+	SELECT FirstDyelot,TPEFirstDyelot,RibItem,SeasonSCIID
+	FROM FirstDyelot fd  with(nolock) 
+	WHERE fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
+)FirstDyelot
 outer apply(
 	select T1InspectedYards=sum(fp.ActualYds)
 	from fir f
@@ -654,7 +663,13 @@ select distinct
     fd.SeasonSCIID,
     fd.Period,
 	fd.FirstDyelot  FirstDyelot,
-	TPEFirstDyelot=iif(fd.TPEFirstDyelot is null and RibItem = 1,'RIB no need frist dye lot',format(fd.TPEFirstDyelot,'yyyy/MM/dd'))
+	TPEFirstDyelot = IIF(fd.TPEFirstDyelot is null and RibItem = 1
+                    ,'RIB no need first dye lot'
+                    ,IIF(fd.SeasonSCIID is null
+                            ,'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
+                            ,format(fd.TPEFirstDyelot,'yyyy/MM/dd')
+                        )
+                )
 into #tmp
 from Export_Detail ed with(nolock)
 inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
@@ -681,8 +696,7 @@ fty.TestDocFactoryGroup
 ,[SeasonSCIID] = iif(a.SeasonSCIID is null,b.SeasonSCIID,a.SeasonSCIID)
 ,[Period] = iif(a.Period is null, b.Period , a.Period)
 ,[FirstDyelot] = iif(a.FirstDyelot is null, b.FirstDyelot, a.FirstDyelot)
-,[TPEFirstDyelot] = iif(a.SeasonSCIID is null and b.SeasonSCIID is null, 'Still not received and under pushing T2. Please contact with PR if you need L/G first.',
-                        iif(a.TPEFirstDyelot is null,format(b.TPEFirstDyelot,'yyyy/MM/dd'),a.TPEFirstDyelot))
+,a.[TPEFirstDyelot]
 from #tmp a
 inner join Factory fty with (nolock) on fty.ID = a.Consignee
 full join FirstDyelot b on fty.TestDocFactoryGroup = b.TestDocFactoryGroup
