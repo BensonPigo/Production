@@ -129,6 +129,8 @@ select distinct s.ID
 	,sd.SizeCode
 	,sd.ToOrderID
 	,sd.ToComboType
+    ,sd.ToArticle
+    ,sd.ToSizeCode
 	,sd.TransferQty
 	,s.Remark
 from SewingOutputTransfer s
