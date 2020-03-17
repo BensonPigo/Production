@@ -100,13 +100,39 @@ select
 	o.Qty,
 	ChargeableQty = o.Qty - o.FOCQty,
 	o.FOCQty,
-	ChargeablePulloutQty = isnull(ShipQty_ByType.TotalNotFocShipQty,0),
+	ChargeablePulloutQty = isnull(ChargeablePullout.Qty,0),
+    --isnull(ShipQty_ByType.TotalNotFocShipQty,0),
 	FOCPulloutQty = isnull(ShipQty_ByType.TotalFocShipQty,0),
     SewingOutputQty = SewingOutPut.Qty ,
 	FinishedFOCStockinQty = ISNULL(FocStockQty.Value ,0)    -- Function 取得 FOC 庫存
 	,o.OrderTypeID
 from orders o with(nolock)
 inner join Factory f with(nolock) on f.id = o.FactoryID and f.IsProduceFty = 1
+outer apply(
+	select 	oq.ID,
+	[Qty] = sum(isnull(C_Pullout.ShipQty,0) + isnull(TPE_Adjust.DiffQty,0))
+	from Order_Qty oq
+	left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oq.Id and ou1.Article = oq.Article and ou1.SizeCode = oq.SizeCode 
+	left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oq.Id and ou2.Article = '----' and ou2.SizeCode = '----' 
+	outer apply(
+		SELECT [ShipQty]=SUM(pd.ShipQty)
+		FROM PackingList p 
+		INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+		INNER JOIN Pullout pu ON p.PulloutID=pu.ID
+		WHERE pu.Status <> 'New' AND pd.OrderID = oq.ID
+		and pd.Article = oq.Article and pd.SizeCode = oq.SizeCode
+	)C_Pullout --  總出貨數
+	outer apply(
+		SELECt [DiffQty]= SUM(iq.DiffQty)
+		FROm InvAdjust i
+		INNER JOIN InvAdjust_Qty iq ON i.ID = iq.ID
+		WHERE i.OrderID = oq.ID
+		and iq.Article = oq.Article and iq.SizeCode = oq.SizeCode
+	)TPE_Adjust -- 台北財務調整的數量
+	where oq.ID=o.ID
+	and ISNULL(ou1.POPrice, ISNULL(ou2.PoPrice, -1)) !=0
+	group by oq.ID
+)ChargeablePullout
 outer apply(
 	select sum(TotalNotFocShipQty) as TotalNotFocShipQty , sum(TotalFocShipQty) as TotalFocShipQty 
 	from
@@ -161,19 +187,12 @@ where o.Junk = 0
         and o.MDivisionID = '{Sci.Env.User.Keyword}'
         AND o.FOCQty > 0  --訂單有 FOC 數量
         AND FocStockQty.Value > 0  -- FOC 還有未出貨的數量
+	    AND ISNULL(ChargeablePullout.Qty,0) = (o.Qty - o.FOCQty)  --Chargeable 必須『全數』出貨
         and not exists(
             select 1 
             from Order_Finish ox 
             where ox.id = o.ID
         )  --訂單尚未執行 FOC 入庫
-        and exists (
-	        select 1
-	        from Order_QtyShip_Detail oqd WITH (NOLOCK) 
-	        left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' 
-	        left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode 
-	        where oqd.Id = o.id
-	        and isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) = 0
-        )-- 有一筆 Price 為 0 表示此 Orderid 有Foc
         AND (	
 		        PackingList_Chk_HasFoc.Result='false' 
 		        OR 
