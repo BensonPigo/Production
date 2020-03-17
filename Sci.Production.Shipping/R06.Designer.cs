@@ -49,6 +49,7 @@
             this.radioByInvWK = new Sci.Win.UI.RadioButton();
             this.dateVoucherDate = new Sci.Win.UI.DateRange();
             this.label1 = new Sci.Win.UI.Label();
+            this.radioByAPP = new Sci.Win.UI.RadioButton();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -272,12 +273,13 @@
             // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.radioByAPP);
             this.radioPanel1.Controls.Add(this.radioByInvWK);
             this.radioPanel1.Controls.Add(this.radioSummary);
             this.radioPanel1.Controls.Add(this.radioDetail);
             this.radioPanel1.Location = new System.Drawing.Point(106, 294);
             this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(219, 78);
+            this.radioPanel1.Size = new System.Drawing.Size(219, 109);
             this.radioPanel1.TabIndex = 9;
             // 
             // radioByInvWK
@@ -320,6 +322,18 @@
             this.label1.Size = new System.Drawing.Size(90, 23);
             this.label1.TabIndex = 110;
             this.label1.Text = "Voucher Date";
+            // 
+            // radioByAPP
+            // 
+            this.radioByAPP.AutoSize = true;
+            this.radioByAPP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioByAPP.Location = new System.Drawing.Point(3, 81);
+            this.radioByAPP.Name = "radioByAPP";
+            this.radioByAPP.Size = new System.Drawing.Size(141, 21);
+            this.radioByAPP.TabIndex = 13;
+            this.radioByAPP.TabStop = true;
+            this.radioByAPP.Text = "Detail list by APP#";
+            this.radioByAPP.UseVisualStyleBackColor = true;
             // 
             // R06
             // 
@@ -400,5 +414,6 @@
         private Win.UI.DateRange dateVoucherDate;
         private Win.UI.Label label1;
         private Win.UI.RadioButton radioByInvWK;
+        private Win.UI.RadioButton radioByAPP;
     }
 }

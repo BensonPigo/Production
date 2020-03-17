@@ -965,6 +965,9 @@
     <None Include="XLT\Shipping_P11_BIRSalesReport.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Shipping_R06_PaymentListDetailByAPP.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Shipping_R06_PaymentListDetailByInvWK.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
