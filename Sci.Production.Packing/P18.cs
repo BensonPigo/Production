@@ -222,6 +222,17 @@ namespace Sci.Production.Packing
             #endregion
         }
 
+        private bool IsNotInitialedIDX_CTRL()
+        {
+            if (this.UseAutoScanPack && this.IDX == null)
+            {
+                MyUtility.Msg.WarningBox("Please enter Paircode first.");
+                return true;
+            }
+
+            return false;
+        }
+
         private void Tab_Focus(string type)
         {
             if (type.Equals("EAN"))
@@ -592,6 +603,11 @@ WHERE o.ID='{dr.OrderID}'");
             }
 
             if (this.scanDetailBS.DataSource == null)
+            {
+                return;
+            }
+
+            if (this.IsNotInitialedIDX_CTRL())
             {
                 return;
             }
@@ -1357,6 +1373,11 @@ and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
             }
 
             if (this.scanDetailBS.DataSource == null)
+            {
+                return;
+            }
+
+            if (this.IsNotInitialedIDX_CTRL())
             {
                 return;
             }
