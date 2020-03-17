@@ -15,8 +15,11 @@
     [FullName]                VARCHAR (15) NULL,
     [IsLackingAndReplacement] BIT          DEFAULT ((0)) NOT NULL,
     [Seq]                     TINYINT      DEFAULT ((0)) NOT NULL,
+    [IsBoundedProcess]        BIT          DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_SubProcess] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 

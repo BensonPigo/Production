@@ -141,6 +141,28 @@ WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,C
         /// <param name="isNeedCombinBundleGroup">是否要依照 BundleGroup 算成衣件數 true/false</param>
         /// <param name="isMorethenOrderQty">回傳Qty值是否超過訂單數, (生產有可能超過) </param>
         /// <returns>回傳字串, 提供接下去的Sql指令使用#temp Table</returns>
+        /// 
+	/*
+	 * @Order
+		訂單號碼
+	 * @SubprocessID
+		外加工段
+	 * @IsSpectialReader
+		特殊的外加工段
+		e.g. Sorting, Loading...
+	 * @InStartDate
+		篩選裁片收進的起始日
+	 * @InEndDate
+		篩選裁片收進的結束日
+	 * @OutStartDate
+		篩選裁片完成加工段的起始日
+	 * @OutEndDate
+		篩選裁片完成加工段的結束日
+	 * @IsNeedCombinBundleGroup
+		是否要依照 BundleGroup 算成衣件數
+	 * @IsMorethenOrderQty
+		回傳Qty值是否超過訂單數, (生產有可能超過)
+	 */
         ///非常重要 更新此處一定要把此dll檔案更新到MES
         ///非常重要 更新此處一定要把此dll檔案更新到MES
         ///非常重要 更新此處一定要把此dll檔案更新到MES
@@ -327,10 +349,12 @@ select	st0.Orderid
 		, bunD.Qty
 		, [IsPair]=ISNULL(TopIsPair.IsPair,0)--isnull(bunD.IsPair,0) 
 		, m=iif (sub.IsRFIDDefault = 1, st0.QtyBySet, st0.QtyBySubprocess)
+		, NoBundleCardAfterSubprocess=isnull( bda.NoBundleCardAfterSubprocess,0)
+		, PostSewingSubProcess_SL =iif(isnull(bda.PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0)
 into #BundleInOutDetail{subprocessIDtmp}
 from #QtyBySetPerCutpart{subprocessIDtmp} st0
 inner join SubProcess sub WITH (NOLOCK) on sub.ID = '{subprocessID}'
-left join Order_SizeCode os with (nolock) on os.ID = st0.POID and os.SizeCode = st0.SizeCode
+left join Order_SizeCode os WITH (NOLOCK) on os.ID = st0.POID and os.SizeCode = st0.SizeCode
 left join #tmp_Bundle_QtyBySubprocess bund on bunD.Orderid = st0.Orderid 
 							and bunD.PatternPanel = st0.PatternPanel 
 							and	bunD.FabricPanelCode = st0.FabricPanelCode 
@@ -338,6 +362,9 @@ left join #tmp_Bundle_QtyBySubprocess bund on bunD.Orderid = st0.Orderid
 							and	bunD.Patterncode = st0.Patterncode 
 							and	bunD.Sizecode = os.SizeCode 
 left join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId = sub.ID and isnull(bunIO.RFIDProcessLocationID,'') = ''
+left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = bunD.BundleNo and bunIOS.SubProcessId = 'SORTING' and isnull(bunIOS.RFIDProcessLocationID,'') = ''
+left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = bunD.BundleNo and bunIOL.SubProcessId = 'LOADING' and isnull(bunIOL.RFIDProcessLocationID,'') = ''
+left join Bundle_Detail_Art bda with (nolock) on bda.BundleNo = bunD.BundleNo and bda.SubProcessId = sub.ID--BundleNo + SubProcessId只有一筆
 outer apply(
 	select	top 1
 			bunD.ID
@@ -365,23 +392,40 @@ select	Orderid
 		, PatternPanel
 		, FabricPanelCode
 		, PatternCode
-		, InQty = sum(iif(InComing is not null and (x.InStartDate is null or x.InStartDate <= InComing) and (x.InEndDate is null or InComing <= x.InEndDate),Qty,0)) / iif(IsPair=1,IIF(m=1,2,m),1) 
-		, OutQty = sum(iif(OutGoing is not null and (x.OutStartDate is null or x.OutStartDate <= OutGoing) and (x.OutEndDate is null or OutGoing <= x.OutEndDate),Qty,0)) / iif(IsPair=1,IIF(m=1,2,m),1) 
-		, OriInQty = sum(iif(InComing is not null and (x.InStartDate is null or x.InStartDate <= InComing) and (x.InEndDate is null or InComing <= x.InEndDate),Qty,0)) --原始裁片數總和
-		, OriOutQty = sum(iif(OutGoing is not null and (x.OutStartDate is null or x.OutStartDate <= OutGoing) and (x.OutEndDate is null or OutGoing <= x.OutEndDate),Qty,0)) --原始裁片數總和
-		, FinishedQty = (case	when InOutRule = 1 then sum(iif(InComing is not null and (x.InStartDate is null or x.InStartDate <= InComing) and (x.InEndDate is null or InComing <= x.InEndDate),Qty,0))
-								when InOutRule = 2 then sum(iif(OutGoing is not null and (x.OutStartDate is null or x.OutStartDate <= OutGoing) and (x.OutEndDate is null or OutGoing <= x.OutEndDate),Qty,0))
-								else sum(iif(OutGoing is not null and (x.OutStartDate is null or x.OutStartDate <= OutGoing) and (x.OutEndDate is null or OutGoing <= x.OutEndDate) and
-										InComing is not null and (x.InStartDate is null or x.InStartDate <= InComing) and (x.InEndDate is null or InComing <= x.InEndDate)
-										,Qty,0)) end) / iif(IsPair=1,IIF(m=1,2,m),1) 
-		, num = count(1)
-		, num_In = sum(iif(InComing is not null and (x.InStartDate is null or x.InStartDate <= InComing) and (x.InEndDate is null or InComing <= x.InEndDate),1,0)) 
-		, num_Out= sum(iif(OutGoing is not null and (x.OutStartDate is null or x.OutStartDate <= OutGoing) and (x.OutEndDate is null or OutGoing <= x.OutEndDate),1,0))
-		, num_F  = case	when InOutRule = 1 then sum(iif(InComing is not null and (x.InStartDate is null or x.InStartDate <= InComing) and (x.InEndDate is null or InComing <= x.InEndDate),1,0))
-								when InOutRule = 2 then sum(iif(OutGoing is not null and (x.OutStartDate is null or x.OutStartDate <= OutGoing) and (x.OutEndDate is null or OutGoing <= x.OutEndDate),1,0))
-								else sum(iif(OutGoing is not null and (x.OutStartDate is null or x.OutStartDate <= OutGoing) and (x.OutEndDate is null or OutGoing <= x.OutEndDate) and
-										InComing is not null and (x.InStartDate is null or x.InStartDate <= InComing) and (x.InEndDate is null or InComing <= x.InEndDate)
-										,1,0)) end
+		, InQty = sum( Case when PostSewingSubProcess_SL = 1 Then Qty
+							when NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then Qty--不判斷InComing,直接計算數量
+					   else iif(I_Judge.v = 1, Qty, 0)
+					   End
+					 ) / IsPair.M
+
+		, OutQty = sum( Case when PostSewingSubProcess_SL = 1 Then Qty
+							 when NoBundleCardAfterSubprocess=1 and InOutRule = 3 Then Qty--不判斷OutGoing,直接計算數量
+						else iif(O_Judge.v = 1, Qty, 0)
+						End 
+					  ) / IsPair.M
+
+		, OriInQty = sum( Case when PostSewingSubProcess_SL = 1 Then Qty
+							   when NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then Qty--不判斷InComing,直接計算數量
+						  else iif(I_Judge.v = 1, Qty, 0)
+						  End
+					 ) --原始裁片數總和
+
+		, OriOutQty = sum( Case when PostSewingSubProcess_SL = 1 Then Qty
+							    when NoBundleCardAfterSubprocess=1 and InOutRule = 3 Then Qty--不判斷OutGoing,直接計算數量
+						   else iif(O_Judge.v = 1, Qty, 0)
+						   End 
+					  ) --原始裁片數總和
+
+		, FinishedQty = sum(case when PostSewingSubProcess_SL = 1 Then Qty
+								 when NoBundleCardAfterSubprocess = 1 and InOutRule = 1 Then Qty-- 不判斷InComing
+								 when InOutRule = 1 then iif(I_Judge.v = 1,Qty,0)
+								 when InOutRule = 2 then iif(O_Judge.v = 1,Qty,0)
+								 when NoBundleCardAfterSubprocess = 1 and InOutRule = 3 Then iif(I_Judge.v = 1,Qty,0)-- 忽略OutGoing, 只判斷InComing									
+								 when NoBundleCardAfterSubprocess = 1 and InOutRule = 4 Then iif(O_Judge.v = 1,Qty,0)-- 忽略InComing, 只判斷OutGoing
+								 else iif(O_Judge.v = 1 and I_Judge.v = 1 ,Qty,0)
+							end) 
+						/ IsPair.M
+
         , InStartDate,InEndDate,OutStartDate,OutEndDate
 into #BundleInOutQty{subprocessIDtmp}
 from #BundleInOutDetail{subprocessIDtmp} bt
@@ -389,7 +433,10 @@ outer  apply(
     select distinct InStartDate,InEndDate,OutStartDate,OutEndDate
     from {tempTable} t where t.OrderID = bt.Orderid
 )x
-group by OrderID, SubprocessId, InOutRule, BundleGroup, Size, PatternPanel, FabricPanelCode, Article, PatternCode,IsPair,m
+outer apply(select v = iif(InComing is not null and (x.InStartDate is null or x.InStartDate <= InComing) and (x.InEndDate is null or InComing <= x.InEndDate),1,0))I_Judge
+outer apply(select v = iif(OutGoing is not null and (x.OutStartDate is null or x.OutStartDate <= OutGoing) and (x.OutEndDate is null or OutGoing <= x.OutEndDate),1,0))O_Judge
+outer apply(select M = iif(IsPair=1,IIF(m=1,2,m),1) )IsPair--此處判斷後才放入group by 欄位中 
+group by OrderID, SubprocessId, InOutRule, BundleGroup, Size, PatternPanel, FabricPanelCode, Article, PatternCode,IsPair.m
     , InStartDate,InEndDate,OutStartDate,OutEndDate
 ";
 

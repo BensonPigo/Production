@@ -795,12 +795,28 @@ select
 			 end
 	,[InComing] = FORMAT(t.InComing,'yyyy/MM/dd HH:mm:ss')
 	,[OutGoing] = FORMAT(t.OutGoing,'yyyy/MM/dd HH:mm:ss')
+    ,ps.PostSewingSubProcess
+    ,nb.NoBundleCardAfterSubprocess
 from #tmpBundleNo_Complete t
 outer apply(
 	select qty=sum(bd.Qty)
 	from Bundle_Detail bd with(nolock)
 	where bd.BundleNo = t.BundleNo
 )b
+outer apply(
+    select top 1 PostSewingSubProcess
+    from Bundle_Detail_Art bda
+    where bda.BundleNo = t.BundleNo
+    and bda.subProcessid='{subProcess}'
+    and bda.PostSewingSubProcess = 1
+)ps
+outer apply(
+    select top 1 NoBundleCardAfterSubprocess
+    from Bundle_Detail_Art bda
+    where bda.BundleNo = t.BundleNo
+    and bda.subProcessid='{subProcess}'
+    and bda.NoBundleCardAfterSubprocess = 1
+)nb
 
 order by t.BundleNo
 
@@ -927,6 +943,8 @@ select
 			 end
 	,[InComing] = FORMAT(t.InComing,'yyyy/MM/dd HH:mm:ss')
 	,[OutGoing] = FORMAT(t.OutGoing,'yyyy/MM/dd HH:mm:ss')
+    ,ps.PostSewingSubProcess
+    ,nb.NoBundleCardAfterSubprocess
 from #tmpBundleNo_Complete t
 outer apply(
 	select qty=sum(bd.Qty)
@@ -934,6 +952,20 @@ outer apply(
 	inner join Bundle b WITH (NOLOCK) on b.id = bd.Id
 	where bd.BundleNo = t.BundleNo and b.Article = t.Article and b.Sizecode = t.Sizecode
 )b
+outer apply(
+    select top 1 PostSewingSubProcess
+    from Bundle_Detail_Art bda
+    where bda.BundleNo = t.BundleNo
+    and bda.subProcessid='{subProcess}'
+    and bda.PostSewingSubProcess = 1
+)ps
+outer apply(
+    select top 1 NoBundleCardAfterSubprocess
+    from Bundle_Detail_Art bda
+    where bda.BundleNo = t.BundleNo
+    and bda.subProcessid='{subProcess}'
+    and bda.NoBundleCardAfterSubprocess = 1
+)nb
 
 drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
 ";
@@ -950,7 +982,6 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
 
             #region 準備要傳入元件的Grid
 
-
             this.listControlBindingSource2.DataSource = dt;
             this.grid2.Columns.Clear();
             //準備Grid 2
@@ -966,6 +997,15 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
             .Text("InComing", header: "Farm In", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
+
+            string sqlchk = $@"select 1 from SubProcess where id = '{subProcess}' and IsSelection = 1";
+            if (MyUtility.Check.Seek(sqlchk))
+            {
+                this.Helper.Controls.Grid.Generator(this.grid2)
+                .CheckBox("PostSewingSubProcess", header: "Post Sewing\r\nSubProcess", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0, iseditable: false)
+                .CheckBox("NoBundleCardAfterSubprocess", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0, iseditable: false)
+                ;
+            }
             this.grid2.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.grid2_CellFormatting);
 
             #endregion

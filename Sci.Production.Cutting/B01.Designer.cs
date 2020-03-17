@@ -42,6 +42,7 @@
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
             this.combInOutRule = new Sci.Win.UI.ComboBox();
             this.label1 = new Sci.Win.UI.Label();
+            this.chkIsBoundedProcess = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -56,6 +57,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkIsBoundedProcess);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.combInOutRule);
             this.detailcont.Controls.Add(this.txtartworktype_ftyArtworkType);
@@ -245,6 +247,20 @@
             this.label1.TabIndex = 18;
             this.label1.Text = "In Out Rule";
             // 
+            // chkIsBoundedProcess
+            // 
+            this.chkIsBoundedProcess.AutoSize = true;
+            this.chkIsBoundedProcess.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsBoundedProcess", true));
+            this.chkIsBoundedProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkIsBoundedProcess.IsSupportEditMode = false;
+            this.chkIsBoundedProcess.Location = new System.Drawing.Point(315, 167);
+            this.chkIsBoundedProcess.Name = "chkIsBoundedProcess";
+            this.chkIsBoundedProcess.ReadOnly = true;
+            this.chkIsBoundedProcess.Size = new System.Drawing.Size(153, 21);
+            this.chkIsBoundedProcess.TabIndex = 19;
+            this.chkIsBoundedProcess.Text = "Is Bounded Process";
+            this.chkIsBoundedProcess.UseVisualStyleBackColor = true;
+            // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(836, 457);
@@ -290,5 +306,6 @@
         private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
         private Win.UI.ComboBox combInOutRule;
         private Win.UI.Label label1;
+        private Win.UI.CheckBox chkIsBoundedProcess;
     }
 }

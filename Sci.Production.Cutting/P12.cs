@@ -78,6 +78,8 @@ namespace Sci.Production.Cutting
                 .Text("SubProcess", header: "Artwork", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Parts", header: "Parts", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", decimal_places: 0, integer_places: 10, width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("PostSewingSubProcess_String", header: "Post Sewing\r\nSubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("NoBundleCardAfterSubprocess_String", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 ;
         }
 
@@ -269,6 +271,8 @@ select
     , brand=c.brandid
     , b.IsEXCESS
     , WorkOrder.SpreadingNoID
+    , ps.NoBundleCardAfterSubprocess_String
+    , nbs.PostSewingSubProcess_String
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -276,13 +280,36 @@ inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.M
 outer apply
 (
     select SubProcess = 
-    (
-        select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
+    stuff((
+        select concat('+',e1.Subprocessid)
         from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
+		Order by e1.Subprocessid
         for xml path('')
-    )
+    ),1,1,'')
 )as SubProcess
+outer apply
+(
+    select NoBundleCardAfterSubprocess_String = 
+    stuff((
+        select concat('+',e1.Subprocessid)
+        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode and e1.NoBundleCardAfterSubprocess = 1
+		Order by e1.Subprocessid
+        for xml path('')
+    ),1,1,'')
+) as ps
+outer apply
+(
+    select PostSewingSubProcess_String = 
+    stuff((
+        select concat('+',e1.Subprocessid)
+        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode and e1.PostSewingSubProcess = 1
+		Order by e1.Subprocessid
+        for xml path('')
+    ),1,1,'')
+) as nbs
 OUTER APPLY(
 	SELECT TOP 1 
 		MarkerNo  
@@ -326,6 +353,8 @@ select
     , brand=c.brandid
     , b.IsEXCESS
     , WorkOrder.SpreadingNoID
+    , ps.NoBundleCardAfterSubprocess_String
+    , nbs.PostSewingSubProcess_String
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
@@ -339,13 +368,36 @@ outer apply
 outer apply
 (
     select SubProcess = 
-    (
+    stuff((
         select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
         from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= bda.PatternCode
+		Order by e1.Subprocessid
         for xml path('')
-    )
+    ),1,1,'')
 )as SubProcess
+outer apply
+(
+    select NoBundleCardAfterSubprocess_String = 
+    stuff((
+        select concat('+',e1.Subprocessid)
+        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= bda.PatternCode and e1.NoBundleCardAfterSubprocess = 1
+		Order by e1.Subprocessid
+        for xml path('')
+    ),1,1,'')
+) as ps
+outer apply
+(
+    select PostSewingSubProcess_String = 
+    stuff((
+        select concat('+',e1.Subprocessid)
+        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= bda.PatternCode and e1.PostSewingSubProcess = 1
+		Order by e1.Subprocessid
+        for xml path('')
+    ),1,1,'')
+) as nbs
 OUTER APPLY(
 	SELECT TOP 1 
 		MarkerNo  
@@ -427,6 +479,8 @@ select
     , brand=c.brandid
     , b.IsEXCESS
     , WorkOrder.SpreadingNoID
+    , ps.NoBundleCardAfterSubprocess_String
+    , nbs.PostSewingSubProcess_String
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -434,13 +488,36 @@ inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.M
 outer apply
 (
     select SubProcess = 
-    (
-        select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
+    stuff((
+        select concat('+',e1.Subprocessid)
         from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
+		Order by e1.Subprocessid
         for xml path('')
-    )
+    ),1,1,'')
 )as SubProcess 
+outer apply
+(
+    select NoBundleCardAfterSubprocess_String = 
+    stuff((
+        select concat('+',e1.Subprocessid)
+        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode and e1.NoBundleCardAfterSubprocess = 1
+		Order by e1.Subprocessid
+        for xml path('')
+    ),1,1,'')
+) as ps
+outer apply
+(
+    select PostSewingSubProcess_String = 
+    stuff((
+        select concat('+',e1.Subprocessid)
+        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode and e1.PostSewingSubProcess = 1
+		Order by e1.Subprocessid
+        for xml path('')
+    ),1,1,'')
+) as nbs
 OUTER APPLY(
 	SELECT TOP 1 
 		MarkerNo  
@@ -484,19 +561,44 @@ select
     , brand=c.brandid
     , b.IsEXCESS
     , WorkOrder.SpreadingNoID
+    , ps.NoBundleCardAfterSubprocess_String
+    , nbs.PostSewingSubProcess_String
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 inner join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid and c.MDivisionID  = b.MDivisionID 
 outer apply
 (
     select SubProcess = 
-    (
-        select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
+    stuff((
+        select concat('+',e1.Subprocessid)
         from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
+		Order by e1.Subprocessid
         for xml path('')
-    )
+    ),1,1,'')
 )as SubProcess 
+outer apply
+(
+    select NoBundleCardAfterSubprocess_String = 
+    stuff((
+        select concat('+',e1.Subprocessid)
+        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode and e1.NoBundleCardAfterSubprocess = 1
+		Order by e1.Subprocessid
+        for xml path('')
+    ),1,1,'')
+) as ps
+outer apply
+(
+    select PostSewingSubProcess_String = 
+    stuff((
+        select concat('+',e1.Subprocessid)
+        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode and e1.PostSewingSubProcess = 1
+		Order by e1.Subprocessid
+        for xml path('')
+    ),1,1,'')
+) as nbs
 OUTER APPLY(
 	SELECT TOP 1 
 		MarkerNo  
@@ -627,6 +729,7 @@ OPTION (RECOMPILE)"
                         pdata.item = dr["item"].ToString();
                         pdata.EXCESS1 = dr["IsEXCESS"].ToString();
                         pdata.CutRef = tmpCut;
+                        pdata.NoBundleCardAfterSubprocess1 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? "" : "(X)";
                     }
                     else if (j == 1)
                     {
@@ -653,6 +756,7 @@ OPTION (RECOMPILE)"
                         pdata.item2 = dr["item"].ToString();
                         pdata.EXCESS2 = dr["IsEXCESS"].ToString();
                         pdata.CutRef2 = tmpCut;
+                        pdata.NoBundleCardAfterSubprocess2 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? "" : "(X)";
                     }
                     else
                     {
@@ -679,6 +783,7 @@ OPTION (RECOMPILE)"
                         pdata.item3 = dr["item"].ToString();
                         pdata.EXCESS3 = dr["IsEXCESS"].ToString();
                         pdata.CutRef3 = tmpCut;
+                        pdata.NoBundleCardAfterSubprocess3 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? "" : "(X)";
                     }
                 }
                 
