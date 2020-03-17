@@ -31,6 +31,7 @@ namespace Sci.Production.Cutting
         public string item { get; set; }
         public string CutRef { get; set; }
         public string EXCESS1 { get; set; }
+        public string NoBundleCardAfterSubprocess1 { get; set; }
 
         public string Group_right2 { get; set; }
         public string Group_left2 { get; set; }
@@ -55,6 +56,7 @@ namespace Sci.Production.Cutting
         public string item2 { get; set; }
         public string CutRef2 { get; set; }
         public string EXCESS2 { get; set; }
+        public string NoBundleCardAfterSubprocess2 { get; set; }
 
         public string Group_right3 { get; set; }
         public string Group_left3 { get; set; }
@@ -79,6 +81,7 @@ namespace Sci.Production.Cutting
         public string item3 { get; set; }
         public string CutRef3 { get; set; }
         public string EXCESS3 { get; set; }
+        public string NoBundleCardAfterSubprocess3 { get; set; }
     }
 }
 

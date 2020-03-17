@@ -114,6 +114,8 @@ Select
             [Qty] = bd.Qty,
             [RFID Reader] = bt.RFIDReaderId,
             [Sub-process] = bt.SubprocessId,
+            [Post Sewing SubProcess]= iif(ps.sub = 1,N'✔',''),
+            [No Bundle Card After Subprocess]= iif(nbs.sub= 1,N'✔',''),
             [Type] = case when bt.Type = '1' then 'IN'
 			              when bt.Type = '2' then 'Out'
 			              when bt.Type = '3' then 'In/Out' end,
@@ -129,6 +131,18 @@ Select
             left join Bundle_Detail bd WITH (NOLOCK) on bt.BundleNo = bd.BundleNo
             left join Bundle b WITH (NOLOCK) on bd.Id = b.Id
             left join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
+            outer apply(
+                select sub = 1
+                from Bundle_Detail_Art bda WITH (NOLOCK) 
+                where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.PostSewingSubProcess = 1
+                and bda.SubprocessId = bt.SubprocessId
+            ) as ps
+            outer apply(
+                select sub = 1
+                from Bundle_Detail_Art bda WITH (NOLOCK) 
+                where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.NoBundleCardAfterSubprocess = 1
+                and bda.SubprocessId = bt.SubprocessId
+            ) as nbs 
             /*outer apply(
 	             select sub= (
 		             Select distinct concat('+', bda.SubprocessId)
@@ -292,6 +306,8 @@ Select
             [Qty] = ba.Qty,
             [RFID Reader] = bt.RFIDReaderId,
             [Sub-process] = bt.SubprocessId,
+            [Post Sewing SubProcess]= iif(ps.sub = 1,N'✔',''),
+            [No Bundle Card After Subprocess]= iif(nbs.sub= 1,N'✔',''),
             [Type] = case when bt.Type = '1' then 'IN'
 			              when bt.Type = '2' then 'Out'
 			              when bt.Type = '3' then 'In/Out' end,
@@ -305,6 +321,18 @@ Select
 from #BundleTransfer  bt WITH (NOLOCK)
 inner JOIN #BundleAll ba WITH (NOLOCK) on bt.BundleNo = ba.BundleNo
 left join orders o WITH (NOLOCK) on o.Id = ba.OrderId and o.MDivisionID  = ba.MDivisionID 
+outer apply(
+    select sub = 1
+    from Bundle_Detail_Art bda WITH (NOLOCK) 
+    where bda.Bundleno = bt.Bundleno and bda.PostSewingSubProcess = 1
+    and bda.SubprocessId = bt.SubprocessId
+) as ps
+outer apply(
+    select sub = 1
+    from Bundle_Detail_Art bda WITH (NOLOCK) 
+    where bda.Bundleno = bt.Bundleno and bda.NoBundleCardAfterSubprocess = 1
+    and bda.SubprocessId = bt.SubprocessId
+) as nbs 
 where 1=1
 ");
                 if (!MyUtility.Check.Empty(Factory))

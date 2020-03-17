@@ -83,7 +83,10 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             .Text("subProcessid", header: "SubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true)
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true)
-            .CheckBox("IsPair", header: "IsPair", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0);
+            .CheckBox("IsPair", header: "IsPair", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
+            .Text("PostSewingSubProcess_String", header: "Post Sewing\r\nSubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("NoBundleCardAfterSubprocess_String", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            ;
             return base.OnGridSetup();
         }
 
@@ -92,7 +95,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             #region 主 Detail
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
             string cmdsql = string.Format(@"
-Select a.*	,s.subProcessid	,ukey1 = 0
+Select a.*	,s.subProcessid, ps.NoBundleCardAfterSubprocess_String, nbs.PostSewingSubProcess_String, ukey1 = 0
 From Bundle_Detail a WITH (NOLOCK) 
 outer apply
 (
@@ -101,9 +104,32 @@ outer apply
 		Select concat('+',Subprocessid)
 		From Bundle_Detail_art c WITH (NOLOCK) 
 		Where c.bundleno =a.bundleno and c.id = a.id 
+		Order by Subprocessid
 		For XML path('')
 	),1,1,'')
 ) as s
+outer apply
+(
+	select NoBundleCardAfterSubprocess_String =
+	stuff((
+		Select concat('+',Subprocessid)
+		From Bundle_Detail_art c WITH (NOLOCK) 
+		Where c.bundleno =a.bundleno and c.id = a.id and c.NoBundleCardAfterSubprocess = 1
+		Order by Subprocessid
+		For XML path('')
+	),1,1,'')
+) as ps
+outer apply
+(
+	select PostSewingSubProcess_String =
+	stuff((
+		Select concat('+',Subprocessid)
+		From Bundle_Detail_art c WITH (NOLOCK) 
+		Where c.bundleno =a.bundleno and c.id = a.id and c.PostSewingSubProcess = 1
+		Order by Subprocessid
+		For XML path('')
+	),1,1,'')
+) as nbs
 where a.id = '{0}' 
 order by bundlegroup"
                 , masterID);
@@ -114,7 +140,7 @@ order by bundlegroup"
             if (!IsDetailInsertByCopy)
             {
                 string allPart_cmd = string.Format(@"Select sel = 0,*, ukey1 = 0, annotation = '' from  Bundle_Detail_Allpart  WITH (NOLOCK)  Where id ='{0}'", masterID);
-                string art_cmd = string.Format(@"Select b.*, ukey1 = 0 from Bundle_Detail a WITH (NOLOCK) inner join Bundle_Detail_art b WITH (NOLOCK) on a.Bundleno = b.bundleno and a.id = b.id Where a.id ='{0}' ", masterID);
+                string art_cmd = string.Format(@"Select b.*, ukey1 = 0,NoBundleCardAfterSubprocess_String='',PostSewingSubProcess_String='' from Bundle_Detail a WITH (NOLOCK) inner join Bundle_Detail_art b WITH (NOLOCK) on a.Bundleno = b.bundleno and a.id = b.id Where a.id ='{0}' ", masterID);
                 string qty_cmd = string.Format(@"Select No = 0, a.* from Bundle_Detail_qty a WITH (NOLOCK) Where a.id ='{0}'", masterID);
                 DualResult dRes = null;
                 dRes = DBProxy.Current.Select(null, allPart_cmd, out bundle_Detail_allpart_Tb);
@@ -199,7 +225,7 @@ order by bundlegroup"
         {
             string masterID = (CurrentMaintain == null) ? "" : CurrentMaintain["id"].ToString();
             string allPart_cmd = string.Format(@"Select 0 as sel,*, 0 as ukey1,'' as annotation from Bundle_Detail_Allpart  WITH (NOLOCK) Where id ='{0}' ", masterID);
-            string art_cmd = string.Format(@"Select b.*, 0 as ukey1 from Bundle_Detail a WITH (NOLOCK) ,Bundle_Detail_art b WITH (NOLOCK) Where a.id ='{0}' and a.Bundleno = b.bundleno and a.id = b.id", masterID);
+            string art_cmd = string.Format(@"Select b.*, 0 as ukey1,NoBundleCardAfterSubprocess_String='',PostSewingSubProcess_String='' from Bundle_Detail a WITH (NOLOCK) ,Bundle_Detail_art b WITH (NOLOCK) Where a.id ='{0}' and a.Bundleno = b.bundleno and a.id = b.id", masterID);
             string qty_cmd = string.Format(@"Select 0 as No,a.* from Bundle_Detail_qty a WITH (NOLOCK) Where a.id ='{0}'", masterID);
             DualResult dRes = DBProxy.Current.Select(null, allPart_cmd, out bundle_Detail_allpart_Tb);
             if (!dRes)
@@ -414,6 +440,8 @@ order by bundlegroup"
                     drArt["Bundleno"] = dr1["Bundleno"];
                     drArt["SubProcessID"] = subprocss[i].ToString();
                     drArt["PatternCode"] = dr1["PatternCode"];
+                    drArt["NoBundleCardAfterSubprocess"] = MyUtility.Convert.GetString(dr1["NoBundleCardAfterSubprocess_String"]).Split('+').ToList().Contains(subprocss[i].ToString());
+                    drArt["PostSewingSubProcess"] = MyUtility.Convert.GetString(dr1["PostSewingSubProcess_String"]).Split('+').ToList().Contains(subprocss[i].ToString());
                     drArt["id"] = dr1["id"];
                     drArt["ukey"] = dr1["ukey"];
                     drArt["ukey1"] = ukey;
@@ -428,9 +456,9 @@ order by bundlegroup"
                 if (dr.RowState != DataRowState.Deleted)
                 {
                     Art_cmd = Art_cmd + string.Format(
-               @"insert into bundle_Detail_Art(ID,Bundleno,PatternCode,SubProcessid) 
-                        values('{0}','{1}','{2}','{3}');"
-                , CurrentMaintain["ID"], dr["Bundleno"], dr["PatternCode"], dr["SubProcessid"]);
+               @"insert into bundle_Detail_Art(ID,Bundleno,PatternCode,SubProcessid,NoBundleCardAfterSubprocess,PostSewingSubProcess) 
+                        values('{0}','{1}','{2}','{3}',{4},{5});"
+                , CurrentMaintain["ID"], dr["Bundleno"], dr["PatternCode"], dr["SubProcessid"], MyUtility.Convert.GetBool(dr["NoBundleCardAfterSubprocess"]) ? 1 : 0, MyUtility.Convert.GetBool(dr["PostSewingSubProcess"]) ? 1 : 0);
                 }
             }
 

@@ -45,6 +45,7 @@
             this.chkIsLackingAndReplacement = new Sci.Win.UI.CheckBox();
             this.txtFullName = new Sci.Win.UI.TextBox();
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
+            this.chkIsBoundedProcess = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -59,6 +60,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkIsBoundedProcess);
             this.detailcont.Controls.Add(this.txtFullName);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.chkIsLackingAndReplacement);
@@ -281,6 +283,18 @@
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 1;
             // 
+            // chkIsBoundedProcess
+            // 
+            this.chkIsBoundedProcess.AutoSize = true;
+            this.chkIsBoundedProcess.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsBoundedProcess", true));
+            this.chkIsBoundedProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIsBoundedProcess.Location = new System.Drawing.Point(315, 221);
+            this.chkIsBoundedProcess.Name = "chkIsBoundedProcess";
+            this.chkIsBoundedProcess.Size = new System.Drawing.Size(153, 21);
+            this.chkIsBoundedProcess.TabIndex = 26;
+            this.chkIsBoundedProcess.Text = "Is Bounded Process";
+            this.chkIsBoundedProcess.UseVisualStyleBackColor = true;
+            // 
             // Cutting_B01
             // 
             this.ClientSize = new System.Drawing.Size(836, 457);
@@ -328,5 +342,6 @@
         private Win.UI.Label label2;
         private Win.UI.CheckBox chkIsLackingAndReplacement;
         private Win.UI.TextBox txtFullName;
+        private Win.UI.CheckBox chkIsBoundedProcess;
     }
 }
