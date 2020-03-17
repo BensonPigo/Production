@@ -27,7 +27,6 @@ namespace MarkerFile.Hourly
         TransferPms transferPMS = new TransferPms();
         StringBuilder sqlmsg = new StringBuilder();
         bool isTestJobLog = false;
-        string tpeMisMail = string.Empty;
         private string MarkerInputPath;
         private string MarkerOutputPath;
         List<FileInfo> fileInfos = new List<FileInfo>();
@@ -72,7 +71,7 @@ namespace MarkerFile.Hourly
             DualResult result = DBProxy.Current.Select("Production", "select MarkerInputPath,MarkerOutputPath from system", out Path);
             if (!result)
             {
-                msg = result.ToSimpleString();
+                msg = result.ToString();
             }
             if (MyUtility.Check.Empty(msg))
             {
@@ -144,11 +143,6 @@ Please do not reply this mail.
                 ccAddress = MyUtility.Convert.GetString(drmail["ccAddress"]);
             }
 
-            if (isFail)
-            {
-                toAddress += MyUtility.Check.Empty(toAddress) ? this.tpeMisMail : ";" + this.tpeMisMail;
-            }
-
             if (!MyUtility.Check.Empty(toAddress))
             {
                 Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(sendFrom, toAddress, ccAddress, subject, "", desc, true, true);
@@ -205,7 +199,7 @@ and w.Layer -isnull(acc.AccuCuttingLayer,0)- cod.layer = 0
             DualResult result = DBProxy.Current.Select("Production", sqlcmd, out deleteFileData);
             if (!result)
             {
-                msg = result.ToSimpleString();
+                msg = result.ToString() + "\r\nDeleteFile() Sql Error 1";
                 return false;
             }
 
@@ -227,7 +221,7 @@ and w.Layer -isnull(acc.AccuCuttingLayer,0)- cod.layer = 0
             result = DBProxy.Current.Execute("Production", sqlDelete);
             if (!result)
             {
-                msg = result.ToSimpleString();
+                msg = result.ToString() + "\r\nDeleteFile() Sql Error 2";
                 return false;
             }
             #endregion
@@ -241,7 +235,7 @@ where NS.EstCutDate < cast(Dateadd(day,-30,getdate())as date)
             result = DBProxy.Current.Select("Production", sqlcmd, out deleteFileData);
             if (!result)
             {
-                msg = result.ToSimpleString();
+                msg = result.ToString() + "\r\nDeleteFile() Sql Error 3";
                 return false;
             }
 
@@ -256,7 +250,7 @@ Delete MarkerFileNameSwitchRecord where EstCutDate < cast(Dateadd(day,-30,getdat
             result = DBProxy.Current.Execute("Production", sqlDelete);
             if (!result)
             {
-                msg = result.ToSimpleString();
+                msg = result.ToString() + "\r\nDeleteFile() Sql Error 4";
                 return false;
             }
             #endregion
@@ -279,7 +273,7 @@ Delete MarkerFileNameSwitchRecord where EstCutDate < cast(Dateadd(day,-30,getdat
                     }
                     catch (IOException e)
                     {
-                        msg = e.Message;
+                        msg = e.Message + $"POID:{item["CuttingID"]}, CutRef:{item["CutRef"]}" + destFilePath + "\r\nDeleteFileFromList() Error1";
                         return false;
                     }
                 }
@@ -287,7 +281,7 @@ Delete MarkerFileNameSwitchRecord where EstCutDate < cast(Dateadd(day,-30,getdat
                 // 相同SP#名稱的資料夾下已經沒有檔案，則移除該資料夾
                 string destPath = Path.Combine(this.MarkerOutputPath, MyUtility.Convert.GetString(item["CuttingID"]));
                 DirectoryInfo di = new DirectoryInfo(destPath);
-                if (di.Exists && di.GetFiles().Count() == 0)
+                if (di.Exists && di.GetFiles().Count() == 0 && di.GetDirectories().Count() == 0)
                 {
                     try
                     {
@@ -295,7 +289,7 @@ Delete MarkerFileNameSwitchRecord where EstCutDate < cast(Dateadd(day,-30,getdat
                     }
                     catch (IOException e)
                     {
-                        msg = e.Message;
+                        msg = e.Message + $"POID:{item["CuttingID"]}, CutRef:{item["CutRef"]}" + destPath + "\r\nDeleteFileFromList() Error2";
                         return false;
                     }
                 }
@@ -313,7 +307,7 @@ Delete MarkerFileNameSwitchRecord where EstCutDate < cast(Dateadd(day,-30,getdat
             DualResult result = DBProxy.Current.Select("Production", sqlcmd, out markerFileNameSwitchRecord);
             if (!result)
             {
-                msg = result.ToSimpleString();
+                msg = result.ToString() + "\r\nCheckUpdateFile() Sql Error 1";
                 return false;
             }
 
@@ -325,7 +319,7 @@ Delete MarkerFileNameSwitchRecord where EstCutDate < cast(Dateadd(day,-30,getdat
             }
             catch (Exception ex)
             {
-                msg = ex.Message;
+                msg = ex.Message + "\r\nFindFile() Error";
                 return false;
             }
 
@@ -349,16 +343,18 @@ Delete MarkerFileNameSwitchRecord where EstCutDate < cast(Dateadd(day,-30,getdat
                     foreach (var item in chkExists)
                     {
                         // 以對應的[MarkerFileNameSwitchRecord].[CutRef]為檔名，複製該input資料夾路徑馬克檔，到output資料夾路徑以取代舊馬克檔
+                        string destPath = string.Empty;
+                        string destFile = string.Empty;
                         try
                         {
-                            string destPath = System.IO.Path.Combine(this.MarkerOutputPath, MyUtility.Convert.GetString(item["CuttingID"]));
-                            string destFile = System.IO.Path.Combine(destPath, MyUtility.Convert.GetString(item["CutRef"]) + ".gbr");
+                            destPath = System.IO.Path.Combine(this.MarkerOutputPath, MyUtility.Convert.GetString(item["CuttingID"]));
+                            destFile = System.IO.Path.Combine(destPath, MyUtility.Convert.GetString(item["CutRef"]) + ".gbr");
                             Directory.CreateDirectory(destPath);
                             File.Copy(fi.FullName, destFile, true);
                         }
                         catch (IOException e)
                         {
-                            msg = e.Message;
+                            msg = e.Message + $"POID:{item["CuttingID"]}, CutRef:{item["CutRef"]}\r\n" + destFile + "\r\nCheckUpdateFile() Error";
                             return false;
                         }
 
@@ -371,7 +367,7 @@ where Cutref='{item["Cutref"]}'";
                         result = DBProxy.Current.Execute("Production", sqlupdate);
                         if (!result)
                         {
-                            msg = result.ToSimpleString();
+                            msg = result.ToString() + "\r\nCheckUpdateFile() Sql Error 2";
                             return false;
                         }
                     }
@@ -393,7 +389,7 @@ where w.EstCutDate <> NS.EstCutDate or NS.EstCutDate is null";
             DualResult result = DBProxy.Current.Execute("Production", sqlupdate);
             if (!result)
             {
-                msg = result.ToSimpleString();
+                msg = result.ToString() + "\r\nCheckUpdateSwitchRecord() Sql Error 1";
                 return false;
             }
 
@@ -409,15 +405,16 @@ select
 	w.CutRef,w.id,filename=concat(w.MarkerNo,w.Markername,'.gbr'),w.EstCutDate,acc.AccuCuttingLayer
 from WorkOrder w with(nolock)
 outer apply(select AccuCuttingLayer = sum(cd.Layer) from cuttingoutput_Detail cd where cd.WorkOrderUkey = w.Ukey)acc
-where w.EstCutDate between cast(getdate()as date) and  cast(Dateadd(day,7,getdate())as date) 
+where w.EstCutDate between  cast(Dateadd(day,0,getdate())as date) and  cast(Dateadd(day,7,getdate())as date) --從今天往後7天
 and w.Layer -isnull(acc.AccuCuttingLayer,0) <> 0
 and not exists(select 1 from [MarkerFileNameSwitchRecord] where cutref = w.cutref)
+and isnull(w.CutRef,'') <> ''
 ";
             DataTable copyFileData;
             DualResult result = DBProxy.Current.Select("Production", sqlcmd, out copyFileData);
             if (!result)
             {
-                msg = result.ToSimpleString();
+                msg = result.ToString() + "\r\nCreateFile() Sql Error 1";
                 return false;
             }
 
@@ -450,7 +447,7 @@ and not exists(select 1 from [MarkerFileNameSwitchRecord] where cutref = w.cutre
                     }
                     catch (IOException e)
                     {
-                        msg = e.Message;
+                        msg = e.Message + $"POID:{item["CuttingID"]}, CutRef:{item["CutRef"]}\r\n" + destFile + "\r\nCreateFile() Error";
                         return false;
                     }
 
@@ -473,7 +470,7 @@ VALUES
                     result = DBProxy.Current.Execute("Production", sqlinsert);
                     if (!result)
                     {
-                        msg = result.ToSimpleString();
+                        msg = result.ToString() + "\r\nCreateFile() Sql Error 2";
                         return false;
                     }
                 }
