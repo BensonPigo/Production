@@ -495,13 +495,19 @@ INSERT([SCICtnNo],[Side],[Seq],[FilePath],[FileName],[CmdTime],[SunriseUpdated],
 VALUES(s.[SCICtnNo],s.[Side],s.[Seq],s.[FilePath],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated],s.[Image]);
 
 --06. 轉出區間 [Production].[dbo].[PackingList].AddDate or EditDate=今天
+select * 
+into #tmpPackingList
+from Production.dbo.PackingList p
+where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
+
 MERGE PackingList AS T
 USING(
 	SELECT p.ID, p.AddDate, p.EditDate
 	,[Junk] = 0
 	,[CmdTime] = GetDate()
 	FROM Production.dbo.PackingList p
-	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
+	where exists(
+		select 1 from #tmpPackingList where id = p.id	)
 ) as S
 on T.ID = S.ID
 WHEN MATCHED THEN
@@ -594,17 +600,21 @@ VALUES(s.ID, s.SCICtnNo,
 iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 , s.PulloutDate, s.OrderID, s.OrderShipmodeSeq, s.Article, s.SizeCode
 		, s.ShipQty, s.Barcode, s.GW, s.CtnRefno, s.CtnLength, s.CtnWidth, s.CtnHeight, s.CtnUnit
-	, s.Junk, s.CmdTime, s.SunriseUpdated, s.GenSongUpdated,s.PackingCTN ,s.IsMixPacking)	;
+	, s.Junk, s.CmdTime, s.SunriseUpdated, s.GenSongUpdated,s.PackingCTN ,s.IsMixPacking)
+WHEN NOT MATCHED BY SOURCE 
+	AND exists(	select 1 from #tmpPackingList where id = t.id) THEN
+	UPDATE SET
+	t.Junk = 1	;
 		
-		----寫入HTMLSetting和PicSetting
-		-- 如果FPS.dbo.PackingList.Junk=1， 則update FPS.dbo.PackingList_Detail
-		update t
-		set t.Junk= 1
-		,t.SunriseUpdated = 0
-		,t.GenSongUpdated = 0
-		from PackingList_Detail t 
-		inner join PackingList s on t.ID=s.id
-		where s.junk=1
+----寫入HTMLSetting和PicSetting
+-- 如果FPS.dbo.PackingList.Junk=1， 則update FPS.dbo.PackingList_Detail
+update t
+set t.Junk= 1
+,t.SunriseUpdated = 0
+,t.GenSongUpdated = 0
+from PackingList_Detail t 
+inner join PackingList s on t.ID=s.id
+where s.junk=1
 
 		-------------------------------------------------------------HTMLSetting Update-------------------------------------------------------------
 		----搜尋出Packing B02有設定的
@@ -643,7 +653,7 @@ iif(s.CustCTN ='' or s.CustCTN is null,s.SCICtnNo,s.CustCTN)
 												AND pd.SizeCode=t.SizeCode
 						)
 
-		DROP TABLE #HasSetting_HTMLSetting
+		DROP TABLE #HasSetting_HTMLSetting,#tmpPackingList
 		-------------------------------------------------------------HTMLSetting Update-------------------------------------------------------------
 
 		-------------------------------------------------------------PicSetting Update-------------------------------------------------------------
