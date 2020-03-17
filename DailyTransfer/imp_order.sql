@@ -532,8 +532,6 @@ BEGIN
 				t.AirFreightByBrand    = s.AirFreightByBrand,
 				t.AllowanceComboID = s.AllowanceComboID,
 				t.ChangeMemoDate       = s.ChangeMemoDate,
-				t.BuyBack              = s.BuyBack,
-				t.BuyBackOrderID       = s.BuyBackOrderID,
 				t.ForecastCategory     = s.ForecastCategory,
 				t.OnSiteSample		   = s.OnSiteSample
 		when not matched by target then
@@ -565,7 +563,7 @@ BEGIN
 			, KPICmpq				, KPIMNotice			, GFR					, SDPDate				, PulloutComplete		
 			, SewINLINE				, FtyGroup				, ForecastSampleGroup	, DyeingLoss			, SubconInType
 			, LastProductionDate	, EstPODD				, AirFreightByBrand		, AllowanceComboID      , ChangeMemoDate
-			, BuyBack				, BuyBackOrderID		, ForecastCategory		, OnSiteSample
+			, ForecastCategory		, OnSiteSample
 
 		) values (
 			s.ID					, s.BrandID				, s.ProgramID			, s.StyleID				, s.SeasonID 
@@ -595,7 +593,7 @@ BEGIN
 			, s.KPICmpq 			, s.KPIMNotice			, s.GFR					, s.SDPDate				, s.PulloutComplete		
 			, s.SewINLINE           , s.FTY_Group			, s.ForecastSampleGroup , s.DyeingLoss          , '0'
 			, s.LastProductionDate	, s.EstPODD				, s.AirFreightByBrand	, s.AllowanceComboID    , s.ChangeMemoDate
-			, s.BuyBack				, s.BuyBackOrderID		, s.ForecastCategory	, s.OnSiteSample
+			, s.ForecastCategory	, s.OnSiteSample
 		)
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
@@ -1625,14 +1623,14 @@ BEGIN
 	and t.OrderIDFrom = s.OrderIDFrom
 		when matched then 
 		update set
-			t.BuyBackReason	= s.BuyBackReason ,
-			t.AddName	    = s.AddName ,
+			t.BuyBackReason	= isnull(s.BuyBackReason,'') ,
+			t.AddName	    = isnull(s.AddName,'') ,
 			t.AddDate		= s.AddDate ,
-			t.EditName		= s.EditName ,
+			t.EditName		= isnull(s.EditName,'') ,
 			t.EditDate		= s.EditDate 
 	when not matched by target then
 		insert  ([ID], [OrderIDFrom], [BuyBackReason], [AddName], [AddDate], [EditName], [EditDate]) 
-		values (s.[ID], s.[OrderIDFrom], s.[BuyBackReason], s.[AddName], s.[AddDate], s.[EditName], s.[EditDate])
+		values (s.[ID], s.[OrderIDFrom], isnull(s.[BuyBackReason],''), isnull(s.[AddName],''), s.[AddDate], isnull(s.[EditName],''), s.[EditDate])
 	when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 	delete;
 
@@ -1646,13 +1644,13 @@ BEGIN
 	when matched then
 		update set
 			t.Qty		= s.Qty,
-			t.AddName	= s.AddName ,
+			t.AddName	= isnull(s.AddName,'') ,
 			t.AddDate	= s.AddDate ,
-			t.EditName	= s.EditName ,
+			t.EditName	= isnull(s.EditName,'') ,
 			t.EditDate	= s.EditDate 
 	when not matched by target then 
 		insert ([ID], [OrderIDFrom], [Article], [SizeCode], [Qty], [AddName], [AddDate], [EditName], [EditDate]) 
-		values (s.[ID], s.[OrderIDFrom], s.[Article], s.[SizeCode], s.[Qty], s.[AddName], s.[AddDate], s.[EditName], s.[EditDate]) 
+		values (s.[ID], s.[OrderIDFrom], s.[Article], s.[SizeCode], s.[Qty], isnull(s.[AddName],''), s.[AddDate], isnull(s.[EditName],''), s.[EditDate]) 
 	when not matched by source  AND T.ID IN (SELECT ID FROM #Torder) then 
 	delete;
 		
