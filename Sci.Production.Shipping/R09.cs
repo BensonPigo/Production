@@ -251,9 +251,9 @@ FtyExportData as (
                     "{0}{1}",
                     sqlCmd.ToString(),
                     string.Format(@") select distinct a.* from (
-select AccountID as Accno from ExportData where AccountID not in ('61012001','61012002','61012003','61012004','61012005')
+select AccountID as Accno from ExportData --where AccountID not in ('61012001','61012002','61012003','61012004','61012005')
 union
-select AccountID from FtyExportData where AccountID not in ('61012001','61012002','61012003','61012004','61012005')
+select AccountID from FtyExportData --where AccountID not in ('61012001','61012002','61012003','61012004','61012005')
 ) a where Accno!='' order by Accno"));
                 DualResult result = DBProxy.Current.Select(null, queryAccount, out this.accnoData);
                 if (!result)
@@ -263,11 +263,13 @@ select AccountID from FtyExportData where AccountID not in ('61012001','61012002
                 }
 
                 StringBuilder allAccno = new StringBuilder();
-                allAccno.Append("[61012001],[61012002],[61012003],[61012004],[61012005]");
-                foreach (DataRow dr in this.accnoData.Rows)
-                {
-                    allAccno.Append(string.Format(",[{0}]", MyUtility.Convert.GetString(dr["Accno"])));
-                }
+                //allAccno.Append("[61012001],[61012002],[61012003],[61012004],[61012005]");
+                allAccno.Append("[" + this.accnoData.AsEnumerable().Select(o => o["Accno"].ToString()).JoinToString("],[") +"]");
+                //foreach (DataRow dr in this.accnoData.Rows)
+                //{
+                //    allAccno.Append(string.Format(",[{0}]", MyUtility.Convert.GetString(dr["Accno"])));
+
+                //}
 
                 sqlCmd.Append(string.Format(
                     @"),
@@ -526,22 +528,22 @@ select * from FtyExportData");
                 foreach (DataRow dr in this.accnoData.Rows)
                 {
                     i++;
-                    worksheet.Cells[1, 20 + i] = MyUtility.GetValue.Lookup(string.Format("select Name from SciFMS_AccountNo where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"])));
+                    worksheet.Cells[1, 15 + i] = MyUtility.GetValue.Lookup(string.Format("select Name from SciFMS_AccountNo where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"])));
                 }
 
-                worksheet.Cells[1, 20 + i + 1] = "Total Import Fee";
+                worksheet.Cells[1, 15 + i + 1] = "Total Import Fee";
 
                 // 匯率選擇 Fixed, KPI, 各費用欄位名稱加上 (USD)
                 if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
                 {
-                    for (int k = 16; k <= 20 + i + 1;  k++)
+                    for (int k = 16; k <= 15 + i + 1; k++)
                     {
                         worksheet.Cells[1, k] = worksheet.Cells[1, k].Value + "\r\n(USD)";
                     }
                 }
 
-                string excelSumCol = PublicPrg.Prgs.GetExcelEnglishColumnName(20 + i);
-                string excelColumn = PublicPrg.Prgs.GetExcelEnglishColumnName(20 + i + 1);
+                string excelSumCol = PublicPrg.Prgs.GetExcelEnglishColumnName(15 + i);
+                string excelColumn = PublicPrg.Prgs.GetExcelEnglishColumnName(15 + i + 1);
 
                 // 填內容值
                 int intRowsStart = 2;
@@ -563,19 +565,19 @@ select * from FtyExportData");
                     objArray[0, 12] = dr["PortArrival"];
                     objArray[0, 13] = dr["DocArrival"];
                     objArray[0, 14] = dr["CurrencyID"];
-                    objArray[0, 15] = MyUtility.Check.Empty(dr["61012001"]) ? 0 : dr["61012001"];
-                    objArray[0, 16] = MyUtility.Check.Empty(dr["61012002"]) ? 0 : dr["61012002"];
-                    objArray[0, 17] = MyUtility.Check.Empty(dr["61012003"]) ? 0 : dr["61012003"];
-                    objArray[0, 18] = MyUtility.Check.Empty(dr["61012004"]) ? 0 : dr["61012004"];
-                    objArray[0, 19] = MyUtility.Check.Empty(dr["61012005"]) ? 0 : dr["61012005"];
+                    //objArray[0, 15] = MyUtility.Check.Empty(dr["61012001"]) ? 0 : dr["61012001"];
+                    //objArray[0, 16] = MyUtility.Check.Empty(dr["61012002"]) ? 0 : dr["61012002"];
+                    //objArray[0, 17] = MyUtility.Check.Empty(dr["61012003"]) ? 0 : dr["61012003"];
+                    //objArray[0, 18] = MyUtility.Check.Empty(dr["61012004"]) ? 0 : dr["61012004"];
+                    //objArray[0, 19] = MyUtility.Check.Empty(dr["61012005"]) ? 0 : dr["61012005"];
                     i = 0;
                     foreach (DataRow ddr in this.accnoData.Rows)
                     {
                         i++;
-                        objArray[0, 19 + i] = MyUtility.Check.Empty(dr[19 + i]) ? 0 : dr[19 + i];
+                        objArray[0, 14 + i] = MyUtility.Check.Empty(dr[14 + i]) ? 0 : dr[14 + i];
                     }
 
-                    objArray[0, 19 + i + 1] = string.Format("=SUM(O{0}:{1}{0})", intRowsStart, excelSumCol);
+                    objArray[0, 14 + i + 1] = string.Format("=SUM(O{0}:{1}{0})", intRowsStart, excelSumCol);
                     worksheet.Range[string.Format("A{0}:{1}{0}", intRowsStart, excelColumn)].Value2 = objArray;
                     intRowsStart++;
                 }
@@ -619,7 +621,7 @@ select * from FtyExportData");
                     objArray[0, 23] = dr["VoucherDate"];
                     objArray[0, 24] = dr["SubType"];
 
-                    worksheet.Range[string.Format("A{0}:W{0}", intRowsStart)].Value2 = objArray;
+                    worksheet.Range[string.Format("A{0}:Y{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }
             }
