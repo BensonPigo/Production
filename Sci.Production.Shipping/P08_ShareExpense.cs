@@ -698,7 +698,7 @@ select
     sap.APPExchageRate,
     APPAmt=iif(APPExchageRate=0,0, round((sa.AmtFty+sa.AmtOther)/sap.APPExchageRate,2))
 from ShareExpense_APP sa with(nolock)
-inner join AirPP with(nolock) on AirPP.id = sa.AirPPID
+inner join AirPP with(nolock) on AirPP.id = sa.AirPPID and AirPP.Status <> 'Junked'
 inner  join ShippingAP sap on sap.ID = sa.ShippingAPID
 where sa.Junk = 0
 and sa.ShippingAPID = '{this.apData["ID"]}' 
