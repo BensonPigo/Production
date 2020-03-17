@@ -201,7 +201,12 @@ select  ID,
         SewingOutput,
         SewingOutputCPU,
         IsProduceFty,
-        [isNormalOrderCanceled] = iif(Junk = 1 and Qty > 0  And Category in ('B','S')  and (localorder = 0 or SubconInType=2),1,0)
+        --summary頁面不算Junk訂單使用，Forecast沒排掉是因為Planning R10有含
+        [isNormalOrderCanceled] = iif(  Junk = 1 and 
+                                        --正常訂單
+                                        ((Qty > 0  And Category in ('B','S')  and (localorder = 0 or SubconInType=2)) or
+                                        --當地訂單
+                                        (LocalOrder = 1 and SubconInType=3)),1,0)
 into #tmpBaseBySource
 from #tmpBase
 where {whereSource}
