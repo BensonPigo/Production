@@ -504,6 +504,7 @@ BEGIN
 			inner join PackingList_Detail pld with (nolock) on t.PackID = pld.ID
 			inner join AirPP app with (nolock) on pld.OrderID = app.OrderID 
 												  and pld.OrderShipmodeSeq = app.OrderShipmodeSeq
+												  and app.Status <> 'Junked'
 			outer apply (
 				select [Value] = isnull(sum(NWPerPcs * ShipQty),0) 
 				from PackingList_Detail 
