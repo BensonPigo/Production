@@ -103,6 +103,7 @@ SELECT [Inspected Date] = FP.InspDate
 	   ,[Color]=dbo.GetColorMultipleID(o.BrandID,p.ColorID)
        ,[Arrived YDS] = RD.StockQty
        ,[Actual YDS] = FP.ActualYds
+       ,[Shortage YDS] = isnull(isd.Qty, 0)
        ,[Full Width] = ww.width
        ,[Actual Width] = FP.ActualWidth
        ,[Speed] = IIF((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty) <= 0, 0,
@@ -123,6 +124,7 @@ LEFT JOIN Receiving_Detail RD ON RD.PoId= F.POID AND RD.Seq1 = F.SEQ1 AND RD.Seq
 LEFT join PO_Supp_Detail p on p.ID = f.poid and p.seq1 = f.seq1 and p.seq2 = f.seq2
 LEFT join orders o on o.id=f.POID
 LEFT JOIN Fabric on Fabric.SCIRefno  = f.SCIRefno
+LEFT JOIN Issue_Detail isd on FP.Issue_DetailUkey = isd.ukey and isd.IsQMS = 1
 outer apply(select width from Fabric with(nolock) where SCIRefno = f.SCIRefno)ww
 WHERE 1=1
 {0}
