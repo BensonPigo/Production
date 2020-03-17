@@ -87,6 +87,7 @@ where bi.BundleNo='{drSelected["BundleNo"]}'
             this.grid.DataSource = listControlBindingSource1;
 
             Helper.Controls.Grid.Generator(this.grid)
+            .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("BundleNo", header: "Bundle No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Orderid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("POID", header: "Master SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -224,6 +225,7 @@ bd.BundleNo
 ,[ReceiveQtyLoading]= IIF(ReceiveQtyLoading.InComing != '' OR ReceiveQtyLoading.InComing IS NOT NULL , 'Complete' ,'Not Complete')
 ,[XXXRFIDIn]=bio.InComing
 ,[XXXRFIDOut]=bio.OutGoing
+,b.CutRef
 into #tmpMain
 FROM Bundle b
 INNER JOIN Bundle_Detail bd ON bd.ID=b.Id
@@ -316,6 +318,7 @@ t.BundleNo
 ,t.XXXRFIDIn
 ,t.XXXRFIDOut
 ,BundleReplacement = BR.RQ
+,CutRef
 from #tmpMain t
 outer apply(
     select RQ=stuff((

@@ -718,6 +718,7 @@ select   b.Orderid
         ,b.Article
         ,bd.BundleGroup
         ,bd.SizeCode
+		,b.CutRef
 into #tmpBundleNo
 from Bundle b with(nolock)
 inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
@@ -739,6 +740,7 @@ select   Orderid
         ,Article
         ,BundleGroup
         ,SizeCode
+		,CutRef
 into #tmpBundleNo_SubProcess
 from #tmpBundleNo
 
@@ -755,6 +757,7 @@ select   Orderid
         ,Article
         ,BundleGroup
         ,SizeCode
+		,CutRef
 from #tmpBundleNo b
 inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
 inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
@@ -774,13 +777,15 @@ select
 	,[HasOutGoing]=IIF( bio.OutGoing IS NOT NULL ,'true','false')
 	,bio.InComing
 	,bio.OutGoing
+	,b.CutRef
 into #tmpBundleNo_Complete
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
 where b.subProcessid='{subProcess}'
 
 select
-	[Bundle#]=t.BundleNo
+	 CutRef
+    ,[Bundle#]=t.BundleNo
 	,b.Qty
 	,EXCESS=iif(IsEXCESS=1,'Y','')
     ,PatternDesc
@@ -863,6 +868,7 @@ select   b.Orderid
         ,bd.PatternDesc
         ,bd.BundleGroup
         ,[BD_SizeCode]=bd.SizeCode
+		,b.CutRef
 into #tmpBundleNo
 from Bundle b with(nolock)
 inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID and b.Article = o.Article and b.Sizecode = o.SizeCode
@@ -878,6 +884,7 @@ select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDe
     ,PatternDesc
     ,BundleGroup
     ,[BD_SizeCode]
+    ,CutRef
 into #tmpBundleNo_SubProcess
 from #tmpBundleNo
 
@@ -887,6 +894,7 @@ select Orderid,Article,Sizecode,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutR
     ,PatternDesc
     ,BundleGroup
     ,[BD_SizeCode]
+    ,CutRef
 from #tmpBundleNo b
 inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
 inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
@@ -906,13 +914,15 @@ select
 	,[HasOutGoing]=IIF( bio.OutGoing IS NOT NULL ,'true','false')
 	,bio.InComing
 	,bio.OutGoing
+	,b.CutRef
 into #tmpBundleNo_Complete
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
 where b.subProcessid='{subProcess}'
 
 select
-	[Bundle#]=t.BundleNo
+	 CutRef
+    ,[Bundle#]=t.BundleNo
 	,b.Qty
 	,EXCESS=iif(IsEXCESS=1,'Y','')
     ,PatternDesc
@@ -955,6 +965,7 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
             this.grid2.Columns.Clear();
             //準備Grid 2
             this.Helper.Controls.Grid.Generator(this.grid2)
+            .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Bundle#", header: "BundleNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("PatternDesc", header: "PatternDesc", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
