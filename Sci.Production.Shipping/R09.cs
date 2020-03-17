@@ -31,7 +31,7 @@ namespace Sci.Production.Shipping
         private int reportType;
         private bool IsDelayReplacement;
         private DataTable printData;
-        //private DataTable accnoData;
+        private DataTable accnoData;
 
         /// <summary>
         /// R09
@@ -102,12 +102,11 @@ as (
 		,e.DocArrival
 		,se.CurrencyID
 		,[Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
-		,[AccountNo] = se.AccountID+'-'+ isnull(acc.Name,'')
+		,se.AccountID		
     from ShippingAP s WITH (NOLOCK) 
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
     inner join Export e WITH (NOLOCK) on se.WKNo = e.ID
     left join Supp WITH (NOLOCK) on supp.ID = e.Forwarder
-	LEFT JOIN SciFMS_AccountNo acc WITH (NOLOCK) ON acc.ID = se.AccountID		
     outer apply(select value = cycfs from Export as a1 WITH (NOLOCK) where a1.ID =  e.MainExportID) as CYCFS
     where s.Type = 'IMPORT'
     AND se.Junk <> 1
@@ -185,15 +184,13 @@ FtyExportData as (
 		,fe.DocArrival
 		,se.CurrencyID
 		,[Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
-		,[AccountNo] = se.AccountID+'-'+isnull(acc.Name,'')
+		,se.AccountID 
     from ShippingAP s WITH (NOLOCK) 
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
     left join FtyExport fe WITH (NOLOCK) on se.WKNo = fe.ID
     left join LocalSupp ls WITH (NOLOCK) on ls.ID = fe.Forwarder
-	LEFT JOIN SciFMS_AccountNo acc WITH (NOLOCK) ON acc.ID = se.AccountID		
     where fe.Type <> 3
     AND se.Junk <> 1
-
 ");
                 if (this.IsDelayReplacement)
                 {
@@ -250,22 +247,47 @@ FtyExportData as (
                     sqlCmd.Append(string.Format(" and fe.Forwarder = '{0}'", this.forwarder));
                 }
                 #endregion
+                string queryAccount = string.Format(
+                    "{0}{1}",
+                    sqlCmd.ToString(),
+                    string.Format(@") select distinct a.* from (
+select AccountID as Accno from ExportData --where AccountID not in ('61012001','61012002','61012003','61012004','61012005')
+union
+select AccountID from FtyExportData --where AccountID not in ('61012001','61012002','61012003','61012004','61012005')
+) a where Accno!='' order by Accno"));
+                DualResult result = DBProxy.Current.Select(null, queryAccount, out this.accnoData);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                    return failResult;
+                }
 
-                sqlCmd.Append($@"),
+                StringBuilder allAccno = new StringBuilder();
+                //allAccno.Append("[61012001],[61012002],[61012003],[61012004],[61012005]");
+                allAccno.Append("[" + this.accnoData.AsEnumerable().Select(o => o["Accno"].ToString()).JoinToString("],[") +"]");
+                //foreach (DataRow dr in this.accnoData.Rows)
+                //{
+                //    allAccno.Append(string.Format(",[{0}]", MyUtility.Convert.GetString(dr["Accno"])));
+
+                //}
+
+                sqlCmd.Append(string.Format(
+                    @"),
 tmpAllData
 as (
     select InvNo,Type,WKNo,FtyWKNo,DelayRepacement,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
-        PortArrival,DocArrival,CurrencyID,AccountNo,Amount
+        PortArrival,DocArrival,CurrencyID,AccountID,Amount
     from ExportData
     union all
     select InvNo,Type,WKNo,FtyWKNo,DelayRepacement,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
-        PortArrival,DocArrival,CurrencyID,AccountNo,Amount
+        PortArrival,DocArrival,CurrencyID,AccountID,Amount
     from FtyExportData
 )
 
 select * from tmpAllData
-");
-                DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
+PIVOT (SUM(Amount)
+FOR AccountID IN ({0})) a", allAccno.ToString()));
+                result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
                 if (!result)
                 {
                     DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -503,14 +525,25 @@ select * from FtyExportData");
             if (this.reportType == 1)
             {
                 int i = 0;
+                foreach (DataRow dr in this.accnoData.Rows)
+                {
+                    i++;
+                    worksheet.Cells[1, 15 + i] = MyUtility.GetValue.Lookup(string.Format("select Name from SciFMS_AccountNo where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"])));
+                }
+
+                worksheet.Cells[1, 15 + i + 1] = "Total Import Fee";
 
                 // 匯率選擇 Fixed, KPI, 各費用欄位名稱加上 (USD)
                 if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
                 {
-                    worksheet.Cells[1, 17] = worksheet.Cells[1, 17].Value + "\r\n(USD)";
+                    for (int k = 16; k <= 15 + i + 1; k++)
+                    {
+                        worksheet.Cells[1, k] = worksheet.Cells[1, k].Value + "\r\n(USD)";
+                    }
                 }
 
-                string excelColumn = PublicPrg.Prgs.GetExcelEnglishColumnName(17);
+                string excelSumCol = PublicPrg.Prgs.GetExcelEnglishColumnName(15 + i);
+                string excelColumn = PublicPrg.Prgs.GetExcelEnglishColumnName(15 + i + 1);
 
                 // 填內容值
                 int intRowsStart = 2;
@@ -532,9 +565,19 @@ select * from FtyExportData");
                     objArray[0, 12] = dr["PortArrival"];
                     objArray[0, 13] = dr["DocArrival"];
                     objArray[0, 14] = dr["CurrencyID"];
-                    objArray[0, 15] = dr["AccountNo"];
-                    objArray[0, 16] = dr["Amount"];
+                    //objArray[0, 15] = MyUtility.Check.Empty(dr["61012001"]) ? 0 : dr["61012001"];
+                    //objArray[0, 16] = MyUtility.Check.Empty(dr["61012002"]) ? 0 : dr["61012002"];
+                    //objArray[0, 17] = MyUtility.Check.Empty(dr["61012003"]) ? 0 : dr["61012003"];
+                    //objArray[0, 18] = MyUtility.Check.Empty(dr["61012004"]) ? 0 : dr["61012004"];
+                    //objArray[0, 19] = MyUtility.Check.Empty(dr["61012005"]) ? 0 : dr["61012005"];
+                    i = 0;
+                    foreach (DataRow ddr in this.accnoData.Rows)
+                    {
+                        i++;
+                        objArray[0, 14 + i] = MyUtility.Check.Empty(dr[14 + i]) ? 0 : dr[14 + i];
+                    }
 
+                    objArray[0, 14 + i + 1] = string.Format("=SUM(O{0}:{1}{0})", intRowsStart, excelSumCol);
                     worksheet.Range[string.Format("A{0}:{1}{0}", intRowsStart, excelColumn)].Value2 = objArray;
                     intRowsStart++;
                 }
