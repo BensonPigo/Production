@@ -110,7 +110,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.gridicon.Location = new System.Drawing.Point(2640, 111);
+            this.gridicon.Location = new System.Drawing.Point(2693, 111);
             // 
             // refresh
             // 
@@ -201,7 +201,7 @@
             this.dateIssueDate.Location = new System.Drawing.Point(302, 9);
             this.dateIssueDate.Name = "dateIssueDate";
             this.dateIssueDate.Size = new System.Drawing.Size(130, 23);
-            this.dateIssueDate.TabIndex = 2;
+            this.dateIssueDate.TabIndex = 5;
             // 
             // displayLineNo
             // 
@@ -228,7 +228,7 @@
             this.txtRemark.Location = new System.Drawing.Point(87, 99);
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.Size = new System.Drawing.Size(418, 23);
-            this.txtRemark.TabIndex = 6;
+            this.txtRemark.TabIndex = 4;
             // 
             // labelRemark
             // 
@@ -245,7 +245,7 @@
             this.btnAutoPick.Location = new System.Drawing.Point(911, 31);
             this.btnAutoPick.Name = "btnAutoPick";
             this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
-            this.btnAutoPick.TabIndex = 4;
+            this.btnAutoPick.TabIndex = 8;
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
             this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);
@@ -258,7 +258,7 @@
             this.btnBreakDown.Location = new System.Drawing.Point(876, 63);
             this.btnBreakDown.Name = "btnBreakDown";
             this.btnBreakDown.Size = new System.Drawing.Size(120, 30);
-            this.btnBreakDown.TabIndex = 5;
+            this.btnBreakDown.TabIndex = 9;
             this.btnBreakDown.Text = "Issue B\'down";
             this.btnBreakDown.UseVisualStyleBackColor = true;
             this.btnBreakDown.Click += new System.EventHandler(this.btnBreakDown_Click);
@@ -288,7 +288,7 @@
             this.txtOrderID.Location = new System.Drawing.Point(87, 41);
             this.txtOrderID.Name = "txtOrderID";
             this.txtOrderID.Size = new System.Drawing.Size(107, 23);
-            this.txtOrderID.TabIndex = 1;
+            this.txtOrderID.TabIndex = 2;
             this.txtOrderID.Validating += new System.ComponentModel.CancelEventHandler(this.txtOrderID_Validating);
             this.txtOrderID.Validated += new System.EventHandler(this.txtOrderID_Validated);
             // 

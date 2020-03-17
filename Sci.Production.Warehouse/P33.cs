@@ -119,7 +119,7 @@ namespace Sci.Production.Warehouse
 SELECT t.sewline + ',' 
 FROM(SELECT DISTINCT o.sewline FROM dbo.issue_detail a WITH (nolock) 
 INNER JOIN dbo.orders o WITH (nolock) ON a.poid = o.poid  
-WHERE  a.id = '{CurrentMaintain["ID"] }' AND o.sewline != '') t FOR xml path('')
+WHERE o.id = '{OrderID}' AND o.sewline != '') t FOR xml path('')
 ");
 
             #region -- matrix breakdown
@@ -259,6 +259,7 @@ AND iis.SuppColor <> ''
                 {
                     DataTable bulkItems;
                     string suppColor =MyUtility.Check.Empty(CurrentDetailData["SuppColor"]) ? string.Empty : CurrentDetailData["SuppColor"].ToString();
+                    string Refno = MyUtility.Check.Empty(CurrentDetailData["Refno"]) ? string.Empty : CurrentDetailData["Refno"].ToString();
                     string sqlcmd = $@"
  SELECT   DISTINCT [Refno]= psd.Refno
 		 , [SuppColor]=psd.SuppColor
@@ -268,6 +269,7 @@ AND iis.SuppColor <> ''
 		 , [UnitDesc]=StockUnit.Description
 		 , [BulkQty]=BulkQty.Val
 		 , [InventoryQty]=InventoryQty.Val
+		 , psd.SCIRefno
 INTO #tmp
 FROM PO_Supp_Detail psd
 LEFT JOIN Fabric fc ON fc.SCIRefno = psd.SCIRefno
@@ -294,6 +296,15 @@ WHERE psd.ID='{this.poid}'
 AND m.IsThread=1 
 AND psd.FabricType ='A'
 ";
+                    if (!MyUtility.Check.Empty(Refno))
+                    {
+                        sqlcmd += $"AND psd.Refno='{Refno}' ";
+                    }
+                    else
+                    {
+                        sqlcmd += $"AND psd.Refno <> '' ";
+                    }
+
                     if (!MyUtility.Check.Empty(suppColor))
                     {
                         sqlcmd += $"AND psd.SuppColor='{suppColor}' ";
@@ -312,6 +323,7 @@ SELECT [Refno]
 		 , [UnitDesc]
 		 , [BulkQty]=SUM(BulkQty)
 		 , [InventoryQty]=SUM(InventoryQty)
+         , [SCIRefno]
 FROM #tmp
 GROUP BY  [Refno]
 		 , [SuppColor]
@@ -319,6 +331,7 @@ GROUP BY  [Refno]
 		 , [Desc]
 		 , [Stock Unit]
 		 , [UnitDesc]
+         , [SCIRefno]
 
 DROP TABLE #tmp
 
@@ -341,8 +354,12 @@ DROP TABLE #tmp
                     DialogResult result = selepoitem.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     selectedDatas = selepoitem.GetSelecteds();
+                    CurrentDetailData["SCIRefno"] = selectedDatas[0]["SCIRefno"];
                     CurrentDetailData["Refno"] = selectedDatas[0]["Refno"];
                     CurrentDetailData["SuppColor"] = selectedDatas[0]["SuppColor"];
+                    CurrentDetailData["DescDetail"] = selectedDatas[0]["Desc"];
+                    CurrentDetailData["POID"] = this.poid;
+                    CurrentDetailData.EndEdit();
                 }
             };
             RefnoSet.CellValidating += (s, e) =>
@@ -360,41 +377,92 @@ DROP TABLE #tmp
 
                         string suppColor = MyUtility.Check.Empty(CurrentDetailData["SuppColor"]) ? string.Empty : CurrentDetailData["SuppColor"].ToString();
 
-                        string sqlcmd = $@"
+                        //                        string sqlcmd = $@"
 
- SELECT    [Refno]= psd.Refno
-		 , [SuppColor]=psd.SuppColor
-		 , [MtlType]=fc.MtlTypeID
-		 , [Desc]=fc.DescDetail
-		 , [Stock Unit]=StockUnit.Val
-		 , [UnitDesc]=StockUnit.Description
-		 , [BulkQty]=BulkQty.Val
-		 , [InventoryQty]=InventoryQty.Val
- FROM PO_Supp_Detail psd
- LEFT JOIN Fabric fc ON fc.SCIRefno = psd.SCIRefno
-LEFT JOIN MtlType m on m.id= fc.MtlTypeID
- OUTER APPLY(
-	 SELECT TOP 1 [Val] = psd2.StockUnit  ,u.Description
-	 FROM PO_Supp_Detail psd2 
-	 LEFT JOIN Unit u ON u.ID = psd2.StockUnit
-	 WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.SuppColor= psd.SuppColor
- )StockUnit
- OUTER APPLY(
-	SELECT [Val]=(f.InQty-f.OutQty+f.AdjustQty) 
-	FROM PO_Supp_Detail psd2
-	INNER JOIN FtyInventory F ON F.POID=psd2.ID AND F.SEQ1= psd2.SEQ1 AND F.SEQ2 = psd2.SEQ2
-	WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.SuppColor=psd.SuppColor AND F.StockType='B' {(MyUtility.Check.Empty(suppColor) ? "AND psd2.SuppColor <> ''" : $"AND psd2.SuppColor='{suppColor}'")}
- )BulkQty
- OUTER APPLY(
-	SELECT [Val]=(f.InQty-f.OutQty+f.AdjustQty) 
-	FROM PO_Supp_Detail psd2
-	INNER JOIN FtyInventory F ON F.POID=psd2.ID AND F.SEQ1= psd2.SEQ1 AND F.SEQ2 = psd2.SEQ2
-	WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.SuppColor=psd.SuppColor AND F.StockType='I' {(MyUtility.Check.Empty(suppColor) ? "AND psd2.SuppColor <> ''" : $"AND psd2.SuppColor='{suppColor}'")}
- )InventoryQty
- WHERE psd.ID='{this.poid}' 
-AND psd.Refno='{e.FormattedValue}'
+                        // SELECT    [Refno]= psd.Refno
+                        //		 , [SuppColor]=psd.SuppColor
+                        //		 , [MtlType]=fc.MtlTypeID
+                        //		 , [Desc]=fc.DescDetail
+                        //		 , [Stock Unit]=StockUnit.Val
+                        //		 , [UnitDesc]=StockUnit.Description
+                        //		 , [BulkQty]=BulkQty.Val
+                        //		 , [InventoryQty]=InventoryQty.Val
+                        //		 , psd.SCIRefno
+                        // FROM PO_Supp_Detail psd
+                        // LEFT JOIN Fabric fc ON fc.SCIRefno = psd.SCIRefno
+                        //LEFT JOIN MtlType m on m.id= fc.MtlTypeID
+                        // OUTER APPLY(
+                        //	 SELECT TOP 1 [Val] = psd2.StockUnit  ,u.Description
+                        //	 FROM PO_Supp_Detail psd2 
+                        //	 LEFT JOIN Unit u ON u.ID = psd2.StockUnit
+                        //	 WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.SuppColor= psd.SuppColor
+                        // )StockUnit
+                        // OUTER APPLY(
+                        //	SELECT [Val]=(f.InQty-f.OutQty+f.AdjustQty) 
+                        //	FROM PO_Supp_Detail psd2
+                        //	INNER JOIN FtyInventory F ON F.POID=psd2.ID AND F.SEQ1= psd2.SEQ1 AND F.SEQ2 = psd2.SEQ2
+                        //	WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.SuppColor=psd.SuppColor AND F.StockType='B' {(MyUtility.Check.Empty(suppColor) ? "AND psd2.SuppColor <> ''" : $"AND psd2.SuppColor='{suppColor}'")}
+                        // )BulkQty
+                        // OUTER APPLY(
+                        //	SELECT [Val]=(f.InQty-f.OutQty+f.AdjustQty) 
+                        //	FROM PO_Supp_Detail psd2
+                        //	INNER JOIN FtyInventory F ON F.POID=psd2.ID AND F.SEQ1= psd2.SEQ1 AND F.SEQ2 = psd2.SEQ2
+                        //	WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.SuppColor=psd.SuppColor AND F.StockType='I' {(MyUtility.Check.Empty(suppColor) ? "AND psd2.SuppColor <> ''" : $"AND psd2.SuppColor='{suppColor}'")}
+                        // )InventoryQty
+                        // WHERE psd.ID='{this.poid}' 
+                        //AND psd.Refno='{e.FormattedValue}'
+                        //AND m.IsThread=1 
+                        //AND psd.FabricType ='A'
+                        //";
+
+                        string sqlcmd = $@"
+SELECT  DISTINCT
+  psd.SCIRefno
+, psd.Refno
+, psd.SuppColor
+, f.DescDetail
+, [@Qty]=BOT.Val
+, [AccuIssued] = (
+					select isnull(sum([IS].qty),0)
+					from dbo.issue I WITH (NOLOCK) 
+					inner join dbo.Issue_Summary [IS] WITH (NOLOCK) on I.id = [IS].Id 
+					where I.type = 'E' and I.Status = 'Confirmed' 
+					and [IS].Poid=psd.id AND [IS].SCIRefno=PSD.SCIRefno AND [IS].SuppColor=PSD.SuppColor and i.[EditDate]<GETDATE()
+				)
+, [IssueQty]=0.00
+, [Use Qty By Stock Unit]=0.00
+, [Stock Unit]=StockUnit.StockUnit
+, [Use Qty By Use Unit]=0.00
+, [Use Unit]='CM'
+, [Stock Unit Desc.]=StockUnit.Description
+, [OutputQty]=0.00
+, [Balance(Stock Unit)]= 0.00
+, [Location] = ''
+, [POID]=psd.ID 
+, o.MDivisionID
+FROM PO_Supp_Detail psd
+INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
+INNER JOIN MtlType m ON m.id= f.MtlTypeID
+INNER JOIN Orders o ON psd.ID = o.ID
+OUTER APPLY(
+	SELECT TOP 1 PSD2.StockUnit ,u.Description
+	FROM PO_Supp_Detail PSD2 
+	LEFT JOIN Unit u ON u.ID = psd2.StockUnit
+	WHERE PSD2.ID = psd.id
+	AND PSD2.SCIRefno=psd.SCIRefno
+	AND PSD2.SuppColor=psd.SuppColor
+)StockUnit
+OUTER APPLY(
+	SELECT Val=SUM((SeamLength * Frequency * UseRatio) + Allowance)
+	FROM dbo.GetThreadUsedQtyByBOT(psd.ID)
+	WHERE SCIRefNo = psd.SCIRefno AND SuppColor = psd.SuppColor
+)BOT
+WHERE psd.id ='{this.poid}' 
 AND m.IsThread=1 
 AND psd.FabricType ='A'
+and psd.SuppColor <> ''
+
+AND psd.Refno='{e.FormattedValue}'
 ";
 
                         if (!MyUtility.Check.Empty(suppColor))
@@ -415,7 +483,37 @@ AND psd.FabricType ='A'
                         }
                         else
                         {
-                            CurrentDetailData["Refno"] = e.FormattedValue;
+                            if (MyUtility.Check.Empty(suppColor))
+                            {
+                                CurrentDetailData["SCIRefno"] = row["SCIRefno"];
+                                CurrentDetailData["Refno"] = e.FormattedValue;
+                                CurrentDetailData["DescDetail"] = row["DescDetail"];
+                                CurrentDetailData["POID"] = this.poid;
+                            }
+                            else
+                            {
+                                CurrentDetailData["SCIRefno"] = row["SCIRefno"];
+                                CurrentDetailData["Refno"] = row["Refno"];
+                                CurrentDetailData["SuppColor"] = row["SuppColor"];
+                                CurrentDetailData["POID"] = row["POID"];
+                                CurrentDetailData["DescDetail"] = row["DescDetail"];
+                                CurrentDetailData["@Qty"] = row["@Qty"];
+                                CurrentDetailData["Use Unit"] = row["Use Unit"];
+                                CurrentDetailData["AccuIssued"] = row["AccuIssued"];
+
+                                CurrentDetailData["IssueQty"] = row["IssueQty"];
+                                CurrentDetailData["Use Qty By Stock Unit"] = row["Use Qty By Stock Unit"];
+                                CurrentDetailData["Stock Unit"] = row["Stock Unit"];
+                                CurrentDetailData["Use Qty By Use Unit"] = row["Use Qty By Use Unit"];
+                                CurrentDetailData["Use Unit"] = row["Use Unit"];
+                                CurrentDetailData["Stock Unit Desc."] = row["Stock Unit Desc."];
+                                CurrentDetailData["OutputQty"] = row["OutputQty"];
+                                CurrentDetailData["Balance(Stock Unit)"] = row["Balance(Stock Unit)"];
+                                CurrentDetailData["Location"] = row["Location"];
+                                CurrentDetailData["MDivisionID"] = row["MDivisionID"];
+                            }
+
+                            CurrentDetailData.EndEdit();
                         }
                     }
                 }
@@ -430,6 +528,7 @@ AND psd.FabricType ='A'
                 {
                     DataTable bulkItems;
                     string Refno = MyUtility.Check.Empty(CurrentDetailData["Refno"]) ? string.Empty : CurrentDetailData["Refno"].ToString();
+                    string SuppColor = MyUtility.Check.Empty(CurrentDetailData["SuppColor"]) ? string.Empty : CurrentDetailData["SuppColor"].ToString();
                     string sqlcmd = $@"
  SELECT  DISTINCT  [Refno]= psd.Refno
 		 , [SuppColor]=psd.SuppColor
@@ -439,6 +538,7 @@ AND psd.FabricType ='A'
 		 , [UnitDesc]=StockUnit.Description
 		 , [BulkQty]=BulkQty.Val
 		 , [InventoryQty]=InventoryQty.Val
+         , psd.SCIRefno
 INTO #tmp
  FROM PO_Supp_Detail psd
  LEFT JOIN Fabric fc ON fc.SCIRefno = psd.SCIRefno
@@ -466,7 +566,6 @@ LEFT JOIN MtlType m on m.id= fc.MtlTypeID
 AND psd.FabricType ='A'
 AND psd.SuppColor <> ''
 ";
-
                     if (!MyUtility.Check.Empty(Refno))
                     {
                         sqlcmd += $"AND psd.Refno='{Refno}' ";
@@ -474,6 +573,15 @@ AND psd.SuppColor <> ''
                     else
                     {
                         sqlcmd += $"AND psd.Refno <> '' ";
+                    }
+
+                    if (!MyUtility.Check.Empty(SuppColor))
+                    {
+                        sqlcmd += $"AND psd.SuppColor='{SuppColor}' ";
+                    }
+                    else
+                    {
+                        sqlcmd += $"AND psd.SuppColor <> '' ";
                     }
 
                     sqlcmd += $@"
@@ -485,6 +593,7 @@ SELECT [Refno]
 		 , [UnitDesc]
 		 , [BulkQty]=SUM(BulkQty)
 		 , [InventoryQty]=SUM(InventoryQty)
+         , [SCIRefno]
 FROM #tmp
 GROUP BY  [Refno]
 		 , [SuppColor]
@@ -492,6 +601,7 @@ GROUP BY  [Refno]
 		 , [Desc]
 		 , [Stock Unit]
 		 , [UnitDesc]
+         , [SCIRefno]
 
 DROP TABLE #tmp
 
@@ -515,8 +625,12 @@ DROP TABLE #tmp
                     DialogResult result = selepoitem.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     selectedDatas = selepoitem.GetSelecteds();
+                    CurrentDetailData["SCIRefno"] = selectedDatas[0]["SCIRefno"];
                     CurrentDetailData["Refno"] = selectedDatas[0]["Refno"];
                     CurrentDetailData["SuppColor"] = selectedDatas[0]["SuppColor"];
+                    CurrentDetailData["DescDetail"] = selectedDatas[0]["Desc"];
+                    CurrentDetailData["POID"] = this.poid;
+                    CurrentDetailData.EndEdit();
                 }
             };
             ColorSet.CellValidating += (s, e) =>
@@ -532,40 +646,92 @@ DROP TABLE #tmp
                     {
                         DataRow row;
 
-                        if (!MyUtility.Check.Seek($@"
- SELECT    [Refno]= psd.Refno
-		 , [SuppColor]=psd.SuppColor
-		 , [MtlType]=fc.MtlTypeID
-		 , [Desc]=fc.DescDetail
-		 , [Stock Unit]=StockUnit.Val
-		 , [UnitDesc]=StockUnit.Description
-		 , [BulkQty]=BulkQty.Val
-		 , [InventoryQty]=InventoryQty.Val
- FROM PO_Supp_Detail psd
- LEFT JOIN Fabric fc ON fc.SCIRefno = psd.SCIRefno
-LEFT JOIN MtlType m on m.id= fc.MtlTypeID
- OUTER APPLY(
-	 SELECT TOP 1 [Val] = psd2.StockUnit  ,u.Description
-	 FROM PO_Supp_Detail psd2 
-	 LEFT JOIN Unit u ON u.ID = psd2.StockUnit
-	 WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.SuppColor= psd.SuppColor
- )StockUnit
- OUTER APPLY(
-	SELECT [Val]=(f.InQty-f.OutQty+f.AdjustQty) 
-	FROM PO_Supp_Detail psd2
-	INNER JOIN FtyInventory F ON F.POID=psd2.ID AND F.SEQ1= psd2.SEQ1 AND F.SEQ2 = psd2.SEQ2
-	WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.SuppColor=psd.SuppColor AND F.StockType='B' AND psd2.SuppColor='{e.FormattedValue}'
- )BulkQty
- OUTER APPLY(
-	SELECT [Val]=(f.InQty-f.OutQty+f.AdjustQty) 
-	FROM PO_Supp_Detail psd2
-	INNER JOIN FtyInventory F ON F.POID=psd2.ID AND F.SEQ1= psd2.SEQ1 AND F.SEQ2 = psd2.SEQ2
-	WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.SuppColor=psd.SuppColor AND F.StockType='I' AND psd2.SuppColor='{e.FormattedValue}'
- )InventoryQty
- WHERE psd.ID='{this.poid}' AND psd.Refno<>'{CurrentDetailData["Refno"]}'  AND psd.SuppColor='{e.FormattedValue}'
- AND m.IsThread=1 and psd.FabricType ='A'
+                        //                        string sqlcmd = $@"
+                        // SELECT    [Refno]= psd.Refno
+                        //		 , [SuppColor]=psd.SuppColor
+                        //		 , [MtlType]=fc.MtlTypeID
+                        //		 , [Desc]=fc.DescDetail
+                        //		 , [Stock Unit]=StockUnit.Val
+                        //		 , [UnitDesc]=StockUnit.Description
+                        //		 , [BulkQty]=BulkQty.Val
+                        //		 , [InventoryQty]=InventoryQty.Val
+                        // FROM PO_Supp_Detail psd
+                        // LEFT JOIN Fabric fc ON fc.SCIRefno = psd.SCIRefno
+                        //LEFT JOIN MtlType m on m.id= fc.MtlTypeID
+                        // OUTER APPLY(
+                        //	 SELECT TOP 1 [Val] = psd2.StockUnit  ,u.Description
+                        //	 FROM PO_Supp_Detail psd2 
+                        //	 LEFT JOIN Unit u ON u.ID = psd2.StockUnit
+                        //	 WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.SuppColor= psd.SuppColor
+                        // )StockUnit
+                        // OUTER APPLY(
+                        //	SELECT [Val]=(f.InQty-f.OutQty+f.AdjustQty) 
+                        //	FROM PO_Supp_Detail psd2
+                        //	INNER JOIN FtyInventory F ON F.POID=psd2.ID AND F.SEQ1= psd2.SEQ1 AND F.SEQ2 = psd2.SEQ2
+                        //	WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.SuppColor=psd.SuppColor AND F.StockType='B' AND psd2.SuppColor='{e.FormattedValue}'
+                        // )BulkQty
+                        // OUTER APPLY(
+                        //	SELECT [Val]=(f.InQty-f.OutQty+f.AdjustQty) 
+                        //	FROM PO_Supp_Detail psd2
+                        //	INNER JOIN FtyInventory F ON F.POID=psd2.ID AND F.SEQ1= psd2.SEQ1 AND F.SEQ2 = psd2.SEQ2
+                        //	WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.SuppColor=psd.SuppColor AND F.StockType='I' AND psd2.SuppColor='{e.FormattedValue}'
+                        // )InventoryQty
+                        //WHERE psd.ID='{this.poid}' 
+                        //AND psd.SuppColor='{e.FormattedValue}'
+                        //AND m.IsThread=1 
+                        //AND psd.FabricType ='A'
+                        //";
+                        string sqlcmd = $@"
 
-", out row, null))
+SELECT  DISTINCT
+  psd.SCIRefno
+, psd.Refno
+, psd.SuppColor
+, f.DescDetail
+, [@Qty]=BOT.Val
+, [AccuIssued] = (
+					select isnull(sum([IS].qty),0)
+					from dbo.issue I WITH (NOLOCK) 
+					inner join dbo.Issue_Summary [IS] WITH (NOLOCK) on I.id = [IS].Id 
+					where I.type = 'E' and I.Status = 'Confirmed' 
+					and [IS].Poid=psd.id AND [IS].SCIRefno=PSD.SCIRefno AND [IS].SuppColor=PSD.SuppColor and i.[EditDate]<GETDATE()
+				)
+, [IssueQty]=0.00
+, [Use Qty By Stock Unit]=0.00
+, [Stock Unit]=StockUnit.StockUnit
+, [Use Qty By Use Unit]=0.00
+, [Use Unit]='CM'
+, [Stock Unit Desc.]=StockUnit.Description
+, [OutputQty]=0.00
+, [Balance(Stock Unit)]= 0.00
+, [Location] = ''
+, [POID]=psd.ID 
+, o.MDivisionID
+FROM PO_Supp_Detail psd
+INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
+INNER JOIN MtlType m ON m.id= f.MtlTypeID
+INNER JOIN Orders o ON psd.ID = o.ID
+OUTER APPLY(
+	SELECT TOP 1 PSD2.StockUnit ,u.Description
+	FROM PO_Supp_Detail PSD2 
+	LEFT JOIN Unit u ON u.ID = psd2.StockUnit
+	WHERE PSD2.ID = psd.id
+	AND PSD2.SCIRefno=psd.SCIRefno
+	AND PSD2.SuppColor=psd.SuppColor
+)StockUnit
+OUTER APPLY(
+	SELECT Val=SUM((SeamLength * Frequency * UseRatio) + Allowance)
+	FROM dbo.GetThreadUsedQtyByBOT(psd.ID)
+	WHERE SCIRefNo = psd.SCIRefno AND SuppColor = psd.SuppColor
+)BOT
+WHERE psd.id ='{this.poid}' 
+AND m.IsThread=1 
+AND psd.FabricType ='A'
+and psd.Refno <> ''
+AND psd.SuppColor='{e.FormattedValue}'
+
+";
+                        if (!MyUtility.Check.Seek(sqlcmd, out row, null))
                         {
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data not found!", "SuppColor");
@@ -573,7 +739,11 @@ LEFT JOIN MtlType m on m.id= fc.MtlTypeID
                         }
                         else
                         {
+                            CurrentDetailData["SCIRefno"] = row["SCIRefno"];
                             CurrentDetailData["SuppColor"] = e.FormattedValue;
+                            CurrentDetailData["DescDetail"] = row["Desc"];
+                            CurrentDetailData["POID"] = this.poid;
+                            CurrentDetailData.EndEdit();
                         }
                     }
                 }
@@ -595,24 +765,24 @@ LEFT JOIN MtlType m on m.id= fc.MtlTypeID
                 }
 
 
-                Decimal sum = 0;
-                foreach (DataRow dr in dtIssueBreakDown.Rows)
-                {
-                    foreach (DataColumn dc in dtIssueBreakDown.Columns)
-                    {
-                        if (Object.ReferenceEquals(sum.GetType(), dr[dc].GetType()))
-                            sum += (Decimal)dr[dc];
-                    }
-                }
+                //Decimal sum = 0;
+                //foreach (DataRow dr in dtIssueBreakDown.Rows)
+                //{
+                //    foreach (DataColumn dc in dtIssueBreakDown.Columns)
+                //    {
+                //        if (Object.ReferenceEquals(sum.GetType(), dr[dc].GetType()))
+                //            sum += (Decimal)dr[dc];
+                //    }
+                //}
 
-                if (sum == 0)
-                {
-                    MyUtility.Msg.WarningBox("IssueBreakdown data no data!", "Warning");
-                    return;
-                }
+                //if (sum == 0)
+                //{
+                //    MyUtility.Msg.WarningBox("IssueBreakdown data no data!", "Warning");
+                //    return;
+                //}
 
 
-                subform.dtIssueBreakDown = this.dtIssueBreakDown;
+                //subform.dtIssueBreakDown = this.dtIssueBreakDown;
                 DoSubForm.IsSupportUpdate = false;
 
                 #region keep SubDt
@@ -685,7 +855,7 @@ LEFT JOIN MtlType m on m.id= fc.MtlTypeID
             .Text("Use Unit", header: "Use Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("Stock Unit Desc.", header: "Stock Unit Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Numeric("OutputQty", header: "Output Qty" + Environment.NewLine + "(Garment)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
-            .Numeric("Balance(Stock Unit)", header: "Balance" + Environment.NewLine + "(Garment)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
+            .Numeric("Balance(Stock Unit)", header: "Balance" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
             .Text("Location", header: "Location", width: Widths.AnsiChars(10), iseditingreadonly: true) 
             ;
             #endregion 欄位設定
@@ -747,6 +917,13 @@ LEFT JOIN MtlType m on m.id= fc.MtlTypeID
         protected override bool ClickSaveBefore()
         {
             DataTable result = null;
+
+
+            if(((DataTable)detailgridbs.DataSource).AsEnumerable().Where(o=>o.RowState != DataRowState.Deleted).Count() == 0)
+            {
+                MyUtility.Msg.InfoBox("Detail can't be empty !!");
+                return false;
+            }
 
             #region 檢查不可為空
 
@@ -857,6 +1034,10 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
             DataTable detail = (DataTable)detailgridbs.DataSource;
             foreach (DataRow detailRow in detail.Rows)
             {
+                if (detailRow.RowState == DataRowState.Deleted)
+                {
+                    continue;
+                }
 
                 this.GetSubDetailDatas(detailRow, out subDetail);
                 if (subDetail.Rows.Count == 0)
@@ -1417,6 +1598,8 @@ DROP TABLE #tmp
                     ((DataTable)detailgridbs.DataSource).Rows.Remove(dr);
                     dr.Delete();
                 }
+
+                this.displayLineNo.Text = string.Empty;
                 return;
             }
 
@@ -1428,6 +1611,13 @@ DROP TABLE #tmp
                 MyUtility.Msg.WarningBox(result.ToString());
                 return;
             }
+
+            this.displayLineNo.Text = MyUtility.GetValue.Lookup($@"
+SELECT t.sewline + ',' 
+FROM(SELECT DISTINCT o.sewline FROM dbo.issue_detail a WITH (nolock) 
+INNER JOIN dbo.orders o WITH (nolock) ON a.poid = o.poid  
+WHERE o.id = '{CurrentOrderID}'  AND o.sewline != '') t FOR xml path('')
+");
 
             Ismatrix_Reload = true;
             IssueBreakDown_Reload();
@@ -1469,6 +1659,10 @@ DROP TABLE #tmp
         private void btnAutoPick_Click(object sender, EventArgs e)
         {
 
+            if (dtIssueBreakDown == null)
+            {
+                return;
+            }
             List<IssueQtyBreakdown> modelList = new List<IssueQtyBreakdown>();
 
             //檢查是否有勾選Combo，處理傳入AutoPick資料篩選
@@ -1649,10 +1843,10 @@ SELECT  DISTINCT
 				)
 , [IssueQty]=0.00
 , [Use Qty By Stock Unit]=0.00
-, [Stock Unit]=''
+, [Stock Unit]=StockUnit.StockUnit
 , [Use Qty By Use Unit]=0.00
 , [Use Unit]='CM'
-, [Stock Unit Desc.]=''
+, [Stock Unit Desc.]=StockUnit.Description
 , [OutputQty]=0.00
 , [Balance(Stock Unit)]= 0.00
 , [Location] = ''
@@ -1662,6 +1856,14 @@ FROM PO_Supp_Detail psd
 INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
 INNER JOIN MtlType m ON m.id= f.MtlTypeID
 INNER JOIN Orders o ON psd.ID = o.ID
+OUTER APPLY(
+	SELECT TOP 1 PSD2.StockUnit ,u.Description
+	FROM PO_Supp_Detail PSD2 
+	LEFT JOIN Unit u ON u.ID = psd2.StockUnit
+	WHERE PSD2.ID = psd.id
+	AND PSD2.SCIRefno=psd.SCIRefno
+	AND PSD2.SuppColor=psd.SuppColor
+)StockUnit
 OUTER APPLY(
 	SELECT Val=SUM((SeamLength * Frequency * UseRatio) + Allowance)
 	FROM dbo.GetThreadUsedQtyByBOT(psd.ID)
@@ -1698,6 +1900,16 @@ ORDER BY psd.SCIRefno,psd.SuppColor
                     ndr["Use Unit"] = dr["Use Unit"];
                     ndr["AccuIssued"] = dr["AccuIssued"];
 
+                    ndr["IssueQty"] = dr["IssueQty"];
+                    ndr["Use Qty By Stock Unit"] = dr["Use Qty By Stock Unit"];
+                    ndr["Stock Unit"] = dr["Stock Unit"];
+                    ndr["Use Qty By Use Unit"] = dr["Use Qty By Use Unit"];
+                    ndr["Use Unit"] = dr["Use Unit"];
+                    ndr["Stock Unit Desc."] = dr["Stock Unit Desc."];
+                    ndr["OutputQty"] = dr["OutputQty"]; 
+                    ndr["Balance(Stock Unit)"] = dr["Balance(Stock Unit)"];
+                    ndr["Location"] = dr["Location"];
+                    ndr["MDivisionID"] = dr["MDivisionID"];
                     detailDt.Rows.Add(ndr);
                 }
 

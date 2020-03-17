@@ -119,6 +119,7 @@
             this.gridIssueBreakDown.CellValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridIssueBreakDown_CellValidated);
             this.gridIssueBreakDown.ColumnHeaderMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.GridIssueBreakDown_ColumnHeaderMouseDoubleClick);
             this.gridIssueBreakDown.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.gridIssueBreakDown_DataError);
+            this.gridIssueBreakDown.Sorted += new System.EventHandler(this.gridIssueBreakDown_Sorted);
             // 
             // panel1
             // 

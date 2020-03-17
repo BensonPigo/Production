@@ -116,34 +116,7 @@ order by [OrderID], [Article]", Master["orderid"], sbSizecode.ToString().Substri
             this.HideNullColumn(gridQtyBreakDown);
             this.HideNullColumn(gridIssueBreakDown);
 
-            foreach (DataGridViewColumn Column in gridIssueBreakDown.Columns)
-            {
-                string ColumnName = Column.Name;
-
-                if (ColumnName != "Selected" && ColumnName != "Article" && ColumnName != "OrderID")
-                {
-                    foreach (DataGridViewRow Row in gridIssueBreakDown.Rows)
-                    {
-                        string val = Row.Cells[ColumnName].Value.ToString();
-                        if (!MyUtility.Check.Empty(val))
-                        {
-                            Row.Cells[ColumnName].Style.BackColor = Color.Pink;
-                        }
-                        else
-                        {
-                            Row.Cells[ColumnName].ReadOnly = true;
-                        }
-                    }
-                }
-                if (ColumnName == "Selected")
-                {
-
-                    foreach (DataGridViewRow Row in gridIssueBreakDown.Rows)
-                    {
-                        Row.Cells[ColumnName].Style.BackColor = Color.Pink;
-                    }
-                }
-            }
+            this.Pink();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -223,6 +196,11 @@ order by [OrderID], [Article]", Master["orderid"], sbSizecode.ToString().Substri
             }
         }
 
+        private void gridIssueBreakDown_Sorted(object sender, EventArgs e)
+        {
+            this.Pink();
+        }
+
         private void btnSet_Click(object sender, EventArgs e)
         {
             if (dtQtyBreakDown == null || DtModifyIssueBDown == null) return;
@@ -247,6 +225,8 @@ order by [OrderID], [Article]", Master["orderid"], sbSizecode.ToString().Substri
                 }
             }
             dt.DefaultView.Sort = "OrderID,Article";
+
+            this.Pink();
         }
 
         private void HideNullColumn(Win.UI.Grid grid)
@@ -279,6 +259,38 @@ order by [OrderID], [Article]", Master["orderid"], sbSizecode.ToString().Substri
             foreach (var col in nullCol)
             {
                 grid.Columns[col].Visible = false;
+            }
+        }
+
+        private void Pink()
+        {
+            foreach (DataGridViewColumn Column in gridIssueBreakDown.Columns)
+            {
+                string ColumnName = Column.Name;
+
+                if (ColumnName != "Selected" && ColumnName != "Article" && ColumnName != "OrderID")
+                {
+                    foreach (DataGridViewRow Row in gridIssueBreakDown.Rows)
+                    {
+                        string val = Row.Cells[ColumnName].Value.ToString();
+                        if (!MyUtility.Check.Empty(val))
+                        {
+                            Row.Cells[ColumnName].Style.BackColor = Color.Pink;
+                        }
+                        else
+                        {
+                            Row.Cells[ColumnName].ReadOnly = true;
+                        }
+                    }
+                }
+                if (ColumnName == "Selected")
+                {
+
+                    foreach (DataGridViewRow Row in gridIssueBreakDown.Rows)
+                    {
+                        Row.Cells[ColumnName].Style.BackColor = Color.Pink;
+                    }
+                }
             }
         }
     }

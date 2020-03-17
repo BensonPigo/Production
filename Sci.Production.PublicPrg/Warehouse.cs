@@ -1134,6 +1134,10 @@ where    psd.ID = '{material["poid"]}'
             }
             else
             {
+                if (!dt.AsEnumerable().Any())
+                {
+                    return items;
+                }
                 // 先確認是否有數量剛好足夠的 Seq1 + Seq2， 若有則該項直接帶出
                 if (dt.AsEnumerable().Any(o => (decimal)o["BulkQty"] == request))
                 {

@@ -155,7 +155,7 @@ SELECT  --DISTINCT
 		, [Use Unit]='CM'
 		, [Stock Unit Desc.]=StockUnit.Description
 		, [Output Qty(Garment)] = Garment.Qty
-		, [Bulk Balance(Stock Unit)] = ( Fty.InQty-Fty.OutQty + Fty.AdjustQty )-- BulkBalance.val--
+		, [Bulk Balance(Stock Unit)] = ISNULL(( Fty.InQty-Fty.OutQty + Fty.AdjustQty ) ,0)
 		, [FtyInventoryUkey]=Fty.Ukey
         , [POID]=psd.ID
 		, psd.SEQ1
