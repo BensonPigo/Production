@@ -305,8 +305,6 @@
             this.comboSubconInType = new Ict.Win.UI.ComboBox();
             this.chkAFbyAdidas = new Sci.Win.UI.CheckBox();
             this.labBuyBack = new Sci.Win.UI.Label();
-            this.dispBuyBack = new Sci.Win.UI.DisplayBox();
-            this.dispBuyBackOrderID = new Sci.Win.UI.DisplayBox();
             this.labBBSP = new Sci.Win.UI.Label();
             this.chkOnSiteSample = new Sci.Win.UI.CheckBox();
             this.chkBuyBack = new Sci.Win.UI.CheckBox();
@@ -327,9 +325,7 @@
             // detailcont
             // 
             this.detailcont.Controls.Add(this.chkOnSiteSample);
-            this.detailcont.Controls.Add(this.dispBuyBackOrderID);
             this.detailcont.Controls.Add(this.labBBSP);
-            this.detailcont.Controls.Add(this.dispBuyBack);
             this.detailcont.Controls.Add(this.labBuyBack);
             this.detailcont.Controls.Add(this.chkBuyBack);
             this.detailcont.Controls.Add(this.chkAFbyAdidas);
@@ -3431,24 +3427,6 @@
             this.labBuyBack.Size = new System.Drawing.Size(0, 0);
             this.labBuyBack.TabIndex = 235;
             // 
-            // dispBuyBack
-            // 
-            this.dispBuyBack.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dispBuyBack.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dispBuyBack.Location = new System.Drawing.Point(0, 0);
-            this.dispBuyBack.Name = "dispBuyBack";
-            this.dispBuyBack.Size = new System.Drawing.Size(100, 21);
-            this.dispBuyBack.TabIndex = 234;
-            // 
-            // dispBuyBackOrderID
-            // 
-            this.dispBuyBackOrderID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dispBuyBackOrderID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dispBuyBackOrderID.Location = new System.Drawing.Point(0, 0);
-            this.dispBuyBackOrderID.Name = "dispBuyBackOrderID";
-            this.dispBuyBackOrderID.Size = new System.Drawing.Size(100, 21);
-            this.dispBuyBackOrderID.TabIndex = 232;
-            // 
             // labBBSP
             // 
             this.labBBSP.Location = new System.Drawing.Point(0, 0);
@@ -3790,9 +3768,7 @@
         private Win.UI.CheckBox chkAFbyAdidas;
         private Win.UI.DateBox dateBoxChangeMemo;
         private Win.UI.Label labChangeMemoDate;
-        private Win.UI.DisplayBox dispBuyBackOrderID;
         private Win.UI.Label labBBSP;
-        private Win.UI.DisplayBox dispBuyBack;
         private Win.UI.Label labBuyBack;
         private Win.UI.CheckBox chkOnSiteSample;
         private Win.UI.CheckBox chkBuyBack;
