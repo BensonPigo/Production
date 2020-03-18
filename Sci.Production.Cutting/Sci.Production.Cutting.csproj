@@ -434,6 +434,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="R01.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R01.Designer.cs">
+      <DependentUpon>R01.cs</DependentUpon>
+    </Compile>
     <Compile Include="R02.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -633,6 +639,9 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R01.resx">
+      <DependentUpon>R01.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
