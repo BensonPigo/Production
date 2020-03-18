@@ -372,6 +372,10 @@ AND PERCENTAGE >= IIF({PointRate} > 100, 100, {PointRate} )
 
             #region Sqlcmd
             string sqlcmd = $@"
+Select RowNo = ROW_NUMBER() OVER(ORDER by Month), ID 
+Into #probablySeasonList
+From SeasonSCI
+
 select distinct
     selected = cast(0 as bit),
 	FileExistI= cast(0 as bit),
@@ -395,7 +399,7 @@ select distinct
 	sr.ContinuityCard,
 	sr.TPEContinuityCard,
 	FirstDyelot.FirstDyelot,
-	TPEFirstDyelot = IIF(FirstDyelot.TPEFirstDyelot is null and FirstDyelot.RibItem = 1
+	TPEFirstDyelot = IIF(FirstDyelot.TPEFirstDyelot is null and f.RibItem = 1
                         ,'RIB no need first dye lot'
                         ,IIF(FirstDyelot.SeasonSCIID is null
                                 ,'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
@@ -423,10 +427,14 @@ left join Supp with(nolock) on Supp.ID = ps.SuppID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 left join Factory fty with (nolock) on fty.ID = Export.Consignee
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
+Left join #probablySeasonList seasonSCI on seasonSCI.ID = s.SeasonSCIID
 OUTER APPLY(
-	SELECT FirstDyelot,TPEFirstDyelot,RibItem,SeasonSCIID
-	FROM FirstDyelot fd  with(nolock) 
+	Select Top 1 FirstDyelot,TPEFirstDyelot,SeasonSCIID
+	From dbo.FirstDyelot fd
+	Inner join #probablySeasonList season on fd.SeasonSCIID = season.ID
 	WHERE fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
+		And seasonSCI.RowNo >= season.RowNo
+	Order by season.RowNo Desc
 )FirstDyelot
 outer apply(
 	select T1InspectedYards=sum(fp.ActualYds)
@@ -448,6 +456,8 @@ and (ed.qty + ed.Foc)>0
 and o.Category in('B','M')
 
 order by ed.id,ed.PoID,ed.Seq1,ed.Seq2
+
+DROP TABLE #probablySeasonList
 ";
             #endregion Sqlcmd
             DualResult result = DBProxy.Current.Select(null, sqlcmd, listSQLParameter, out dt1);
