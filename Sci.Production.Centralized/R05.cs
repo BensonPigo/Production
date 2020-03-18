@@ -291,7 +291,7 @@ drop table #tmpBase,#tmpBaseBySource,#tmpBaseByOrderID,#tmpOrder_QtyShip
             #region --由 appconfig 抓各個連線路徑
             this.SetLoadingText("Load connections... ");
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' });
+            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' }).Where(s => !s.Contains("testing_PMS")).ToArray();
             List<string> connectionString = new List<string>(); // ←主要是要重組 List connectionString
             foreach (string ss in strSevers)
             {
