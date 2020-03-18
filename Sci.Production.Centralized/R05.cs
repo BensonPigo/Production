@@ -168,7 +168,10 @@ left join SewingOutput_Detail_Detail sdd with (nolock) on o.ID = sdd.OrderId
 left join SewingOutput s with (nolock) on sdd.ID = s.ID
 left join Order_Location ol with (nolock) on ol.OrderId = sdd.OrderId and ol.Location = sdd.ComboType
 left join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey and sl.Location = sdd.ComboType
-outer apply (select CpuRate from GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'O') ) gcRate
+outer apply (select [CpuRate] = case when o.IsForecast = 1 then (select CpuRate from GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'O'))
+                                     when o.LocalOrder = 1 and o.SubconInType=3 then 1
+                                     else (select CpuRate from GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'O')) end
+                     ) gcRate
 outer apply (select Qty=sum(shipQty) from Pullout_Detail where orderid = o.id) GetPulloutData
 where   IsProduceFty = 1
         {where}
@@ -201,7 +204,12 @@ select  ID,
         SewingOutput,
         SewingOutputCPU,
         IsProduceFty,
-        [isNormalOrderCanceled] = iif(Junk = 1 and Qty > 0  And Category in ('B','S')  and (localorder = 0 or SubconInType=2),1,0)
+        --summary頁面不算Junk訂單使用，Forecast沒排掉是因為Planning R10有含
+        [isNormalOrderCanceled] = iif(  Junk = 1 and 
+                                        --正常訂單
+                                        ((Qty > 0  And Category in ('B','S')  and (localorder = 0 or SubconInType=2)) or
+                                        --當地訂單
+                                        (LocalOrder = 1 and SubconInType=3)),1,0)
 into #tmpBaseBySource
 from #tmpBase
 where {whereSource}
@@ -283,7 +291,7 @@ drop table #tmpBase,#tmpBaseBySource,#tmpBaseByOrderID,#tmpOrder_QtyShip
             #region --由 appconfig 抓各個連線路徑
             this.SetLoadingText("Load connections... ");
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' });
+            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' }).Where(s => !s.Contains("testing_PMS")).ToArray();
             List<string> connectionString = new List<string>(); // ←主要是要重組 List connectionString
             foreach (string ss in strSevers)
             {
