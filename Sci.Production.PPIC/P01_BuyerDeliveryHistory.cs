@@ -69,7 +69,7 @@ select SourceID
 	   , a.Remark
 	   , a.ReasonID
 	   , ResName = b.Name
-	   , editby = a.AddName + ' ' + CONVERT(CHAR(20), a.AddDate, 120) 
+	   , editby = dbo.getTPEPass1(a.AddName) + ' ' + CONVERT(CHAR(20), a.AddDate, 120) 
 from TradeHIS_@Module@ a
 left join Reason b on a.ReasonID = b.ID 
 								and a.ReasonTypeID = b.ReasonTypeID
