@@ -211,7 +211,7 @@ inner join Bundle bun WITH (NOLOCK) on bun.id = bd.id
 inner join Orders o WITH (NOLOCK) on bun.Orderid = o.ID and  bun.MDivisionID = o.MDivisionID
 and exists (select 1 from {tempTable} t where t.OrderID = o.ID and o.LocalOrder = 1) --Local單
 
-
+--2020/03/18↓效能調整,重組#Table where和join順序
 select distinct bunD.ID
 		, bunD.BundleGroup
 		, bunD.BundleNo
@@ -225,15 +225,13 @@ select distinct bunD.ID
 		, bunD.Qty
 		, bunD.IsPair
 into #tmp_Bundle_QtyBySubprocess
-from Bundle bun WITH (NOLOCK)
-INNER JOIn Orders o WITH (NOLOCK) ON bun.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID  /*2019/10/03 ISP20191382 */
-inner join Bundle_Detail bunD WITH (NOLOCK) on bunD.Id = bun.ID
-where exists (select 1 from  #AllOrders x0 where bun.Orderid = x0.Orderid
-		and bun.PatternPanel = x0.PatternPanel
-		and bun.FabricPanelCode = x0.FabricPanelCode
-		and bun.Article = x0.Article
-		and bunD.Sizecode = x0.Sizecode
-	    and bunD.Patterncode = x0.Patterncode)
+from #AllOrders x0
+inner join Bundle_Detail bunD WITH (NOLOCK) on bunD.Sizecode = x0.Sizecode and bunD.Patterncode = x0.Patterncode
+inner join Bundle bun WITH (NOLOCK) on bunD.Id = bun.ID and bun.Orderid = x0.Orderid 
+    and bun.PatternPanel = x0.PatternPanel and bun.FabricPanelCode = x0.FabricPanelCode and bun.Article = x0.Article
+inner join  Orders o WITH (NOLOCK) ON x0.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID 
+group by bunD.ID, bunD.BundleGroup, bunD.BundleNo, bun.AddDate, bun.Orderid, bun.PatternPanel, bun.FabricPanelCode, bun.Article,
+    bunD.Sizecode, bunD.Patterncode, bunD.Qty, bunD.IsPair
 ";
 
             foreach (string subprocessID in subprocessIDs)
@@ -335,11 +333,12 @@ into #CutpartBySet{subprocessIDtmp}
 from #QtyBySetPerCutpart{subprocessIDtmp} st2
 group by st2.Orderid, st2.Article, st2.Sizecode
 
+--2020/3/18↓效能調整,移除join Order_SizeCode,現在上方準備資料階段SizeCode已從Bundle來源改成Bundle_Detail和Order_Qty, 不需要再去串Order_SizeCode確認此SizeCode是否存在
 select	st0.Orderid
 		, SubprocessId=sub.id
 		, sub.InOutRule
 		, bunD.BundleGroup
-		, Size=os.SizeCode
+		, Size=st0.SizeCode
 		, st0.Article
 		, st0.PatternPanel
 		, st0.FabricPanelCode
@@ -353,14 +352,13 @@ select	st0.Orderid
 		, PostSewingSubProcess_SL =iif(isnull(bda.PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0)
 into #BundleInOutDetail{subprocessIDtmp}
 from #QtyBySetPerCutpart{subprocessIDtmp} st0
-inner join SubProcess sub WITH (NOLOCK) on sub.ID = '{subprocessID}'
-left join Order_SizeCode os WITH (NOLOCK) on os.ID = st0.POID and os.SizeCode = st0.SizeCode
+inner join SubProcess sub WITH (NOLOCK) on sub.ID = '{subprocessIDtmp}'
 left join #tmp_Bundle_QtyBySubprocess bund on bunD.Orderid = st0.Orderid 
 							and bunD.PatternPanel = st0.PatternPanel 
 							and	bunD.FabricPanelCode = st0.FabricPanelCode 
 							and	bunD.Article = st0.Article  
 							and	bunD.Patterncode = st0.Patterncode 
-							and	bunD.Sizecode = os.SizeCode 
+							and	bunD.Sizecode = st0.SizeCode 
 left join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId = sub.ID and isnull(bunIO.RFIDProcessLocationID,'') = ''
 left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = bunD.BundleNo and bunIOS.SubProcessId = 'SORTING' and isnull(bunIOS.RFIDProcessLocationID,'') = ''
 left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = bunD.BundleNo and bunIOL.SubProcessId = 'LOADING' and isnull(bunIOL.RFIDProcessLocationID,'') = ''
@@ -379,7 +377,7 @@ outer apply(
 		and bun.FabricPanelCode = st0.FabricPanelCode 
 		and bun.Article = st0.Article  
 		and bunD.Patterncode = st0.Patterncode 
-		and bunD.Sizecode = os.SizeCode
+		and bunD.Sizecode = st0.SizeCode
 	order by bun.AddDate desc
 )TopIsPair
 where (sub.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0)
