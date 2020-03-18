@@ -1468,13 +1468,6 @@ where POID = @poid group by POID,b.spno";
                 }
             }
 
-            string strCancelOrder = ChkCancelOrder(this.CurrentMaintain["POID"].ToString());
-            if (strCancelOrder.Empty() == false)
-            {
-                MyUtility.Msg.WarningBox(strCancelOrder);
-                return;
-            }
-
             string sqlCmd;
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "M" || MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "T")
             {
@@ -1741,36 +1734,38 @@ where POID = @poid group by POID,b.spno";
             string errmsg = string.Empty;
             System.Data.DataTable[] dtPacking;
             string sql = $@"
--- 判斷是否有CancelOrder
-select id from Orders 
-where poid= '{POID}'
-and Junk = 1
-
 -- show整個採購組合總裝箱數量和總產出數量
 select 
- [TotalPackQty] = sum(pd.ShipQty)
+ [TotalPackQty] = sum(pd.ShipQty + fc.FOCQty)
 ,[TotalQty] = sum(Output.value) 
-,o.POID
+,o.ID
 from Orders o 
 outer apply(
-	select ShipQty = sum(shipQty)
+	select ShipQty = isnull(sum(shipQty), 0)
 	from PackingList_Detail pd
 	where pd.OrderID = o.ID
 )pd
 outer apply(
-	select value = sum(dbo.getMinCompleteSewQty(oq.ID,oq.Article,oq.SizeCode))
+	select FOCQty = isnull(sum(FOCQty) ,0)
+	from Order_Finish
+	where ID = o.ID
+)fc
+outer apply(
+	select value = isnull(sum(dbo.getMinCompleteSewQty(oq.ID,oq.Article,oq.SizeCode)),0)
 	from Order_Qty oq
 	where oq.ID = o.ID
 )Output
 where o.poid= '{POID}'
-group by o.POID
+group by o.ID
 
 -- 判斷是否有進Clog
-select distinct pd.OrderID
+select distinct pd.OrderID, pd.ID
 from PackingList_Detail pd
 inner join Orders o on pd.OrderID= o.ID
+inner join PackingList p on p.ID = pd.ID
 where o.poid= '{POID}'
 and pd.ReceiveDate is null
+and p.Type in ('L', 'B')
 ";
 
             if (!(result = DBProxy.Current.Select(null, sql, out dtPacking)))
@@ -1780,26 +1775,29 @@ and pd.ReceiveDate is null
             }
 
             string strmsg = string.Empty;
-
-            // 判斷有CancelOrder 和總產出量>0 就接下去檢查
-            if (dtPacking[0].Rows.Count > 0 && !MyUtility.Check.Empty(dtPacking[1].Rows[0]["TotalQty"]))
+            foreach (DataRow row in dtPacking[0].AsEnumerable()
+                .Where(x => x.Field<int>("TotalPackQty") != x.Field<int>("TotalQty")))
             {
-                // 判斷是否每一個箱子都必須轉移到 Clog 和 總產出數量 = 總裝箱數量
-                if (MyUtility.Convert.GetInt(dtPacking[1].Rows[0]["TotalPackQty"]) != MyUtility.Convert.GetInt(dtPacking[1].Rows[0]["TotalQty"]) || dtPacking[2].Rows.Count > 0)
-                {
-                    foreach (DataRow dr in dtPacking[0].Rows)
-                    {
-                        strmsg += $"{dr["id"]}" + Environment.NewLine;
-                    }
-                }
+                strmsg = MyUtility.Check.Empty(strmsg) ? "Below SP# is Packing Qty not equal to Sewing Qty:" + Environment.NewLine : strmsg;
+                strmsg += string.Format(
+                    "SP# {0}, Packing Qty: {1}, Sewing Qty: {2}",
+                    row["ID"].ToString(),
+                    row["TotalPackQty"].ToString(),
+                    row["TotalQty"].ToString()) + Environment.NewLine;
             }
 
-            if (!strmsg.Empty())
+            errmsg += strmsg;
+            strmsg = string.Empty;
+            foreach (DataRow row in dtPacking[1].Rows)
             {
-                errmsg = "SP# :" + Environment.NewLine + strmsg + @"is cancel order, already output garment must create Packing List and transfer carton to Clog before use function 'shipment finish'.";
-                return errmsg;
+                strmsg = MyUtility.Check.Empty(strmsg) ? "Below SP# is carton not yet sent to clog:" + Environment.NewLine : strmsg;
+                strmsg += string.Format(
+                    "SP# {0}, Packing# {1}",
+                    row["OrderID"].ToString(),
+                    row["ID"].ToString()) + Environment.NewLine;
             }
 
+            errmsg += strmsg;
             return errmsg;
         }
     }
