@@ -1243,7 +1243,7 @@
             this.gridAppearance.RowTemplate.Height = 24;
             this.gridAppearance.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridAppearance.ShowCellToolTips = false;
-            this.gridAppearance.Size = new System.Drawing.Size(865, 411);
+            this.gridAppearance.Size = new System.Drawing.Size(1020, 411);
             this.gridAppearance.TabIndex = 0;
             // 
             // btnEncode
@@ -1311,6 +1311,7 @@
             this.Controls.Add(this.btnEncode);
             this.Controls.Add(this.tabControl1);
             this.Name = "P04_Detail";
+            this.OnLineHelpID = "Sci.Win.Forms.Base";
             this.Text = "Garment Test";
             this.Load += new System.EventHandler(this.P04_Detail_Load);
             this.tabControl1.ResumeLayout(false);

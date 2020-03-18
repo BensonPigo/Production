@@ -381,7 +381,9 @@ namespace Sci.Production.Quality
             .ComboBox("Wash1", header: "Wash1", width: Widths.AnsiChars(10), settings: ResultComboCell)
             .ComboBox("Wash2", header: "Wash2", width: Widths.AnsiChars(10), settings: ResultComboCell)
             .ComboBox("Wash3", header: "Wash3", width: Widths.AnsiChars(10), settings: ResultComboCell)
-            .Text("Comment", header: "Comment", width: Widths.AnsiChars(10), settings: TextColumnSetting);
+            .ComboBox("Wash4", header: "Wash4", width: Widths.AnsiChars(10), settings: ResultComboCell)
+            .ComboBox("Wash5", header: "Wash5", width: Widths.AnsiChars(10), settings: ResultComboCell)
+            .Text("Comment", header: "Comment", width: Widths.AnsiChars(20), settings: TextColumnSetting);
 
             tab1Load(); 
             tab2Load();
@@ -687,8 +689,10 @@ update [GarmentTest_Detail_Twisting] set S1={numBottomS1.Value},L={numBottomL.Va
   update set
 	t.[Type]  = s.[Type],
 	t.[Wash1]  = s.[Wash1],
-    t.[Wash2]	= s.[Wash2]	,
+    t.[Wash2]	= s.[Wash2],
     t.[Wash3]	= s.[Wash3],
+    t.[Wash4]	= s.[Wash4],
+    t.[Wash5]	= s.[Wash5],
     t.[Comment]	= s.[Comment]
 	;
 
@@ -849,10 +853,23 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                     worksheet.Cells[61, 9] = "V";
                 else
                     worksheet.Cells[61, 8] = tmpAR;
-
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["wash4"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[61, 10] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[61, 11] = "V";
+                else
+                    worksheet.Cells[61, 10] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["wash5"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[61, 12] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[61, 13] = "V";
+                else
+                    worksheet.Cells[61, 12] = tmpAR;
                 string strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["Comment"]);
                 rowHeight(worksheet, 61, strComment);
-                worksheet.Cells[61, 10] = strComment;
+                worksheet.Cells[61, 14] = strComment;
 
                 //
                 tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["wash1"]);
@@ -876,9 +893,23 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                     worksheet.Cells[62, 9] = "V";
                 else
                     worksheet.Cells[62, 8] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["wash4"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[62, 10] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[62, 11] = "V";
+                else
+                    worksheet.Cells[62, 10] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["wash5"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[62, 12] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[62, 13] = "V";
+                else
+                    worksheet.Cells[62, 12] = tmpAR;
                 strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["Comment"]);
                 rowHeight(worksheet, 62, strComment);
-                worksheet.Cells[62, 10] = strComment;
+                worksheet.Cells[62, 14] = strComment;
 
                 //
                 tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["wash1"]);
@@ -902,9 +933,23 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                     worksheet.Cells[63, 9] = "V";
                 else
                     worksheet.Cells[63, 8] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["wash4"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[63, 10] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[63, 11] = "V";
+                else
+                    worksheet.Cells[63, 10] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["wash5"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[63, 12] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[63, 13] = "V";
+                else
+                    worksheet.Cells[63, 12] = tmpAR;
                 strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["Comment"]);
                 rowHeight(worksheet, 63, strComment);
-                worksheet.Cells[63, 10] = strComment;
+                worksheet.Cells[63, 14] = strComment;
 
                 //
                 worksheet.Cells[64, 3] = dtApperance.Select("seq=4")[0]["Type"].ToString(); // type;
@@ -935,9 +980,23 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                     worksheet.Cells[64, 9] = "V";
                 else
                     worksheet.Cells[64, 8] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["wash4"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[64, 10] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[64, 11] = "V";
+                else
+                    worksheet.Cells[64, 10] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["wash5"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[64, 12] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[64, 13] = "V";
+                else
+                    worksheet.Cells[64, 12] = tmpAR;
                 strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["Comment"]);
                 rowHeight(worksheet, 64, strComment);
-                worksheet.Cells[64, 10] = strComment;
+                worksheet.Cells[64, 14] = strComment;
 
                 //
                 tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["wash1"]);
@@ -961,9 +1020,23 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                     worksheet.Cells[65, 9] = "V";
                 else
                     worksheet.Cells[65, 8] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["wash4"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[65, 10] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[65, 11] = "V";
+                else
+                    worksheet.Cells[65, 10] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["wash5"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[65, 12] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[65, 13] = "V";
+                else
+                    worksheet.Cells[65, 12] = tmpAR;
                 strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["Comment"]);
                 rowHeight(worksheet, 65, strComment);
-                worksheet.Cells[65, 10] = strComment;
+                worksheet.Cells[65, 14] = strComment;
 
                 //
                 tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["wash1"]);
@@ -987,9 +1060,23 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                     worksheet.Cells[66, 9] = "V";
                 else
                     worksheet.Cells[66, 8] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["wash4"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[66, 10] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[66, 11] = "V";
+                else
+                    worksheet.Cells[66, 10] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["wash5"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[66, 12] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[66, 13] = "V";
+                else
+                    worksheet.Cells[66, 12] = tmpAR;
                 strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["Comment"]);
                 rowHeight(worksheet, 66, strComment);
-                worksheet.Cells[66, 10] = strComment;
+                worksheet.Cells[66, 14] = strComment;
 
                 //
                 tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["wash1"]);
@@ -1013,9 +1100,23 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                     worksheet.Cells[67, 9] = "V";
                 else
                     worksheet.Cells[67, 8] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["wash4"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[67, 10] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[67, 11] = "V";
+                else
+                    worksheet.Cells[67, 10] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["wash5"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[67, 12] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[67, 13] = "V";
+                else
+                    worksheet.Cells[67, 12] = tmpAR;
                 strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["Comment"]);
                 rowHeight(worksheet, 67, strComment);
-                worksheet.Cells[67, 10] = strComment;
+                worksheet.Cells[67, 14] = strComment;
 
                 //
                 tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["wash1"]);
@@ -1039,9 +1140,23 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                     worksheet.Cells[68, 9] = "V";
                 else
                     worksheet.Cells[68, 8] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["wash4"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[68, 10] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[68, 11] = "V";
+                else
+                    worksheet.Cells[68, 10] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["wash5"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[68, 12] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[68, 13] = "V";
+                else
+                    worksheet.Cells[68, 12] = tmpAR;
                 strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["Comment"]);
                 rowHeight(worksheet, 68, strComment);
-                worksheet.Cells[68, 10] = strComment;
+                worksheet.Cells[68, 14] = strComment;
 
                 //
                 tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=9")[0]["wash1"]);
@@ -1065,9 +1180,23 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                     worksheet.Cells[69, 9] = "V";
                 else
                     worksheet.Cells[69, 8] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=9")[0]["wash4"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[69, 10] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[69, 11] = "V";
+                else
+                    worksheet.Cells[69, 10] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=9")[0]["wash5"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[69, 12] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[69, 13] = "V";
+                else
+                    worksheet.Cells[69, 12] = tmpAR;
                 strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=9")[0]["Comment"]);
                 rowHeight(worksheet, 69, strComment);
-                worksheet.Cells[69, 10] = strComment;
+                worksheet.Cells[69, 14] = strComment;
                 #endregion
 
                 if (comboNeck.Text.EqualString("Yes"))
@@ -1377,10 +1506,24 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                     worksheet.Cells[61, 9] = "V";
                 else
                     worksheet.Cells[61, 8] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["wash4"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[61, 10] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[61, 11] = "V";
+                else
+                    worksheet.Cells[61, 10] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["wash5"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[61, 12] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[61, 13] = "V";
+                else
+                    worksheet.Cells[61, 12] = tmpAR;
 
                 string strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["Comment"]);
                 rowHeight(worksheet, 61, strComment);
-                worksheet.Cells[61, 10] = strComment;
+                worksheet.Cells[61, 14] = strComment;
 
                 //
 
@@ -1407,9 +1550,24 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                     worksheet.Cells[62, 9] = "V";
                 else
                     worksheet.Cells[62, 8] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["wash4"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[62, 10] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[62, 11] = "V";
+                else
+                    worksheet.Cells[62, 10] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["wash5"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[62, 12] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[62, 13] = "V";
+                else
+                    worksheet.Cells[62, 12] = tmpAR;
+
                 strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["Comment"]);
                 rowHeight(worksheet, 62, strComment);
-                worksheet.Cells[62, 10] = strComment;
+                worksheet.Cells[62, 14] = strComment;
 
                 //
                 tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["wash1"]);
@@ -1453,9 +1611,23 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                     worksheet.Cells[63, 9] = "V";
                 else
                     worksheet.Cells[63, 8] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["wash4"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[63, 10] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[63, 11] = "V";
+                else
+                    worksheet.Cells[63, 10] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["wash5"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[63, 12] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[63, 13] = "V";
+                else
+                    worksheet.Cells[63, 12] = tmpAR;
                 strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["Comment"]);
                 rowHeight(worksheet, 63, strComment);
-                worksheet.Cells[63, 10] = strComment;
+                worksheet.Cells[63, 14] = strComment;
 
                 //
 
@@ -1481,9 +1653,23 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                     worksheet.Cells[64, 9] = "V";
                 else
                     worksheet.Cells[64, 8] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["wash4"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[64, 10] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[64, 11] = "V";
+                else
+                    worksheet.Cells[64, 10] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["wash5"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[64, 12] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[64, 13] = "V";
+                else
+                    worksheet.Cells[64, 12] = tmpAR;
                 strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["Comment"]);
                 rowHeight(worksheet, 64, strComment);
-                worksheet.Cells[64, 10] = strComment;
+                worksheet.Cells[64, 14] = strComment;
 
                 //
 
@@ -1510,9 +1696,23 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                     worksheet.Cells[65, 9] = "V";
                 else
                     worksheet.Cells[65, 8] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["wash4"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[65, 10] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[65, 11] = "V";
+                else
+                    worksheet.Cells[65, 10] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["wash5"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[65, 12] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[65, 13] = "V";
+                else
+                    worksheet.Cells[65, 12] = tmpAR;
                 strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["Comment"]);
                 rowHeight(worksheet, 65, strComment);
-                worksheet.Cells[65, 10] = strComment;
+                worksheet.Cells[65, 14] = strComment;
 
                 //
                 worksheet.Cells[66, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["Type"]);
@@ -1538,9 +1738,23 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                     worksheet.Cells[66, 9] = "V";
                 else
                     worksheet.Cells[66, 8] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["wash4"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[66, 10] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[66, 11] = "V";
+                else
+                    worksheet.Cells[66, 10] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["wash5"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[66, 12] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[66, 13] = "V";
+                else
+                    worksheet.Cells[66, 12] = tmpAR;
                 strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["Comment"]);
                 rowHeight(worksheet, 66, strComment);
-                worksheet.Cells[66, 10] = strComment;
+                worksheet.Cells[66, 14] = strComment;
 
                 //
                 worksheet.Cells[67, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["Type"]);
@@ -1566,9 +1780,23 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                     worksheet.Cells[67, 9] = "V";
                 else
                     worksheet.Cells[67, 8] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["wash4"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[67, 10] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[67, 11] = "V";
+                else
+                    worksheet.Cells[67, 10] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["wash5"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[67, 12] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[67, 13] = "V";
+                else
+                    worksheet.Cells[67, 12] = tmpAR;
                 strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["Comment"]);
                 rowHeight(worksheet, 67, strComment);
-                worksheet.Cells[67, 10] = strComment;
+                worksheet.Cells[67, 14] = strComment;
 
                 //
                 worksheet.Cells[68, 3] = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["Type"]);
@@ -1594,9 +1822,23 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                     worksheet.Cells[68, 9] = "V";
                 else
                     worksheet.Cells[68, 8] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["wash4"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[68, 10] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[68, 11] = "V";
+                else
+                    worksheet.Cells[68, 10] = tmpAR;
+                tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["wash5"]);
+                if (tmpAR.EqualString("Accepted"))
+                    worksheet.Cells[68, 12] = "V";
+                else if (tmpAR.EqualString("Rejected"))
+                    worksheet.Cells[68, 13] = "V";
+                else
+                    worksheet.Cells[68, 12] = tmpAR;
                 strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["Comment"]);
                 rowHeight(worksheet, 68, strComment);
-                worksheet.Cells[68, 10] = strComment;
+                worksheet.Cells[68, 14] = strComment;
                 
                 #endregion
 
