@@ -168,7 +168,10 @@ left join SewingOutput_Detail_Detail sdd with (nolock) on o.ID = sdd.OrderId
 left join SewingOutput s with (nolock) on sdd.ID = s.ID
 left join Order_Location ol with (nolock) on ol.OrderId = sdd.OrderId and ol.Location = sdd.ComboType
 left join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey and sl.Location = sdd.ComboType
-outer apply (select CpuRate from GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'O') ) gcRate
+outer apply (select [CpuRate] = case when o.IsForecast = 1 then (select CpuRate from GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'O'))
+                                     when o.LocalOrder = 1 and o.SubconInType=3 then 1
+                                     else (select CpuRate from GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'O')) end
+                     ) gcRate
 outer apply (select Qty=sum(shipQty) from Pullout_Detail where orderid = o.id) GetPulloutData
 where   IsProduceFty = 1
         {where}
