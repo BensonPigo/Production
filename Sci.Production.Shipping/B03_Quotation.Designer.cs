@@ -48,7 +48,8 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(826, 395);
+            this.detail.Location = new System.Drawing.Point(4, 29);
+            this.detail.Size = new System.Drawing.Size(826, 391);
             // 
             // detailcont
             // 
@@ -62,15 +63,17 @@
             this.detailcont.Controls.Add(this.labelCode);
             this.detailcont.Controls.Add(this.txtCurrency1);
             this.detailcont.Controls.Add(this.txtsubconSupplier1);
-            this.detailcont.Size = new System.Drawing.Size(826, 357);
+            this.detailcont.Size = new System.Drawing.Size(826, 353);
             // 
             // detailbtm
             // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 353);
             this.detailbtm.Size = new System.Drawing.Size(826, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(826, 395);
+            this.browse.Location = new System.Drawing.Point(4, 29);
+            this.browse.Size = new System.Drawing.Size(826, 391);
             // 
             // tabs
             // 
@@ -78,12 +81,12 @@
             // 
             // createby
             // 
-            this.createby.Size = new System.Drawing.Size(350, 23);
+            this.createby.Size = new System.Drawing.Size(350, 26);
             // 
             // editby
             // 
             this.editby.Location = new System.Drawing.Point(471, 7);
-            this.editby.Size = new System.Drawing.Size(350, 23);
+            this.editby.Size = new System.Drawing.Size(350, 26);
             // 
             // lbleditby
             // 
@@ -95,7 +98,7 @@
             this.numPrice1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "price1", true));
             this.numPrice1.DecimalPlaces = 5;
             this.numPrice1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numPrice1.Location = new System.Drawing.Point(183, 89);
+            this.numPrice1.Location = new System.Drawing.Point(179, 89);
             this.numPrice1.Maximum = new decimal(new int[] {
             -727379969,
             232,
@@ -103,7 +106,7 @@
             262144});
             this.numPrice1.MaxLength = 13;
             this.numPrice1.Minimum = new decimal(new int[] {
-            99999,
+            99999999,
             0,
             0,
             -2147483648});
@@ -113,7 +116,7 @@
             0,
             0,
             0});
-            this.numPrice1.Size = new System.Drawing.Size(100, 23);
+            this.numPrice1.Size = new System.Drawing.Size(118, 26);
             this.numPrice1.TabIndex = 37;
             this.numPrice1.Value = new decimal(new int[] {
             0,
@@ -136,7 +139,7 @@
             this.displayCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayCode.Location = new System.Drawing.Point(137, 18);
             this.displayCode.Name = "displayCode";
-            this.displayCode.Size = new System.Drawing.Size(140, 23);
+            this.displayCode.Size = new System.Drawing.Size(140, 26);
             this.displayCode.TabIndex = 31;
             // 
             // labelCode
@@ -166,7 +169,7 @@
             this.txtCurrency1.IsSupportSytsemContextMenu = false;
             this.txtCurrency1.Location = new System.Drawing.Point(137, 89);
             this.txtCurrency1.Name = "txtCurrency1";
-            this.txtCurrency1.Size = new System.Drawing.Size(40, 23);
+            this.txtCurrency1.Size = new System.Drawing.Size(40, 26);
             this.txtCurrency1.TabIndex = 26;
             // 
             // txtsubconSupplier1
@@ -196,7 +199,7 @@
             this.dateQuotation1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "QuotDate1", true));
             this.dateQuotation1.Location = new System.Drawing.Point(137, 126);
             this.dateQuotation1.Name = "dateQuotation1";
-            this.dateQuotation1.Size = new System.Drawing.Size(130, 23);
+            this.dateQuotation1.Size = new System.Drawing.Size(130, 26);
             this.dateQuotation1.TabIndex = 48;
             // 
             // label6

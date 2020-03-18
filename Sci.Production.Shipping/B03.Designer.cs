@@ -60,7 +60,8 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(882, 395);
+            this.detail.Location = new System.Drawing.Point(4, 29);
+            this.detail.Size = new System.Drawing.Size(882, 391);
             // 
             // detailcont
             // 
@@ -85,15 +86,17 @@
             this.detailcont.Controls.Add(this.txtUnit);
             this.detailcont.Controls.Add(this.txtsubconSupplier);
             this.detailcont.Controls.Add(this.txtbrand);
-            this.detailcont.Size = new System.Drawing.Size(882, 357);
+            this.detailcont.Size = new System.Drawing.Size(882, 353);
             // 
             // detailbtm
             // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 353);
             this.detailbtm.Size = new System.Drawing.Size(882, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(882, 395);
+            this.browse.Location = new System.Drawing.Point(4, 29);
+            this.browse.Size = new System.Drawing.Size(882, 391);
             // 
             // tabs
             // 
@@ -101,12 +104,12 @@
             // 
             // createby
             // 
-            this.createby.Size = new System.Drawing.Size(350, 23);
+            this.createby.Size = new System.Drawing.Size(350, 26);
             // 
             // editby
             // 
             this.editby.Location = new System.Drawing.Point(471, 7);
-            this.editby.Size = new System.Drawing.Size(350, 23);
+            this.editby.Size = new System.Drawing.Size(350, 26);
             // 
             // lbleditby
             // 
@@ -175,7 +178,7 @@
             this.txtCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCode.Location = new System.Drawing.Point(120, 22);
             this.txtCode.Name = "txtCode";
-            this.txtCode.Size = new System.Drawing.Size(140, 23);
+            this.txtCode.Size = new System.Drawing.Size(140, 26);
             this.txtCode.TabIndex = 7;
             this.txtCode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCode_Validating);
             // 
@@ -197,7 +200,7 @@
             this.displayPrice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayPrice.Location = new System.Drawing.Point(120, 222);
             this.displayPrice.Name = "displayPrice";
-            this.displayPrice.Size = new System.Drawing.Size(40, 23);
+            this.displayPrice.Size = new System.Drawing.Size(40, 26);
             this.displayPrice.TabIndex = 11;
             // 
             // numPrice
@@ -215,7 +218,7 @@
             0,
             0});
             this.numPrice.ReadOnly = true;
-            this.numPrice.Size = new System.Drawing.Size(100, 23);
+            this.numPrice.Size = new System.Drawing.Size(118, 26);
             this.numPrice.TabIndex = 12;
             this.numPrice.Value = new decimal(new int[] {
             0,
@@ -230,7 +233,7 @@
             this.dateCanvassDate.Location = new System.Drawing.Point(120, 257);
             this.dateCanvassDate.Name = "dateCanvassDate";
             this.dateCanvassDate.ReadOnly = true;
-            this.dateCanvassDate.Size = new System.Drawing.Size(130, 23);
+            this.dateCanvassDate.Size = new System.Drawing.Size(130, 26);
             this.dateCanvassDate.TabIndex = 13;
             // 
             // checkBox1
@@ -242,7 +245,7 @@
             this.checkBox1.Location = new System.Drawing.Point(316, 22);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.ReadOnly = true;
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
+            this.checkBox1.Size = new System.Drawing.Size(66, 24);
             this.checkBox1.TabIndex = 3;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
@@ -253,7 +256,7 @@
             this.btnQuotationRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnQuotationRecord.Location = new System.Drawing.Point(683, 57);
             this.btnQuotationRecord.Name = "btnQuotationRecord";
-            this.btnQuotationRecord.Size = new System.Drawing.Size(138, 30);
+            this.btnQuotationRecord.Size = new System.Drawing.Size(145, 30);
             this.btnQuotationRecord.TabIndex = 16;
             this.btnQuotationRecord.Text = "Quotation Record";
             this.btnQuotationRecord.UseVisualStyleBackColor = true;
@@ -265,7 +268,7 @@
             this.btnPaymentHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnPaymentHistory.Location = new System.Drawing.Point(683, 94);
             this.btnPaymentHistory.Name = "btnPaymentHistory";
-            this.btnPaymentHistory.Size = new System.Drawing.Size(138, 30);
+            this.btnPaymentHistory.Size = new System.Drawing.Size(145, 30);
             this.btnPaymentHistory.TabIndex = 17;
             this.btnPaymentHistory.Text = "Payment History";
             this.btnPaymentHistory.UseVisualStyleBackColor = true;
@@ -307,7 +310,7 @@
             this.txtUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtUnit.Location = new System.Drawing.Point(120, 154);
             this.txtUnit.Name = "txtUnit";
-            this.txtUnit.Size = new System.Drawing.Size(66, 23);
+            this.txtUnit.Size = new System.Drawing.Size(66, 26);
             this.txtUnit.TabIndex = 20;
             // 
             // txtsubconSupplier
@@ -331,7 +334,7 @@
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(120, 118);
             this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand.Size = new System.Drawing.Size(66, 26);
             this.txtbrand.TabIndex = 1;
             // 
             // txtAccountNo
