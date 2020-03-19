@@ -699,8 +699,11 @@ drop table #tmpFinal_step1
                                         if (this.drSummary.Length > 0)
                                         {
                                             worksheet.Cells[intRowsStart + 1, monthDays + 4] = this.drSummary[0]["Total_StdOutput"];
+                                            ((Excel.Range)worksheet.Cells[intRowsStart + 1, monthDays + 4]).NumberFormat = "#,##0_);(#,##0)";
                                             worksheet.Cells[intRowsStart + 2, monthDays + 4] = this.drSummary[0]["PPH"];
+                                            ((Excel.Range)worksheet.Cells[intRowsStart + 2, monthDays + 4]).NumberFormat = "0.00";
                                             worksheet.Cells[intRowsStart + 3, monthDays + 4] = this.drSummary[0]["CPU"];
+                                            ((Excel.Range)worksheet.Cells[intRowsStart + 3, monthDays + 4]).NumberFormat = "#,##0_);(#,##0)";
                                         }
                                     }
                                 }
@@ -709,14 +712,23 @@ drop table #tmpFinal_step1
                                 worksheet.Range[$"A1:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
                                 // 設定格式
-                                worksheet.Range[$"A2:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].NumberFormatLocal = "@";
                                 worksheet.Range[$"A1:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
                                 worksheet.Range[$"A1:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].Font.Bold = true;
                                 worksheet.Range[$"A2:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].Font.Size = 10;
                                 worksheet.Range[$"A1:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].Font.Name = "Calibri";
 
+                                // 相同line資訊用粗線框起來
+                                for (int i = 2; i <= (rowcnt * 4); i++)
+                                {
+                                    if ((i - 2) % 4 == 0)
+                                    {
+                                        worksheet.Range[$"A{i}:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{i + 3}"].BorderAround2(LineStyle: 1, Excel.XlBorderWeight.xlMedium);
+                                    }
+                                }
+
                                 // 複製Sheet[Gantt Chart]表頭格式
                                 objApp.Sheets[mWorkBook.Sheets.Count].Copy(objApp.ActiveWorkbook.Worksheets[4]);
+
                                 // 換Sheet 需要清空變數line,不然會抓到上一筆廠區的lineID
                                 line = string.Empty;
                             }
@@ -731,8 +743,11 @@ drop table #tmpFinal_step1
                             // 填入SubTotal
                             this.drSummary = dtGanttSumery[1].Select($@" FactoryID = '{dr["FactoryID"]}'");
                             worksheet.Cells[4, 3] = this.drSummary[0]["TotalPPH"];
+                            ((Excel.Range)worksheet.Cells[4, 3]).NumberFormat = "0.00";
                             worksheet.Cells[6, 3] = this.drSummary[0]["TotalStdQ"];
+                            ((Excel.Range)worksheet.Cells[6, 3]).NumberFormat = "#,##0_);(#,##0)";
                             worksheet.Cells[8, 3] = this.drSummary[0]["TotalCPU"];
+                            ((Excel.Range)worksheet.Cells[8, 3]).NumberFormat = "#,##0_);(#,##0)";
 
                             writeFty = MyUtility.Convert.GetString(dr["FactoryID"]);
                             ftyCount++;
@@ -784,8 +799,11 @@ drop table #tmpFinal_step1
                                     if (this.drSummary.Length > 0)
                                     {
                                         worksheet.Cells[intRowsStart - 3, monthDays + 4] = this.drSummary[0]["Total_StdOutput"];
+                                        ((Excel.Range)worksheet.Cells[intRowsStart - 3, monthDays + 4]).NumberFormat = "#,##0_);(#,##0)";
                                         worksheet.Cells[intRowsStart - 2, monthDays + 4] = this.drSummary[0]["PPH"];
+                                        ((Excel.Range)worksheet.Cells[intRowsStart - 2, monthDays + 4]).NumberFormat = "0.00";
                                         worksheet.Cells[intRowsStart - 1, monthDays + 4] = this.drSummary[0]["CPU"];
+                                        ((Excel.Range)worksheet.Cells[intRowsStart - 1, monthDays + 4]).NumberFormat = "#,##0_);(#,##0)";
                                     }
                                 }
                             }
@@ -893,8 +911,11 @@ drop table #tmpFinal_step1
                             if (this.drSummary.Length > 0)
                             {
                                 worksheet.Cells[intRowsStart + 1, startCol + d] = this.drSummary[0]["Total_StdOutput"];
+                                ((Excel.Range)worksheet.Cells[intRowsStart + 1, startCol + d]).NumberFormat = "#,##0_);(#,##0)";
                                 worksheet.Cells[intRowsStart + 2, startCol + d] = this.drSummary[0]["PPH"];
+                                ((Excel.Range)worksheet.Cells[intRowsStart + 2, startCol + d]).NumberFormat = "0.00";
                                 worksheet.Cells[intRowsStart + 3, startCol + d] = this.drSummary[0]["CPU"];
+                                ((Excel.Range)worksheet.Cells[intRowsStart + 3, startCol + d]).NumberFormat = "#,##0_);(#,##0)";
                                 rngColor.Cells.Interior.Color = System.Drawing.Color.White;
                             }
                         }
@@ -914,8 +935,11 @@ drop table #tmpFinal_step1
                             if (this.drSummary.Length > 0)
                             {
                                 worksheet.Cells[(rowcnt * 4) + 2 - 3, monthDays + 4] = this.drSummary[0]["Total_StdOutput"];
+                                ((Excel.Range)worksheet.Cells[(rowcnt * 4) + 2 - 3, monthDays + 4]).NumberFormat = "#,##0_);(#,##0)";
                                 worksheet.Cells[(rowcnt * 4) + 2 - 2, monthDays + 4] = this.drSummary[0]["PPH"];
+                                ((Excel.Range)worksheet.Cells[(rowcnt * 4) + 2 - 2, monthDays + 4]).NumberFormat = "0.00";
                                 worksheet.Cells[(rowcnt * 4) + 2 - 1, monthDays + 4] = this.drSummary[0]["CPU"];
+                                ((Excel.Range)worksheet.Cells[(rowcnt * 4) + 2 - 1, monthDays + 4]).NumberFormat = "#,##0_);(#,##0)";
                             }
                         }
                     }
@@ -930,13 +954,19 @@ drop table #tmpFinal_step1
 
                     // 畫線
                     worksheet.Range[$"A1:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-
-                    // 設定格式
-                    worksheet.Range[$"A2:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].NumberFormatLocal = "@";
                     worksheet.Range[$"A1:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
                     worksheet.Range[$"A1:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].Font.Bold = true;
                     worksheet.Range[$"A2:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].Font.Size = 10;
                     worksheet.Range[$"A1:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{(rowcnt * 4) + 1}"].Font.Name = "Calibri";
+
+                    // 相同line資訊用粗線框起來
+                    for (int i = 2; i <= (rowcnt * 4); i++)
+                    {
+                        if ((i - 2) % 4 == 0)
+                        {
+                            worksheet.Range[$"A{i}:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{i + 3}"].BorderAround2(LineStyle: 1, Excel.XlBorderWeight.xlMedium);
+                        }
+                    }
 
                     // 調整欄寬
                     for (int c = 1; c < colcnts + 3; c++)
@@ -1104,6 +1134,7 @@ where id = '{0}'", Env.User.Factory), null);
                 }
                 #endregion
             }
+
             return true;
         }
 
