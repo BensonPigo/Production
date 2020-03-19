@@ -207,7 +207,7 @@ OUTER APPLY(
 				        FROM Issue_Breakdown
 				        WHERE ID='{masterID}'
 				        GROUP BY OrderID ,Article
-			        ) t ON  t.Article = tcd.Article AND t.OrderID= o.ID
+			        ) t ON /* t.Article = tcd.Article AND*/ t.OrderID= o.ID
 		WHERE tcd.SCIRefNo= iis.SCIRefNo AND tcd.SuppColor = iis.SuppColor 
 	)A
 	GROUP BY  SCIRefNo, SuppColor
@@ -1912,7 +1912,7 @@ WHERE o.id = '{CurrentOrderID}'  AND o.sewline != '') t FOR xml path('')
                     string StockUnitDesc = key["Stock Unit Desc."].ToString();
                     string OutputQty = key["Output Qty(Garment)"].ToString();
                     decimal balance = (decimal)key["Bulk Balance(Stock Unit)"];
-                    string FtyInventoryUkey = key["FtyInventoryUkey"].ToString();
+                    //string FtyInventoryUkey = key["FtyInventoryUkey"].ToString();
                     string AccuIssued = key["AccuIssued"].ToString();
 
                     DataRow nRow = _detail.NewRow();

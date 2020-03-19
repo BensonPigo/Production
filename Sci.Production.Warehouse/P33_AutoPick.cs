@@ -156,10 +156,10 @@ SELECT  --DISTINCT
 		, [Stock Unit Desc.]=StockUnit.Description
 		, [Output Qty(Garment)] = Garment.Qty
 		, [Bulk Balance(Stock Unit)] = ISNULL(( Fty.InQty-Fty.OutQty + Fty.AdjustQty ) ,0)
-		, [FtyInventoryUkey]=Fty.Ukey
+		--, [FtyInventoryUkey]=Fty.Ukey
         , [POID]=psd.ID
-		, psd.SEQ1
-		, psd.SEQ2
+		--, psd.SEQ1
+		--, psd.SEQ2
 		, [AccuIssued] = (
 					select isnull(sum([IS].qty),0)
 					from dbo.issue I2 WITH (NOLOCK) 
@@ -190,7 +190,7 @@ OUTER APPLY(
 		INNER JOIN dbo.Style as s On s.Ukey = o.StyleUkey
 		INNER JOIN dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
 		INNER JOIN dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
-		INNER JOIN #tmp t ON  t.Article = tcd.Article  AND o.ID = t.OrderID
+		INNER JOIN #tmp t ON  /*t.Article = tcd.Article  AND*/ o.ID = t.OrderID
 		WHERE tcd.SCIRefNo= psd.SCIRefNo AND tcd.SuppColor = psd.SuppColor
 	)A
 	GROUP BY  SCIRefNo, SuppColor
@@ -232,7 +232,7 @@ SELECT  [Selected]
 		, [Output Qty(Garment)]
 		, [Bulk Balance(Stock Unit)] = SUM([Bulk Balance(Stock Unit)])
         , [POID]
-		, [FtyInventoryUkey]
+		--, [FtyInventoryUkey]
 		, [AccuIssued]
 FROM #final
 GROUP BY [Selected] 
@@ -248,7 +248,7 @@ GROUP BY [Selected]
 		, [Stock Unit Desc.]
 		, [Output Qty(Garment)]
         , [POID]
-		, [FtyInventoryUkey]
+		--, [FtyInventoryUkey]
 		, [AccuIssued]
 
 DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final
