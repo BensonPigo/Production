@@ -926,71 +926,17 @@ AND psd.SuppColor='{e.FormattedValue}'
             Ict.Win.DataGridViewGeneratorNumericColumnSettings issueQty = new DataGridViewGeneratorNumericColumnSettings();
             issueQty.CellMouseDoubleClick += (s, e) =>
             {
-                if (!this.EditMode)
-                {
-                    return;
-                }
                 if (dtIssueBreakDown == null)
                 {
                     MyUtility.Msg.WarningBox("IssueBreakdown data no data!", "Warning");
                     return;
                 }
 
-
-                //Decimal sum = 0;
-                //foreach (DataRow dr in dtIssueBreakDown.Rows)
-                //{
-                //    foreach (DataColumn dc in dtIssueBreakDown.Columns)
-                //    {
-                //        if (Object.ReferenceEquals(sum.GetType(), dr[dc].GetType()))
-                //            sum += (Decimal)dr[dc];
-                //    }
-                //}
-
-                //if (sum == 0)
-                //{
-                //    MyUtility.Msg.WarningBox("IssueBreakdown data no data!", "Warning");
-                //    return;
-                //}
-
-
-                //subform.dtIssueBreakDown = this.dtIssueBreakDown;
                 DoSubForm.IsSupportUpdate = false;
-
-                #region keep SubDt
-                /*
-                 * 如果要實現 Reject 第三層
-                 * 必須先 keep 原始資料
-                 */
-                Dictionary<DataRow, DataTable> originSub = new Dictionary<DataRow, DataTable>();
-                foreach (DataRow dr in DetailDatas)
-                {
-                    if (dr.RowState != DataRowState.Deleted)
-                    {
-                        DataTable subDt;
-                        GetSubDetailDatas(dr, out subDt);
-                        //if (subDt == null)
-                        //{
-                        //    return;
-                        //}
-                        DataTable keepDt = subDt.Clone();
-
-                        foreach (DataRow subDr in subDt.Rows)
-                        {
-                            keepDt.ImportRow(subDr);
-                        }
-                        originSub.Add(dr, keepDt);
-                    }
-                }
-                #endregion
-
                 OpenSubDetailPage();
 
                 DataTable FinalSubDt;
                 GetSubDetailDatas(out FinalSubDt);
-                if (!subform.isSave)
-                {
-                }
 
                 DataTable detail = (DataTable)detailgridbs.DataSource;
                 foreach (DataRow dr in detail.Rows)
@@ -1019,7 +965,7 @@ AND psd.SuppColor='{e.FormattedValue}'
             .Text("SuppColor", header: "Color", width: Widths.AnsiChars(7),  settings: ColorSet) 
             .EditText("DescDetail", header: "Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true) 
             .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(15), decimal_places: 2, integer_places: 10, iseditingreadonly: true)  
-            .Text("AccuIssued", header: "Accu. Issued"+Environment.NewLine+"(Stock Unit)", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Numeric("AccuIssued", header: "Accu. Issued"+Environment.NewLine+"(Stock Unit)", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("IssueQty", header: "Issue Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6),decimal_places:2 , settings: issueQty, iseditingreadonly: true)
             .Numeric("Use Qty By Stock Unit", header: "Use Qty" + Environment.NewLine + "By Stock Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
             .Text("Stock Unit", header: "Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
