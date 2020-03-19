@@ -1292,6 +1292,9 @@
     <None Include="XLT\Subcon_R37_List.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Subcon_R41-1 Replacement Bundle tracking list%28RFID%29.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Subcon_R41_Bundle tracking list %28RFID%29.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

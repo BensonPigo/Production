@@ -543,7 +543,7 @@ order by x.[Bundle]");
                         Season = row1["Seasonid"].ToString(),
                         brand = row1["brand"].ToString(),
                         item = row1["item"].ToString(),
-                        EXCESS1 = row1["isEXCESS"].ToString(),
+                        EXCESS1 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : "",
                         NoBundleCardAfterSubprocess1 = row1["NoBundleCardAfterSubprocess"].ToString()
                     }).ToList();
                 data.AddRange(
@@ -568,7 +568,7 @@ order by x.[Bundle]");
                      Season2 = row1["Seasonid"].ToString(),
                      brand2 = row1["brand"].ToString(),
                      item2 = row1["item"].ToString(),
-                     EXCESS2 = row1["isEXCESS"].ToString(),
+                     EXCESS2 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : "",
                      NoBundleCardAfterSubprocess2 = row1["NoBundleCardAfterSubprocess"].ToString()
                  }).ToList());
 
@@ -595,7 +595,7 @@ order by x.[Bundle]");
                     Season3 = row1["Seasonid"].ToString(),
                     brand3 = row1["brand"].ToString(),
                     item3 = row1["item"].ToString(),
-                    EXCESS3 = row1["isEXCESS"].ToString(),
+                    EXCESS3 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : "",
                     NoBundleCardAfterSubprocess3 = row1["NoBundleCardAfterSubprocess"].ToString()
                 }).ToList());
 
