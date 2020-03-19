@@ -36,6 +36,8 @@
     [NewSeq1]              VARCHAR (3)    DEFAULT ('') NULL,
     [NewSeq2]              VARCHAR (2)    DEFAULT ('') NULL,
     [PurchaseID]           VARCHAR (13)   DEFAULT ('') NULL,
+    [FinalNeedQty] NUMERIC(9, 2) CONSTRAINT [DF_ReplacementReport_Detail_FinalNeedQty] DEFAULT (0) NOT NULL, 
+	[ReplacementUnit] varchar(8) CONSTRAINT [DF_ReplacementReport_Detail_ReplacementUnit] DEFAULT ('') NULL, 
     CONSTRAINT [PK_ReplacementReport_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
 

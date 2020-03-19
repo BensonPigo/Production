@@ -113,7 +113,10 @@ ID
 ,UKey
 ,OldFabricUkey
 ,OldFabricVer
-,Junk from ReplacementReport_Detail where ID = '{replacementID}'
+,Junk
+,FinalNeedQty
+,ReplacementUnit
+from ReplacementReport_Detail where ID = '{replacementID}'
 ";
 
             DataTable dtReplacementReport;
@@ -131,7 +134,17 @@ ID
             }
 
             var postBody = new { ReplacementReport = dtReplacementReport, ReplacementReport_Detail = dtReplacementReportDetail };
-            string tradeWebApiUri = ConfigurationManager.AppSettings["TradeWebAPI"];
+            string tradeWebApiUri;
+
+            if (DBProxy.Current.DefaultModuleName.Contains("testing") ||
+                DBProxy.Current.DefaultModuleName.Contains("Dummy"))
+            {
+                tradeWebApiUri = ConfigurationManager.AppSettings["TradeWebAPI_Test"];
+            }
+            else
+            {
+                tradeWebApiUri = ConfigurationManager.AppSettings["TradeWebAPI"];
+            }
 
             CallTPEWebAPI callTPEWebAPI = new CallTPEWebAPI(tradeWebApiUri);
 
