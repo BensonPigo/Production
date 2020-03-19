@@ -107,11 +107,14 @@ select 1
 from Inspection
 where orderid = '{this.CurrentDetailData["OrderID"]}'
 and Article = '{this.CurrentDetailData["Article"]}'
-and InspectionDate = '{this.CurrentMaintain["OutputDate"]}'
+and InspectionDate = '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
 and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
 and Line = '{this.CurrentMaintain["SewingLineID"]}'
 and Team = '{this.CurrentMaintain["Team"]}'
-and Shift = '{this.CurrentMaintain["Shift"]}'
+and Shift = case '{this.CurrentMaintain["Shift"]}' 
+            when 'D' then 'DAY'
+            when 'N' then 'Night'
+            else '' end
 and Location = '{this.CurrentDetailData["ComboType"]}'
 and SunriseNid != 0
 ";
