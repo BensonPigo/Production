@@ -106,7 +106,7 @@ and (select stuff((select concat('+', SubprocessID) from SubprocessLeadTime_Deta
         {
             string sqlcmd = $@"
 Select s.id as [Subprocess],s.ArtworkTypeId AS [Artwork Type] from subprocess S 
-inner join ArtworkType a on a.id=s.ArtworkTypeId
+LEFT join ArtworkType a on a.id=s.ArtworkTypeId
 where S.junk=0 and s.IsSelection=1
 order by s.id asc
 ";
