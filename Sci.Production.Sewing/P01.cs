@@ -91,12 +91,33 @@ where UnLockDate is null and SewingOutputID='{this.CurrentMaintain["ID"]}'";
         /// <inheritdoc/>
         protected override void OnDetailGridDelete()
         {
+            if (CurrentMaintain == null || this.CurrentDetailData == null)
+            {
+                return;
+            }
+
             if (this.CurrentDetailData["AutoCreate"].EqualString("True"))
             {
                 MyUtility.Msg.WarningBox("Can't delete autocreate Item.");
                 return;
             }
-            if (this.CurrentDetailData["ImportFromDQS"].EqualString("True"))
+
+            string sqlcmd = $@"
+select 1
+from Inspection
+where orderid = '{this.CurrentDetailData["OrderID"]}'
+and Article = '{this.CurrentDetailData["Article"]}'
+and InspectionDate = '{this.CurrentMaintain["OutputDate"]}'
+and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
+and Line = '{this.CurrentMaintain["SewingLineID"]}'
+and Team = '{this.CurrentMaintain["Team"]}'
+and Shift = '{this.CurrentMaintain["Shift"]}'
+and Location = '{this.CurrentDetailData["ComboType"]}'
+and SunriseNid != 0
+";
+
+            if (this.CurrentDetailData["ImportFromDQS"].EqualString("True") &&
+                !MyUtility.Check.Seek(sqlcmd, "ManufacturingExecution"))
             {
                 MyUtility.Msg.WarningBox("If DQS record is inaccurate,please update QA Qty to zero manually");
                 return;
