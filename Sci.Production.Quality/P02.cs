@@ -51,31 +51,59 @@ namespace Sci.Production.Quality
             find = "";
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
             string cmd = string.Format(
-                @"Select a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,C.exportid,
-                ArriveQty,InspDeadline,a.InspQty,a.RejectQty,a.Defect,a.Result,[Result1]=a.Result,a.InspDate,
-                (
-				    select Pass1.Name from Pass1 WITH (NOLOCK) where a.Inspector = pass1.id
-				) AS Inspector2,a.Inspector,
-                a.Remark,a.ReplacementReportID,
-                a.Status,ReplacementReportID,(seq1+seq2) as seq,
-                (
-                    Select weavetypeid from Fabric b WITH (NOLOCK) where b.SCIRefno =a.SCIrefno
-                ) as weavetypeid,
-                c.ID AS ReceivingID,c.whseArrival,
-                (
-                    dbo.GetColorMultipleID((select top 1 o.BrandID from orders o where o.POID =a.poid) ,(Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2))
-                ) as Colorid,
-                (
-                    Select d.SizeSpec from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
-                ) as Size,
-                (
-                    Select d.StockUnit from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
-                ) as unit,
-                (
-                    Select AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id
-                ) as SuppEn
-	                From AIR a WITH (NOLOCK) Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
-                Where a.poid='{0}' order by seq1,seq2  ", masterID);
+                @"
+Select a.id
+,a.poid
+,SEQ1
+,SEQ2
+,Receivingid
+,Refno
+,SCIRefno
+,Suppid
+,C.exportid
+,ArriveQty
+,InspDeadline
+,a.InspQty
+,a.RejectQty
+,a.Defect
+,[DefectDescription] = DefectText.Val
+,a.Result
+,[Result1]=a.Result
+,a.InspDate
+,(
+	select Pass1.Name from Pass1 WITH (NOLOCK) where a.Inspector = pass1.id
+) AS Inspector2,a.Inspector,
+a.Remark,a.ReplacementReportID,
+a.Status,ReplacementReportID,(seq1+seq2) as seq,
+(
+    Select weavetypeid from Fabric b WITH (NOLOCK) where b.SCIRefno =a.SCIrefno
+) as weavetypeid,
+c.ID AS ReceivingID,c.whseArrival,
+(
+    dbo.GetColorMultipleID((select top 1 o.BrandID from orders o where o.POID =a.poid) ,(Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2))
+) as Colorid,
+(
+    Select d.SizeSpec from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
+) as Size,
+(
+    Select d.StockUnit from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
+) as unit,
+(
+    Select AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id
+) as SuppEn
+
+From AIR a WITH (NOLOCK) Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
+OUTER APPLY(
+	SELECT  [Val]=  STUFF((
+	SELECT ', '+ IIF(a.Defect = '' , '' ,ori.Data +'-'+ ISNULL(ad.Description,''))
+	FROM [SplitString](a.Defect,'+') ori
+	LEFT JOIN AccessoryDefect ad  WITH (NOLOCK) on ad.id = ori.Data
+	 FOR XML PATH('')
+	 ),1,1,'')
+
+)DefectText
+Where a.poid='{0}' order by seq1,seq2  
+", masterID);
             this.DetailSelectCommand = cmd;
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -131,7 +159,7 @@ namespace Sci.Production.Quality
                 .Date("InspDeadline", header: "Insp. Deadline", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("InspQty", header: "Inspected Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true, settings: detail_Int)
                 .Text("RejectQty", header: "Reject Qty", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
-                .Text("defect", header: "Defect Type", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
+                .Text("DefectDescription", header: "Defect Type", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: detail)
                 .Text("Inspdate", header: "Insp. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("Inspector2", header: "Inspector", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
@@ -140,7 +168,7 @@ namespace Sci.Production.Quality
                 .Text("ReceivingID", header: "Receiving ID", width: Widths.AnsiChars(15), iseditingreadonly: true);
             detailgrid.Columns["InspQty"].DefaultCellStyle.BackColor = Color.LemonChiffon;
             detailgrid.Columns["RejectQty"].DefaultCellStyle.BackColor = Color.LemonChiffon;
-            detailgrid.Columns["defect"].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            detailgrid.Columns["DefectDescription"].DefaultCellStyle.BackColor = Color.LemonChiffon;
             detailgrid.Columns["Result"].DefaultCellStyle.BackColor = Color.LemonChiffon;
             detailgrid.Columns["Inspdate"].DefaultCellStyle.BackColor = Color.LemonChiffon;
             detailgrid.Columns["inspector2"].DefaultCellStyle.BackColor = Color.LemonChiffon;
