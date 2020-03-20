@@ -730,9 +730,12 @@ drop table #tmpFinal_step1
 
                             // 填入SubTotal
                             this.drSummary = dtGanttSumery[1].Select($@" FactoryID = '{dr["FactoryID"]}'");
-                            worksheet.Cells[4, 3] = this.drSummary[0]["TotalPPH"];
-                            worksheet.Cells[6, 3] = this.drSummary[0]["TotalStdQ"];
-                            worksheet.Cells[8, 3] = this.drSummary[0]["TotalCPU"];
+                            if (this.drSummary.Length > 0)
+                            {
+                                worksheet.Cells[4, 3] = this.drSummary[0]["TotalPPH"];
+                                worksheet.Cells[6, 3] = this.drSummary[0]["TotalStdQ"];
+                                worksheet.Cells[8, 3] = this.drSummary[0]["TotalCPU"];
+                            }
 
                             writeFty = MyUtility.Convert.GetString(dr["FactoryID"]);
                             ftyCount++;
