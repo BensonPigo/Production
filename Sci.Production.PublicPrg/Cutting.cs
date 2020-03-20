@@ -89,7 +89,7 @@ namespace Sci.Production.PublicPrg
         /// </summary>
         /// <param name="OrderID"></param>
         /// <returns></returns>
-        public static List<GarmentList> GetCut(string OrderID)
+        public static List<GarmentList> GetCut(List<string> OrderIDs)
         {
 
             DataTable tmpDt;
@@ -110,7 +110,7 @@ INNER JOIN Order_qty oq ON o.ID=oq.ID
 INNER JOIN Order_ColorCombo occ ON o.poid = occ.id AND occ.Article = oq.Article
 INNER JOIN order_Eachcons cons ON occ.id = cons.id AND cons.FabricCombo = occ.PatternPanel AND cons.CuttingPiece='0'
 WHERE occ.FabricCode !='' AND occ.FabricCode IS NOT NULL
-AND o.id = '{OrderID}' 
+AND o.id IN ('{OrderIDs.JoinToString("','")}')
 ";
 
             result = DBProxy.Current.Select(null, tmpCmd, out tmpDt);
@@ -168,12 +168,18 @@ SELECT  [EstCutDate]=(SELECT EstCutDate FROM Cutplan WHERE ID = CD.ID)
 ,WOD.SizeCode
 ,wo.FabricCombo
 ,wo.FabricPanelCode
-,WOD.Qty 
+,[Qty]=SUM(WOD.Qty)
 FROM WorkOrder_Distribute WOD
 INNER JOIN WorkOrder WO ON WO.Ukey = WOD.WorkOrderUkey
 INNER JOIN Cutplan_Detail CD ON CD.WorkorderUkey = WO.Ukey
-WHERE WOD.OrderID='{OrderID}'
-ORDER BY WOD.OrderID,WOD.Article,wo.fabricCombo,wo.FabricPanelCode,WOD.SizeCode
+WHERE WOD.OrderID IN ('{OrderIDs.JoinToString("','")}')
+GROUP BY CD.ID
+		,WOD.OrderID
+		,WOD.Article 
+		,WOD.SizeCode
+		,wo.FabricCombo
+		,wo.FabricPanelCode
+--ORDER BY WOD.OrderID,WOD.Article,wo.fabricCombo,wo.FabricPanelCode,WOD.SizeCode
 ";
 
             result = DBProxy.Current.Select(null, tmpCmd, out tmpDt);
@@ -196,7 +202,7 @@ ORDER BY WOD.OrderID,WOD.Article,wo.fabricCombo,wo.FabricPanelCode,WOD.SizeCode
                         {
                             garment.IsPanelShortage = true;
                             //garment.EstCutDate = null;
-                            garment.EstCutDate = Convert.ToDateTime(exists.FirstOrDefault()["EstCutDate"]);
+                            //garment.EstCutDate = Convert.ToDateTime(exists.FirstOrDefault()["EstCutDate"]);
                             fabricPanelCode.Qty = 0;
                         }
                         else
@@ -218,30 +224,6 @@ ORDER BY WOD.OrderID,WOD.Article,wo.fabricCombo,wo.FabricPanelCode,WOD.SizeCode
             return GarmentListList;
         }
 
-        public class LeadTime
-        {
-            public string OrderID { get; set; }
-            public int LeadTimeDay { get; set; }
-        }
-        public class InOffLineList
-        {
-            public string OrderID { get; set; }
-            public List<InOffLine> InOffLines { get; set; }
-        }
-        public class InOffLine
-        {
-            public string ApsNO { get; set; }
-            public int StdQty { get; set; }
-            public int AccuStdQty { get; set; }
-            public DateTime? InLine { get; set; }
-            public DateTime? OffLine { get; set; }
-        }
-        public class Day
-        {
-            //public string FactoryID { get; set; }
-            public DateTime Date { get; set; }
-            public bool IsHoliday { get; set; }
-        }
 
         /// <summary>
         /// 一件成衣，由哪些部位組成
