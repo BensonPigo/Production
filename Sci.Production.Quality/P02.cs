@@ -66,7 +66,7 @@ Select a.id
 ,a.InspQty
 ,a.RejectQty
 ,a.Defect
-,[DefectDescription]=a.Defect + '-' + ISNULL(ad.Description,'')
+,[DefectDescription] = DefectText.Val
 ,a.Result
 ,[Result1]=a.Result
 ,a.InspDate
@@ -93,7 +93,15 @@ c.ID AS ReceivingID,c.whseArrival,
 ) as SuppEn
 
 From AIR a WITH (NOLOCK) Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
-LEFT JOIN AccessoryDefect ad  WITH (NOLOCK) on ad.id =a.Defect
+OUTER APPLY(
+	SELECT  [Val]=  STUFF((
+	SELECT ', '+ IIF(a.Defect = '' , '' ,ori.Data +'-'+ ISNULL(ad.Description,''))
+	FROM [SplitString](a.Defect,'+') ori
+	LEFT JOIN AccessoryDefect ad  WITH (NOLOCK) on ad.id = ori.Data
+	 FOR XML PATH('')
+	 ),1,1,'')
+
+)DefectText
 Where a.poid='{0}' order by seq1,seq2  
 ", masterID);
             this.DetailSelectCommand = cmd;

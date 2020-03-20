@@ -187,7 +187,7 @@ PS.SizeSpec,
 	                   PS.stockunit,(P.SuppID+'-'+s.AbbEN)Supplier,A.Result
 	                   ,IIF(A.Status='Confirmed',A.InspQty,NULL)[Inspected Qty]
 	                   ,IIF(A.Status='Confirmed',A.RejectQty,NULL)[Rejected Qty]
-,IIF(A.Status='Confirmed', A.Defect + '-' + ISNULL(ad.Description,'') ,NULL)[Defect Type]
+,IIF(A.Status='Confirmed', DefectText.Val ,NULL)[Defect Type]
 	                   ,IIF(A.Status='Confirmed',A.InspDate,NULL)[Inspection Date],a.Remark
 	                   ,AIRL_Encode.OvenEncode
 ,AIRL.NonOven,AIRL.Oven,AIRL.OvenScale,AIRL.OvenDate,AIRL.NonWash,AIRL.Wash,AIRL.WashScale,
@@ -205,7 +205,15 @@ PS.SizeSpec,
                 inner join dbo.PO_Supp_Detail PS WITH (NOLOCK) on PS.ID = A.POID and PS.SEQ1 = A.SEQ1 and PS.SEQ2 = A.SEQ2
                 left join dbo.Color C WITH (NOLOCK) on C.ID = PS.ColorID and C.BrandId = x.BrandId
                 inner join supp s WITH (NOLOCK) on s.id = P.SuppID
-				LEFT JOIN AccessoryDefect ad  WITH (NOLOCK) on ad.id = A.Defect
+OUTER APPLY(
+	SELECT  [Val]=  STUFF((
+	SELECT ', '+ IIF(a.Defect = '' , '' ,ori.Data +'-'+ ISNULL(ad.Description,''))
+	FROM [SplitString](a.Defect,'+') ori
+	LEFT JOIN AccessoryDefect ad  WITH (NOLOCK) on ad.id = ori.Data
+	 FOR XML PATH('')
+	 ),1,1,'')
+
+)DefectText
                 OUTER APPLY(select * from dbo.AIR_Laboratory AL WITH (NOLOCK) where AL.OvenEncode = 1 and AL.ID = A.ID)AIRL
 OUTER APPLY(select [OvenEncode]='Y' from dbo.AIR_Laboratory AL WITH (NOLOCK) where AL.ID = A.ID and NonOven =1 and NonWash =1)AIRL_Encode                
         outer apply (select name from dbo.color c where c.id=ps.colorid_old and C.BrandId = x.BrandId) as oc
