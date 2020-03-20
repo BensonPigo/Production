@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
@@ -22,6 +23,8 @@ namespace Sci.Production.Cutting
         DateTime? SewingDate_s, SewingDate_e;
         DateTime MinInLine, MaxOffLine;
         List<string> FtyFroup = new List<string>();
+        List<InOffLineList> AllData = new List<InOffLineList>();
+        List<Day> Days = new List<Day>();
         List<LeadTime> LeadTimeList = new List<LeadTime>();
 
         protected override void OnFormLoaded()
@@ -34,6 +37,7 @@ namespace Sci.Production.Cutting
         protected override bool ValidateInput()
         {
             this.LeadTimeList.Clear();
+            this.AllData.Clear();
             this.FtyFroup.Clear();
 
             if (!(SewingDate.Value1.HasValue || SewingDate.Value2.HasValue))
@@ -70,7 +74,7 @@ namespace Sci.Production.Cutting
             #region 所有Order ID、對應的所有Inline/Offline
 
             cmd = $@"
-SELECT  DISTINCT OrderID
+SELECT *
 FROM SewingSchedule
 WHERE Inline >= '{SewingDate_s.Value.ToString("yyyy/MM/dd")}'
 AND Offline <= '{SewingDate_e.Value.ToString("yyyy/MM/dd")}' 
@@ -91,29 +95,112 @@ AND Offline <= '{SewingDate_e.Value.ToString("yyyy/MM/dd")}'
                 return result;
             }
 
+            if (dt.Rows.Count == 0)
+            {
+                return result;
+            }
+
             //取出最早InLine / 最晚OffLine，先存下來待會用
             this.MinInLine = dt.AsEnumerable().Min(o => Convert.ToDateTime(o["Inline"]));
-            this.MaxOffLine = dt.AsEnumerable().Min(o => Convert.ToDateTime(o["offline"]));
+            this.MaxOffLine = dt.AsEnumerable().Max(o => Convert.ToDateTime(o["offline"]));
 
             foreach (string OrderID in dt.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct())
             {
                 InOffLineList nOnj = new InOffLineList();
                 nOnj.OrderID = OrderID;
                 nOnj.InOffLines = new List<InOffLine>();
+
+
+                //取得該訂單的組成
+                DataTable tmpDt;
+                string tmpCmd = $@"
+SELECT DISTINCT o.ID,oq.Article,oq.SizeCode,occ.PatternPanel,cons.FabricPanelCode
+FROM Orders o WITH (NOLOCK)
+INNER JOIN Order_qty oq ON o.ID=oq.ID
+INNER JOIN Order_ColorCombo occ ON o.poid = occ.id AND occ.Article = oq.Article
+INNER JOIN order_Eachcons cons ON occ.id = cons.id AND cons.FabricCombo = occ.PatternPanel AND cons.CuttingPiece='0'
+WHERE occ.FabricCode !='' AND occ.FabricCode IS NOT NULL
+AND o.id = '{OrderID}' 
+";
+
+                result = DBProxy.Current.Select(null, tmpCmd, out tmpDt);
+
+               List<GarmentList> GarmentListList = ConvertToClassList<GarmentList>(tmpDt).ToList();
+
+
+
                 foreach (DataRow dr in dt.AsEnumerable().Where(o => o["OrderID"].ToString() == OrderID))
                 {
+                    string ApsNO = dr["APSNo"].ToString();
+                    int LeadTime = this.LeadTimeList.Where(o => o.OrderID == OrderID).FirstOrDefault().LeadTimeDay;
+
+                    string StdQty = MyUtility.GetValue.Lookup($"SELECT StdQ FROM [dbo].[getDailystdq]('{ApsNO}') WHERE Date = '{Convert.ToDateTime(dr["Inline"]).ToString("yyyy/MM/dd")}'");
+                    string AccuStdQty = MyUtility.GetValue.Lookup($"SELECT SUM(StdQ) FROM [dbo].[getDailystdq]('{ApsNO}') WHERE Date < '{Convert.ToDateTime(dr["Inline"]).ToString("yyyy/MM/dd")}'");
+
+
                     InOffLine nLineObj = new InOffLine()
                     {
-                        InLine = Convert.ToDateTime(dr["Inline"]),
-                        OffLine = Convert.ToDateTime(dr["Offline"])
+                        ApsNO = ApsNO,
+                        InLine = Convert.ToDateTime(dr["Inline"]).AddDays((-1* LeadTime)),
+                        OffLine = Convert.ToDateTime(dr["Offline"]).AddDays((-1 * LeadTime)),
+
+                        StdQty = MyUtility.Check.Empty(StdQty) ? 0 : Convert.ToInt32(StdQty),
+                        AccuStdQty = MyUtility.Check.Empty(AccuStdQty) ? 0 : Convert.ToInt32(AccuStdQty),
                     };
+
                     nOnj.InOffLines.Add(nLineObj);
                 }
+                AllData.Add(nOnj);
             }
 
             #endregion
 
             #region 處理橫向日期的時間軸
+
+            // 取得時間軸 ： (最早Inline - 最大Lead Time) ~ (最晚Offline - 最小Lead Time)
+            int maxLeadTime = this.LeadTimeList.Max(o => o.LeadTimeDay);
+            int minLeadTime = this.LeadTimeList.Min(o => o.LeadTimeDay);
+
+            // 起點 = (最早Inline - 最大Lead Time)、終點 = (最晚Offline - 最小Lead Time)
+            DateTime start = Convert.ToDateTime(this.MinInLine.AddDays((-1 * maxLeadTime)).ToString("yyyy/MM/dd"));
+            DateTime end = Convert.ToDateTime(this.MaxOffLine.AddDays((-1 * minLeadTime)).ToString("yyyy/MM/dd"));
+
+            // 算出總天數
+            TimeSpan ts = end - start;
+            int DayCount = Math.Abs(ts.Days);
+
+            // 找出時間軸內，所有的假日
+
+            cmd = $@"
+SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
+FROM
+(
+	SElECt * 
+	FROM Holiday
+	WHERE HolidayDate >= '{start.ToString("yyyy/MM/dd")}'
+)a
+WHERE HolidayDate <= '{end.ToString("yyyy/MM/dd")}'
+AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
+";
+
+            result = DBProxy.Current.Select(null, cmd, out dt);
+
+            // 開始組合時間軸
+
+            for (int Day = 0; Day <= DayCount -1; Day++)
+            {
+                Day day = new Day();
+                day.Date = start.AddDays(Day);
+                bool IsHoliday = false;
+
+                if (dt.Rows.Count > 0)
+                {
+                    IsHoliday = dt.AsEnumerable().Where(o => Convert.ToDateTime(o["HolidayDate"]) == day.Date).Any();
+                }
+
+                day.IsHoliday = IsHoliday;
+                this.Days.Add(day);
+            }
 
             #endregion
 
@@ -159,7 +246,7 @@ INNER JOIN Orders b ON a.OrderID= b.ID
             }
 
             List<string> PoID_List = PoID_dt.AsEnumerable().Select(o => o["POID"].ToString()).Distinct().ToList();
-            this.FtyFroup = PoID_dt.AsEnumerable().Select(o => o["FtyFroup"].ToString()).Distinct().ToList();
+            this.FtyFroup = PoID_dt.AsEnumerable().Select(o => o["FtyGroup"].ToString()).Distinct().ToList();
             List<string> Msg = new List<string>();
 
 
@@ -167,6 +254,11 @@ INNER JOIN Orders b ON a.OrderID= b.ID
             {
                 string POID = dr["POID"].ToString();
                 string OrderID = dr["OrderID"].ToString();
+
+                if (OrderID == "20012166GG001")
+                {
+
+                }
 
                 PublicPrg.Prgs.GetGarmentListTable(string.Empty, POID, "", out GarmentTb);
 
@@ -232,7 +324,7 @@ WHERE Subprocess.IDs = '{AnnotationStr}'
                     LeadTime o = new LeadTime()
                     {
                         OrderID = OrderID,
-                        LeadTimeDay = Convert.ToInt32(LeadTime_dt)
+                        LeadTimeDay = Convert.ToInt32(LeadTime_dt.Rows[0]["LeadTime"])
                     };
                     this.LeadTimeList.Add(o);
                 }
@@ -252,6 +344,82 @@ When the settings are complete, can be export excel!
         }
 
 
+        /// <summary>
+        /// DataTable 轉換成自行定義的類別集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <returns></returns>
+        public static IList<T> ConvertToClassList<T>(this DataTable table) where T : new()
+        {
+            IList<PropertyInfo> properties = typeof(T).GetProperties().ToList();
+            IList<T> result = new List<T>();
+
+            //取得DataTable所有的row data
+            foreach (var row in table.Rows)
+            {
+                var item = MappingItem<T>((DataRow)row, properties);
+                result.Add(item);
+            }
+
+            return result;
+        }
+
+        private static T MappingItem<T>(DataRow row, IList<PropertyInfo> properties) where T : new()
+        {
+            T item = new T();
+            foreach (var property in properties)
+            {
+                if (row.Table.Columns.Contains(property.Name))
+                {
+                    //針對欄位的型態去轉換
+                    if (property.PropertyType == typeof(DateTime))
+                    {
+                        DateTime dt = new DateTime();
+                        if (DateTime.TryParse(row[property.Name].ToString(), out dt))
+                        {
+                            property.SetValue(item, dt, null);
+                        }
+                        else
+                        {
+                            property.SetValue(item, null, null);
+                        }
+                    }
+                    else if (property.PropertyType == typeof(decimal))
+                    {
+                        decimal val = new decimal();
+                        decimal.TryParse(row[property.Name].ToString(), out val);
+                        property.SetValue(item, val, null);
+                    }
+                    else if (property.PropertyType == typeof(double))
+                    {
+                        double val = new double();
+                        double.TryParse(row[property.Name].ToString(), out val);
+                        property.SetValue(item, val, null);
+                    }
+                    else if (property.PropertyType == typeof(int))
+                    {
+                        int val = new int();
+                        int.TryParse(row[property.Name].ToString(), out val);
+                        property.SetValue(item, val, null);
+                    }
+                    else if (property.PropertyType == typeof(string))
+                    {
+                        string val = row[property.Name].ToString();
+                        property.SetValue(item, val, null);
+                    }
+                    else
+                    {
+                        if (row[property.Name] != DBNull.Value)
+                        {
+                            property.SetValue(item, row[property.Name], null);
+                        }
+                    }
+                }
+            }
+            return item;
+        }
+
         private class LeadTime
         {
             public string OrderID { get; set; }
@@ -264,8 +432,48 @@ When the settings are complete, can be export excel!
         }
         private class InOffLine
         {
+            public string ApsNO { get; set; }
+            public int StdQty { get; set; }
+            public int AccuStdQty { get; set; }
             public DateTime? InLine { get; set; }
             public DateTime? OffLine { get; set; }
+        }
+        private class Day
+        {
+            //public string FactoryID { get; set; }
+            public DateTime Date { get; set; }
+            public bool IsHoliday { get; set; }
+        }
+        
+        /// <summary>
+        /// 一件成衣，由哪些部位組成
+        /// </summary>
+        private class GarmentList
+        {
+            public string OrderID { get; set; }
+            public string Article { get; set; }
+            public string SizeCoe { get; set; }
+            public List<Panel> Panels { get; set; }
+        }
+
+        /// <summary>
+        /// 大部位名
+        /// </summary>
+        private class Panel
+        {
+            /// <summary>
+            /// 大部位
+            /// </summary>
+            public string PatternPanel { get; set; }
+
+            /// <summary>
+            /// 該大部位內的小部位
+            /// </summary>
+            public List<PanelCode> FabricPanelCodes { get; set; }
+        }
+        private class PanelCode
+        {
+            public string FabricPanelCode { get; set; }
         }
     }
 }
