@@ -66,7 +66,7 @@ Select a.id
 ,a.InspQty
 ,a.RejectQty
 ,a.Defect
-,[DefectDescription]=ad.Description
+,[DefectDescription]=a.Defect + '-' + ISNULL(ad.Description,'')
 ,a.Result
 ,[Result1]=a.Result
 ,a.InspDate

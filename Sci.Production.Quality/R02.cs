@@ -187,7 +187,7 @@ PS.SizeSpec,
 	                   PS.stockunit,(P.SuppID+'-'+s.AbbEN)Supplier,A.Result
 	                   ,IIF(A.Status='Confirmed',A.InspQty,NULL)[Inspected Qty]
 	                   ,IIF(A.Status='Confirmed',A.RejectQty,NULL)[Rejected Qty]
-,IIF(A.Status='Confirmed',ad.Description,NULL)[Defect Type]
+,IIF(A.Status='Confirmed', A.Defect + '-' + ISNULL(ad.Description,'') ,NULL)[Defect Type]
 	                   ,IIF(A.Status='Confirmed',A.InspDate,NULL)[Inspection Date],a.Remark
 	                   ,AIRL_Encode.OvenEncode
 ,AIRL.NonOven,AIRL.Oven,AIRL.OvenScale,AIRL.OvenDate,AIRL.NonWash,AIRL.Wash,AIRL.WashScale,
