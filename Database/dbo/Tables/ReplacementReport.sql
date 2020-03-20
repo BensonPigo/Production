@@ -27,8 +27,11 @@
     [SurchargeAmt]   NUMERIC (10, 2) DEFAULT ((0)) NULL,
     [VoucherID]      VARCHAR (16)    DEFAULT ('') NULL,
     [VoucherDate]    DATE            NULL,
+    [LockDate]       DATE            NULL,
     CONSTRAINT [PK_ReplacementReport] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
