@@ -1095,10 +1095,13 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
 
             switch (MyUtility.Convert.GetString(e.Value))
             {
+                case "Complete":
+                    e.CellStyle.BackColor = Color.Green;
+                    break;
                 case "OnGoing":
                     e.CellStyle.BackColor = Color.Yellow;
                     break;
-                case "Not Valid":
+                case "Not Yet Load":
                     e.CellStyle.BackColor = Color.Red;
                     break;
                 default:
