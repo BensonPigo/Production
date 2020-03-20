@@ -722,7 +722,7 @@ drop table #tmpFinal_step1
                                 {
                                     if ((i - 2) % 4 == 0)
                                     {
-                                        worksheet.Range[$"A{i}:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{i + 3}"].BorderAround2(LineStyle: 1, Excel.XlBorderWeight.xlMedium);
+                                        worksheet.Range[$"A{i}:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{i + 3}"].BorderAround2(LineStyle: 1, Weight: Excel.XlBorderWeight.xlMedium);
                                     }
                                 }
 
@@ -964,7 +964,7 @@ drop table #tmpFinal_step1
                     {
                         if ((i - 2) % 4 == 0)
                         {
-                            worksheet.Range[$"A{i}:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{i + 3}"].BorderAround2(LineStyle: 1, Excel.XlBorderWeight.xlMedium);
+                            worksheet.Range[$"A{i}:{PublicPrg.Prgs.GetExcelEnglishColumnName(monthDays + 4)}{i + 3}"].BorderAround2(LineStyle: 1, Weight: Excel.XlBorderWeight.xlMedium);
                         }
                     }
 
