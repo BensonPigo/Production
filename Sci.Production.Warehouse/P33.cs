@@ -162,7 +162,7 @@ SELECT   iis.SCIRefno
 		, [Stock Unit Desc.]=StockUnit.Description
 		, [OutputQty] = Garment.Qty
 		, [Balance(Stock Unit)]= ISNULL( fi.InQty - fi.OutQty + fi.AdjustQty ,0)
-		, [Location]=Location.MtlLocationID
+		, [Location]=ISNULL(Location.MtlLocationID,'')
         , [POID]=iis.POID
         , i.MDivisionID
         , i.ID
@@ -190,7 +190,7 @@ OUTER APPLY(
 		FROM Issue_Detail 
 		INNER JOIN FtyInventory FI ON FI.POID=Issue_Detail.POID AND FI.Seq1=Issue_Detail.Seq1 AND FI.Seq2=Issue_Detail.Seq2
 		INNER JOIN FtyInventory_Detail FID ON FID.Ukey= FI.Ukey
-		WHERE Issue_Detail.ID = i.ID AND  FI.StockType='B' AND  fid.MtlLocationID  <> ''
+		WHERE Issue_Detail.ID = i.ID AND  FI.StockType='B' AND  fid.MtlLocationID  <> '' AND Issue_Detail.ukey=isd.ukey
 		FOR XML PATH('')
 	), 1, 1, '') 
 )Location

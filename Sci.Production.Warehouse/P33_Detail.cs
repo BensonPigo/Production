@@ -51,7 +51,7 @@ select t.poid
        , t.Seq1
        , t.Seq2
 	   , [BulkQty]= ISNULL(FTY.InQty-FTY.OutQty+ FTY.AdjustQty ,0)
-	   , [BulkLocation]= ISNULL(FTYD.MtlLocationID,'')
+	   , [BulkLocation]= ISNULL( Location.MtlLocationID ,'')
 	   , t.Qty
        , t.ID
        , t.Issue_SummaryUkey
@@ -62,7 +62,15 @@ select t.poid
        , t.ukey
 from #tmp t    ---- #tmp = Issue_Detail
 Left join dbo.FtyInventory FTY WITH (NOLOCK) on  t.FtyInventoryUkey=FTY.Ukey  ----t.POID = FTY.POID AND t.Seq1 = FTY.Seq1 AND t.Seq2 = FTY.Seq2 
-Left JOIN FtyInventory_Detail FTYD WITH (NOLOCK)  ON FTYD.Ukey= FTY.Ukey
+OUTER APPLY(
+	SELECT   [MtlLocationID] = STUFF(
+	(
+		SELECT DISTINCT ',' +fid.MtlLocationID 
+		FROM FtyInventory_Detail FID 
+		WHERE FID.Ukey= FTY.Ukey AND  fid.MtlLocationID  <> ''
+		FOR XML PATH('')
+	), 1, 1, '') 
+)Location
 WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
 ", out dtFtyinventory, "#tmp")))
                 {
