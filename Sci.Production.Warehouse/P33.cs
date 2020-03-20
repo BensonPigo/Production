@@ -115,6 +115,7 @@ namespace Sci.Production.Warehouse
 
             string OrderID = this.CurrentMaintain["OrderID"].ToString();
             this.displayPOID.Text = MyUtility.GetValue.Lookup($"SELECT POID FROm Orders WHERE ID='{OrderID}' ");
+            this.poid = this.displayPOID.Text;
             this.displayLineNo.Text= MyUtility.GetValue.Lookup($@"
 SELECT t.sewline + ',' 
 FROM(SELECT DISTINCT o.sewline FROM dbo.issue_detail a WITH (nolock) 
@@ -139,7 +140,6 @@ WHERE o.id = '{OrderID}' AND o.sewline != '') t FOR xml path('')
 
             Ismatrix_Reload = true;
             this.DetailSelectCommand = $@"
-
 SELECT   iis.SCIRefno
         , [Refno]=Refno.Refno
 		, iis.SuppColor
@@ -153,14 +153,14 @@ SELECT   iis.SCIRefno
 					and [IS].Poid=iis.POID AND [IS].SCIRefno=iis.SCIRefno AND [IS].SuppColor=iis.SuppColor and i2.[EditDate]<I.AddDate AND i2.ID <> i.ID
 				)
 		, [IssueQty]=iis.Qty
-		, [Use Qty By Stock Unit] = CEILING(Garment.Qty *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) ) 
+		, [Use Qty By Stock Unit] = CEILING(ISNULL(Garment.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) ) 
 		, [Stock Unit]=StockUnit.StockUnit
 
 		, [Use Unit]='CM'
-		, [Use Qty By Use Unit]= (Garment.Qty *  ThreadUsedQtyByBOT.Val  )
+		, [Use Qty By Use Unit]= (ISNULL(Garment.Qty,0) *  ThreadUsedQtyByBOT.Val  )
 
 		, [Stock Unit Desc.]=StockUnit.Description
-		, [OutputQty] = Garment.Qty
+		, [OutputQty] = ISNULL(Garment.Qty,0)
 		, [Balance(Stock Unit)]= ISNULL( fi.InQty - fi.OutQty + fi.AdjustQty ,0)
 		, [Location]=ISNULL(Location.MtlLocationID,'')
         , [POID]=iis.POID
@@ -195,22 +195,26 @@ OUTER APPLY(
 	), 1, 1, '') 
 )Location
 OUTER APPLY(
-	SELECT SCIRefNo,SuppColor,[Qty]=SUM(Qty)
-	FROM(
-		SELECT DISTINCT  O.POID ,t.OrderID , tcd.SCIRefNo, tcd.SuppColor,tcd.Article ,  t.Qty
-		From dbo.Orders as o
-		INNER JOIN dbo.Style as s On s.Ukey = o.StyleUkey
-		INNER JOIN dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
-		INNER JOIN dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
+	SELECt [Qty]=sum(b.Qty)
+	FROM (
+        Select distinct tcd.SCIRefNo, tcd.SuppColor ,tcd.Article
+        From dbo.Orders as o
+        Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
+        Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
+        Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
         INNER JOIN (
-				        SElECT OrderID ,Article ,[Qty]=SUM(Qty)   ----這裡等同於表身下方Grid的總和(不分Size)
-				        FROM Issue_Breakdown
-				        WHERE ID='{masterID}'
-				        GROUP BY OrderID ,Article
-			        ) t ON /* t.Article = tcd.Article AND*/ t.OrderID= o.ID
-		WHERE tcd.SCIRefNo= iis.SCIRefNo AND tcd.SuppColor = iis.SuppColor 
-	)A
-	GROUP BY  SCIRefNo, SuppColor
+                        SELECt DISTINCT OrderID, Article
+                        FROM Issue_Breakdown
+                        WHERE ID='{masterID}'
+                    ) i On i.OrderID=o.ID AND i.Article=tcd.Article
+    ) a
+	INNER JOIN (
+                    SELECt Article,[Qty]=SUM(Qty) 
+                    FROM Issue_Breakdown
+                    WHERE ID='{masterID}'
+                    GROUP BY Article
+                ) b ON a.Article = b.article
+	WHERE SCIRefNo= iis.SCIRefNo AND SuppColor=iis.SuppColor
 )Garment
 OUTER APPLY(
 	SELECT TOP 1 psd2.StockUnit ,u.Description
@@ -227,7 +231,8 @@ OUTER APPLY(
 )UnitRate
 WHERE i.ID='{masterID}' 
 AND iis.SuppColor <> ''
---AND Garment.Qty IS NOT NULL
+
+DROP TABLE #tmpIssue_Breakdown ,#step1 ,#tmp_sumQty
 ";
 
             return base.OnDetailSelectCommandPrepare(e);
@@ -1799,33 +1804,24 @@ WHERE o.id = '{CurrentOrderID}'  AND o.sewline != '') t FOR xml path('')
                 }
             }
 
-            var tmp = dtIssueBreakDown.AsEnumerable().Select(o => new { OrderID = o["OrderID"].ToString(), Article = o["Article"].ToString() }).ToList();
-
-            foreach (var obj in tmp)
+            foreach (DataRow tempRow in dtIssueBreakDown.Rows)
             {
-
-                foreach (DataRow tempRow in dtIssueBreakDown.Rows)
-                {
-                    if (tempRow["OrderID"].ToString() == obj.OrderID && tempRow["Article"].ToString() == obj.Article)
+                    IssueQtyBreakdown m = new IssueQtyBreakdown()
                     {
-                        IssueQtyBreakdown m = new IssueQtyBreakdown()
-                        {
-                            OrderID = obj.OrderID,
-                            Article = obj.Article
-                        };
+                        OrderID = tempRow["OrderID"].ToString(),
+                        Article = tempRow["Article"].ToString()
+                    };
 
-                        int totalQty = 0;
-                        foreach (DataColumn col in dtIssueBreakDown.Columns)
+                    int totalQty = 0;
+                    foreach (DataColumn col in dtIssueBreakDown.Columns)
+                    {
+                        if ("Decimal" == tempRow[col].GetType().Name)
                         {
-                            if ("Decimal" == tempRow[col].GetType().Name)
-                            {
-                                totalQty += Convert.ToInt32(tempRow[col]);
-                            }
+                            totalQty += Convert.ToInt32(tempRow[col]);
                         }
-                        m.Qty = totalQty;
-                        modelList.Add(m);
                     }
-                }
+                    m.Qty = totalQty;
+                    modelList.Add(m);
             }
 
             var frm = new Sci.Production.Warehouse.P33_AutoPick(CurrentMaintain["id"].ToString(), this.poid, txtOrderID.Text.ToString(), dtIssueBreakDown, sbSizecode, checkByCombo.Checked , modelList);

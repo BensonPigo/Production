@@ -99,10 +99,17 @@ namespace Sci.Production.Warehouse
 
             #region SQL
             sqlcmd = $@"
+
+SELECt Article,[Qty]=SUM(Qty) 
+INTO #tmp_sumQty
+FROm #tmp
+GROUP BY Article
+
+
 --------------取得哪些要打勾--------------
 ---- 從Issue breakdown的Article，找到包含在哪些物料裡面
 ---- 傳入OrderID
-Select distinct tcd.SCIRefNo, tcd.SuppColor
+Select distinct tcd.SCIRefNo, tcd.SuppColor ,tcd.Article 
 INTO #step1
 From dbo.Orders as o
 Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
@@ -149,12 +156,12 @@ SELECT  --DISTINCT
 		, psd.SuppColor
 		, f.DescDetail
 		, [@Qty]= ThreadUsedQtyByBOT.Val/*(SELECT dbo.[GetThreadUsedQtyByBOT] (psd.ID,psd.SCIRefno,psd.SuppColor))*/
-		, [Use Qty By Stock Unit] = CEILING(Garment.Qty *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) ) --並轉換為Stock Unit
+		, [Use Qty By Stock Unit] = CEILING(ISNULL(Garment.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) ) --並轉換為Stock Unit
 		, [Stock Unit]=StockUnit.StockUnit
-		, [Use Qty By Use Unit]= (Garment.Qty *  ThreadUsedQtyByBOT.Val  )
+		, [Use Qty By Use Unit]= (ISNULL(Garment.Qty,0) *  ThreadUsedQtyByBOT.Val  )
 		, [Use Unit]='CM'
 		, [Stock Unit Desc.]=StockUnit.Description
-		, [Output Qty(Garment)] = Garment.Qty
+		, [Output Qty(Garment)] = ISNULL(Garment.Qty,0)
 		, [Bulk Balance(Stock Unit)] = ISNULL(( Fty.InQty-Fty.OutQty + Fty.AdjustQty ) ,0)
 		--, [FtyInventoryUkey]=Fty.Ukey
         , [POID]=psd.ID
@@ -183,23 +190,11 @@ OUTER APPLY(
 	WHERE UnitFrom='M' and  UnitTo = StockUnit.StockUnit
 )UnitRate
 OUTER APPLY(
-	SELECT SCIRefNo,SuppColor,[Qty]=SUM(Qty)
-	FROM(
-		SELECT DISTINCT O.POID	,t.OrderID ,tcd.SCIRefNo, tcd.SuppColor,tcd.Article ,  t.Qty
-		From dbo.Orders as o
-		INNER JOIN dbo.Style as s On s.Ukey = o.StyleUkey
-		INNER JOIN dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
-		INNER JOIN dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
-		INNER JOIN #tmp t ON  /*t.Article = tcd.Article  AND*/ o.ID = t.OrderID
-		WHERE tcd.SCIRefNo= psd.SCIRefNo AND tcd.SuppColor = psd.SuppColor
-	)A
-	GROUP BY  SCIRefNo, SuppColor
+	SELECt [Qty]=sum(b.Qty)
+	FROM #step1 a
+	INNER JOIN #tmp_sumQty b ON a.Article = b.article
+	WHERE SCIRefNo= psd.SCIRefNo AND SuppColor=psd.SuppColor
 )Garment
---OUTER APPLY(
---	SELECT val = SUM(( Fty.InQty-Fty.OutQty + Fty.AdjustQty ))
---	FROM FtyInventory Fty 
---	WHERE Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
---)BulkBalance
 OUTER APPLY(
 	SELECT [Val]=SUM(((SeamLength  * Frequency * UseRatio ) + Allowance))
 	FROM dbo.GetThreadUsedQtyByBOT(psd.ID)
@@ -215,8 +210,6 @@ AND EXISTS(
 	AND m.IsThread=1 
 )
 AND psd.SuppColor <> ''
-AND Garment.Qty IS NOT NULL
-
 
 SELECT  [Selected] 
 		, SCIRefno 

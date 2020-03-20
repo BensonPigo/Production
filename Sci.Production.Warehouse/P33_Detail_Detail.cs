@@ -62,13 +62,21 @@ SELECT 0 as selected
        , psd.Seq2
        , [BulkQty] =ISNULL( a.inqty - a.outqty + a.adjustqty,0.00)
 	   , [Qty]=0.00
-	   , [BulkLocation]=ISNULL(FTYD.MtlLocationID,'')
+	   , [BulkLocation]= ISNULL( Location.MtlLocationID ,'')
        , a.stocktype
        , [FtyInventoryUkey]=a.Ukey
        , [POID]='{ dr_master["poid"].ToString()}'
 FROM dbo.PO_Supp_Detail psd WITH (NOLOCK) 
 LEFT JOIN FtyInventory a on a.POID = psd.id AND a.seq1=psd.seq1 AND a.seq2=psd.seq2
-LEFT JOIN FtyInventory_Detail FTYD WITH (NOLOCK)  ON FTYD.Ukey= a.Ukey
+OUTER APPLY(
+	SELECT   [MtlLocationID] = STUFF(
+	(
+		SELECT DISTINCT ',' +fid.MtlLocationID 
+		FROM FtyInventory_Detail FID 
+		WHERE FID.Ukey= a.Ukey AND  fid.MtlLocationID  <> ''
+		FOR XML PATH('')
+	), 1, 1, '') 
+)Location
 WHERE psd.id = '{dr_master["poid"]}' 
 AND psd.SCIRefno='{dr_master["SCIRefno"]}' 
 AND psd.SuppColor='{dr_master["SuppColor"]}'
