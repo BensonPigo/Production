@@ -110,11 +110,21 @@ AND Offline <= '{SewingDate_e.Value.ToString("yyyy/MM/dd")}'
                 nOnj.OrderID = OrderID;
                 nOnj.InOffLines = new List<InOffLine>();
 
+                if (OrderID == "20012166GG001")
+                {
+
+                }
 
                 //取得該訂單的組成
+                #region 取得該訂單的組成
                 DataTable tmpDt;
                 string tmpCmd = $@"
-SELECT DISTINCT o.ID,oq.Article,oq.SizeCode,occ.PatternPanel,cons.FabricPanelCode
+SELECT DISTINCT 
+    [OrderID]=o.ID
+    ,oq.Article
+    ,oq.SizeCode
+    ,occ.PatternPanel
+    ,cons.FabricPanelCode
 FROM Orders o WITH (NOLOCK)
 INNER JOIN Order_qty oq ON o.ID=oq.ID
 INNER JOIN Order_ColorCombo occ ON o.poid = occ.id AND occ.Article = oq.Article
@@ -125,9 +135,55 @@ AND o.id = '{OrderID}'
 
                 result = DBProxy.Current.Select(null, tmpCmd, out tmpDt);
 
-               List<GarmentList> GarmentListList = ConvertToClassList<GarmentList>(tmpDt).ToList();
+                List<GarmentList> GarmentListList = new List<GarmentList>();
+                foreach (var Key in tmpDt.AsEnumerable().Select(o=>new
+                            {
+                                OrderID =o["OrderID"].ToString(),
+                                Article = o["Article"].ToString(),
+                                SizeCode = o["SizeCode"].ToString()
+                            }).Distinct()
+                        )
+                {
+                    GarmentList obj = new GarmentList()
+                    {
+                        OrderID = Key.OrderID,
+                        Article = Key.Article,
+                        SizeCode = Key.SizeCode,
+                    };
+
+                    obj.Panels = new List<Panel>();
+                    var detail = tmpDt.AsEnumerable()
+                        .Where(o => o["OrderID"].ToString() == Key.OrderID
+                            && o["Article"].ToString() == Key.Article
+                            && o["SizeCode"].ToString() == Key.SizeCode)
+                        .Select(o =>  o["PatternPanel"].ToString()).Distinct().ToList();
+
+                    // Panel
+                    foreach (var PatternPanel in detail)
+                    {
+                        Panel panel = new Panel() { PatternPanel = PatternPanel };
+                        List<DataRow> FabricPanelCodes = tmpDt.AsEnumerable()
+                         .Where(o => o["OrderID"].ToString() == Key.OrderID
+                             && o["Article"].ToString() == Key.Article
+                             && o["SizeCode"].ToString() == Key.SizeCode
+                             && o["PatternPanel"].ToString() == PatternPanel).ToList();
+                        panel.FabricPanelCodes = new List<PanelCode>();
+                        foreach (var row in FabricPanelCodes)
+                        {
+                            PanelCode code = new PanelCode() { FabricPanelCode = row["FabricPanelCode"].ToString() };
+                            panel.FabricPanelCodes.Add(code);
+                        }
+                        obj.Panels.Add(panel);
+                    }
+
+                    GarmentListList.Add(obj);
+                }
+                #endregion
+
+                // 取得各部位Cutting 數量
 
 
+                //List<GarmentList> GarmentListList = ConvertToClassList<GarmentList>(tmpDt).ToList();
 
                 foreach (DataRow dr in dt.AsEnumerable().Where(o => o["OrderID"].ToString() == OrderID))
                 {
@@ -343,7 +399,7 @@ When the settings are complete, can be export excel!
             return true;
         }
 
-
+        /*
         /// <summary>
         /// DataTable 轉換成自行定義的類別集合
         /// </summary>
@@ -419,7 +475,7 @@ When the settings are complete, can be export excel!
             }
             return item;
         }
-
+        */
         private class LeadTime
         {
             public string OrderID { get; set; }
@@ -452,7 +508,7 @@ When the settings are complete, can be export excel!
         {
             public string OrderID { get; set; }
             public string Article { get; set; }
-            public string SizeCoe { get; set; }
+            public string SizeCode { get; set; }
             public List<Panel> Panels { get; set; }
         }
 
