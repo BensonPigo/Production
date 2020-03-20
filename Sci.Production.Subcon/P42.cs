@@ -301,9 +301,16 @@ cross join(
 	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1
 )s
 
-select Orderid,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,NoBundleCardAfterSubprocess=0,PostSewingSubProcess=0
+select Orderid,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,
+	NoBundleCardAfterSubprocess= case when SubProcessID = 'Loading' Or SubProcessID = 'SEWINGLINE' then isnull(x.NoBundleCardAfterSubprocess,0) else 0 end,
+	PostSewingSubProcess=0
 into #tmpBundleNo_SubProcess
-from #tmpBundleNo
+from #tmpBundleNo b
+outer apply(
+	select NoBundleCardAfterSubprocess=MAX(cast(NoBundleCardAfterSubprocess as int))
+	from Bundle_Detail_art bda WITH (NOLOCK) 
+	where bda.bundleno = b.bundleno
+)x
 
 union
 
@@ -507,9 +514,16 @@ cross join(
 )s
 
 
-select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,NoBundleCardAfterSubprocess=0,PostSewingSubProcess=0
+select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,
+	NoBundleCardAfterSubprocess= case when SubProcessID = 'Loading' Or SubProcessID = 'SEWINGLINE' then isnull(x.NoBundleCardAfterSubprocess,0) else 0 end,
+	PostSewingSubProcess=0
 into #tmpBundleNo_SubProcess
-from #tmpBundleNo
+from #tmpBundleNo b
+outer apply(
+	select NoBundleCardAfterSubprocess=MAX(cast(NoBundleCardAfterSubprocess as int))
+	from Bundle_Detail_art bda WITH (NOLOCK) 
+	where bda.bundleno = b.bundleno
+)x
 
 union
 
@@ -759,8 +773,15 @@ select   Orderid
         ,BundleGroup
         ,SizeCode
 		,CutRef
+	    ,NoBundleCardAfterSubprocess= case when SubProcessID = 'Loading' Or SubProcessID = 'SEWINGLINE' then isnull(x.NoBundleCardAfterSubprocess,0) else 0 end
+	    ,PostSewingSubProcess=0
 into #tmpBundleNo_SubProcess
-from #tmpBundleNo
+from #tmpBundleNo b
+outer apply(
+	select NoBundleCardAfterSubprocess=MAX(cast(NoBundleCardAfterSubprocess as int))
+	from Bundle_Detail_art bda WITH (NOLOCK) 
+	where bda.bundleno = b.bundleno
+)x
 
 union
 
@@ -775,7 +796,7 @@ select   Orderid
         ,Article
         ,BundleGroup
         ,SizeCode
-		,CutRef
+		,CutRef,bda.NoBundleCardAfterSubprocess,bda.PostSewingSubProcess
 from #tmpBundleNo b
 inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
 inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
@@ -791,14 +812,23 @@ select
     ,BundleGroup
     ,SizeCode
 	,b.InOutRule 
-	,[HasInComing]=IIF( bio.InComing IS NOT NULL ,'true','false')
-	,[HasOutGoing]=IIF( bio.OutGoing IS NOT NULL ,'true','false')
+	,[HasInComing]=case when p.PostSewingSubProcess_SL=1 then 'true'
+						when NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then 'true'
+						else IIF( bio.InComing IS NOT NULL ,'true','false')
+						end
+	,[HasOutGoing]=case when p.PostSewingSubProcess_SL=1 then 'true'
+						when NoBundleCardAfterSubprocess=1 and InOutRule = 3  Then 'true'
+						else IIF( bio.OutGoing IS NOT NULL ,'true','false')
+						end
 	,bio.InComing
 	,bio.OutGoing
 	,b.CutRef
 into #tmpBundleNo_Complete
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
+left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = b.BundleNo and bunIOS.SubProcessId = 'SORTING' and isnull(bunIOS.RFIDProcessLocationID,'') = ''
+left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = b.BundleNo and bunIOL.SubProcessId = 'LOADING' and isnull(bunIOL.RFIDProcessLocationID,'') = ''
+outer apply(select PostSewingSubProcess_SL =iif(isnull(PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0))p
 where b.subProcessid='{subProcess}'
 
 select
@@ -915,16 +945,23 @@ cross join(
 
 
 select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,IsEXCESS
+	,NoBundleCardAfterSubprocess= case when SubProcessID = 'Loading' Or SubProcessID = 'SEWINGLINE' then isnull(x.NoBundleCardAfterSubprocess,0) else 0 end
+	,PostSewingSubProcess=0
     ,PatternDesc
     ,BundleGroup
     ,[BD_SizeCode]
     ,CutRef
 into #tmpBundleNo_SubProcess
-from #tmpBundleNo
+from #tmpBundleNo b
+outer apply(
+	select NoBundleCardAfterSubprocess=MAX(cast(NoBundleCardAfterSubprocess as int))
+	from Bundle_Detail_art bda WITH (NOLOCK) 
+	where bda.bundleno = b.bundleno
+)x
 
 union
 
-select Orderid,Article,Sizecode,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,IsEXCESS
+select Orderid,Article,Sizecode,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,IsEXCESS,bda.NoBundleCardAfterSubprocess,bda.PostSewingSubProcess
     ,PatternDesc
     ,BundleGroup
     ,[BD_SizeCode]
@@ -944,14 +981,23 @@ select
     ,BundleGroup
     ,[BD_SizeCode]
 	,b.InOutRule 
-	,[HasInComing]=IIF( bio.InComing IS NOT NULL ,'true','false')
-	,[HasOutGoing]=IIF( bio.OutGoing IS NOT NULL ,'true','false')
+	,[HasInComing]=case when p.PostSewingSubProcess_SL=1 then 'true'
+						when NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then 'true'
+						else IIF( bio.InComing IS NOT NULL ,'true','false')
+						end
+	,[HasOutGoing]=case when p.PostSewingSubProcess_SL=1 then 'true'
+						when NoBundleCardAfterSubprocess=1 and InOutRule = 3  Then 'true'
+						else IIF( bio.OutGoing IS NOT NULL ,'true','false')
+						end
 	,bio.InComing
 	,bio.OutGoing
 	,b.CutRef
 into #tmpBundleNo_Complete
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
+left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = b.BundleNo and bunIOS.SubProcessId = 'SORTING' and isnull(bunIOS.RFIDProcessLocationID,'') = ''
+left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = b.BundleNo and bunIOL.SubProcessId = 'LOADING' and isnull(bunIOL.RFIDProcessLocationID,'') = ''
+outer apply(select PostSewingSubProcess_SL =iif(isnull(PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0))p
 where b.subProcessid='{subProcess}'
 
 select
