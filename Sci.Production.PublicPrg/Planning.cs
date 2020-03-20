@@ -349,7 +349,7 @@ select	st0.Orderid
 		, bunD.Qty
 		, [IsPair]=ISNULL(TopIsPair.IsPair,0)--isnull(bunD.IsPair,0) 
 		, m=iif (sub.IsRFIDDefault = 1, st0.QtyBySet, st0.QtyBySubprocess)
-		, NoBundleCardAfterSubprocess=isnull( bda.NoBundleCardAfterSubprocess,0)
+		, NoBundleCardAfterSubprocess=case when sub.id = 'Loading' Or sub.id = 'SEWINGLINE' then isnull(x.NoBundleCardAfterSubprocess,0) else 0 end
 		, PostSewingSubProcess_SL =iif(isnull(bda.PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0)
 into #BundleInOutDetail{subprocessIDtmp}
 from #QtyBySetPerCutpart{subprocessIDtmp} st0
@@ -365,6 +365,11 @@ left join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and
 left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = bunD.BundleNo and bunIOS.SubProcessId = 'SORTING' and isnull(bunIOS.RFIDProcessLocationID,'') = ''
 left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = bunD.BundleNo and bunIOL.SubProcessId = 'LOADING' and isnull(bunIOL.RFIDProcessLocationID,'') = ''
 left join Bundle_Detail_Art bda with (nolock) on bda.BundleNo = bunD.BundleNo and bda.SubProcessId = sub.ID--BundleNo + SubProcessId只有一筆
+outer apply(
+	select NoBundleCardAfterSubprocess=MAX(cast(NoBundleCardAfterSubprocess as int))
+	from Bundle_Detail_art bda WITH (NOLOCK) 
+	where bda.BundleNo = bunD.BundleNo
+)x
 outer apply(
 	select	top 1
 			bunD.ID
