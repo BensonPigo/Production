@@ -343,10 +343,11 @@ from SewingSchedule s WITH (NOLOCK)
 left join Orders o WITH (NOLOCK) on s.OrderID = o.ID
 left join Style st WITH (NOLOCK) on st.Ukey = o.StyleUkey
 outer apply(select [val] = iif(isnull(s.OriEff,0) = 0 or isnull(s.SewLineEff,0) = 0,s.MaxEff, isnull(s.OriEff,100) * isnull(s.SewLineEff,100) / 100) ) ScheduleEff
-where (s.Inline between  @sewinginline and @sewingoffline 
-    or s.Offline between @sewinginline and @sewingoffline
-	or @sewinginline between s.Inline and s.Offline
-	or @sewingoffline between s.Inline and s.Offline
+where (
+       CONVERT(date, s.Inline)  between @sewinginline and @sewingoffline 
+    or CONVERT(date, s.Offline) between @sewinginline and @sewingoffline
+	or @sewinginline  between CONVERT(date, s.Inline) and CONVERT(date, s.Offline)
+	or @sewingoffline between CONVERT(date, s.Inline) and CONVERT(date, s.Offline)
 )
 {whereM}
 {whereF}
@@ -742,12 +743,17 @@ drop table #tmpFinal_step1
 
                             // 填入SubTotal
                             this.drSummary = dtGanttSumery[1].Select($@" FactoryID = '{dr["FactoryID"]}'");
-                            worksheet.Cells[4, 3] = this.drSummary[0]["TotalPPH"];
-                            ((Excel.Range)worksheet.Cells[4, 3]).NumberFormat = "0.00";
-                            worksheet.Cells[6, 3] = this.drSummary[0]["TotalStdQ"];
-                            ((Excel.Range)worksheet.Cells[6, 3]).NumberFormat = "#,##0_);(#,##0)";
-                            worksheet.Cells[8, 3] = this.drSummary[0]["TotalCPU"];
-                            ((Excel.Range)worksheet.Cells[8, 3]).NumberFormat = "#,##0_);(#,##0)";
+
+                            if (this.drSummary.Length > 0)
+                            {
+                                ((Excel.Range)worksheet.Cells[4, 3]).NumberFormat = "0.00";
+                                ((Excel.Range)worksheet.Cells[6, 3]).NumberFormat = "#,##0_);(#,##0)";
+                                ((Excel.Range)worksheet.Cells[8, 3]).NumberFormat = "#,##0_);(#,##0)";
+
+                                worksheet.Cells[4, 3] = this.drSummary[0]["TotalPPH"];
+                                worksheet.Cells[6, 3] = this.drSummary[0]["TotalStdQ"];
+                                worksheet.Cells[8, 3] = this.drSummary[0]["TotalCPU"];
+                            }
 
                             writeFty = MyUtility.Convert.GetString(dr["FactoryID"]);
                             ftyCount++;
