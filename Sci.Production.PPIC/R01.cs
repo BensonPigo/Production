@@ -343,10 +343,11 @@ from SewingSchedule s WITH (NOLOCK)
 left join Orders o WITH (NOLOCK) on s.OrderID = o.ID
 left join Style st WITH (NOLOCK) on st.Ukey = o.StyleUkey
 outer apply(select [val] = iif(isnull(s.OriEff,0) = 0 or isnull(s.SewLineEff,0) = 0,s.MaxEff, isnull(s.OriEff,100) * isnull(s.SewLineEff,100) / 100) ) ScheduleEff
-where (s.Inline between  @sewinginline and @sewingoffline 
-    or s.Offline between @sewinginline and @sewingoffline
-	or @sewinginline between s.Inline and s.Offline
-	or @sewingoffline between s.Inline and s.Offline
+where (
+       CONVERT(date, s.Inline)  between @sewinginline and @sewingoffline 
+    or CONVERT(date, s.Offline) between @sewinginline and @sewingoffline
+	or @sewinginline  between CONVERT(date, s.Inline) and CONVERT(date, s.Offline)
+	or @sewingoffline between CONVERT(date, s.Inline) and CONVERT(date, s.Offline)
 )
 {whereM}
 {whereF}
