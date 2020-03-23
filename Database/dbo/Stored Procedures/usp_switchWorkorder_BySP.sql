@@ -1,5 +1,4 @@
-﻿
-Create PROCEDURE [dbo].[usp_switchWorkorder_BySP]
+﻿CREATE PROCEDURE [dbo].[usp_switchWorkorder_BySP]
 	(
 	 @WorkType  varChar(1)=2,--By SP = 2
 	 @Cuttingid  varChar(13),
@@ -72,6 +71,7 @@ order by isnull(hasforArticle.A,1),MixedSizeMarker desc,MarkerName
 select Inline = Min(s.Inline),[orderid] = o.id,oq.Article,occ.ColorID,oq.SizeCode,occ.PatternPanel,[Size_orderqty] = oq.qty,IDENTITY(int,1,1) as identRowid
 ,InlineForOrderby = isnull(Min(s.Inline),'9999/12/31')
 ,sr.SCIRefno
+,occ.FabricPanelCode
 into #_tmpdisQty
 from Orders o WITH (NOLOCK)
 inner join Order_Qty oq WITH (NOLOCK) on oq.id = o.id
@@ -90,7 +90,7 @@ outer apply(
 	where ob.Id = oe.id and ob.FabricCode = occ.FabricCode
 )sr
 where o.CuttingSP = @Cuttingid and o.junk = 0
-group by s.Inline,o.id,oq.Article,occ.ColorID,oq.SizeCode,occ.PatternPanel,oq.qty ,sr.SCIRefno
+group by s.Inline,o.id,oq.Article,occ.ColorID,oq.SizeCode,occ.PatternPanel,oq.qty ,sr.SCIRefno,occ.FabricPanelCode
 order by InlineForOrderby,o.id
 --主要資料參數
 Declare @MixedSizeMarker varchar(2),@id varchar(13),@SizeCode varchar(8),@FirstSizeCode varchar(8),@colorid varchar(6),
@@ -131,7 +131,7 @@ Begin
 		select [SizeRatio]=oes.Qty,	b.identRowid,a.id,b.orderid,b.Article,b.SizeCode,b.Size_orderqty,a.ThisMarkerColor_MaxLayer,Rowid = IDENTITY(int,1,1) 
 		into #DistributeSource
 		from #WorkOrderMix a
-		inner join #_tmpdisQty b on a.ColorID = b.ColorID and a.FabricCombo = b.PatternPanel and a.SCIRefno = b.SCIRefno
+		inner join #_tmpdisQty b on a.ColorID = b.ColorID and a.FabricCombo = b.PatternPanel and a.SCIRefno = b.SCIRefno and a.FabricPanelCode = b.FabricPanelCode
 		inner join Order_EachCons_SizeQty oes on  oes.id = a.id and oes.Order_EachConsUkey = a.Order_EachConsUkey and b.SizeCode = oes.SizeCode
 		outer apply(select top 1 A=0 from Order_EachCons_Article WITH (NOLOCK) where Order_EachConsUkey=a.Order_EachConsUkey)hasforArticle
 		outer apply(select Article from Order_EachCons_Article  WITH (NOLOCK) where Order_EachConsUkey=a.Order_EachConsUkey)forArticle
