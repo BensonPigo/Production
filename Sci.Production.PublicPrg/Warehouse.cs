@@ -1075,6 +1075,118 @@ where   poid = '{1}'
             }
             return items;
         }
+
+        /// <summary>
+        /// 目的：自動產生可以寫入Issue_Detail的DataRow
+        /// </summary>
+        /// <param name="materials">P33表身</param>
+        /// <returns>準備寫入P33第三層的DataRow (資料結構: Issue_Detail)</returns>
+        public static List<DataRow> Thread_AutoPick(DataRow material, decimal AccuIssued)
+        {
+            List<DataRow> items = new List<DataRow>();
+
+            //foreach (DataRow material in materials)
+            //{
+            string sqlcmd = string.Empty;
+            DataTable dt;
+            decimal request; //需求總數
+            decimal accu_issue = 0m;
+            //decimal AccuIssued = MyUtility.Check.Empty(material["AccuIssued"]) ? 0 : decimal.Parse(material["AccuIssued"].ToString());
+            decimal UseQtyByStockUnit = MyUtility.Check.Empty(material["Use Qty By Stock Unit"]) ? 0 : decimal.Parse(material["Use Qty By Stock Unit"].ToString());
+
+            // 需求量 - 已發累計量 = 待發的量
+            request = UseQtyByStockUnit;// - AccuIssued;
+
+
+            // 取得所有項次號(欄位名稱跟Issue_Detail一樣)
+            sqlcmd = $@"
+
+select   [POID]=psd.ID
+    , psd.Seq1
+    , psd.Seq2
+	, psd.SCIRefno
+	, psd.SuppColor
+    , a.stocktype
+    , [BulkQty] =ISNULL( a.inqty - a.outqty + a.adjustqty,0.00)
+	, [Qty]=0.00
+	, [BulkLocation]=ISNULL(FTYD.MtlLocationID,'')
+    , [FtyInventoryUkey]=a.Ukey
+from dbo.FtyInventory a WITH (NOLOCK) 
+LEFT JOIN FtyInventory_Detail FTYD WITH (NOLOCK)  ON FTYD.Ukey= a.Ukey
+inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on  psd.id = a.POID 
+												and psd.seq1 = a.Seq1 
+												and psd.seq2 = a.Seq2
+
+INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
+INNER JOIN MtlType m ON m.id= f.MtlTypeID
+where    psd.ID = '{material["poid"]}'
+	and psd.SCIRefno = '{material["SCIRefno"]}' 
+	and psd.SuppColor = '{material["SuppColor"]}' 
+    AND (a.stocktype = 'B' OR a.stocktype IS NULL)
+    AND m.IsThread=1
+";
+
+            DualResult result = DBProxy.Current.Select("", sqlcmd, out dt);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox(sqlcmd, "Sql Error");
+                return null;
+            }
+            else
+            {
+                if (!dt.AsEnumerable().Any())
+                {
+                    return items;
+                }
+                // 先確認是否有數量剛好足夠的 Seq1 + Seq2， 若有則該項直接帶出
+                if (dt.AsEnumerable().Any(o => (decimal)o["BulkQty"] == request))
+                {
+                    DataRow ImortRow = dt.AsEnumerable().Where(o => ((decimal)o["BulkQty"]).EqualDecimal(request)).FirstOrDefault();
+                    ImortRow["Qty"] = request;
+                    items.Add(ImortRow);
+                }
+                else
+                {
+                    // 沒有的話，則從Qty > 需求量的,找第一筆
+                    if (dt.AsEnumerable().Any(o => (decimal)o["BulkQty"] > request))
+                    {
+                        DataRow ImortRow = dt.AsEnumerable().Where(o => (decimal)o["BulkQty"] > request).FirstOrDefault();
+                        ImortRow["Qty"] = request;
+                        items.Add(ImortRow);
+                    }
+                    else
+                    {
+                        // 淪落至此，表示要出的量，沒有一個項次號的物料夠，因此必須從多個項次號出
+
+                        // 先從數量少的開始出
+                        DataTable orderDt = dt.AsEnumerable().OrderByDescending(o => (decimal)o["BulkQty"]).CopyToDataTable();
+                        decimal totalQty = 0;
+
+                        // 逐個項次號出
+                        foreach (DataRow dr in orderDt.Rows)
+                        {
+                            if ((decimal)dr["BulkQty"] + totalQty < request)
+                            {
+                                dr["Qty"] = dr["BulkQty"];
+                                items.Add(dr);
+                                totalQty += (decimal)dr["Qty"];
+                            }
+                            else
+                            {
+                                dr["Qty"] = request - totalQty;
+                                items.Add(dr);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+            }
+            //}
+
+            return items;
+        }
+
         /// <summary>
         /// 檢查實際到倉日不可早於到港日
         /// </summary>

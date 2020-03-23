@@ -18,6 +18,7 @@
     [seq2]            VARCHAR (2)     NULL,
     [OldFabricUkey] VARCHAR(10) NULL DEFAULT (''), 
     [OldFabricVer] VARCHAR(2) NULL DEFAULT (''), 
+    [SuppColor] NVARCHAR(MAX) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Issue_Summary_1] PRIMARY KEY CLUSTERED ([Id] ASC, [Ukey] ASC)
 );
 
