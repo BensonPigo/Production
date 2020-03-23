@@ -228,7 +228,6 @@ outer apply( select top 1 * from Rft WITH (NOLOCK) where rft.OrderID = sd.OrderI
                                and rft.CDate = s.OutputDate 
                                and rft.SewinglineID = s.SewingLineID 
                                and rft.Shift = s.Shift 
-                               and rft.Team = s.Team
                                and rft.Team = s.Team) Rft
 where sd.ID = '{0}'",
                 masterID);
@@ -2138,14 +2137,14 @@ and ukey = (select max(ukey) from SewingOutput_Detail s2 where s.id =s2.id)
             using (transactionscope)
             {
                 DualResult dualResult = DBProxy.Current.Execute(null, strUpdateWorkHour, listSqlParmeter);
-
+            
                 if (dualResult == false)
                 {
                     transactionscope.Dispose();
                     MyUtility.Msg.WarningBox(dualResult.ToString());
                     return;
                 }
-
+            
                 transactionscope.Complete();
                 transactionscope.Dispose();
             }
@@ -2818,13 +2817,114 @@ where 1=1
     and s.FactoryID  = '{Sci.Env.User.Factory}'
 ";
 
+            string sqlFixWrongSewingOutput = $@"
+Declare @ID varchar(13)
+Declare @WorkHour numeric(6,2)
+Declare @QAQty int
+Declare @DefectQty int
+Declare @InlineQty int
+Declare @TMS int
+Declare @Efficiency numeric(6,1)
+Declare @ManHour numeric(9,3)
+Declare @AllQAQty int
+
+DECLARE Sewingoutput_cursor CURSOR FOR 
+	select S.ID,S.WorkHour,S.ManHour
+	from SewingOutput S with (nolock)
+	where S.Category='O' and s.FactoryID = '{Env.User.Factory}' and s.OutputDate <= GETDATE() and s.LockDate is null  and
+		 exists(select 1  from  SewingOutput_Detail SD WITH (NOLOCK)
+					outer apply 
+					( 
+					select isnull(SUM(SDD.QAQty),0) as SDD_Qty from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.ID=SD.ID and SDD.SewingOutput_DetailUKey=SD.UKey 
+					) as SDD 
+					where SD.ID = S.ID and SD.QAQty != SDD.SDD_Qty) 
+
+
+OPEN Sewingoutput_cursor --開始run cursor                   
+FETCH NEXT FROM Sewingoutput_cursor INTO @ID,@WorkHour,@ManHour
+WHILE @@FETCH_STATUS = 0 --檢查是否有讀取到資料; WHILE用來處理迴圈，當為true時則進入迴圈執行
+BEGIN
+	--更新SewingOutput_Detail數量
+	update SD set  SD.QAQty = SDD.SDD_Qty,SD.InlineQty = SDD.SDD_Qty,SD.DefectQty = 0 
+			from  SewingOutput_Detail SD WITH (NOLOCK)
+			outer apply 
+			( 
+			select isnull(SUM(SDD.QAQty),0) as SDD_Qty from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.ID=SD.ID and SDD.SewingOutput_DetailUKey=SD.UKey 
+			) as SDD 
+			where SD.QAQty!=SDD.SDD_Qty and SD.ID = @ID
+
+	--重新計算 WorkHour
+	
+	select	UKey,
+		    [WorkHour] = case	When AllCost = 0 or @WorkHour = 0 then 0
+								when IsLast = 0 then Round(Cost / AllCost * @WorkHour,3)
+								--最後一筆要用前面的值加總後剪掉最後一筆的值，這樣才不會有小數差
+								else @WorkHour + Round(Cost / AllCost * @WorkHour,3) - sum(iif(AllCost = 0,0, Round(Cost / AllCost * @WorkHour,3))) OVER ()   end
+	into #tmpUpdWorkHour
+	from (select UKey,
+		[Cost] = cast( (isnull(sd.TMS,0) * isnull(sd.QAQty,0)) as numeric),
+		[AllCost] = Cast(sum(isnull(sd.TMS,0) * isnull(sd.QAQty,0))	OVER () as numeric),
+		[IsLast] = iif(LEAD(sd.QAQty,1,0) OVER (order by ukey) = 0 ,1,0)
+	from SewingOutput_Detail  SD WITH (NOLOCK)
+	where ID = @ID and AutoCreate = 0) a
+	
+	update SD set SD.WorkHour = t.WorkHour
+	from SewingOutput_Detail  SD
+	inner join #tmpUpdWorkHour t on sd.ukey = t.ukey
+
+	drop table #tmpUpdWorkHour
+
+	--更新表頭資料
+	select @AllQAQty = isnull(sum(isnull(QAQty,0)),0) from SewingOutput_Detail where id = @ID and AutoCreate = 0
+
+	select
+	@QAQty = @AllQAQty,
+	@InlineQty = isnull(sum(isnull(InlineQty,0)),0),
+	@DefectQty = isnull(sum(isnull(DefectQty,0)),0),
+	@TMS = iif(@AllQAQty = 0,0,Round(sum(isnull(SD.TMS,0) * isnull(SD.QAQty,0) * 1.0 ) / @AllQAQty,0))
+	from SewingOutput_Detail SD WITH (NOLOCK)
+	where ID = @ID and AutoCreate = 0
+
+	if(@TMS = 0 or @ManHour = 0)
+	begin
+		set @Efficiency = 0
+	end
+	else
+	begin
+		set @Efficiency = @QAQty * 1.0 / (3600.0 / @TMS * @ManHour * 1.0) * 100
+	end
+
+	update SewingOutput set	QAQty = @QAQty,
+							InlineQty = @InlineQty,
+							DefectQty = @DefectQty,
+							TMS = @TMS,
+							Efficiency = @Efficiency
+	where ID = @ID
+
+FETCH NEXT FROM Sewingoutput_cursor INTO @ID,@WorkHour,@ManHour
+END
+--關閉cursor與參數的關聯
+CLOSE Sewingoutput_cursor
+DEALLOCATE Sewingoutput_cursor --將cursor物件從記憶體移除
+";
+
             using (TransactionScope scope = new TransactionScope())
             {
                 DualResult upResult;
+
+                upResult = DBProxy.Current.Execute(null, sqlFixWrongSewingOutput);
+                if (!upResult)
+                {
+                    scope.Dispose();
+                    this.ShowErr(upResult);
+                    return;
+                }
+
                 if (!MyUtility.Check.Empty(sqlcmd))
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, sqlcmd)))
                     {
+                        scope.Dispose();
                         this.ShowErr(upResult);
                         return;
                     }
