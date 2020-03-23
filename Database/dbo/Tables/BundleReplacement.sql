@@ -1,17 +1,17 @@
 ﻿CREATE TABLE [dbo].[BundleReplacement] (
-    [ID]              VARCHAR (13)  NOT NULL,
-    [POID]            VARCHAR (13)  NOT NULL,
-    [MDivisionid]     VARCHAR (8)   NOT NULL,
-    [Sizecode]        VARCHAR (100) NOT NULL,
-    [Colorid]         VARCHAR (6)   NOT NULL,
-    [Article]         VARCHAR (8)   NOT NULL,
-    [PatternPanel]    VARCHAR (2)   NOT NULL,
+    [ID]              VARCHAR (13)  DEFAULT ('') NOT NULL,
+    [POID]            VARCHAR (13)  DEFAULT ('') NOT NULL,
+    [MDivisionid]     VARCHAR (8)   DEFAULT ('') NOT NULL,
+    [Sizecode]        VARCHAR (100) DEFAULT ('') NOT NULL,
+    [Colorid]         VARCHAR (6)   DEFAULT ('') NOT NULL,
+    [Article]         VARCHAR (8)   DEFAULT ('') NOT NULL,
+    [PatternPanel]    VARCHAR (2)   DEFAULT ('') NOT NULL,
     [Cutno]           NUMERIC (6)   NULL,
     [Cdate]           DATE          NULL,
-    [Orderid]         VARCHAR (13)  NOT NULL,
-    [Sewinglineid]    VARCHAR (2)   NOT NULL,
+    [Orderid]         VARCHAR (13)  DEFAULT ('') NOT NULL,
+    [Sewinglineid]    VARCHAR (2)   DEFAULT ('') NOT NULL,
     [Item]            VARCHAR (20)  NULL,
-    [SewingCell]      VARCHAR (2)   NOT NULL,
+    [SewingCell]      VARCHAR (2)   DEFAULT ('') NOT NULL,
     [Ratio]           VARCHAR (100) NULL,
     [Startno]         NUMERIC (5)   NULL,
     [Qty]             NUMERIC (2)   NULL,
@@ -24,7 +24,9 @@
     [EditDate]        DATETIME      NULL,
     [oldid]           VARCHAR (13)  NULL,
     [FabricPanelCode] VARCHAR (2)   NULL,
-    [Remake]          BIT           NOT NULL,
+    [Remake]          BIT           DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_BundleReplacement] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 

@@ -544,7 +544,8 @@ order by x.[Bundle]");
                         brand = row1["brand"].ToString(),
                         item = row1["item"].ToString(),
                         EXCESS1 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : "",
-                        NoBundleCardAfterSubprocess1 = row1["NoBundleCardAfterSubprocess"].ToString()
+                        NoBundleCardAfterSubprocess1 = row1["NoBundleCardAfterSubprocess"].ToString(),
+                        Replacement1 = ""
                     }).ToList();
                 data.AddRange(
                  dt2.AsEnumerable().Select(row1 => new P10_PrintData()
@@ -569,7 +570,8 @@ order by x.[Bundle]");
                      brand2 = row1["brand"].ToString(),
                      item2 = row1["item"].ToString(),
                      EXCESS2 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : "",
-                     NoBundleCardAfterSubprocess2 = row1["NoBundleCardAfterSubprocess"].ToString()
+                     NoBundleCardAfterSubprocess2 = row1["NoBundleCardAfterSubprocess"].ToString(),
+                     Replacement2 = ""
                  }).ToList());
 
 
@@ -596,7 +598,8 @@ order by x.[Bundle]");
                     brand3 = row1["brand"].ToString(),
                     item3 = row1["item"].ToString(),
                     EXCESS3 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : "",
-                    NoBundleCardAfterSubprocess3 = row1["NoBundleCardAfterSubprocess"].ToString()
+                    NoBundleCardAfterSubprocess3 = row1["NoBundleCardAfterSubprocess"].ToString(),
+                    Replacement3 = ""
                 }).ToList());
 
                 report.ReportDataSource = data;
