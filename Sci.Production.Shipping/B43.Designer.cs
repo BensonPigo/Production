@@ -45,6 +45,8 @@
             this.lab_status = new System.Windows.Forms.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.txtmultifactory1 = new Sci.Production.Class.txtmultifactory();
+            this.lbShipper = new Sci.Win.UI.Label();
+            this.txtShipper = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -61,6 +63,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtShipper);
+            this.masterpanel.Controls.Add(this.lbShipper);
             this.masterpanel.Controls.Add(this.txtmultifactory1);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.lab_status);
@@ -78,7 +82,7 @@
             this.masterpanel.Controls.Add(this.labelStartDate);
             this.masterpanel.Controls.Add(this.dateEndDate);
             this.masterpanel.Controls.Add(this.dateStartDate);
-            this.masterpanel.Size = new System.Drawing.Size(912, 160);
+            this.masterpanel.Size = new System.Drawing.Size(912, 191);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateStartDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateEndDate, 0);
@@ -97,15 +101,17 @@
             this.masterpanel.Controls.SetChildIndex(this.lab_status, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtmultifactory1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbShipper, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtShipper, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 160);
-            this.detailpanel.Size = new System.Drawing.Size(912, 219);
+            this.detailpanel.Location = new System.Drawing.Point(0, 191);
+            this.detailpanel.Size = new System.Drawing.Size(912, 227);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(649, 125);
+            this.gridicon.Location = new System.Drawing.Point(649, 156);
             // 
             // refresh
             // 
@@ -113,7 +119,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(912, 219);
+            this.detailgridcont.Size = new System.Drawing.Size(912, 227);
             // 
             // detail2
             // 
@@ -129,15 +135,15 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(912, 417);
+            this.detail.Size = new System.Drawing.Size(912, 456);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(912, 379);
+            this.detailcont.Size = new System.Drawing.Size(912, 418);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 379);
+            this.detailbtm.Location = new System.Drawing.Point(0, 418);
             this.detailbtm.Size = new System.Drawing.Size(912, 38);
             // 
             // browse
@@ -146,7 +152,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(920, 446);
+            this.tabs.Size = new System.Drawing.Size(920, 485);
             // 
             // createby
             // 
@@ -287,7 +293,7 @@
             this.btnImportData.Location = new System.Drawing.Point(498, 96);
             this.btnImportData.Name = "btnImportData";
             this.btnImportData.Size = new System.Drawing.Size(100, 30);
-            this.btnImportData.TabIndex = 13;
+            this.btnImportData.TabIndex = 90;
             this.btnImportData.Text = "Import Data";
             this.btnImportData.UseVisualStyleBackColor = true;
             this.btnImportData.Click += new System.EventHandler(this.BtnImportData_Click);
@@ -298,7 +304,7 @@
             this.btnAddNewNLCode.Location = new System.Drawing.Point(603, 96);
             this.btnAddNewNLCode.Name = "btnAddNewNLCode";
             this.btnAddNewNLCode.Size = new System.Drawing.Size(151, 30);
-            this.btnAddNewNLCode.TabIndex = 14;
+            this.btnAddNewNLCode.TabIndex = 91;
             this.btnAddNewNLCode.Text = "Add New Customs Code";
             this.btnAddNewNLCode.UseVisualStyleBackColor = true;
             this.btnAddNewNLCode.Click += new System.EventHandler(this.BtnAddNewNLCode_Click);
@@ -315,7 +321,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(9, 131);
+            this.label1.Location = new System.Drawing.Point(9, 159);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(105, 23);
             this.label1.TabIndex = 16;
@@ -326,17 +332,35 @@
             this.txtmultifactory1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtmultifactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtmultifactory1.IsSupportEditMode = false;
-            this.txtmultifactory1.Location = new System.Drawing.Point(118, 131);
+            this.txtmultifactory1.Location = new System.Drawing.Point(118, 159);
             this.txtmultifactory1.Name = "txtmultifactory1";
             this.txtmultifactory1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditMode;
             this.txtmultifactory1.ReadOnly = true;
             this.txtmultifactory1.Size = new System.Drawing.Size(450, 23);
-            this.txtmultifactory1.TabIndex = 17;
+            this.txtmultifactory1.TabIndex = 7;
+            // 
+            // lbShipper
+            // 
+            this.lbShipper.Location = new System.Drawing.Point(9, 129);
+            this.lbShipper.Name = "lbShipper";
+            this.lbShipper.Size = new System.Drawing.Size(105, 23);
+            this.lbShipper.TabIndex = 18;
+            this.lbShipper.Text = "Shipper";
+            // 
+            // txtShipper
+            // 
+            this.txtShipper.BackColor = System.Drawing.Color.White;
+            this.txtShipper.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Shipper", true));
+            this.txtShipper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtShipper.Location = new System.Drawing.Point(118, 129);
+            this.txtShipper.Name = "txtShipper";
+            this.txtShipper.Size = new System.Drawing.Size(130, 23);
+            this.txtShipper.TabIndex = 6;
             // 
             // B43
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(920, 479);
+            this.ClientSize = new System.Drawing.Size(920, 518);
             this.DefaultControl = "dateStartDate";
             this.DefaultControlForEdit = "dateStartDate";
             this.DefaultDetailOrder = "NLCode";
@@ -395,5 +419,7 @@
         private System.Windows.Forms.Label lab_status;
         private Win.UI.Label label1;
         private Class.txtmultifactory txtmultifactory1;
+        private Win.UI.TextBox txtShipper;
+        private Win.UI.Label lbShipper;
     }
 }

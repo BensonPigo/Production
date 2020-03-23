@@ -231,6 +231,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
             .Numeric("BGradeRequest", header: "Defect Qty", decimal_places: 2, width: Widths.AnsiChars(7), settings: bgraderequest, iseditingreadonly: true)
             .Numeric("NarrowRequest", header: "1st Estimate Qty", decimal_places: 2, width: Widths.AnsiChars(7), settings: narrowrequest, iseditingreadonly: true)
             .Numeric("TotalRequest", header: "Final Needed Qty", decimal_places: 2, width: Widths.AnsiChars(7), settings: ttlrequest, iseditingreadonly: true)
+            .Text("ReplacementUnit", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Date("DamageSendDate", header: "Damage\r\nSample Sent\r\nDate", iseditingreadonly: true)
             .Text("AWBNo", header: "AWB# Of\r\nDamage\r\nSample", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("ReplacementETA", header: "Replacement\r\nETA", iseditingreadonly: true)
@@ -240,7 +241,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
 
             this.detailgrid.CellDoubleClick += (s, e) =>
             {
-                if (e.ColumnIndex == 1 && !MyUtility.Convert.GetBool(this.CurrentMaintain["SendToTrade"]))
+                if (e.ColumnIndex == 1)
                 {
                     Sci.Production.PPIC.P09_InputData callInputDataForm = new Sci.Production.PPIC.P09_InputData(this.CurrentMaintain);
                     callInputDataForm.Set(this.EditMode, this.DetailDatas, this.CurrentDetailData);
@@ -474,7 +475,8 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
                 worksheet.Cells[row + 11, column] = MyUtility.Convert.GetString(dr["AGradeRequest"]);
                 worksheet.Cells[row + 12, column] = MyUtility.Convert.GetString(dr["BGradeRequest"]);
                 worksheet.Cells[row + 13, column] = MyUtility.Convert.GetString(dr["NarrowRequest"]);
-                worksheet.Cells[row + 14, column] = MyUtility.Convert.GetString(dr["TotalRequest"]);
+                string finalNeedQty = string.Format("{0:N2}", MyUtility.Convert.GetDecimal(dr["TotalRequest"])) + (MyUtility.Check.Empty(dr["ReplacementUnit"]) ? string.Empty : "  " + dr["ReplacementUnit"].ToString());
+                worksheet.Cells[row + 14, column] = finalNeedQty;
                 worksheet.Cells[row + 15, column] = MyUtility.Check.Empty(dr["DamageSendDate"]) ? string.Empty : Convert.ToDateTime(dr["DamageSendDate"]).ToString("d");
                 worksheet.Cells[row + 16, column] = MyUtility.Convert.GetString(dr["AWBNo"]);
                 worksheet.Cells[row + 17, column] = MyUtility.Check.Empty(dr["ReplacementETA"]) ? string.Empty : Convert.ToDateTime(dr["ReplacementETA"]).ToString("d");

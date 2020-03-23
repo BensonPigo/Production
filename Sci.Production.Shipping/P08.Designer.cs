@@ -85,6 +85,9 @@
             this.numericBoxShareAmt = new Sci.Win.UI.NumericBox();
             this.label5 = new Sci.Win.UI.Label();
             this.numericBox1 = new Sci.Win.UI.NumericBox();
+            this.chkIncludeFoundry = new Sci.Win.UI.CheckBox();
+            this.lbSisFtyAPID = new Sci.Win.UI.Label();
+            this.txtSisFtyAPID = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -101,6 +104,9 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtSisFtyAPID);
+            this.masterpanel.Controls.Add(this.lbSisFtyAPID);
+            this.masterpanel.Controls.Add(this.chkIncludeFoundry);
             this.masterpanel.Controls.Add(this.numericBox1);
             this.masterpanel.Controls.Add(this.label5);
             this.masterpanel.Controls.Add(this.numericBoxShareAmt);
@@ -216,6 +222,9 @@
             this.masterpanel.Controls.SetChildIndex(this.label5, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkIncludeFoundry, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbSisFtyAPID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtSisFtyAPID, 0);
             // 
             // detailpanel
             // 
@@ -911,6 +920,37 @@
             0,
             0});
             // 
+            // chkIncludeFoundry
+            // 
+            this.chkIncludeFoundry.AutoSize = true;
+            this.chkIncludeFoundry.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkIncludeFoundry.IsSupportEditMode = false;
+            this.chkIncludeFoundry.Location = new System.Drawing.Point(642, 160);
+            this.chkIncludeFoundry.Name = "chkIncludeFoundry";
+            this.chkIncludeFoundry.ReadOnly = true;
+            this.chkIncludeFoundry.Size = new System.Drawing.Size(128, 21);
+            this.chkIncludeFoundry.TabIndex = 103;
+            this.chkIncludeFoundry.Text = "Include Foundry";
+            this.chkIncludeFoundry.UseVisualStyleBackColor = true;
+            // 
+            // lbSisFtyAPID
+            // 
+            this.lbSisFtyAPID.Location = new System.Drawing.Point(642, 181);
+            this.lbSisFtyAPID.Name = "lbSisFtyAPID";
+            this.lbSisFtyAPID.Size = new System.Drawing.Size(83, 23);
+            this.lbSisFtyAPID.TabIndex = 104;
+            this.lbSisFtyAPID.Text = "Sis. Fty A/P#";
+            // 
+            // txtSisFtyAPID
+            // 
+            this.txtSisFtyAPID.BackColor = System.Drawing.Color.White;
+            this.txtSisFtyAPID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SisFtyAPID", true));
+            this.txtSisFtyAPID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSisFtyAPID.Location = new System.Drawing.Point(728, 181);
+            this.txtSisFtyAPID.Name = "txtSisFtyAPID";
+            this.txtSisFtyAPID.Size = new System.Drawing.Size(100, 23);
+            this.txtSisFtyAPID.TabIndex = 105;
+            // 
             // P08
             // 
             this.ClientSize = new System.Drawing.Size(1008, 628);
@@ -1006,5 +1046,8 @@
         private Win.UI.Label label3;
         private Win.UI.NumericBox numericBox1;
         private Win.UI.Label label5;
+        private Win.UI.CheckBox chkIncludeFoundry;
+        private Win.UI.TextBox txtSisFtyAPID;
+        private Win.UI.Label lbSisFtyAPID;
     }
 }

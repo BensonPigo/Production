@@ -10,6 +10,7 @@
     [AddDate]       DATETIME      NULL,
     [EditName]      VARCHAR (10)  CONSTRAINT [DF_VNContract_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME      NULL,
+    [Shipper] VARCHAR(8) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_VNContract] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

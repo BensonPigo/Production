@@ -48,6 +48,7 @@
             this.label10 = new Sci.Win.UI.Label();
             this.label11 = new Sci.Win.UI.Label();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.lineShape16 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape15 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape14 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape13 = new Microsoft.VisualBasic.PowerPacks.LineShape();
@@ -102,13 +103,16 @@
             this.txtNoOfRollsOver50 = new Sci.Win.UI.TextBox();
             this.txtWidthNoOfRollsWith = new Sci.Win.UI.TextBox();
             this.numTotalDefectPoints = new Sci.Win.UI.NumericBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.numFinalNeedQty = new Sci.Win.UI.NumericBox();
+            this.lblReplacementUnit = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.SuspendLayout();
             // 
             // btmcont
             // 
-            this.btmcont.Location = new System.Drawing.Point(0, 594);
+            this.btmcont.Location = new System.Drawing.Point(0, 630);
             this.btmcont.Size = new System.Drawing.Size(929, 42);
             this.btmcont.TabIndex = 26;
             // 
@@ -410,6 +414,7 @@
             this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
+            this.lineShape16,
             this.lineShape15,
             this.lineShape14,
             this.lineShape13,
@@ -425,9 +430,18 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(929, 636);
+            this.shapeContainer1.Size = new System.Drawing.Size(929, 672);
             this.shapeContainer1.TabIndex = 115;
             this.shapeContainer1.TabStop = false;
+            // 
+            // lineShape16
+            // 
+            this.lineShape16.BorderColor = System.Drawing.SystemColors.ControlDark;
+            this.lineShape16.Name = "lineShape16";
+            this.lineShape16.X1 = 7;
+            this.lineShape16.X2 = 921;
+            this.lineShape16.Y1 = 504;
+            this.lineShape16.Y2 = 504;
             // 
             // lineShape15
             // 
@@ -435,8 +449,8 @@
             this.lineShape15.Name = "lineShape15";
             this.lineShape15.X1 = 7;
             this.lineShape15.X2 = 921;
-            this.lineShape15.Y1 = 587;
-            this.lineShape15.Y2 = 587;
+            this.lineShape15.Y1 = 624;
+            this.lineShape15.Y2 = 624;
             // 
             // lineShape14
             // 
@@ -472,7 +486,7 @@
             this.lineShape11.X1 = 7;
             this.lineShape11.X2 = 7;
             this.lineShape11.Y1 = 12;
-            this.lineShape11.Y2 = 587;
+            this.lineShape11.Y2 = 624;
             // 
             // lineShape10
             // 
@@ -488,9 +502,9 @@
             this.lineShape9.BorderColor = System.Drawing.SystemColors.ControlDark;
             this.lineShape9.Name = "lineShape9";
             this.lineShape9.X1 = 921;
-            this.lineShape9.X2 = 921;
+            this.lineShape9.X2 = 922;
             this.lineShape9.Y1 = 12;
-            this.lineShape9.Y2 = 587;
+            this.lineShape9.Y2 = 624;
             // 
             // lineShape8
             // 
@@ -974,7 +988,7 @@
             // labelDamageSampleSendDate
             // 
             this.labelDamageSampleSendDate.BackColor = System.Drawing.Color.Transparent;
-            this.labelDamageSampleSendDate.Location = new System.Drawing.Point(14, 478);
+            this.labelDamageSampleSendDate.Location = new System.Drawing.Point(14, 513);
             this.labelDamageSampleSendDate.Name = "labelDamageSampleSendDate";
             this.labelDamageSampleSendDate.Size = new System.Drawing.Size(175, 23);
             this.labelDamageSampleSendDate.TabIndex = 142;
@@ -987,7 +1001,7 @@
             // labelReplacementETA
             // 
             this.labelReplacementETA.BackColor = System.Drawing.Color.Transparent;
-            this.labelReplacementETA.Location = new System.Drawing.Point(14, 505);
+            this.labelReplacementETA.Location = new System.Drawing.Point(14, 540);
             this.labelReplacementETA.Name = "labelReplacementETA";
             this.labelReplacementETA.Size = new System.Drawing.Size(175, 23);
             this.labelReplacementETA.TabIndex = 143;
@@ -1000,7 +1014,7 @@
             // labelFactorySuggesteSolutionAsideFromReplacement
             // 
             this.labelFactorySuggesteSolutionAsideFromReplacement.BackColor = System.Drawing.Color.Transparent;
-            this.labelFactorySuggesteSolutionAsideFromReplacement.Location = new System.Drawing.Point(13, 559);
+            this.labelFactorySuggesteSolutionAsideFromReplacement.Location = new System.Drawing.Point(13, 594);
             this.labelFactorySuggesteSolutionAsideFromReplacement.Name = "labelFactorySuggesteSolutionAsideFromReplacement";
             this.labelFactorySuggesteSolutionAsideFromReplacement.Size = new System.Drawing.Size(333, 23);
             this.labelFactorySuggesteSolutionAsideFromReplacement.TabIndex = 145;
@@ -1013,7 +1027,7 @@
             // dateDamageSampleSendDate
             // 
             this.dateDamageSampleSendDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DamageSendDate", true));
-            this.dateDamageSampleSendDate.Location = new System.Drawing.Point(193, 478);
+            this.dateDamageSampleSendDate.Location = new System.Drawing.Point(193, 513);
             this.dateDamageSampleSendDate.Name = "dateDamageSampleSendDate";
             this.dateDamageSampleSendDate.Size = new System.Drawing.Size(110, 23);
             this.dateDamageSampleSendDate.TabIndex = 18;
@@ -1021,7 +1035,7 @@
             // dateReplacementETA
             // 
             this.dateReplacementETA.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ReplacementETA", true));
-            this.dateReplacementETA.Location = new System.Drawing.Point(193, 505);
+            this.dateReplacementETA.Location = new System.Drawing.Point(193, 540);
             this.dateReplacementETA.Name = "dateReplacementETA";
             this.dateReplacementETA.Size = new System.Drawing.Size(110, 23);
             this.dateReplacementETA.TabIndex = 20;
@@ -1032,7 +1046,7 @@
             this.txtFactorySuggesteSolutionAsideFromReplacement.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtFactorySuggesteSolutionAsideFromReplacement.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Suggested", true));
             this.txtFactorySuggesteSolutionAsideFromReplacement.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFactorySuggesteSolutionAsideFromReplacement.Location = new System.Drawing.Point(350, 559);
+            this.txtFactorySuggesteSolutionAsideFromReplacement.Location = new System.Drawing.Point(350, 594);
             this.txtFactorySuggesteSolutionAsideFromReplacement.Name = "txtFactorySuggesteSolutionAsideFromReplacement";
             this.txtFactorySuggesteSolutionAsideFromReplacement.Size = new System.Drawing.Size(384, 23);
             this.txtFactorySuggesteSolutionAsideFromReplacement.TabIndex = 24;
@@ -1040,7 +1054,7 @@
             // labelAWBofDamageSample
             // 
             this.labelAWBofDamageSample.BackColor = System.Drawing.Color.Transparent;
-            this.labelAWBofDamageSample.Location = new System.Drawing.Point(390, 478);
+            this.labelAWBofDamageSample.Location = new System.Drawing.Point(390, 513);
             this.labelAWBofDamageSample.Name = "labelAWBofDamageSample";
             this.labelAWBofDamageSample.Size = new System.Drawing.Size(165, 23);
             this.labelAWBofDamageSample.TabIndex = 150;
@@ -1053,7 +1067,7 @@
             // labelCostOccurred
             // 
             this.labelCostOccurred.BackColor = System.Drawing.Color.Transparent;
-            this.labelCostOccurred.Location = new System.Drawing.Point(390, 505);
+            this.labelCostOccurred.Location = new System.Drawing.Point(390, 540);
             this.labelCostOccurred.Name = "labelCostOccurred";
             this.labelCostOccurred.Size = new System.Drawing.Size(93, 23);
             this.labelCostOccurred.TabIndex = 151;
@@ -1066,7 +1080,7 @@
             // labelDefectReason
             // 
             this.labelDefectReason.BackColor = System.Drawing.Color.Transparent;
-            this.labelDefectReason.Location = new System.Drawing.Point(431, 532);
+            this.labelDefectReason.Location = new System.Drawing.Point(431, 567);
             this.labelDefectReason.Name = "labelDefectReason";
             this.labelDefectReason.Size = new System.Drawing.Size(51, 23);
             this.labelDefectReason.TabIndex = 152;
@@ -1081,7 +1095,7 @@
             this.txtAWBofDamageSample.BackColor = System.Drawing.Color.White;
             this.txtAWBofDamageSample.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AWBNo", true));
             this.txtAWBofDamageSample.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtAWBofDamageSample.Location = new System.Drawing.Point(557, 478);
+            this.txtAWBofDamageSample.Location = new System.Drawing.Point(557, 513);
             this.txtAWBofDamageSample.Name = "txtAWBofDamageSample";
             this.txtAWBofDamageSample.Size = new System.Drawing.Size(280, 23);
             this.txtAWBofDamageSample.TabIndex = 19;
@@ -1092,7 +1106,7 @@
             this.numCostOccurred.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OccurCost", true));
             this.numCostOccurred.DecimalPlaces = 3;
             this.numCostOccurred.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numCostOccurred.Location = new System.Drawing.Point(485, 505);
+            this.numCostOccurred.Location = new System.Drawing.Point(485, 540);
             this.numCostOccurred.Maximum = new decimal(new int[] {
             9999999,
             0,
@@ -1123,7 +1137,7 @@
             this.txtDefectReason.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtDefectReason.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ResponsibilityReason", true));
             this.txtDefectReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtDefectReason.Location = new System.Drawing.Point(485, 532);
+            this.txtDefectReason.Location = new System.Drawing.Point(485, 567);
             this.txtDefectReason.Name = "txtDefectReason";
             this.txtDefectReason.Size = new System.Drawing.Size(425, 23);
             this.txtDefectReason.TabIndex = 23;
@@ -1194,9 +1208,67 @@
             0});
             this.numTotalDefectPoints.Validated += new System.EventHandler(this.numTotalDefectPoints_Validated);
             // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Location = new System.Drawing.Point(14, 477);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(118, 23);
+            this.label1.TabIndex = 154;
+            this.label1.Text = "Final Needed Q\'ty:";
+            this.label1.TextStyle.BorderColor = System.Drawing.Color.Red;
+            this.label1.TextStyle.Color = System.Drawing.Color.Red;
+            this.label1.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
+            this.label1.TextStyle.GradientColor = System.Drawing.Color.Red;
+            // 
+            // numFinalNeedQty
+            // 
+            this.numFinalNeedQty.BackColor = System.Drawing.Color.White;
+            this.numFinalNeedQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FinalNeedQty", true));
+            this.numFinalNeedQty.DecimalPlaces = 2;
+            this.numFinalNeedQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numFinalNeedQty.Location = new System.Drawing.Point(146, 477);
+            this.numFinalNeedQty.Maximum = new decimal(new int[] {
+            99999999,
+            0,
+            0,
+            131072});
+            this.numFinalNeedQty.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numFinalNeedQty.Name = "numFinalNeedQty";
+            this.numFinalNeedQty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numFinalNeedQty.Size = new System.Drawing.Size(100, 23);
+            this.numFinalNeedQty.TabIndex = 155;
+            this.numFinalNeedQty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // lblReplacementUnit
+            // 
+            this.lblReplacementUnit.AutoSize = true;
+            this.lblReplacementUnit.BackColor = System.Drawing.Color.Transparent;
+            this.lblReplacementUnit.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ReplacementUnit", true));
+            this.lblReplacementUnit.Location = new System.Drawing.Point(249, 480);
+            this.lblReplacementUnit.Name = "lblReplacementUnit";
+            this.lblReplacementUnit.Size = new System.Drawing.Size(0, 0);
+            this.lblReplacementUnit.TabIndex = 156;
+            this.lblReplacementUnit.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // P08_InputData
             // 
-            this.ClientSize = new System.Drawing.Size(929, 636);
+            this.ClientSize = new System.Drawing.Size(929, 672);
+            this.Controls.Add(this.lblReplacementUnit);
+            this.Controls.Add(this.numFinalNeedQty);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.numTotalDefectPoints);
             this.Controls.Add(this.txtWidthNoOfRollsWith);
             this.Controls.Add(this.txtNoOfRollsOver50);
@@ -1321,6 +1393,9 @@
             this.Controls.SetChildIndex(this.txtNoOfRollsOver50, 0);
             this.Controls.SetChildIndex(this.txtWidthNoOfRollsWith, 0);
             this.Controls.SetChildIndex(this.numTotalDefectPoints, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.numFinalNeedQty, 0);
+            this.Controls.SetChildIndex(this.lblReplacementUnit, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -1404,5 +1479,9 @@
         private Win.UI.TextBox txtNoOfRollsOver50;
         private Win.UI.TextBox txtWidthNoOfRollsWith;
         private Win.UI.NumericBox numTotalDefectPoints;
+        private Microsoft.VisualBasic.PowerPacks.LineShape lineShape16;
+        private Win.UI.Label label1;
+        private Win.UI.NumericBox numFinalNeedQty;
+        private Win.UI.Label lblReplacementUnit;
     }
 }

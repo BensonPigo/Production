@@ -87,6 +87,7 @@ where bi.BundleNo='{drSelected["BundleNo"]}'
             this.grid.DataSource = listControlBindingSource1;
 
             Helper.Controls.Grid.Generator(this.grid)
+            .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("BundleNo", header: "Bundle No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Orderid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("POID", header: "Master SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -111,6 +112,8 @@ where bi.BundleNo='{drSelected["BundleNo"]}'
             .Text("XXXRFIDIn", header: "RFID In", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("XXXRFIDOut", header: "RFID Out", width: Widths.AnsiChars(13), iseditingreadonly: true)            
             .Text("BundleReplacement", header: "Bundle Replacement", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: BundleReplacement)
+            .Text("PostSewingSubProcess_String", header: "Post Sewing\r\nSubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("NoBundleCardAfterSubprocess_String", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
 
             #endregion
@@ -224,6 +227,9 @@ bd.BundleNo
 ,[ReceiveQtyLoading]= IIF(ReceiveQtyLoading.InComing != '' OR ReceiveQtyLoading.InComing IS NOT NULL , 'Complete' ,'Not Complete')
 ,[XXXRFIDIn]=bio.InComing
 ,[XXXRFIDOut]=bio.OutGoing
+, ps.NoBundleCardAfterSubprocess_String
+, nbs.PostSewingSubProcess_String
+,b.CutRef
 into #tmpMain
 FROM Bundle b
 INNER JOIN Bundle_Detail bd ON bd.ID=b.Id
@@ -262,6 +268,29 @@ OUTER APPLY(
 		)
 	)M
 )SubProcess
+
+outer apply
+(
+    select NoBundleCardAfterSubprocess_String = 
+    stuff((
+        select concat('+',e1.Subprocessid)
+        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        where e1.id=b.id and e1.Bundleno=bd.BundleNo and e1.NoBundleCardAfterSubprocess = 1
+		Order by e1.Subprocessid
+        for xml path('')
+    ),1,1,'')
+) as ps
+outer apply
+(
+    select PostSewingSubProcess_String = 
+    stuff((
+        select concat('+',e1.Subprocessid)
+        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        where e1.id=b.id and e1.Bundleno=bd.BundleNo and e1.PostSewingSubProcess = 1
+		Order by e1.Subprocessid
+        for xml path('')
+    ),1,1,'')
+) as nbs
 
 OUTER APPLY(
 	--每個Bundle都會有的SubProcess
@@ -316,6 +345,9 @@ t.BundleNo
 ,t.XXXRFIDIn
 ,t.XXXRFIDOut
 ,BundleReplacement = BR.RQ
+, t.NoBundleCardAfterSubprocess_String
+, t.PostSewingSubProcess_String
+, CutRef
 from #tmpMain t
 outer apply(
     select RQ=stuff((
@@ -335,7 +367,7 @@ drop table #tmpMain,#tmpBundleInspection
 
             if (!result)
             {
-                MyUtility.Msg.WarningBox("DB Error");
+                MyUtility.Msg.WarningBox(result.ToString());
                 return;
             }
 

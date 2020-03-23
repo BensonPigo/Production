@@ -38,6 +38,7 @@ namespace Sci.Production.PPIC
             this.labelNoOfRollsOver50.Text = "No. of Rolls over 50\r\npoints per 100y";
             this.labelWidthNoOfRollsWith.Text = "Standard with / Rcvd\r\nwidth / No. of rolls with\r\nnarrow width";
             this.label24.Text = "After Cutting\r\nReplacement\r\nRequest";
+
         }
 
         /// <inheritdoc/>
@@ -55,6 +56,14 @@ namespace Sci.Production.PPIC
             {
                 MyUtility.Msg.WarningBox("SEQ can't empty!!");
                 this.txtSEQ.Focus();
+                return false;
+            }
+
+            decimal finalNeedQty = this.CurrentData["FinalNeedQty"] == null ? 0 : MyUtility.Convert.GetDecimal(this.CurrentData["FinalNeedQty"]);
+
+            if (finalNeedQty <= 0)
+            {
+                MyUtility.Msg.WarningBox("<Final Needed Q'ty> Cannot be less than or equal to 0");
                 return false;
             }
 
@@ -89,14 +98,14 @@ namespace Sci.Production.PPIC
                     @"select f.Seq1,f.Seq2,isnull(psd.ColorID,'') as ColorID,isnull(psd.Refno,'') as Refno,
 isnull(psd.SCIRefno,'') as SCIRefno,iif(e.Eta is null, r.ETA, e.Eta) as ETA,isnull(r.ExportId,'') as ExportId,
 isnull(r.InvNo,'') as InvNo,isnull(sum(fp.TicketYds),0) as EstInQty,isnull(sum(fp.ActualYds),0) as ActInQty,
-dbo.getmtldesc(f.POID,f.Seq1,f.Seq2,2,0) as Description
+dbo.getmtldesc(f.POID,f.Seq1,f.Seq2,2,0) as Description, psd.StockUnit
 from FIR f WITH (NOLOCK) 
 inner join FIR_Physical fp WITH (NOLOCK) on f.ID = fp.ID
 left join Receiving r WITH (NOLOCK) on f.ReceivingID = r.Id
 left join Export e WITH (NOLOCK) on r.ExportId = e.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on f.POID = psd.ID and f.Seq1 = psd.SEQ1 and f.Seq2 = psd.SEQ2
 where f.POID = '{0}' and f.Seq1 = '{1}' and f.Seq2 = '{2}' and fp.Result = 'F'
-group by f.Seq1,f.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.ETA, e.Eta),r.ExportId,r.InvNo,dbo.getmtldesc(f.POID,f.Seq1,f.Seq2,2,0)",
+group by f.Seq1,f.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.ETA, e.Eta),r.ExportId,r.InvNo,dbo.getmtldesc(f.POID,f.Seq1,f.Seq2,2,0), psd.StockUnit",
                     MyUtility.Convert.GetString(this.masterData["POID"]),
                     seq1,
                     seq2);
@@ -115,13 +124,14 @@ group by f.Seq1,f.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.E
                     this.CurrentData["ActInQty"] = firData["ActInQty"];
                     this.CurrentData["Description"] = firData["Description"];
                     this.CurrentData["ExportID"] = firData["ExportId"];
+                    this.CurrentData["ReplacementUnit"] = firData["StockUnit"];
                 }
                 else
                 {
                     DataRow poData;
                     sqlCmd = string.Format(
                         @"select psd.Refno,psd.SCIRefno,psd.seq1,psd.seq2,psd.FabricType,psd.ColorID, 
-dbo.getmtldesc(psd.ID,psd.SEQ1,psd.SEQ2,2,0) as Description 
+dbo.getmtldesc(psd.ID,psd.SEQ1,psd.SEQ2,2,0) as Description, psd.StockUnit
 from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
 inner join dbo.Factory f on psd.FactoryID=f.ID
 , dbo.MDivisionPoDetail mpd WITH (NOLOCK) 
@@ -165,6 +175,7 @@ and mpd.InQty > 0",
                     this.CurrentData["SCIRefno"] = poData["SCIRefno"];
                     this.CurrentData["ColorID"] = poData["ColorID"];
                     this.CurrentData["Description"] = poData["Description"];
+                    this.CurrentData["ReplacementUnit"] = poData["StockUnit"];
 
                     sqlCmd = string.Format(
                         @"select distinct r.InvNo,r.ExportId,iif(e.Eta is null, r.ETA,e.Eta) as ETA,
@@ -384,5 +395,6 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
                 this.CalculateTotalRequest();
             }
         }
+
     }
 }

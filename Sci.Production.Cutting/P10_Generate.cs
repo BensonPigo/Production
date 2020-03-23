@@ -46,9 +46,9 @@ namespace Sci.Production.Cutting
             #region 取tabel的結構
             string cmd_st = "Select 0 as Sel, PatternCode ,Location ,PatternDesc, '' as annotation,parts,IsPair from Bundle_detail_allpart WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_st, out allpartTb);
-            string pattern_cmd = "Select patternCode,PatternDesc ,Location ,Parts,'' as art,0 AS parts,IsPair from Bundle_Detail WITH (NOLOCK) Where 1=0"; //左下的Table
+            string pattern_cmd = "Select patternCode,PatternDesc ,Location ,Parts,'' as art,0 AS parts,IsPair,NoBundleCardAfterSubprocess_String='',PostSewingSubProcess_String='' from Bundle_Detail WITH (NOLOCK) Where 1=0"; //左下的Table
             DBProxy.Current.Select(null, pattern_cmd, out patternTb);
-            string cmd_art = "Select PatternCode,subprocessid from Bundle_detail_art WITH (NOLOCK) where 1=0";
+            string cmd_art = "Select PatternCode,subprocessid,NoBundleCardAfterSubprocess_String='',PostSewingSubProcess_String='' from Bundle_detail_art WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_art, out artTb);
             #endregion
 
@@ -275,11 +275,11 @@ order by ArticleGroup", patternukey);
             DataTable detailAccept = detailTb.Copy();
             detailAccept.AcceptChanges();
             string BundleGroup = detailAccept.Rows[0]["BundleGroup"].ToString();
-            MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,PatternDesc,parts,subProcessid,BundleGroup,isPair,Location", string.Format(@"
-Select  PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location
+            MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,PatternDesc,parts,subProcessid,BundleGroup,isPair,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String", string.Format(@"
+Select  PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String
 from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             //需要使用上一層表身的值,不可重DB撈不然新增的資料就不會存回DB
-            MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,SubProcessid", "Select distinct PatternCode,SubProcessid from #tmp WHERE PatternCode<>'ALLPARTS'", out artTb);
+            MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,SubProcessid,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String", "Select distinct PatternCode,SubProcessid,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String from #tmp WHERE PatternCode<>'ALLPARTS'", out artTb);
             //foreach (DataRow dr in tmp.Select("BundleNO<>''"))
             foreach (DataRow dr in tmp.Rows)
             {
@@ -289,18 +289,9 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                 ndr["Location"] = dr["Location"];
                 ndr["Parts"] = dr["Parts"];
                 ndr["isPair"] = dr["isPair"];
-                ndr["art"] = MyUtility.Check.Empty(dr["SubProcessid"]) ? "" : dr["SubProcessid"].ToString().Substring(0, dr["SubProcessid"].ToString().Length - 1);
-                string art = "";
-                DataRow[] dray = artTb.Select(string.Format("PatternCode = '{0}'", dr["PatternCode"]));
-                if (dray.Length != 0)
-                {
-                    foreach (DataRow dr2 in dray)
-                    {
-                        if (art != "") art = art + "+" + dr2["Subprocessid"].ToString();
-                        else art = dr2["Subprocessid"].ToString();
-                    }
-                    ndr["art"] = art;
-                }
+                ndr["art"] =  dr["SubProcessid"].ToString();
+                ndr["NoBundleCardAfterSubprocess_String"] = dr["NoBundleCardAfterSubprocess_String"];
+                ndr["PostSewingSubProcess_String"] = dr["PostSewingSubProcess_String"];
                 patternTb.Rows.Add(ndr);
             }
 
@@ -352,6 +343,8 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             DataGridViewGeneratorNumericColumnSettings partsCell1 = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings partsCell2 = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings isPair = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorTextColumnSettings NoBundleCardAfterSubprocess_String = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings PostSewingSubProcess_String = new DataGridViewGeneratorTextColumnSettings();
 
             #region 左上grid
             NoCell.CellValidating += (s, e) =>
@@ -463,6 +456,25 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     e.EditingControl.Text = subpro;
                     dr["art"] = subpro;
                     dr.EndEdit();
+
+                    string[] arts = MyUtility.Convert.GetString(dr["art"]).Split('+');
+                    string[] pssps = MyUtility.Convert.GetString(dr["PostSewingSubProcess_String"]).Split('+');
+                    string nbcass = MyUtility.Convert.GetString(dr["NoBundleCardAfterSubprocess_String"]);
+                    if (!arts.Contains(nbcass))
+                    {
+                        dr["NoBundleCardAfterSubprocess_String"] = string.Empty;
+                    }
+                    List<string> recordPS = new List<string>();
+                    foreach (var item in arts)
+                    {
+                        if (pssps.Contains(item))
+                        {
+                            recordPS.Add(item);
+                        }
+                    }
+                    dr["PostSewingSubProcess_String"] = string.Join("+", recordPS);
+                    dr.EndEdit();
+
                     DataRow[] artdr = artTb.Select(string.Format("PatternCode='{0}'", dr["PatternCode"]));
                     foreach (DataRow adr in artdr)
                     {
@@ -477,6 +489,65 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     }
                 }
             };
+            PostSewingSubProcess_String.EditingMouseDown += (s, e) =>
+            {
+                DataRow dr = grid_art.GetDataRow(e.RowIndex);
+                if (dr["PatternCode"].ToString() == "ALLPARTS") return;
+                if (MyUtility.Check.Empty(dr["art"])) return;
+                if (e.Button == MouseButtons.Right)
+                {
+                    string inArt = "'" + string.Join("','", MyUtility.Convert.GetString(dr["art"]).Split('+')) + "'";
+                    string sqlcmd = $"Select id from subprocess WITH (NOLOCK) where junk=0 and IsSelection=1 and id in({inArt})";
+                    SelectItem2 item = new SelectItem2(sqlcmd, "Subprocess", "23", dr["PostSewingSubProcess_String"].ToString(), null, null, null);
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+
+                    dr["PostSewingSubProcess_String"] = item.GetSelectedString().Replace(",", "+"); ;
+                    dr.EndEdit();
+                }
+            };
+            PostSewingSubProcess_String.CellFormatting += (s, e) =>
+            {
+                DataRow dr = grid_art.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["art"]) || dr["PatternCode"].ToString() == "ALLPARTS")
+                {
+                    e.CellStyle.BackColor = Color.White;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+            NoBundleCardAfterSubprocess_String.EditingMouseDown += (s, e) =>
+            {
+                DataRow dr = grid_art.GetDataRow(e.RowIndex);
+                if (dr["PatternCode"].ToString() == "ALLPARTS") return;
+                if (MyUtility.Check.Empty(dr["art"])) return;
+                if (e.Button == MouseButtons.Right)
+                {
+                    string inArt = "'" + string.Join("','", MyUtility.Convert.GetString(dr["art"]).Split('+')) + "'";
+                    string sqlcmd = $"select id = '' union all Select id from subprocess WITH (NOLOCK) where IsBoundedProcess = 1 and id in({inArt})";
+                    SelectItem item = new SelectItem(sqlcmd, "23", MyUtility.Convert.GetString(dr["NoBundleCardAfterSubprocess_String"]), "Subprocess");
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+
+                    dr["NoBundleCardAfterSubprocess_String"] = item.GetSelectedString();
+                    dr.EndEdit();
+                }
+            };
+            NoBundleCardAfterSubprocess_String.CellFormatting += (s, e) =>
+            {
+                DataRow dr = grid_art.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["art"]) || dr["PatternCode"].ToString() == "ALLPARTS")
+                {
+                    e.CellStyle.BackColor = Color.White;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+
             partsCell1.CellValidating += (s, e) =>
             {
                 DataRow dr = grid_art.GetDataRow(e.RowIndex);
@@ -591,7 +662,10 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             .Text("Location", header: "Location", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("art", header: "Artwork", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: subcell)
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partsCell1)
-            .CheckBox("IsPair", header: "IsPair", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: isPair);
+            .CheckBox("IsPair", header: "IsPair", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: isPair)
+            .Text("PostSewingSubProcess_String", header: "Post Sewing\r\nSubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: PostSewingSubProcess_String)
+            .Text("NoBundleCardAfterSubprocess_String", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: NoBundleCardAfterSubprocess_String)
+            ;
             grid_art.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
             grid_art.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
             grid_art.Columns["art"].DefaultCellStyle.BackColor = Color.Pink;
@@ -1033,8 +1107,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             #endregion
 
 
-            DataTable bundle_detail_tmp;
-            DBProxy.Current.Select(null, "Select *,0 as ukey1,'' as subprocessid,Location from bundle_Detail WITH (NOLOCK) where 1=0", out bundle_detail_tmp);
+            DataTable bundle_detail_tmp = detailTb.Clone();
             int bundlegroup = Convert.ToInt32(maindatarow["startno"]);
             int ukey = 1;
             grid_qty.ValidateControl();
@@ -1061,6 +1134,8 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                         if (dr2["PatternCode"].ToString() != "ALLPARTS")
                         {
                             nDetail["subprocessid"] = dr2["art"].ToString();
+                            nDetail["NoBundleCardAfterSubprocess_String"] = dr2["NoBundleCardAfterSubprocess_String"];
+                            nDetail["PostSewingSubProcess_String"] = dr2["PostSewingSubProcess_String"];
                         }
                         ukey++;
 
@@ -1090,6 +1165,8 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                         dr["PatternDesc"] = tmpdr["PatternDesc"];
                         dr["Location"] = tmpdr["Location"];
                         dr["subprocessid"] = tmpdr["subprocessid"];
+                        dr["NoBundleCardAfterSubprocess_String"] = tmpdr["NoBundleCardAfterSubprocess_String"];
+                        dr["PostSewingSubProcess_String"] = tmpdr["PostSewingSubProcess_String"];
                         dr["Parts"] = tmpdr["Parts"];
                         dr["Qty"] = tmpdr["Qty"];
                         dr["SizeCode"] = tmpdr["SizeCode"];
@@ -1134,6 +1211,8 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                             art_ndr["Bundleno"] = dr["Bundleno"];
                             art_ndr["PatternCode"] = dr["PatternCode"];
                             art_ndr["Subprocessid"] = dr["subprocessid"];
+                            art_ndr["NoBundleCardAfterSubprocess_String"] = dr["NoBundleCardAfterSubprocess_String"];
+                            art_ndr["PostSewingSubProcess_String"] = dr["PostSewingSubProcess_String"];
                             art_ndr["ukey1"] = dr["ukey1"];
                             bundle_detail_artTb.Rows.Add(art_ndr);
                         }
@@ -1161,6 +1240,8 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     ndr["PatternCode"] = tmpdr["PatternCode"];
                     ndr["PatternDesc"] = tmpdr["PatternDesc"];
                     ndr["subprocessid"] = tmpdr["subprocessid"];
+                    ndr["NoBundleCardAfterSubprocess_String"] = tmpdr["NoBundleCardAfterSubprocess_String"];
+                    ndr["PostSewingSubProcess_String"] = tmpdr["PostSewingSubProcess_String"];
                     ndr["Location"] = tmpdr["Location"];
                     ndr["Parts"] = tmpdr["Parts"];
                     ndr["Qty"] = tmpdr["Qty"];
@@ -1205,6 +1286,8 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                         DataRow art_ndr = bundle_detail_artTb.NewRow();
                         art_ndr["PatternCode"] = tmpdr["PatternCode"];
                         art_ndr["Subprocessid"] = tmpdr["subprocessid"];
+                        art_ndr["NoBundleCardAfterSubprocess_String"] = tmpdr["NoBundleCardAfterSubprocess_String"];
+                        art_ndr["PostSewingSubProcess_String"] = tmpdr["PostSewingSubProcess_String"];
                         art_ndr["ukey1"] = tmpdr["ukey1"];
                         bundle_detail_artTb.Rows.Add(art_ndr);
                     }

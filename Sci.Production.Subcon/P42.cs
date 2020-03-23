@@ -301,13 +301,20 @@ cross join(
 	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1
 )s
 
-select Orderid,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault
+select Orderid,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,
+	NoBundleCardAfterSubprocess= case when SubProcessID = 'Loading' Or SubProcessID = 'SEWINGLINE' then isnull(x.NoBundleCardAfterSubprocess,0) else 0 end,
+	PostSewingSubProcess=0
 into #tmpBundleNo_SubProcess
-from #tmpBundleNo
+from #tmpBundleNo b
+outer apply(
+	select NoBundleCardAfterSubprocess=MAX(cast(NoBundleCardAfterSubprocess as int))
+	from Bundle_Detail_art bda WITH (NOLOCK) 
+	where bda.bundleno = b.bundleno
+)x
 
 union
 
-select Orderid,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
+select Orderid,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,bda.NoBundleCardAfterSubprocess,bda.PostSewingSubProcess
 from #tmpBundleNo b
 inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
 inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
@@ -341,11 +348,20 @@ select
 	b.BundleNo,
 	b.subProcessid,
 	b.InOutRule 
-	,[HasInComing]=IIF( bio.InComing IS NOT NULL ,'true','false')
-	,[HasOutGoing]=IIF( bio.OutGoing IS NOT NULL ,'true','false')
+	,[HasInComing]=case when p.PostSewingSubProcess_SL=1 then 'true'
+						when NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then 'true'
+						else IIF( bio.InComing IS NOT NULL ,'true','false')
+						end
+	,[HasOutGoing]=case when p.PostSewingSubProcess_SL=1 then 'true'
+						when NoBundleCardAfterSubprocess=1 and InOutRule = 3  Then 'true'
+						else IIF( bio.OutGoing IS NOT NULL ,'true','false')
+						end
 into #tmpBundleNo_Complete2
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
+left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = b.BundleNo and bunIOS.SubProcessId = 'SORTING' and isnull(bunIOS.RFIDProcessLocationID,'') = ''
+left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = b.BundleNo and bunIOL.SubProcessId = 'LOADING' and isnull(bunIOL.RFIDProcessLocationID,'') = ''
+outer apply(select PostSewingSubProcess_SL =iif(isnull(PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0))p
 
 
 SELECT Orderid,	BundleNo,InOutRule,SubProcessID
@@ -498,13 +514,20 @@ cross join(
 )s
 
 
-select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault
+select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,
+	NoBundleCardAfterSubprocess= case when SubProcessID = 'Loading' Or SubProcessID = 'SEWINGLINE' then isnull(x.NoBundleCardAfterSubprocess,0) else 0 end,
+	PostSewingSubProcess=0
 into #tmpBundleNo_SubProcess
-from #tmpBundleNo
+from #tmpBundleNo b
+outer apply(
+	select NoBundleCardAfterSubprocess=MAX(cast(NoBundleCardAfterSubprocess as int))
+	from Bundle_Detail_art bda WITH (NOLOCK) 
+	where bda.bundleno = b.bundleno
+)x
 
 union
 
-select Orderid,Article,Sizecode,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
+select Orderid,Article,Sizecode,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,bda.NoBundleCardAfterSubprocess,bda.PostSewingSubProcess
 from #tmpBundleNo b
 inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
 inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
@@ -540,11 +563,20 @@ select
 	b.BundleNo,
 	b.subProcessid,
 	b.InOutRule 
-	,[HasInComing]=IIF( bio.InComing IS NOT NULL ,'true','false')
-	,[HasOutGoing]=IIF( bio.OutGoing IS NOT NULL ,'true','false')
+	,[HasInComing]=case when p.PostSewingSubProcess_SL=1 then 'true'
+						when NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then 'true'
+						else IIF( bio.InComing IS NOT NULL ,'true','false')
+						end
+	,[HasOutGoing]=case when p.PostSewingSubProcess_SL=1 then 'true'
+						when NoBundleCardAfterSubprocess=1 and InOutRule = 3  Then 'true'
+						else IIF( bio.OutGoing IS NOT NULL ,'true','false')
+						end
 into #tmpBundleNo_Complete2
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
+left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = b.BundleNo and bunIOS.SubProcessId = 'SORTING' and isnull(bunIOS.RFIDProcessLocationID,'') = ''
+left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = b.BundleNo and bunIOL.SubProcessId = 'LOADING' and isnull(bunIOL.RFIDProcessLocationID,'') = ''
+outer apply(select PostSewingSubProcess_SL =iif(isnull(PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0))p
 
 SELECT Orderid,	Article,Sizecode,BundleNo,InOutRule,SubProcessID
 ,[CompleteCount]=CompleteCount.Value
@@ -718,6 +750,7 @@ select   b.Orderid
         ,b.Article
         ,bd.BundleGroup
         ,bd.SizeCode
+		,b.CutRef
 into #tmpBundleNo
 from Bundle b with(nolock)
 inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
@@ -739,8 +772,16 @@ select   Orderid
         ,Article
         ,BundleGroup
         ,SizeCode
+		,CutRef
+	    ,NoBundleCardAfterSubprocess= case when SubProcessID = 'Loading' Or SubProcessID = 'SEWINGLINE' then isnull(x.NoBundleCardAfterSubprocess,0) else 0 end
+	    ,PostSewingSubProcess=0
 into #tmpBundleNo_SubProcess
-from #tmpBundleNo
+from #tmpBundleNo b
+outer apply(
+	select NoBundleCardAfterSubprocess=MAX(cast(NoBundleCardAfterSubprocess as int))
+	from Bundle_Detail_art bda WITH (NOLOCK) 
+	where bda.bundleno = b.bundleno
+)x
 
 union
 
@@ -755,6 +796,7 @@ select   Orderid
         ,Article
         ,BundleGroup
         ,SizeCode
+		,CutRef,bda.NoBundleCardAfterSubprocess,bda.PostSewingSubProcess
 from #tmpBundleNo b
 inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
 inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
@@ -770,17 +812,28 @@ select
     ,BundleGroup
     ,SizeCode
 	,b.InOutRule 
-	,[HasInComing]=IIF( bio.InComing IS NOT NULL ,'true','false')
-	,[HasOutGoing]=IIF( bio.OutGoing IS NOT NULL ,'true','false')
+	,[HasInComing]=case when p.PostSewingSubProcess_SL=1 then 'true'
+						when NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then 'true'
+						else IIF( bio.InComing IS NOT NULL ,'true','false')
+						end
+	,[HasOutGoing]=case when p.PostSewingSubProcess_SL=1 then 'true'
+						when NoBundleCardAfterSubprocess=1 and InOutRule = 3  Then 'true'
+						else IIF( bio.OutGoing IS NOT NULL ,'true','false')
+						end
 	,bio.InComing
 	,bio.OutGoing
+	,b.CutRef
 into #tmpBundleNo_Complete
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
+left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = b.BundleNo and bunIOS.SubProcessId = 'SORTING' and isnull(bunIOS.RFIDProcessLocationID,'') = ''
+left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = b.BundleNo and bunIOL.SubProcessId = 'LOADING' and isnull(bunIOL.RFIDProcessLocationID,'') = ''
+outer apply(select PostSewingSubProcess_SL =iif(isnull(PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0))p
 where b.subProcessid='{subProcess}'
 
 select
-	[Bundle#]=t.BundleNo
+	 CutRef
+    ,[Bundle#]=t.BundleNo
 	,b.Qty
 	,EXCESS=iif(IsEXCESS=1,'Y','')
     ,PatternDesc
@@ -795,12 +848,28 @@ select
 			 end
 	,[InComing] = FORMAT(t.InComing,'yyyy/MM/dd HH:mm:ss')
 	,[OutGoing] = FORMAT(t.OutGoing,'yyyy/MM/dd HH:mm:ss')
+    ,ps.PostSewingSubProcess
+    ,nb.NoBundleCardAfterSubprocess
 from #tmpBundleNo_Complete t
 outer apply(
 	select qty=sum(bd.Qty)
 	from Bundle_Detail bd with(nolock)
 	where bd.BundleNo = t.BundleNo
 )b
+outer apply(
+    select top 1 PostSewingSubProcess
+    from Bundle_Detail_Art bda
+    where bda.BundleNo = t.BundleNo
+    and bda.subProcessid='{subProcess}'
+    and bda.PostSewingSubProcess = 1
+)ps
+outer apply(
+    select top 1 NoBundleCardAfterSubprocess
+    from Bundle_Detail_Art bda
+    where bda.BundleNo = t.BundleNo
+    and bda.subProcessid='{subProcess}'
+    and bda.NoBundleCardAfterSubprocess = 1
+)nb
 
 order by t.BundleNo
 
@@ -863,6 +932,7 @@ select   b.Orderid
         ,bd.PatternDesc
         ,bd.BundleGroup
         ,[BD_SizeCode]=bd.SizeCode
+		,b.CutRef
 into #tmpBundleNo
 from Bundle b with(nolock)
 inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID and b.Article = o.Article and b.Sizecode = o.SizeCode
@@ -875,18 +945,27 @@ cross join(
 
 
 select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,IsEXCESS
+	,NoBundleCardAfterSubprocess= case when SubProcessID = 'Loading' Or SubProcessID = 'SEWINGLINE' then isnull(x.NoBundleCardAfterSubprocess,0) else 0 end
+	,PostSewingSubProcess=0
     ,PatternDesc
     ,BundleGroup
     ,[BD_SizeCode]
+    ,CutRef
 into #tmpBundleNo_SubProcess
-from #tmpBundleNo
+from #tmpBundleNo b
+outer apply(
+	select NoBundleCardAfterSubprocess=MAX(cast(NoBundleCardAfterSubprocess as int))
+	from Bundle_Detail_art bda WITH (NOLOCK) 
+	where bda.bundleno = b.bundleno
+)x
 
 union
 
-select Orderid,Article,Sizecode,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,IsEXCESS
+select Orderid,Article,Sizecode,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,IsEXCESS,bda.NoBundleCardAfterSubprocess,bda.PostSewingSubProcess
     ,PatternDesc
     ,BundleGroup
     ,[BD_SizeCode]
+    ,CutRef
 from #tmpBundleNo b
 inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
 inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
@@ -902,17 +981,28 @@ select
     ,BundleGroup
     ,[BD_SizeCode]
 	,b.InOutRule 
-	,[HasInComing]=IIF( bio.InComing IS NOT NULL ,'true','false')
-	,[HasOutGoing]=IIF( bio.OutGoing IS NOT NULL ,'true','false')
+	,[HasInComing]=case when p.PostSewingSubProcess_SL=1 then 'true'
+						when NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then 'true'
+						else IIF( bio.InComing IS NOT NULL ,'true','false')
+						end
+	,[HasOutGoing]=case when p.PostSewingSubProcess_SL=1 then 'true'
+						when NoBundleCardAfterSubprocess=1 and InOutRule = 3  Then 'true'
+						else IIF( bio.OutGoing IS NOT NULL ,'true','false')
+						end
 	,bio.InComing
 	,bio.OutGoing
+	,b.CutRef
 into #tmpBundleNo_Complete
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
+left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = b.BundleNo and bunIOS.SubProcessId = 'SORTING' and isnull(bunIOS.RFIDProcessLocationID,'') = ''
+left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = b.BundleNo and bunIOL.SubProcessId = 'LOADING' and isnull(bunIOL.RFIDProcessLocationID,'') = ''
+outer apply(select PostSewingSubProcess_SL =iif(isnull(PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0))p
 where b.subProcessid='{subProcess}'
 
 select
-	[Bundle#]=t.BundleNo
+	 CutRef
+    ,[Bundle#]=t.BundleNo
 	,b.Qty
 	,EXCESS=iif(IsEXCESS=1,'Y','')
     ,PatternDesc
@@ -927,6 +1017,8 @@ select
 			 end
 	,[InComing] = FORMAT(t.InComing,'yyyy/MM/dd HH:mm:ss')
 	,[OutGoing] = FORMAT(t.OutGoing,'yyyy/MM/dd HH:mm:ss')
+    ,ps.PostSewingSubProcess
+    ,nb.NoBundleCardAfterSubprocess
 from #tmpBundleNo_Complete t
 outer apply(
 	select qty=sum(bd.Qty)
@@ -934,6 +1026,20 @@ outer apply(
 	inner join Bundle b WITH (NOLOCK) on b.id = bd.Id
 	where bd.BundleNo = t.BundleNo and b.Article = t.Article and b.Sizecode = t.Sizecode
 )b
+outer apply(
+    select top 1 PostSewingSubProcess
+    from Bundle_Detail_Art bda
+    where bda.BundleNo = t.BundleNo
+    and bda.subProcessid='{subProcess}'
+    and bda.PostSewingSubProcess = 1
+)ps
+outer apply(
+    select top 1 NoBundleCardAfterSubprocess
+    from Bundle_Detail_Art bda
+    where bda.BundleNo = t.BundleNo
+    and bda.subProcessid='{subProcess}'
+    and bda.NoBundleCardAfterSubprocess = 1
+)nb
 
 drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
 ";
@@ -950,11 +1056,11 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
 
             #region 準備要傳入元件的Grid
 
-
             this.listControlBindingSource2.DataSource = dt;
             this.grid2.Columns.Clear();
             //準備Grid 2
             this.Helper.Controls.Grid.Generator(this.grid2)
+            .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Bundle#", header: "BundleNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("PatternDesc", header: "PatternDesc", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -966,6 +1072,15 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
             .Text("InComing", header: "Farm In", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
+
+            string sqlchk = $@"select 1 from SubProcess where id = '{subProcess}' and IsSelection = 1";
+            if (MyUtility.Check.Seek(sqlchk))
+            {
+                this.Helper.Controls.Grid.Generator(this.grid2)
+                .CheckBox("PostSewingSubProcess", header: "Post Sewing\r\nSubProcess", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0, iseditable: false)
+                .CheckBox("NoBundleCardAfterSubprocess", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0, iseditable: false)
+                ;
+            }
             this.grid2.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.grid2_CellFormatting);
 
             #endregion
@@ -980,10 +1095,13 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
 
             switch (MyUtility.Convert.GetString(e.Value))
             {
+                case "Complete":
+                    e.CellStyle.BackColor = Color.Green;
+                    break;
                 case "OnGoing":
                     e.CellStyle.BackColor = Color.Yellow;
                     break;
-                case "Not Valid":
+                case "Not Yet Load":
                     e.CellStyle.BackColor = Color.Red;
                     break;
                 default:
