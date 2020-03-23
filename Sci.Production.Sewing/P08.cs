@@ -1,123 +1,192 @@
 ﻿using Ict;
-using Ict.Win;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
 {
     public partial class P08 : Sci.Win.Tems.QueryForm
     {
+        private DataTable dt = new DataTable();
+
         public P08(ToolStripMenuItem menuitem)
-            : base(menuitem)
+           : base(menuitem)
         {
             this.InitializeComponent();
         }
 
-        protected override void OnFormLoaded()
+        private void BtnSave_Click(object sender, EventArgs e)
         {
-            base.OnFormLoaded();
-
-            this.Helper.Controls.Grid.Generator(this.grid1)
-            .Date("ReceiveDate", header: "Receive Date", iseditingreadonly: true)
-            .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditingreadonly: false)
-            .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditingreadonly: false)
-            .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditingreadonly: false)
-            .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditingreadonly: false)
-            .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditingreadonly: false)
-            .Text("BrandID", header: "Brand", width: Widths.Auto(), iseditingreadonly: false)
-            .Text("Alias", header: "Destination", width: Widths.Auto(), iseditingreadonly: false)
-            .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditingreadonly: false)
-            .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditingreadonly: false)
-            .Text("ReceivedBy", header: "Received By", width: Widths.Auto(), iseditingreadonly: false)
-            .DateTime("AddDate", header: "Receive Time", width: Widths.Auto(), iseditingreadonly: false)
-            .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
-            .Text("RepackOrderID", header: "Repack To SP #", width: Widths.AnsiChars(15), iseditable: false)
-            .Text("RepackCtnStartNo", header: "Repack To CTN #", width: Widths.AnsiChars(6), iseditable: false)
-            ;
+            if (this.BeforeSave())
+            {
+                this.Save();
+            }
         }
 
-        private void BtnQuery_Click(object sender, EventArgs e)
+        private void TxtScanCartonsBarcode_Validating(object sender, CancelEventArgs e)
         {
-            this.listControlBindingSource1.DataSource = null;
+            this.Find(this.txtScanCartonsBarcode.Text);
+        }
 
-            string datereceive1 = string.Empty, datereceive2 = string.Empty, packid = string.Empty, sp = string.Empty;
-            string sqlwhere = string.Empty;
-            if (!MyUtility.Check.Empty(this.dateReceive.TextBox1.Value))
+        private void Find(string cartonsBarcode)
+        {
+            if (MyUtility.Check.Empty(cartonsBarcode))
             {
-                datereceive1 = this.dateReceive.TextBox1.Text;
-                datereceive2 = this.dateReceive.TextBox2.Text;
-                sqlwhere += $@" and dr.ReceiveDate between @datereceive1 and @datereceive2 ";
+                return;
             }
 
-            if (!MyUtility.Check.Empty(this.txtPackID.Text))
-            {
-                packid = this.txtPackID.Text;
-                sqlwhere += $@" and  (pd.ID = @packid or  pd.OrigID = @packid) ";
-            }
+            List<SqlParameter> sqlParameters = new List<SqlParameter>();
+            sqlParameters.Add(new SqlParameter("@cartonsBarcode", cartonsBarcode));
 
-            if (!MyUtility.Check.Empty(this.txtsp.Text))
-            {
-                sp = this.txtsp.Text;
-                sqlwhere += $@" and (pd.OrderID = @sp or pd.OrigOrderID = @sp) ";
-            }
-
-            this.ShowWaitMessage("Data Loading...");
-
-            string sqlcmd = $@"
-declare @datereceive1 date = '{datereceive1}'
-declare @datereceive2 date = '{datereceive2}'
-declare @packid nvarchar(20) = '{packid}'
-declare @sp nvarchar(20) = '{sp}'
-
-select DISTINCT
-	dr.ReceiveDate
-	,[PackingListID] = iif(pd.OrigID = '' OR pd.OrigID IS NULL  ,dr.PackingListID , pd.OrigID)
-	,[CTNStartNo] = iif(pd.OrigCTNStartNo = '' OR pd.OrigCTNStartNo IS NULL    ,dr.CTNStartNo   , pd.OrigCTNStartNo)
-	,[OrderID] = iif(pd.OrigOrderID = '' OR pd.OrigOrderID IS NULL ,dr.OrderID, pd.OrigOrderID)
+            string sqlcmd =
+                @"
+select top 1 pd.MDFailQty
+	,pd.OrderID
 	,o.CustPONo
 	,o.StyleID
+	,o.SeasonID
 	,o.BrandID
-	,Country.Alias
-	,o.BuyerDelivery
-	,o.SciDelivery
-	,ReceivedBy = dbo.getPass1(dr.AddName)
-    ,dr.AddDate
-    , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
-    , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
-    , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
-from DRYReceive dr with(nolock)
-left join orders o with(nolock) on dr.OrderID = o.ID
-left join Country with(nolock) on Country.id = o.Dest
-left join PackingList_Detail pd WITH (NOLOCK) on pd.SCICtnNo = dr.SCICtnNo
-													AND dr.OrderID = pd.OrderID
-													AND  pd.CTNStartNo = dr.CTNStartNo AND dr.OrderID = pd.OrderID AND dr.PackingListID=pd.id 
-where 1=1
-{sqlwhere}
-
- ORDER BY dr.ReceiveDate,[PackingListID],[CTNStartNo],[OrderID]
+	,c.Alias
+	,[BuyerDelivery] = format(os.BuyerDelivery, 'yyyy/MM/dd')
+	,[CartonQty] = sum(pd.ShipQty) * isnull(ol.LocationQty, sl.LocationQty)
+    ,pd.Ukey
+    ,p.ID
+    ,pd.CTNStartNo
+    ,pd.SCICtnNo
+from PackingList p with(nolock)
+inner join PackingList_Detail pd with(nolock) on p.ID = pd.ID
+inner join orders o with(nolock) on pd.OrderID = o.ID
+left join Country c with(nolock) on c.id = o.Dest
+left join Order_QtyShip os with(nolock) on pd.OrderID = os.Id
+										and pd.OrderShipmodeSeq = os.Seq
+outer apply
+(
+	select [LocationQty] = count(distinct Location)
+	from Order_Location
+	where OrderId = pd.OrderID
+)ol
+outer apply
+(
+	select [LocationQty] = count(distinct Location)
+	from Style_Location
+	where StyleUkey = o.StyleUkey
+)sl
+where ((p.ID + pd.CTNStartNo) = @cartonsBarcode
+or pd.CustCTN = @cartonsBarcode
+or pd.SCICtnNo = @cartonsBarcode)
+group by pd.MDFailQty,pd.OrderID,o.CustPONo,o.StyleID,o.SeasonID,o.BrandID
+	,c.Alias,os.BuyerDelivery,ol.LocationQty, sl.LocationQty,pd.Ukey,p.ID
+    ,pd.CTNStartNo,pd.SCICtnNo
 ";
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            this.ShowWaitMessage("Data Loading....");
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, sqlParameters, out this.dt);
+            this.HideWaitMessage();
             if (!result)
             {
                 this.ShowErr(result);
                 return;
             }
 
-            if (dt.Rows.Count == 0)
+            if (this.dt.Rows.Count == 0)
             {
+                this.txtScanCartonsBarcode.Text = string.Empty;
                 MyUtility.Msg.WarningBox("Datas not found!");
+                return;
             }
 
-            this.HideWaitMessage();
-            this.listControlBindingSource1.DataSource = dt;
-            this.grid1.AutoResizeColumns();
+            foreach (DataRow row in this.dt.Rows)
+            {
+                this.displaySP.Text = MyUtility.Convert.GetString(row["OrderID"]);
+                this.displayPO.Text = MyUtility.Convert.GetString(row["CustPONo"]);
+                this.displayStyle.Text = MyUtility.Convert.GetString(row["StyleID"]);
+                this.displaySeason.Text = MyUtility.Convert.GetString(row["SeasonID"]);
+                this.displayBrand.Text = MyUtility.Convert.GetString(row["BrandID"]);
+                this.displayDestination.Text = MyUtility.Convert.GetString(row["Alias"]);
+                this.displayBuyerDelivery.Text = MyUtility.Convert.GetString(row["BuyerDelivery"]);
+                this.displayCartonQty.Text = MyUtility.Convert.GetString(row["CartonQty"]);
+                this.numericBoxDiscrepancy.Text = MyUtility.Convert.GetString(row["MDFailQty"]);
+                this.numericBoxDiscrepancy.Maximum = MyUtility.Convert.GetInt(row["CartonQty"]);
+            }
+        }
+
+        private bool BeforeSave()
+        {
+            if (MyUtility.Check.Empty(this.txtScanCartonsBarcode.Text))
+            {
+                MyUtility.Msg.WarningBox("Scan Cartons Barcode is not empty");
+                return false;
+            }
+
+            if (MyUtility.Convert.GetInt(this.numericBoxDiscrepancy.Text) > MyUtility.Convert.GetInt(this.displayCartonQty.Text))
+            {
+                MyUtility.Msg.WarningBox("Discrepancy cannot exceed Carton Qty");
+                return false;
+            }
+
+            if (this.dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found");
+                return false;
+            }
+
+            return true;
+        }
+
+        private void Save()
+        {
+            DataRow dr = this.dt.Rows[0];
+            string sqlcmd = string.Format(
+                @"
+update PackingList_Detail
+set MDFailQty = {1}, MDScanDate = getdate()
+where Ukey = {0};
+
+
+insert into MDScan([ScanDate], [MDivisionID], [OrderID], [PackingListID], [CTNStartNo], [AddName], [AddDate], [SCICtnNo], [MDFailQty], [CartonQty])
+values(getdate(), '{2}', '{3}', '{4}', '{5}', '{6}', getdate(), '{7}', {1}, {8})
+                ",
+                dr["Ukey"],
+                this.numericBoxDiscrepancy.Text,
+                Sci.Env.User.Keyword,
+                dr["OrderID"],
+                dr["ID"],
+                dr["CTNStartNo"],
+                Sci.Env.User.UserID,
+                dr["SCICtnNo"],
+                dr["CartonQty"]);
+
+            DualResult result = DBProxy.Current.Execute("Production", sqlcmd);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            MyUtility.Msg.InfoBox("Save Completed");
+            this.Init();
+        }
+
+        private void Init()
+        {
+            this.txtScanCartonsBarcode.Text = string.Empty; 
+            this.numericBoxDiscrepancy.Text = string.Empty;
+            this.displaySP.Text = string.Empty;
+            this.displayPO.Text = string.Empty;
+            this.displayStyle.Text = string.Empty;
+            this.displaySeason.Text = string.Empty;
+            this.displayBrand.Text = string.Empty;
+            this.displayDestination.Text = string.Empty;
+            this.displayBuyerDelivery.Text = string.Empty;
+            this.displayCartonQty.Text = string.Empty;
+            this.dt.Clear();
         }
     }
 }

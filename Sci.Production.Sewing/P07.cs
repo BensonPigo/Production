@@ -1,17 +1,12 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Data.SqlClient;
 using System.Drawing;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
@@ -22,422 +17,110 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.EditMode = true;
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Ict.Win.UI.DataGridViewComboBoxColumn cbb_TransferTo;
-            this.gridTransfer.IsEditingReadOnly = false;
-            this.Helper.Controls.Grid.Generator(this.gridTransfer)
-                .CheckBox("selected", header: string.Empty, width: Widths.AnsiChars(15), iseditable: true, trueValue: 1, falseValue: 0)
-                .Text("ID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("OrderIdlist", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("SeasonID", header: "Season", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("Alias", header: "Destination", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .ComboBox("TransferTo", header: "Transfer to", width: Widths.AnsiChars(11)).Get(out cbb_TransferTo)
-                .Text("Remark", header: "Remark", width: Widths.AnsiChars(25), iseditingreadonly: true);
 
-            DataTable cbSrc;
-            DBProxy.Current.Select(null, "select ID,Name from DropDownList where type = 'Pms_DRYTransferTo'", out cbSrc);
-            cbb_TransferTo.DataSource = cbSrc;
-            cbb_TransferTo.ValueMember = "ID";
-            cbb_TransferTo.DisplayMember = "Name";
-
-            this.gridTransfer.Columns["TransferTo"].DefaultCellStyle.BackColor = Color.Pink;
-
-            foreach (DataGridViewColumn col in this.gridTransfer.Columns)
-            {
-                col.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            }
-
-            string sqlCmd = $@"
-select 
-[selected] = 0,
-pd.ID,
-pd.CTNStartNo,
-[OrderIdlist] = '',
-pd.OrderID,
-o.CustPONo,
-o.StyleID,
-o.BrandID,
-o.SeasonID,
-c.Alias,
-o.BuyerDelivery,
-[TransferTo] = '',
-pd.Remark,
-pd.TransferDate,
-pd.DRYReceiveDate,
-pu.Status,
-pd.SCICtnNo
-from  Orders o with (nolock)
-left join PackingList_Detail pd with (nolock) on pd.OrderID = o.ID
-left join PackingList p with (nolock) on p.id = pd.ID
-left join Pullout pu with (nolock) on p.PulloutID = pu.ID
-left join Country c with (nolock) on o.Dest = c.ID 
-where	1 = 0";
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.dtTransfer);
-            this.gridTransfer.DataSource = this.dtTransfer;
+            this.Helper.Controls.Grid.Generator(this.grid1)
+            .Date("ReceiveDate", header: "Scan Date", iseditingreadonly: true)
+            .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditingreadonly: false)
+            .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditingreadonly: false)
+            .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditingreadonly: false)
+            .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditingreadonly: false)
+            .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditingreadonly: false)
+            .Text("BrandID", header: "Brand", width: Widths.Auto(), iseditingreadonly: false)
+            .Text("Alias", header: "Destination", width: Widths.Auto(), iseditingreadonly: false)
+            .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditingreadonly: false)
+            .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditingreadonly: false)
+            .Text("ReceivedBy", header: "Scan By", width: Widths.Auto(), iseditingreadonly: false)
+            .DateTime("AddDate", header: "Scan Time", width: Widths.Auto(), iseditingreadonly: false)
+            .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
+            .Text("RepackOrderID", header: "Repack To SP #", width: Widths.AnsiChars(15), iseditable: false)
+            .Text("RepackCtnStartNo", header: "Repack To CTN #", width: Widths.AnsiChars(6), iseditable: false)
+            ;
         }
 
-        DataTable dtTransfer = new DataTable();
-
-        private void BtnFind_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
-            List<SqlParameter> sqlPar = new List<SqlParameter>();
-            sqlPar.Add(new SqlParameter("@M", Env.User.Keyword));
+            this.listControlBindingSource1.DataSource = null;
 
-            string addWhere = string.Empty;
+            string datereceive1 = string.Empty, datereceive2 = string.Empty, packid = string.Empty, sp = string.Empty;
+            string sqlwhere = string.Empty;
+            if (!MyUtility.Check.Empty(this.dateReceive.TextBox1.Value))
+            {
+                datereceive1 = this.dateReceive.TextBox1.Text;
+                datereceive2 = this.dateReceive.TextBox2.Text;
+                sqlwhere += $@" and dr.ReceiveDate between @datereceive1 and @datereceive2 ";
+            }
 
             if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {
-                addWhere += " and pd.ID = @PackID ";
-                sqlPar.Add(new SqlParameter("@PackID", this.txtPackID.Text));
+                packid = this.txtPackID.Text;
+                sqlwhere += $@" and  (pd.ID = @packid or  pd.OrigID = @packid) ";
             }
 
-            if (!MyUtility.Check.Empty(this.txtSP.Text))
+            if (!MyUtility.Check.Empty(this.txtsp.Text))
             {
-                addWhere += " and pd.OrderID = @OrderID ";
-                sqlPar.Add(new SqlParameter("@OrderID", this.txtSP.Text));
+                sp = this.txtsp.Text;
+                sqlwhere += $@" and (pd.OrderID = @sp or pd.OrigOrderID = @sp) ";
             }
 
-            if (!MyUtility.Check.Empty(this.txtPO.Text))
-            {
-                addWhere += " and o.CustPONo = @CustPoNo ";
-                sqlPar.Add(new SqlParameter("@CustPoNo", this.txtPO.Text));
-            }
+            this.ShowWaitMessage("Data Loading...");
 
-            if (this.dateRangeReceive.HasValue)
-            {
-                addWhere += " and pd.DRYReceiveDate  between @fromDt and @toDt ";
-                sqlPar.Add(new SqlParameter("@fromDt", this.dateRangeReceive.DateBox1.Value));
-                sqlPar.Add(new SqlParameter("@toDt", this.dateRangeReceive.DateBox2.Value));
-            }
+            string sqlcmd = $@"
+declare @datereceive1 date = '{datereceive1}'
+declare @datereceive2 date = '{datereceive2}'
+declare @packid nvarchar(20) = '{packid}'
+declare @sp nvarchar(20) = '{sp}'
 
-            string sqlCmd = $@"
-select 
-[selected] = 0,
-pd.ID,
-pd.CTNStartNo,
-[OrderIdlist] = Stuff((select distinct concat( '/',OrderID)   from PackingList_Detail with (nolock) where ID = pd.ID and CTNStartNo = pd.CTNStartNo and DisposeFromClog= 0  FOR XML PATH('')),1,1,'') ,
-pd.OrderID,
-o.CustPONo,
-o.StyleID,
-o.BrandID,
-o.SeasonID,
-c.Alias,
-o.BuyerDelivery,
-[TransferTo] = '',
-pd.Remark,
-pd.TransferDate,
-pd.DRYReceiveDate,
-pu.Status,
-pd.SCICtnNo
-from  Orders o with (nolock)
-left join PackingList_Detail pd with (nolock) on pd.OrderID = o.ID 
-left join PackingList p with (nolock) on p.id = pd.ID
-left join Pullout pu with (nolock) on p.PulloutID = pu.ID
-left join Country c with (nolock) on o.Dest = c.ID 
-where	pd.CTNStartNo != '' and 
-		p.MDivisionID =@M and
-        pd.CTNQty = 1 and
-        pd.DisposeFromClog= 0 and
-		p.Type in ('B','L') and
-		pd.TransferDate  is null and
-		pd.DRYReceiveDate  is not null and 
-		(pu.Status = 'New' or pu.Status is null)
-" + addWhere;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, sqlPar, out this.dtTransfer);
+select DISTINCT dr.ReceiveDate
+	, [PackingListID] = iif(isnull(pd.OrigID, '') = '', dr.PackingListID, pd.OrigID)
+	, [CTNStartNo] = iif(isnull(pd.OrigCTNStartNo, '') = '', dr.CTNStartNo, pd.OrigCTNStartNo)
+	, [OrderID] = iif(isnull(pd.OrigOrderID, '') = '', dr.OrderID, pd.OrigOrderID)
+	, o.CustPONo
+	, o.StyleID
+	, o.BrandID
+	, Country.Alias
+	, os.BuyerDelivery
+	, o.SciDelivery
+	, ReceivedBy = dbo.getPass1(dr.AddName)
+    , [AddDate] = format(dr.AddDate, 'yyyy/MM/dd HH:mm:ss')
+    , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
+    , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
+    , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
+from DRYReceive dr with(nolock)
+left join orders o with(nolock) on dr.OrderID = o.ID
+left join Country with(nolock) on Country.id = o.Dest
+left join PackingList_Detail pd WITH (NOLOCK) on dr.SCICtnNo = pd.SCICtnNo
+													AND dr.OrderID = pd.OrderID
+													AND dr.CTNStartNo  = pd.CTNStartNo
+                                                    AND dr.PackingListID = pd.id 
+                                                    AND pd.CTNQty <> 0
+left join Order_QtyShip os on pd.OrderID = os.Id
+							and pd.OrderShipmodeSeq = os.Seq
+where 1=1
+{sqlwhere}
 
-            if (result == false)
+ ORDER BY dr.ReceiveDate,[PackingListID],[CTNStartNo],[OrderID]
+";
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            if (!result)
             {
                 this.ShowErr(result);
                 return;
             }
 
-            if (this.dtTransfer.Rows.Count == 0)
+            if (dt.Rows.Count == 0)
             {
-                MyUtility.Msg.WarningBox("No data Found!");
-                return;
+                MyUtility.Msg.WarningBox("Datas not found!");
             }
 
-            this.gridTransfer.DataSource = this.dtTransfer;
-        }
-
-        private void TxtScanBarcode_Validating(object sender, CancelEventArgs e)
-        {
-            if (MyUtility.Check.Empty(this.txtScanBarcode.Text))
-            {
-                return;
-            }
-
-            PackDataResult packDataResult = new PackDataResult();
-            packDataResult = this.GetPackData(this.txtScanBarcode.Text);
-            if (packDataResult.result == true)
-            {
-                if (this.dtTransfer.AsEnumerable().Any(s => s["ID"].Equals(packDataResult.Dr["ID"]) && s["CTNStartNo"].Equals(packDataResult.Dr["CTNStartNo"])))
-                {
-                    this.txtScanBarcode.Text = string.Empty;
-                    e.Cancel = true;
-                    return;
-                }
-
-                packDataResult.Dr.Table.Merge(this.dtTransfer);
-                this.dtTransfer = packDataResult.Dr.Table;
-                this.gridTransfer.DataSource = this.dtTransfer;
-
-            }
-            else
-            {
-                MyUtility.Msg.WarningBox(packDataResult.errMsg);
-            }
-
-            this.txtScanBarcode.Text = string.Empty;
-            e.Cancel = true;
-        }
-
-        private class PackDataResult
-        {
-            public DataRow Dr;
-            public bool result;
-            public string errMsg;
-        }
-
-        private PackDataResult GetPackData(string PackNo, bool fromCustCTN = false)
-        {
-            string keyWhere = string.Empty;
-            string PackingListID = string.Empty;
-            string CTNStarNo = string.Empty;
-
-            if (PackNo.Length > 13)
-            {
-                PackingListID = PackNo.Substring(0, 13);
-                CTNStarNo = PackNo.Substring(13, PackNo.Length - 13);
-            }
-
-            if (fromCustCTN == true)
-            {
-                keyWhere = $"CustCTN = '{PackNo}'";
-            }
-            else
-            {
-                //keyWhere = $"(ID+CTNStartNo) = '{PackNo}'";
-
-                if (PackNo.Length > 13)
-                {
-                    keyWhere = $" ID = '{PackingListID}' AND CTNStartNo ='{CTNStarNo}' ";
-                }
-                else
-                {
-                    keyWhere = $"(ID+CTNStartNo) = '{PackNo}'";
-                }
-            }
-
-            PackDataResult packDataResult = new PackDataResult();
-            string chkSql = $@"
-select 
-[selected] = 1,
-pd.ID,
-pd.CTNStartNo,
-[OrderIdlist] = Stuff((select distinct concat( '/',OrderID)   from PackingList_Detail with (nolock) where {keyWhere} and DisposeFromClog= 0 FOR XML PATH('')),1,1,'') ,
-pd.OrderID,
-o.CustPONo,
-o.StyleID,
-o.BrandID,
-o.SeasonID,
-c.Alias,
-o.BuyerDelivery,
-[TransferTo] = '',
-pd.Remark,
-pd.TransferDate,
-pd.DRYReceiveDate,
-pu.Status,
-pd.SCICtnNo
-from  (select * from PackingList_Detail with (nolock) where {keyWhere} and CTNQty = 1 and DisposeFromClog= 0) pd
-inner join Orders o with (nolock) on pd.OrderID = o.ID
-left join PackingList p with (nolock) on p.id = pd.ID
-left join Pullout pu with (nolock) on p.PulloutID = pu.ID
-left join Country c with (nolock) on o.Dest = c.ID 
-where	pd.CTNStartNo != '' and 
-		p.MDivisionID = '{Env.User.Keyword}' and
-		p.Type in ('B','L') ";
-
-            bool checkBarcode = MyUtility.Check.Seek(chkSql, out packDataResult.Dr);
-            packDataResult.result = false;
-            if (checkBarcode == false)
-            {
-                packDataResult.errMsg = $"<CNT#:{PackNo}> does not exist!";
-                return packDataResult;
-            }
-
-            if (MyUtility.Check.Empty(packDataResult.Dr["DRYReceiveDate"]))
-            {
-                packDataResult.errMsg = $"<CNT#:{PackNo}> This CTN# Dehumidifying Room not yet received.";
-                this.txtScanBarcode.Focus();
-                return packDataResult;
-            }
-
-            if (packDataResult.Dr["Status"].Equals("Confirmed") || packDataResult.Dr["Status"].Equals("Locked"))
-            {
-                packDataResult.errMsg = $"<CNT#:{PackNo}> Already pullout!";
-                return packDataResult;
-            }
-
-            packDataResult.result = true;
-            return packDataResult;
-        }
-
-        private void BtnClose_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void BtnImportFromBarcode_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.Filter = "txt files (*.txt)|*.txt";
-
-            // 開窗且有選擇檔案
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                string file = openFileDialog1.FileName;
-                using (StreamReader reader = new StreamReader(MyUtility.Convert.GetString(file), System.Text.Encoding.UTF8))
-                {
-                    this.ShowWaitMessage("Processing....");
-                    string line;
-                    try
-                    {
-                        string[] splitResult;
-
-                        // 檢查第1碼是否都為2
-                        while ((line = reader.ReadLine()) != null)
-                        {
-                            splitResult = line.Split('\t');
-                            if (!splitResult[0].Trim().Equals("1"))
-                            {
-                                MyUtility.Msg.WarningBox("Format is not correct!");
-                                return;
-                            }
-                        }
-
-                        // 讀取資料
-                        DataTable tmpDetail = this.dtTransfer.Clone();
-                        PackDataResult packDataResult = new PackDataResult();
-                        string packNo = string.Empty;
-                        reader.DiscardBufferedData();
-                        reader.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
-                        while ((line = reader.ReadLine()) != null)
-                        {
-                            packNo = line.Split('\t')[1].Trim();
-
-                            // 檢查PackingList_Detail.ID + PackingList_Detail.CustCTN
-                            packDataResult = this.GetPackData(packNo, false);
-                            if (packDataResult.result == true)
-                            {
-                                tmpDetail.Rows.Add(packDataResult.Dr.ItemArray);
-                                continue;
-                            }
-
-                            // 檢查PackingList_Detail.CustCTN
-                            packDataResult = this.GetPackData(packNo, true);
-                            if (packDataResult.result == true)
-                            {
-                                tmpDetail.Rows.Add(packDataResult.Dr.ItemArray);
-                                continue;
-                            }
-                        }
-
-                        // 將tmpDetail 匯入 dtTransfer
-                        tmpDetail.Merge(this.dtTransfer);
-                        this.dtTransfer = tmpDetail;
-                        this.gridTransfer.DataSource = this.dtTransfer;
-                    }
-                    catch (Exception err)
-                    {
-                        this.ShowErr(err);
-                    }
-
-                    this.HideWaitMessage();
-                }
-            }
-        }
-
-        private void BtnSave_Click(object sender, EventArgs e)
-        {
-            if (!this.dtTransfer.AsEnumerable().Any(s => (int)s["selected"] == 1))
-            {
-                MyUtility.Msg.WarningBox("Please select detail data first");
-                return;
-            }
-
-            this.ShowWaitMessage("Save Processing....");
-
-            // 檢查資料
-            PackDataResult packDataResult = new PackDataResult();
-            string updSql = string.Empty;
-            var checkData = this.dtTransfer.AsEnumerable().Where(s => (int)s["selected"] == 1).ToList();
-            foreach (var item in checkData)
-            {
-                packDataResult = this.GetPackData(item["ID"].ToString() + item["CTNStartNo"].ToString());
-                if (packDataResult.result == false)
-                {
-                    MyUtility.Msg.WarningBox(packDataResult.errMsg);
-                    this.HideWaitMessage();
-                    return;
-                }
-
-                if (MyUtility.Check.Empty(item["TransferTo"]))
-                {
-                    MyUtility.Msg.WarningBox($"Msg: <{item["ID"].ToString() + item["CTNStartNo"].ToString()}> Must Key-in Transfer to!!");
-                    this.HideWaitMessage();
-                    return;
-                }
-            }
-
-            // save data
-            DualResult result;
-            foreach (var item in checkData)
-            {
-                updSql = $@"
-update PackingList_Detail set DRYReceiveDate = null where ID = '{item["ID"]}' 
-and CTNStartNo = '{item["CTNStartNo"]}' and DisposeFromClog= 0;
-insert into DRYTransfer(TransferDate, MDivisionID, OrderID, PackingListID, CTNStartNo, TransferTo, AddName, AddDate, SCICtnNo)
-            values(GETDATE(),'{Env.User.Keyword}','{item["OrderID"]}','{item["ID"]}','{item["CTNStartNo"]}', '{item["TransferTo"]}','{Env.User.UserID}',GETDATE(),'{item["SCICtnNo"]}');
-";
-                result = DBProxy.Current.Execute(null, updSql);
-                if (result == false)
-                {
-                    this.ShowErr(result);
-                    this.HideWaitMessage();
-                    return;
-                }
-
-                Prgs.UpdateOrdersCTN(item["OrderID"].ToString());
-            }
-
-            foreach (DataRow item in checkData)
-            {
-                this.dtTransfer.Rows.Remove(item);
-            }
-
-            MyUtility.Msg.InfoBox("Save successfully");
             this.HideWaitMessage();
-        }
-
-        private void BtnUpdateAll_Click(object sender, EventArgs e)
-        {
-            var selectDr = this.dtTransfer.AsEnumerable().Where(s => (int)s["selected"] == 1).ToList();
-            foreach (DataRow item in selectDr)
-            {
-                item["TransferTo"] = this.comboTransferTo.SelectedValue;
-            }
-
+            this.listControlBindingSource1.DataSource = dt;
+            this.grid1.AutoResizeColumns();
         }
     }
 }

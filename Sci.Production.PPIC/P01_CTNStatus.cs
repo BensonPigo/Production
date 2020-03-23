@@ -406,7 +406,7 @@ order by Seq", this.orderID);
 	from (
 		select PackingListID = pd.ID
 				, pd.CTNStartNo
-				, Type = 'Dry Room Receive from Fty' 
+				, Type = 'Dry Room Scan' 
 				, c.id
 				, TypeDate = c.ReceiveDate 
 				, Location = '' 
@@ -426,7 +426,7 @@ order by Seq", this.orderID);
 		union all
 		select PackingListID = pd.ID
 				, pd.CTNStartNo
-				, Type = 'Dry Room Receive from Fty' 
+				, Type = 'Dry Room Scan' 
 				, c.id
 				, TypeDate = c.ReceiveDate 
 				, Location = '' 
@@ -491,6 +491,24 @@ order by Seq", this.orderID);
 		      and c.CTNStartNo != ''
 	) t
 	
+	--MDScan
+	select *
+	into #MDScan
+	from (
+		select m.PackingListID
+			, m.CTNStartNo
+			, [type] = 'MD Room Scan'
+			, m.Ukey
+			, m.ScanDate
+			, [Location] = ''
+			, [UpdateDate] = m.AddDate
+			, [seq] = pd.Seq
+			, pd.OrigID
+			, pd.OrigOrderID
+			, pd.OrigCTNStartNo
+		from MDScan m WITH (NOLOCK)
+		inner join #PackingList_Detail pd on m.PackingListID = pd.ID and m.CTNStartNo = pd.CTNStartNo
+	) t
 
 select * from #Transferclog
 union all
@@ -509,9 +527,11 @@ union all
 select * from #DryRoomReceive 
 union all
 select * from #DryRoomTransfer 
+union all
+select * from #MDScan
 order by PackingListID,Seq,UpdateDate
 
-drop table #PackingList_Detail,#Transferclog,#CReceive,#CReturn,#TransferCFA,#ReceiveCFA,#ReturnCFA,#CReceiveCFA ,#DryRoomReceive ,#DryRoomTransfer 
+drop table #PackingList_Detail,#Transferclog,#CReceive,#CReturn,#TransferCFA,#ReceiveCFA,#ReturnCFA,#CReceiveCFA ,#DryRoomReceive ,#DryRoomTransfer ,#MDScan
 ", this.orderID);
             #endregion
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out transferDetail);
@@ -545,6 +565,8 @@ select [PackingListID] =  p.ID
 ,EditCFALocationName=concat(pd.EditCFALocationName,'-'+(select name from pass1 where id=pd.EditCFALocationName))
 ,pd.Remark
 ,pd.Seq
+,pd.MDScanDate
+,pd.MDFailQty
 from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
 outer apply(
 	select sum(QtyPerCTN) QtyPerCTN ,sum(ScanQty) ScanQty 
@@ -584,7 +606,9 @@ order by p.ID,pd.Seq", this.orderID);
                 .Date("TransferDate", header: "Trans. Date", width: Widths.AnsiChars(10))
                 .Date("ReceiveDate", header: "Rec. Date", width: Widths.AnsiChars(10))
                 .Date("ReturnDate", header: "Return Date", width: Widths.AnsiChars(10))
-                .Date("DryReceiveDate", header: "Dry Room Rec. Date", width: Widths.AnsiChars(10))
+                .Date("DryReceiveDate", header: "Dry Room Scan Date", width: Widths.AnsiChars(10))
+                .Date("MDScanDate", header: "MD Room Scan Date", width: Widths.AnsiChars(10))
+                .Text("MDFailQty", header: "MD Discrepancy", width: Widths.AnsiChars(6))
                 .Date("TransferCFADate", header: "Trans. CFA Date", width: Widths.AnsiChars(10))
                 .Date("CFAReceiveDate", header: "CFA Rec. Clog Date", width: Widths.AnsiChars(10))
                 .Date("CFAReturnClogDate", header: "CFA Return Clog Date", width: Widths.AnsiChars(10))
@@ -594,7 +618,7 @@ order by p.ID,pd.Seq", this.orderID);
                 .Text("ClogLocationId", header: "Clog Location", width: Widths.AnsiChars(8))
                 .Text("EditLocationDate", header: "Edit Clog Location Date", width: Widths.AnsiChars(10))
                 .Text("EditLocationName", header: "Edit Clog Location By", width: Widths.AnsiChars(10))
-                .Text("CFALocationID", header: "Clog Location", width: Widths.AnsiChars(8))
+                .Text("CFALocationID", header: "CFA Location", width: Widths.AnsiChars(8))
                 .Text("EditCFALocationDate", header: "Edit Clog Location Date", width: Widths.AnsiChars(10))
                 .Text("EditCFALocationName", header: "Edit Clog Location By", width: Widths.AnsiChars(10))
                 .EditText("Remark", header: "Remark", width: Widths.AnsiChars(20));

@@ -199,7 +199,7 @@ namespace Sci.Production.Planning
                     // 列印動態欄位的表頭
                     for (int i = 0; i < this.dtArtworkType.Rows.Count; i++)
                     {
-                        objSheets.Cells[1, 89 + i] = this.dtArtworkType.Rows[i]["id"].ToString();
+                        objSheets.Cells[1, 88 + i] = this.dtArtworkType.Rows[i]["id"].ToString();
                     }
 
                     // 首列資料篩選
@@ -265,7 +265,7 @@ namespace Sci.Production.Planning
                     // 列印動態欄位的表頭
                     for (int i = 0; i < this.dtArtworkType.Rows.Count; i++)
                     {
-                        objSheets.Cells[1, 90 + i] = this.dtArtworkType.Rows[i]["id"].ToString();
+                        objSheets.Cells[1, 89 + i] = this.dtArtworkType.Rows[i]["id"].ToString();
                     }
 
                     // 首列資料篩選
@@ -344,7 +344,7 @@ namespace Sci.Production.Planning
                            , O.KPIChangeReason , O.StyleUkey  , O.POID            , OrdersBuyerDelivery = o.BuyerDelivery
                            , InspResult = case when o.InspResult = 'P' then 'Pass' when o.InspResult = 'F' then 'Fail' end
                            , InspHandle = o.InspHandle +'-'+ Pass1.Name
-                           , O.Junk,DryCTN=isnull(o.DryCTN,0),CFACTN=isnull(o.CFACTN,0)
+                           , O.Junk,CFACTN=isnull(o.CFACTN,0)
                            , InStartDate = Null,InEndDate = Null,OutStartDate = Null,OutEndDate = Null
                     into #cte 
                     from dbo.Orders o WITH (NOLOCK) 
@@ -750,7 +750,6 @@ select t.MDivisionID
        , [pack_rate] = IIF(isnull(t.TotalCTN, 0) = 0, 0
                                                     , round(t.ClogCTN / (t.TotalCTN * 1.0), 4) * 100 ) 
        , t.TotalCTN
-       , t.DryCTN
        , FtyCtn = t.TotalCTN - t.FtyCTN
        , t.ClogCTN
        , t.CFACTN
@@ -936,7 +935,7 @@ select o.MDivisionID       , o.FactoryID  , o.SciDelivery     , O.CRDDate       
        , O.KPIChangeReason , O.StyleUkey  , O.POID            , OrdersBuyerDelivery = o.BuyerDelivery
        , InspResult = case when o.InspResult = 'P' then 'Pass' when o.InspResult = 'F' then 'Fail' end
        , InspHandle = o.InspHandle +'-'+ Pass1.Name
-       , O.Junk,DryCTN=isnull(o.DryCTN,0),CFACTN=isnull(o.CFACTN,0)
+       , O.Junk,CFACTN=isnull(o.CFACTN,0)
 	   , oq.Article,oq.SizeCode
        , InStartDate = Null,InEndDate = Null,OutStartDate = Null,OutEndDate = Null
 into #cte 
@@ -1338,8 +1337,7 @@ select t.MDivisionID
        , [Scanned_Qty] = PackDetail.ScanQty
        , [pack_rate] = IIF(isnull(t.TotalCTN, 0) = 0, 0
                                                     , round(t.ClogCTN / (t.TotalCTN * 1.0), 4) * 100 ) 
-       , t.TotalCTN               
-       , t.DryCTN
+       , t.TotalCTN
        , FtyCtn = t.TotalCTN - t.FtyCTN
        , t.ClogCTN
        , t.CFACTN

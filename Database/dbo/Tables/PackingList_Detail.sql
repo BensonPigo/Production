@@ -59,6 +59,8 @@
     [ClogPulloutDate]     DATE            NULL,
     [PulloutTransport]    VARCHAR (1)     DEFAULT ('') NOT NULL,
     [PulloutTransportNo]  VARCHAR (10)    DEFAULT ('') NOT NULL,
+    [MDScanDate] DATE NULL, 
+    [MDFailQty] INT NOT NULL DEFAULT (0), 
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -216,3 +218,21 @@ GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'紙箱從倉庫移出準備出貨(裝上卡車/貨櫃)的日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'ClogPulloutDate';
 
 GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'金屬檢測日期',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'MDScanDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'金屬檢測失敗數量',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'MDFailQty'
