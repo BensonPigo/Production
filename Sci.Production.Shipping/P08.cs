@@ -214,7 +214,12 @@ where sd.ID = '{0}'", masterID);
                                 listPara);
             string sql = "select top 1 Vessel from Export where blno = @blno";
             this.disVesselName.Text = this.CurrentMaintain["Type"].ToString().Equals("IMPORT") && !MyUtility.Check.Empty(this.CurrentMaintain["BLNo"]) ? MyUtility.GetValue.Lookup(sql, listPara) : string.Empty;
-            this.chkIncludeFoundry.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup(string.Format(" select top 1 'True' from GMTBooking where BLNo = '{0}' or BL2No = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"]))));
+            this.IncludeFoundryRefresh(MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"]));
+        }
+
+        private void IncludeFoundryRefresh(string blNo)
+        {
+            this.chkIncludeFoundry.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup(string.Format(" select top 1 Foundry from GMTBooking where '{0}' != '' and (BLNo = '{0}' or BL2No = '{0}') and Foundry = 1", blNo)));
         }
 
         /// <inheritdoc/>
@@ -710,6 +715,8 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
                 }
             }
 
+            this.IncludeFoundryRefresh(this.txtBLNo.Text);
+
             // 系統單純提示訊息
             if (this.chkIncludeFoundry.Checked)
             {
@@ -1164,6 +1171,8 @@ Non SP# Sample/Mock-up
         // B/L NO. Change
         private void TxtBLNo_Validating(object sender, CancelEventArgs e)
         {
+            this.IncludeFoundryRefresh(this.txtBLNo.Text);
+
             if (this.comboType.SelectedValue == null || !this.EditMode || !this.IsDetailInserting)
             {
                 return;
