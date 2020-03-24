@@ -67,7 +67,7 @@ BEGIN
 	Where Cuttingsp = @Cuttingid and junk=0
 
 	---------組每個SP#的Article,Size,Qty,PatternPanel,inline
-	Select distinct e.id,a.article,a.colorid,e.sizecode,a.PatternPanel,e.qty as orderqty, 0 as disqty,f.Inline,sr.SCIRefno
+	Select distinct e.id,a.article,a.colorid,e.sizecode,a.PatternPanel,e.qty as orderqty, 0 as disqty,f.Inline,sr.SCIRefno,a.FabricPanelCode
 	Into #_tmpdisQty
 	from Order_ColorCombo a  WITH (NOLOCK) 
 	inner join Order_EachCons b  WITH (NOLOCK) on a.id = b.id and b.cuttingpiece='0' and  b.FabricCombo = a.PatternPanel
@@ -192,16 +192,16 @@ BEGIN
 		outer apply(select ct=count(1) from Order_EachCons_Article WITH (NOLOCK) where Order_EachConsUkey=a.Order_EachConsUkey)hasforArticleCt
 		order by isnull(hasforArticle.A,1),hasforArticleCt.ct,MixedSizeMarker desc,MarkerName
 		--------------------------------
-		select b.id,b.article,b.sizecode,b.colorid,PatternPanel,b.orderqty, disqty,Min(INLINE) as inline,IDENTITY(int,1,1) as identRowid,a.SCIRefno
+		select b.id,b.article,b.sizecode,b.colorid,PatternPanel,b.orderqty, disqty,Min(INLINE) as inline,IDENTITY(int,1,1) as identRowid,a.SCIRefno,a.FabricPanelCode
 		into #disQty
 		from #WorkOrderMix a
-		inner join #_tmpdisQty b on a.ColorID = b.ColorID and a.FabricCombo = b.PatternPanel and a.SCIRefno = b.SCIRefno
+		inner join #_tmpdisQty b on a.ColorID = b.ColorID and a.FabricCombo = b.PatternPanel and a.SCIRefno = b.SCIRefno and a.FabricPanelCode = b.FabricPanelCode
 		inner join Order_EachCons_SizeQty oes on  oes.id = a.id and oes.Order_EachConsUkey = a.Order_EachConsUkey and b.SizeCode = oes.SizeCode
 		outer apply(select top 1 A=0 from Order_EachCons_Article WITH (NOLOCK) where Order_EachConsUkey=a.Order_EachConsUkey)hasforArticle
 		outer apply(select Article from Order_EachCons_Article  WITH (NOLOCK) where Order_EachConsUkey=a.Order_EachConsUkey)forArticle
 		where (b.Article in (forArticle.Article) or hasforArticle.A is null)
 		--and a.MarkerName = @MarkerName and a.ColorID = @colorid and a.FabricCombo = @FabricCombo and b.SizeCode = @sizecode  and a.SCIRefno = @SCIRefno
-		group by b.id,b.article,b.sizecode,b.colorid,PatternPanel,b.orderqty, disqty,a.SCIRefno
+		group by b.id,b.article,b.sizecode,b.colorid,PatternPanel,b.orderqty, disqty,a.SCIRefno,a.FabricPanelCode
 		order by inline
 		--------------------Factory-------------------------------------
 		Select @Factoryid = FtyGroup From Orders  WITH (NOLOCK)  Where ID = @Cuttingid
@@ -340,7 +340,9 @@ BEGIN
 						DECLARE cur_disQty  CURSOR FOR 
 						Select disqty,orderqty,Article,identRowid,ID
 						from #disQty 
-						Where SizeCode = @sizeCode and Colorid = @colorid and PatternPanel = @FabricCombo and SCIRefno = @SCIRefno--因為不同article要一起計算，拿掉 
+						Where SizeCode = @sizeCode and Colorid = @colorid and PatternPanel = @FabricCombo and SCIRefno = @SCIRefno
+						and FabricPanelCode=@FabricPanelCode
+						--因為不同article要一起計算，拿掉 
 						and (Article in(select Article from #LongArticle) or @LongArticleCount=0 )
 						order by identRowid
 							
