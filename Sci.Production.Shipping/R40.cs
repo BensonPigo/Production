@@ -757,7 +757,7 @@ from (
             , [MaterialType] = dbo.GetMaterialTypeDesc(li.Category)
             , li.Description
             , [CustomsUnit] = li.CustomsUnit
-            , [StockQty] = IIF(l.OutQty > 0,l.OutQty*IIF(l.UnitId = 'CONE',isnull(li.MeterToCone,0),1),0)
+            , [StockQty] = l.OutQty
             , [StockUnit] = li.UnitId
             , [StyleID] = t.StyleID
             , [Color] = ''
