@@ -55,7 +55,7 @@ namespace Sci.Production.PublicPrg
                                                 select dateadd(day, @count,@bascidate) as workdate", days, basicdate.ToShortDateString(), factoryid);
 
             return DateTime.Parse((MyUtility.GetValue.Lookup(sqlcmd, null)));
-        
+
 
         }
         #endregion
@@ -117,7 +117,7 @@ WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,C
             //	 group by a.orderid,a.sewinglineid,a.ComboType,a.INLINE,b.Hours
             //	 having isnull(b.hours,0) > 0) tmp
             DataTable dt;
-            DBProxy.Current.Select(null,sqlcmd,out dt);
+            DBProxy.Current.Select(null, sqlcmd, out dt);
             //return int.Parse(dt.Rows[0][0].ToString());
             if (dt == null || dt.Rows.Count == 0 || dt.Rows[0].Table == null || dt.Rows[0].Table.Rows.Count == 0 || dt.Rows[0][0].Empty())
             {
@@ -352,13 +352,13 @@ select	st0.Orderid
 		, PostSewingSubProcess_SL =iif(isnull(bda.PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0)
 into #BundleInOutDetail{subprocessIDtmp}
 from #QtyBySetPerCutpart{subprocessIDtmp} st0
-inner join SubProcess sub WITH (NOLOCK) on sub.ID = '{subprocessIDtmp}'
+inner join SubProcess sub WITH (NOLOCK) on sub.ID = '{subprocessID}'
 left join #tmp_Bundle_QtyBySubprocess bund on bunD.Orderid = st0.Orderid 
 							and bunD.PatternPanel = st0.PatternPanel 
 							and	bunD.FabricPanelCode = st0.FabricPanelCode 
 							and	bunD.Article = st0.Article  
 							and	bunD.Patterncode = st0.Patterncode 
-							and	bunD.Sizecode = st0.SizeCode 
+							and	bunD.Sizecode = st0.SizeCode
 left join BundleInOut bunIO with (nolock)  on bunIO.BundleNo = bunD.BundleNo and bunIO.SubProcessId = sub.ID and isnull(bunIO.RFIDProcessLocationID,'') = ''
 left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = bunD.BundleNo and bunIOS.SubProcessId = 'SORTING' and isnull(bunIOS.RFIDProcessLocationID,'') = ''
 left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = bunD.BundleNo and bunIOL.SubProcessId = 'LOADING' and isnull(bunIOL.RFIDProcessLocationID,'') = ''
@@ -639,7 +639,7 @@ from(
 ) minArticle
 group by OrderID, InStartDate,InEndDate,OutStartDate,OutEndDate
 ";
-                } 
+                }
 
                 sqlcmd += Environment.NewLine + $@"/*******************   {subprocessIDtmp} END  ********************/";
             }
