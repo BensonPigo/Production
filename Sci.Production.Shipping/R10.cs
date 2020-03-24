@@ -150,7 +150,10 @@ as (
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
     inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
-    inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+    inner join (
+		select distinct id,OrderID,OrderShipmodeSeq 
+		from PackingList_Detail	pd	
+	) pd on pd.id = p.id
     inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
     inner join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder 
     where s.Type = 'EXPORT'
@@ -247,7 +250,10 @@ tmpPL as
     from ShippingAP s WITH (NOLOCK) 
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
-    inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+    inner join (
+		select distinct id,OrderID,OrderShipmodeSeq 
+		from PackingList_Detail	pd	
+	) pd on pd.id = p.id
     inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
     inner join SciFMS_AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
     where s.Type = 'EXPORT'
@@ -342,7 +348,10 @@ as (
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
     inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
-    inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+    inner join (
+		select distinct id,OrderID,OrderShipmodeSeq 
+		from PackingList_Detail	pd	
+	) pd on pd.id = p.id
     inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
     inner join Order_QtyShip oq WITH (NOLOCK) on pd.OrderID=oq.Id and oq.Seq = pd.OrderShipmodeSeq
     inner join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
@@ -447,7 +456,10 @@ tmpPL as
     from ShippingAP s WITH (NOLOCK) 
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
-    inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+    inner join (
+		select distinct id,OrderID,OrderShipmodeSeq 
+		from PackingList_Detail	pd	
+	) pd on pd.id = p.id
     inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
     inner join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID 
     inner join SciFMS_AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
@@ -891,7 +903,10 @@ as (
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
     inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
-    inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+    inner join (
+		select distinct id,OrderID,OrderShipmodeSeq 
+		from PackingList_Detail	pd	
+	) pd on pd.id = p.id
     left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
     left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
     left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
@@ -1007,7 +1022,10 @@ tmpPL as
     from ShippingAP s WITH (NOLOCK) 
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
-    inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+    inner join (
+		select distinct id,OrderID,OrderShipmodeSeq 
+		from PackingList_Detail	pd	
+	) pd on pd.id = p.id
     left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
     left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
     left join SciFMS_AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
