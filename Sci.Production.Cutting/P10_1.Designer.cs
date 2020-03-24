@@ -333,7 +333,7 @@
             // 
             // labelQtyperBundleGroup
             // 
-            this.labelQtyperBundleGroup.Location = new System.Drawing.Point(667, 149);
+            this.labelQtyperBundleGroup.Location = new System.Drawing.Point(667, 115);
             this.labelQtyperBundleGroup.Name = "labelQtyperBundleGroup";
             this.labelQtyperBundleGroup.Size = new System.Drawing.Size(139, 23);
             this.labelQtyperBundleGroup.TabIndex = 10;
@@ -543,7 +543,7 @@
             this.numQtyperBundleGroup.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numQtyperBundleGroup.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numQtyperBundleGroup.IsSupportEditMode = false;
-            this.numQtyperBundleGroup.Location = new System.Drawing.Point(809, 149);
+            this.numQtyperBundleGroup.Location = new System.Drawing.Point(809, 115);
             this.numQtyperBundleGroup.Minimum = new decimal(new int[] {
             0,
             0,
@@ -744,7 +744,7 @@
             this.ckRemake.AutoSize = true;
             this.ckRemake.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Remake", true));
             this.ckRemake.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.ckRemake.Location = new System.Drawing.Point(667, 185);
+            this.ckRemake.Location = new System.Drawing.Point(667, 151);
             this.ckRemake.Name = "ckRemake";
             this.ckRemake.Size = new System.Drawing.Size(79, 21);
             this.ckRemake.TabIndex = 49;
