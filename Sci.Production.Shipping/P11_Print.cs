@@ -127,22 +127,45 @@ o.ID,
 o.CPU,
 [SubProcessCPU] = SubProcessCPU.Value,
 [SubProcessAMT] = SubProcessAMT.Value,
-[CPUCost] = CPUCost.Value,
+[CPUCost] = isnull(round(isnull(fsr_s.CpuCost,fsr_ns.CpuCost),3,1), 0),
 [LocalPurchase] = LocalPurchase.Value,
-[StdFtyCMP] = round(((o.CPU + SubProcessCPU.Value) * CPUCost.Value) + SubProcessAMT.Value + LocalPurchase.Value,2)
+[StdFtyCMP] = ROUND(std.FtyCMP,2)
 into #tmpOrderStdFtyCMP
 from orders o with (nolock)
 inner join Factory f with (nolock) on o.FactoryID = f.ID
 outer apply (select [Value] = isnull(sum(Isnull(Price,0)),0) from GetSubProcessDetailByOrderID(o.ID,'CPU')) SubProcessCPU
 outer apply (select [Value] = isnull(sum(Isnull(Price,0)),0) from GetSubProcessDetailByOrderID(o.ID,'AMT')) SubProcessAMT
-outer apply (select top 1 [Value] = fd.CpuCost
-             from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
-             where fsd.BrandID = o.BrandID
-             and fsd.FactoryID = o.FactoryID
-             and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
-             and fsd.ShipperID = fd.ShipperID
-             and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate) CPUCost
-outer apply (select [Value] = iif(f.LocalCMT = 1,dbo.GetLocalPurchaseStdCost(o.id),0)) LocalPurchase
+outer apply(
+	select fd.CpuCost
+	from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
+	where fsd.BrandID = o.BrandID
+	        and fsd.FactoryID = o.FactoryID
+	        and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
+	        and fsd.ShipperID = fd.ShipperID
+	        and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+	        and o.OrigBuyerDelivery is not null
+            and fsd.seasonID = o.seasonID
+)fsr_s
+outer apply(
+	select fd.CpuCost
+	from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
+	where fsd.BrandID = o.BrandID
+	        and fsd.FactoryID = o.FactoryID
+	        and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
+	        and fsd.ShipperID = fd.ShipperID
+	        and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+	        and o.OrigBuyerDelivery is not null
+            and fsd.seasonID = ''
+)fsr_ns
+outer apply (
+    select [Value] = iif(f.LocalCMT = 1,dbo.GetLocalPurchaseStdCost(o.id),0)
+) LocalPurchase
+outer apply(
+	select FtyCMP = Round((isnull(round(o.CPU,3,1),0) + isnull(round(SubProcessCPU.Value,3,1),0)) * isnull(round(isnull(fsr_s.CpuCost,fsr_ns.CpuCost),3,1),0) 
+                            + isnull(round(subProcessAMT.Value,3,1),0) 
+                            + isnull(round(LocalPurchase.Value,3,1),0)
+                          , 3)
+)std
 where exists( select 1 from #tmpPackOrder tpack where tpack.OrderID = o.ID)
 
 select
