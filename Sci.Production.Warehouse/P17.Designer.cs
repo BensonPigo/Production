@@ -44,6 +44,7 @@
             this.btnAccumulatedQty = new Sci.Win.UI.Button();
             this.labelTransfer = new Sci.Win.UI.Label();
             this.txtTransfer = new Sci.Win.UI.TextBox();
+            this.btnImport = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -60,6 +61,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnImport);
             this.masterpanel.Controls.Add(this.txtTransfer);
             this.masterpanel.Controls.Add(this.labelTransfer);
             this.masterpanel.Controls.Add(this.btnAccumulatedQty);
@@ -92,6 +94,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnAccumulatedQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelTransfer, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtTransfer, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
             // 
             // detailpanel
             // 
@@ -115,15 +118,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(998, 515);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(992, 469);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(992, 40);
             // 
             // detail
             // 
@@ -313,6 +316,18 @@
             this.txtTransfer.TabIndex = 0;
             this.txtTransfer.Validating += new System.ComponentModel.CancelEventHandler(this.txtTransfer_Validating);
             // 
+            // btnImport
+            // 
+            this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImport.Location = new System.Drawing.Point(809, 41);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(145, 31);
+            this.btnImport.TabIndex = 68;
+            this.btnImport.Text = "Import From Excel";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
+            // 
             // P17
             // 
             this.ApvChkValue = "New";
@@ -330,6 +345,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P17";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P17. R/Mtl Return";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "id";
@@ -372,5 +388,6 @@
         private Win.UI.Button btnAccumulatedQty;
         private Win.UI.TextBox txtTransfer;
         private Win.UI.Label labelTransfer;
+        private Win.UI.Button btnImport;
     }
 }

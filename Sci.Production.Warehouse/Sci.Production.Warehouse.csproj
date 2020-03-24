@@ -230,6 +230,12 @@
     <Compile Include="P05.Designer.cs">
       <DependentUpon>P05.cs</DependentUpon>
     </Compile>
+    <Compile Include="P17_ExcelImport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P17_ExcelImport.Designer.cs">
+      <DependentUpon>P17_ExcelImport.cs</DependentUpon>
+    </Compile>
     <Compile Include="P33_PrintData.cs" />
     <Compile Include="P33_Detail_Detail.cs">
       <SubType>Form</SubType>
@@ -1269,6 +1275,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P05.resx">
       <DependentUpon>P05.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P17_ExcelImport.resx">
+      <DependentUpon>P17_ExcelImport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P33_Detail_Detail.resx">
       <DependentUpon>P33_Detail_Detail.cs</DependentUpon>
