@@ -10,6 +10,8 @@ using Sci.Win;
 using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Sci.Production.Subcon
 {
@@ -131,5 +133,83 @@ Where	vSA.ArtworkTypeID = 'Printing'
          this.HideWaitMessage();
          return true;
       }
-   }
+
+        private void BtnSketchDownload_Click(object sender, EventArgs e)
+        {
+            int ttlCnt = 0;
+            string destination_path = MyUtility.GetValue.Lookup("select StyleSketch from System WITH (NOLOCK) ", null);
+
+            DataTable dt;
+            string sqlcmd = $@"
+select * from
+(
+	select Picture =Picture1 from Style where SeasonID='{txtseason.Text}' and Picture1 !=''
+	union all
+	select Picture =Picture2 from Style where SeasonID='{txtseason.Text}' and Picture2 !=''
+) a order by  Picture
+";
+            DualResult result;
+            if (!(result = DBProxy.Current.Select(null, sqlcmd, out dt)))
+            {
+                ShowErr(result);
+                return;
+            }
+
+            if (Directory.Exists(destination_path))
+            {
+                DirectoryInfo dir = new DirectoryInfo(destination_path);
+                // 開窗選擇存放位置
+                FolderBrowserDialog path = new FolderBrowserDialog();
+                if (path.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    this.ShowLoadingText("Loading...");
+                    ttlCnt = 0;
+                    // 計算總數量
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        foreach (FileInfo f in dir.GetFiles())
+                        {
+                            // 查詢檔名符合Seasion名稱
+                            if (f.Name.IndexOf(dr["Picture"].ToString()) >= 0)
+                            {
+                                ttlCnt++;
+                            }
+                        }
+                    }
+                    int cnt = 1;
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        foreach (FileInfo f in dir.GetFiles())
+                        {
+                            // 查詢檔名符合Seasion名稱
+                            if (f.Name.IndexOf(dr["Picture"].ToString()) >= 0)
+                            {
+                                string[] fileArray = f.Name.Split(new char[] { '_' });
+                                string style = fileArray[1];
+                                string brand = fileArray[0];
+                                string season = fileArray[2];
+                                string picNo = fileArray[3];
+                                string newName = style + "@" + season + "@" + brand + "@" + picNo;
+                                // 複製檔案並更名到指定路徑
+                                File.Copy(dir + "\\" + f.Name, path.SelectedPath + "\\" + newName, true);
+                                this.ShowLoadingText($"{cnt}/{ttlCnt}");
+                                cnt++;
+                            }
+                        }
+                    }
+                    this.HideLoadingText();
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            if (ttlCnt !=0)
+            {
+                MyUtility.Msg.InfoBox("Finished!");
+            }
+        }
+    }
 }
