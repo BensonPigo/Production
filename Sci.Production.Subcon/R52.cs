@@ -172,22 +172,22 @@ select * from
 
                         foreach (DataRow dr in dt.Rows)
                         {
-                            foreach (FileInfo f in dir.GetFiles())
+                            try
                             {
-                                // 查詢檔名符合Seasion名稱
-                                if (f.Name.IndexOf(dr["Picture"].ToString()) >= 0)
-                                {
-                                    string[] fileArray = f.Name.Split(new char[] { '_' });
-                                    string style = fileArray[1];
-                                    string brand = fileArray[0];
-                                    string season = fileArray[2];
-                                    string picNo = fileArray[3];
-                                    string newName = style + "@" + season + "@" + brand + "@" + picNo;
-                                    // 複製檔案並更名到指定路徑
-                                    File.Copy(dir + "\\" + f.Name, path.SelectedPath + "\\" + newName, true);
-                                    this.ShowLoadingText($"{cnt}/{ttlCnt}");
-                                    cnt++;
-                                }
+                                string[] fileArray = dr["Picture"].ToString().Split(new char[] { '_' });
+                                string style = fileArray[1];
+                                string brand = fileArray[0];
+                                string season = fileArray[2];
+                                string picNo = fileArray[3];
+                                string newName = style + "@" + season + "@" + brand + "@" + picNo;
+                                // 複製檔案並更名到指定路徑
+                                File.Copy(dir + "\\" + dr["Picture"].ToString(), path.SelectedPath + "\\" + newName, true);
+                                this.ShowLoadingText($"{cnt}/{ttlCnt}");
+                                cnt++;
+                            }
+                            catch (Exception ex)
+                            {
+
                             }
                         }
                     }
