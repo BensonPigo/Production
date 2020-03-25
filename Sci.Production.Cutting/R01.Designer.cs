@@ -39,14 +39,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(454, 12);
+            this.print.TabIndex = 4;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(454, 48);
+            this.toexcel.TabIndex = 5;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(454, 84);
+            this.close.TabIndex = 6;
             // 
             // buttonCustomized
             // 
@@ -94,7 +97,7 @@
             this.txtMdivision.Location = new System.Drawing.Point(105, 19);
             this.txtMdivision.Name = "txtMdivision";
             this.txtMdivision.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision.TabIndex = 101;
+            this.txtMdivision.TabIndex = 1;
             // 
             // txtfactory
             // 
@@ -108,7 +111,7 @@
             this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 102;
+            this.txtfactory.TabIndex = 2;
             // 
             // SewingDate
             // 
@@ -129,7 +132,7 @@
             this.SewingDate.Location = new System.Drawing.Point(105, 91);
             this.SewingDate.Name = "SewingDate";
             this.SewingDate.Size = new System.Drawing.Size(280, 23);
-            this.SewingDate.TabIndex = 103;
+            this.SewingDate.TabIndex = 3;
             // 
             // R01
             // 
