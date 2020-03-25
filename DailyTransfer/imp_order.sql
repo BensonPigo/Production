@@ -72,6 +72,7 @@ BEGIN
 											   and b.FactoryID <> a.FTY_Group
 		where	a.qty > 0 
 				and a.IsForecast = '0'
+				and not exists(select 1 from Production.dbo.MDivision m where m.ID = a.MDivisionID )
 
 	--需填入 Order.SDPDate = Buyer Delivery - 放假日(船期表)--
 		--如果買家到貨日不是工廠放假日,SDDate=BuyerDelivery
