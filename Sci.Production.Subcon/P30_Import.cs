@@ -125,7 +125,7 @@ outer apply(
 outer apply(
 	select qty   = sum(qty)                    
 	from LocalPo_Detail lpd WITH (NOLOCK) 
-    where b.OrderID = lpd.OrderId and b.RefNo = lpd.Refno
+    where b.OrderID = lpd.OrderId and b.RefNo = lpd.Refno and lpd.RequestID= a.ID
 )lp
 where a.ApvToPurchase = 1 
       and a.LocalPOID = ''
