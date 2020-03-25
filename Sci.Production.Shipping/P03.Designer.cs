@@ -103,6 +103,8 @@
             this.txtCustomOTRespFty1 = new Sci.Production.Class.txtfactory();
             this.txtCustomOTRespFty2 = new Sci.Production.Class.txtfactory();
             this.numFtyTruckFee = new Sci.Win.UI.NumericBox();
+            this.numOTFee = new Sci.Win.UI.NumericBox();
+            this.labOTFee = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -119,6 +121,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.numOTFee);
+            this.masterpanel.Controls.Add(this.labOTFee);
             this.masterpanel.Controls.Add(this.numFtyTruckFee);
             this.masterpanel.Controls.Add(this.txtCustomOTRespFty2);
             this.masterpanel.Controls.Add(this.txtCustomOTRespFty1);
@@ -269,6 +273,8 @@
             this.masterpanel.Controls.SetChildIndex(this.txtCustomOTRespFty1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCustomOTRespFty2, 0);
             this.masterpanel.Controls.SetChildIndex(this.numFtyTruckFee, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labOTFee, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numOTFee, 0);
             // 
             // detailpanel
             // 
@@ -1096,7 +1102,7 @@
             this.chkCustomOT.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CustomOT", true));
             this.chkCustomOT.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkCustomOT.IsSupportEditMode = false;
-            this.chkCustomOT.Location = new System.Drawing.Point(567, 323);
+            this.chkCustomOT.Location = new System.Drawing.Point(466, 326);
             this.chkCustomOT.Name = "chkCustomOT";
             this.chkCustomOT.ReadOnly = true;
             this.chkCustomOT.Size = new System.Drawing.Size(98, 21);
@@ -1116,7 +1122,7 @@
             // lbRespFty
             // 
             this.lbRespFty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.lbRespFty.Location = new System.Drawing.Point(668, 321);
+            this.lbRespFty.Location = new System.Drawing.Point(567, 324);
             this.lbRespFty.Name = "lbRespFty";
             this.lbRespFty.Size = new System.Drawing.Size(65, 23);
             this.lbRespFty.TabIndex = 71;
@@ -1131,7 +1137,7 @@
             this.txtCustomOTRespFty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCustomOTRespFty1.IsProduceFty = false;
             this.txtCustomOTRespFty1.IssupportJunk = false;
-            this.txtCustomOTRespFty1.Location = new System.Drawing.Point(736, 321);
+            this.txtCustomOTRespFty1.Location = new System.Drawing.Point(635, 324);
             this.txtCustomOTRespFty1.MDivision = null;
             this.txtCustomOTRespFty1.Name = "txtCustomOTRespFty1";
             this.txtCustomOTRespFty1.Size = new System.Drawing.Size(76, 23);
@@ -1147,7 +1153,7 @@
             this.txtCustomOTRespFty2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCustomOTRespFty2.IsProduceFty = false;
             this.txtCustomOTRespFty2.IssupportJunk = false;
-            this.txtCustomOTRespFty2.Location = new System.Drawing.Point(818, 321);
+            this.txtCustomOTRespFty2.Location = new System.Drawing.Point(713, 324);
             this.txtCustomOTRespFty2.MDivision = null;
             this.txtCustomOTRespFty2.Name = "txtCustomOTRespFty2";
             this.txtCustomOTRespFty2.Size = new System.Drawing.Size(76, 23);
@@ -1176,6 +1182,38 @@
             0,
             0,
             0});
+            // 
+            // numOTFee
+            // 
+            this.numOTFee.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numOTFee.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OTFee", true));
+            this.numOTFee.DecimalPlaces = 2;
+            this.numOTFee.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numOTFee.IsSupportEditMode = false;
+            this.numOTFee.Location = new System.Drawing.Point(864, 324);
+            this.numOTFee.Name = "numOTFee";
+            this.numOTFee.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numOTFee.ReadOnly = true;
+            this.numOTFee.Size = new System.Drawing.Size(100, 23);
+            this.numOTFee.TabIndex = 73;
+            this.numOTFee.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // labOTFee
+            // 
+            this.labOTFee.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labOTFee.Location = new System.Drawing.Point(796, 324);
+            this.labOTFee.Name = "labOTFee";
+            this.labOTFee.Size = new System.Drawing.Size(65, 23);
+            this.labOTFee.TabIndex = 72;
+            this.labOTFee.Text = "OT Fee";
             // 
             // P03
             // 
@@ -1296,5 +1334,7 @@
         private Class.txtfactory txtCustomOTRespFty2;
         private Class.txtfactory txtCustomOTRespFty1;
         private Win.UI.NumericBox numFtyTruckFee;
+        private Win.UI.NumericBox numOTFee;
+        private Win.UI.Label labOTFee;
     }
 }
