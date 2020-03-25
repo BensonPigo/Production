@@ -507,7 +507,32 @@ order by Seq", this.orderID);
 			, pd.OrigOrderID
 			, pd.OrigCTNStartNo
 		from MDScan m WITH (NOLOCK)
-		inner join #PackingList_Detail pd on m.PackingListID = pd.ID and m.CTNStartNo = pd.CTNStartNo
+		inner join #PackingList_Detail pd on pd.ID = m.PackingListID
+												  and pd.OrderID = m.OrderID 
+												  and pd.CTNStartNo = m.CTNStartNo 
+		where m.PackingListID != ''
+		      and m.OrderID != ''
+		      and m.CTNStartNo != ''
+
+		union all
+		select m.PackingListID
+			, m.CTNStartNo
+			, [type] = 'MD Room Scan'
+			, m.Ukey
+			, m.ScanDate
+			, [Location] = ''
+			, [UpdateDate] = m.AddDate
+			, [seq] = pd.Seq
+			, pd.OrigID
+			, pd.OrigOrderID
+			, pd.OrigCTNStartNo
+		from MDScan m WITH (NOLOCK)
+		inner join #PackingList_Detail pd on pd.OrigID = m.PackingListID
+												  and pd.OrigOrderID = m.OrderID 
+												  and pd.OrigCTNStartNo = m.CTNStartNo
+		where m.PackingListID != ''
+		      and m.OrderID != ''
+		      and m.CTNStartNo != ''
 	) t
 
 select * from #Transferclog

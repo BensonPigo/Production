@@ -93,12 +93,12 @@ select distinct o.ID
 	,o.BrandID
 	,o.BuyerDelivery
 	,o.SciDelivery
-	,[OrderQty] = o.Qty * isnull(ol.LocationQty, sl.LocationQty)
+	,[OrderQty] = o.Qty * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
 	,[TTLQcOutput] = i.tCnt
 	,[MDFailQty] = isnull(pd.MDFailQty,0)
 	,[MDpassBalance] = isnull(pd.MDFailQty,0) - i.tCnt
-	,[Scan and Pack Qty] = (isnull(pd.ScanQty,0) * isnull(ol.LocationQty, sl.LocationQty))
-	,[Scan and Pack Balance] = (isnull(pd.ScanQty,0) * isnull(ol.LocationQty, sl.LocationQty)) - isnull(pd.MDFailQty,0)
+	,[Scan and Pack Qty] = (isnull(pd.ScanQty,0) * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
+	,[Scan and Pack Balance] = (isnull(pd.ScanQty,0) * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty) - isnull(pd.MDFailQty,0)
 from Orders o with(nolock)
 outer apply(
 	select pd.id
@@ -119,13 +119,13 @@ outer apply(
 outer apply
 (
 	select [LocationQty] = count(distinct Location)
-	from Order_Location
+	from Order_Location with(nolock)
 	where OrderId = o.ID
 )ol
 outer apply
 (
 	select [LocationQty] = count(distinct Location)
-	from Style_Location
+	from Style_Location with(nolock)
 	where StyleUkey = o.StyleUkey
 )sl
 where 1=1
@@ -136,12 +136,12 @@ select distinct o.ID
 	,o.BrandID
 	,[PackID] = pd.ID
 	,pd.CTNStartNo
-	,[CatronQty] = pd.ShipQty * isnull(ol.LocationQty, sl.LocationQty)
+	,[CatronQty] = pd.ShipQty * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
 	,[TTLQcOutput] = i.tCnt
 	,pd.MDFailQty
 	,pd.DRYReceiveDate
 	,pd.MDScanDate
-	,[ScanQty] = pd.ScanQty * isnull(ol.LocationQty, sl.LocationQty)
+	,[ScanQty] = pd.ScanQty * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
 	,pd.ScanEditDate
 	,os.BuyerDelivery
 	,o.SciDelivery
@@ -159,13 +159,13 @@ outer apply(
 outer apply
 (
 	select [LocationQty] = count(distinct Location)
-	from Order_Location
+	from Order_Location with(nolock)
 	where OrderId = o.ID
 )ol
 outer apply
 (
 	select [LocationQty] = count(distinct Location)
-	from Style_Location
+	from Style_Location with(nolock)
 	where StyleUkey = o.StyleUkey
 )sl
 where 1=1

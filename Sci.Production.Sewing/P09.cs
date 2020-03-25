@@ -79,7 +79,7 @@ declare @sp nvarchar(20) = '{sp}'
 select DISTINCT md.ScanDate
 	, [PackingListID] = iif(isnull(pd.OrigID, '') = '', md.PackingListID, pd.OrigID)
 	, [CTNStartNo] = iif(isnull(pd.OrigCTNStartNo, '') = '', md.CTNStartNo, pd.OrigCTNStartNo)
-	, [CartonQty] = md.CartonQty * isnull(ol.LocationQty, sl.LocationQty)
+	, [CartonQty] = md.CartonQty * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
 	, pd.MDFailQty
 	, [OrderID] = iif(isnull(pd.OrigOrderID, '') = '', md.OrderID, pd.OrigOrderID)
 	, o.CustPONo
@@ -106,13 +106,13 @@ left join Order_QtyShip os on pd.OrderID = os.Id
 outer apply
 (
 	select [LocationQty] = count(distinct Location)
-	from Order_Location
+	from Order_Location with(nolock)
 	where OrderId = md.OrderID
 )ol
 outer apply
 (
 	select [LocationQty] = count(distinct Location)
-	from Style_Location
+	from Style_Location with(nolock)
 	where StyleUkey = o.StyleUkey
 )sl
 where 1=1

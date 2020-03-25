@@ -56,8 +56,7 @@ select top 1 pd.MDFailQty
 	,o.BrandID
 	,c.Alias
 	,[BuyerDelivery] = format(os.BuyerDelivery, 'yyyy/MM/dd')
-	,[CartonQty] = sum(pd.ShipQty) * isnull(ol.LocationQty, sl.LocationQty)
-    ,pd.Ukey
+	,[CartonQty] = sum(pd.ShipQty) * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
     ,p.ID
     ,pd.CTNStartNo
     ,pd.SCICtnNo
@@ -70,20 +69,20 @@ left join Order_QtyShip os with(nolock) on pd.OrderID = os.Id
 outer apply
 (
 	select [LocationQty] = count(distinct Location)
-	from Order_Location
+	from Order_Location with(nolock)
 	where OrderId = pd.OrderID
 )ol
 outer apply
 (
 	select [LocationQty] = count(distinct Location)
-	from Style_Location
+	from Style_Location with(nolock)
 	where StyleUkey = o.StyleUkey
 )sl
-where ((p.ID + pd.CTNStartNo) = @cartonsBarcode
+where ((pd.ID = left(@cartonsBarcode,13) and pd.CTNStartNo = right(@cartonsBarcode,1))
 or pd.CustCTN = @cartonsBarcode
 or pd.SCICtnNo = @cartonsBarcode)
 group by pd.MDFailQty,pd.OrderID,o.CustPONo,o.StyleID,o.SeasonID,o.BrandID
-	,c.Alias,os.BuyerDelivery,ol.LocationQty, sl.LocationQty,pd.Ukey,p.ID
+	,c.Alias,os.BuyerDelivery,ol.LocationQty, sl.LocationQty,p.ID
     ,pd.CTNStartNo,pd.SCICtnNo
 ";
             this.ShowWaitMessage("Data Loading....");
@@ -146,14 +145,13 @@ group by pd.MDFailQty,pd.OrderID,o.CustPONo,o.StyleID,o.SeasonID,o.BrandID
             string sqlcmd = string.Format(
                 @"
 update PackingList_Detail
-set MDFailQty = {1}, MDScanDate = getdate()
-where Ukey = {0};
+set MDFailQty = {0}, MDScanDate = getdate()
+where ID = '{3}' and CTNStartNo = '{4}';
 
 
 insert into MDScan([ScanDate], [MDivisionID], [OrderID], [PackingListID], [CTNStartNo], [AddName], [AddDate], [SCICtnNo], [MDFailQty], [CartonQty])
-values(getdate(), '{2}', '{3}', '{4}', '{5}', '{6}', getdate(), '{7}', {1}, {8})
+values(getdate(), '{1}', '{2}', '{3}', '{4}', '{5}', getdate(), '{6}', {0}, {7})
                 ",
-                dr["Ukey"],
                 this.numericBoxDiscrepancy.Text,
                 Sci.Env.User.Keyword,
                 dr["OrderID"],
