@@ -60,6 +60,9 @@ namespace Sci.Production.Warehouse
             grid2Data.Columns.Add("Location", typeof(String));
             grid2Data.Columns.Add("ErrMsg", typeof(String));
             grid2Data.Columns.Add("CanWriteIn", typeof(bool));
+            grid2Data.Columns.Add("MDivisionID", typeof(String));
+            grid2Data.Columns.Add("Stocktype", typeof(String));
+            grid2Data.Columns.Add("ftyinventoryukey", typeof(String));
 
             listControlBindingSource2.DataSource = grid2Data;
             gridPoid.DataSource = listControlBindingSource2;
@@ -271,6 +274,7 @@ namespace Sci.Production.Warehouse
                     sqlpar.Add(new SqlParameter("@Seq2", newRow["seq2"].ToString().Trim()));
                     sqlpar.Add(new SqlParameter("@Roll", newRow["roll"].ToString().Trim()));
                     sqlpar.Add(new SqlParameter("@Dyelot", newRow["dyelot"].ToString().Trim()));
+                    sqlpar.Add(new SqlParameter("@MDivisionID", Sci.Env.User.Keyword));
                     DataRow dr2;
                     string sql = @"
 select fi.*
@@ -285,13 +289,15 @@ and fi.POID = @POID
 and fi.Seq1 = @Seq1
 and fi.Seq2 = @Seq2
 and fi.Roll = @Roll
-and fi.Dyelot = @Dyelot";
+and fi.Dyelot = @Dyelot
+and f.MDivisionID = @MDivisionID ";
                     bool result = MyUtility.Check.Seek(sql, sqlpar, out dr2);
                     if (result)
                     {
                         newRow["Description"] = dr2["Description"];
                         newRow["StockUnit"] = dr2["StockUnit"];
                         newRow["Location"] = dr2["Location"];
+                        newRow["ftyinventoryukey"] = dr2["Ukey"];
                     }
                     else
                     {
@@ -319,6 +325,8 @@ and fi.Dyelot = @Dyelot";
                     {
                         newRow["CanWriteIn"] = false;
                     }
+                    newRow["MDivisionID"] = Sci.Env.User.Keyword;
+                    newRow["Stocktype"] = "B";
 
                     grid2Data.Rows.Add(newRow);
                 }
