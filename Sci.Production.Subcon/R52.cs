@@ -174,7 +174,7 @@ select * from
                         {
                             try
                             {
-                                string newName = dr["ID"].ToString() + "@" + dr["SeasonID"].ToString() + "@" + dr["BrandID"].ToString() + "@" + dr["PicNo"].ToString()+".jpg";
+                                string newName = dr["ID"].ToString().Trim() + "@" + dr["SeasonID"].ToString().Trim() + "@" + dr["BrandID"].ToString().Trim() + "@" + dr["PicNo"].ToString().Trim() + ".jpg";
                                 // 複製檔案並更名到指定路徑
                                 File.Copy(dir + "\\" + dr["Picture"].ToString(), path.SelectedPath + "\\" + newName, true);
                                 this.ShowLoadingText($"{cnt}/{ttlCnt}");
