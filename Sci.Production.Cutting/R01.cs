@@ -441,7 +441,7 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
         {
             this.ShowWaitMessage("Excel processing...");
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R01.xltx"); //預先開啟excel app
-            objApp.Visible = true;
+            //objApp.Visible = true;
             Microsoft.Office.Interop.Excel.Worksheet Summary_Sheet = objApp.ActiveWorkbook.Worksheets[1];
             Microsoft.Office.Interop.Excel.Worksheet Detail_Sheet = objApp.ActiveWorkbook.Worksheets[2];
 

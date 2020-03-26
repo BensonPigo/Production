@@ -186,6 +186,10 @@ GROUP BY CD.ID
 
             foreach (var garment in GarmentListList)
             {
+                if (garment.OrderID == "20022206GG001")
+                {
+
+                }
                 var exists_1 = tmpDt.AsEnumerable().Where(o =>
                 o["OrderID"].ToString() == garment.OrderID &&
                 o["Article"].ToString() == garment.Article &&
@@ -250,12 +254,13 @@ GROUP BY CD.ID
                 // 表示Lead Time有缺
                 return null;
             }
+            Dictionary<string, int> accu = new Dictionary<string, int>();
 
             foreach (string OrderID in allOrder)
             {
                 var sameOrderId = dt.AsEnumerable().Where(o => o["OrderID"].ToString() == OrderID);
 
-                if (OrderID == "20060222GG")
+                if (OrderID == "20032395GG010")
                 {
 
                 }
@@ -289,15 +294,48 @@ GROUP BY CD.ID
                             string StdQty = MyUtility.GetValue.Lookup($"SELECT StdQ FROM [dbo].[getDailystdq]('{ApsNO}') WHERE Date = '{day.Date.AddDays(LeadTime).ToString("yyyy/MM/dd")}'");
                             string AccuStdQty = MyUtility.GetValue.Lookup($"SELECT SUM(StdQ) FROM [dbo].[getDailystdq]('{ApsNO}') WHERE Date <= '{day.Date.AddDays(LeadTime).ToString("yyyy/MM/dd")}'");
 
-                            // 取最小
-                            int Cutqty = GarmentList.Where(o => o.OrderID == OrderID && o.EstCutDate == day.Date.Date.AddDays((-1 * LeadTime)))
-                                                        .Sum(o => o.Panels
-                                                            .Sum(x => x.FabricPanelCodes
-                                                                .Min(y => y.Qty)));
-                            int accuCutQty = GarmentList.Where(o => o.OrderID == OrderID && DateTime.Compare(o.EstCutDate, day.Date.Date.AddDays((-1 * LeadTime))) <= 0)
-                                                        .Sum(o => o.Panels
-                                                            .Sum(x => x.FabricPanelCodes
-                                                                .Min(y => y.Qty)));
+                            // 取裁剪數量
+                            int Cutqty = 0;
+                            var sameData = GarmentList.Where(o => o.OrderID == OrderID && o.EstCutDate == day.Date.Date);
+
+                            foreach (var item in sameData)
+                            {
+                                int thisSize_Qty = 0;
+                                foreach (var panel in item.Panels)
+                                {
+                                    thisSize_Qty = panel.FabricPanelCodes.Min(o => o.Qty);
+                                }
+                                Cutqty += thisSize_Qty;
+                            }
+
+                            // 取累計裁剪數量
+
+                            if (!accu.Where(o => o.Key == OrderID).Any())
+                            {
+                                accu.Add(OrderID, Cutqty);
+                            }
+                            else
+                            {
+                                accu[OrderID] = accu[OrderID] + Cutqty;
+                            }
+
+                            int accuCutQty = accu[OrderID];
+
+                            //if (accuDatas.Count == 0)
+                            //{// 如果是第一天，累計數量 = 當天裁剪數量
+                            //    accuCutQty = Cutqty;
+                            //}
+                            //else
+                            //{
+                            //    // 如果不是第一天，累計數量 = 當天裁剪數量 + 之前累計的數量
+                            //    foreach (var accuData in accuDatas)
+                            //    {
+                            //        foreach (var InOffLine in accuData.InOffLines)
+                            //        {
+                            //            accuCutQty = InOffLine.AccuStdQty + Cutqty;
+                            //        }
+                            //    }
+                            //}
 
                             InOffLine nLineObj = new InOffLine()
                             {
