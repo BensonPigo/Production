@@ -110,6 +110,7 @@ namespace Sci.Production.Warehouse
                  .Numeric("ActualWeight", header: "Act.(kg)", width: Widths.AnsiChars(8), decimal_places: 2, settings: cellActWeight)
                  .Numeric("Differential", header: "Differential", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(15))
+                 .Text("LastRemark", header: "Last P26 Remark data", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .DateTime("LastEditDate", header: "Last Edit Date", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  ;
 
@@ -244,6 +245,7 @@ rd.ActualWeight,
 rd.Seq1,
 rd.Seq2
 ,[Remark]=''
+,[LastRemark] = LastRemark.Remark
 ,[LastEditDate]=LastEditDate.Val
 from  Receiving r with (nolock)
 inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
@@ -262,6 +264,14 @@ OUTER APPLY(
 	INNER JOIN LocationTrans_detail ltd ON lt.ID=ltd.ID
 	WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey=fi.Ukey 
 )LastEditDate
+OUTER APPLY(
+	SELECT lt.Remark
+	FROM LocationTrans lt
+	INNER JOIN LocationTrans_detail ltd ON lt.ID=ltd.ID
+	WHERE lt.Status='Confirmed' 
+    AND ltd.FtyInventoryUkey=fi.Ukey 
+	AND lt.EditDate = LastEditDate.Val
+)LastRemark
 
 where r.MDivisionID  = '{Env.User.Keyword}' {sqlWhere}
 ";
