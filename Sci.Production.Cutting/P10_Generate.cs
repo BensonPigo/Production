@@ -1126,75 +1126,79 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             int detailRow = 0;
             int tmpRow = bundle_detail_tmp.Rows.Count;
             bool notYetInsertAllPart = true;
-            foreach (DataRow dr in detailTb.Rows)
+            foreach (DataRow dr in detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
             {
-                if (dr.RowState != DataRowState.Deleted)
+                if (j < tmpRow)
                 {
-                    if (j < tmpRow)
+                    DataRow tmpdr = bundle_detail_tmp.Rows[j];
+                    dr["bundlegroup"] = tmpdr["bundlegroup"];
+                    dr["PatternCode"] = tmpdr["PatternCode"];
+                    dr["PatternDesc"] = tmpdr["PatternDesc"];
+                    dr["Location"] = tmpdr["Location"];
+                    dr["subprocessid"] = tmpdr["subprocessid"];
+                    dr["NoBundleCardAfterSubprocess_String"] = tmpdr["NoBundleCardAfterSubprocess_String"];
+                    dr["PostSewingSubProcess_String"] = tmpdr["PostSewingSubProcess_String"];
+                    dr["Parts"] = tmpdr["Parts"];
+                    dr["Qty"] = tmpdr["Qty"];
+                    dr["SizeCode"] = tmpdr["SizeCode"];
+                    dr["ukey1"] = tmpdr["ukey1"];
+                    dr["isPair"] = tmpdr["isPair"];
+                    j++;
+                    if (tmpdr["PatternCode"].ToString() == "ALLPARTS" && notYetInsertAllPart)
                     {
-                        DataRow tmpdr = bundle_detail_tmp.Rows[j];
-                        dr["bundlegroup"] = tmpdr["bundlegroup"];
-                        dr["PatternCode"] = tmpdr["PatternCode"];
-                        dr["PatternDesc"] = tmpdr["PatternDesc"];
-                        dr["Location"] = tmpdr["Location"];
-                        dr["subprocessid"] = tmpdr["subprocessid"];
-                        dr["NoBundleCardAfterSubprocess_String"] = tmpdr["NoBundleCardAfterSubprocess_String"];
-                        dr["PostSewingSubProcess_String"] = tmpdr["PostSewingSubProcess_String"];
-                        dr["Parts"] = tmpdr["Parts"];
-                        dr["Qty"] = tmpdr["Qty"];
-                        dr["SizeCode"] = tmpdr["SizeCode"];
-                        dr["ukey1"] = tmpdr["ukey1"];
-                        dr["isPair"] = tmpdr["isPair"];
-                        j++;
-                        if (tmpdr["PatternCode"].ToString() == "ALLPARTS" && notYetInsertAllPart)
-                        {
 
-                            foreach (DataRow aldr in allpartTb.Rows)
+                        foreach (DataRow aldr in allpartTb.Rows)
+                        {
+                            if (aldr.RowState == DataRowState.Deleted)
                             {
-                                if (aldr.RowState == DataRowState.Deleted)
-                                {
-                                    continue;
-                                }
-
-                                if (aldr["Parts"] == DBNull.Value)
-                                {
-                                    continue;
-                                }
-
-                                if (Convert.ToInt32(aldr["Parts"]) == 0)
-                                {
-                                    continue;
-                                }
-
-                                DataRow allpart_ndr = alltmpTb.NewRow();
-                                allpart_ndr["PatternCode"] = aldr["PatternCode"];
-                                allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
-                                allpart_ndr["Location"] = aldr["Location"];
-                                allpart_ndr["Parts"] = aldr["Parts"];
-                                allpart_ndr["ukey1"] = dr["ukey1"];
-                                allpart_ndr["ispair"] = aldr["ispair"];
-                                alltmpTb.Rows.Add(allpart_ndr);
+                                continue;
                             }
-                            notYetInsertAllPart = false;
 
+                            if (aldr["Parts"] == DBNull.Value)
+                            {
+                                continue;
+                            }
+
+                            if (Convert.ToInt32(aldr["Parts"]) == 0)
+                            {
+                                continue;
+                            }
+
+                            DataRow allpart_ndr = alltmpTb.NewRow();
+                            allpart_ndr["PatternCode"] = aldr["PatternCode"];
+                            allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
+                            allpart_ndr["Location"] = aldr["Location"];
+                            allpart_ndr["Parts"] = aldr["Parts"];
+                            allpart_ndr["ukey1"] = dr["ukey1"];
+                            allpart_ndr["ispair"] = aldr["ispair"];
+                            alltmpTb.Rows.Add(allpart_ndr);
                         }
-                        else
-                        {
-                            DataRow art_ndr = bundle_detail_artTb.NewRow();
-                            art_ndr["Bundleno"] = dr["Bundleno"];
-                            art_ndr["PatternCode"] = dr["PatternCode"];
-                            art_ndr["Subprocessid"] = dr["subprocessid"];
-                            art_ndr["NoBundleCardAfterSubprocess_String"] = dr["NoBundleCardAfterSubprocess_String"];
-                            art_ndr["PostSewingSubProcess_String"] = dr["PostSewingSubProcess_String"];
-                            art_ndr["ukey1"] = dr["ukey1"];
-                            bundle_detail_artTb.Rows.Add(art_ndr);
-                        }
+                        notYetInsertAllPart = false;
+
+                    }
+                    else
+                    {
+                        DataRow art_ndr = bundle_detail_artTb.NewRow();
+                        art_ndr["Bundleno"] = dr["Bundleno"];
+                        art_ndr["PatternCode"] = dr["PatternCode"];
+                        art_ndr["Subprocessid"] = dr["subprocessid"];
+                        art_ndr["NoBundleCardAfterSubprocess_String"] = dr["NoBundleCardAfterSubprocess_String"];
+                        art_ndr["PostSewingSubProcess_String"] = dr["PostSewingSubProcess_String"];
+                        art_ndr["ukey1"] = dr["ukey1"];
+                        bundle_detail_artTb.Rows.Add(art_ndr);
                     }
                 }
+                else
+                {
+                    dr.AcceptChanges();
+                    dr.Delete();
+                }
+
+
                 detailRow++;
             }
             //判斷當前表身的筆數(排除掉已刪除的Row)
-            DataTable dtCount = detailTb.Copy();
+            DataTable dtCount = detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).CopyToDataTable();
             dtCount.AcceptChanges();
             int detailrow = detailTb.Rows.Count;
             int deleteCnt = dtCount.Rows.Count - tmpRow;
