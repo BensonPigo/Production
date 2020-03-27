@@ -25,7 +25,7 @@ namespace Sci.Production.Sewing
         private DateTime? sciDel2;
         private string season;
         private string brand;
-        private string mDivision;
+        private string ftyZone;
         private string factory;
         private string style;
         private string category;
@@ -48,15 +48,12 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             this.InitializeComponent();
-            DataTable mDivision, factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
+            DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FTYGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboM.Text = Sci.Env.User.Keyword;
             this.comboFactory.Text = Sci.Env.User.Factory;
             this.comboDropDownListCategory.SelectedIndex = 0;
-
+            this.comboFtyZone.setDataSource();
         }
 
         /// <inheritdoc/>
@@ -76,7 +73,7 @@ namespace Sci.Production.Sewing
             this.sciDel2 = this.dateSCIDelivery.Value2;
             this.season = this.txtseason.Text;
             this.brand = this.txtbrand.Text;
-            this.mDivision = this.comboM.Text;
+            this.ftyZone = this.comboFtyZone.Text;
             this.factory = this.comboFactory.Text;
             this.style = this.txtstyle.Text;
             this.category = this.comboDropDownListCategory.SelectedValue.ToString();
@@ -172,9 +169,9 @@ with tmp1stData as (
                 sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", this.brand));
             }
 
-            if (!MyUtility.Check.Empty(this.mDivision))
+            if (!MyUtility.Check.Empty(this.ftyZone))
             {
-                sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", this.mDivision));
+                sqlCmd.Append(string.Format(" and f.FtyZone = '{0}'", this.ftyZone));
             }
 
             if (!MyUtility.Check.Empty(this.factory))

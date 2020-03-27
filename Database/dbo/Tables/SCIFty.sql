@@ -19,6 +19,7 @@
     [EditDate]     DATETIME       NULL,
     [Type]         VARCHAR (1)    DEFAULT ('') NOT NULL,
     [Zone]         VARCHAR (6)    DEFAULT ('') NULL,
+    [FtyZone] VARCHAR(8) NULL, 
     CONSTRAINT [PK_SCIFty] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
