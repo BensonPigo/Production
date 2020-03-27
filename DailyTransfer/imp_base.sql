@@ -901,6 +901,7 @@ SET
       ,a.FactorySort	      =b.FactorySort	
 	  ,a.IsSCI        =b.IsSCI
 	  ,a.TestDocFactoryGroup = b.TestDocFactoryGroup
+	  ,a.FtyZone      =b.FtyZone
 from Production.dbo.Factory as a inner join Trade_To_Pms.dbo.Factory as b ON a.id=b.id
 --Factory1
 --Factory_TMS
@@ -1078,6 +1079,7 @@ SET
       ,a.EditDate	      =b.EditDate	
       ,a.Type	      =b.Type	
       ,a.Zone	      =b.Zone	
+	  ,a.FtyZone      =b.FtyZone 
 from Production.dbo.SCIFty as a inner join Trade_To_Pms.dbo.Factory as b ON a.id=b.id
 where b.IsSCI=1
 
@@ -1103,6 +1105,7 @@ INSERT INTO Production.dbo.SCIFty(
       ,EditDate
 	  ,Type
 	  ,Zone
+	  ,FtyZone
 )
 select 
        ID
@@ -1125,6 +1128,7 @@ select
       ,EditDate
 	  ,Type
 	  ,Zone
+	  ,FtyZone 
 from Trade_To_Pms.dbo.Factory as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.SCIFty as a WITH (NOLOCK) where a.id = b.id)
 and b.IsSCI=1
