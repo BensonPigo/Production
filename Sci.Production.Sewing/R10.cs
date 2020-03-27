@@ -99,7 +99,7 @@ where 1=1
 
                 sqlWhere.Clear();
                 sqlWhere.Append($"AND exists (select 1 from #tmp_sewingSP where orderid = o.ID)" + Environment.NewLine);
-                sqlWhere2.Append($"AND exists (select 1 from #tmp_sewingSP where orderid = o.ID and Article = o.Article and SizeCode=o.SizeCode)" + Environment.NewLine)
+                sqlWhere2.Append($"AND exists (select 1 from #tmp_sewingSP where orderid = o.ID and Article = o.Article and SizeCode=o.SizeCode)" + Environment.NewLine);
             }
 
             if (!MyUtility.Check.Empty(this.BuyerDev_S))
@@ -213,8 +213,7 @@ IF object_id('tempdb..#tmp_sewingSP') IS NOT NULL drop table #tmp_sewingSP
 IF object_id('tempdb..#tmp_orders') IS NOT NULL drop table #tmp_orders",
                 sqlWhere.ToString(),
                 sqlWhereOutstanding.ToString(),
-                sqlWhere2.ToString()
-                ));
+                sqlWhere2.ToString()));
             #endregion
 
             DBProxy.Current.DefaultTimeout = 900;  // timeout時間改為15分鐘
