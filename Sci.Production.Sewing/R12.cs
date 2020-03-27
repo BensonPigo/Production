@@ -95,21 +95,39 @@ select distinct o.ID
 	,o.SciDelivery
 	,[OrderQty] = o.Qty * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
 	,[TTLQcOutput] = i.tCnt
-	,[MDFailQty] = isnull(pd.MDFailQty,0)
-	,[MDpassBalance] = isnull(pd.MDFailQty,0) - i.tCnt
-	,[Scan and Pack Qty] = isnull(pd.ScanQty,0) * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
-	,[Scan and Pack Balance] = isnull(pd.ScanQty,0) * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty) - isnull(pd.MDFailQty,0)
+	,[MDpassQty] = (ShipQty.val * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)) - MDFailQty.val
+	,[MDpassBalance] = ((ShipQty.val * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)) - MDFailQty.val) - i.tCnt
+	,[Scan and Pack Qty] = isnull(ScanQty.val,0) * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
+	,[Scan and Pack Balance] = isnull(ScanQty.val,0) * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty) - ((ShipQty.val * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)) - MDFailQty.val)
 from Orders o with(nolock)
 outer apply(
-	select pd.id
-		, pd.MDFailQty
-		,[ScanQty] = sum(pd.ScanQty)
+	select pd.ID
+		,[val] = sum(pd.MDFailQty)
 	from PackingList_Detail pd
 	inner join PackingList p on pd.ID = p.ID
 	where o.ID = pd.OrderID
-	and p.Status = 'Confirmed'
-	group by  pd.id, pd.MDFailQty
-)pd
+	and pd.MDScanDate is not null
+	and pd.CTNQty > 0
+	group by pd.id
+)MDFailQty
+outer apply(
+	select pd.ID
+		,[val] = SUM(pd.ShipQty)
+	from PackingList_Detail pd
+	inner join PackingList p on pd.ID = p.ID
+	where o.ID = pd.OrderID
+	and pd.MDScanDate is not null
+	group by pd.id
+)ShipQty
+outer apply(
+	select pd.ID
+		,[val] = SUM(pd.ScanQty)
+	from PackingList_Detail pd
+	inner join PackingList p on pd.ID = p.ID
+	where o.ID = pd.OrderID
+	and pd.MDScanDate is not null
+	group by pd.id
+)ScanQty
 outer apply(
 	select [tCnt] = count(*)
 	from [ExtendServer].ManufacturingExecution.dbo.Inspection i with(nolock)
@@ -135,10 +153,10 @@ select distinct o.ID
 	,o.CustPONo
 	,o.BrandID
 	,[PackID] = pd.ID
-	,pd.CTNStartNo
-	,[CatronQty] = pd.ShipQty * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
+	,pd.CTNStartNo 
+	,[CatronQty] = isnull(ShipQty.val,0) * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
 	,[TTLQcOutput] = i.tCnt
-	,pd.MDFailQty
+	,MDFailQty = isnull(MDFailQty.val,0)
 	,pd.DRYReceiveDate
 	,pd.MDScanDate
 	,[ScanQty] = pd.ScanQty * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
@@ -147,9 +165,30 @@ select distinct o.ID
 	,o.SciDelivery
 from Orders o with(nolock)
 left join PackingList_Detail pd with(nolock) on o.ID = pd.OrderID
-												and pd.CTNQty > 0
 left join Order_QtyShip os on pd.OrderID = os.Id
 							and pd.OrderShipmodeSeq = os.Seq
+outer apply(
+	select pd.ID
+		,[val] = SUM(pdd.ShipQty)
+	from PackingList_Detail pdd
+	inner join PackingList p on pdd.ID = p.ID
+	where o.ID = pdd.OrderID
+	and pd.ID = pdd.ID
+	and pd.CTNStartNo = pdd.CTNStartNo
+	and pdd.MDScanDate is not null
+	group by pdd.id
+)ShipQty
+outer apply(
+	select pd.ID
+		,[val] = pd.MDFailQty
+	from PackingList_Detail pdd
+	inner join PackingList p on pdd.ID = p.ID
+	where o.ID = pdd.OrderID
+	and pd.ID = pdd.ID
+	and pd.CTNStartNo = pdd.CTNStartNo
+	and pdd.MDScanDate is not null
+	and pdd.CTNQty > 0
+)MDFailQty
 outer apply(
 	select [tCnt] = count(*)
 	from [ExtendServer].ManufacturingExecution.dbo.Inspection i with(nolock)

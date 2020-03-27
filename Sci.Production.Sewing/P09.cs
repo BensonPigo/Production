@@ -79,7 +79,7 @@ declare @sp nvarchar(20) = '{sp}'
 select DISTINCT md.ScanDate
 	, [PackingListID] = iif(isnull(pd.OrigID, '') = '', md.PackingListID, pd.OrigID)
 	, [CTNStartNo] = iif(isnull(pd.OrigCTNStartNo, '') = '', md.CTNStartNo, pd.OrigCTNStartNo)
-	, [CartonQty] = md.CartonQty * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
+	, [CartonQty] = sum(pd.ShipQty) * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
 	, md.MDFailQty
 	, [OrderID] = iif(isnull(pd.OrigOrderID, '') = '', md.OrderID, pd.OrigOrderID)
 	, o.CustPONo
@@ -117,6 +117,9 @@ outer apply
 )sl
 where 1=1
 {sqlwhere}
+group by md.ScanDate, pd.OrigID, md.PackingListID, pd.OrigCTNStartNo, md.CTNStartNo, sl.LocationQty, ol.LocationQty
+	, md.MDFailQty, md.OrderID, pd.OrigOrderID, o.CustPONo, o.StyleID, o.BrandID, Country.Alias
+	, os.BuyerDelivery, o.SciDelivery, md.AddName, md.AddDate, pd.ID, pd.OrigID, pd.OrderID ,pd.CTNStartNo
 
  ORDER BY md.ScanDate,[PackingListID],[CTNStartNo],[OrderID]
 ";
