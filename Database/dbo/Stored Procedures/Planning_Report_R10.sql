@@ -24,10 +24,22 @@ CREATE PROCEDURE [dbo].[Planning_Report_R10]
 AS
 BEGIN
 
-	declare @HasOrders bit = 0, @HasForecast bit = 0, @HasFtyLocalOrder bit = 0
+	declare @HasOrders bit = 0, @HasForecast bit = 0, @HasFtyLocalOrder bit = 0	
 	set @HasOrders = iif(exists(select 1 from dbo.SplitString(@SourceStr,',') where Data = 'Order'), 1, 0)
 	set @HasForecast = iif(exists(select 1 from dbo.SplitString(@SourceStr,',') where Data = 'Forecast'), 1, 0)
 	set @HasFtyLocalOrder = iif(exists(select 1 from dbo.SplitString(@SourceStr,',') where Data = 'Fty Local Order'), 1, 0)
+
+	declare @CalculateCPU bit = 0
+	IF (@ArtWorkType = 'SEWING')
+	BEGIN
+		set @CalculateCPU = 1;
+	END
+	
+	IF ((select ArtworkUnit from ArtworkType where id = @ArtWorkType) ='STITCH' 
+		OR (select ProductionUnit from ArtworkType where id = @ArtWorkType) = 'QTY')
+	BEGIN
+		set @CalculateCPU = 0;
+	END
 	
 	declare @CalArtWorkType varchar(30)
 	set @CalArtWorkType = iif(@ArtWorkType = 'SEWING', 'CPU', @ArtWorkType)
@@ -61,7 +73,11 @@ BEGIN
 	outer apply (select DATEFROMPARTS(Factory_Tms.Year,Factory_Tms.Month,8) as OrderDate) od
 	left join ArtworkType on ArtworkType.Id = Factory_TMS.ArtworkTypeID
 	left join Factory_WorkHour fw on Factory.ID = fw.ID and fw.Year = Factory_TMS.Year and fw.Month = Factory_Tms.Month	
-	outer apply (select iif(@CalArtWorkType = 'CPU', Round(Factory_Tms.TMS * 3600 / @mStandardTMS ,0), Factory_Tms.TMS) as Capacity) cc
+	--outer apply (select iif(@CalArtWorkType = 'CPU', Round(Factory_Tms.TMS * 3600 / @mStandardTMS ,0), Factory_Tms.TMS) as Capacity) cc
+	outer apply (select IIF(@CalArtWorkType = 'CPU', ROUND(Factory_TMS.Tms * 3600 / @mStandardTMS, 0),
+						iif(ArtworkType.ArtworkUnit = 'STITCH', Factory_TMS.Tms,
+						iif(ArtworkType.ProductionUnit = 'Qty', Factory_TMS.Tms,
+						IIF(@CalculateCPU = 1, ROUND(Factory_Tms.Tms * 60 / @mStandardTMS, 0), Factory_TMS.TMS )))) as Capacity) cc
 	outer apply (select format(dateadd(day,-7,OrderDate),'yyyyMM') as Date1) odd1
 	outer apply (select cast(Factory_TMS.Year as varchar(4)) + cast(Factory_TMS.Month as varchar(2)) as Date2) odd2
 	Where ISsci = 1  And Factory.Junk = 0 And Artworktype.ReportDropdown = 1 
@@ -171,8 +187,9 @@ BEGIN
 	And Orders.Junk = 0 and Orders.Qty > 0 	
 	AND @HasFtyLocalOrder = 1
 	AND Orders.LocalOrder = 1
-	And (Orders.MDivisionID = @M or @M = '') And (Orders.FactoryID = @Fty or @Fty = '')
-	and (exists(select 1 from Factory where id = Orders.FactoryID and Zone = @Zone) or @Zone = '')
+	--And (Orders.MDivisionID = @M or @M = '') 
+	--And (Orders.FactoryID = @Fty or @Fty = '')
+	--and (exists(select 1 from Factory where id = Orders.FactoryID and Zone = @Zone) or @Zone = '')
 
 	--#tmpFactoryOrder1
 	Select FactoryOrder.ID, rtrim(FactoryOrder.FactoryID) as FactoryID
@@ -430,7 +447,21 @@ BEGIN
 				left join SCIFty f on t.ProgramID=f.ID
 				where SubconInType=2
 			union all
-				select CountryID, MDivisionID, FactoryID, OrderYYMM, 0,0, Capacity as FtyTmsCapa, 0 from #tmpFactory 
+			--	#tmpFactory
+				select CountryID, MDivisionID, FactoryID, OrderYYMM, 0,0, Capacity as FtyTmsCapa, 0 
+				from #tmpFactory 
+			-- SubconInType = 2 , LocalOrder
+			union all
+			select t.CountryID, f.MDivisionID
+				, [FactoryID] = case when f.ID is null then (select FactoryID from orders where id=t.ProgramID)
+					else t.ProgramID end
+				, OrderYYMM
+				,[Capacity1] = 0
+				,[Capacity2] = - isnull(OrderLoadingCPU,0) 
+				,[FtyTmsCapa] = 0, OrderShortage=0
+				from #tmpFinal t
+				left join SCIFty f on t.ProgramID=f.ID
+				where SubconInType = 2
 		) a 
 		group by CountryID, MDivisionID, FactoryID,OrderYYMM
 
