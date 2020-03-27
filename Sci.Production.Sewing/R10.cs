@@ -72,6 +72,7 @@ namespace Sci.Production.Sewing
         {
             StringBuilder sqlcmd = new StringBuilder();
             StringBuilder sqlWhere = new StringBuilder();
+            StringBuilder sqlWhere2 = new StringBuilder();
             StringBuilder sqlWhereOutstanding = new StringBuilder();
             #region WHERE條件
             if (!MyUtility.Check.Empty(this.SewingOutputDate_S) || !MyUtility.Check.Empty(this.SewingOutputDate_E))
@@ -88,7 +89,7 @@ namespace Sci.Production.Sewing
 
                 sqlcmd.Append(string.Format(
                     @"
-select distinct ssd.OrderId
+select distinct ssd.OrderId,ssd.Article,ssd.SizeCode
 into #tmp_sewingSP
 from SewingOutput s 
 inner join SewingOutput_Detail_Detail ssd on s.ID = ssd.ID
@@ -98,6 +99,7 @@ where 1=1
 
                 sqlWhere.Clear();
                 sqlWhere.Append($"AND exists (select 1 from #tmp_sewingSP where orderid = o.ID)" + Environment.NewLine);
+                sqlWhere2.Append($"AND exists (select 1 from #tmp_sewingSP where orderid = o.ID and Article = o.Article and SizeCode=o.SizeCode)" + Environment.NewLine)
             }
 
             if (!MyUtility.Check.Empty(this.BuyerDev_S))
@@ -132,7 +134,7 @@ where 1=1
 
             if (this.bolOutstanding)
             {
-                sqlWhereOutstanding.Append("where (o.OrderQty - o.SewingOutputQty) < 0" + Environment.NewLine);
+                sqlWhereOutstanding.Append("And (o.OrderQty - o.SewingOutputQty) < 0" + Environment.NewLine);
             }
             #endregion
 
@@ -141,51 +143,78 @@ where 1=1
             sqlcmd.Append(string.Format(
                 @"
 select distinct
-o.MDivisionID
-,o.FactoryID
-,o.ID
-,o.StyleID
-,o.SeasonID
-,o.BrandID
-,o.BuyerDelivery
-,o.SCIDelivery
+    o.MDivisionID
+    ,o.FactoryID
+    ,o.ID
+    ,Cancelorder = iif(o.junk=1,'Y','')
+    ,Category= case 
+            when o.Category = 'S' then 'Sample' 
+            when o.Category = 'B' then 'Bulk' 
+            when o.Category = 'M' then 'Material' 
+            when o.Category = 'T' then 'SMTL' 
+            else o.Category 
+        end
+    ,o.CustPONo
+    ,o.StyleID
+    ,o.SeasonID
+    ,o.BrandID
+    ,o.BuyerDelivery
+    ,o.SCIDelivery
+    ,o.SewLine
 into #tmp_orders
 from Orders o WITH (NOLOCK) 
-where o.Category in ('B','S','G')
+where o.Category in ('B','S')
 {0}
 
 select o.*
     ,[BalanceQty] = o.OrderQty - o.SewingOutputQty
 from 
 (
-	select distinct o.*
-		,[Article] = Coalesce(sdd.Article, oq2.Article, '')
-		,[SizeCode] = Coalesce(sdd.SizeCode, oq2.SizeCode, '')
-		,[OrderQty] = Coalesce(sdd.Qty, oq2.Qty, 0)
-		,[SewingOutputQty] = isnull(dbo.getMinCompleteSewQty(isnull(sdd.OrderId, oq2.ID), isnull(sdd.Article, oq2.Article), isnull(sdd.SizeCode, oq2.SizeCode)),0)
+	select distinct 
+        o.MDivisionID
+        ,o.FactoryID
+        ,o.ID
+        ,o.Cancelorder
+        ,o.Category
+        ,o.CustPONo
+        ,o.StyleID
+        ,o.SeasonID
+        ,o.BrandID
+        ,o.BuyerDelivery
+        ,o.SCIDelivery
+		,[Article] = oq.Article
+		,[SizeCode] = oq.SizeCode
+        ,Garmentdye = iif((select ot.Price from Order_TmsCost ot with(nolock) where ot.id =o.id and ot.ArtworkTypeID = 'Garment Dye' ) > 0, 'Y', '')
+        ,o.SewLine
+		,[OrderQty] =oq.Qty
+		,[SewingOutputQty] = isnull(dbo.getMinCompleteSewQty(o.id, oq.Article, oq.SizeCode),0)
 	from #tmp_orders o
-	outer apply
-	(
-		select distinct sdd.OrderId, sdd.Article, sdd.SizeCode, oq.Qty
-		from SewingOutput_Detail_Detail sdd WITH (NOLOCK) 		
-		left join Order_Qty oq WITH (NOLOCK) on oq.ID = sdd.OrderId and oq.Article = sdd.Article and oq.SizeCode = sdd.SizeCode
-		where o.ID = sdd.OrderId
-	)sdd
 	outer apply
 	(
 		select ID, Article, SizeCode, [Qty] = Sum(Qty)
 		from Order_Qty WITH (NOLOCK)
 		where ID = o.ID
 		group by ID, Article, SizeCode
-	)oq2
+	)oq
+	outer apply
+	(
+		select distinct sdd.OrderId, sdd.Article, sdd.SizeCode, oq.Qty
+		from SewingOutput_Detail_Detail sdd WITH (NOLOCK) 		
+		where o.ID = sdd.OrderId
+		and oq.ID = sdd.OrderId and oq.Article = sdd.Article and oq.SizeCode = sdd.SizeCode
+	)sdd
 )o 
+where 1=1
 {1}
+{2}
 order by o.MDivisionID, o.FactoryID, o.ID, o.Article, o.SizeCode
 
 IF object_id('tempdb..#tmp_sewingSP') IS NOT NULL drop table #tmp_sewingSP
 IF object_id('tempdb..#tmp_orders') IS NOT NULL drop table #tmp_orders",
                 sqlWhere.ToString(),
-                sqlWhereOutstanding.ToString()));
+                sqlWhereOutstanding.ToString(),
+                sqlWhere2.ToString()
+                ));
             #endregion
 
             DBProxy.Current.DefaultTimeout = 900;  // timeout時間改為15分鐘
