@@ -97,8 +97,8 @@ select distinct o.ID
 	,[TTLQcOutput] = i.tCnt
 	,[MDFailQty] = isnull(pd.MDFailQty,0)
 	,[MDpassBalance] = isnull(pd.MDFailQty,0) - i.tCnt
-	,[Scan and Pack Qty] = (isnull(pd.ScanQty,0) * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
-	,[Scan and Pack Balance] = (isnull(pd.ScanQty,0) * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty) - isnull(pd.MDFailQty,0)
+	,[Scan and Pack Qty] = isnull(pd.ScanQty,0) * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
+	,[Scan and Pack Balance] = isnull(pd.ScanQty,0) * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty) - isnull(pd.MDFailQty,0)
 from Orders o with(nolock)
 outer apply(
 	select pd.id

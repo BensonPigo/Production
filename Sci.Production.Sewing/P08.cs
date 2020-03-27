@@ -78,7 +78,7 @@ outer apply
 	from Style_Location with(nolock)
 	where StyleUkey = o.StyleUkey
 )sl
-where ((pd.ID = left(@cartonsBarcode,13) and pd.CTNStartNo = right(@cartonsBarcode,1))
+where ((pd.ID = left(@cartonsBarcode,13) and pd.CTNStartNo = SUBSTRING(@cartonsBarcode,14,len(@cartonsBarcode)))
 or pd.CustCTN = @cartonsBarcode
 or pd.SCICtnNo = @cartonsBarcode)
 group by pd.MDFailQty,pd.OrderID,o.CustPONo,o.StyleID,o.SeasonID,o.BrandID

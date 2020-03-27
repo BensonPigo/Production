@@ -80,7 +80,7 @@ select DISTINCT md.ScanDate
 	, [PackingListID] = iif(isnull(pd.OrigID, '') = '', md.PackingListID, pd.OrigID)
 	, [CTNStartNo] = iif(isnull(pd.OrigCTNStartNo, '') = '', md.CTNStartNo, pd.OrigCTNStartNo)
 	, [CartonQty] = md.CartonQty * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
-	, pd.MDFailQty
+	, md.MDFailQty
 	, [OrderID] = iif(isnull(pd.OrigOrderID, '') = '', md.OrderID, pd.OrigOrderID)
 	, o.CustPONo
 	, o.StyleID
