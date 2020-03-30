@@ -58,13 +58,13 @@ namespace Sci.Production.Sewing
             if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {
                 packid = this.txtPackID.Text;
-                sqlwhere += $@" and  (pd.ID = @packid or  pd.OrigID = @packid) ";
+                sqlwhere += $@" and  (dr.PackingListID = @packid or  pd.OrigID = @packid) ";
             }
 
             if (!MyUtility.Check.Empty(this.txtsp.Text))
             {
                 sp = this.txtsp.Text;
-                sqlwhere += $@" and (pd.OrderID = @sp or pd.OrigOrderID = @sp) ";
+                sqlwhere += $@" and (dr.OrderID = @sp or pd.OrigOrderID = @sp) ";
             }
 
             this.ShowWaitMessage("Data Loading...");
@@ -75,33 +75,36 @@ declare @datereceive2 date = '{datereceive2}'
 declare @packid nvarchar(20) = '{packid}'
 declare @sp nvarchar(20) = '{sp}'
 
-select DISTINCT dr.ReceiveDate
-	, [PackingListID] = iif(isnull(pd.OrigID, '') = '', dr.PackingListID, pd.OrigID)
-	, [CTNStartNo] = iif(isnull(pd.OrigCTNStartNo, '') = '', dr.CTNStartNo, pd.OrigCTNStartNo)
-	, [OrderID] = iif(isnull(pd.OrigOrderID, '') = '', dr.OrderID, pd.OrigOrderID)
-	, o.CustPONo
-	, o.StyleID
-	, o.BrandID
-	, Country.Alias
-	, os.BuyerDelivery
-	, o.SciDelivery
-	, ReceivedBy = dbo.getPass1(dr.AddName)
-    , [AddDate] = format(dr.AddDate, 'yyyy/MM/dd HH:mm:ss')
-    , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
-    , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
-    , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
+select dr.ReceiveDate
+	    , [PackingListID] = iif(isnull(pd.OrigID, '') = '', dr.PackingListID, pd.OrigID)
+	    , [CTNStartNo] = iif(isnull(pd.OrigCTNStartNo, '') = '', dr.CTNStartNo, pd.OrigCTNStartNo)
+	    , [OrderID] = iif(isnull(pd.OrigOrderID, '') = '', dr.OrderID, pd.OrigOrderID)
+	    , o.CustPONo
+	    , o.StyleID
+	    , o.BrandID
+	    , Country.Alias
+	    , os.BuyerDelivery
+	    , o.SciDelivery
+	    , ReceivedBy = dbo.getPass1(dr.AddName)
+        , [AddDate] = format(dr.AddDate, 'yyyy/MM/dd HH:mm:ss')
+        , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
+        , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
+        , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
 from DRYReceive dr with(nolock)
 left join orders o with(nolock) on dr.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
-left join PackingList_Detail pd WITH (NOLOCK) on dr.SCICtnNo = pd.SCICtnNo
-													AND dr.OrderID = pd.OrderID
-													AND dr.CTNStartNo  = pd.CTNStartNo
-                                                    AND dr.PackingListID = pd.id 
-                                                    AND pd.CTNQty <> 0
+outer apply (
+    select top 1 *
+    from PackingList_Detail pd with (nolock)
+    where dr.SCICtnNo = pd.SCICtnNo
+	        AND dr.OrderID = pd.OrderID
+	        AND dr.CTNStartNo  = pd.CTNStartNo
+            AND dr.PackingListID = pd.id 
+) pd
 left join Order_QtyShip os on pd.OrderID = os.Id
 							and pd.OrderShipmodeSeq = os.Seq
 where 1=1
-{sqlwhere}
+    {sqlwhere}
 
  ORDER BY dr.ReceiveDate,[PackingListID],[CTNStartNo],[OrderID]
 ";

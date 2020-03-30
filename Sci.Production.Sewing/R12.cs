@@ -88,127 +88,109 @@ and i.Status in ('Pass', 'Fixed');
 
             sqlCmd += string.Format(
                 @"
-select distinct o.ID
+select o.ID
+        , o.CustPONo
+        , o.BrandID
+        , o.SciDelivery
+        , o.BuyerDelivery
+        , o.Qty
+        , QCQty = i.tCnt
+        , LocationQty = iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
+into #Orders
+from Orders o
+outer apply
+(
+	select [LocationQty] = count(distinct Location)
+	from Order_Location with(nolock)
+	where OrderId = o.ID
+)ol
+outer apply
+(
+	select [LocationQty] = count(distinct Location)
+	from Style_Location with(nolock)
+	where StyleUkey = o.StyleUkey
+)sl
+outer apply(
+	select [tCnt] = count(1)
+	from [ExtendServer].ManufacturingExecution.dbo.Inspection i with(nolock)
+	where i.OrderId = o.ID
+			and i.Status in ('Pass', 'Fixed') 
+) i
+where 1 = 1
+        {0}
+
+select pd.ID
+        , pd.CtnStartNo
+        , pd.OrderID
+        , [ShipBuyerDelivery] = max (oq.BuyerDelivery)
+        , MDFailQty = Max (pd.MDFailQty)
+        , MDScanDate = Max (pd.MDScanDate)
+        , DRYReceiveDate = Max (pd.DRYReceiveDate)
+        , ScanEditDate = Max (pd.ScanEditDate)
+into #PD_Detail
+from #Orders o with(nolock)
+inner join PackingList_Detail pd with(nolock) on o.ID = pd.OrderID
+left join Order_QtyShip oq with(nolock) on pd.OrderID = oq.ID
+                                            and pd.OrderShipmodeSeq = oq.Seq
+group by pd.ID, pd.CtnStartNo, pd.OrderID
+
+----------------------------------------------------------------
+--- Detail
+----------------------------------------------------------------
+select o.ID
+	    ,o.CustPONo
+	    ,o.BrandID
+	    ,[PackID] = pd.ID
+	    ,pd.CTNStartNo 
+	    ,[CartonQty] = pl_Qty.CtnQty
+	    ,[TTLQcOutput] = o.QCQty
+	    ,MDPassQty = iif (pd.MDScanDate is null, 0, pl_Qty.CtnQty - isnull(pd.MDFailQty,0))
+	    ,pd.DRYReceiveDate
+	    ,pd.MDScanDate
+	    ,[ScanQty] = pl_Qty.ScanQty
+	    ,pd.ScanEditDate
+	    ,pd.ShipBuyerDelivery
+	    ,o.SciDelivery
+into #Detail
+from #Orders o with(nolock)
+left join #PD_Detail pd on o.id = pd.OrderID
+outer apply(
+	select [CtnQty] = SUM(pdd.ShipQty) * o.LocationQty
+            , [ScanQty] = sum (pdd.ScanQty) * o.LocationQty
+	from PackingList_Detail pdd  with(nolock)
+	inner join PackingList p with(nolock) on pdd.ID = p.ID
+	where o.ID = pdd.OrderID
+	        and pd.ID = pdd.ID
+	        and pd.CTNStartNo = pdd.CTNStartNo
+)pl_Qty
+
+----------------------------------------------------------------
+--- Summary
+----------------------------------------------------------------
+select o.ID
 	,o.CustPONo
 	,o.BrandID
 	,o.BuyerDelivery
 	,o.SciDelivery
-	,[OrderQty] = o.Qty * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
-	,[TTLQcOutput] = i.tCnt
-	,[MDpassQty] = (ShipQty.val * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)) - MDFailQty.val
-	,[MDpassBalance] = ((ShipQty.val * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)) - MDFailQty.val) - i.tCnt
-	,[Scan and Pack Qty] = isnull(ScanQty.val,0) * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
-	,[Scan and Pack Balance] = isnull(ScanQty.val,0) * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty) - ((ShipQty.val * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)) - MDFailQty.val)
-from Orders o with(nolock)
-outer apply(
-	select pd.ID
-		,[val] = sum(pd.MDFailQty)
-	from PackingList_Detail pd
-	inner join PackingList p on pd.ID = p.ID
-	where o.ID = pd.OrderID
-	and pd.MDScanDate is not null
-	and pd.CTNQty > 0
-	group by pd.id
-)MDFailQty
-outer apply(
-	select pd.ID
-		,[val] = SUM(pd.ShipQty)
-	from PackingList_Detail pd
-	inner join PackingList p on pd.ID = p.ID
-	where o.ID = pd.OrderID
-	and pd.MDScanDate is not null
-	group by pd.id
-)ShipQty
-outer apply(
-	select pd.ID
-		,[val] = SUM(pd.ScanQty)
-	from PackingList_Detail pd
-	inner join PackingList p on pd.ID = p.ID
-	where o.ID = pd.OrderID
-	and pd.MDScanDate is not null
-	group by pd.id
-)ScanQty
-outer apply(
-	select [tCnt] = count(*)
-	from [ExtendServer].ManufacturingExecution.dbo.Inspection i with(nolock)
-	where i.OrderId = o.ID
-	and i.Status in ('Pass', 'Fixed') 
-)i
-outer apply
-(
-	select [LocationQty] = count(distinct Location)
-	from Order_Location with(nolock)
-	where OrderId = o.ID
-)ol
-outer apply
-(
-	select [LocationQty] = count(distinct Location)
-	from Style_Location with(nolock)
-	where StyleUkey = o.StyleUkey
-)sl
-where 1=1
-{0}
+	,[OrderQty] = o.Qty * o.LocationQty
+	,[TTLQcOutput] = o.QCQty
+	,[MDpassQty] = d.MDPassQty
+	,[MDpassBalance] = d.MDPassQty - o.QCQty
+	,[Scan and Pack Qty] = d.ScanQty
+	,[Scan and Pack Balance] = d.ScanQty - d.MDPassQty
+from #Orders o with(nolock)
+outer apply (
+    select CartonQty = sum(CartonQty)
+            , MDPassQty = sum(MDPassQty)
+            , ScanQty = sum(ScanQty)
+    from #Detail d
+    where o.ID = d.ID
+) d
 
-select distinct o.ID
-	,o.CustPONo
-	,o.BrandID
-	,[PackID] = pd.ID
-	,pd.CTNStartNo 
-	,[CatronQty] = isnull(ShipQty.val,0) * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
-	,[TTLQcOutput] = i.tCnt
-	,MDFailQty = isnull(MDFailQty.val,0)
-	,pd.DRYReceiveDate
-	,pd.MDScanDate
-	,[ScanQty] = pd.ScanQty * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
-	,pd.ScanEditDate
-	,os.BuyerDelivery
-	,o.SciDelivery
-from Orders o with(nolock)
-left join PackingList_Detail pd with(nolock) on o.ID = pd.OrderID
-left join Order_QtyShip os on pd.OrderID = os.Id
-							and pd.OrderShipmodeSeq = os.Seq
-outer apply(
-	select pd.ID
-		,[val] = SUM(pdd.ShipQty)
-	from PackingList_Detail pdd
-	inner join PackingList p on pdd.ID = p.ID
-	where o.ID = pdd.OrderID
-	and pd.ID = pdd.ID
-	and pd.CTNStartNo = pdd.CTNStartNo
-	and pdd.MDScanDate is not null
-	group by pdd.id
-)ShipQty
-outer apply(
-	select pd.ID
-		,[val] = pd.MDFailQty
-	from PackingList_Detail pdd
-	inner join PackingList p on pdd.ID = p.ID
-	where o.ID = pdd.OrderID
-	and pd.ID = pdd.ID
-	and pd.CTNStartNo = pdd.CTNStartNo
-	and pdd.MDScanDate is not null
-	and pdd.CTNQty > 0
-)MDFailQty
-outer apply(
-	select [tCnt] = count(*)
-	from [ExtendServer].ManufacturingExecution.dbo.Inspection i with(nolock)
-	where i.OrderId = o.ID
-	and i.Status in ('Pass', 'Fixed') 
-)i
-outer apply
-(
-	select [LocationQty] = count(distinct Location)
-	from Order_Location with(nolock)
-	where OrderId = o.ID
-)ol
-outer apply
-(
-	select [LocationQty] = count(distinct Location)
-	from Style_Location with(nolock)
-	where StyleUkey = o.StyleUkey
-)sl
-where 1=1
-{0}
+select *
+from #Detail
+
+drop table #Orders, #PD_Detail, #Detail
 
 IF object_id('tempdb..#tmp_InspectionOrderId') IS NOT NULL drop table #tmp_InspectionOrderId
 ",

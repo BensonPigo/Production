@@ -45,10 +45,11 @@ namespace Sci.Production.Sewing
 
             List<SqlParameter> sqlParameters = new List<SqlParameter>();
             sqlParameters.Add(new SqlParameter("@cartonsBarcode", cartonsBarcode));
+            sqlParameters.Add(new SqlParameter("@M", Env.User.Keyword));
 
             string sqlcmd =
                 @"
-select top 1 pd.MDFailQty
+select MDFailQty = max (pd.MDFailQty)
 	,pd.OrderID
 	,o.CustPONo
 	,o.StyleID
@@ -79,8 +80,12 @@ outer apply
 	where StyleUkey = o.StyleUkey
 )sl
 where ((pd.ID = left(@cartonsBarcode,13) and pd.CTNStartNo = SUBSTRING(@cartonsBarcode,14,len(@cartonsBarcode)))
-or pd.CustCTN = @cartonsBarcode
-or pd.SCICtnNo = @cartonsBarcode)
+        or pd.CustCTN = @cartonsBarcode
+        or pd.SCICtnNo = @cartonsBarcode)
+		and p.MDivisionID =@M
+		and p.Type in ('B','L') 
+        and pd.DisposeFromClog = 0 
+		and pd.TransferDate  is null 
 group by pd.MDFailQty,pd.OrderID,o.CustPONo,o.StyleID,o.SeasonID,o.BrandID
 	,c.Alias,os.BuyerDelivery,ol.LocationQty, sl.LocationQty,p.ID
     ,pd.CTNStartNo,pd.SCICtnNo

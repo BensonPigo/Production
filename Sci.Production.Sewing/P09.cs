@@ -59,13 +59,13 @@ namespace Sci.Production.Sewing
             if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {
                 packid = this.txtPackID.Text;
-                sqlwhere += $@" and (pd.ID = @packid or  pd.OrigID = @packid) ";
+                sqlwhere += $@" and (md.PackingListID = @packid or  pd.OrigID = @packid) ";
             }
 
             if (!MyUtility.Check.Empty(this.txtsp.Text))
             {
                 sp = this.txtsp.Text;
-                sqlwhere += $@" and (pd.OrderID = @sp or pd.OrigOrderID = @sp) ";
+                sqlwhere += $@" and (md.OrderID = @sp or pd.OrigOrderID = @sp) ";
             }
 
             this.ShowWaitMessage("Data Loading...");
@@ -76,52 +76,40 @@ declare @TransferDate2  datetime = '{dateTransfer2}'
 declare @packid nvarchar(20) = '{packid}'
 declare @sp nvarchar(20) = '{sp}'
 
-select DISTINCT md.ScanDate
-	, [PackingListID] = iif(isnull(pd.OrigID, '') = '', md.PackingListID, pd.OrigID)
-	, [CTNStartNo] = iif(isnull(pd.OrigCTNStartNo, '') = '', md.CTNStartNo, pd.OrigCTNStartNo)
-	, [CartonQty] = sum(pd.ShipQty) * iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
-	, md.MDFailQty
-	, [OrderID] = iif(isnull(pd.OrigOrderID, '') = '', md.OrderID, pd.OrigOrderID)
-	, o.CustPONo
-	, o.StyleID
-	, o.BrandID
-	, Country.Alias
-	, os.BuyerDelivery
-	, o.SciDelivery
-	, ReceivedBy = dbo.getPass1(md.AddName)
-    , [AddDate] = format(md.AddDate, 'yyyy/MM/dd HH:mm:ss')
-	, [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
-    , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
-    , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
+select md.ScanDate
+	    , [PackingListID] = iif(isnull(pd.OrigID, '') = '', md.PackingListID, pd.OrigID)
+	    , [CTNStartNo] = iif(isnull(pd.OrigCTNStartNo, '') = '', md.CTNStartNo, pd.OrigCTNStartNo)
+	    , [CartonQty] = md.CartonQty
+        , [MDFailQty] = md.MDFailQty
+	    , [OrderID] = iif(isnull(pd.OrigOrderID, '') = '', md.OrderID, pd.OrigOrderID)
+	    , o.CustPONo
+	    , o.StyleID
+	    , o.BrandID
+	    , Country.Alias
+	    , os.BuyerDelivery
+	    , o.SciDelivery
+	    , ReceivedBy = dbo.getPass1(md.AddName)
+        , [AddDate] = format(md.AddDate, 'yyyy/MM/dd HH:mm:ss')
+	    , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
+        , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
+        , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
 from MDScan md with(nolock)
 left join orders o with(nolock) on md.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
-left join PackingList_Detail pd WITH (NOLOCK) on md.SCICtnNo = pd.SCICtnNo
-													AND md.OrderID = pd.OrderID
-													AND md.CTNStartNo = pd.CTNStartNo
-                                                    AND md.PackingListID = pd.id 
-													AND pd.CTNQty <> 0
+outer apply (
+    select top 1 *
+    from PackingList_Detail pd with(nolock) 
+    where md.SCICtnNo = pd.SCICtnNo
+		    AND md.OrderID = pd.OrderID
+		    AND md.CTNStartNo = pd.CTNStartNo
+            AND md.PackingListID = pd.id 
+) PD
 left join Order_QtyShip os on pd.OrderID = os.Id
 							and pd.OrderShipmodeSeq = os.Seq
-outer apply
-(
-	select [LocationQty] = count(distinct Location)
-	from Order_Location with(nolock)
-	where OrderId = md.OrderID
-)ol
-outer apply
-(
-	select [LocationQty] = count(distinct Location)
-	from Style_Location with(nolock)
-	where StyleUkey = o.StyleUkey
-)sl
-where 1=1
-{sqlwhere}
-group by md.ScanDate, pd.OrigID, md.PackingListID, pd.OrigCTNStartNo, md.CTNStartNo, sl.LocationQty, ol.LocationQty
-	, md.MDFailQty, md.OrderID, pd.OrigOrderID, o.CustPONo, o.StyleID, o.BrandID, Country.Alias
-	, os.BuyerDelivery, o.SciDelivery, md.AddName, md.AddDate, pd.ID, pd.OrigID, pd.OrderID ,pd.CTNStartNo
 
- ORDER BY md.ScanDate,[PackingListID],[CTNStartNo],[OrderID]
+where 1=1
+        {sqlwhere}
+ORDER BY md.ScanDate,[PackingListID],[CTNStartNo],[OrderID]
 ";
             DataTable dt;
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
