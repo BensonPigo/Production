@@ -1419,7 +1419,9 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                             Where(w => w.RowState != DataRowState.Deleted &&
                             MyUtility.Convert.GetString(w["PatternCode"]) != "ALLPARTS" &&
                             MyUtility.Convert.GetInt(w["BundleGroup"]) == MyUtility.Convert.GetInt(row["BundleGroup"])).
-                            Sum(s => MyUtility.Convert.GetInt(s["Qty"]));
+                            Sum(s => MyUtility.Convert.GetInt(s["Qty"]))
+                            / (patternTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().Count() - 1)
+                            ;
                         dtAllPart2.ImportRow(row);
                     }
                     DataRow[] drA = dtAllPart2.AsEnumerable().ToArray();
