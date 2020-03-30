@@ -29,7 +29,7 @@ namespace Sci.Production.Cutting
         public P10_Generate(DataRow maindr, DataTable table_bundle_Detail, DataTable bundle_Detail_allpart_Tb, DataTable bundle_Detail_Art_Tb, DataTable bundle_Detail_Qty_Tb)
         {
             InitializeComponent();
-
+            chkTone.Checked = MyUtility.Convert.GetBool(maindr["ByToneGenerate"]);
             #region 準備要處理的table 和原本的table
             detailTb = table_bundle_Detail.Copy();
             alltmpTb = bundle_Detail_allpart_Tb.Copy();
@@ -276,11 +276,12 @@ order by ArticleGroup", patternukey);
             detailAccept.AcceptChanges();
             string BundleGroup = detailAccept.Rows[0]["BundleGroup"].ToString();
             MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,PatternDesc,parts,subProcessid,BundleGroup,isPair,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String", string.Format(@"
-Select  PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String
+Select distinct PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String
 from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             //需要使用上一層表身的值,不可重DB撈不然新增的資料就不會存回DB
             MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,SubProcessid,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String", "Select distinct PatternCode,SubProcessid,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String from #tmp WHERE PatternCode<>'ALLPARTS'", out artTb);
             //foreach (DataRow dr in tmp.Select("BundleNO<>''"))
+
             foreach (DataRow dr in tmp.Rows)
             {
                 DataRow ndr = patternTb.NewRow();
@@ -721,39 +722,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                 Double TotalCutQty = Convert.ToDouble(dr["Qty"]);
                 DataRow[] qtyarry = qtyTb.Select(string.Format("SizeCode='{0}'", dr["SizeCode"]), "");
                 Double rowcount = qtyarry.Length;
-                if (TotalCutQty % rowcount == 0)
-                {
-                    int qty = (int)(TotalCutQty / rowcount); //每一個數量是多少
-                    foreach (DataRow dr2 in qtyarry)
-                    {
-                        dr2["Qty"] = qty;
-                    }
-                }
-                else
-                {
-                    int eachqty = (int)(Math.Floor(TotalCutQty / rowcount));
-                    int modqty = (int)(TotalCutQty % rowcount); //剩餘數
-
-                    foreach (DataRow dr2 in qtyarry)
-                    {
-                        if (eachqty != 0)
-                        {
-                            if (modqty > 0) dr2["Qty"] = eachqty + 1;//每組分配一個Qty 當分配完表示沒了
-                            else dr2["Qty"] = eachqty;
-                            modqty--; //剩餘數一定小於rowcount所以會有筆數沒有拿到
-                        }
-                        else
-                        {
-                            if (modqty > 0)
-                            {
-                                dr2["Qty"] = 1;
-                                modqty--;
-                            }
-                            else dr2.Delete();
-                        }
-                    }
-
-                }
+                PublicPrg.Prgs.AverageNumeric(qtyarry, "Qty", (int)TotalCutQty, true);
             }
             calsumQty();
         }
@@ -1055,6 +1024,11 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
 
         private void OK_button_Click(object sender, EventArgs e)
         {
+            if (numTone.Value > numNoOfBundle.Value)
+            {
+                MyUtility.Msg.WarningBox("Generate by Tone can not greater than No of Bunde");
+                return;
+            }
             DataTable at = artTb.Copy();
             #region 判斷Pattern的Artwork  不可為空
             DataRow[] findr = this.patternTb.Select("PatternCode<>'ALLPARTS' and (art='' or art is null)", "");
@@ -1152,76 +1126,87 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             int detailRow = 0;
             int tmpRow = bundle_detail_tmp.Rows.Count;
             bool notYetInsertAllPart = true;
-            foreach (DataRow dr in detailTb.Rows)
+            foreach (DataRow dr in detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
             {
-                if (dr.RowState != DataRowState.Deleted)
+                if (j < tmpRow)
                 {
-
-                    if (j < tmpRow)
+                    DataRow tmpdr = bundle_detail_tmp.Rows[j];
+                    dr["bundlegroup"] = tmpdr["bundlegroup"];
+                    dr["PatternCode"] = tmpdr["PatternCode"];
+                    dr["PatternDesc"] = tmpdr["PatternDesc"];
+                    dr["Location"] = tmpdr["Location"];
+                    dr["subprocessid"] = tmpdr["subprocessid"];
+                    dr["NoBundleCardAfterSubprocess_String"] = tmpdr["NoBundleCardAfterSubprocess_String"];
+                    dr["PostSewingSubProcess_String"] = tmpdr["PostSewingSubProcess_String"];
+                    dr["Parts"] = tmpdr["Parts"];
+                    dr["Qty"] = tmpdr["Qty"];
+                    dr["SizeCode"] = tmpdr["SizeCode"];
+                    dr["ukey1"] = tmpdr["ukey1"];
+                    dr["isPair"] = tmpdr["isPair"];
+                    j++;
+                    if (tmpdr["PatternCode"].ToString() == "ALLPARTS" && notYetInsertAllPart)
                     {
-                        DataRow tmpdr = bundle_detail_tmp.Rows[j];
-                        dr["bundlegroup"] = tmpdr["bundlegroup"];
-                        dr["PatternCode"] = tmpdr["PatternCode"];
-                        dr["PatternDesc"] = tmpdr["PatternDesc"];
-                        dr["Location"] = tmpdr["Location"];
-                        dr["subprocessid"] = tmpdr["subprocessid"];
-                        dr["NoBundleCardAfterSubprocess_String"] = tmpdr["NoBundleCardAfterSubprocess_String"];
-                        dr["PostSewingSubProcess_String"] = tmpdr["PostSewingSubProcess_String"];
-                        dr["Parts"] = tmpdr["Parts"];
-                        dr["Qty"] = tmpdr["Qty"];
-                        dr["SizeCode"] = tmpdr["SizeCode"];
-                        dr["ukey1"] = tmpdr["ukey1"];
-                        dr["isPair"] = tmpdr["isPair"];
-                        j++;
-                        if (tmpdr["PatternCode"].ToString() == "ALLPARTS" && notYetInsertAllPart)
-                        {
 
-                            foreach (DataRow aldr in allpartTb.Rows)
+                        foreach (DataRow aldr in allpartTb.Rows)
+                        {
+                            if (aldr.RowState == DataRowState.Deleted)
                             {
-                                if (aldr.RowState == DataRowState.Deleted)
-                                {
-                                    continue;
-                                }
-
-                                if (aldr["Parts"] == DBNull.Value)
-                                {
-                                    continue;
-                                }
-
-                                if (Convert.ToInt32(aldr["Parts"]) == 0)
-                                {
-                                    continue;
-                                }
-
-                                DataRow allpart_ndr = alltmpTb.NewRow();
-                                allpart_ndr["PatternCode"] = aldr["PatternCode"];
-                                allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
-                                allpart_ndr["Location"] = aldr["Location"];
-                                allpart_ndr["Parts"] = aldr["Parts"];
-                                allpart_ndr["ukey1"] = dr["ukey1"];
-                                allpart_ndr["ispair"] = aldr["ispair"];
-                                alltmpTb.Rows.Add(allpart_ndr);
+                                continue;
                             }
-                            notYetInsertAllPart = false;
 
+                            if (aldr["Parts"] == DBNull.Value)
+                            {
+                                continue;
+                            }
+
+                            if (Convert.ToInt32(aldr["Parts"]) == 0)
+                            {
+                                continue;
+                            }
+
+                            DataRow allpart_ndr = alltmpTb.NewRow();
+                            allpart_ndr["PatternCode"] = aldr["PatternCode"];
+                            allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
+                            allpart_ndr["Location"] = aldr["Location"];
+                            allpart_ndr["Parts"] = aldr["Parts"];
+                            allpart_ndr["ukey1"] = dr["ukey1"];
+                            allpart_ndr["ispair"] = aldr["ispair"];
+                            alltmpTb.Rows.Add(allpart_ndr);
                         }
-                        else
-                        {
-                            DataRow art_ndr = bundle_detail_artTb.NewRow();
-                            art_ndr["Bundleno"] = dr["Bundleno"];
-                            art_ndr["PatternCode"] = dr["PatternCode"];
-                            art_ndr["Subprocessid"] = dr["subprocessid"];
-                            art_ndr["NoBundleCardAfterSubprocess_String"] = dr["NoBundleCardAfterSubprocess_String"];
-                            art_ndr["PostSewingSubProcess_String"] = dr["PostSewingSubProcess_String"];
-                            art_ndr["ukey1"] = dr["ukey1"];
-                            bundle_detail_artTb.Rows.Add(art_ndr);
-                        }
+                        notYetInsertAllPart = false;
+
+                    }
+                    else
+                    {
+                        DataRow art_ndr = bundle_detail_artTb.NewRow();
+                        art_ndr["Bundleno"] = dr["Bundleno"];
+                        art_ndr["PatternCode"] = dr["PatternCode"];
+                        art_ndr["Subprocessid"] = dr["subprocessid"];
+                        art_ndr["NoBundleCardAfterSubprocess_String"] = dr["NoBundleCardAfterSubprocess_String"];
+                        art_ndr["PostSewingSubProcess_String"] = dr["PostSewingSubProcess_String"];
+                        art_ndr["ukey1"] = dr["ukey1"];
+                        bundle_detail_artTb.Rows.Add(art_ndr);
                     }
                 }
+                else
+                {
+                    dr.AcceptChanges();
+                    dr.Delete();
+                }
+
+
                 detailRow++;
             }
             //判斷當前表身的筆數(排除掉已刪除的Row)
-            DataTable dtCount = detailTb.Copy();
+            DataTable dtCount;
+            if (detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().Count() > 0)
+            {
+                dtCount = detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).CopyToDataTable();
+            }
+            else
+            {
+                dtCount = detailTb.Clone();
+            }
             dtCount.AcceptChanges();
             int detailrow = detailTb.Rows.Count;
             int deleteCnt = dtCount.Rows.Count - tmpRow;
@@ -1358,19 +1343,127 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             }
             #endregion
 
+            #region Generate by Tone 有勾選再處理一次
+            if (chkTone.Checked && numTone.Value >0)
+            {
+                int bundlegroupS = Convert.ToInt32(maindatarow["startno"]);
+                int tone = MyUtility.Convert.GetInt(numTone.Value);
+                DataTable dtDetail = new DataTable();
+                DataTable dtAllPart = new DataTable();
+                DataTable dtAllPart2 = detailTb.Clone();
+                DataTable dtArt = bundle_detail_artTb.Copy();
+                bundle_detail_artTb.Clear();
 
+                int na = detailTb.Select("PatternCode <> 'AllParts'").Length;
+                int a = detailTb.Select("PatternCode = 'AllParts'").Length;
+                if (na > 0)
+                {
+                    dtDetail = detailTb.Select("PatternCode <> 'AllParts'").CopyToDataTable();
+                    dtDetail.Columns.Add("tmpNum", typeof(int));
+                }
+                if (a > 0)
+                    dtAllPart = detailTb.Select("PatternCode = 'AllParts'").CopyToDataTable();
+
+                for (int i = detailTb.Rows.Count - 1; i >= 0; i--)
+                {
+                    detailTb.Rows[i].Delete();
+                }
+
+                int ukeytone = 1;
+                if (na > 0)
+                {
+                    int maxbundlegroupS = bundlegroupS;
+                    for (int i = 0; i < tone; i++)
+                    {
+                        int tmpNum = 0;
+                        DataTable dtCopy = dtDetail.Copy();
+                        DataTable dtCopyArt = dtArt.Copy();
+                        foreach (DataRow item in dtCopy.Rows)
+                        {
+                            item["bundlegroup"] = bundlegroupS + i; // 重設bundlegroup
+                            maxbundlegroupS = bundlegroupS + i;
+
+                            item["tmpNum"] = tmpNum; // 暫時紀錄原本資料對應拆出去的資料,要用來重分配Qty
+                            tmpNum++;
+
+                            DataRow artdr = dtCopyArt.Select($"Ukey1 = {item["Ukey1"]}")[0];
+                            artdr["Ukey1"] = ukeytone;
+                            item["Ukey1"] = ukeytone;
+                            bundle_detail_artTb.ImportRow(artdr);
+                            ukeytone++;
+                        }
+
+                        detailTb.Merge(dtCopy);
+                    }
+
+                    // 重分每一筆拆的Qty
+                    int tmpNumF = 0;
+                    for (int i = 0; i < detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Count() / tone; i++, tmpNumF++)
+                    {
+                        DataRow[] drD = detailTb.Select($"tmpNum={tmpNumF}").AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToArray();
+                        Prgs.AverageNumeric(drD, "Qty", MyUtility.Convert.GetInt(drD[0]["Qty"]), true);
+                    }
+                    detailTb.Columns.Remove("tmpNum");
+                }
+
+                // 處理All Part筆數
+                if (a > 0)
+                {
+                    int allPartQty = MyUtility.Convert.GetInt(dtAllPart.Compute("Sum(Qty)", "PatternCode = 'ALLPARTS'"));
+                    DataRow row = dtAllPart.Rows[0];
+                    for (int i = 0; i < tone; i++)
+                    {
+                        row["BundleGroup"] = bundlegroupS + i;
+
+                        row["Qty"] = detailTb.AsEnumerable().
+                            Where(w => w.RowState != DataRowState.Deleted &&
+                            MyUtility.Convert.GetString(w["PatternCode"]) != "ALLPARTS" &&
+                            MyUtility.Convert.GetInt(w["BundleGroup"]) == MyUtility.Convert.GetInt(row["BundleGroup"])).
+                            Sum(s => MyUtility.Convert.GetInt(s["Qty"]))
+                            / (patternTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().Count() - 1)
+                            ;
+                        dtAllPart2.ImportRow(row);
+                    }
+                    DataRow[] drA = dtAllPart2.AsEnumerable().ToArray();
+                    foreach (DataRow item in dtAllPart2.Rows)
+                    {
+                        item["Ukey1"] = ukeytone;
+                        ukeytone++;
+                    }
+                    detailTb.Merge(dtAllPart2);
+                }
+
+                foreach (DataRow dr in detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
+                {
+                    dr["BundleNo"] = string.Empty;
+                    dr.AcceptChanges();
+                    dr.SetAdded();
+                }
+            }
+            else
+            {
+                chkTone.Checked = false;
+            }
+            #endregion
+
+            DataRow[] art_dr = bundle_detail_artTb.Select("PatternCode = 'ALLPARTS'");
+            for (int i = art_dr.Count() - 1; i>= 0; i--)
+            {
+                art_dr[i].Delete();
+            }
             #region 把處理好的資料塞回上層Table
             detailTb2.Clear();
             alltmpTb2.Clear();
             bundle_detail_artTb2.Clear();
             qtyTb2.Clear();
-
             maindatarow["Qty"] = numNoOfBundle.Value;
             detailTb2.Merge(detailTb);
             alltmpTb2.Merge(alltmpTb);
             bundle_detail_artTb2.Merge(bundle_detail_artTb);
             qtyTb2.Merge(qtyTb);
             #endregion
+
+            maindatarow["ByToneGenerate"] = this.chkTone.Checked;
 
             this.Close();
         }

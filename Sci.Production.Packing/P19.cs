@@ -359,8 +359,7 @@ insert into PackErrTransfer(TransferDate,MDivisionID,OrderID,PackingListID,CTNSt
 where	pd.CTNStartNo <> '' 
 		and p.MDivisionID = '{Env.User.Keyword}' 
 		and p.Type in ('B','L') 
-		and pd.TransferDate is null 
-		and pd.DRYReceiveDate is null 
+		and pd.TransferDate is null
         and pd.DisposeFromClog= 0
 		and pd.PackErrTransferDate is null 
 		and (pu.Status = 'New' or pu.Status is null) 
@@ -425,13 +424,6 @@ where	pd.CTNStartNo <> ''
             if (drPackResult["TransferDate"] != DBNull.Value)
             {
                 checkPackResult.ErrMsg = $"<CTN#:{packID + cartonStartNo}> has been transferred to Clog!";
-                checkPackResult.IsOK = false;
-                return checkPackResult;
-            }
-
-            if (drPackResult["DryReceiveDate"] != DBNull.Value)
-            {
-                checkPackResult.ErrMsg = $"<CTN#:{packID + cartonStartNo}> This CTN# Dehumidifying Room has been received.";
                 checkPackResult.IsOK = false;
                 return checkPackResult;
             }

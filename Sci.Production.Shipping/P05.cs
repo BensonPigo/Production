@@ -656,6 +656,18 @@ where   pl.INVNo = '{0}'
                 }
             }
 
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["CYCFS"]))
+            {
+                string chkLoadingType = $@"select LoadingType from ShipMode where id = '{this.CurrentMaintain["ShipModeID"]}'";
+                string loadingType = MyUtility.GetValue.Lookup(chkLoadingType);
+                var x = loadingType.Split(',').ToList();
+                if (!x.Contains(MyUtility.Convert.GetString(this.CurrentMaintain["CYCFS"])))
+                {
+                    MyUtility.Msg.WarningBox($"Shipmode {this.CurrentMaintain["ShipModeID"]} cannot choose loading type {this.CurrentMaintain["CYCFS"]}");
+                    return false;
+                }
+            }
+
             string sqlCmd = string.Format(
             @"select fwd.WhseNo,fwd.address,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK) 
 where fw.ID = fwd.ID

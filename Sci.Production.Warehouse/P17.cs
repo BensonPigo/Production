@@ -912,5 +912,12 @@ AND o.Category <> 'A'
             else
             { detailgridbs.Position = index; }
         }
+
+        private void BtnImport_Click(object sender, EventArgs e)
+        {
+            var frm = new Sci.Production.Warehouse.P17_ExcelImport(CurrentMaintain, (DataTable)detailgridbs.DataSource);
+            frm.ShowDialog(this);
+            this.RenewData();
+        }
     }
 }

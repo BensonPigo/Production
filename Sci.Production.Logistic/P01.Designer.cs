@@ -131,8 +131,6 @@
             this.txtdropdownlistCategory = new Sci.Production.Class.txtdropdownlist();
             this.btnAccessoryInspectionList = new Sci.Win.UI.Button();
             this.panel7 = new System.Windows.Forms.Panel();
-            this.numDryCTN = new Sci.Win.UI.NumericBox();
-            this.label3 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.numCtnCFA = new Sci.Win.UI.NumericBox();
@@ -1370,8 +1368,6 @@
             this.panel7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel7.Controls.Add(this.numPackErrCTN);
             this.panel7.Controls.Add(this.label4);
-            this.panel7.Controls.Add(this.numDryCTN);
-            this.panel7.Controls.Add(this.label3);
             this.panel7.Controls.Add(this.label1);
             this.panel7.Controls.Add(this.label2);
             this.panel7.Controls.Add(this.numCtnCFA);
@@ -1393,36 +1389,6 @@
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(964, 72);
             this.panel7.TabIndex = 99;
-            // 
-            // numDryCTN
-            // 
-            this.numDryCTN.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numDryCTN.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DryCTN", true));
-            this.numDryCTN.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numDryCTN.IsSupportEditMode = false;
-            this.numDryCTN.Location = new System.Drawing.Point(293, 36);
-            this.numDryCTN.Name = "numDryCTN";
-            this.numDryCTN.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numDryCTN.ReadOnly = true;
-            this.numDryCTN.Size = new System.Drawing.Size(60, 23);
-            this.numDryCTN.TabIndex = 86;
-            this.numDryCTN.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(174, 36);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(116, 23);
-            this.label3.TabIndex = 85;
-            this.label3.Text = "Ctn in Dry Room";
             // 
             // label1
             // 
@@ -1649,8 +1615,6 @@
         private Win.UI.Label label2;
         private Win.UI.NumericBox numCtnCFA;
         private Win.UI.NumericBox numCtnTransit;
-        private Win.UI.NumericBox numDryCTN;
-        private Win.UI.Label label3;
         private Win.UI.NumericBox numPackErrCTN;
         private Win.UI.Label label4;
     }

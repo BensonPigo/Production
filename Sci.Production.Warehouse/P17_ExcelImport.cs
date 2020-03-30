@@ -1,0 +1,436 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using Ict;
+using Ict.Win;
+using Sci.Data;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
+using System.Data.SqlClient;
+using Excel = Microsoft.Office.Interop.Excel;
+
+namespace Sci.Production.Warehouse
+{
+    public partial class P17_ExcelImport : Sci.Win.Subs.Base
+    {
+        DataTable grid2Data = new DataTable();
+        DataTable detailData;
+        DataRow master;
+        public P17_ExcelImport(DataRow _master, DataTable DetailData)
+        {
+            InitializeComponent();
+            detailData = DetailData;
+            this.master = _master;
+        }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            DataTable ExcelFile = new DataTable();
+            ExcelFile.Columns.Add("Filename", typeof(String));
+            ExcelFile.Columns.Add("Status", typeof(String));
+            ExcelFile.Columns.Add("Count", typeof(String));
+            ExcelFile.Columns.Add("FullFileName", typeof(String));
+
+            listControlBindingSource1.DataSource = ExcelFile;
+            gridAttachFile.DataSource = listControlBindingSource1;
+            gridAttachFile.IsEditingReadOnly = true;
+            Helper.Controls.Grid.Generator(this.gridAttachFile)
+                .Text("Filename", header: "File Name", width: Widths.AnsiChars(15))
+                .Text("Status", header: "Status", width: Widths.AnsiChars(30))
+                .Text("Count", header: "Count", width: Widths.AnsiChars(10))
+                ;
+
+            //取Grid結構       
+            grid2Data.Columns.Add("ID", typeof(String));
+            grid2Data.Columns.Add("poid", typeof(String));
+            grid2Data.Columns.Add("seq", typeof(String));
+            grid2Data.Columns.Add("seq1", typeof(String));
+            grid2Data.Columns.Add("seq2", typeof(String));
+            grid2Data.Columns.Add("Roll", typeof(String));            
+            grid2Data.Columns.Add("Dyelot", typeof(String));
+            grid2Data.Columns.Add("Description", typeof(String));
+            grid2Data.Columns.Add("stockunit", typeof(String));
+            grid2Data.Columns.Add("qty", typeof(decimal));
+            grid2Data.Columns.Add("Location", typeof(String));
+            grid2Data.Columns.Add("ErrMsg", typeof(String));
+            grid2Data.Columns.Add("CanWriteIn", typeof(bool));
+            grid2Data.Columns.Add("MDivisionID", typeof(String));
+            grid2Data.Columns.Add("Stocktype", typeof(String));
+            grid2Data.Columns.Add("ftyinventoryukey", typeof(String));
+
+            listControlBindingSource2.DataSource = grid2Data;
+            gridPoid.DataSource = listControlBindingSource2;
+            gridPoid.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(this.gridPoid)
+                .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  
+                .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4))
+                .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3))
+                .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: false)    
+                .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: false)                    
+                .Numeric("qty", header: "Return Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)                
+                .EditText("ErrMsg", header: "Error Message", width: Widths.AnsiChars(100), iseditingreadonly: true);
+
+            for (int i = 0; i < gridPoid.ColumnCount; i++)
+            {
+                gridPoid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                gridPoid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
+        }
+
+        //Add Excel
+        private void btnAddExcel_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.Filter = "Excel files (*.xlsx;*.xls)|*.xlsx;*.xls";
+            if (openFileDialog1.ShowDialog() == DialogResult.OK) //開窗且有選擇檔案
+            {
+                DataRow dr = ((DataTable)listControlBindingSource1.DataSource).NewRow();
+                dr["Filename"] = openFileDialog1.SafeFileName;
+                dr["Status"] = "";
+                dr["FullFileName"] = openFileDialog1.FileName;
+                ((DataTable)listControlBindingSource1.DataSource).Rows.Add(dr);
+                listControlBindingSource1.MoveLast();
+            }
+        }
+
+        //Remove Excel
+        private void btnRemoveExcel_Click(object sender, EventArgs e)
+        {
+            if (listControlBindingSource1.Position != -1)
+            {
+                listControlBindingSource1.RemoveCurrent();
+            }
+        }
+
+        //Check & Import
+        private void btnCheckImport_Click(object sender, EventArgs e)
+        {
+            #region -- 判斷第一個Grid是否有資料 --
+            if (listControlBindingSource1.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("No excel data!!");
+                return;
+            }
+            #endregion
+
+            #region -- 清空Grid2資料
+            if (grid2Data != null)
+            {
+                grid2Data.Clear();
+            }
+            gridPoid.SuspendLayout();
+            #endregion
+
+            /* 檢查1. Grid中的檔案是否存在，不存在時顯示於status欄位 
+                 --   2. Grid中的檔案都可以正常開啟，無法開啟時顯示於status欄位
+                 --   3.檢查開啟的excel檔存在必要的欄位，將不存在欄位顯示於status。當檢查都沒問題時，就將資料寫入第2個Grid*/
+            #region
+            int count = 0;
+            foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
+            {
+                if (MyUtility.Check.Empty(dr["Filename"]))
+                {
+                    continue;
+                }
+                if (!System.IO.File.Exists(MyUtility.Convert.GetString(dr["FullFileName"])))
+                {
+                    dr["Status"] = string.Format("Excel file not found < {0} >.", MyUtility.Convert.GetString(dr["Filename"]));
+                    continue;
+                }
+
+                Microsoft.Office.Interop.Excel.Application excel;
+                try
+                {
+                    excel = new Microsoft.Office.Interop.Excel.Application();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                    dr["Status"] = string.Format("Not able to open excel file < {0} >.", MyUtility.Convert.GetString(dr["Filename"]));
+                    continue;
+                }
+
+                excel.Workbooks.Open(MyUtility.Convert.GetString(dr["FullFileName"]));
+                excel.Visible = false;
+                Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+                int intColumnsCount = worksheet.UsedRange.Columns.Count;
+
+                if (intColumnsCount >= 30)
+                {
+                    Marshal.ReleaseComObject(worksheet);
+                    excel.ActiveWorkbook.Close(false, Type.Missing, Type.Missing);
+                    //excel.Workbooks.Close();
+                    excel.Quit();
+                    Marshal.ReleaseComObject(excel);
+                    excel = null;
+                    dr["Status"] = "Column count can not more than 30!!";
+                    continue;
+                }
+                //檢查Excel格式
+                Microsoft.Office.Interop.Excel.Range range = worksheet.Range[String.Format("A{0}:AE{0}", 2)];
+                object[,] objCellArray = range.Value;
+                string[] ItemCheck = { "SP#", "SEQ1", "SEQ2", "Roll", "Dyelot", "Return Qty" };
+                int[] ItemPosition = new int[ItemCheck.Length];
+                string[] ExcelItem = new string[intColumnsCount + 1];
+
+                for (int y = 1; y <= intColumnsCount; y++)
+                    ExcelItem[y] = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, y], "C").ToString();
+
+                StringBuilder columnName = new StringBuilder();
+                //確認Excel各Item是否存在，並儲存所在位置
+                for (int x = 0; x < ItemCheck.Length; x++)
+                {
+                    for (int y = 1; y <= intColumnsCount; y++)
+                    {
+                        if (ExcelItem[y] == ItemCheck[x])
+                        {
+                            ItemPosition[x] = y;
+                            break;
+                        }
+                    }
+                    if (MyUtility.Check.Empty(ItemPosition[x])) columnName.Append("< " + ItemCheck[x].ToString() + " >, ");
+                }
+
+                if (!MyUtility.Check.Empty(columnName.Length))
+                {
+                    dr["Status"] = columnName.ToString().Substring(0, columnName.ToString().Length - 2) + "column not found in the excel.";
+                    Marshal.ReleaseComObject(worksheet);
+                    continue;
+                }
+
+                int intRowsCount = worksheet.UsedRange.Rows.Count;
+                int intRowsStart = 3;
+                int intRowsRead = intRowsStart - 1;
+
+                while (intRowsRead < intRowsCount)
+                {
+                    intRowsRead++;
+                    range = worksheet.Range[String.Format("A{0}:Z{0}", intRowsRead)];
+                    objCellArray = range.Value;
+                    Dictionary<string, bool> listNewRowErrMsg = new Dictionary<string, bool>();
+
+                    DataRow newRow = grid2Data.NewRow();
+                    string seq1 = (objCellArray[1, ItemPosition[1]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[1]].ToString().Trim(), "C").ToString();
+                    string seq2 = (objCellArray[1, ItemPosition[2]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[2]].ToString().Trim(), "C").ToString();
+
+                    newRow["poid"] = (objCellArray[1, ItemPosition[0]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[0]].ToString().Trim(), "C");
+                    newRow["seq"] = seq1 + " " + seq2;
+                    newRow["seq1"] = seq1;
+                    newRow["seq2"] = seq2;
+                    newRow["Roll"] = (objCellArray[1, ItemPosition[3]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]].ToString().Trim(), "C");
+                    newRow["Dyelot"] = (objCellArray[1, ItemPosition[4]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]].ToString().Trim(), "C").ToString();                    
+                    newRow["qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]], "N");
+                    newRow["CanWriteIn"] = true;
+                    #region check Columns length
+                    List<string> listColumnLengthErrMsg = new List<string>();
+
+                    // Poid varchar(13)
+                    if (Encoding.Default.GetBytes(newRow["poid"].ToString()).Length > 13)
+                        listColumnLengthErrMsg.Add("<SP#> length can't be more than 13 Characters.");
+
+                    // Seq1 varchar(3)
+                    if (Encoding.Default.GetBytes(newRow["Seq1"].ToString()).Length > 3)
+                        listColumnLengthErrMsg.Add("<SEQ1> length can't be more than 3 Characters.");
+
+                    // Seq2 varchar(2)
+                    if (Encoding.Default.GetBytes(newRow["Seq2"].ToString()).Length > 2)
+                        listColumnLengthErrMsg.Add("<SEQ2> length can't be more than 2 Characters.");
+
+                    // Roll varchar(8)
+                    if (Encoding.Default.GetBytes(newRow["Roll"].ToString()).Length > 8)
+                        listColumnLengthErrMsg.Add("<Roll> length can't be more than 8 Characters.");
+
+                    // Dyelot varchar(8)
+                    if (Encoding.Default.GetBytes(newRow["Dyelot"].ToString()).Length > 8)
+                        listColumnLengthErrMsg.Add("<Dyelot> length can't be more than 8 Characters.");
+
+                    // Qty  numeric (11, 2)
+                    if (MyUtility.Convert.GetInt(newRow["qty"].ToString()) <= 0)
+                        listColumnLengthErrMsg.Add("<Qty> value must be more than 0");
+
+                    if (MyUtility.Convert.GetInt(newRow["qty"].ToString()) > 999999999)
+                        listColumnLengthErrMsg.Add("<Qty> value can't be more than 999,999,999");
+
+                    if (listColumnLengthErrMsg.Count > 0)
+                    {
+                        listNewRowErrMsg.Add(listColumnLengthErrMsg.JoinToString(Environment.NewLine), false);
+                    }
+                    #endregion
+
+                    #region P17表身檢查
+                    if (MyUtility.Check.Empty(newRow["seq1"]) || MyUtility.Check.Empty(newRow["seq2"]))
+                    {
+                        listNewRowErrMsg.Add(string.Format(@"SP#: {0} Seq#: {1}-{2} can't be empty", newRow["poid"], newRow["seq1"], newRow["seq2"]), false);
+                    }
+
+                    List<SqlParameter> sqlpar = new List<SqlParameter>();
+                    sqlpar.Add(new SqlParameter("@POID", newRow["poid"].ToString().Trim()));
+                    sqlpar.Add(new SqlParameter("@Seq1", newRow["seq1"].ToString().Trim()));
+                    sqlpar.Add(new SqlParameter("@Seq2", newRow["seq2"].ToString().Trim()));
+                    sqlpar.Add(new SqlParameter("@Roll", newRow["roll"].ToString().Trim()));
+                    sqlpar.Add(new SqlParameter("@Dyelot", newRow["dyelot"].ToString().Trim()));
+                    sqlpar.Add(new SqlParameter("@MDivisionID", Sci.Env.User.Keyword));
+                    DataRow dr2;
+                    string sql = @"
+select fi.*
+	,[Description] = dbo.getmtldesc(fi.POID,fi.seq1, fi.seq2, 2, 0)
+	,[StockUnit] = dbo.GetStockUnitBySPSeq(fi.POID, fi.seq1, fi.seq2)
+	,[Location] = dbo.Getlocation(fi.ukey)
+from ftyinventory fi
+inner join Orders o on fi.POID = o.id
+inner join Factory f on o.FtyGroup = f.id
+where fi.StockType = 'B'
+and fi.POID = @POID
+and fi.Seq1 = @Seq1
+and fi.Seq2 = @Seq2
+and fi.Roll = @Roll
+and fi.Dyelot = @Dyelot
+and f.MDivisionID = @MDivisionID ";
+                    bool result = MyUtility.Check.Seek(sql, sqlpar, out dr2);
+                    if (result)
+                    {
+                        newRow["Description"] = dr2["Description"];
+                        newRow["StockUnit"] = dr2["StockUnit"];
+                        newRow["Location"] = dr2["Location"];
+                        newRow["ftyinventoryukey"] = dr2["Ukey"];
+                    }
+                    else
+                    {
+                        listNewRowErrMsg.Add(string.Format("SP#:{0}-Seq1:{1}-Seq2:{2}-Roll:{3}-Dyelot:{4} is not found!!",
+                                                    newRow["poid"],
+                                                    newRow["seq1"],
+                                                    newRow["seq2"],
+                                                    newRow["roll"],
+                                                    newRow["dyelot"]), false);
+                    }
+
+                    #endregion
+
+                    if (listNewRowErrMsg.Count == 0)
+                    {
+                        count++;
+                    }
+                    else
+                    {
+                        newRow["ErrMsg"] = listNewRowErrMsg.Select(s => s.Key).JoinToString(Environment.NewLine);
+                    }
+
+                    bool canNotWriteIn = listNewRowErrMsg.Any(s => s.Value == false);
+                    if(canNotWriteIn)
+                    {
+                        newRow["CanWriteIn"] = false;
+                    }
+                    newRow["MDivisionID"] = Sci.Env.User.Keyword;
+                    newRow["Stocktype"] = "B";
+
+                    grid2Data.Rows.Add(newRow);
+                }
+
+                dr["Status"] = (intRowsCount - 1 == count) ? "Check & Import Completed." : "Some Data Faild. Please check Error Message.";
+                dr["Count"] = count;
+
+
+                Marshal.ReleaseComObject(worksheet);
+                excel.ActiveWorkbook.Close(false, Type.Missing, Type.Missing);
+                //excel.Workbooks.Close();
+                excel.Quit();
+                Marshal.ReleaseComObject(excel);
+                excel = null;
+            }
+            #endregion
+
+            gridPoid.ResumeLayout();
+            foreach (DataGridViewRow dr in gridPoid.Rows)
+            {
+                if (!dr.Cells["ErrMsg"].Value.Empty())
+                {
+                    dr.DefaultCellStyle.ForeColor = Color.Red;
+                }
+            }
+        }
+
+        //Write in
+        private void btnWriteIn_Click(object sender, EventArgs e)
+        {
+            var tmpPacking = ((DataTable)listControlBindingSource2.DataSource).AsEnumerable();
+
+            //如果資料中有錯誤不能WriteIn
+            if (tmpPacking.Any(s => (bool)s["CanWriteIn"] == false))
+            {
+                MyUtility.Msg.WarningBox("Import data error, please check column [Error Message] information to fix Excel.");
+                return;
+            }
+
+            try
+            {
+                var q = from p in tmpPacking
+                        group p by new
+                        {
+                            poid = p.Field<string>("poid"),
+                            seq1 = p.Field<string>("seq1"),
+                            seq2 = p.Field<string>("seq2"),
+                            Roll = p.Field<string>("Roll"),
+                            Dyelot = p.Field<string>("Dyelot")
+                        } into m
+                        where m.Count() > 1 //只顯示超過一次以上的
+                        select new
+                        {
+                            poid = m.First().Field<string>("poid"),
+                            seq1 = m.First().Field<string>("seq1"),
+                            seq2 = m.First().Field<string>("seq2"),
+                            Roll = m.First().Field<string>("Roll"),
+                            Dyelot = m.First().Field<string>("Dyelot"),
+                            count = m.Count()
+                        };
+                if (q.ToList().Count > 0)
+                {
+                    string warning = "";
+
+                    foreach (var dr in q)
+                    {
+                        warning += string.Format("{0}-{1}-{2}-{3}-{4}" + Environment.NewLine, dr.poid, dr.seq1, dr.seq2, dr.Roll, dr.Dyelot);
+                    }
+                    MyUtility.Msg.WarningBox(warning, "Roll# are duplicated!!");
+                    return;
+                }
+
+                foreach (DataRow dr2 in tmpPacking)
+                {
+                    //刪除 Import 重複的資料 by SP# Seq Carton#
+                    DataRow[] checkRow = detailData.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && row["poid"].EqualString(dr2["poid"])
+                                                                                && row["seq1"].EqualString(dr2["seq1"]) && row["seq2"].EqualString(dr2["seq2"])
+                                                                                && row["roll"].EqualString(dr2["roll"]) && row["Dyelot"].EqualString(dr2["Dyelot"])).ToArray();
+                    if (checkRow.Length == 0)
+                    {
+                        dr2["id"] = master["id"];
+                        detailData.ImportRow(dr2);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MyUtility.Msg.ErrorBox("Process error.\r\n" + ex.ToString());
+                return;
+            }
+
+            MyUtility.Msg.InfoBox("Write in completed!!");
+            DialogResult = System.Windows.Forms.DialogResult.OK;
+        }
+
+        private void BtnDownloadTempExcel_Click(object sender, EventArgs e)
+        {
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P17_ExcelImport.xltx"); //預先開啟excel app
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P17_ExcelImport");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+
+            strExcelName.OpenFile();
+        }
+    }
+}

@@ -1,19 +1,22 @@
 ﻿CREATE TABLE [dbo].[ShipMode] (
-    [ID]          VARCHAR (10)   CONSTRAINT [DF_ShipMode_ID] DEFAULT ('') NOT NULL,
-    [Description] NVARCHAR (50)  CONSTRAINT [DF_ShipMode_Description] DEFAULT ('') NULL,
-    [UseFunction] NVARCHAR (100) CONSTRAINT [DF_ShipMode_UseFunction] DEFAULT ('') NULL,
-    [Junk]        BIT            CONSTRAINT [DF_ShipMode_Junk] DEFAULT ((0)) NULL,
-    [ShareBase]   VARCHAR (1)    CONSTRAINT [DF_ShipMode_ShareBase] DEFAULT ('') NULL,
-    [AddName]     VARCHAR (10)   CONSTRAINT [DF_ShipMode_AddName] DEFAULT ('') NULL,
-    [AddDate]     DATETIME       NULL,
-    [EditName]    VARCHAR (10)   CONSTRAINT [DF_ShipMode_EditName] DEFAULT ('') NULL,
-    [EditDate]    DATETIME       NULL,
-    [IncludeSeaShipping] BIT NOT NULL DEFAULT ((0)), 
-    [NeedCreateAPP] BIT CONSTRAINT [DF_ShipMode_NeedCreateAPP] DEFAULT ((0)) NOT NULL,
-    [NeedCreateIntExpress] BIT NOT NULL DEFAULT ((0)), 
-    [ShipGroup] VARCHAR(10) NOT NULL DEFAULT (''), 
+    [ID]                   VARCHAR (10)   CONSTRAINT [DF_ShipMode_ID] DEFAULT ('') NOT NULL,
+    [Description]          NVARCHAR (50)  CONSTRAINT [DF_ShipMode_Description] DEFAULT ('') NULL,
+    [UseFunction]          NVARCHAR (100) CONSTRAINT [DF_ShipMode_UseFunction] DEFAULT ('') NULL,
+    [Junk]                 BIT            CONSTRAINT [DF_ShipMode_Junk] DEFAULT ((0)) NULL,
+    [ShareBase]            VARCHAR (1)    CONSTRAINT [DF_ShipMode_ShareBase] DEFAULT ('') NULL,
+    [AddName]              VARCHAR (10)   CONSTRAINT [DF_ShipMode_AddName] DEFAULT ('') NULL,
+    [AddDate]              DATETIME       NULL,
+    [EditName]             VARCHAR (10)   CONSTRAINT [DF_ShipMode_EditName] DEFAULT ('') NULL,
+    [EditDate]             DATETIME       NULL,
+    [IncludeSeaShipping]   BIT            DEFAULT ((0)) NOT NULL,
+    [NeedCreateAPP]        BIT            CONSTRAINT [DF_ShipMode_NeedCreateAPP] DEFAULT ((0)) NOT NULL,
+    [NeedCreateIntExpress] BIT            DEFAULT ((0)) NOT NULL,
+    [ShipGroup]            VARCHAR (10)   DEFAULT ('') NOT NULL,
+    [LoadingType]          VARCHAR (20)   DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_ShipMode] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

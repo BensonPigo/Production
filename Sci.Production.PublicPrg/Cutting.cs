@@ -23,7 +23,7 @@ namespace Sci.Production.PublicPrg
         /// <param name="artTb"></param>
         /// <param name="lallpartas"></param>
         /// <returns>string</returns>
-        public static string BundleCardCheckSubprocess(string[] ann, string patterncode,DataTable artTb, out bool lallpart)
+        public static string BundleCardCheckSubprocess(string[] ann, string patterncode, DataTable artTb, out bool lallpart)
         {
             //artTb 是給前Form 使用同Garment List 的PatternCode 與Subrpocess
             string art = "";
@@ -42,16 +42,16 @@ namespace Sci.Production.PublicPrg
                             //Artwork 相同的也要顯示, ex: HT+HT
                             //if (art.IndexOf(ann2[j]) == -1)
                             //{
-                                DataRow[] existdr = artTb.Select(string.Format("PatternCode ='{0}' and Subprocessid ='{1}'", patterncode, ann2[j]));
-                                if (existdr.Length == 0)
-                                {
-                                    DataRow ndr_art = artTb.NewRow();
-                                    ndr_art["PatternCode"] = patterncode;
-                                    ndr_art["SubProcessid"] = ann2[j];
-                                    artTb.Rows.Add(ndr_art);
-                                }
-                                if (art == "") art = ann2[j];
-                                else art = art.Trim() + "+" + ann2[j];
+                            DataRow[] existdr = artTb.Select(string.Format("PatternCode ='{0}' and Subprocessid ='{1}'", patterncode, ann2[j]));
+                            if (existdr.Length == 0)
+                            {
+                                DataRow ndr_art = artTb.NewRow();
+                                ndr_art["PatternCode"] = patterncode;
+                                ndr_art["SubProcessid"] = ann2[j];
+                                artTb.Rows.Add(ndr_art);
+                            }
+                            if (art == "") art = ann2[j];
+                            else art = art.Trim() + "+" + ann2[j];
                             //}
                         }
                     }
@@ -70,7 +70,7 @@ namespace Sci.Production.PublicPrg
                             {
                                 DataRow ndr_art = artTb.NewRow();
                                 ndr_art["PatternCode"] = patterncode;
-                                ndr_art["SubProcessid"] = ann[i];                             
+                                ndr_art["SubProcessid"] = ann[i];
                                 artTb.Rows.Add(ndr_art);
                             }
                             if (art == "") art = ann[i];
@@ -83,5 +83,56 @@ namespace Sci.Production.PublicPrg
             return art;
         }
         #endregion;
+
+        #region 均分數量 EX:10均分4份→3,3,2,2
+        public static void AverageNumeric(DataRow[] dr, string columnName = "Qty", int TotalNumeric = 0, bool deleteZero = false)
+        {
+            if (dr.Count() == 0) return;
+            int rowCount = dr.Count();
+            int eachqty = TotalNumeric / rowCount;
+            int modqty = TotalNumeric % rowCount; //剩餘數
+
+            if (modqty == 0)
+            {
+                foreach (DataRow dr2 in dr)
+                {
+                    dr2[columnName] = eachqty;
+                }
+            }
+            else
+            {
+                foreach (DataRow dr2 in dr)
+                {
+                    if (eachqty != 0)
+                    {
+                        if (modqty > 0) dr2[columnName] = eachqty + 1;//每組分配一個Qty 當分配完表示沒了
+                        else dr2[columnName] = eachqty;
+                        modqty--; //剩餘數一定小於rowcount所以會有筆數沒有拿到
+                    }
+                    else
+                    {
+                        // 這處理資料筆數小於總數. EX:3筆資料,總數只有2
+                        if (modqty > 0)
+                        {
+                            dr2[columnName] = 1;
+                            modqty--;
+                        }
+                        else
+                        {
+                            if (deleteZero)
+                            {
+                                dr2.Delete();
+                            }
+                            else
+                            {
+                                dr2[columnName] = 0;
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+        #endregion
     }
 }

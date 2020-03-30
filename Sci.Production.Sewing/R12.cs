@@ -1,0 +1,241 @@
+﻿using Ict;
+using Sci.Data;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Sci.Production.Sewing
+{
+    public partial class R12 : Sci.Win.Tems.PrintForm
+    {
+        private DataTable[] printData;
+        private DateTime? InspectionDate1;
+        private DateTime? InspectionDate2;
+        private DateTime? SCIDelivery1;
+        private DateTime? SCIDelivery2;
+        private DateTime? Delivery1;
+        private DateTime? Delivery2;
+
+        public R12(ToolStripMenuItem menuitem)
+            : base(menuitem)
+        {
+            this.InitializeComponent();
+        }
+
+        /// <inheritdoc/>
+        protected override bool ValidateInput()
+        {
+            if (!(this.dateRangeEndlineInspectionDate.Value1.HasValue && this.dateRangeEndlineInspectionDate.Value2.HasValue) &&
+               !(this.dateRangeSCIDelivery.Value1.HasValue && this.dateRangeSCIDelivery.Value2.HasValue) &&
+               !(this.dateRangeBuyerDelivery.Value1.HasValue && this.dateRangeBuyerDelivery.Value2.HasValue))
+            {
+                MyUtility.Msg.WarningBox("Date can't empty!!");
+                return false;
+            }
+
+            this.InspectionDate1 = this.dateRangeEndlineInspectionDate.Value1;
+            this.InspectionDate2 = this.dateRangeEndlineInspectionDate.Value2;
+            this.SCIDelivery1 = this.dateRangeSCIDelivery.Value1;
+            this.SCIDelivery2 = this.dateRangeSCIDelivery.Value2;
+            this.Delivery1 = this.dateRangeBuyerDelivery.Value1;
+            this.Delivery2 = this.dateRangeBuyerDelivery.Value2;
+            return base.ValidateInput();
+        }
+
+        /// <inheritdoc/>
+        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        {
+            string sqlCmd = string.Empty;
+            string sqlWhere = string.Empty;
+            if (this.InspectionDate1.HasValue && this.InspectionDate2.HasValue)
+            {
+                sqlCmd = string.Format(
+                    @"
+select distinct OrderId
+into #tmp_InspectionOrderId
+from [ExtendServer].ManufacturingExecution.dbo.Inspection i with(nolock)
+where i.InspectionDate between '{0}' and '{1}'
+and i.Status in ('Pass', 'Fixed');
+",
+                    this.InspectionDate1.Value.ToString("yyyyMMdd"),
+                    this.InspectionDate2.Value.ToString("yyyyMMdd"));
+
+                sqlWhere = "and exists (select 1 from #tmp_InspectionOrderId where OrderId = o.ID)";
+            }
+
+            if (this.SCIDelivery1.HasValue && this.SCIDelivery2.HasValue)
+            {
+                sqlWhere += string.Format(
+                    "and o.SCIDelivery between '{0}' and '{1}'",
+                    this.SCIDelivery1.Value.ToString("yyyyMMdd"),
+                    this.SCIDelivery2.Value.ToString("yyyyMMdd")) + Environment.NewLine;
+            }
+
+            if (this.Delivery1.HasValue && this.Delivery2.HasValue)
+            {
+                sqlWhere += string.Format(
+                    "and o.BuyerDelivery between '{0}' and '{1}'",
+                    this.Delivery1.Value.ToString("yyyyMMdd"),
+                    this.Delivery2.Value.ToString("yyyyMMdd")) + Environment.NewLine;
+            }
+
+            sqlCmd += string.Format(
+                @"
+select o.ID
+        , o.CustPONo
+        , o.BrandID
+        , o.SciDelivery
+        , o.BuyerDelivery
+        , o.Qty
+        , QCQty = i.tCnt
+        , LocationQty = iif(ol.LocationQty = 0, sl.LocationQty, ol.LocationQty)
+into #Orders
+from Orders o
+outer apply
+(
+	select [LocationQty] = count(distinct Location)
+	from Order_Location with(nolock)
+	where OrderId = o.ID
+)ol
+outer apply
+(
+	select [LocationQty] = count(distinct Location)
+	from Style_Location with(nolock)
+	where StyleUkey = o.StyleUkey
+)sl
+outer apply(
+	select [tCnt] = count(1)
+	from [ExtendServer].ManufacturingExecution.dbo.Inspection i with(nolock)
+	where i.OrderId = o.ID
+			and i.Status in ('Pass', 'Fixed') 
+) i
+where 1 = 1
+        {0}
+
+select pd.ID
+        , pd.CtnStartNo
+        , pd.OrderID
+        , [ShipBuyerDelivery] = max (oq.BuyerDelivery)
+        , MDFailQty = Max (pd.MDFailQty)
+        , MDScanDate = Max (pd.MDScanDate)
+        , DRYReceiveDate = Max (pd.DRYReceiveDate)
+        , ScanEditDate = Max (pd.ScanEditDate)
+into #PD_Detail
+from #Orders o with(nolock)
+inner join PackingList_Detail pd with(nolock) on o.ID = pd.OrderID
+left join Order_QtyShip oq with(nolock) on pd.OrderID = oq.ID
+                                            and pd.OrderShipmodeSeq = oq.Seq
+group by pd.ID, pd.CtnStartNo, pd.OrderID
+
+----------------------------------------------------------------
+--- Detail
+----------------------------------------------------------------
+select o.ID
+	    ,o.CustPONo
+	    ,o.BrandID
+	    ,[PackID] = pd.ID
+	    ,pd.CTNStartNo 
+	    ,[CartonQty] = pl_Qty.CtnQty
+	    ,[TTLQcOutput] = o.QCQty
+	    ,MDPassQty = iif (pd.MDScanDate is null, 0, pl_Qty.CtnQty - isnull(pd.MDFailQty,0))
+	    ,pd.DRYReceiveDate
+	    ,pd.MDScanDate
+	    ,[ScanQty] = pl_Qty.ScanQty
+	    ,pd.ScanEditDate
+	    ,pd.ShipBuyerDelivery
+	    ,o.SciDelivery
+into #Detail
+from #Orders o with(nolock)
+left join #PD_Detail pd on o.id = pd.OrderID
+outer apply(
+	select [CtnQty] = SUM(pdd.ShipQty) * o.LocationQty
+            , [ScanQty] = sum (pdd.ScanQty) * o.LocationQty
+	from PackingList_Detail pdd  with(nolock)
+	inner join PackingList p with(nolock) on pdd.ID = p.ID
+	where o.ID = pdd.OrderID
+	        and pd.ID = pdd.ID
+	        and pd.CTNStartNo = pdd.CTNStartNo
+)pl_Qty
+
+----------------------------------------------------------------
+--- Summary
+----------------------------------------------------------------
+select o.ID
+	,o.CustPONo
+	,o.BrandID
+	,o.BuyerDelivery
+	,o.SciDelivery
+	,[OrderQty] = o.Qty * o.LocationQty
+	,[TTLQcOutput] = o.QCQty
+	,[MDpassQty] = d.MDPassQty
+	,[MDpassBalance] = d.MDPassQty - o.QCQty
+	,[Scan and Pack Qty] = d.ScanQty
+	,[Scan and Pack Balance] = d.ScanQty - d.MDPassQty
+from #Orders o with(nolock)
+outer apply (
+    select CartonQty = sum(CartonQty)
+            , MDPassQty = sum(MDPassQty)
+            , ScanQty = sum(ScanQty)
+    from #Detail d
+    where o.ID = d.ID
+) d
+
+select *
+from #Detail
+
+drop table #Orders, #PD_Detail, #Detail
+
+IF object_id('tempdb..#tmp_InspectionOrderId') IS NOT NULL drop table #tmp_InspectionOrderId
+",
+            sqlWhere);
+
+            DBProxy.Current.DefaultTimeout = 900;  // timeout時間改為15分鐘
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlCmd, out this.printData);
+            DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
+            if (!result)
+            {
+                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                return failResult;
+            }
+
+            return Result.True;
+        }
+
+        /// <inheritdoc/>
+        protected override bool OnToExcel(Win.ReportDefinition report)
+        {
+            this.SetCount(this.printData[0].Rows.Count);
+
+            if (this.printData[0].Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                return false;
+            }
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Sewing_R12.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.printData[0], string.Empty, "Sewing_R12.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[1]); // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(this.printData[1], string.Empty, "Sewing_R12.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[2]); // 將datatable copy to excel
+
+            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Sewing_R12");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
+
+            strExcelName.OpenFile();
+            #endregion
+
+            return true;
+        }
+    }
+}

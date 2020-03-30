@@ -73,6 +73,7 @@
     [CustomOT] BIT NOT NULL DEFAULT ((0)), 
     [CustomOTRespFty1] VARCHAR(8) NOT NULL DEFAULT (''), 
     [CustomOTRespFty2] VARCHAR(8) NOT NULL DEFAULT (''), 
+    [OTFee] NUMERIC(10, 2) NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Export] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

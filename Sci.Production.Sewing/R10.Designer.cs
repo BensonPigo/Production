@@ -39,6 +39,7 @@
             this.lbSewingOutputDate = new Sci.Win.UI.Label();
             this.dateRangeSewingOutputDate = new Sci.Win.UI.DateRange();
             this.chkOutstanding = new Sci.Win.UI.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // print
@@ -193,16 +194,27 @@
             this.chkOutstanding.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkOutstanding.Location = new System.Drawing.Point(28, 196);
             this.chkOutstanding.Name = "chkOutstanding";
-            this.chkOutstanding.Size = new System.Drawing.Size(104, 21);
+            this.chkOutstanding.Size = new System.Drawing.Size(355, 21);
             this.chkOutstanding.TabIndex = 561;
-            this.chkOutstanding.Text = "Outstanding";
+            this.chkOutstanding.Text = "Outstanding (Only show Sewing output > Order Qty)";
             this.chkOutstanding.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.Color.Red;
+            this.label1.Location = new System.Drawing.Point(41, 220);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(156, 17);
+            this.label1.TabIndex = 562;
+            this.label1.Text = "*Exclude garment order";
             // 
             // R10
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(562, 244);
+            this.ClientSize = new System.Drawing.Size(562, 274);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.chkOutstanding);
             this.Controls.Add(this.dateRangeSewingOutputDate);
             this.Controls.Add(this.lbSewingOutputDate);
@@ -234,6 +246,7 @@
             this.Controls.SetChildIndex(this.lbSewingOutputDate, 0);
             this.Controls.SetChildIndex(this.dateRangeSewingOutputDate, 0);
             this.Controls.SetChildIndex(this.chkOutstanding, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -252,5 +265,6 @@
         private Win.UI.Label lbSewingOutputDate;
         private Win.UI.DateRange dateRangeSewingOutputDate;
         private Win.UI.CheckBox chkOutstanding;
+        private System.Windows.Forms.Label label1;
     }
 }
