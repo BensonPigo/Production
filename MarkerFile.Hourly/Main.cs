@@ -436,8 +436,8 @@ having sum(w.Layer) -sum(isnull(acc.AccuCuttingLayer,0)) <> 0
                 }
 
                 string sourceFile = fileList.Where(w => w.Name.ToLower() == MyUtility.Convert.GetString(item["filename"]).ToLower()).Select(s => s.FullName).First().ToString();
-                string targetPath = Path.Combine(this.MarkerOutputPath, MyUtility.Convert.GetString(item["id"]));
-                string destFile = Path.Combine(this.MarkerOutputPath, MyUtility.Convert.GetString(item["id"]), MyUtility.Convert.GetString(item["CutRef"]) + ".gbr");
+                string targetPath = Path.Combine(this.MarkerOutputPath, MyUtility.Convert.GetString(item["CuttingID"]));
+                string destFile = Path.Combine(this.MarkerOutputPath, MyUtility.Convert.GetString(item["CuttingID"]), MyUtility.Convert.GetString(item["CutRef"]) + ".gbr");
                 string lastWriteTime = File.GetLastWriteTime(sourceFile).ToString("yyyy/MM/dd HH:mm:ss");
                 if (File.Exists(sourceFile))
                 {
