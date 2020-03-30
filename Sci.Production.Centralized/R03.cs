@@ -56,6 +56,8 @@ namespace Sci.Production.Centralized
         private System.Data.DataTable gdtData9;
         private System.Data.DataTable gdtData;
 
+        private string FtyZone;
+
         /// <summary>
         /// R03
         /// </summary>
@@ -83,7 +85,7 @@ namespace Sci.Production.Centralized
             DualResult result;
             base.OnFormLoaded();
             this.comboDropDownListCategory.SelectedIndex = 0;
-
+            this.comboFtyZone.setDataSource();
             #region 取得 MR Team 資料
             System.Data.DataTable dt_ref = null;
             string sql = @"select * from Department WITH (NOLOCK) where Department.Type = 'MR'";
@@ -129,6 +131,8 @@ namespace Sci.Production.Centralized
             this.gdtData7 = null;
             this.gdtData8 = null;
             this.gdtData9 = null;
+
+            this.FtyZone = this.comboFtyZone.Text;
             return true;
         }
 
@@ -271,6 +275,11 @@ and ((o.LocalOrder = 1 and o.SubconInType in ('1','2')) or (o.LocalOrder = 0 and
                 if (this.chkType.Checked)
                 {
                     strSQL += " AND f.Type <>'S' ";
+                }
+
+                if (MyUtility.Check.Empty(this.FtyZone))
+                {
+                    strSQL += string.Format(" AND f.FtyZone = '{0}' ", this.FtyZone);
                 }
 
                 strSQL += @"

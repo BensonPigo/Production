@@ -44,6 +44,7 @@
     [TestDocFactoryGroup]  VARCHAR (8)    CONSTRAINT [DF_Factory_TestDocFactoryGroup] DEFAULT ('') NULL,
     [IsOriginalFty]        BIT            DEFAULT ((0)) NULL,
     [LastDownloadAPSDate] DATETIME NULL, 
+    [FtyZone] VARCHAR(8) NULL, 
     CONSTRAINT [PK_Factory] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

@@ -110,6 +110,7 @@ namespace Sci.Production.Warehouse
                  .Numeric("ActualWeight", header: "Act.(kg)", width: Widths.AnsiChars(8), decimal_places: 2, settings: cellActWeight)
                  .Numeric("Differential", header: "Differential", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(15))
+                 .Text("LastRemark", header: "Last P26 Remark data", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .DateTime("LastEditDate", header: "Last Edit Date", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  ;
 
@@ -244,7 +245,8 @@ rd.ActualWeight,
 rd.Seq1,
 rd.Seq2
 ,[Remark]=''
-,[LastEditDate]=LastEditDate.Val
+,[LastRemark] = LastEditDate.Remark
+,[LastEditDate]=LastEditDate.EditDate
 from  Receiving r with (nolock)
 inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
 inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
@@ -257,10 +259,11 @@ inner join Ftyinventory  fi with (nolock) on    rd.POID = fi.POID and
                                                 rd.StockType = fi.StockType
 left join #tmpStockType st with (nolock) on st.ID = rd.StockType
 OUTER APPLY(
-	SELECT [Val]=MAX(lt.EditDate)
+	SELECT top 1 lt.EditDate, lt.Remark
 	FROM LocationTrans lt
 	INNER JOIN LocationTrans_detail ltd ON lt.ID=ltd.ID
 	WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey=fi.Ukey 
+    order by lt.EditDate desc
 )LastEditDate
 
 where r.MDivisionID  = '{Env.User.Keyword}' {sqlWhere}

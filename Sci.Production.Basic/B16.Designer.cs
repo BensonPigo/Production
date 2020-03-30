@@ -36,6 +36,8 @@
             this.chkIncludeSeaShipping = new Sci.Win.UI.CheckBox();
             this.checkBoxNeedCreateAPP = new Sci.Win.UI.CheckBox();
             this.chkNeedCreateIntExpress = new Sci.Win.UI.CheckBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.dispLoadingType = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -50,6 +52,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.dispLoadingType);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.chkNeedCreateIntExpress);
             this.detailcont.Controls.Add(this.checkBoxNeedCreateAPP);
             this.detailcont.Controls.Add(this.chkIncludeSeaShipping);
@@ -90,7 +94,7 @@
             // 
             this.labelCode.Location = new System.Drawing.Point(38, 36);
             this.labelCode.Name = "labelCode";
-            this.labelCode.Size = new System.Drawing.Size(75, 23);
+            this.labelCode.Size = new System.Drawing.Size(88, 23);
             this.labelCode.TabIndex = 0;
             this.labelCode.Text = "Code";
             // 
@@ -98,7 +102,7 @@
             // 
             this.labelDescription.Location = new System.Drawing.Point(38, 65);
             this.labelDescription.Name = "labelDescription";
-            this.labelDescription.Size = new System.Drawing.Size(75, 23);
+            this.labelDescription.Size = new System.Drawing.Size(88, 23);
             this.labelDescription.TabIndex = 1;
             this.labelDescription.Text = "Description";
             // 
@@ -174,6 +178,24 @@
             this.chkNeedCreateIntExpress.Text = "Need create International Express";
             this.chkNeedCreateIntExpress.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(38, 94);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(88, 23);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Loading Type";
+            // 
+            // dispLoadingType
+            // 
+            this.dispLoadingType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.dispLoadingType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LoadingType", true));
+            this.dispLoadingType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.dispLoadingType.Location = new System.Drawing.Point(129, 94);
+            this.dispLoadingType.Name = "dispLoadingType";
+            this.dispLoadingType.Size = new System.Drawing.Size(433, 23);
+            this.dispLoadingType.TabIndex = 9;
+            // 
             // B16
             // 
             this.ClientSize = new System.Drawing.Size(834, 402);
@@ -212,5 +234,7 @@
         private Win.UI.CheckBox chkIncludeSeaShipping;
         private Win.UI.CheckBox checkBoxNeedCreateAPP;
         private Win.UI.CheckBox chkNeedCreateIntExpress;
+        private Win.UI.DisplayBox dispLoadingType;
+        private Win.UI.Label label1;
     }
 }
