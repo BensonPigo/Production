@@ -367,7 +367,7 @@ where Cutref='{item["Cutref"]}'";
                         result = DBProxy.Current.Execute("Production", sqlupdate);
                         if (!result)
                         {
-                            msg = result.ToString() + "\r\nCheckUpdateFile() Sql Error 2";
+                            msg = result.ToString() + $"POID:{item["CuttingID"]}, CutRef:{item["CutRef"]}\r\n" + "\r\nCheckUpdateFile() Sql Error 2";
                             return false;
                         }
                     }
@@ -401,14 +401,15 @@ where w.EstCutDate <> NS.EstCutDate or NS.EstCutDate is null";
         private bool CreateFile(out string msg)
         {
             string sqlcmd = $@"
-select
-	w.CutRef,w.id,filename=concat(w.MarkerNo,w.Markername,'.gbr'),w.EstCutDate,acc.AccuCuttingLayer
+select 
+	w.CutRef,CuttingID=w.ID,filename=concat(w.MarkerNo,w.Markername,'.gbr'),w.EstCutDate
 from WorkOrder w with(nolock)
 outer apply(select AccuCuttingLayer = sum(cd.Layer) from cuttingoutput_Detail cd where cd.WorkOrderUkey = w.Ukey)acc
 where w.EstCutDate between  cast(Dateadd(day,0,getdate())as date) and  cast(Dateadd(day,7,getdate())as date) --從今天往後7天
-and w.Layer -isnull(acc.AccuCuttingLayer,0) <> 0
 and not exists(select 1 from [MarkerFileNameSwitchRecord] where cutref = w.cutref)
 and isnull(w.CutRef,'') <> ''
+group by w.CutRef,w.id,concat(w.MarkerNo,w.Markername,'.gbr'),w.EstCutDate
+having sum(w.Layer) -sum(isnull(acc.AccuCuttingLayer,0)) <> 0
 ";
             DataTable copyFileData;
             DualResult result = DBProxy.Current.Select("Production", sqlcmd, out copyFileData);
@@ -462,7 +463,7 @@ INSERT INTO [dbo].[MarkerFileNameSwitchRecord]
 VALUES
     ('{item["CutRef"]}'
     ,'{((DateTime)item["EstCutDate"]).ToString("yyyy/MM/dd HH:mm:ss")}'
-    ,'{item["id"]}'
+    ,'{item["CuttingID"]}'
     ,'{item["filename"]}'
     ,'{lastWriteTime}'
     ,GETDATE())
@@ -470,7 +471,7 @@ VALUES
                     result = DBProxy.Current.Execute("Production", sqlinsert);
                     if (!result)
                     {
-                        msg = result.ToString() + "\r\nCreateFile() Sql Error 2";
+                        msg = result.ToString() + $"POID:{item["CuttingID"]}, CutRef:{item["CutRef"]}\r\n" + "\r\nCreateFile() Sql Error 2";
                         return false;
                     }
                 }
