@@ -1198,7 +1198,15 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                 detailRow++;
             }
             //判斷當前表身的筆數(排除掉已刪除的Row)
-            DataTable dtCount = detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).CopyToDataTable();
+            DataTable dtCount;
+            if (detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().Count() > 0)
+            {
+                dtCount = detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).CopyToDataTable();
+            }
+            else
+            {
+                dtCount = detailTb.Clone();
+            }
             dtCount.AcceptChanges();
             int detailrow = detailTb.Rows.Count;
             int deleteCnt = dtCount.Rows.Count - tmpRow;
@@ -1406,10 +1414,15 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     for (int i = 0; i < tone; i++)
                     {
                         row["BundleGroup"] = bundlegroupS + i;
+
+                        row["Qty"] = detailTb.AsEnumerable().
+                            Where(w => w.RowState != DataRowState.Deleted &&
+                            MyUtility.Convert.GetString(w["PatternCode"]) != "ALLPARTS" &&
+                            MyUtility.Convert.GetInt(w["BundleGroup"]) == MyUtility.Convert.GetInt(row["BundleGroup"])).
+                            Sum(s => MyUtility.Convert.GetInt(s["Qty"]));
                         dtAllPart2.ImportRow(row);
                     }
                     DataRow[] drA = dtAllPart2.AsEnumerable().ToArray();
-                    Prgs.AverageNumeric(drA, "Qty", allPartQty, true);
                     foreach (DataRow item in dtAllPart2.Rows)
                     {
                         item["Ukey1"] = ukeytone;
