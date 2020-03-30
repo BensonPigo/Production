@@ -234,7 +234,7 @@
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnSave);
             this.Name = "P06";
-            this.Text = "P06. Dry Room Receive Carton Input";
+            this.Text = "P06. Dry Room Scan";
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.gridReceive, 0);

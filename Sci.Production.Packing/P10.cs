@@ -102,7 +102,7 @@ from (
     where b.CTNStartNo != ''  
     and b.PackErrTransferDate is null
     and b.DisposeFromClog= 0 
-    and ((b.ReturnDate is null and b.TransferDate is null and b.DRYReceiveDate is null and b.PackErrTransferDate is null) or b.ReturnDate is not null) 
+    and ((b.ReturnDate is null and b.TransferDate is null and b.PackErrTransferDate is null) or b.ReturnDate is not null) 
     and a.MDivisionID = '{0}' 
     and (a.Type = 'B' or a.Type = 'L')
 	and b.CTNQty=1

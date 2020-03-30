@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.label1 = new Sci.Win.UI.Label();
+            this.lbScanDate = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.txtPackID = new Sci.Win.UI.TextBox();
@@ -38,20 +38,19 @@
             this.btnQuery = new Sci.Win.UI.Button();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label4 = new Sci.Win.UI.Label();
             this.dateTransfer = new Sci.Win.UI.DateRange();
-            this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
+            this.lbPackIDmsg = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
-            // label1
+            // lbScanDate
             // 
-            this.label1.Location = new System.Drawing.Point(9, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(93, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Transfer Date";
+            this.lbScanDate.Location = new System.Drawing.Point(9, 9);
+            this.lbScanDate.Name = "lbScanDate";
+            this.lbScanDate.Size = new System.Drawing.Size(93, 23);
+            this.lbScanDate.TabIndex = 1;
+            this.lbScanDate.Text = "Scan Date";
             // 
             // label2
             // 
@@ -115,7 +114,7 @@
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(12, 75);
+            this.grid1.Location = new System.Drawing.Point(12, 94);
             this.grid1.Name = "grid1";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -130,16 +129,8 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(748, 296);
+            this.grid1.Size = new System.Drawing.Size(748, 277);
             this.grid1.TabIndex = 8;
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(390, 9);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 9;
-            this.label4.Text = "Transfer To";
             // 
             // dateTransfer
             // 
@@ -163,45 +154,40 @@
             this.dateTransfer.Size = new System.Drawing.Size(280, 23);
             this.dateTransfer.TabIndex = 10;
             // 
-            // txtdropdownlist1
+            // lbPackIDmsg
             // 
-            this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlist1.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlist1.FormattingEnabled = true;
-            this.txtdropdownlist1.IsSupportUnselect = true;
-            this.txtdropdownlist1.Location = new System.Drawing.Point(468, 9);
-            this.txtdropdownlist1.Name = "txtdropdownlist1";
-            this.txtdropdownlist1.OldText = "";
-            this.txtdropdownlist1.Size = new System.Drawing.Size(210, 24);
-            this.txtdropdownlist1.TabIndex = 2;
-            this.txtdropdownlist1.Type = "Pms_DRYTransferTo";
+            this.lbPackIDmsg.AutoSize = true;
+            this.lbPackIDmsg.ForeColor = System.Drawing.Color.Red;
+            this.lbPackIDmsg.Location = new System.Drawing.Point(12, 74);
+            this.lbPackIDmsg.Name = "lbPackIDmsg";
+            this.lbPackIDmsg.Size = new System.Drawing.Size(438, 17);
+            this.lbPackIDmsg.TabIndex = 11;
+            this.lbPackIDmsg.Text = "The Qty here is by pieces instead of complete set on below function.";
             // 
             // P09
             // 
             this.ClientSize = new System.Drawing.Size(772, 383);
-            this.Controls.Add(this.txtdropdownlist1);
+            this.Controls.Add(this.lbPackIDmsg);
             this.Controls.Add(this.dateTransfer);
-            this.Controls.Add(this.label4);
             this.Controls.Add(this.grid1);
             this.Controls.Add(this.btnQuery);
             this.Controls.Add(this.txtsp);
             this.Controls.Add(this.txtPackID);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lbScanDate);
             this.Name = "P09";
-            this.Text = "P09.Query For Dehumidifying Room Transfer Carton Record";
-            this.Controls.SetChildIndex(this.label1, 0);
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
+            this.Text = "P09.Query for MD Room Scan";
+            this.Controls.SetChildIndex(this.lbScanDate, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.txtPackID, 0);
             this.Controls.SetChildIndex(this.txtsp, 0);
             this.Controls.SetChildIndex(this.btnQuery, 0);
             this.Controls.SetChildIndex(this.grid1, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.dateTransfer, 0);
-            this.Controls.SetChildIndex(this.txtdropdownlist1, 0);
+            this.Controls.SetChildIndex(this.lbPackIDmsg, 0);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
@@ -211,7 +197,7 @@
 
         #endregion
 
-        private Win.UI.Label label1;
+        private Win.UI.Label lbScanDate;
         private Win.UI.Label label2;
         private Win.UI.Label label3;
         private Win.UI.TextBox txtPackID;
@@ -219,8 +205,7 @@
         private Win.UI.Button btnQuery;
         private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.Label label4;
         private Win.UI.DateRange dateTransfer;
-        private Class.txtdropdownlist txtdropdownlist1;
+        private System.Windows.Forms.Label lbPackIDmsg;
     }
 }

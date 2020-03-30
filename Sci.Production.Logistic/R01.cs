@@ -100,7 +100,6 @@ select  o.FactoryID
 		, oq.Seq
         , o.SciDelivery
         , o.TotalCTN
-		, o.DRYCTN
         , o.PackErrCTN
         , o.ClogCTN
 		, o.CfaCTN
@@ -297,12 +296,11 @@ select
     ,t.ShipmodeID
     ,t.Location
 	,t.TotalCTN
-	,DRYCTN=isnull(t.DRYCTN,0)
 	,PackErrCTN = isnull(t.PackErrCTN,0)
 	,ClogCTN=isnull(t.ClogCTN,0)
 	,CfaCTN=isnull(t.CfaCTN,0)
 	,t2.RetCtnBySP
-	,[Bal Ctn by SP#]=isnull(t.TotalCTN,0)-isnull(t.ClogCTN,0) -isnull(t.DRYCTN,0) -isnull(t.CfaCTN,0) - isnull(t.PackErrCTN,0)
+	,[Bal Ctn by SP#]=isnull(t.TotalCTN,0)-isnull(t.ClogCTN,0) -isnull(t.CfaCTN,0) - isnull(t.PackErrCTN,0)
 	,[% by SP#]=iif(isnull(t.TtlGMTQty,0)=0,0,Round(1-((t.TtlGMTQty-isnull(t.TtlClogGMTQty,0))/t.TtlGMTQty),2)*100)
 	,[Ctn SDP by SP#]=iif(isnull(t.TotalCTN,0)=0, 0,ROUND(isnull(t.ClogCTN,0)/t.TotalCTN,2)*100)
 	,t.PulloutCTNQty
@@ -412,7 +410,7 @@ drop table #tmp,#tmp2
             ////此欄位只有 Clog R01 擁有 Confirm 權限的使用者可以『看到』，其餘的則移除該欄位。
             if (!canConfrim)
             {
-                worksheet.get_Range("AC:AC").EntireColumn.Delete();
+                worksheet.get_Range("AB:AB").EntireColumn.Delete();
             }
 
             excel.Cells.EntireColumn.AutoFit();

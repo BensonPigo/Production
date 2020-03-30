@@ -2471,6 +2471,7 @@
     <Build Include="dbo\Tables\Order_BuyBack_Qty.sql" />
     <Build Include="dbo\Tables\Express_History.sql" />
     <Build Include="dbo\Tables\Bundle_Detail_Art_History.sql" />
+    <Build Include="dbo\Tables\MDScan.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

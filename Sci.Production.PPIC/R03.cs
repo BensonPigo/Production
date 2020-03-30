@@ -233,7 +233,6 @@ with tmpOrders as (
             , o.OrigBuyerDelivery
             , o.DoxType
             , o.TotalCTN
-            , DryCTN=isnull(o.DryCTN,0)
             , PackErrorCtn = isnull(o.PackErrCTN,0)
             , o.FtyCTN
             , o.ClogCTN
@@ -554,7 +553,6 @@ tmpFilterZone as (
             , o.OrigBuyerDelivery
             , o.DoxType
             , o.TotalCTN
-            , DryCTN=isnull(o.DryCTN,0)
             , PackErrorCtn = isnull(o.PackErrCTN,0)
             , o.FtyCTN
             , o.ClogCTN
@@ -723,7 +721,6 @@ group by pd.OrderID, pd.OrderShipmodeSeq
 			, pdm.FtyCtn as  FtyCtn1
 			, pdm.ClogCTN as  ClogCTN1
 			, pdm.ClogRcvDate
-            , t.DryCTN
             , t.PackErrorCtn
             , t.CFACTN
 			, t.isForecast
@@ -1492,7 +1489,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
 
         // 最後一欄 , 有新增欄位要改這
         // 注意!新增欄位也要新增到StandardReport_Detail。
-        private int lastColA = 129;
+        private int lastColA = 128;
 
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -1701,25 +1698,24 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                 objArray[intRowsStart, 108] = dr["DoxType"];
                 objArray[intRowsStart, 109] = dr["PackingCTN"];
                 objArray[intRowsStart, 110] = dr["TotalCTN1"];
-                objArray[intRowsStart, 111] = dr["DryCTN"];
-                objArray[intRowsStart, 112] = dr["PackErrorCtn"];
-                objArray[intRowsStart, 113] = dr["FtyCtn1"];
-                objArray[intRowsStart, 114] = dr["ClogCTN1"];
-                objArray[intRowsStart, 115] = dr["CFACTN"];
-                objArray[intRowsStart, 116] = dr["ClogRcvDate"];
-                objArray[intRowsStart, 117] = dr["InspDate"];
-                objArray[intRowsStart, 118] = dr["InspResult"];
-                objArray[intRowsStart, 119] = dr["InspHandle"];
-                objArray[intRowsStart, 120] = dr["SewLine"];
-                objArray[intRowsStart, 121] = dr["ShipModeList"];
-                objArray[intRowsStart, 122] = dr["Article"];
-                objArray[intRowsStart, 123] = dr["SpecialMarkName"];
-                objArray[intRowsStart, 124] = dr["FTYRemark"];
-                objArray[intRowsStart, 125] = dr["SampleReasonName"];
-                objArray[intRowsStart, 126] = dr["IsMixMarker"];
-                objArray[intRowsStart, 127] = dr["CuttingSP"];
-                objArray[intRowsStart, 128] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-                objArray[intRowsStart, 129] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
+                objArray[intRowsStart, 111] = dr["PackErrorCtn"];
+                objArray[intRowsStart, 112] = dr["FtyCtn1"];
+                objArray[intRowsStart, 113] = dr["ClogCTN1"];
+                objArray[intRowsStart, 114] = dr["CFACTN"];
+                objArray[intRowsStart, 115] = dr["ClogRcvDate"];
+                objArray[intRowsStart, 116] = dr["InspDate"];
+                objArray[intRowsStart, 117] = dr["InspResult"];
+                objArray[intRowsStart, 118] = dr["InspHandle"];
+                objArray[intRowsStart, 119] = dr["SewLine"];
+                objArray[intRowsStart, 120] = dr["ShipModeList"];
+                objArray[intRowsStart, 121] = dr["Article"];
+                objArray[intRowsStart, 122] = dr["SpecialMarkName"];
+                objArray[intRowsStart, 123] = dr["FTYRemark"];
+                objArray[intRowsStart, 124] = dr["SampleReasonName"];
+                objArray[intRowsStart, 125] = dr["IsMixMarker"];
+                objArray[intRowsStart, 126] = dr["CuttingSP"];
+                objArray[intRowsStart, 127] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+                objArray[intRowsStart, 128] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
                 #endregion
 
                 if (this.artwork || this.pap)
