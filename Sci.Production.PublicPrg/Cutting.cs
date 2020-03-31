@@ -85,12 +85,12 @@ namespace Sci.Production.PublicPrg
         /// </summary>
         /// <param name="OrderID"></param>
         /// <returns></returns>
-        public static List<GarmentList> GetCutPlanQty(List<string> OrderIDs)
+        public static List<GarmentQty> GetCutPlanQty(List<string> OrderIDs)
         {
 
+            DataTable HeadDt;
             DataTable tmpDt;
             DualResult result;
-            List<GarmentList> GarmentListList = new List<GarmentList>();
 
             //取得該訂單的組成
             #region 取得該訂單的組成
@@ -107,127 +107,144 @@ INNER JOIN Order_ColorCombo occ ON o.poid = occ.id AND occ.Article = oq.Article
 INNER JOIN order_Eachcons cons ON occ.id = cons.id AND cons.FabricCombo = occ.PatternPanel AND cons.CuttingPiece='0'
 WHERE occ.FabricCode !='' AND occ.FabricCode IS NOT NULL
 AND o.id IN ('{OrderIDs.JoinToString("','")}')
+--AND o.id='20032468LL004'
 ";
 
-            result = DBProxy.Current.Select(null, tmpCmd, out tmpDt);
+            result = DBProxy.Current.Select(null, tmpCmd, out HeadDt);
 
-            // 整理出表頭
-            var keys = tmpDt.AsEnumerable().Select(o => new
-            {
-                OrderID = o["OrderID"].ToString(),
-                Article = o["Article"].ToString(),
-                SizeCode = o["SizeCode"].ToString()
-            }).Distinct().ToList();
-
-            foreach (var Key in keys)
-            {
-                GarmentList obj = new GarmentList()
-                {
-                    OrderID = Key.OrderID,
-                    Article = Key.Article,
-                    SizeCode = Key.SizeCode,
-                };
-
-                obj.Panels = new List<Panel>();
-
-                // 相同表頭的資料
-                var detail = tmpDt.AsEnumerable().Where(o => o["OrderID"].ToString() == Key.OrderID
-                        && o["Article"].ToString() == Key.Article
-                        && o["SizeCode"].ToString() == Key.SizeCode).ToList();
-
-                var detail_PatternPanel_Keys = detail.Select(o => o["PatternPanel"].ToString()).Distinct().ToList();
-
-                // Panel
-                foreach (var PatternPanel in detail_PatternPanel_Keys)
-                {
-                    Panel panel = new Panel() { PatternPanel = PatternPanel };
-
-                    List<DataRow> FabricPanelCodes = detail.Where(o => o["PatternPanel"].ToString() == PatternPanel).ToList();
-
-                    panel.FabricPanelCodes = new List<PanelCode>();
-
-                    foreach (var row in FabricPanelCodes)
-                    {
-                        PanelCode code = new PanelCode() { FabricPanelCode = row["FabricPanelCode"].ToString() };
-                        panel.FabricPanelCodes.Add(code);
-                    }
-                    obj.Panels.Add(panel);
-                }
-
-                GarmentListList.Add(obj);
-            }
             #endregion
 
             // 取得所有部位Cutting 數量
+            #region SQL
+
             tmpCmd = $@"
 
-SELECT  [EstCutDate]=(SELECT EstCutDate FROM Cutplan WHERE ID = CD.ID AND Status='Confirmed')
-,WOD.OrderID
+SELECT  WOD.OrderID
 ,WOD.Article 
 ,WOD.SizeCode
 ,wo.FabricCombo
 ,wo.FabricPanelCode
 ,[Qty]=SUM(WOD.Qty)
+,[EstCutDate]=Cast(EstCutDate.EstCutDate as Date)
 FROM WorkOrder_Distribute WOD WITH(NOLOCK)
 INNER JOIN WorkOrder WO WITH(NOLOCK) ON WO.Ukey = WOD.WorkOrderUkey
 INNER JOIN Cutplan_Detail CD WITH(NOLOCK) ON CD.WorkorderUkey = WO.Ukey
+OUTER APPLY (
+	SELECT TOP 1 EstCutDate FROM Cutplan WHERE ID = CD.ID
+)EstCutDate
 WHERE WOD.OrderID IN ('{OrderIDs.JoinToString("','")}')
 AND (SELECT EstCutDate FROM Cutplan WHERE ID = CD.ID AND Status='Confirmed') IS NOT NULL
-GROUP BY CD.ID
-		,WOD.OrderID
+--AND WOD.OrderID='20032468LL004'
+
+GROUP BY WOD.OrderID
 		,WOD.Article 
 		,WOD.SizeCode
 		,wo.FabricCombo
-		,wo.FabricPanelCode
---ORDER BY WOD.OrderID,WOD.Article,wo.fabricCombo,wo.FabricPanelCode,WOD.SizeCode
+		,wo.FabricPanelCode 
+		,EstCutDate.EstCutDate
+ORDER BY WOD.OrderID
 ";
+            #endregion
 
             result = DBProxy.Current.Select(null, tmpCmd, out tmpDt);
 
-            foreach (var garment in GarmentListList)
+            var keys2 = tmpDt.AsEnumerable().Select(o => new { OrderID = o["OrderID"].ToString(), SizeCode = o["SizeCode"].ToString(), EstCutDate = Convert.ToDateTime(o["EstCutDate"]) }).Distinct();
+
+            List<GarmentQty_Detail> GarmentQty_Details = new List<GarmentQty_Detail>();
+
+            foreach (var key in keys2)
             {
-                if (garment.OrderID == "20022206GG001")
+                if (key.OrderID == "20032468LL004")
                 {
 
                 }
-                var exists_1 = tmpDt.AsEnumerable().Where(o =>
-                o["OrderID"].ToString() == garment.OrderID &&
-                o["Article"].ToString() == garment.Article &&
-                o["SizeCode"].ToString() == garment.SizeCode);
+                string OrderID = key.OrderID;
+                string SizeCode = key.SizeCode;
+                DateTime EstCutDate = key.EstCutDate;
+                int Qty = 0;
 
-                foreach (var panel in garment.Panels)
-                {
-                    var exists_2 = exists_1.Where(o => o["FabricCombo"].ToString() == panel.PatternPanel);
-
-                    foreach (var fabricPanelCode in panel.FabricPanelCodes)
+                var Head = HeadDt.AsEnumerable()
+                    .Where(o => o["OrderID"].ToString() == OrderID && o["SizeCode"].ToString() == SizeCode)
+                    .Select(o => new
                     {
-                        var exists = exists_2.Where(o => o["FabricPanelCode"].ToString() == fabricPanelCode.FabricPanelCode);
+                        PatternPanel = o["PatternPanel"].ToString(),
+                        FabricPanelCode = o["FabricPanelCode"].ToString()
+                    }).Distinct().ToList();
 
-                        // 任何一個部位不存在，則記錄下來
-                        if (!exists.Any())
-                        {
-                            garment.IsPanelShortage = true;
-                            //garment.EstCutDate = null;
-                            //garment.EstCutDate = Convert.ToDateTime(exists.FirstOrDefault()["EstCutDate"]);
-                            fabricPanelCode.Qty = 0;
-                        }
-                        else
-                        {
-                            garment.IsPanelShortage = false;
-                            garment.EstCutDate = Convert.ToDateTime(exists.FirstOrDefault()["EstCutDate"]);
-                            fabricPanelCode.Qty = Convert.ToInt32(exists.FirstOrDefault()["Qty"]);
-                        }
-                    }
+                var datas = tmpDt.AsEnumerable().Where(o => o["OrderID"].ToString() == OrderID && o["SizeCode"].ToString() == SizeCode && Convert.ToDateTime(o["EstCutDate"]) == EstCutDate).ToList();
+
+                foreach (DataRow item in datas)
+                {
+                    GarmentQty_Detail gd = new GarmentQty_Detail()
+                    {
+                        EstCutDate = EstCutDate,
+                        OrderID = OrderID,
+                        SizeCode = SizeCode,
+                        Article = item["Article"].ToString(),
+                        FabricCombo = item["FabricCombo"].ToString(),
+                        FabricPanelCode = item["FabricPanelCode"].ToString(),
+                        Qty = Convert.ToInt32(item["Qty"]),
+                    };
+                    GarmentQty_Details.Add(gd);
                 }
             }
 
-            // 移除缺少部位不成套的的
-            GarmentListList.RemoveAll(o => o.IsPanelShortage);
+            List<GarmentQty> GarmentQtys = new List<GarmentQty>();
 
+            foreach (var item in GarmentQty_Details.Select(o => new { o.OrderID, o.EstCutDate }).Distinct().OrderBy(o => o.EstCutDate))
+            {
+                GarmentQty g = new GarmentQty();
+                g.OrderID = item.OrderID;
+                g.EstCutDate = item.EstCutDate;
+                int Qty = 0;
+                if (item.OrderID== "20020590LL")
+                {
 
-            //int CutQty = GarmentListList.Sum(o => o.Panels.Sum(x => x.FabricPanelCodes.Min(y => y.Qty)));
+                }
 
-            return GarmentListList;
+                if (!GarmentQtys.Where(o => o.OrderID == item.OrderID).Any())
+                {
+                    var finds_Details = GarmentQty_Details.Where(o => o.OrderID == item.OrderID && o.EstCutDate == item.EstCutDate);
+
+                    foreach (var SizeCode in finds_Details.Select(o => o.SizeCode).Distinct())
+                    {
+                        var key3 = HeadDt.AsEnumerable().Where(o => o["OrderID"].ToString() == item.OrderID && o["SizeCode"].ToString() == SizeCode)
+                            .Select(o => new { PatternPanel = o["PatternPanel"].ToString(), FabricPanelCode = o["FabricPanelCode"].ToString() }).Distinct();
+
+                        var detailctn = finds_Details.Where(o => o.SizeCode == SizeCode);
+                        if (key3.Count() == detailctn.Select(o => new { o.FabricCombo, o.FabricPanelCode }).Distinct().Count())
+                        {
+                            Qty += detailctn.Min(o => o.Qty);
+                        }
+
+                    }
+                }
+                else
+                {
+                    var finds_Details = GarmentQty_Details.Where(o => o.OrderID == item.OrderID && o.EstCutDate <= item.EstCutDate);
+
+                    foreach (var SizeCode in finds_Details.Select(o => o.SizeCode).Distinct())
+                    {
+                        var key3 = HeadDt.AsEnumerable().Where(o => o["OrderID"].ToString() == item.OrderID && o["SizeCode"].ToString() == SizeCode).Select(o => new { PatternPanel = o["PatternPanel"].ToString(), FabricPanelCode = o["FabricPanelCode"].ToString() }).Distinct();
+
+                        var detailctn = finds_Details.Where(o => o.SizeCode == SizeCode);
+                        if (key3.Count() == detailctn.Select(o => new { o.FabricCombo, o.FabricPanelCode }).Distinct().Count())
+                        {
+                            Qty += detailctn.GroupBy(o => new { o.FabricCombo, o.FabricPanelCode }).Select(x => new
+                            {
+                                x.Key.FabricCombo,
+                                x.Key.FabricPanelCode,
+                                Qty = x.Sum(o => o.Qty)
+                            }).Min(o => o.Qty);
+                        }
+
+                    }
+                }
+                g.Qty = Qty;
+                GarmentQtys.Add(g);
+            }
+
+            return GarmentQtys;
         }
 
         /// <summary>
@@ -246,7 +263,7 @@ GROUP BY CD.ID
 
             List<string> allOrder = dt.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct().ToList();
 
-            List<GarmentList> GarmentList = GetCutPlanQty(allOrder);
+            List<GarmentQty> GarmentList = GetCutPlanQty(allOrder);
             List<LeadTime> LeadTimeList = GetLeadTimeList(allOrder);
 
             if (LeadTimeList == null)
@@ -260,7 +277,7 @@ GROUP BY CD.ID
             {
                 var sameOrderId = dt.AsEnumerable().Where(o => o["OrderID"].ToString() == OrderID);
 
-                if (OrderID == "20032395GG010")
+                if (OrderID == "20020590LL")
                 {
 
                 }
@@ -277,11 +294,10 @@ GROUP BY CD.ID
                 // 所有Order ID、以及相對應 要扣去的Lead Time
                 int LeadTime = LeadTimeList.Where(o => o.OrderID == OrderID).FirstOrDefault().LeadTimeDay;
 
-
                 foreach (DataRow dr in sameOrderId)
                 {
                     string ApsNO = dr["APSNo"].ToString();
-                    // 
+
                     foreach (Day day in Days)
                     {
                         // 比Inline晚
@@ -291,55 +307,34 @@ GROUP BY CD.ID
 
                         if (Later_ThanInline && Eaelier_ThanInline)
                         {
-                            string StdQty = MyUtility.GetValue.Lookup($"SELECT StdQ FROM [dbo].[getDailystdq]('{ApsNO}') WHERE Date = '{day.Date.AddDays(LeadTime).ToString("yyyy/MM/dd")}'");
-                            string AccuStdQty = MyUtility.GetValue.Lookup($"SELECT SUM(StdQ) FROM [dbo].[getDailystdq]('{ApsNO}') WHERE Date <= '{day.Date.AddDays(LeadTime).ToString("yyyy/MM/dd")}'");
+                            Day realDate = new Day() { Date = day.Date, IsHoliday = day.IsHoliday };
+                            int PassDayCount = 0;
+                            string StdQty = MyUtility.GetValue.Lookup($"SELECT StdQ FROM [dbo].[getDailystdq]('{ApsNO}') WHERE Date = '{realDate.Date.AddDays(LeadTime + PassDayCount).ToString("yyyy/MM/dd")}'");
+                            string AccuStdQty = MyUtility.GetValue.Lookup($"SELECT SUM(StdQ) FROM [dbo].[getDailystdq]('{ApsNO}') WHERE Date <= '{realDate.Date.AddDays(LeadTime + PassDayCount).ToString("yyyy/MM/dd")}'");
 
                             // 取裁剪數量
                             int Cutqty = 0;
                             var sameData = GarmentList.Where(o => o.OrderID == OrderID && o.EstCutDate == day.Date.Date);
-
-                            foreach (var item in sameData)
-                            {
-                                int thisSize_Qty = 0;
-                                foreach (var panel in item.Panels)
-                                {
-                                    thisSize_Qty = panel.FabricPanelCodes.Min(o => o.Qty);
-                                }
-                                Cutqty += thisSize_Qty;
-                            }
+                            Cutqty = sameData.Any() ? sameData.FirstOrDefault().Qty : 0;
 
                             // 取累計裁剪數量
 
                             if (!accu.Where(o => o.Key == OrderID).Any())
                             {
+                                // 如果是第一天，累計數量 = 當天裁剪數量
                                 accu.Add(OrderID, Cutqty);
                             }
                             else
                             {
+                                // 如果不是第一天，累計數量 = 之前累計的數量 +當天裁剪數量 
                                 accu[OrderID] = accu[OrderID] + Cutqty;
                             }
 
                             int accuCutQty = accu[OrderID];
 
-                            //if (accuDatas.Count == 0)
-                            //{// 如果是第一天，累計數量 = 當天裁剪數量
-                            //    accuCutQty = Cutqty;
-                            //}
-                            //else
-                            //{
-                            //    // 如果不是第一天，累計數量 = 當天裁剪數量 + 之前累計的數量
-                            //    foreach (var accuData in accuDatas)
-                            //    {
-                            //        foreach (var InOffLine in accuData.InOffLines)
-                            //        {
-                            //            accuCutQty = InOffLine.AccuStdQty + Cutqty;
-                            //        }
-                            //    }
-                            //}
-
                             InOffLine nLineObj = new InOffLine()
                             {
-                                DateWithLeadTime = day.Date,
+                                DateWithLeadTime = realDate.Date,
                                 ApsNO = ApsNO,
                                 CutQty = Cutqty,
                                 AccuCutQty = accuCutQty,
@@ -356,7 +351,7 @@ GROUP BY CD.ID
             // 相同日期GROUP BY
             foreach (var BySP in AllDataTmp)
             {
-                if (BySP.OrderID == "20060222GG")
+                if (BySP.OrderID == "20020590LL")
                 {
 
                 }
@@ -372,21 +367,216 @@ GROUP BY CD.ID
                     AccuStdQty = x.Sum(o => o.AccuStdQty)
                 }).OrderBy(o => o.DateWithLeadTime).ToList();
 
-                // 處理累計
+                // 處理標準量
                 for (int i = 0; i <= groupData.Count - 1; i++)
                 {
+                    // 第一天保持原樣，因此從第二天開始計算
                     if (i > 0)
                     {
-                        // 當天累計裁減量 = 當天裁減 + 前一天累計裁減
-                        groupData[i].AccuStdQty = groupData[i].CutQty + groupData[i - 1].AccuCutQty;
-
-                        // 當天累計標準裁減量 = 當天標準 + 前一天累計標準
+                        // 當天累計標準量 = 當天標準 + 前一天累計標準
                         groupData[i].AccuStdQty = groupData[i].StdQty + groupData[i - 1].AccuStdQty;
                     }
                 }
+                // 編碼
+                int key = 0;
+                foreach (var item in groupData)
+                {
+                    item.UKey = key;
+                    key++;
+                }
 
                 n.InOffLines = groupData;
+                n.IsDateMove = false;
+
+
                 AllData.Add(n);
+            }
+
+            var hasHolidayDatas = AllData.Where(o => /*o.OrderID == "20030528GG" &&*/ o.InOffLines.Where(x => Days.Where(y => y.IsHoliday && y.Date == x.DateWithLeadTime).Any()).Any());
+            var Holidays = Days.Where(o => o.IsHoliday);
+
+            //紀錄每個初始資料，移動了幾天
+            List<MoveDate> MoveDates = new List<MoveDate>();
+
+            foreach (var item in hasHolidayDatas)
+            {
+                if (item.OrderID == "20020590LL")
+                {
+
+                }
+
+                //先找出假日是哪幾天
+                var tmp = item.InOffLines.Where(x => Days.Where(y => y.IsHoliday && y.Date == x.DateWithLeadTime).Any());
+                List<DateTime> AllHoliday = new List<DateTime>();
+
+                foreach (var data in tmp)
+                {
+                    AllHoliday.Add(data.DateWithLeadTime);
+                }
+
+                // 由於時間往前推，可能還會繼續撞到假日，繼續抓出來放進去，抓到沒假日為止
+                for (int i = 1; i <= AllHoliday.Count; i++)
+                {
+                    var newFirstDay = item.InOffLines.OrderBy(o => o.DateWithLeadTime).FirstOrDefault().DateWithLeadTime.AddDays(-1 * i);
+
+                    if (Days.Where(o => o.IsHoliday && o.Date == newFirstDay.Date).Any())
+                    {
+                        AllHoliday.Add(newFirstDay.Date);
+                    }
+                }
+
+
+                int LeadTime = LeadTimeList.Where(o => o.OrderID == item.OrderID).FirstOrDefault().LeadTimeDay;
+
+                // 先把原始日期記錄下來
+                foreach (var inOffLine in item.InOffLines)
+                {
+                    MoveDate m = new MoveDate();
+
+                    m.OrderID = item.OrderID;
+                    m.UKey = inOffLine.UKey.Value;
+                    m.Ori_DateWithLeadTime = inOffLine.DateWithLeadTime;
+                    MoveDates.Add(m);
+                }
+
+                // 日期往前推
+                foreach (var Holiday in AllHoliday)
+                {
+                    foreach (var data in item.InOffLines.OrderByDescending(o => o.DateWithLeadTime))
+                    {
+                        var sameDate = item.InOffLines.Where(o => o.DateWithLeadTime == data.DateWithLeadTime);
+
+                        MoveDate m = new MoveDate();
+
+                        m.OrderID = item.OrderID;
+                        m.UKey = data.UKey.Value;
+                        m.MoveCount = 0;
+
+                        //是假日 或 後面日期有推到這邊來，則往前推一天
+                        if (Holidays.Where(o => o.IsHoliday && o.Date == data.DateWithLeadTime).Any() || sameDate.Count() > 1)
+                        {
+                            data.DateWithLeadTime = data.DateWithLeadTime.AddDays(-1);
+                        }
+                    }
+                }
+
+                //把推完的日期 扣去 原始日期，得到每筆資料推了幾天
+                var datas = MoveDates.Where(o => o.OrderID == item.OrderID);
+                foreach (var MoveDate in datas)
+                {
+                    DateTime newDate = item.InOffLines.Where(o => o.UKey == MoveDate.UKey).FirstOrDefault().DateWithLeadTime;
+                    TimeSpan ts2 = MoveDate.Ori_DateWithLeadTime - newDate;
+                    MoveDate.MoveCount = ts2.Days;
+                }
+
+                // 找出空出來的那幾天，那幾天一定會是原本的假日，塞回去
+                DateTime max = item.InOffLines.Max(o => o.DateWithLeadTime);
+                DateTime min = item.InOffLines.Min(o => o.DateWithLeadTime);
+
+                var emptyDates = AllHoliday.Where(o => o.Date > min && o.Date < max);
+
+                if (item.OrderID == "20032356GG016")
+                {
+
+                }
+
+                foreach (var emptyDate in emptyDates)
+                {
+                    // 假日前後一天都有資料，才補日期
+                    if (item.InOffLines.Where(o => o.DateWithLeadTime == emptyDate.Date.AddDays(-1)).Any() && item.InOffLines.Where(o => o.DateWithLeadTime == emptyDate.Date.AddDays(1)).Any())
+                    {
+                        InOffLine n = new InOffLine();
+                        n.DateWithLeadTime = emptyDate;
+                        n.UKey = null; // item.InOffLines.Max(o=>o.UKey) + 1;
+                        item.InOffLines.Add(n);
+                    }
+                }
+                item.IsDateMove = true;
+            }
+
+            var MoveDateDatas = AllData.Where(o => o.IsDateMove);
+
+            accu.Clear();
+            // 有移動日期的資料OrderID，重新抓取資料
+            foreach (var MoveDateData in MoveDateDatas)
+            {
+                string OrderID = MoveDateData.OrderID;
+                int LeadTime = LeadTimeList.Where(o => o.OrderID == OrderID).FirstOrDefault().LeadTimeDay;
+
+                if (OrderID == "20020590LL")
+                {
+
+                }
+                foreach (var InOffLine in MoveDateData.InOffLines.OrderBy(o => o.DateWithLeadTime))
+                {
+                    // 沒有Ukey代表是補上的日期
+                    bool IsBrandNewDay = InOffLine.UKey == null;
+
+                    //這日期推過幾天
+                    int movecount = MoveDates.Where(o => o.OrderID == OrderID && o.UKey == InOffLine.UKey).Any() ? MoveDates.Where(o => o.OrderID == OrderID && o.UKey == InOffLine.UKey).FirstOrDefault().MoveCount : 0;
+
+                    // 標準量
+                    var obj = dt.AsEnumerable().Where(o => o["OrderID"].ToString() == OrderID).ToList();
+                    int StdQty = 0;
+                    foreach (DataRow dr in obj)
+                    {
+                        string ApsNO = dr["APSNO"].ToString();
+                        string strStdQty = MyUtility.GetValue.Lookup($"SELECT StdQ FROM [dbo].[getDailystdq]('{ApsNO}') WHERE Date = '{InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount).ToString("yyyy/MM/dd")}'");
+                        StdQty += MyUtility.Check.Empty(strStdQty) ? 0 : Convert.ToInt32(strStdQty);
+                    }
+                    StdQty = IsBrandNewDay ? 0 : StdQty;
+                    InOffLine.StdQty = StdQty;
+
+                    // 累計標準量
+                    int AccuStdQty = 0;
+                    foreach (DataRow dr in obj)
+                    {
+                        string ApsNO = dr["APSNO"].ToString();
+                        string strAccuStdQty = MyUtility.GetValue.Lookup($"SELECT SUM(StdQ) FROM [dbo].[getDailystdq]('{ApsNO}') WHERE Date <= '{InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount).ToString("yyyy/MM/dd")}'");
+
+                        //第一天的話  放資料庫的資料即可
+                        AccuStdQty += MyUtility.Check.Empty(strAccuStdQty) ? 0 : Convert.ToInt32(strAccuStdQty);
+                    }
+
+                    if (!accu.Where(o => o.Key == OrderID).Any())
+                    {
+                        // 如果是第一天，累計標準量 = 當天標準量
+                        accu.Add(OrderID, AccuStdQty);
+                    }
+                    else
+                    {
+                        // 如果不是第一天，累計標準量 = 之前累計的標準量 + 當天標準量
+                        accu[OrderID] = accu[OrderID] + StdQty;
+                    }
+
+                    InOffLine.AccuStdQty = accu[OrderID];
+
+                    /*-------------------*/
+
+                    // 裁剪量
+                    int Cutqty = 0;
+                    var sameDatas = GarmentList.Where(o => o.OrderID == OrderID && o.EstCutDate == InOffLine.DateWithLeadTime);
+                    Cutqty = sameDatas.Any() ? sameDatas.FirstOrDefault().Qty : 0;
+
+                    //foreach (var sameData in sameDatas)
+                    //{
+                    //    int thisSize_Qty = 0;
+                    //    foreach (var panel in sameData.Panels)
+                    //    {
+                    //        thisSize_Qty = panel.FabricPanelCodes.Min(o => o.Qty);
+                    //    }
+                    //    Cutqty += thisSize_Qty;
+                    //}
+                    InOffLine.CutQty = Cutqty;
+
+                    // 累計裁剪量 = 前一天累計裁剪量(若前面沒有則是0) + 當天裁剪量
+                    int AccuCutQty = (MoveDateData.InOffLines.Where(o => o.DateWithLeadTime.AddDays(1) == InOffLine.DateWithLeadTime).Any() ?
+                                        MoveDateData.InOffLines.Where(o => o.DateWithLeadTime.AddDays(1) == InOffLine.DateWithLeadTime).FirstOrDefault().AccuCutQty
+                                        : 0)
+                                     + Cutqty;
+                    InOffLine.AccuCutQty = AccuCutQty;
+
+                }
             }
 
             return AllData;
@@ -842,10 +1032,28 @@ WHERE Subprocess.IDs = '{AnnotationStr}'
         }
 
         #region 類別
+
+        public class GarmentQty
+        {
+            public string OrderID { get; set; }
+            public DateTime EstCutDate { get; set; }
+            public int Qty { get; set; }
+        }
+        public class GarmentQty_Detail
+        {
+            public DateTime EstCutDate { get; set; }
+            public string OrderID { get; set; }
+            public string Article { get; set; }
+            public string SizeCode { get; set; }
+            public string FabricCombo { get; set; }
+            public string FabricPanelCode { get; set; }
+            public int Qty { get; set; }
+        }
+
         /// <summary>
         /// 一件成衣，由哪些部位組成
         /// </summary>
-        public class GarmentList
+        /*public class GarmentList
         {
             public DateTime EstCutDate { get; set; }
             // 是否缺部位，因此不成套
@@ -853,30 +1061,33 @@ WHERE Subprocess.IDs = '{AnnotationStr}'
             public string OrderID { get; set; }
             public string Article { get; set; }
             public string SizeCode { get; set; }
+            public string PatternPanel { get; set; }
+            public string FabricPanelCode { get; set; }
+
+            //Delete
             public List<Panel> Panels { get; set; }
-        }
+            public List<PanelQty> PanelQtys { get; set; }
+        }*/
 
         /// <summary>
         /// 大部位名
         /// </summary>
-        public class Panel
+        /*public class Panel
         {
             /// <summary>
             /// 大部位
             /// </summary>
             public string PatternPanel { get; set; }
+            public string FabricPanelCodess { get; set; }
+            public DateTime EstCutDate { get; set; }
+            public int Qty { get; set; }
 
             /// <summary>
             /// 該大部位內的小部位
             /// </summary>
             public List<PanelCode> FabricPanelCodes { get; set; }
         }
-
-        public class PanelCode
-        {
-            public string FabricPanelCode { get; set; }
-            public int Qty { get; set; }
-        }
+        */
 
         /// <summary>
         /// 時間軸基礎物件
@@ -887,6 +1098,7 @@ WHERE Subprocess.IDs = '{AnnotationStr}'
             public DateTime Date { get; set; }
             public bool IsHoliday { get; set; }
         }
+
         /// <summary>
         /// OrderID對應的LeadTime
         /// </summary>
@@ -899,12 +1111,24 @@ WHERE Subprocess.IDs = '{AnnotationStr}'
         public class InOffLineList
         {
             public string OrderID { get; set; }
+            public bool IsDateMove { get; set; }
 
             public List<InOffLine> InOffLines { get; set; }
         }
 
+        public class MoveDate
+        {
+            public string OrderID { get; set; }
+
+            public int UKey { get; set; }
+            public DateTime Ori_DateWithLeadTime { get; set; }
+            public int MoveCount { get; set; }
+
+        }
+
         public class InOffLine
         {
+            public int? UKey { get; set; }
             public string ApsNO { get; set; }
             public int CutQty { get; set; }
             public int AccuCutQty { get; set; }

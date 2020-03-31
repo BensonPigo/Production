@@ -549,7 +549,7 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                 if (removeDays.Where(o => o.Date == day.Date).Any())
                 {
                     string str = MyExcelPrg.GetExcelColumnName(ColumnIndex - deleteCount);
-                    Detail_Sheet.get_Range($"{str}:{str}").EntireColumn.Delete();
+                    //Detail_Sheet.get_Range($"{str}:{str}").EntireColumn.Delete();
                     deleteCount++;
                 }
                 ColumnIndex++;
@@ -583,7 +583,7 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                 if (removeDays.Where(o => o.Date == day.Date).Any())
                 {
                     string str = MyExcelPrg.GetExcelColumnName(ColumnIndex - deleteCount);
-                    Summary_Sheet.get_Range($"{str}:{str}").EntireColumn.Delete();
+                    //Summary_Sheet.get_Range($"{str}:{str}").EntireColumn.Delete();
                     deleteCount++;
                 }
                 ColumnIndex++;
