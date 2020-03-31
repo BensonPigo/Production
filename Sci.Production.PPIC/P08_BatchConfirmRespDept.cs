@@ -37,6 +37,7 @@ namespace Sci.Production.PPIC
         {
             base.OnFormLoaded();
             this.GridSetup();
+            this.comboDropDownList1.SelectedIndex = 2;
         }
 
         private void GridSetup()
@@ -143,6 +144,11 @@ where IRD.ID in('{string.Join("','", ids)}')
 
         private void BtnReject_Click(object sender, EventArgs e)
         {
+            if (this.dt1 == null || this.dt1.Rows.Count == 0)
+            {
+                return;
+            }
+
             this.grid1.ValidateControl();
             DataRow[] drs = this.dt1.Select("Selected = 1");
             if (drs.Count() == 0)
@@ -163,6 +169,11 @@ where IRD.ID in('{string.Join("','", ids)}')
 
         private void BtnConfirm_Click(object sender, EventArgs e)
         {
+            if (this.dt1 == null || this.dt1.Rows.Count ==0)
+            {
+                return;
+            }
+
             this.grid1.ValidateControl();
             DataRow[] drs = this.dt1.Select("Selected = 1");
             if (drs.Count() == 0)
