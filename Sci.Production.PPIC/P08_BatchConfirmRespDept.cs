@@ -115,7 +115,6 @@ and rr.Type  = '{this.Type}'
             if (this.dt1.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found");
-                return;
             }
 
             this.listControlBindingSource1.DataSource = this.dt1;
@@ -193,6 +192,8 @@ where ID in('{string.Join("','", ids)}')
             {
                 this.ShowErr(result);
             }
+
+            MyUtility.Msg.InfoBox("Complete");
 
             this.Query();
         }
