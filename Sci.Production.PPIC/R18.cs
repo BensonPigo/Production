@@ -64,7 +64,7 @@ namespace Sci.Production.PPIC
 
             if (this.dateRangeConfirm.HasValue2)
             {
-                sqlWhere += " and ICR.CFMDate <= @CFMDateTo ";
+                sqlWhere += " and ICR.CFMDate < DateAdd(Day,1,@CFMDateTo) ";
                 this.listPar.Add(new SqlParameter("@CFMDateTo", this.dateRangeConfirm.DateBox2.Value));
             }
 
@@ -76,7 +76,7 @@ namespace Sci.Production.PPIC
 
             if (this.dateRangeConfirmDept.HasValue2)
             {
-                sqlWhere += " and ICR.RespDeptConfirmDate <= @RespDeptConfirmDateTo ";
+                sqlWhere += " and ICR.RespDeptConfirmDate < DateAdd(Day,1,@RespDeptConfirmDateTo) ";
                 this.listPar.Add(new SqlParameter("@RespDeptConfirmDateTo", this.dateRangeConfirmDept.DateBox2.Value));
             }
 
