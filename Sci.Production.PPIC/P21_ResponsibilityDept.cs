@@ -17,14 +17,18 @@ namespace Sci.Production.PPIC
     {
         private string ID;
         private string FormType;
+        private bool canConfirm;
 
-        public P21_ResponsibilityDept(bool canedit, string id, string keyvalue2, string keyvalue3, string formType)
+        public P21_ResponsibilityDept(bool canedit, string id, string keyvalue2, string keyvalue3, string formType, bool canConfirm)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
             this.InitializeComponent();
             this.ID = id;
             this.EditMode = canedit;
             this.FormType = formType;
+
+            this.canConfirm = canConfirm;
+            this.ConfirmStatusCheck();
         }
 
         protected override bool OnGridSetup()
@@ -269,6 +273,37 @@ namespace Sci.Production.PPIC
 
         }
 
+        /// <summary>
+        /// OnEditModeChanged
+        /// </summary>
+        protected override void OnEditModeChanged()
+        {
+            base.OnEditModeChanged();
+            this.ConfirmStatusCheck();
+        }
+
+        private void ConfirmStatusCheck()
+        {
+            if (this.btnConfirm == null)
+            {
+                return;
+            }
+
+            if (!this.EditMode && this.canConfirm && IsRespDeptConfirmDateNull())
+            {
+                this.btnConfirm.Enabled = true;
+            }
+            else
+            {
+                this.btnConfirm.Enabled = false;
+            }
+        }
+
+        private bool IsRespDeptConfirmDateNull()
+        {
+            return MyUtility.Check.Seek($"select 1 from ICR with (nolock) where ID = '{this.ID}' and RespDeptConfirmDate is null");
+        }
+
         protected override void OnDelete()
         {
             base.OnDelete();
@@ -374,6 +409,44 @@ where ICR.id = '{this.ID}'
             }
 
             return base.OnSaveBefore();
+        }
+
+        protected override DualResult OnSavePre()
+        {
+            foreach (DataRow dr in this.Datas)
+            {
+                dr["EditName"] = Env.User.UserID;
+                dr["EditDate"] = DateTime.Now;
+            }
+
+            return base.OnSavePre();
+        }
+
+        private void BtnConfirm_Click(object sender, EventArgs e)
+        {
+            bool isICR_ResponsibilityDeptNoData = !MyUtility.Check.Seek($"select 1 from ICR_ResponsibilityDept with (nolock) where ID = '{this.ID}'");
+
+            if (isICR_ResponsibilityDeptNoData)
+            {
+                return;
+            }
+
+            string sqlConfirm = $@"
+            update ICR set RespDeptConfirmDate = getdate(), RespDeptConfirmName  = '{Env.User.UserID}' where ID = '{this.ID}'
+            update ReplacementReport set RespDeptConfirmDate = getdate(), RespDeptConfirmName  = '{Env.User.UserID}' where ID = '{this.ID}'
+";
+
+            DualResult result = DBProxy.Current.Execute(null, sqlConfirm);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.ConfirmStatusCheck();
+            MyUtility.Msg.InfoBox("Confirm success!");
+            this.save.Visible = false;
         }
     }
 }

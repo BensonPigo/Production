@@ -15,6 +15,7 @@ namespace Sci.Production.PPIC
 {
     public partial class P21 : Sci.Win.Tems.Input6
     {
+
         public P21(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -24,6 +25,7 @@ namespace Sci.Production.PPIC
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            this.btnBatchConfirmResponsibilityDept.Enabled = this.Perm.Confirm;
             this.gridReplacement.ReadOnly = true;
         }
 
@@ -31,6 +33,8 @@ namespace Sci.Production.PPIC
         {
             if (this.CurrentMaintain != null)
             {
+                this.lblConfirmDept.Visible = !MyUtility.Check.Empty(this.CurrentMaintain["RespDeptConfirmDate"]);
+
                 this.txtSDPKPICode.Text = MyUtility.GetValue.Lookup($@"select KpiCode from Factory where id = '{this.CurrentMaintain["Department"]}'");
                 this.numTotal.Value = (decimal)this.CurrentMaintain["RMtlAmtUSD"] + (decimal)this.CurrentMaintain["ActFreightUSD"] + (decimal)this.CurrentMaintain["OtherAmtUSD"];
 
@@ -210,10 +214,22 @@ where ICR.ID = '{masterID}';
                 }
             }
 
-            var frm = new P21_ResponsibilityDept(canEdit, this.CurrentMaintain["ID"].ToString(), null, null, string.Empty);
+            if (canEdit)
+            {
+                canEdit = MyUtility.Check.Seek($"select 1 from ICR with (nolock) where ID = '{this.CurrentMaintain["ID"]}' and RespDeptConfirmDate is null");
+            }
+
+            var frm = new P21_ResponsibilityDept(canEdit, this.CurrentMaintain["ID"].ToString(), null, null, string.Empty, this.Perm.Confirm);
             frm.ShowDialog(this);
             frm.Dispose();
+            this.OnRefreshClick();
             this.OnDetailEntered();
+        }
+
+        private void BtnBatchConfirmResponsibilityDept_Click(object sender, EventArgs e)
+        {
+            new P21_BatchConfirmRespDept().ShowDialog();
+            this.ReloadDatas();
         }
     }
 }

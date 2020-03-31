@@ -937,7 +937,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 canEdit = true;
             }
 
-            var frm = new P21_ResponsibilityDept(canEdit, this.CurrentMaintain["ID"].ToString(), null, null, "Replacement");
+            var frm = new P21_ResponsibilityDept(canEdit, this.CurrentMaintain["ID"].ToString(), null, null, "Replacement", this.Perm.Confirm);
             frm.ShowDialog(this);
             frm.Dispose();
             this.OnDetailEntered();

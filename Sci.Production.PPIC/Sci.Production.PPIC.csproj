@@ -543,6 +543,12 @@
     <Compile Include="P21.Designer.cs">
       <DependentUpon>P21.cs</DependentUpon>
     </Compile>
+    <Compile Include="P21_BatchConfirmRespDept.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P21_BatchConfirmRespDept.Designer.cs">
+      <DependentUpon>P21_BatchConfirmRespDept.cs</DependentUpon>
+    </Compile>
     <Compile Include="P21_ResponsibilityDept.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -704,6 +710,12 @@
     </Compile>
     <Compile Include="R16.Designer.cs">
       <DependentUpon>R16.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R18.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R18.Designer.cs">
+      <DependentUpon>R18.cs</DependentUpon>
     </Compile>
     <Compile Include="SCIControl.cs">
       <SubType>Code</SubType>
@@ -932,6 +944,9 @@
     <EmbeddedResource Include="P21.resx">
       <DependentUpon>P21.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P21_BatchConfirmRespDept.resx">
+      <DependentUpon>P21_BatchConfirmRespDept.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P21_ResponsibilityDept.resx">
       <DependentUpon>P21_ResponsibilityDept.cs</DependentUpon>
     </EmbeddedResource>
@@ -998,6 +1013,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R16.resx">
       <DependentUpon>R16.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R18.resx">
+      <DependentUpon>R18.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

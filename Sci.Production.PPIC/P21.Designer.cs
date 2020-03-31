@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labICRNo = new Sci.Win.UI.Label();
             this.txtID = new Sci.Win.UI.TextBox();
             this.labFactory = new Sci.Win.UI.Label();
@@ -42,24 +42,28 @@
             this.labTotal = new Sci.Win.UI.Label();
             this.labReplaceReport = new Sci.Win.UI.Label();
             this.panel7 = new System.Windows.Forms.Panel();
-            this.txtProgram = new Sci.Win.UI.TextBox();
-            this.txtStyle = new Sci.Win.UI.TextBox();
+            this.txtSMR = new Sci.Production.Class.txttpeuser();
+            this.label11 = new Sci.Win.UI.Label();
+            this.txtMR = new Sci.Production.Class.txttpeuser();
+            this.labSpNo = new Sci.Win.UI.Label();
+            this.label3 = new Sci.Win.UI.Label();
+            this.txtPoSMR = new Sci.Production.Class.txttpeuser();
+            this.txtOrderID = new Sci.Win.UI.TextBox();
+            this.label6 = new Sci.Win.UI.Label();
+            this.txtPOHandle = new Sci.Production.Class.txttpeuser();
+            this.label7 = new Sci.Win.UI.Label();
+            this.txtBrand = new Sci.Win.UI.TextBox();
+            this.label8 = new Sci.Win.UI.Label();
+            this.label10 = new Sci.Win.UI.Label();
+            this.numTotalQty = new Sci.Win.UI.NumericBox();
+            this.label9 = new Sci.Win.UI.Label();
             this.txtFactory = new Sci.Win.UI.TextBox();
             this.editPoCombo = new Sci.Win.UI.EditBox();
-            this.txtBrand = new Sci.Win.UI.TextBox();
-            this.numTotalQty = new Sci.Win.UI.NumericBox();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
-            this.txtOrderID = new Sci.Win.UI.TextBox();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.labSpNo = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtStyle = new Sci.Win.UI.TextBox();
+            this.txtProgram = new Sci.Win.UI.TextBox();
+            this.label5 = new Sci.Win.UI.Label();
             this.btnResponsibilitydept = new Sci.Win.UI.Button();
             this.label4 = new Sci.Win.UI.Label();
             this.label12 = new Sci.Win.UI.Label();
@@ -83,10 +87,8 @@
             this.editRemark = new Sci.Win.UI.EditBox();
             this.txtVoucher = new Sci.Win.UI.TextBox();
             this.dateConfirmedDate = new Sci.Win.UI.DateBox();
-            this.txtSMR = new Sci.Production.Class.txttpeuser();
-            this.txtMR = new Sci.Production.Class.txttpeuser();
-            this.txtPoSMR = new Sci.Production.Class.txttpeuser();
-            this.txtPOHandle = new Sci.Production.Class.txttpeuser();
+            this.lblConfirmDept = new Sci.Win.UI.Label();
+            this.btnBatchConfirmResponsibilityDept = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -105,6 +107,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.lblConfirmDept);
             this.masterpanel.Controls.Add(this.txtVoucher);
             this.masterpanel.Controls.Add(this.gridReplacement);
             this.masterpanel.Controls.Add(this.txtIssueSubject);
@@ -118,7 +121,6 @@
             this.masterpanel.Controls.Add(this.txtSDPKPICode);
             this.masterpanel.Controls.Add(this.txtDepartment);
             this.masterpanel.Controls.Add(this.panel7);
-            this.masterpanel.Controls.Add(this.dateVoucherDate);
             this.masterpanel.Controls.Add(this.labReplaceReport);
             this.masterpanel.Controls.Add(this.labTotal);
             this.masterpanel.Controls.Add(this.labActFreight);
@@ -131,8 +133,10 @@
             this.masterpanel.Controls.Add(this.labFactory);
             this.masterpanel.Controls.Add(this.txtID);
             this.masterpanel.Controls.Add(this.labICRNo);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 307);
+            this.masterpanel.Controls.Add(this.dateVoucherDate);
+            this.masterpanel.Size = new System.Drawing.Size(875, 307);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateVoucherDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labICRNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labFactory, 0);
@@ -145,7 +149,6 @@
             this.masterpanel.Controls.SetChildIndex(this.labActFreight, 0);
             this.masterpanel.Controls.SetChildIndex(this.labTotal, 0);
             this.masterpanel.Controls.SetChildIndex(this.labReplaceReport, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateVoucherDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.panel7, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtDepartment, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSDPKPICode, 0);
@@ -159,11 +162,12 @@
             this.masterpanel.Controls.SetChildIndex(this.txtIssueSubject, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridReplacement, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtVoucher, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lblConfirmDept, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 307);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 153);
+            this.detailpanel.Size = new System.Drawing.Size(875, 0);
             // 
             // gridicon
             // 
@@ -177,7 +181,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 153);
+            this.detailgridcont.Size = new System.Drawing.Size(875, 0);
             // 
             // detail2
             // 
@@ -191,13 +195,9 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1000, 621);
-            // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 460);
+            this.detailcont.Size = new System.Drawing.Size(892, 226);
             // 
             // detailbtm
             // 
@@ -209,8 +209,8 @@
             this.detailbtm.Controls.Add(this.label13);
             this.detailbtm.Controls.Add(this.label12);
             this.detailbtm.Controls.Add(this.dateConfirmedDate);
-            this.detailbtm.Location = new System.Drawing.Point(0, 460);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 161);
+            this.detailbtm.Location = new System.Drawing.Point(0, 226);
+            this.detailbtm.Size = new System.Drawing.Size(892, 161);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -322,6 +322,7 @@
             // 
             // labTotal
             // 
+            this.labTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
             this.labTotal.Location = new System.Drawing.Point(426, 79);
             this.labTotal.Name = "labTotal";
             this.labTotal.Size = new System.Drawing.Size(82, 23);
@@ -366,25 +367,147 @@
             this.panel7.Size = new System.Drawing.Size(696, 160);
             this.panel7.TabIndex = 42;
             // 
-            // txtProgram
+            // txtSMR
             // 
-            this.txtProgram.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtProgram.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtProgram.Location = new System.Drawing.Point(295, 35);
-            this.txtProgram.Name = "txtProgram";
-            this.txtProgram.ReadOnly = true;
-            this.txtProgram.Size = new System.Drawing.Size(100, 23);
-            this.txtProgram.TabIndex = 56;
+            this.txtSMR.DisplayBox1Binding = "";
+            this.txtSMR.DisplayBox2Binding = "";
+            this.txtSMR.Location = new System.Drawing.Point(413, 125);
+            this.txtSMR.Name = "txtSMR";
+            this.txtSMR.Size = new System.Drawing.Size(265, 23);
+            this.txtSMR.TabIndex = 61;
             // 
-            // txtStyle
+            // label11
             // 
-            this.txtStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtStyle.Location = new System.Drawing.Point(88, 34);
-            this.txtStyle.Name = "txtStyle";
-            this.txtStyle.ReadOnly = true;
-            this.txtStyle.Size = new System.Drawing.Size(123, 23);
-            this.txtStyle.TabIndex = 55;
+            this.label11.Location = new System.Drawing.Point(405, 5);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(64, 23);
+            this.label11.TabIndex = 43;
+            this.label11.Text = "Factory";
+            // 
+            // txtMR
+            // 
+            this.txtMR.DisplayBox1Binding = "";
+            this.txtMR.DisplayBox2Binding = "";
+            this.txtMR.Location = new System.Drawing.Point(413, 95);
+            this.txtMR.Name = "txtMR";
+            this.txtMR.Size = new System.Drawing.Size(265, 23);
+            this.txtMR.TabIndex = 60;
+            // 
+            // labSpNo
+            // 
+            this.labSpNo.Location = new System.Drawing.Point(4, 4);
+            this.labSpNo.Name = "labSpNo";
+            this.labSpNo.Size = new System.Drawing.Size(81, 23);
+            this.labSpNo.TabIndex = 31;
+            this.labSpNo.Text = "SP.No";
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(219, 5);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(73, 23);
+            this.label3.TabIndex = 35;
+            this.label3.Text = "Brand";
+            // 
+            // txtPoSMR
+            // 
+            this.txtPoSMR.DisplayBox1Binding = "";
+            this.txtPoSMR.DisplayBox2Binding = "";
+            this.txtPoSMR.Location = new System.Drawing.Point(88, 125);
+            this.txtPoSMR.Name = "txtPoSMR";
+            this.txtPoSMR.Size = new System.Drawing.Size(265, 23);
+            this.txtPoSMR.TabIndex = 59;
+            // 
+            // txtOrderID
+            // 
+            this.txtOrderID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtOrderID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OrderID", true));
+            this.txtOrderID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtOrderID.Location = new System.Drawing.Point(88, 5);
+            this.txtOrderID.Name = "txtOrderID";
+            this.txtOrderID.ReadOnly = true;
+            this.txtOrderID.Size = new System.Drawing.Size(123, 23);
+            this.txtOrderID.TabIndex = 46;
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(4, 33);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(81, 23);
+            this.label6.TabIndex = 39;
+            this.label6.Text = "Style#";
+            // 
+            // txtPOHandle
+            // 
+            this.txtPOHandle.DisplayBox1Binding = "";
+            this.txtPOHandle.DisplayBox2Binding = "";
+            this.txtPOHandle.Location = new System.Drawing.Point(88, 95);
+            this.txtPOHandle.Name = "txtPOHandle";
+            this.txtPOHandle.Size = new System.Drawing.Size(265, 23);
+            this.txtPOHandle.TabIndex = 57;
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(219, 35);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(73, 23);
+            this.label7.TabIndex = 40;
+            this.label7.Text = "Program";
+            // 
+            // txtBrand
+            // 
+            this.txtBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtBrand.Location = new System.Drawing.Point(295, 5);
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.ReadOnly = true;
+            this.txtBrand.Size = new System.Drawing.Size(100, 23);
+            this.txtBrand.TabIndex = 48;
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(362, 125);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(48, 23);
+            this.label8.TabIndex = 42;
+            this.label8.Text = "SMR";
+            // 
+            // label10
+            // 
+            this.label10.Location = new System.Drawing.Point(405, 35);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(64, 23);
+            this.label10.TabIndex = 43;
+            this.label10.Text = "Total Qty";
+            // 
+            // numTotalQty
+            // 
+            this.numTotalQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTotalQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTotalQty.IsSupportEditMode = false;
+            this.numTotalQty.Location = new System.Drawing.Point(472, 35);
+            this.numTotalQty.Name = "numTotalQty";
+            this.numTotalQty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTotalQty.ReadOnly = true;
+            this.numTotalQty.Size = new System.Drawing.Size(77, 23);
+            this.numTotalQty.TabIndex = 47;
+            this.numTotalQty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label9
+            // 
+            this.label9.Location = new System.Drawing.Point(362, 95);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(48, 23);
+            this.label9.TabIndex = 41;
+            this.label9.Text = "MR";
             // 
             // txtFactory
             // 
@@ -408,95 +531,13 @@
             this.editPoCombo.Size = new System.Drawing.Size(590, 25);
             this.editPoCombo.TabIndex = 53;
             // 
-            // txtBrand
+            // label1
             // 
-            this.txtBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtBrand.Location = new System.Drawing.Point(295, 5);
-            this.txtBrand.Name = "txtBrand";
-            this.txtBrand.ReadOnly = true;
-            this.txtBrand.Size = new System.Drawing.Size(100, 23);
-            this.txtBrand.TabIndex = 48;
-            // 
-            // numTotalQty
-            // 
-            this.numTotalQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numTotalQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numTotalQty.IsSupportEditMode = false;
-            this.numTotalQty.Location = new System.Drawing.Point(472, 35);
-            this.numTotalQty.Name = "numTotalQty";
-            this.numTotalQty.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numTotalQty.ReadOnly = true;
-            this.numTotalQty.Size = new System.Drawing.Size(77, 23);
-            this.numTotalQty.TabIndex = 47;
-            this.numTotalQty.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // label11
-            // 
-            this.label11.Location = new System.Drawing.Point(405, 5);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(64, 23);
-            this.label11.TabIndex = 43;
-            this.label11.Text = "Factory";
-            // 
-            // label10
-            // 
-            this.label10.Location = new System.Drawing.Point(405, 35);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(64, 23);
-            this.label10.TabIndex = 43;
-            this.label10.Text = "Total Qty";
-            // 
-            // txtOrderID
-            // 
-            this.txtOrderID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtOrderID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OrderID", true));
-            this.txtOrderID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtOrderID.Location = new System.Drawing.Point(88, 5);
-            this.txtOrderID.Name = "txtOrderID";
-            this.txtOrderID.ReadOnly = true;
-            this.txtOrderID.Size = new System.Drawing.Size(123, 23);
-            this.txtOrderID.TabIndex = 46;
-            // 
-            // label8
-            // 
-            this.label8.Location = new System.Drawing.Point(362, 125);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(48, 23);
-            this.label8.TabIndex = 42;
-            this.label8.Text = "SMR";
-            // 
-            // label9
-            // 
-            this.label9.Location = new System.Drawing.Point(362, 95);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(48, 23);
-            this.label9.TabIndex = 41;
-            this.label9.Text = "MR";
-            // 
-            // label7
-            // 
-            this.label7.Location = new System.Drawing.Point(219, 35);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(73, 23);
-            this.label7.TabIndex = 40;
-            this.label7.Text = "Program";
-            // 
-            // label6
-            // 
-            this.label6.Location = new System.Drawing.Point(4, 33);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(81, 23);
-            this.label6.TabIndex = 39;
-            this.label6.Text = "Style#";
+            this.label1.Location = new System.Drawing.Point(4, 63);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(81, 23);
+            this.label1.TabIndex = 34;
+            this.label1.Text = "PO Combo";
             // 
             // label2
             // 
@@ -506,6 +547,26 @@
             this.label2.TabIndex = 38;
             this.label2.Text = "P/O SMR";
             // 
+            // txtStyle
+            // 
+            this.txtStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtStyle.Location = new System.Drawing.Point(88, 34);
+            this.txtStyle.Name = "txtStyle";
+            this.txtStyle.ReadOnly = true;
+            this.txtStyle.Size = new System.Drawing.Size(123, 23);
+            this.txtStyle.TabIndex = 55;
+            // 
+            // txtProgram
+            // 
+            this.txtProgram.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtProgram.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtProgram.Location = new System.Drawing.Point(295, 35);
+            this.txtProgram.Name = "txtProgram";
+            this.txtProgram.ReadOnly = true;
+            this.txtProgram.Size = new System.Drawing.Size(100, 23);
+            this.txtProgram.TabIndex = 56;
+            // 
             // label5
             // 
             this.label5.Location = new System.Drawing.Point(4, 95);
@@ -513,30 +574,6 @@
             this.label5.Size = new System.Drawing.Size(81, 23);
             this.label5.TabIndex = 37;
             this.label5.Text = "P/O Handle";
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(219, 5);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(73, 23);
-            this.label3.TabIndex = 35;
-            this.label3.Text = "Brand";
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(4, 63);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(81, 23);
-            this.label1.TabIndex = 34;
-            this.label1.Text = "PO Combo";
-            // 
-            // labSpNo
-            // 
-            this.labSpNo.Location = new System.Drawing.Point(4, 4);
-            this.labSpNo.Name = "labSpNo";
-            this.labSpNo.Size = new System.Drawing.Size(81, 23);
-            this.labSpNo.TabIndex = 31;
-            this.labSpNo.Text = "SP.No";
             // 
             // btnResponsibilitydept
             // 
@@ -722,6 +759,7 @@
             // 
             this.numTotal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotal.DecimalPlaces = 2;
+            this.numTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
             this.numTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotal.IsSupportEditMode = false;
             this.numTotal.Location = new System.Drawing.Point(510, 79);
@@ -767,38 +805,37 @@
             this.gridReplacement.AllowUserToDeleteRows = false;
             this.gridReplacement.AllowUserToOrderColumns = true;
             this.gridReplacement.AllowUserToResizeRows = false;
-            this.gridReplacement.AutoGenerateColumns = false;
             this.gridReplacement.BackgroundColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle13.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle13.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle13.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle13.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle13.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReplacement.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle13;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridReplacement.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridReplacement.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle14.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle14.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle14.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle14.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle14.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle14.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.gridReplacement.DefaultCellStyle = dataGridViewCellStyle14;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.gridReplacement.DefaultCellStyle = dataGridViewCellStyle2;
             this.gridReplacement.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridReplacement.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridReplacement.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridReplacement.Location = new System.Drawing.Point(571, 17);
             this.gridReplacement.Name = "gridReplacement";
-            dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle15.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle15.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle15.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle15.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle15.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReplacement.RowHeadersDefaultCellStyle = dataGridViewCellStyle15;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridReplacement.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.gridReplacement.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridReplacement.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReplacement.RowTemplate.Height = 24;
@@ -866,45 +903,32 @@
             this.dateConfirmedDate.Size = new System.Drawing.Size(110, 23);
             this.dateConfirmedDate.TabIndex = 58;
             // 
-            // txtSMR
+            // lblConfirmDept
             // 
-            this.txtSMR.DisplayBox1Binding = "";
-            this.txtSMR.DisplayBox2Binding = "";
-            this.txtSMR.Location = new System.Drawing.Point(413, 125);
-            this.txtSMR.Name = "txtSMR";
-            this.txtSMR.Size = new System.Drawing.Size(265, 23);
-            this.txtSMR.TabIndex = 61;
+            this.lblConfirmDept.BackColor = System.Drawing.Color.Transparent;
+            this.lblConfirmDept.Font = new System.Drawing.Font("Microsoft Sans Serif", 17F, System.Drawing.FontStyle.Bold);
+            this.lblConfirmDept.Location = new System.Drawing.Point(792, 54);
+            this.lblConfirmDept.Name = "lblConfirmDept";
+            this.lblConfirmDept.Size = new System.Drawing.Size(197, 34);
+            this.lblConfirmDept.TabIndex = 58;
+            this.lblConfirmDept.Text = "Confirmed Dept.";
+            this.lblConfirmDept.TextStyle.Color = System.Drawing.Color.Red;
             // 
-            // txtMR
+            // btnBatchConfirmResponsibilityDept
             // 
-            this.txtMR.DisplayBox1Binding = "";
-            this.txtMR.DisplayBox2Binding = "";
-            this.txtMR.Location = new System.Drawing.Point(413, 95);
-            this.txtMR.Name = "txtMR";
-            this.txtMR.Size = new System.Drawing.Size(265, 23);
-            this.txtMR.TabIndex = 60;
-            // 
-            // txtPoSMR
-            // 
-            this.txtPoSMR.DisplayBox1Binding = "";
-            this.txtPoSMR.DisplayBox2Binding = "";
-            this.txtPoSMR.Location = new System.Drawing.Point(88, 125);
-            this.txtPoSMR.Name = "txtPoSMR";
-            this.txtPoSMR.Size = new System.Drawing.Size(265, 23);
-            this.txtPoSMR.TabIndex = 59;
-            // 
-            // txtPOHandle
-            // 
-            this.txtPOHandle.DisplayBox1Binding = "";
-            this.txtPOHandle.DisplayBox2Binding = "";
-            this.txtPOHandle.Location = new System.Drawing.Point(88, 95);
-            this.txtPOHandle.Name = "txtPOHandle";
-            this.txtPOHandle.Size = new System.Drawing.Size(265, 23);
-            this.txtPOHandle.TabIndex = 57;
+            this.btnBatchConfirmResponsibilityDept.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBatchConfirmResponsibilityDept.Location = new System.Drawing.Point(627, 24);
+            this.btnBatchConfirmResponsibilityDept.Name = "btnBatchConfirmResponsibilityDept";
+            this.btnBatchConfirmResponsibilityDept.Size = new System.Drawing.Size(211, 30);
+            this.btnBatchConfirmResponsibilityDept.TabIndex = 4;
+            this.btnBatchConfirmResponsibilityDept.Text = "Batch Confirm Responsibility Dept.";
+            this.btnBatchConfirmResponsibilityDept.UseVisualStyleBackColor = true;
+            this.btnBatchConfirmResponsibilityDept.Click += new System.EventHandler(this.BtnBatchConfirmResponsibilityDept_Click);
             // 
             // P21
             // 
             this.ClientSize = new System.Drawing.Size(1008, 683);
+            this.Controls.Add(this.btnBatchConfirmResponsibilityDept);
             this.Grid2Edit = false;
             this.GridAlias = "ICR_Detail";
             this.GridEdit = false;
@@ -922,6 +946,7 @@
             this.UniqueExpress = "id";
             this.WorkAlias = "ICR";
             this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.btnBatchConfirmResponsibilityDept, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
@@ -1001,5 +1026,7 @@
         private Class.txttpeuser txtMR;
         private Class.txttpeuser txtPoSMR;
         private Class.txttpeuser txtPOHandle;
+        private Win.UI.Label lblConfirmDept;
+        private Win.UI.Button btnBatchConfirmResponsibilityDept;
     }
 }
