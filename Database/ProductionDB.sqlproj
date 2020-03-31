@@ -2472,6 +2472,11 @@
     <Build Include="dbo\Tables\Express_History.sql" />
     <Build Include="dbo\Tables\Bundle_Detail_Art_History.sql" />
     <Build Include="dbo\Tables\MDScan.sql" />
+    <Build Include="dbo\Tables\BundleReplacement_Detail_qty.sql" />
+    <Build Include="dbo\Tables\BundleReplacement_Detail_Art.sql" />
+    <Build Include="dbo\Tables\BundleReplacement_Detail_Allpart.sql" />
+    <Build Include="dbo\Tables\BundleReplacement_Detail.sql" />
+    <Build Include="dbo\Tables\BundleReplacement.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

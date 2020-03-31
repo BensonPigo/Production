@@ -141,6 +141,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ListToDataTable.cs" />
     <Compile Include="ConvertToPDF.cs" />
     <Compile Include="Exts.cs" />
     <Compile Include="Logistic.cs" />
