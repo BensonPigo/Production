@@ -260,9 +260,7 @@ select
     PPICFactorymgr = [dbo].[getPass1_ExtNo](rr.ApvName)
 from ReplacementReport rr with(nolock)
 inner join Orders o with(nolock) on o.ID = rr.POID
-left join ReplacementReport_Detail rrd with(nolock) on rrd.ID = rr.ID
 left join PO with(nolock) on PO.ID = rr.POID
-left join Fabric f with(nolock) on f.SCIRefno = rrd.SCIRefno
 left join  ICR_ResponsibilityDept icr with(nolock) on icr.ID = rr.ID
 where 1=1
 {where}
