@@ -18,6 +18,7 @@ namespace Sci.Production.PPIC
         private string ID;
         private string FormType;
         private bool canConfirm;
+        private string checkTable;
 
         public P21_ResponsibilityDept(bool canedit, string id, string keyvalue2, string keyvalue3, string formType, bool canConfirm)
             : base(canedit, id, keyvalue2, keyvalue3)
@@ -28,6 +29,7 @@ namespace Sci.Production.PPIC
             this.FormType = formType;
 
             this.canConfirm = canConfirm;
+            this.checkTable = formType == "Replacement" ? "ReplacementReport" : "ICR";
             this.ConfirmStatusCheck();
         }
 
@@ -301,7 +303,7 @@ namespace Sci.Production.PPIC
 
         private bool IsRespDeptConfirmDateNull()
         {
-            return MyUtility.Check.Seek($"select 1 from ICR with (nolock) where ID = '{this.ID}' and RespDeptConfirmDate is null");
+            return MyUtility.Check.Seek($"select 1 from {this.checkTable} with (nolock) where ID = '{this.ID}' and RespDeptConfirmDate is null");
         }
 
         protected override void OnDelete()
@@ -432,8 +434,7 @@ where ICR.id = '{this.ID}'
             }
 
             string sqlConfirm = $@"
-            update ICR set RespDeptConfirmDate = getdate(), RespDeptConfirmName  = '{Env.User.UserID}' where ID = '{this.ID}'
-            update ReplacementReport set RespDeptConfirmDate = getdate(), RespDeptConfirmName  = '{Env.User.UserID}' where ID = '{this.ID}'
+            update {this.checkTable} set RespDeptConfirmDate = getdate(), RespDeptConfirmName  = '{Env.User.UserID}' where ID = '{this.ID}'
 ";
 
             DualResult result = DBProxy.Current.Execute(null, sqlConfirm);
