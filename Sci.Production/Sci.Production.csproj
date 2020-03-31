@@ -707,7 +707,10 @@
     <None Include="XLT\PPIC_R07_SewingScheduleGanttChart.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\PPIC_R08_ReplacementReportList.xltx">
+    <None Include="XLT\PPIC_R08_RespDeptList.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\PPIC_R08_DetailList.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\PPIC_R09.xltx">

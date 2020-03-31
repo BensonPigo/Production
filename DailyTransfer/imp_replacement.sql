@@ -29,7 +29,8 @@ BEGIN
 		t.ActFreight = s.ActFreight,
 		t.EstFreight = s.EstFreight,
 		t.SurchargeAmt = s.SurchargeAmt,
-		t.LockDate = s.LockDate
+		t.LockDate = s.LockDate,
+		t.CompleteDate = s.CompleteDate
 	output inserted.id into @tReplace;
 
 	--Merge Replace2

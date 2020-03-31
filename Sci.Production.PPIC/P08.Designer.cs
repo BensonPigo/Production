@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelID = new Sci.Win.UI.Label();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelPOSMR = new Sci.Win.UI.Label();
@@ -81,6 +81,10 @@
             this.txtuserPreparedby = new Sci.Production.Class.txtuser();
             this.txttpeuserPOHandle = new Sci.Production.Class.txttpeuser();
             this.txttpeuserPOSMR = new Sci.Production.Class.txttpeuser();
+            this.label7 = new Sci.Win.UI.Label();
+            this.dateLockDate = new Sci.Win.UI.DateBox();
+            this.btnBatch = new Sci.Win.UI.Button();
+            this.label8 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -98,6 +102,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.label8);
+            this.masterpanel.Controls.Add(this.label7);
             this.masterpanel.Controls.Add(this.txtVoucher);
             this.masterpanel.Controls.Add(this.label6);
             this.masterpanel.Controls.Add(this.label16);
@@ -127,6 +133,7 @@
             this.masterpanel.Controls.Add(this.displayStyleNo);
             this.masterpanel.Controls.Add(this.labelPCHandle);
             this.masterpanel.Controls.Add(this.labelPCSMR);
+            this.masterpanel.Controls.Add(this.dateLockDate);
             this.masterpanel.Controls.Add(this.dateVoucherDate);
             this.masterpanel.Controls.Add(this.labelStyleNo);
             this.masterpanel.Controls.Add(this.displayFactory);
@@ -174,6 +181,7 @@
             this.masterpanel.Controls.SetChildIndex(this.labelStyleNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateVoucherDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateLockDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPCSMR, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPCHandle, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayStyleNo, 0);
@@ -203,6 +211,8 @@
             this.masterpanel.Controls.SetChildIndex(this.label16, 0);
             this.masterpanel.Controls.SetChildIndex(this.label6, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtVoucher, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label8, 0);
             // 
             // detailpanel
             // 
@@ -491,12 +501,13 @@
             // label15
             // 
             this.label15.BackColor = System.Drawing.Color.Transparent;
+            this.label15.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
             this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
-            this.label15.Location = new System.Drawing.Point(695, 131);
+            this.label15.Location = new System.Drawing.Point(627, 131);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(66, 23);
+            this.label15.Size = new System.Drawing.Size(153, 23);
             this.label15.TabIndex = 6;
-            this.label15.Text = "Junk";
+            this.label15.Text = "Status";
             this.label15.TextStyle.BorderColor = System.Drawing.Color.Red;
             this.label15.TextStyle.Color = System.Drawing.Color.Red;
             this.label15.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
@@ -630,6 +641,7 @@
             // 
             this.numTotalUS.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotalUS.DecimalPlaces = 2;
+            this.numTotalUS.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
             this.numTotalUS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotalUS.IsSupportEditMode = false;
             this.numTotalUS.Location = new System.Drawing.Point(316, 245);
@@ -650,6 +662,7 @@
             // 
             // label3
             // 
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
             this.label3.Location = new System.Drawing.Point(198, 245);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(115, 23);
@@ -769,14 +782,14 @@
             this.gridReplacement.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridReplacement.Location = new System.Drawing.Point(3, 6);
             this.gridReplacement.Name = "gridReplacement";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReplacement.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridReplacement.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridReplacement.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridReplacement.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReplacement.RowTemplate.Height = 24;
@@ -849,11 +862,55 @@
             this.txttpeuserPOSMR.Size = new System.Drawing.Size(302, 23);
             this.txttpeuserPOSMR.TabIndex = 7;
             // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(697, 193);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(99, 23);
+            this.label7.TabIndex = 164;
+            this.label7.Text = "Auto lock date";
+            // 
+            // dateLockDate
+            // 
+            this.dateLockDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LockDate", true));
+            this.dateLockDate.IsSupportCalendar = false;
+            this.dateLockDate.IsSupportEditMode = false;
+            this.dateLockDate.Location = new System.Drawing.Point(799, 193);
+            this.dateLockDate.Name = "dateLockDate";
+            this.dateLockDate.ReadOnly = true;
+            this.dateLockDate.Size = new System.Drawing.Size(110, 23);
+            this.dateLockDate.TabIndex = 165;
+            // 
+            // btnBatch
+            // 
+            this.btnBatch.Location = new System.Drawing.Point(631, 26);
+            this.btnBatch.Name = "btnBatch";
+            this.btnBatch.Size = new System.Drawing.Size(260, 30);
+            this.btnBatch.TabIndex = 4;
+            this.btnBatch.Text = "Batch Confirm Responsibility Dept.";
+            this.btnBatch.UseVisualStyleBackColor = true;
+            this.btnBatch.Click += new System.EventHandler(this.BtnBatch_Click);
+            // 
+            // label8
+            // 
+            this.label8.BackColor = System.Drawing.Color.Transparent;
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.Location = new System.Drawing.Point(813, 157);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(136, 23);
+            this.label8.TabIndex = 166;
+            this.label8.Text = "Confirmed Dept.";
+            this.label8.TextStyle.BorderColor = System.Drawing.Color.Red;
+            this.label8.TextStyle.Color = System.Drawing.Color.Red;
+            this.label8.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
+            this.label8.TextStyle.GradientColor = System.Drawing.Color.Red;
+            // 
             // P08
             // 
             this.ApvChkValue = "Checked";
             this.CheckChkValue = "New";
             this.ClientSize = new System.Drawing.Size(984, 649);
+            this.Controls.Add(this.btnBatch);
             this.DefaultControl = "txtSPNo";
             this.DefaultControlForEdit = "txtSPNo";
             this.DefaultDetailOrder = "Seq1,Seq2";
@@ -877,6 +934,7 @@
             this.WorkAlias = "ReplacementReport";
             this.FormLoaded += new System.EventHandler(this.P08_FormLoaded);
             this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.btnBatch, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
@@ -951,5 +1009,9 @@
         private Win.UI.Label label16;
         private Win.UI.DateBox dateVoucherDate;
         private System.Windows.Forms.DataGridView gridReplacement;
+        private Win.UI.Label label7;
+        private Win.UI.DateBox dateLockDate;
+        private Win.UI.Button btnBatch;
+        private Win.UI.Label label8;
     }
 }

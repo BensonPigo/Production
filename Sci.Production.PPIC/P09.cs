@@ -54,8 +54,9 @@ namespace Sci.Production.PPIC
                 this.ReloadDatas();
             };
 
-           // GridReplacement 欄位設定
-           this.Helper.Controls.Grid.Generator(this.gridReplacement)
+            this.btnBatch.Enabled = this.Perm.Confirm;
+            // GridReplacement 欄位設定
+            this.Helper.Controls.Grid.Generator(this.gridReplacement)
           .Text("SP", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
           .Text("NewSeq1", header: "New Seq1", width: Widths.AnsiChars(7), iseditingreadonly: true)
           .Text("NewSeq2", header: "New Seq2", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -106,12 +107,13 @@ order by rd.Seq1,rd.Seq2", masterID);
             base.OnDetailEntered();
 
             this.btnMailto.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "Junked" && !MyUtility.Check.Empty(this.CurrentMaintain["ApvDate"]) ? true : false;
-            this.label15.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Junked";
+            this.btnResponsibilitydept.Enabled = MyUtility.Check.Empty(this.CurrentMaintain["RespDeptConfirmDate"]);
             this.displayStyleNo.Value = MyUtility.GetValue.Lookup("StyleID", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), "Orders", "ID");
             this.displayPreparedby.Value = MyUtility.Check.Empty(this.CurrentMaintain["ApplyDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ApplyDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
             this.displayPPICFactorymgr.Value = MyUtility.Check.Empty(this.CurrentMaintain["ApvDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ApvDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
             this.displayConfirmby.Value = MyUtility.Check.Empty(this.CurrentMaintain["TPECFMDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["TPECFMDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
             this.displayTPELastEditDate.Value = MyUtility.Check.Empty(this.CurrentMaintain["TPEEditDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["TPEEditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+            this.label8.Visible = !MyUtility.Check.Empty(this.CurrentMaintain["RespDeptConfirmDate"]);
             this.numTotalUS.Value =
                 MyUtility.Convert.GetDecimal(this.CurrentMaintain["RMtlAmt"]) +
                 MyUtility.Convert.GetDecimal(this.CurrentMaintain["ActFreight"]) +
@@ -947,6 +949,14 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             frm.ShowDialog(this);
             frm.Dispose();
             this.OnDetailEntered();
+        }
+
+        private void BtnBatch_Click(object sender, EventArgs e)
+        {
+            var frm = new P08_BatchConfirmRespDept("A");
+            frm.ShowDialog(this);
+            frm.Dispose();
+            this.ReloadDatas();
         }
     }
 }
