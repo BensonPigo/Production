@@ -134,7 +134,7 @@
             this.masterpanel.Controls.Add(this.txtID);
             this.masterpanel.Controls.Add(this.labICRNo);
             this.masterpanel.Controls.Add(this.dateVoucherDate);
-            this.masterpanel.Size = new System.Drawing.Size(875, 307);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 307);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateVoucherDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labICRNo, 0);
@@ -167,7 +167,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 307);
-            this.detailpanel.Size = new System.Drawing.Size(875, 0);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 153);
             // 
             // gridicon
             // 
@@ -181,7 +181,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(875, 0);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 153);
             // 
             // detail2
             // 
@@ -195,9 +195,13 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1000, 621);
+            // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 226);
+            this.detailcont.Size = new System.Drawing.Size(1000, 460);
             // 
             // detailbtm
             // 
@@ -209,8 +213,8 @@
             this.detailbtm.Controls.Add(this.label13);
             this.detailbtm.Controls.Add(this.label12);
             this.detailbtm.Controls.Add(this.dateConfirmedDate);
-            this.detailbtm.Location = new System.Drawing.Point(0, 226);
-            this.detailbtm.Size = new System.Drawing.Size(892, 161);
+            this.detailbtm.Location = new System.Drawing.Point(0, 460);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 161);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -333,7 +337,7 @@
             // 
             this.labReplaceReport.Location = new System.Drawing.Point(426, 18);
             this.labReplaceReport.Name = "labReplaceReport";
-            this.labReplaceReport.Size = new System.Drawing.Size(141, 23);
+            this.labReplaceReport.Size = new System.Drawing.Size(167, 23);
             this.labReplaceReport.TabIndex = 12;
             this.labReplaceReport.Text = "Replacement Report :";
             // 
@@ -578,9 +582,9 @@
             // btnResponsibilitydept
             // 
             this.btnResponsibilitydept.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnResponsibilitydept.Location = new System.Drawing.Point(792, 18);
+            this.btnResponsibilitydept.Location = new System.Drawing.Point(824, 20);
             this.btnResponsibilitydept.Name = "btnResponsibilitydept";
-            this.btnResponsibilitydept.Size = new System.Drawing.Size(184, 33);
+            this.btnResponsibilitydept.Size = new System.Drawing.Size(164, 33);
             this.btnResponsibilitydept.TabIndex = 7;
             this.btnResponsibilitydept.Text = "Responsibility Dept.";
             this.btnResponsibilitydept.UseVisualStyleBackColor = true;
@@ -660,7 +664,7 @@
             this.txtSDPKPICode.Location = new System.Drawing.Point(527, 49);
             this.txtSDPKPICode.Name = "txtSDPKPICode";
             this.txtSDPKPICode.ReadOnly = true;
-            this.txtSDPKPICode.Size = new System.Drawing.Size(40, 23);
+            this.txtSDPKPICode.Size = new System.Drawing.Size(66, 23);
             this.txtSDPKPICode.TabIndex = 45;
             // 
             // numRMtl
@@ -770,7 +774,7 @@
             0,
             0});
             this.numTotal.ReadOnly = true;
-            this.numTotal.Size = new System.Drawing.Size(57, 23);
+            this.numTotal.Size = new System.Drawing.Size(83, 23);
             this.numTotal.TabIndex = 51;
             this.numTotal.Value = new decimal(new int[] {
             0,
@@ -826,7 +830,7 @@
             this.gridReplacement.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridReplacement.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridReplacement.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridReplacement.Location = new System.Drawing.Point(571, 17);
+            this.gridReplacement.Location = new System.Drawing.Point(599, 17);
             this.gridReplacement.Name = "gridReplacement";
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
@@ -907,9 +911,9 @@
             // 
             this.lblConfirmDept.BackColor = System.Drawing.Color.Transparent;
             this.lblConfirmDept.Font = new System.Drawing.Font("Microsoft Sans Serif", 17F, System.Drawing.FontStyle.Bold);
-            this.lblConfirmDept.Location = new System.Drawing.Point(792, 54);
+            this.lblConfirmDept.Location = new System.Drawing.Point(812, 54);
             this.lblConfirmDept.Name = "lblConfirmDept";
-            this.lblConfirmDept.Size = new System.Drawing.Size(197, 34);
+            this.lblConfirmDept.Size = new System.Drawing.Size(183, 34);
             this.lblConfirmDept.TabIndex = 58;
             this.lblConfirmDept.Text = "Confirmed Dept.";
             this.lblConfirmDept.TextStyle.Color = System.Drawing.Color.Red;

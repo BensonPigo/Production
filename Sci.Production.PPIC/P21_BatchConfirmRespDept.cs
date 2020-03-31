@@ -47,7 +47,7 @@ namespace Sci.Production.PPIC
                 ;
 
             this.Helper.Controls.Grid.Generator(this.gridICR_ResponsibilityDept)
-                .Text("FactoryID", "Factory", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("FactoryID", "Factory", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("DepartmentID", "Dept.", width: Widths.AnsiChars(21), iseditingreadonly: true)
                 .Numeric("Percentage", header: "%", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 0, integer_places: 10)
                 .Numeric("Amount", header: "Amt", width: Widths.AnsiChars(13), iseditingreadonly: true, decimal_places: 2, integer_places: 10)
@@ -145,6 +145,11 @@ where   ID in (select ID from #tmp)
 
         private void BtnReject_Click(object sender, EventArgs e)
         {
+            if (this.dtICR == null)
+            {
+                return;
+            }
+
             var listSelectedICR = this.dtICR.AsEnumerable().Where(s => (int)s["select"] == 1);
 
             if (!listSelectedICR.Any())
@@ -166,6 +171,11 @@ Pls re-check and update responsibility information.
 
         private void BtnConfirm_Click(object sender, EventArgs e)
         {
+            if (this.dtICR == null)
+            {
+                return;
+            }
+
             var listSelectedICR = this.dtICR.AsEnumerable().Where(s => (int)s["select"] == 1);
 
             if (!listSelectedICR.Any())
