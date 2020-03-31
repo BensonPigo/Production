@@ -86,7 +86,7 @@ left join Pass1 p with (nolock) on ICR.EditName = p.ID
 left join TpePass1 tp with (nolock) on ICR.EditName = tp.ID
 where   RespDeptConfirmDate is null {sqlWhere}
 
-select * from #tmp
+select t.* from #tmp t where exists (select 1 from ICR_ResponsibilityDept ird with (nolock) where t.ID = ird.ID)
 
 select  ID,
         FactoryID,
