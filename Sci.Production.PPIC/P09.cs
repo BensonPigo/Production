@@ -107,7 +107,6 @@ order by rd.Seq1,rd.Seq2", masterID);
             base.OnDetailEntered();
 
             this.btnMailto.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "Junked" && !MyUtility.Check.Empty(this.CurrentMaintain["ApvDate"]) ? true : false;
-            this.btnResponsibilitydept.Enabled = MyUtility.Check.Empty(this.CurrentMaintain["RespDeptConfirmDate"]);
             this.displayStyleNo.Value = MyUtility.GetValue.Lookup("StyleID", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), "Orders", "ID");
             this.displayPreparedby.Value = MyUtility.Check.Empty(this.CurrentMaintain["ApplyDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ApplyDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
             this.displayPPICFactorymgr.Value = MyUtility.Check.Empty(this.CurrentMaintain["ApvDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ApvDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
@@ -939,12 +938,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 return;
             }
 
-            bool canEdit = false;
-            if (Prgs.GetAuthority(Sci.Env.User.UserID, "P09. Replacement Report (Accessory)", "CanSend") && MyUtility.Check.Empty(this.CurrentMaintain["VoucherDate"]))
-            {
-                canEdit = true;
-            }
-
+            bool canEdit = MyUtility.Check.Empty(this.CurrentMaintain["RespDeptConfirmDate"]) && this.Perm.Edit;
             var frm = new P21_ResponsibilityDept(canEdit, this.CurrentMaintain["ID"].ToString(), null, null, "Replacement");
             frm.ShowDialog(this);
             frm.Dispose();
