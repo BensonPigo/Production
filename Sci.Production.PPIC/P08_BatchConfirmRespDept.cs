@@ -99,7 +99,8 @@ select
 	EMail=(select EMail from Pass1 where ID = rr.ApplyName)
 from ReplacementReport rr with(nolock)
 where 1=1
-and rr.RespDeptConfirmDate is not null 
+and rr.RespDeptConfirmDate is null 
+and exists(select 1 from ICR_ResponsibilityDept icr with(nolock) where icr.id = rr.id)
 and rr.Type  = '{this.Type}'
 {where}
 ";
