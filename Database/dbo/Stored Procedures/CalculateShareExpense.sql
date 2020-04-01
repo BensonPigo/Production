@@ -464,6 +464,7 @@ BEGIN
 			select se.InvNo,se.AccountID,[Amount] = sum(se.Amount)
 			into #InvNoSharedAmt
 			from ShareExpense se with (nolock)
+			LEFT JOIN SciFMS_AccountNo an ON se.AccountID = an.ID
 			where	se.ShippingAPID = @ShippingAPID 
 					and se.Junk = 0 
 					and	exists(
@@ -475,6 +476,7 @@ BEGIN
 						dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 
 						or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1
 					)
+			AND an.IsAPP=1
 			group by se.InvNo,se.AccountID
 
 			select	t.InvNo,[PackID] = pl.ID,t.AccountID,t.Amount,[PLSharedAmt] = Round(t.Amount / SUM(pl.GW) over(PARTITION BY t.InvNo,t.AccountID) * pl.GW,2)
