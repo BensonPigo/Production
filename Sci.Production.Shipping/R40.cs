@@ -582,7 +582,7 @@ into #tmpWHQty
 from (
 	select  [HSCode] = isnull(f.HSCode,'')
 	        , [NLCode] = isnull(f.NLCode,'')
-	        , [POID] = fi.POID
+	        , [POID] = o.POID
             , o.FactoryID
 	        , [Seq] = (fi.Seq1+'-'+fi.Seq2)
 	        , [Refno] = psd.Refno
@@ -647,7 +647,7 @@ from (
     from(
         select  [HSCode] = isnull(li.HSCode,'') 
 	            , [NLCode] = isnull(li.NLCode,'') 
-	            , [POID] = l.OrderID
+	            , [POID] = o.POID
                 , o.FactoryID
 	            , [Seq] = ''
 	            , [RefNo] = l.Refno
@@ -696,6 +696,7 @@ from (
 	        , [NLCode] = isnull(f.NLCode,'')
             , t.FactoryID
 	        , [ID] = t.ID
+	        , [POID] = t.POID
 	        , [Qty] = IIF((mdp.OutQty-mdp.LObQty) > 0,dbo.getVNUnitTransfer(isnull(f.Type,'')
 		                ,psd.StockUnit
 		                ,isnull(f.CustomsUnit,'')
@@ -737,6 +738,7 @@ from (
 	        , [NLCode] = isnull(li.NLCode,'')
             , t.FactoryID
 	        , [ID] = t.ID
+	        , [POID] = t.POID
 	        , [Qty] = IIF(l.OutQty > 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
 		                ,l.UnitId
 		                ,isnull(li.CustomsUnit,'')
@@ -822,20 +824,116 @@ where t.WhseClose is null
 -------------03 WIP在製品(WIP Qty Detail) ----------------------
 ----------------------------------------------------------------
 --組WIP明細
-select  [HSCode] = IIF(ti.HSCode is null,tw.HSCode,ti.HSCode)
-        , [NLCode] = IIF(ti.NLCode is null,tw.NLCode,ti.NLCode)
-        , [ID] = IIF(ti.ID is null,tw.POID,ti.ID)
-        , FactoryID=IIF(ti.FactoryID is null,tw.FactoryID,ti.FactoryID)
-        , [Refno] = IIF(ti.Refno is null,tw.Refno,ti.Refno)   
-        , [MaterialType] = IIF(ti.MaterialType is null,tw.MaterialType,ti.MaterialType)   
-        , [Description] = IIF(ti.Description is null,tw.Description,ti.Description)   
-        , [Qty] = (isnull(ti.Qty,0)-isnull(tw.Qty,0)) 
-        , [CustomsUnit] = IIF(ti.CustomsUnit is null,tw.CustomsUnit,ti.CustomsUnit)
-        , [StockQty] = (isnull(ti.StockQty,0)-isnull(tw.StockQty,0)) 
-        , [StockUnit] = IIF(ti.StockUnit is null,tw.StockUnit,ti.StockUnit)
+--先處理發料部分, 若要group by時其他欄位一樣,只有StockUnit不一樣, 則先轉換其中一個單位再sum起來
+select 	
+	POID	, HSCode	, NLCode	, Qty 	, Refno	, MaterialType	, Description	, CustomsUnit	, StockQty	, StockUnit	, FactoryID
+	,rn=ROW_NUMBER()over(order by ID)
+into #tmpIssueQty_forwip
+from #tmpIssueQty 
+
+select
+	POID	, HSCode	, NLCode	, Qty 	, Refno	, MaterialType	, t2.Description	, CustomsUnit
+	, StockQty=
+		case when t.StockUnit <> t2.StockUnit and t.StockUnit like '%cone%' then
+				StockQty * 
+				(select RateValue from dbo.View_Unitrate where FROM_U = t.StockUnit and TO_U = 'M')*
+				(select RateValue from dbo.View_Unitrate where FROM_U = 'M' and TO_U = t2.StockUnit)
+			when t.StockUnit <> t2.StockUnit then
+				StockQty * 
+				(select RateValue from dbo.View_Unitrate where FROM_U = t.StockUnit and TO_U = t2.StockUnit)
+			else
+				StockQty
+		end
+	, StockUnit = t2.StockUnit
+	, FactoryID	
+into #tmpIssueQty_forwip2
+from #tmpIssueQty_forwip t
+outer apply(
+	select top 1 t2.StockUnit,t2.Description 
+	from #tmpIssueQty_forwip t2
+	where 1=1
+	and t.POID			= t2.POID
+	and t.HSCode		= t2.HSCode
+	and t.NLCode		= t2.NLCode
+	and t.Refno			= t2.Refno
+	and t.MaterialType	= t2.MaterialType
+	and t.CustomsUnit	= t2.CustomsUnit
+	and t.FactoryID		= t2.FactoryID
+	order by t2.rn
+)t2
+
+select 	POID	, HSCode	, NLCode	, Qty     , Refno    , MaterialType    , Description    , CustomsUnit    , StockQty    , StockUnit    , FactoryID
+	,rn=ROW_NUMBER()over(order by POID)
+into #tmpSPNotCloseSewingOutput_forwip
+from #tmpSPNotCloseSewingOutput 
+
+select 	POID	, HSCode	, NLCode	, Qty     , Refno    , MaterialType    , t2.Description    , CustomsUnit
+	, StockQty=
+		case when t.StockUnit <> t2.StockUnit and t.StockUnit like '%cone%' then
+				StockQty * 
+				(select RateValue from dbo.View_Unitrate where FROM_U = t.StockUnit and TO_U = 'M')*
+				(select RateValue from dbo.View_Unitrate where FROM_U = 'M' and TO_U = t2.StockUnit)
+			when t.StockUnit <> t2.StockUnit then
+				StockQty * 
+				(select RateValue from dbo.View_Unitrate where FROM_U = t.StockUnit and TO_U = t2.StockUnit)
+			else
+				StockQty
+		end
+	, t2.StockUnit    , FactoryID
+	,rn=ROW_NUMBER()over(order by POID)
+into #tmpSPNotCloseSewingOutput_forwip2
+from #tmpSPNotCloseSewingOutput_forwip t
+outer apply(
+	select top 1 t2.StockUnit,t2.Description 
+	from #tmpSPNotCloseSewingOutput_forwip t2
+	where 1=1
+	and t.POID			= t2.POID
+	and t.HSCode		= t2.HSCode
+	and t.NLCode		= t2.NLCode
+	and t.Refno			= t2.Refno
+	and t.MaterialType	= t2.MaterialType
+	and t.CustomsUnit	= t2.CustomsUnit
+	and t.FactoryID		= t2.FactoryID
+	order by t2.rn
+)t2
+
+select  [HSCode] = IIF(tw.HSCode is not null, tw.HSCode, ti.HSCode)
+        , [NLCode] = IIF(tw.NLCode is not null, tw.NLCode, ti.NLCode)
+        , [POID] = IIF(tw.POID is not null, tw.POID, ti.POID)
+        , FactoryID=IIF(tw.FactoryID is not null, tw.FactoryID, ti.FactoryID)
+        , [Refno] = IIF(tw.Refno is not null, tw.Refno, ti.Refno)   
+        , [MaterialType] = IIF(tw.MaterialType is not null, tw.MaterialType, ti.MaterialType)   
+        , [Description] = IIF(tw.Description is not null, tw.Description, ti.Description)   
+        , [Qty] = isnull(ti.Qty,0) - isnull(tw.Qty,0)
+        , [CustomsUnit] = IIF(tw.CustomsUnit is not null, tw.CustomsUnit, ti.CustomsUnit)
+        , [StockQty] =
+			case when tw.StockUnit is not null and ti.StockUnit like '%cone%'  then -- 資料以 Already Sewing Output(#tmpSPNotCloseSewingOutput) 為主(單位)
+					isnull(ti.StockQty,0)*
+					(select RateValue from dbo.View_Unitrate where FROM_U = ti.StockUnit and TO_U = 'M')*
+					(select RateValue from dbo.View_Unitrate where FROM_U = 'M' and TO_U = tw.StockUnit)
+					-
+					isnull(tw.StockQty,0)
+				when tw.StockUnit is not null then
+					isnull(ti.StockQty,0)*
+					(select RateValue from dbo.View_Unitrate where FROM_U = ti.StockUnit and TO_U = tw.StockUnit)
+					-
+					isnull(tw.StockQty,0)					
+				when tw.StockUnit is null and tw.StockUnit like '%cone%' then
+					isnull(ti.StockQty,0)
+					-
+					isnull(tw.StockQty,0)*
+					(select RateValue from dbo.View_Unitrate where FROM_U = tw.StockUnit and TO_U = 'M')*
+					(select RateValue from dbo.View_Unitrate where FROM_U = 'M' and TO_U = ti.StockUnit)
+				else
+					isnull(ti.StockQty,0)
+					-
+					isnull(tw.StockQty,0)*
+					(select RateValue from dbo.View_Unitrate where FROM_U = tw.StockUnit and TO_U = ti.StockUnit)
+			end
+        , [StockUnit] = IIF(tw.StockUnit is not null,tw.StockUnit,ti.StockUnit)
 into #tmpWIPDetail
 from (
-	select 	ID
+	select 	POID
 			, HSCode
 			, NLCode
 			, SUM(Qty) as Qty 
@@ -846,8 +944,8 @@ from (
             , SUM(StockQty) as StockQty
             , StockUnit
             , FactoryID
-	from #tmpIssueQty 
-	group by ID,HSCode,NLCode,Refno,MaterialType,Description,CustomsUnit,StockUnit,FactoryID
+	from #tmpIssueQty_forwip2 
+	group by POID,HSCode,NLCode,Refno,MaterialType,Description,CustomsUnit,StockUnit,FactoryID
 ) ti
 full outer 
 join (
@@ -862,18 +960,16 @@ join (
             , SUM(StockQty) as StockQty
             , StockUnit
             , FactoryID
-	from #tmpSPNotCloseSewingOutput 
+	from #tmpSPNotCloseSewingOutput_forwip2 
 	group by POID,HSCode,NLCode,Refno,MaterialType,Description,CustomsUnit,StockUnit,FactoryID
-) tw on tw.POID = ti.ID 
+) tw on tw.POID = ti.POID 
      and ti.HSCode = tw.HSCode 
      and tw.NLCode = ti.NLCode 
      and tw.Refno = ti.Refno 
      and tw.MaterialType = ti.MaterialType 
-     and ti.Description = tw.Description
      and ti.CustomsUnit = tw.CustomsUnit 
-     and ti.StockUnit = tw.StockUnit
      and ti.FactoryID = tw.FactoryID
-order by IIF(ti.ID is null,tw.POID,ti.ID)
+order by IIF(tw.POID is null,ti.POID,tw.POID)
 
 ----------------------------------------------------------------
 --------- 04 Production成品庫存(Prod. Qty Detail) --------------
@@ -1359,7 +1455,7 @@ order by POID,Seq
 select * 
 from #tmpWIPDetail 
 where Qty != 0 {0} {1} 
-order by ID
+order by POID
 
 --4)Prod明細
 select * 
