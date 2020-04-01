@@ -119,7 +119,7 @@ order by M desc");
             sqlWhere = string.Join(" and ", sqlWheres);
             if (!sqlWhere.Empty())
             {
-                sqlWhere = " where " + sqlWhere;
+                sqlWhere = " where A.Junk=0 AND " + sqlWhere;
             }
 
             gb = "group by a.StartDate,b.SuppID,b.StyleID,b.refno";
