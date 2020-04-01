@@ -48,13 +48,23 @@ end;
 
 SELECT * 
 INTO Express
-FROM [Production].dbo.Express  
-WHERE (AddDate >=@DateStart  or EditDate >=@DateStart) ORDER BY Id
+FROM [Production].dbo.Express e
+WHERE (e.AddDate >=@DateStart  or e.EditDate >=@DateStart) 
+		or exists (
+			select 1
+			from [Production].dbo.Express_Detail ed
+			inner join [Production].dbo.PackingList pl with(nolock) on pl.id = ed.PackingListID 
+			inner join [Production].dbo.Pullout p with(nolock) on pl.PulloutID = p.ID
+			where e.id = ed.id
+					and (p.AddDate >=@DateStart  or p.EditDate >=@DateStart) 
+		)
+ORDER BY Id
 
-SELECT B.* ,AirPPID=iif(isnull(b.PackingListID,'') = '',b.DutyNo , airpp.AirPPno)
+SELECT B.* ,AirPPID=iif(isnull(b.PackingListID,'') = '',b.DutyNo , airpp.AirPPno), pl.PulloutID
 INTO Express_Detail
 FROM  Pms_To_Trade.dbo.Express  A
 inner join [Production].dbo.Express_Detail  B on A.ID = B.ID
+left join [Production].dbo.PackingList pl with(nolock) on pl.id = B.PackingListID 
 outer apply(
 	select top 1 AirPPno = AirPP.ID
 	from [Production].dbo.PackingList_Detail pld with(nolock)
