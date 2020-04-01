@@ -902,7 +902,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     objArray[0, 3] = dr["OnTimeQty"];
                     objArray[0, 4] = dr["FailQty"];
                     objArray[0, 5] = dr["SDP"];
-                    objArray[0, 6] = (decimal)dr["SDP"] >= 97 ? "PASS" : "FAIL";
+                    objArray[0, 6] = MyUtility.Convert.GetDouble(dr["SDP"]) >= 0.97 ? "PASS" : "FAIL";
 
                     worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Value2 = objArray;
 
@@ -930,7 +930,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                         // objArray[0, 5] = "=" + string.Format("D{0}/IF(C{0}=0, 1,C{0})*100", rownum + i);
                         objArray[0, 5] = "=" + string.Format("D{0}/IF(D{0}+E{0}=0, 1,D{0}+E{0})", rownum + i);
 
-                        objArray[0, 6] = (decimal)dr["SDP"] >= 97 ? "PASS" : "FAIL";
+                        objArray[0, 6] = MyUtility.Convert.GetDouble(dr["SDP"]) >= 0.97 ? "PASS" : "FAIL";
                         worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Value2 = objArray;
                         worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Interior.Color = Color.FromArgb(204, 255, 204);
                         worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Font.Bold = true;
@@ -956,7 +956,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     // worksheet.Range[string.Format("F{0}:F{0}", rownum + intRowsCount)].Formula = "=" + string.Format("D{0}/IF(C{0}=0, 1,C{0})*100", rownum + intRowsCount);
                     worksheet.Range[string.Format("F{0}:F{0}", rownum + intRowsCount)].Formula = "=" + string.Format("D{0}/IF(D{0}+E{0}=0, 1,D{0}+E{0})", rownum + intRowsCount);
 
-                    worksheet.Cells[rownum + intRowsCount, 7] = $"=IF(F{rownum + intRowsCount}>=97,\"PASS\",\"FAIL\")";
+                    worksheet.Cells[rownum + intRowsCount, 7] = $"=IF(F{rownum + intRowsCount}>=0.97,\"PASS\",\"FAIL\")";
                     worksheet.Range[string.Format("A{0}:G{0}", rownum + intRowsCount)].Borders[Excel.XlBordersIndex.xlEdgeTop].LineStyle = 1;
                     worksheet.Range[string.Format("A{0}:G{0}", rownum + intRowsCount)].Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = 1;
                     worksheet.Range[string.Format("A{0}:G{0}", rownum + intRowsCount)].Interior.Color = Color.FromArgb(255, 255, 1);
