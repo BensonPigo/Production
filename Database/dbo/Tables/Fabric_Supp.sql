@@ -30,6 +30,7 @@
     [Keyword]       VARCHAR (MAX)  NULL,
     [PreShrink]     BIT            NULL,
     [Junk]          BIT            NULL,
+	[SustainableMateria] nvarchar(150) NULL,
     CONSTRAINT [PK_Fabric_Supp] PRIMARY KEY CLUSTERED ([SCIRefno] ASC, [SuppID] ASC)
 );
 
