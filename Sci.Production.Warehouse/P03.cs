@@ -393,7 +393,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'",out dru
             .Text("RevisedETA", header: "Sup. Delivery" + Environment.NewLine + "Rvsd ETA", width: Widths.AnsiChars(2), iseditingreadonly: true)    //5
             .Text("FabricCombo", header: "Fabric" + Environment.NewLine + "Combo", iseditingreadonly: true)  
             .Text("refno", header: "Ref#", iseditingreadonly: true, settings: ts2)  //6
-            .CheckBox("SustainableMateria", header: "Recycled", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
+            .CheckBox("SustainableMaterial", header: "Recycled", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(33))  //8
             .Text("fabrictype2", header: "Material\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(6))  //7  
             .EditText("Article", header: "Article", iseditingreadonly: true, width: Widths.AnsiChars(15))  //8
@@ -662,7 +662,7 @@ from(
             , GarmentSize
 			, Article
             , FabricCombo
-			, SustainableMateria
+			, SustainableMaterial
     from (
         select  *
                 , -len(description) as len_D 
@@ -753,7 +753,7 @@ from(
                     , [GarmentSize]=dbo.GetGarmentSizeByOrderIDSeq(a.Id, a.SEQ1,a.SEQ2)
 					, [Article] = aft.Article
 					, EachCons.FabricCombo 
-					, [SustainableMateria] = IIF(fs.SustainableMateria='Recycled',1,0)
+					, [SustainableMaterial] = IIF(fs.SustainableMaterial='Recycled',1,0)
             from #tmpOrder as orders WITH (NOLOCK) 
             inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
 	        left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
@@ -863,7 +863,7 @@ from(
                     , [GarmentSize]=dbo.GetGarmentSizeByOrderIDSeq(a.Id, a.SEQ1,a.SEQ2)
 					, [Article] = aft.Article
 					, EachCons.FabricCombo 
-					, [SustainableMateria] = IIF(fs.SustainableMateria='Recycled',1,0)
+					, [SustainableMaterial] = IIF(fs.SustainableMaterial='Recycled',1,0)
         from dbo.MDivisionPoDetail m WITH (NOLOCK) 
         inner join #tmpOrder as o on o.poid = m.poid
         left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 
