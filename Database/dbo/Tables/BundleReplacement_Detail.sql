@@ -12,8 +12,11 @@
     [PrintDate]   DATETIME       NULL,
     [IsPair]      BIT            NULL,
     [Location]    VARCHAR (1)    DEFAULT ('') NOT NULL,
-    CONSTRAINT [PK_BundleReplacement_Detail] PRIMARY KEY CLUSTERED ([BundleNo] ASC, [Id] ASC)
+    CONSTRAINT [PK_BundleReplacement_Detail] PRIMARY KEY CLUSTERED ([BundleNo] ASC, [Id] ASC),
+    CONSTRAINT [UK_BundleReplacement_Detail] UNIQUE NONCLUSTERED ([BundleNo] ASC)
 );
+
+
 
 
 
