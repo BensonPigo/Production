@@ -2546,7 +2546,7 @@ on t.type=s.type and t.id=s.id
 			  ,a.SeasonID	   = b.SeasonID	  
 			  ,a.ShowSuppColor = b.ShowSuppColor
 			  ,a.SuppRefno	   = b.SuppRefno
-			  ,a.SustainableMateria	   = b.SustainableMateria
+			  ,a.SustainableMaterial	   = b.SustainableMaterial
 
 		from Production.dbo.Fabric_Supp as a 
 		inner join Trade_To_Pms.dbo.Fabric_Supp as b ON a.SuppID=b.SuppID and a.SCIRefno = b.SCIRefno
@@ -2583,7 +2583,7 @@ on t.type=s.type and t.id=s.id
 				,ukey
 				,SuppID
 				,SCIRefno
-				,SustainableMateria
+				,SustainableMaterial
 		)
 		select 
 				 AbbCH	      
@@ -2617,7 +2617,7 @@ on t.type=s.type and t.id=s.id
 				,ukey
 				,SuppID
 				,SCIRefno
-				,SustainableMateria
+				,SustainableMaterial
 
 		from Trade_To_Pms.dbo.Fabric_Supp as b WITH (NOLOCK)
 		where not exists(select SuppID from Production.dbo.Fabric_Supp as a WITH (NOLOCK) where a.SuppID = b.SuppID and a.SCIRefno = b.SCIRefno)
