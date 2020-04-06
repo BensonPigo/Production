@@ -122,6 +122,7 @@ SELECT
 	,o.localorder
     , OutsdReason = rd.Name
     , ReasonRemark = o.OutstandingRemark
+    ,o.OnsiteSample
 into #tmp_main
 FROM Orders o WITH (NOLOCK)
 LEFT JOIN OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
@@ -145,7 +146,7 @@ and o.IsForecast <> 1
                 }
                 else if (this.radioSample.Checked)
                 {
-                    strSQL += " AND o.Category = 'S' AND f.Type = 'S' and isnull(o.OnSiteSample,0) <> 1";
+                    strSQL += " AND o.Category = 'S' AND f.Type = 'S'";
                 }
                 else
                 {
@@ -303,11 +304,13 @@ SELECT
 		,Extension = convert(varchar(10),iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.{kpiDate}, DATEADD(day, isnull(t.OTDExtension,0), t.{kpiDate})), 111)--I
 		,DeliveryByShipmode = t.ShipmodeID
 		,t.OrderQty 
-        ,OnTimeQty = CASE WHEN t.GMTComplete = 'S' and p.PulloutDate is null THEN Cast(0 as int) --[IST20190675] 若為短交且PullOutDate是空的,不算OnTime也不算Fail,直接給0
-                Else iif(isnull(t.isDevSample,0) = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, 0, Cast(t.OrderQty as int)), Cast(isnull(pd.Qty,0) as int)) 
-              End
-        ,FailQty =  CASE WHEN t.GMTComplete = 'S' and p.PulloutDate is null THEN Cast(0 as int)
-                Else iif(isnull(t.isDevSample,0) = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, Cast(t.OrderQty as int), 0), Cast(isnull(pd.FailQty,t.OrderQty) as int)) 
+        ,OnTimeQty = CASE WHEN t.OnsiteSample = 1 THEN IIF(GetOnsiteSampleFail.isFail = 1 or sew.SewLastDate is null, 0, Cast(t.OrderQty as int))
+                          WHEN t.GMTComplete = 'S' and p.PulloutDate is null THEN Cast(0 as int) --[IST20190675] 若為短交且PullOutDate是空的,不算OnTime也不算Fail,直接給0
+                          Else iif(isnull(t.isDevSample,0) = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, 0, Cast(t.OrderQty as int)), Cast(isnull(pd.Qty,0) as int)) 
+                     End
+        ,FailQty =  CASE WHEN t.OnsiteSample = 1 THEN IIF(GetOnsiteSampleFail.isFail = 1 or sew.SewLastDate is null, Cast(t.OrderQty as int), 0)
+                         WHEN t.GMTComplete = 'S' and p.PulloutDate is null THEN Cast(0 as int)
+                         Else iif(isnull(t.isDevSample,0) = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, Cast(t.OrderQty as int), 0), Cast(isnull(pd.FailQty,t.OrderQty) as int)) 
              End
         ,pullOutDate = iif(isnull(t.isDevSample,0) = 1, CONVERT(char(10), pd2.PulloutDate, 20), CONVERT(char(10), p.PulloutDate, 111))
 		,Shipmode = t.ShipmodeID
@@ -358,6 +361,11 @@ outer apply (
     and pd.OrderShipmodeSeq = t.Seq
     order by pd.PulloutDate ASC
 ) pd2
+----------------End----------------
+-----------OnsiteSample=1-----------
+outer apply (
+    Select isFail = iif(sew.SewLastDate > t.{kpiDate}, 1, 0)
+) GetOnsiteSampleFail
 ----------------End----------------
 where t.OrderQty > 0 
 -----End-------
@@ -427,6 +435,7 @@ outer apply(
 )ps
 -------End-------
 where t.GMTComplete != 'S' 
+and t.OnsiteSample = 0 -- 2020/03/27 [IST20200536]ISP20200567 onSiteSample = 0 才需要看這邊規則是否Fail
 and t.OrderQty - (pd.Qty + pd.FailQty) > 0
 and isnull(t.isDevSample,0) = 0 --isDevSample = 0 才需要看這邊的規則是否Fail
 )a
