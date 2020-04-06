@@ -1650,7 +1650,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                 objArray[intRowsStart, 61] = dr["NotFOCAdjQty"];
                 objArray[intRowsStart, 62] = dr["PoPrice"];
                 objArray[intRowsStart, 63] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["PoPrice"]);
-                objArray[intRowsStart, 64] = MyUtility.Convert.GetString(dr["LocalOrder"]).ToUpper() == "TRUE" ? dr["PoPrice"] : dr["CMPPrice"];
+                objArray[intRowsStart, 64] = MyUtility.Convert.GetDecimal(dr["PoPrice"]);
                 objArray[intRowsStart, 65] = dr["KPILETA"];  // BG
                 objArray[intRowsStart, 66] = dr["PFETA"];
                 objArray[intRowsStart, 67] = dr["PFRemark"];

@@ -85,19 +85,10 @@ SELECT isnull(sum(b.CTNQty),0)
             this.btnCartonSize.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_CTNData WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
             this.btnCartonStatus.ForeColor = MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail WITH (NOLOCK) where OrderID = '{0}' and ReceiveDate is not null", this.CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
             this.btnOrderRemark.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
-            this.btnCMPQSheet.Enabled = !MyUtility.Check.Empty(this.CurrentMaintain["CMPQDate"]);
             this.numCtnQtyInClog.BackColor = Color.FromArgb(181, 230, 29);
             this.numCtnQtyOnTransit.BackColor = Color.FromArgb(181, 230, 29);
             this.numCtnCFA.BackColor = Color.FromArgb(255, 174, 201);
             this.numCtnTransit.BackColor = Color.FromArgb(255, 174, 201);
-            if (this.btnCMPQSheet.Enabled)
-            {
-                this.btnCMPQSheet.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["Packing"]) || !MyUtility.Check.Empty(this.CurrentMaintain["MarkFront"]) || !MyUtility.Check.Empty(this.CurrentMaintain["Label"]) || haveOrder_Qty || MyUtility.Check.Seek(string.Format("select ID from Order_Article where ID = '{0}'", this.CurrentMaintain["ID"].ToString())) || MyUtility.Check.Seek(string.Format("select ID from Order_SizeCode where ID = '{0}'", this.CurrentMaintain["POID"].ToString())) || MyUtility.Check.Seek(string.Format("select ID from Order_ColorCombo where ID = '{0}'", this.CurrentMaintain["POID"].ToString())) || MyUtility.Check.Seek(string.Format("select ID from Orders where POID = '{0}' and ID != '{0}'", this.CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
-            }
-            else
-            {
-                this.btnCMPQSheet.ForeColor = Color.Black;
-            }
 
             this.btnFabricInspectionList.ForeColor = MyUtility.Check.Seek(string.Format("select ID from FIR WITH (NOLOCK) where POID = '{0}'", this.CurrentMaintain["POID"].ToString())) ? Color.Blue : Color.Black;
             this.btnCFARFTList.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Cfa WITH (NOLOCK) where OrderID = '{0}'", this.CurrentMaintain["ID"].ToString())) || MyUtility.Check.Seek(string.Format("select OrderID from Rft where OrderID = '{0}'", this.CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;

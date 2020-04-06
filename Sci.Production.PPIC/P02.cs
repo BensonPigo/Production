@@ -90,7 +90,6 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) 
                 .Text("NewOrder", header: "New", width: Widths.AnsiChars(1))
                 .Text("DeleteOrder", header: "Dele", width: Widths.AnsiChars(1))
                 .Text("JunkOrder", header: "Junk", width: Widths.AnsiChars(1))
-                .Text("CMPQDate", header: "CMPQ", width: Widths.AnsiChars(1))
                 .Text("EachConsApv", header: "Each Cons", width: Widths.AnsiChars(1))
                 .Text("NewMnorder", header: "M/Notice", width: Widths.AnsiChars(1))
                 .Text("NewSMnorder", header: "S/M.Notice", width: Widths.AnsiChars(1))
@@ -154,7 +153,6 @@ select oc.FactoryID
 	   , NewOrder = IIF(NewOrder = 1, 'V','')
 	   , DeleteOrder = iif(DeleteOrder=1,'V','')
 	   , JunkOrder = iif(JunkOrder=1,'V','')
-	   , CMPQDate = iif(NewCMPQDate is null,'','V')
 	   , EachConsApv = iif(NewEachConsApv is null,iif(OriginalEachConsApv is null,'','★'),'V')
 	   , NewMnorder = iif(NewMnorderApv is null,'','V')
 	   , NewSMnorderApv = iif(NewSMnorderApv is null,'','V')
@@ -209,7 +207,7 @@ order by oc.FactoryID,oc.OrderId";
             DataTable excelTable;
             try
             {
-                MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource1.DataSource, "FactoryID,OrderId,OriginalStyleID,SeasonID,BrandID,OriginalCustPONo,OriginalQty,OriginalBuyerDelivery,OriginalSCIDelivery,OriginalLETA,OriginalShipModeList,KPILETA,TransferToFactory,NewCustPONo,NewQty,NewBuyerDelivery,NewSCIDelivery,NewLETA,NewShipModeList,NewOrder,DeleteOrder,JunkOrder,CMPQDate,EachConsApv,NewMnorder,NewSMnorderApv,MnorderApv2", "select * from #tmp", out excelTable);
+                MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource1.DataSource, "FactoryID,OrderId,OriginalStyleID,SeasonID,BrandID,OriginalCustPONo,OriginalQty,OriginalBuyerDelivery,OriginalSCIDelivery,OriginalLETA,OriginalShipModeList,KPILETA,TransferToFactory,NewCustPONo,NewQty,NewBuyerDelivery,NewSCIDelivery,NewLETA,NewShipModeList,NewOrder,DeleteOrder,JunkOrder,EachConsApv,NewMnorder,NewSMnorderApv,MnorderApv2", "select * from #tmp", out excelTable);
             }
             catch (Exception ex)
             {
@@ -270,11 +268,8 @@ order by oc.FactoryID,oc.OrderId";
             objApp.get_Range("Z" + 4, "Z" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             objApp.get_Range("Z" + 4, "Z" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
 
-            objApp.get_Range("AA" + 4, "AA" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("AA" + 4, "AA" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
-
-            objApp.get_Range("A" + number, "AA" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("A" + number, "AA" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 2;
+            objApp.get_Range("A" + number, "Z" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("A" + number, "Z" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 2;
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P02");
