@@ -1196,7 +1196,7 @@ where id = '{0}'", Env.User.Factory), null);
             sqlCmd.Append($@"
 select  s.SewingLineID
             , s.MDivisionID
-            , o.FactoryID
+            , s.FactoryID
             , s.OrderID
             , o.CustPONo
             , s.ComboType
@@ -1485,7 +1485,7 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_CutInLine
 -----------------------------------------------------------------
 select  s.SewingLineID
             , s.MDivisionID
-            , o.FactoryID
+            , s.FactoryID
             , s.OrderID
 			, o.CustPONo
             , s.ComboType 
