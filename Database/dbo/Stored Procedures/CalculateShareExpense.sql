@@ -475,6 +475,7 @@ BEGIN
 						dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 
 						or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1
 					)
+					AND dbo.GetAccountNoExpressType(se.AccountID,'IsApp') = 1 
 			group by se.InvNo,se.AccountID
 
 			select	t.InvNo,[PackID] = pl.ID,t.AccountID,t.Amount,[PLSharedAmt] = Round(t.Amount / SUM(pl.GW) over(PARTITION BY t.InvNo,t.AccountID) * pl.GW,2)
