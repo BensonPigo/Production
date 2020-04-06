@@ -47,6 +47,7 @@ namespace Sci.Production.Cutting
             this.AllData.Clear();
             this.FtyFroup.Clear();
             this.Days.Clear();
+            this.summaryData = new DataTable();
             this.detailData = new DataTable();
 
             if (!(SewingDate.Value1.HasValue || SewingDate.Value2.HasValue))
@@ -165,272 +166,9 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
             #endregion
             List<string> allOrder = dt.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct().ToList();
 
-            #region Note 測試完成後移除
-            /*
-            #region Order ID、對應每一天的資料
-
-
-            // 取得訂單所有成套的裁剪數量 (已去除部位缺少的)
-            List<GarmentList> GarmentListList = PublicPrg.Prgs.GetCutPlanQty(allOrder);
-
-            foreach (string OrderID in allOrder)
-            {
-                var sameOrderId = dt.AsEnumerable().Where(o => o["OrderID"].ToString() == OrderID);
-
-                // 這筆訂單的起始與結束時間
-                DateTime Start = sameOrderId.Min(o => Convert.ToDateTime(o["Inline"]));
-                DateTime End = sameOrderId.Max(o => Convert.ToDateTime(o["offline"]));
-
-
-                InOffLineList nOnj = new InOffLineList();
-                // SP#
-                nOnj.OrderID = OrderID;
-                nOnj.InOffLines = new List<InOffLine>();
-
-                // 所有Order ID、以及相對應 要扣去的Lead Time
-                int LeadTime = this.LeadTimeList.Where(o => o.OrderID == OrderID).FirstOrDefault().LeadTimeDay;
-
-                foreach (DataRow dr in sameOrderId)
-                {
-                    string ApsNO = dr["APSNo"].ToString();
-                    // 
-                    foreach (PublicPrg.Prgs.Day day in this.Days)
-                    {
-                        // 比Inline晚
-                        bool Later_ThanInline = DateTime.Compare(day.Date, Convert.ToDateTime(dr["Inline"]).Date.AddDays((-1 * LeadTime))) >= 0;
-                        // 比Offline早
-                        bool Eaelier_ThanInline = DateTime.Compare(Convert.ToDateTime(dr["Offline"]).Date.AddDays((-1 * LeadTime)), day.Date) >= 0;
-
-                        if (Later_ThanInline && Eaelier_ThanInline)
-                        {
-                            string StdQty = MyUtility.GetValue.Lookup($"SELECT StdQ FROM [dbo].[getDailystdq]('{ApsNO}') WHERE Date = '{day.Date.AddDays(LeadTime).ToString("yyyy/MM/dd")}'");
-                            string AccuStdQty = MyUtility.GetValue.Lookup($"SELECT SUM(StdQ) FROM [dbo].[getDailystdq]('{ApsNO}') WHERE Date <= '{day.Date.AddDays(LeadTime).ToString("yyyy/MM/dd")}'");
-
-                            // 取最小
-                            int Cutqty = GarmentListList.Where(o => o.OrderID == OrderID && o.EstCutDate == day.Date.Date.AddDays((-1 * LeadTime)))
-                                                        .Sum(o => o.Panels
-                                                            .Sum(x => x.FabricPanelCodes
-                                                                .Min(y => y.Qty)));
-                            int accuCutQty = GarmentListList.Where(o => o.OrderID == OrderID && DateTime.Compare(o.EstCutDate, day.Date.Date.AddDays((-1 * LeadTime))) <= 0)
-                                                        .Sum(o => o.Panels
-                                                            .Sum(x => x.FabricPanelCodes
-                                                                .Min(y => y.Qty)));
-
-                            InOffLine nLineObj = new InOffLine()
-                            {
-                                DateWithLeadTime = day.Date,
-                                ApsNO = ApsNO,
-                                CutQty = Cutqty,
-                                AccuCutQty = accuCutQty,
-                                StdQty = MyUtility.Check.Empty(StdQty) ? 0 : Convert.ToInt32(StdQty),
-                                AccuStdQty = MyUtility.Check.Empty(AccuStdQty) ? 0 : Convert.ToInt32(AccuStdQty),
-                            };
-                            nOnj.InOffLines.Add(nLineObj);
-                        }
-                    }
-                }
-                AllDataTmp.Add(nOnj);
-            }
-
-            #endregion
-
-
-            #region 將資料轉換成DataTable
-
-            DataTable detailDt = new DataTable();
-            DataTable summaryDt = new DataTable();
-
-            detailDt.ColumnsStringAdd("SP");
-            detailDt.ColumnsStringAdd("Desc./Sewing Date");
-            summaryDt.ColumnsStringAdd("SP");
-
-            int idx = 3;
-            foreach (var day in this.Days)
-            {
-                string strDate = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
-                detailDt.ColumnsStringAdd(strDate);
-                summaryDt.ColumnsStringAdd(strDate);
-                if (day.IsHoliday)
-                {
-                    string columnName = MyExcelPrg.GetExcelColumnName(idx);
-                    // 儲存格設定填充粉紅色  http://yuchicsharplearn.blogspot.com/2016/05/c-excel_30.html
-                    //Detail_Sheet.get_Range($"{columnName}1").Interior.ColorIndex = 38;
-                }
-                idx++;
-            }
-            int orderCount = this.AllDataTmp.Count;
-
-            for (int i = 0; i <= orderCount - 1; i++)
-            {
-                DataRow dr1 = detailDt.NewRow();
-                DataRow dr2 = detailDt.NewRow();
-                DataRow dr3 = detailDt.NewRow();
-                DataRow dr4 = detailDt.NewRow();
-
-                // 固定純文字
-                dr1["Desc./Sewing Date"] = "Cut Plan Qty";
-                dr2["Desc./Sewing Date"] = "Std. Qty";
-                dr3["Desc./Sewing Date"] = "Accu. Cut Plan Qty";
-                dr4["Desc./Sewing Date"] = "Accu. Std. Qty";
-
-                detailDt.Rows.Add(dr1);
-                detailDt.Rows.Add(dr2);
-                detailDt.Rows.Add(dr3);
-                detailDt.Rows.Add(dr4);
-            }
-
-            for (int i = 0; i <= orderCount - 1; i++)
-            {
-                DataRow dr = summaryDt.NewRow();
-                summaryDt.Rows.Add(dr);
-            }
-
-
-            // 相同日期GROUP BY
-            foreach (var BySP in AllDataTmp)
-            {
-                InOffLineList n = new InOffLineList();
-                n.OrderID = BySP.OrderID;
-                n.InOffLines = new List<InOffLine>();
-                var groupData = BySP.InOffLines.GroupBy(o => new { o.DateWithLeadTime }).Select(x => new InOffLine
-                {
-                    DateWithLeadTime = x.Key.DateWithLeadTime,
-                    CutQty = x.Sum(o => o.CutQty),
-                    StdQty = x.Sum(o => o.StdQty),
-                    AccuCutQty = x.Sum(o => o.AccuCutQty),
-                    AccuStdQty = x.Sum(o => o.AccuStdQty)
-                }).ToList();
-
-                n.InOffLines = groupData;
-                this.AllData.Add(n);
-            }
-
-            int index = 0;
-            foreach (var BySP in AllData)
-            {
-                foreach (var item in BySP.InOffLines)
-                {
-                    foreach (var day in this.Days)
-                    {
-                        string strDate = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
-
-                        detailDt.Rows[(index * 4)]["SP"] = BySP.OrderID;
-                        detailDt.Rows[(index * 4) + 1]["SP"] = BySP.OrderID;
-                        detailDt.Rows[(index * 4) + 2]["SP"] = BySP.OrderID;
-                        detailDt.Rows[(index * 4) + 3]["SP"] = BySP.OrderID;
-
-                        if (item.DateWithLeadTime == day.Date)
-                        {
-                            detailDt.Rows[(index * 4)][strDate] = item.CutQty;
-                            detailDt.Rows[(index * 4) + 1][strDate] = item.StdQty;
-                            detailDt.Rows[(index * 4) + 2][strDate] = item.AccuCutQty;
-                            detailDt.Rows[(index * 4) + 3][strDate] = item.AccuStdQty;
-                        }
-                        else
-                        {
-                            detailDt.Rows[(index * 4)][strDate] = DBNull.Value;
-                            detailDt.Rows[(index * 4) + 1][strDate] = DBNull.Value;
-                            detailDt.Rows[(index * 4) + 2][strDate] = DBNull.Value;
-                            detailDt.Rows[(index * 4) + 3][strDate] = DBNull.Value;
-                        }
-                    }
-                }
-                index++;
-            }
-            this.detailData = detailDt;
-
-            index = 0;
-            foreach (var BySP in AllData)
-            {
-                foreach (var item in BySP.InOffLines)
-                {
-                    int DayIndex = 0;
-                    foreach (var day in this.Days)
-                    {
-                        string strDate = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
-
-                        summaryDt.Rows[(index)]["SP"] = BySP.OrderID;
-                        //detailDt.Rows[(index * 4) + 1]["SP"] = BySP.OrderID;
-                        //detailDt.Rows[(index * 4) + 2]["SP"] = BySP.OrderID;
-                        //detailDt.Rows[(index * 4) + 3]["SP"] = BySP.OrderID;
-
-                        if (item.DateWithLeadTime == day.Date)
-                        {
-                            int CutQty = item.CutQty;
-                            int StdQty = item.StdQty;
-                            int AccuCutQty = item.AccuCutQty;
-                            int AccuStdQty = item.AccuStdQty;
-                            decimal cellValue = 0;
-                            if (AccuCutQty <= AccuStdQty)
-                            {
-                                cellValue = StdQty == 0 ? 0 : (AccuCutQty - AccuStdQty) / StdQty;
-                            }
-                            else if (StdQty > 0 && ((AccuCutQty - AccuStdQty) / StdQty) <= 1)
-                            {
-                                if (this.Days.Count - 1 < (DayIndex + 1))
-                                {
-                                    cellValue = 0;
-                                    continue;
-                                }
-                                var findData_nextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == this.Days[DayIndex + 1].Date);
-                                bool hasNextDayData = findData_nextDay.Any();
-                                // 若沒有下一天的資料，則全部視作0 （下一天不一定是明天日期）
-                                if (!hasNextDayData)
-                                {
-                                    cellValue = 0;
-                                }
-                                else
-                                {
-                                    int NextDayStdQty = findData_nextDay.Sum(o => o.StdQty);
-                                    cellValue = NextDayStdQty == 0 ? 0 : (AccuCutQty - AccuStdQty) / NextDayStdQty;
-                                }
-                            }
-                            else
-                            {
-                                if (this.Days.Count - 1 < (DayIndex + 1) || this.Days.Count - 1 < (DayIndex + 2))
-                                {
-                                    cellValue = 0;
-                                    continue;
-                                }
-                                var findData_nextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == this.Days[DayIndex + 1].Date);
-                                var findData_nextNextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == this.Days[DayIndex + 2].Date);
-                                bool hasNextDayData = findData_nextDay.Any();
-                                bool hasNextNextDayData = findData_nextNextDay.Any();
-                                // 若沒有下一天或下下一天的資料，則全部視作0
-                                if (!hasNextNextDayData || !hasNextDayData)
-                                {
-                                    cellValue = 0;
-                                }
-                                else
-                                {
-
-                                    // 沒意外應該只有一筆，不過還是用SUM
-                                    int NextDayStdQty = findData_nextDay.Sum(o => o.StdQty);
-                                    int NextNextDayStdQty = findData_nextNextDay.Sum(o => o.StdQty);
-
-                                    cellValue = NextNextDayStdQty == 0 ? 0 : 1 + ((AccuCutQty - AccuStdQty - NextDayStdQty) / NextNextDayStdQty);
-                                }
-                            }
-                            summaryDt.Rows[(index)][strDate] = cellValue;
-                        }
-                        else
-                        {
-                            summaryDt.Rows[(index)][strDate] = DBNull.Value;
-                        }
-                        DayIndex++;
-                    }
-                }
-                index++;
-            }
-            this.summaryData = summaryDt;
-
-            #endregion
-            */
-            #endregion
-
             this.AllData = GetInOffLineList(dt, this.Days);
 
-            List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(dt, this.Days, this.AllData);
+            List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days, this.AllData);
 
             this.summaryData = LeadTimeList[0];
             this.detailData = LeadTimeList[1];
@@ -439,9 +177,15 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
 
         protected override bool OnToExcel(ReportDefinition report)
         {
+            if (this.summaryData == null || this.detailData == null || this.summaryData.Rows.Count == 0 || this.detailData.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                return false;
+            }
+
             this.ShowWaitMessage("Excel processing...");
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R01.xltx"); //預先開啟excel app
-            //objApp.Visible = true;
+            objApp.Visible = true;
             Microsoft.Office.Interop.Excel.Worksheet Summary_Sheet = objApp.ActiveWorkbook.Worksheets[1];
             Microsoft.Office.Interop.Excel.Worksheet Detail_Sheet = objApp.ActiveWorkbook.Worksheets[2];
 
@@ -452,11 +196,12 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
 
             foreach (var day in this.Days)
             {
-                //如果該日期，不是「有產出」，則刪掉
+                //如果該日期，不是「有資料」，則刪掉
                 if (!this.AllData.Where(x => x.InOffLines.Where(
                                                                     y => y.DateWithLeadTime == day.Date
                                                                 ).Any()
-                                       ).Any()
+                                       ).Any() 
+                                       && day.IsHoliday
                     )
                 {
                     removeDays.Add(day);
@@ -549,7 +294,7 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                 if (removeDays.Where(o => o.Date == day.Date).Any())
                 {
                     string str = MyExcelPrg.GetExcelColumnName(ColumnIndex - deleteCount);
-                    //Detail_Sheet.get_Range($"{str}:{str}").EntireColumn.Delete();
+                    Detail_Sheet.get_Range($"{str}:{str}").EntireColumn.Delete();
                     deleteCount++;
                 }
                 ColumnIndex++;
@@ -583,7 +328,7 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                 if (removeDays.Where(o => o.Date == day.Date).Any())
                 {
                     string str = MyExcelPrg.GetExcelColumnName(ColumnIndex - deleteCount);
-                    //Summary_Sheet.get_Range($"{str}:{str}").EntireColumn.Delete();
+                    Summary_Sheet.get_Range($"{str}:{str}").EntireColumn.Delete();
                     deleteCount++;
                 }
                 ColumnIndex++;
