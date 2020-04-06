@@ -1,4 +1,6 @@
-﻿CREATE PROCEDURE [dbo].[imp_BundleTransfer]
+﻿
+
+CREATE PROCEDURE [dbo].[imp_BundleTransfer]
 @RFIDServerName varchar(50)='', @RFIDDatabaseName varchar(20)='', @RFIDloginId varchar(20)='', @RFIDLoginPwd varchar(20)='', @RFIDTable varchar(20)=''
 AS
 BEGIN
@@ -107,6 +109,7 @@ BEGIN
 				order by tmp.TransDate Desc
 			) getLastTrans 
 			where exists(select 1 from Bundle_Detail bd where bd.BundleNo = getLastTrans.BundleNo)
+			or  exists(select 1 from BundleReplacement_Detail bd where bd.BundleNo = getLastTrans.BundleNo)
 			'
 
 
@@ -128,6 +131,26 @@ BEGIN
 		from #disTmp d
 		inner join Bundle_Detail bd with (nolock) on d.BundleNo = bd.BundleNo
 		inner join Bundle b with (nolock) on b.ID = bd.Id
+		inner join orders o with (nolock) on b.Orderid = o.ID
+		inner join Style_Location sl with (nolock) on o.StyleUkey = sl.StyleUkey
+		inner join Style s with (nolock) on s.Ukey = o.StyleUkey
+		
+		union all
+		select 
+		distinct
+		[Factory] = o.FtyGroup,
+		o.BrandID,
+		o.StyleID,
+		o.SeasonID,
+		[ComboType] = sl.Location,
+		[WorkLine] = b.Sewinglineid,
+		b.Orderid,
+		s.StyleName,
+		s.Description,
+		o.Qty
+		from #disTmp d
+		inner join BundleReplacement_Detail bd with (nolock) on d.BundleNo = bd.BundleNo
+		inner join BundleReplacement b with (nolock) on b.ID = bd.Id
 		inner join orders o with (nolock) on b.Orderid = o.ID
 		inner join Style_Location sl with (nolock) on o.StyleUkey = sl.StyleUkey
 		inner join Style s with (nolock) on s.Ukey = o.StyleUkey

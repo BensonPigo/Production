@@ -90,7 +90,7 @@ outer apply
 		sum(b.Qty) Claimed
 	FROM dbo.ADIDASComplain a WITH (NOLOCK) 
 	INNER JOIN DBO.ADIDASComplain_Detail b WITH (NOLOCK) ON B.ID = a.ID
-	where format((a.StartDate),'yyyy') = d.y and format((a.StartDate),'MM') = d.m
+	where format((a.StartDate),'yyyy') = d.y and format((a.StartDate),'MM') = d.m AND a.Junk=0
 	group by a.StartDate
 ) Claimed
 outer apply (	
@@ -268,7 +268,7 @@ outer apply
 		sum(b.Qty) Claimed
 	FROM dbo.ADIDASComplain a WITH (NOLOCK) 
 	INNER JOIN DBO.ADIDASComplain_Detail b WITH (NOLOCK) ON B.ID = a.ID
-	where format((a.StartDate),'yyyy') = d.y and format((a.StartDate),'MM') = d.m
+	where format((a.StartDate),'yyyy') = d.y and format((a.StartDate),'MM') = d.m AND a.Junk=0
 	and FactoryID = d.id
 	group by a.StartDate,B.FactoryID
 ) Claimed

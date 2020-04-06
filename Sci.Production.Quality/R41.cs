@@ -131,13 +131,13 @@ order by M desc");
             sqlWhere = string.Join(" and ", sqlWheres);
             if (!sqlWhere.Empty())
             {
-                sqlWhere = " where " + sqlWhere;
+                sqlWhere = " where a.Junk=0 AND " + sqlWhere;
             }
 
             sqlWh1 = string.Join(" and ", sqlWh);
             if (!sqlWh1.Empty())
             {
-                sqlWh1 = " where " + sqlWh1;
+                sqlWh1 = " where A.Junk=0 AND " + sqlWh1;
             }
 
             #region Defect
@@ -168,7 +168,8 @@ order by M desc");
                                             into #temp
                                             from dbo.ADIDASComplain a WITH (NOLOCK) 
                                             inner join dbo.ADIDASComplain_Detail b WITH (NOLOCK) on a.id=b.id
-                                            left join dbo.ADIDASComplainDefect_Detail c WITH (NOLOCK) on c.id=b.DefectMainID AND C.SubID=B.DefectSubID" + " " + sqlWhere + " " + gb + " " +
+                                            left join dbo.ADIDASComplainDefect_Detail c WITH (NOLOCK) on c.id=b.DefectMainID AND C.SubID=B.DefectSubID
+" + " " + sqlWhere + Environment.NewLine + gb + " " +
 
                                          @"declare @d date = '{0}' --getdate()
 											 declare @y1 varchar(4) = cast(datepart(year, dateadd(year,-2, @d) ) as varchar(4))
@@ -232,7 +233,8 @@ select top 10
 from dbo.ADIDASComplain a WITH (NOLOCK) 
 inner join dbo.ADIDASComplain_Detail b WITH (NOLOCK) on a.id=b.id
 left join dbo.ADIDASComplainDefect_Detail c WITH (NOLOCK) on c.id=b.DefectMainID AND C.SubID=B.DefectSubID 
-where b.BrandID ='{1}' 
+where a.Junk=0
+AND b.BrandID ='{1}' 
 AND year(a.StartDate) = '{0}'
 group by B.DefectMainID, B.DefectSubID,C.SubName 
 order by  SUM(B.Qty) desc,SUM(B.ValueinUSD) desc"
@@ -504,9 +506,10 @@ FROM dbo.ADIDASComplain A WITH (NOLOCK)
 INNER JOIN dbo.ADIDASComplain_Detail B WITH (NOLOCK) on b.ID = A.ID
 left join (dbo.ADIDASComplainDefect c WITH (NOLOCK) inner join dbo.ADIDASComplainDefect_Detail d WITH (NOLOCK) on c.id = d.ID)
 on c.ID = b.DefectMainID  and d.SubID = b.DefectSubID
-where b.BrandID ='{0}' and year(a.StartDate)='{1}' and FactoryID = '{2}'
+where A.Junk = 0 AND b.BrandID ='{0}' and year(a.StartDate)='{1}' and FactoryID = '{2}'
 group by b.FactoryID, A.StartDate, B.DefectMainID, c.Name, B.DefectSubID,d.SubName
 order by B.DefectMainID,[Defect_Code]
+
 --↓補上缺的Main,已經有的則不補上
 select * into #t_all
 from
@@ -664,7 +667,7 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
 
             SaveXltReportCls sxc = new SaveXltReportCls("Quality_R41.xltx");
-            SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(dt_All);
+            //SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(dt_All);
 
             #region Defect
 

@@ -13,6 +13,7 @@
     [TPEApvDate] DATETIME NOT NULL, 
     [FtyApvName] VARCHAR(10) CONSTRAINT [DF_ADIDASComplain_FtyApvName] DEFAULT ('') NOT NULL, 
     [FtyApvDate] DATETIME NULL, 
+    [Junk]  bit DEFAULT 0 NULL, 
     CONSTRAINT [PK_ADIDASComplain] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
