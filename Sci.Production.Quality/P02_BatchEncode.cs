@@ -350,9 +350,10 @@ WHERE f.POID='{item["POID"].ToString().Trim()}' AND f.Seq1='{item["Seq1"].ToStri
             {
                 string sqlup = $@"
 update a 
-set Status = iif(dbo.GetAirQaRecord(t.orderid) ='PASS','Preparing',a.Status)
+set Status = 'Preparing'
 from #tmp t
 inner join AccessoryOrderList a with(nolock) on a.OrderID = t.orderid and a.Status = 'Waiting'
+where dbo.GetAirQaRecord(t.orderid) ='PASS'
 ";
                 SqlConnection sqlConn = null;
                 DBProxy.Current.OpenConnection("ManufacturingExecution", out sqlConn);
