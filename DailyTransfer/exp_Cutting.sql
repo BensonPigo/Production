@@ -82,7 +82,7 @@ inner join Production.dbo.CuttingOutput_Detail cud on cud.WorkOrderUkey = wd.Wor
 inner join Pms_To_Trade.dbo.CuttingOutput CUT1 on CUT1.ID = cud.ID
 where occ.FabricCode !='' and occ.FabricCode is not null 
 
-select WIP.Article,WIP.OrderID,WIP.Qty,WIP.Size
+select WIP.OrderID,WIP.Article,WIP.Size,WIP.Qty
 into CuttingOutput_WIP
 FROM #tmp1 t, Production.dbo.CuttingOutput_WIP WIP 
 WHERE  t.orderid = WIP.OrderID and t.Article = WIP.Article and t.SizeCode = WIP.Size
