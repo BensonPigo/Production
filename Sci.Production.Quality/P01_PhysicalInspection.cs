@@ -254,24 +254,67 @@ namespace Sci.Production.Quality
 
             #region Grade,Result
             string WeaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", maindr["SCiRefno"].ToString(), "Fabric", "SciRefno");
-            string grade_cmd = String.Format(@"
-SELECT MIN(GRADE) grade 
+
+            string grade_cmd = $@"
+
+---- 1. 取得預設的布種的等級
+SELECT [Grade]=MIN(Grade)
+INTO #default
+FROM FIR_Grade f WITH (NOLOCK) 
+WHERE f.WeaveTypeID = '{WeaveTypeid}' 
+AND f.Percentage >= IIF({CurrentData["PointRate"]} > 100, 100, 0)
+AND BrandID=''
+
+---- 2. 取得該品牌布種的等級
+SELECT [Grade]=MIN(Grade)
+INTO #withBrandID
 FROM FIR_Grade WITH (NOLOCK) 
-WHERE   WEAVETYPEID = '{0}' 
-        AND PERCENTAGE >= IIF({1} > 100, 100, {1})", WeaveTypeid, CurrentData["PointRate"]);
-            DataRow grade_dr;
-            if (MyUtility.Check.Seek(grade_cmd, out grade_dr))
-            {
-                CurrentData["Grade"] = grade_dr["grade"];
-                CurrentData["Result"] = MyUtility.GetValue.Lookup(string.Format(@"
+WHERE WeaveTypeID = '{WeaveTypeid}' 
+AND Percentage >= IIF({CurrentData["PointRate"]} > 100, 100, 0)
+AND BrandID='{displayBrand.Text}'
+
+---- 若該品牌有另外設定等級，就用該設定，不然用預設（主索引鍵是WeaveTypeID + Percentage + BrandID，因此不會找到多筆預設的Grade）
+SELECT [Grade] = ISNULL(Brand.Grade, ISNULL((SELECT Grade FROM #default),'') ) 
+FROM #withBrandID brand
+
+---- 結果也區分品牌
 Select	[Result] =	case Result	
 						when 'P' then 'Pass'
 						when 'F' then 'Fail'
 					end
 from Fir_Grade WITH (NOLOCK) 
-where	WEAVETYPEID = '{0}' 
-		and Grade = '{1}'", WeaveTypeid, grade_dr["grade"]), null);
+WHERE WeaveTypeID = '{WeaveTypeid}' 
+AND Grade = (
+	SELECT ISNULL(Brand.Grade, (SELECT Grade FROM #default)) 
+	FROM #withBrandID brand
+)
+AND BrandID='{displayBrand.Text}'
+
+DROP TABLE #default,#withBrandID
+
+";
+
+            DataTable[] dts;
+            DBProxy.Current.Select(null, grade_cmd, out dts);
+
+            if (dts != null && dts[0].Rows.Count > 0 && dts[1].Rows.Count > 0)
+            {
+                CurrentData["Grade"] = dts[0].Rows[0]["Grade"];
+                CurrentData["Result"] = dts[1].Rows[0]["Result"];
+
             }
+//            if (MyUtility.Check.Seek(grade_cmd, out grade_dr))
+//            {
+//                CurrentData["Grade"] = grade_dr["grade"];
+//                CurrentData["Result"] = MyUtility.GetValue.Lookup(string.Format(@"
+//Select	[Result] =	case Result	
+//						when 'P' then 'Pass'
+//						when 'F' then 'Fail'
+//					end
+//from Fir_Grade WITH (NOLOCK) 
+//where	WEAVETYPEID = '{0}' 
+//		and Grade = '{1}'", WeaveTypeid, grade_dr["grade"]), null);
+//            }
 
 #endregion
         }

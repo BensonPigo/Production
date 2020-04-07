@@ -297,17 +297,44 @@ namespace Sci.Production.Quality
             {
                 PointRate = MyUtility.Convert.GetDecimal(dr["T2DefectPoint"]) / MyUtility.Convert.GetDecimal(dr["T2InspYds"]) * 100;
             }
+            string BrandID = dr["BrandID"].ToString();
+
             string sqlWEAVETYPEID = $@"
-SELECT isnull(MIN(grade),'')
-FROM FIR_Grade WITH (NOLOCK) 
-WHERE WEAVETYPEID = (
+
+---- 1. 取得預設的布種的等級
+SELECT [Grade]=MIN(Grade)
+INTO #default
+FROM FIR_Grade f WITH (NOLOCK) 
+WHERE f.WeaveTypeID= (
 	SELECT WeaveTypeId 
 	FROM Fabric F
 	LEFT JOIN PO_Supp_Detail  PSD ON PSD.SCIRefno = F.SCIRefno
 	WHERE PSD.ID='{dr["poid"]}' AND PSD.SEQ1 ='{dr["seq1"]}' AND PSD.SEQ2 ='{dr["seq2"]}'
 ) 
 AND PERCENTAGE >= IIF({PointRate} > 100, 100, {PointRate} )
+AND BrandID=''
+
+---- 2. 取得該品牌布種的等級
+SELECT [Grade]=MIN(Grade)
+INTO #withBrandID
+FROM FIR_Grade f WITH (NOLOCK) 
+WHERE f.WeaveTypeID= (
+	SELECT WeaveTypeId 
+	FROM Fabric F
+	LEFT JOIN PO_Supp_Detail  PSD ON PSD.SCIRefno = F.SCIRefno
+	WHERE PSD.ID='{dr["poid"]}' AND PSD.SEQ1 ='{dr["seq1"]}' AND PSD.SEQ2 ='{dr["seq2"]}'
+) 
+AND PERCENTAGE >= IIF({PointRate} > 100, 100, {PointRate} )
+AND BrandID='{BrandID}'
+
+---- 若該品牌有另外設定等級，就用該設定，不然用預設（主索引鍵是WeaveTypeID + Percentage + BrandID，因此不會找到多筆預設的Grade）
+SELECT ISNULL(Brand.Grade, ISNULL((SELECT Grade FROM #default),'') ) 
+FROM #withBrandID brand
+
+DROP TABLE #default,#withBrandID
+
 ";
+
             dr["T2Grade"] = MyUtility.GetValue.Lookup(sqlWEAVETYPEID);
             dr.EndEdit();
         }
