@@ -110,7 +110,7 @@ select distinct p.PulloutDate,oq.BuyerDelivery,pd.OrderID,isnull(o.CustPONo,'') 
 	[ShipQty]= pd.ShipQty,
 	IIF(ct.WorkType = '1','Y','') as byCombo,
 	case pd.Status when 'P' then 'Partial' when 'C' then 'Complete' when 'E' then 'Exceed'when 'S' then 'Shortage' else '' end as StatusExp,
-	isnull(IIF(o.LocalOrder = 1, o.PoPrice,o.CMPPrice),0) as CMP,	
+	isnull(IIF(o.LocalOrder = 1, o.PoPrice,0),0) as CMP,	
 	o.LocalOrder,o.CPU,o.CPUFactor,
 	isnull(o.PoPrice,0) as PoPrice,
 	isnull(o.PoPrice,0)*pd.ShipQty as FOBAmt, 
@@ -184,7 +184,7 @@ drop table #temp1,#temp2
 
             // 填內容值
             int intRowsStart = 2;
-            object[,] objArray = new object[1, 17];
+            object[,] objArray = new object[1, 19];
             foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = dr["PulloutDate"];
@@ -197,16 +197,16 @@ drop table #temp1,#temp2
                 objArray[0, 7] = dr["byCombo"];
                 objArray[0, 8] = dr["ShipQty"];
                 objArray[0, 9] = dr["StatusExp"];
-                //objArray[0, 10] = dr["CMP"];
-                //objArray[0, 10] = dr["CMPAmt"];
-                objArray[0, 10] = dr["PoPrice"];
-                objArray[0, 11] = dr["FOBAmt"];
-                objArray[0, 12] = dr["BrandID"];
-                objArray[0, 13] = dr["MDivisionID"];
-                objArray[0, 14] = dr["FactoryID"];
-                objArray[0, 15] = dr["ShipmodeID"];
-                objArray[0, 16] = dr["Alias"];
-                worksheet.Range[string.Format("A{0}:Q{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 10] = dr["CMP"];
+                objArray[0, 11] = dr["CMPAmt"];
+                objArray[0, 12] = dr["PoPrice"];
+                objArray[0, 13] = dr["FOBAmt"];
+                objArray[0, 14] = dr["BrandID"];
+                objArray[0, 15] = dr["MDivisionID"];
+                objArray[0, 16] = dr["FactoryID"];
+                objArray[0, 17] = dr["ShipmodeID"];
+                objArray[0, 18] = dr["Alias"];
+                worksheet.Range[string.Format("A{0}:S{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
