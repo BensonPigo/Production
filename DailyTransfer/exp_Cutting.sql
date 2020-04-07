@@ -92,7 +92,7 @@ FROM #tmp1 t, Production.dbo.CuttingOutput_WIP WIP
 WHERE  t.orderid = WIP.OrderID and t.Article = WIP.Article and t.SizeCode = WIP.Size
 drop table #tmp1
 
-select wd.Article,wd.ID,wd.OrderID,wd.Qty,wd.SizeCode,wd.WorkOrderUkey
+select wd.WorkOrderUkey,wd.ID,wd.OrderID,wd.Article,wd.SizeCode,wd.Qty
 into Workorder_Distribute
 from Production.dbo.Workorder_Distribute wd
 inner join Pms_To_Trade.dbo.CuttingOutput_Detail cud on cud.WorkOrderUkey = wd.WorkOrderUkey
