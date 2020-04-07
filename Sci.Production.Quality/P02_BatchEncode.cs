@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -203,6 +204,7 @@ Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,C.ex
 
         private void btnEncode_Click(object sender, EventArgs e)
         {
+            this.grid.ValidateControl();
             DataTable gridDt = (DataTable)this.grid.DataSource;
 
             DualResult chkresult;
@@ -334,6 +336,33 @@ WHERE f.POID='{item["POID"].ToString().Trim()}' AND f.Seq1='{item["Seq1"].ToStri
             {
                 ShowErr(upResult);
             }
+
+
+            //ISP20200575 Encode全部執行後
+            string sqlcmd = $@"select distinct orderid=o.ID from Orders o with(nolock) inner join #tmp t on t.POID = o.POID";
+            DataTable dtid = selectedData.CopyToDataTable();
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtid, "poid", sqlcmd, out dtid);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+            else
+            {
+                string sqlup = $@"
+update a 
+set Status = iif(dbo.GetAirQaRecord(t.orderid) ='PASS','Preparing',a.Status)
+from #tmp t
+inner join AccessoryOrderList a with(nolock) on a.OrderID = t.orderid and a.Status = 'Waiting'
+";
+                SqlConnection sqlConn = null;
+                DBProxy.Current.OpenConnection("ManufacturingExecution", out sqlConn);
+                result = MyUtility.Tool.ProcessWithDatatable(dtid, string.Empty, sqlup, out dtid, "#tmp", sqlConn);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                }
+            }
+
             this.QueryData();
         }
 
