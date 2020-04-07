@@ -27,6 +27,10 @@ BEGIN
   DROP TABLE CuttingOutput_WIP
 END
 
+IF OBJECT_ID(N'dbo.Workorder_Distribute') IS NOT NULL
+BEGIN
+  DROP TABLE Workorder_Distribute
+END
 
 
 declare @DateStart date= (SELECT DATEADD(DAY,1,SewLock) FROM Production.dbo.System);
@@ -87,6 +91,12 @@ into CuttingOutput_WIP
 FROM #tmp1 t, Production.dbo.CuttingOutput_WIP WIP 
 WHERE  t.orderid = WIP.OrderID and t.Article = WIP.Article and t.SizeCode = WIP.Size
 drop table #tmp1
+
+select wd.Article,wd.ID,wd.OrderID,wd.Qty,wd.SizeCode,wd.WorkOrderUkey
+into Workorder_Distribute
+from Production.dbo.Workorder_Distribute wd
+inner join Pms_To_Trade.dbo.CuttingOutput_Detail cud on cud.WorkOrderUkey = wd.WorkOrderUkey
+
 
 END
 
