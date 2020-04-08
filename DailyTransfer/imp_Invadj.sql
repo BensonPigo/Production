@@ -127,18 +127,42 @@ inner join #TMPPullout2Cdate as b ON a.PulloutDate=b.PulloutDate
 inner join Trade_To_Pms.dbo.InvAdjust c ON  A.OrderID = c.OrderID
 where b.PulloutDate is not null
 
-
+/*
+判斷訂單是否已出貨完畢:
+訂單數量 = 出貨數量（Pullout_Detail.ShipQty, Status = Confirm/Lock）+ 台北調整數量（InvAdjust_Qty DiffQty）
+*/
 UPDATE a
-
 SET  
- a.ActPulloutDate = (select IIF(PulloutDate is null,(select PullDate from Trade_To_Pms.dbo.InvAdjust b where a.ID=b.ID),PulloutDate) from #TMPPullout2Cdate)
+ a.ActPulloutDate = (
+	SELECT IIF(  t.PulloutDate IS NULL
+				,(SELECT PullDate FROM Trade_To_Pms.dbo.InvAdjust b WHERE b.ID = a.ID)
+				,t.PulloutDate
+			)
+	FROM #TMPPullout2Cdate t
+ )
 ,a.PulloutComplete = 1
-,a.MDClose = getdate()
-
-from Production.dbo.Orders as a 
-where a.Qty = (select SUM(ShipQty) from Production.dbo.Pullout_Detail A inner join Trade_To_Pms.dbo.InvAdjust B ON A.OrderID=B.OrderID)
-+(SELECT sum(DiffQty) FROM  Production.dbo.InvAdjust_Qty A inner join Production.dbo.InvAdjust B ON  A.ID = B.ID)
-and a.PulloutComplete = 0
+,a.MDClose = GETDATE()
+FROM Production.dbo.Orders as a 
+WHERE a.Qty = 
+	(
+		SELECT SUM(pd.ShipQty)
+		FROM Production.dbo.Pullout p
+		INNER JOIN Production.dbo.Pullout_Detail pd ON p.ID = pd.ID
+		WHERE p.Status != 'New' AND pd.OrderID = a.ID
+	)
+	+
+	(
+		SELECT SUM(iaq.DiffQty)
+		FROM Production.dbo.InvAdjust ia
+		INNER JOIN Production.dbo.InvAdjust_Qty iaq ON ia.ID = iaq.ID
+		WHERE ia.OrderID = a.ID
+	)
+AND a.PulloutComplete = 0
+AND EXISTS (
+	SELECT 1 
+	FROM Trade_To_Pms.dbo.InvAdjust ia
+	WHERE ia.ORDERID = a.ID
+)
 
 
 
