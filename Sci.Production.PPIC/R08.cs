@@ -126,13 +126,13 @@ namespace Sci.Production.PPIC
 
             if (!MyUtility.Check.Empty(this.Cfmdate1))
             {
-                where += $@"and rr.RespDeptConfirmDate >= @Cfmdate1 " + "\r\n";
+                where += $@"and cast(rr.RespDeptConfirmDate as date) >= @Cfmdate1 " + "\r\n";
                 sqlpar.Add(new SqlParameter("@Cfmdate1", this.Cfmdate1));
             }
 
             if (!MyUtility.Check.Empty(this.Cfmdate2))
             {
-                where += $@"and rr.RespDeptConfirmDate <= @Cfmdate2 " + "\r\n";
+                where += $@"and cast(rr.RespDeptConfirmDate as date) <= @Cfmdate2 " + "\r\n";
                 sqlpar.Add(new SqlParameter("@Cfmdate2", this.Cfmdate2));
             }
 
