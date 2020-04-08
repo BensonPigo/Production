@@ -83,3 +83,9 @@ CREATE NONCLUSTERED INDEX [Index_ReadyDateIndex]
     ON [dbo].[ClogReceive]([ReceiveDate] ASC, [PackingListID] ASC, [OrderID] ASC, [CTNStartNo] ASC)
     INCLUDE([AddDate]);
 
+
+GO
+CREATE NONCLUSTERED INDEX [Index_SDP_Report]
+    ON [dbo].[ClogReceive]([OrderID] ASC)
+    INCLUDE([PackingListID], [CTNStartNo], [AddDate]);
+
