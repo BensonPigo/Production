@@ -331,7 +331,14 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     }
                 }
             }
-            garmentarRC = garmentTb.Copy();
+
+            StringBuilder w2 = new StringBuilder();
+            w2.Append("1 = 0");
+            foreach (DataRow dr in f_codeTb.Rows)
+            {
+                w2.Append(string.Format(" or {0} = '{1}' ", dr[0], maindatarow["FabricPanelCode"]));
+            }
+            garmentarRC = garmentTb.Select(w2.ToString()).CopyToDataTable();
         }
 
         public void grid_setup()
@@ -1377,7 +1384,6 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     {
                         int tmpNum = 0;
                         DataTable dtCopy = dtDetail.Copy();
-                        DataTable dtCopyArt = dtArt.Copy();
                         foreach (DataRow item in dtCopy.Rows)
                         {
                             item["bundlegroup"] = bundlegroupS + i; // 重設bundlegroup
@@ -1386,7 +1392,9 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                             item["tmpNum"] = tmpNum; // 暫時紀錄原本資料對應拆出去的資料,要用來重分配Qty
                             tmpNum++;
 
+                            DataTable dtCopyArt = dtArt.Copy();
                             DataRow artdr = dtCopyArt.Select($"Ukey1 = {item["Ukey1"]}")[0];
+                            artdr["BundleNo"] = string.Empty;
                             artdr["Ukey1"] = ukeytone;
                             item["Ukey1"] = ukeytone;
                             bundle_detail_artTb.ImportRow(artdr);
