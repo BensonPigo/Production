@@ -240,13 +240,6 @@
             this.displayBrand = new Sci.Win.UI.DisplayBox();
             this.displaySeason = new Sci.Win.UI.DisplayBox();
             this.displayUnit = new Sci.Win.UI.DisplayBox();
-            this.labelCMPQPrice = new Sci.Win.UI.Label();
-            this.labelCMPQAmt = new Sci.Win.UI.Label();
-            this.labelCMPQCFM = new Sci.Win.UI.Label();
-            this.numCMPQPrice = new Sci.Win.UI.NumericBox();
-            this.numCMPQAmt = new Sci.Win.UI.NumericBox();
-            this.dateCMPQCFM = new Sci.Win.UI.DateBox();
-            this.label44 = new Sci.Win.UI.Label();
             this.checkSP = new Sci.Win.UI.CheckBox();
             this.checkVASSHAS = new Sci.Win.UI.CheckBox();
             this.checkTissuePaper = new Sci.Win.UI.CheckBox();
@@ -262,8 +255,6 @@
             this.btnShippingMark = new Sci.Win.UI.Button();
             this.btnTMSCost = new Sci.Win.UI.Button();
             this.btnStdGSDList = new Sci.Win.UI.Button();
-            this.btnCMPQRemark = new Sci.Win.UI.Button();
-            this.btnCMPQSheet = new Sci.Win.UI.Button();
             this.btnArtwork = new Sci.Win.UI.Button();
             this.btnGarmentExport = new Sci.Win.UI.Button();
             this.labelShipmentTerm = new Sci.Win.UI.Label();
@@ -357,8 +348,6 @@
             this.detailcont.Controls.Add(this.labelShipmentTerm);
             this.detailcont.Controls.Add(this.btnArtwork);
             this.detailcont.Controls.Add(this.btnGarmentExport);
-            this.detailcont.Controls.Add(this.btnCMPQRemark);
-            this.detailcont.Controls.Add(this.btnCMPQSheet);
             this.detailcont.Controls.Add(this.btnShippingMark);
             this.detailcont.Controls.Add(this.btnTMSCost);
             this.detailcont.Controls.Add(this.btnStdGSDList);
@@ -374,12 +363,6 @@
             this.detailcont.Controls.Add(this.checkTissuePaper);
             this.detailcont.Controls.Add(this.checkVASSHAS);
             this.detailcont.Controls.Add(this.checkSP);
-            this.detailcont.Controls.Add(this.label44);
-            this.detailcont.Controls.Add(this.numCMPQAmt);
-            this.detailcont.Controls.Add(this.numCMPQPrice);
-            this.detailcont.Controls.Add(this.labelCMPQCFM);
-            this.detailcont.Controls.Add(this.labelCMPQAmt);
-            this.detailcont.Controls.Add(this.labelCMPQPrice);
             this.detailcont.Controls.Add(this.displayUnit);
             this.detailcont.Controls.Add(this.displaySeason);
             this.detailcont.Controls.Add(this.displayBrand);
@@ -437,7 +420,6 @@
             this.detailcont.Controls.Add(this.dateSCIDlv);
             this.detailcont.Controls.Add(this.dateCutOffDate);
             this.detailcont.Controls.Add(this.dateKPIDel);
-            this.detailcont.Controls.Add(this.dateCMPQCFM);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelOrderType);
             this.detailcont.Controls.Add(this.labelProject);
@@ -2721,100 +2703,6 @@
             this.displayUnit.Size = new System.Drawing.Size(50, 21);
             this.displayUnit.TabIndex = 17;
             // 
-            // labelCMPQPrice
-            // 
-            this.labelCMPQPrice.Location = new System.Drawing.Point(460, 336);
-            this.labelCMPQPrice.Name = "labelCMPQPrice";
-            this.labelCMPQPrice.Size = new System.Drawing.Size(75, 21);
-            this.labelCMPQPrice.TabIndex = 92;
-            this.labelCMPQPrice.Text = "CMPQ Price";
-            // 
-            // labelCMPQAmt
-            // 
-            this.labelCMPQAmt.Location = new System.Drawing.Point(460, 363);
-            this.labelCMPQAmt.Name = "labelCMPQAmt";
-            this.labelCMPQAmt.Size = new System.Drawing.Size(75, 21);
-            this.labelCMPQAmt.TabIndex = 93;
-            this.labelCMPQAmt.Text = "CMPQ Amt";
-            // 
-            // labelCMPQCFM
-            // 
-            this.labelCMPQCFM.Location = new System.Drawing.Point(460, 390);
-            this.labelCMPQCFM.Name = "labelCMPQCFM";
-            this.labelCMPQCFM.Size = new System.Drawing.Size(75, 21);
-            this.labelCMPQCFM.TabIndex = 94;
-            this.labelCMPQCFM.Text = "CMPQ CFM";
-            // 
-            // numCMPQPrice
-            // 
-            this.numCMPQPrice.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numCMPQPrice.DecimalPlaces = 3;
-            this.numCMPQPrice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numCMPQPrice.IsSupportEditMode = false;
-            this.numCMPQPrice.Location = new System.Drawing.Point(539, 336);
-            this.numCMPQPrice.Name = "numCMPQPrice";
-            this.numCMPQPrice.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numCMPQPrice.ReadOnly = true;
-            this.numCMPQPrice.Size = new System.Drawing.Size(73, 21);
-            this.numCMPQPrice.TabIndex = 42;
-            this.numCMPQPrice.TabStop = false;
-            this.numCMPQPrice.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numCMPQAmt
-            // 
-            this.numCMPQAmt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numCMPQAmt.DecimalPlaces = 3;
-            this.numCMPQAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numCMPQAmt.IsSupportEditMode = false;
-            this.numCMPQAmt.Location = new System.Drawing.Point(539, 362);
-            this.numCMPQAmt.Name = "numCMPQAmt";
-            this.numCMPQAmt.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numCMPQAmt.ReadOnly = true;
-            this.numCMPQAmt.Size = new System.Drawing.Size(80, 21);
-            this.numCMPQAmt.TabIndex = 49;
-            this.numCMPQAmt.TabStop = false;
-            this.numCMPQAmt.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // dateCMPQCFM
-            // 
-            this.dateCMPQCFM.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CMPQDate", true));
-            this.dateCMPQCFM.IsSupportEditMode = false;
-            this.dateCMPQCFM.Location = new System.Drawing.Point(539, 390);
-            this.dateCMPQCFM.Name = "dateCMPQCFM";
-            this.dateCMPQCFM.ReadOnly = true;
-            this.dateCMPQCFM.Size = new System.Drawing.Size(100, 21);
-            this.dateCMPQCFM.TabIndex = 54;
-            this.dateCMPQCFM.TabStop = false;
-            // 
-            // label44
-            // 
-            this.label44.BackColor = System.Drawing.Color.Transparent;
-            this.label44.Location = new System.Drawing.Point(616, 336);
-            this.label44.Name = "label44";
-            this.label44.Size = new System.Drawing.Size(61, 21);
-            this.label44.TabIndex = 43;
-            this.label44.Text = "/PCS";
-            this.label44.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label44.TextStyle.Color = System.Drawing.Color.Black;
-            this.label44.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
-            this.label44.TextStyle.GradientColor = System.Drawing.Color.Black;
-            // 
             // checkSP
             // 
             this.checkSP.AutoSize = true;
@@ -2989,27 +2877,6 @@
             this.btnStdGSDList.UseVisualStyleBackColor = true;
             this.btnStdGSDList.Click += new System.EventHandler(this.BtnStdGSDList_Click);
             // 
-            // btnCMPQRemark
-            // 
-            this.btnCMPQRemark.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnCMPQRemark.Location = new System.Drawing.Point(600, 598);
-            this.btnCMPQRemark.Name = "btnCMPQRemark";
-            this.btnCMPQRemark.Size = new System.Drawing.Size(194, 27);
-            this.btnCMPQRemark.TabIndex = 41;
-            this.btnCMPQRemark.Text = "CMPQ remark";
-            this.btnCMPQRemark.UseVisualStyleBackColor = true;
-            this.btnCMPQRemark.Click += new System.EventHandler(this.BtnCMPQRemark_Click);
-            // 
-            // btnCMPQSheet
-            // 
-            this.btnCMPQSheet.Location = new System.Drawing.Point(600, 568);
-            this.btnCMPQSheet.Name = "btnCMPQSheet";
-            this.btnCMPQSheet.Size = new System.Drawing.Size(194, 27);
-            this.btnCMPQSheet.TabIndex = 39;
-            this.btnCMPQSheet.Text = "CMPQ Sheet";
-            this.btnCMPQSheet.UseVisualStyleBackColor = true;
-            this.btnCMPQSheet.Click += new System.EventHandler(this.BtnCMPQSheet_Click);
-            // 
             // btnArtwork
             // 
             this.btnArtwork.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
@@ -3141,7 +3008,7 @@
             // btnCuttingCombo
             // 
             this.btnCuttingCombo.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnCuttingCombo.Location = new System.Drawing.Point(600, 628);
+            this.btnCuttingCombo.Location = new System.Drawing.Point(602, 568);
             this.btnCuttingCombo.Name = "btnCuttingCombo";
             this.btnCuttingCombo.Size = new System.Drawing.Size(194, 27);
             this.btnCuttingCombo.TabIndex = 42;
@@ -3586,13 +3453,6 @@
         private Win.UI.CheckBox checkTissuePaper;
         private Win.UI.CheckBox checkVASSHAS;
         private Win.UI.CheckBox checkSP;
-        private Win.UI.Label label44;
-        private Win.UI.DateBox dateCMPQCFM;
-        private Win.UI.NumericBox numCMPQAmt;
-        private Win.UI.NumericBox numCMPQPrice;
-        private Win.UI.Label labelCMPQCFM;
-        private Win.UI.Label labelCMPQAmt;
-        private Win.UI.Label labelCMPQPrice;
         private Win.UI.DisplayBox displayUnit;
         private Win.UI.DisplayBox displaySeason;
         private Win.UI.DisplayBox displayBrand;
@@ -3611,8 +3471,6 @@
         private Win.UI.Label labelShipmentTerm;
         private Win.UI.Button btnArtwork;
         private Win.UI.Button btnGarmentExport;
-        private Win.UI.Button btnCMPQRemark;
-        private Win.UI.Button btnCMPQSheet;
         private Win.UI.Button btnShippingMark;
         private Win.UI.Button btnTMSCost;
         private Win.UI.Button btnStdGSDList;

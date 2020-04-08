@@ -35,7 +35,6 @@
             this.labelSeason = new Sci.Win.UI.Label();
             this.labelOrderQty = new Sci.Win.UI.Label();
             this.labelOrderCFM = new Sci.Win.UI.Label();
-            this.labelCMPQUnit = new Sci.Win.UI.Label();
             this.labelRemark = new Sci.Win.UI.Label();
             this.displaySP = new Sci.Win.UI.DisplayBox();
             this.displayMockupType = new Sci.Win.UI.DisplayBox();
@@ -44,7 +43,6 @@
             this.displaySeason = new Sci.Win.UI.DisplayBox();
             this.numOrderQty = new Sci.Win.UI.NumericBox();
             this.dateOrderCFM = new Sci.Win.UI.DateBox();
-            this.displayCMPQUnit = new Sci.Win.UI.DisplayBox();
             this.editRemark = new Sci.Win.UI.EditBox();
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelCPU = new Sci.Win.UI.Label();
@@ -52,14 +50,12 @@
             this.labelProgram = new Sci.Win.UI.Label();
             this.labelOutputQty = new Sci.Win.UI.Label();
             this.labelSCIDel = new Sci.Win.UI.Label();
-            this.labelCMPQPrice = new Sci.Win.UI.Label();
             this.displayFactory = new Sci.Win.UI.DisplayBox();
             this.numCPU = new Sci.Win.UI.NumericBox();
             this.displayBrand = new Sci.Win.UI.DisplayBox();
             this.displayProgram = new Sci.Win.UI.DisplayBox();
             this.numOutputQty = new Sci.Win.UI.NumericBox();
             this.dateSCIDel = new Sci.Win.UI.DateBox();
-            this.numCMPQPrice = new Sci.Win.UI.NumericBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.labelSMR = new Sci.Win.UI.Label();
             this.labelHandle = new Sci.Win.UI.Label();
@@ -73,6 +69,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(887, 413);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txttpeuserHandle);
@@ -80,14 +80,12 @@
             this.detailcont.Controls.Add(this.labelHandle);
             this.detailcont.Controls.Add(this.labelSMR);
             this.detailcont.Controls.Add(this.checkJunk);
-            this.detailcont.Controls.Add(this.numCMPQPrice);
             this.detailcont.Controls.Add(this.dateSCIDel);
             this.detailcont.Controls.Add(this.numOutputQty);
             this.detailcont.Controls.Add(this.displayProgram);
             this.detailcont.Controls.Add(this.displayBrand);
             this.detailcont.Controls.Add(this.numCPU);
             this.detailcont.Controls.Add(this.displayFactory);
-            this.detailcont.Controls.Add(this.labelCMPQPrice);
             this.detailcont.Controls.Add(this.labelSCIDel);
             this.detailcont.Controls.Add(this.labelOutputQty);
             this.detailcont.Controls.Add(this.labelProgram);
@@ -95,7 +93,6 @@
             this.detailcont.Controls.Add(this.labelCPU);
             this.detailcont.Controls.Add(this.labelFactory);
             this.detailcont.Controls.Add(this.editRemark);
-            this.detailcont.Controls.Add(this.displayCMPQUnit);
             this.detailcont.Controls.Add(this.dateOrderCFM);
             this.detailcont.Controls.Add(this.numOrderQty);
             this.detailcont.Controls.Add(this.displaySeason);
@@ -104,7 +101,6 @@
             this.detailcont.Controls.Add(this.displayMockupType);
             this.detailcont.Controls.Add(this.displaySP);
             this.detailcont.Controls.Add(this.labelRemark);
-            this.detailcont.Controls.Add(this.labelCMPQUnit);
             this.detailcont.Controls.Add(this.labelOrderCFM);
             this.detailcont.Controls.Add(this.labelOrderQty);
             this.detailcont.Controls.Add(this.labelSeason);
@@ -112,6 +108,12 @@
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelMockupType);
             this.detailcont.Controls.Add(this.labelSP);
+            this.detailcont.Size = new System.Drawing.Size(887, 375);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 375);
+            this.detailbtm.Size = new System.Drawing.Size(887, 38);
             // 
             // browse
             // 
@@ -119,7 +121,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(895, 466);
+            this.tabs.Size = new System.Drawing.Size(895, 442);
             // 
             // createby
             // 
@@ -190,17 +192,9 @@
             this.labelOrderCFM.TabIndex = 6;
             this.labelOrderCFM.Text = "Order CFM";
             // 
-            // labelCMPQUnit
-            // 
-            this.labelCMPQUnit.Location = new System.Drawing.Point(5, 193);
-            this.labelCMPQUnit.Name = "labelCMPQUnit";
-            this.labelCMPQUnit.Size = new System.Drawing.Size(86, 23);
-            this.labelCMPQUnit.TabIndex = 7;
-            this.labelCMPQUnit.Text = "CMPQ Unit";
-            // 
             // labelRemark
             // 
-            this.labelRemark.Location = new System.Drawing.Point(5, 220);
+            this.labelRemark.Location = new System.Drawing.Point(5, 194);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(86, 23);
             this.labelRemark.TabIndex = 8;
@@ -288,23 +282,13 @@
             this.dateOrderCFM.Size = new System.Drawing.Size(110, 23);
             this.dateOrderCFM.TabIndex = 15;
             // 
-            // displayCMPQUnit
-            // 
-            this.displayCMPQUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayCMPQUnit.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CMPUnit", true));
-            this.displayCMPQUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCMPQUnit.Location = new System.Drawing.Point(95, 193);
-            this.displayCMPQUnit.Name = "displayCMPQUnit";
-            this.displayCMPQUnit.Size = new System.Drawing.Size(73, 23);
-            this.displayCMPQUnit.TabIndex = 16;
-            // 
             // editRemark
             // 
             this.editRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editRemark.IsSupportEditMode = false;
-            this.editRemark.Location = new System.Drawing.Point(95, 220);
+            this.editRemark.Location = new System.Drawing.Point(95, 194);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
             this.editRemark.ReadOnly = true;
@@ -358,14 +342,6 @@
             this.labelSCIDel.Size = new System.Drawing.Size(80, 23);
             this.labelSCIDel.TabIndex = 23;
             this.labelSCIDel.Text = "SCI Del";
-            // 
-            // labelCMPQPrice
-            // 
-            this.labelCMPQPrice.Location = new System.Drawing.Point(367, 193);
-            this.labelCMPQPrice.Name = "labelCMPQPrice";
-            this.labelCMPQPrice.Size = new System.Drawing.Size(80, 23);
-            this.labelCMPQPrice.TabIndex = 24;
-            this.labelCMPQPrice.Text = "CMPQ Price";
             // 
             // displayFactory
             // 
@@ -451,29 +427,6 @@
             this.dateSCIDel.Size = new System.Drawing.Size(110, 23);
             this.dateSCIDel.TabIndex = 30;
             // 
-            // numCMPQPrice
-            // 
-            this.numCMPQPrice.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numCMPQPrice.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CMPPrice", true));
-            this.numCMPQPrice.DecimalPlaces = 2;
-            this.numCMPQPrice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numCMPQPrice.IsSupportEditMode = false;
-            this.numCMPQPrice.Location = new System.Drawing.Point(451, 193);
-            this.numCMPQPrice.Name = "numCMPQPrice";
-            this.numCMPQPrice.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numCMPQPrice.ReadOnly = true;
-            this.numCMPQPrice.Size = new System.Drawing.Size(50, 23);
-            this.numCMPQPrice.TabIndex = 31;
-            this.numCMPQPrice.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
             // checkJunk
             // 
             this.checkJunk.AutoSize = true;
@@ -490,7 +443,7 @@
             // 
             // labelSMR
             // 
-            this.labelSMR.Location = new System.Drawing.Point(5, 336);
+            this.labelSMR.Location = new System.Drawing.Point(5, 310);
             this.labelSMR.Name = "labelSMR";
             this.labelSMR.Size = new System.Drawing.Size(86, 23);
             this.labelSMR.TabIndex = 33;
@@ -498,7 +451,7 @@
             // 
             // labelHandle
             // 
-            this.labelHandle.Location = new System.Drawing.Point(5, 363);
+            this.labelHandle.Location = new System.Drawing.Point(5, 337);
             this.labelHandle.Name = "labelHandle";
             this.labelHandle.Size = new System.Drawing.Size(86, 23);
             this.labelHandle.TabIndex = 34;
@@ -509,7 +462,7 @@
             this.txttpeuserSMR.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "SMR", true));
             this.txttpeuserSMR.DisplayBox1Binding = "";
             this.txttpeuserSMR.DisplayBox2Binding = "";
-            this.txttpeuserSMR.Location = new System.Drawing.Point(95, 336);
+            this.txttpeuserSMR.Location = new System.Drawing.Point(95, 310);
             this.txttpeuserSMR.Name = "txttpeuserSMR";
             this.txttpeuserSMR.Size = new System.Drawing.Size(302, 23);
             this.txttpeuserSMR.TabIndex = 35;
@@ -519,14 +472,14 @@
             this.txttpeuserHandle.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "MRHandle", true));
             this.txttpeuserHandle.DisplayBox1Binding = "";
             this.txttpeuserHandle.DisplayBox2Binding = "";
-            this.txttpeuserHandle.Location = new System.Drawing.Point(95, 363);
+            this.txttpeuserHandle.Location = new System.Drawing.Point(95, 337);
             this.txttpeuserHandle.Name = "txttpeuserHandle";
             this.txttpeuserHandle.Size = new System.Drawing.Size(302, 23);
             this.txttpeuserHandle.TabIndex = 36;
             // 
             // P12
             // 
-            this.ClientSize = new System.Drawing.Size(895, 499);
+            this.ClientSize = new System.Drawing.Size(895, 475);
             this.ExpressQuery = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
@@ -534,6 +487,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "P12";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "P12. Mockup Order";
             this.UniqueExpress = "ID";
             this.WorkAlias = "MockupOrder";
@@ -558,14 +512,12 @@
         private Win.UI.Label labelHandle;
         private Win.UI.Label labelSMR;
         private Win.UI.CheckBox checkJunk;
-        private Win.UI.NumericBox numCMPQPrice;
         private Win.UI.DateBox dateSCIDel;
         private Win.UI.NumericBox numOutputQty;
         private Win.UI.DisplayBox displayProgram;
         private Win.UI.DisplayBox displayBrand;
         private Win.UI.NumericBox numCPU;
         private Win.UI.DisplayBox displayFactory;
-        private Win.UI.Label labelCMPQPrice;
         private Win.UI.Label labelSCIDel;
         private Win.UI.Label labelOutputQty;
         private Win.UI.Label labelProgram;
@@ -573,7 +525,6 @@
         private Win.UI.Label labelCPU;
         private Win.UI.Label labelFactory;
         private Win.UI.EditBox editRemark;
-        private Win.UI.DisplayBox displayCMPQUnit;
         private Win.UI.DateBox dateOrderCFM;
         private Win.UI.NumericBox numOrderQty;
         private Win.UI.DisplayBox displaySeason;
@@ -582,7 +533,6 @@
         private Win.UI.DisplayBox displayMockupType;
         private Win.UI.DisplayBox displaySP;
         private Win.UI.Label labelRemark;
-        private Win.UI.Label labelCMPQUnit;
         private Win.UI.Label labelOrderCFM;
         private Win.UI.Label labelOrderQty;
         private Win.UI.Label labelSeason;

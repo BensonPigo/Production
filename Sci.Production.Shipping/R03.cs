@@ -110,7 +110,7 @@ select distinct p.PulloutDate,oq.BuyerDelivery,pd.OrderID,isnull(o.CustPONo,'') 
 	[ShipQty]= pd.ShipQty,
 	IIF(ct.WorkType = '1','Y','') as byCombo,
 	case pd.Status when 'P' then 'Partial' when 'C' then 'Complete' when 'E' then 'Exceed'when 'S' then 'Shortage' else '' end as StatusExp,
-	isnull(IIF(o.LocalOrder = 1, o.PoPrice,o.CMPPrice),0) as CMP,	
+	isnull(IIF(o.LocalOrder = 1, o.PoPrice,0),0) as CMP,	
 	o.LocalOrder,o.CPU,o.CPUFactor,
 	isnull(o.PoPrice,0) as PoPrice,
 	isnull(o.PoPrice,0)*pd.ShipQty as FOBAmt, 
@@ -134,8 +134,8 @@ select distinct p.PulloutDate,oq.BuyerDelivery,pd.OrderID,isnull(o.CustPONo,'') 
 
 	select PulloutDate,BuyerDelivery,OrderID,CustPONo,StyleID,Qty,
 [ShipQty]= sum(ShipQty),
-byCombo,StatusExp,CMP,
-PoPrice,FOBAmt,BrandID,MDivisionID,
+byCombo,StatusExp ,CMP
+,PoPrice,FOBAmt,BrandID,MDivisionID,
 FactoryID,ShipmodeID,Alias,CutQty,
 LocalOrder,CPU,CPUFactor  
 into #temp2

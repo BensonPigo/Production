@@ -90,8 +90,6 @@ namespace Sci.Production.PPIC
            this.btnShippingMark.Enabled = this.CurrentMaintain != null;
            this.btnTMSCost.Enabled = this.CurrentMaintain != null;
            this.btnStdGSDList.Enabled = this.CurrentMaintain != null;
-           this.btnCMPQRemark.Enabled = this.CurrentMaintain != null;
-           this.btnCMPQSheet.Enabled = this.CurrentMaintain != null;
            this.btnArtwork.Enabled = this.CurrentMaintain != null;
            this.btnGarmentExport.Enabled = this.CurrentMaintain != null;
            this.btnH.Enabled = this.CurrentMaintain != null;
@@ -210,20 +208,6 @@ namespace Sci.Production.PPIC
             this.displayMTLCmpltSP.Value = MyUtility.Convert.GetString(this.CurrentMaintain["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
             this.displayOutstandingReason2.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Delivery_OutStand' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["OutstandingReason"])));
             this.displayFinalUpdateOutstandingReasondate.Value = MyUtility.Check.Empty(this.CurrentMaintain["OutstandingDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["OutstandingDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
-            if (MyUtility.Convert.GetString(this.CurrentMaintain["LocalOrder"]).ToUpper() == "TRUE")
-            {
-                this.numCMPQPrice.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["PoPrice"]);
-                this.label44.Text = "/PCS";
-                this.numCMPQAmt.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["PoPrice"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["Qty"]), 3);
-                this.tooltip.SetToolTip(this.numCMPQAmt, MyUtility.Convert.GetString(this.CurrentMaintain["PoPrice"]) + " * " + MyUtility.Convert.GetString(this.CurrentMaintain["Qty"]));
-            }
-            else
-            {
-                this.numCMPQPrice.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["CMPPrice"]);
-                this.label44.Text = "/" + MyUtility.Convert.GetString(this.CurrentMaintain["CMPUnit"]);
-                this.numCMPQAmt.Value = this.numCPUAmt.Value;
-                this.tooltip.SetToolTip(this.numCMPQAmt, MyUtility.Convert.GetString(this.CurrentMaintain["CPU"]) + " * " + MyUtility.Convert.GetString(this.CurrentMaintain["CPUFactor"]) + " * " + MyUtility.Convert.GetString(this.CurrentMaintain["Qty"]));
-            }
             #region 填Description, Exception Form, Fty Remark, Style Apv欄位值
             DataRow styleData;
             string sqlCmd = string.Format("select Description,ExpectionForm,FTYRemark,ApvDate,ExpectionFormRemark from Style WITH (NOLOCK) where Ukey = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
@@ -352,8 +336,6 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             this.btnShippingMark.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["MarkFront"]) || !MyUtility.Check.Empty(this.CurrentMaintain["MarkBack"]) || !MyUtility.Check.Empty(this.CurrentMaintain["MarkLeft"]) || !MyUtility.Check.Empty(this.CurrentMaintain["MarkRight"]) ? Color.Blue : Color.Black;
             this.btnTMSCost.ForeColor = haveTmsCost ? Color.Blue : Color.Black;
             this.btnStdGSDList.ForeColor = MyUtility.Check.Seek(string.Format("select i.ID from Style s WITH (NOLOCK) , IETMS i WITH (NOLOCK) where s.Ukey = '{0}' and s.IETMSID = i.ID and s.IETMSVersion = i.Version", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]))) && MyUtility.Check.Seek(string.Format("select ID from Order_TmsCost where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
-            this.btnCMPQRemark.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["CMPQRemark"]) ? Color.Blue : Color.Black;
-            this.btnCMPQSheet.ForeColor = MyUtility.Check.Seek(string.Format("select ID from orders WITH (NOLOCK) where Junk = 0 and POID='{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]))) ? Color.Blue : Color.Black;
             this.btnArtwork.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Artwork WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             this.btnGarmentExport.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             this.btnCuttingCombo.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["CuttingSP"]) ? Color.Blue : Color.Black;
@@ -467,7 +449,6 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
         {
             this.txtpaytermar1.TextBox1.ReadOnly = true;
             this.txtDevSample.ReadOnly = true;
-            this.label44.Text = "/PCS";
 
             // 帶入預設值
             this.CurrentMaintain["Category"] = "B";
@@ -1043,137 +1024,6 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         {
             Sci.Production.PublicForm.StdGSDList callNextForm = new Sci.Production.PublicForm.StdGSDList(MyUtility.Convert.GetLong(this.CurrentMaintain["StyleUKey"]));
             callNextForm.ShowDialog(this);
-        }
-
-        // CMPQ remark
-        private void BtnCMPQRemark_Click(object sender, EventArgs e)
-        {
-            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["CMPQRemark"]), "CMPQ Remark", false, null);
-            callNextForm.ShowDialog(this);
-        }
-
-        // CMPQ Sheet
-        private void BtnCMPQSheet_Click(object sender, EventArgs e)
-        {
-            this.ShowWaitMessage("Data processing, please wait...");
-
-            // string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
-            string poid = this.CurrentMaintain["POID"].ToString();
-            System.Data.DataTable rpt3;
-            string strSqlSelect = @"
-declare @newLine varchar(10) = CHAR(13)+CHAR(10)
-Select IIF(fty.CountryID ='TW', 'STARPORT CORPORATION' , 'SPORTS CITY INTERNATIONAL') as Title
-    ,'11F, No.585, Ruiguang Rd. Neihu Dist,
-    Taipei , Taiwan 11492 ( R.O.C.) 
-    Tel: +886 2 8751-0228 Fax: +886 2 8752-4101' as AbbEN --依規格
-    ,o.ID
-    ,fty.NameEN as name
-    ,fty.AddressEN as AddressEN
-    ,fty.Tel
-    ,fty.Fax
-    ,o.CMPQRemark as remark
-    ,o.SeasonID
-    ,convert(varchar(10),o.BuyerDelivery,111) as delivery
-    ,cty.Alias as des
-    ,par.Description as terms
-    ,o.StyleID
-    ,format(o.Qty,'#,0.')+o.StyleUnit as QTY   --Format : 999,999
-    ,sty.Description as descripition
-    ,fty.CurrencyID+str( o.CMPPrice,5,2)  +'/'+o.CMPUnit as price
-    ,amount = concat(fty.CurrencyID,' ',format(round(IIF(O.LocalOrder=1,o.POprice * o.Qty,o.CPU*o.CPUFactor*o.qty),3),'0.000'))
-    ,o.packing ,o.label ,o.packing2
-    ,Mark=iif(MarkFront<>'','(A) '+@newLine+MarkFront,'')
-    +@newLine+iif(MarkBack<>'','(B) '+@newLine+MarkBack,'')
-    +@newLine+iif(MarkLeft<>'','(C) '+@newLine+MarkLeft,'')
-    +@newLine+iif(MarkRight<>'','(D) '+@newLine+MarkRight,'')
-from Orders o WITH (NOLOCK)  inner join Factory fty WITH (NOLOCK)  ON o.FactoryID = fty.ID
-LEFT join Country cty WITH (NOLOCK)  ON o.Dest = cty.ID
-LEFT JOIN PaytermAR par WITH (NOLOCK)  ON o.PayTermARID = par.ID
-LEFT JOIN Style sty WITH (NOLOCK)  ON o.StyleUkey = sty.Ukey
-where o.Junk = 0 and o.POID= @POID order by o.ID";
-
-            DualResult res = DBProxy.Current.Select(string.Empty, strSqlSelect, new List<SqlParameter> { new SqlParameter("@ID", this.CurrentMaintain["ID"]), new SqlParameter("@POID", poid) }, out rpt3);
-
-            if (!res)
-            {
-                return;
-            }
-
-            string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_CMPQ.xltx");
-
-            sxrc sxr = new sxrc(xltPath, true);
-            int idx = 0;
-            sxr.CopySheet.Add(1, rpt3.Rows.Count - 1);
-            sxr.VarToSheetName = sxr.VPrefix + "SP";
-            Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
-            foreach (DataRow row in rpt3.Rows)
-            {
-                string sIdx = idx.ToString();
-                idx += 1;
-                string oid = row["ID"].ToString();
-                sxr.DicDatas.Add(sxr.VPrefix + "Title" + sIdx, row["Title"].ToString());
-                sxr.DicDatas.Add(sxr.VPrefix + "AbbEN" + sIdx, row["AbbEN"].ToString());
-                sxr.DicDatas.Add(sxr.VPrefix + "SP" + sIdx, oid);
-                sxr.DicDatas.Add(sxr.VPrefix + "Style" + sIdx, row["StyleID"].ToString());
-                sxr.DicDatas.Add(sxr.VPrefix + "name" + sIdx, row["name"].ToString());
-                sxr.DicDatas.Add(sxr.VPrefix + "addressen" + sIdx, row["AddressEN"].ToString());
-                sxr.DicDatas.Add(sxr.VPrefix + "tel" + sIdx, row["Tel"].ToString());
-                sxr.DicDatas.Add(sxr.VPrefix + "fax" + sIdx, row["Fax"].ToString());
-                sxr.DicDatas.Add(sxr.VPrefix + "remark" + sIdx, row["remark"].ToString());
-                sxr.DicDatas.Add(sxr.VPrefix + "season" + sIdx, row["SeasonID"].ToString());
-                sxr.DicDatas.Add(sxr.VPrefix + "delivery" + sIdx, row["delivery"].ToString());
-                sxr.DicDatas.Add(sxr.VPrefix + "des" + sIdx, row["des"].ToString());
-                sxr.DicDatas.Add(sxr.VPrefix + "terms" + sIdx, row["terms"].ToString());
-                sxr.DicDatas.Add(sxr.VPrefix + "styleno" + sIdx, row["StyleID"].ToString());
-                sxr.DicDatas.Add(sxr.VPrefix + "qty" + sIdx, row["QTY"].ToString());
-                sxr.DicDatas.Add(sxr.VPrefix + "descripition" + sIdx, row["descripition"].ToString());
-                sxr.DicDatas.Add(sxr.VPrefix + "price" + sIdx, row["price"].ToString());
-                sxr.DicDatas.Add(sxr.VPrefix + "amount" + sIdx, row["amount"].ToString());
-
-                int l = 79;
-                int la = row["AddressEN"].ToString().Length / l;
-                for (int i = 1; i <= la; i++)
-                {
-                    if (row["AddressEN"].ToString().Length > l * i)
-                    {
-                        wks.get_Range("A6").RowHeight = 16.5 * (i + 1);
-                    }
-                }
-
-                System.Data.DataTable[] dts;
-                res = DBProxy.Current.SelectSP(string.Empty, "PPIC_Report03", new List<SqlParameter> { new SqlParameter("@OrderID", oid), new SqlParameter("@ByType", 0) }, out dts);
-
-                if (!res)
-                {
-                    continue;
-                }
-
-                if (dts.Length < 3)
-                {
-                    continue;
-                }
-
-                sxrc.XltRptTable tbl1 = new sxrc.XltRptTable(dts[0], 1, 2, true);
-                sxrc.XltRptTable tbl2 = new sxrc.XltRptTable(dts[1], 1, 3);
-                sxrc.XltRptTable tbl3 = new sxrc.XltRptTable(dts[2], 1, 0);
-                this.SetColumn1toText(tbl1);
-                this.SetColumn1toText(tbl2);
-                this.SetColumn1toText(tbl3);
-                sxr.DicDatas.Add(sxr.VPrefix + "qtybreakdown" + sIdx, tbl1);
-                sxr.DicDatas.Add(sxr.VPrefix + "fabcom" + sIdx, tbl2);
-                sxr.DicDatas.Add(sxr.VPrefix + "acccom" + sIdx, tbl3);
-
-                sxr.DicDatas.Add(sxr.VPrefix + "shipmark" + sIdx, new sxrc.XltLongString(row["mark"].ToString().Trim()));
-                sxr.DicDatas.Add(sxr.VPrefix + "paching" + sIdx, new sxrc.XltLongString(row["packing"].ToString()));
-                sxr.DicDatas.Add(sxr.VPrefix + "labelhantag" + sIdx, new sxrc.XltLongString(row["label"].ToString()));
-                string userName;
-                UserPrg.GetName(Env.User.UserID, out userName, UserPrg.NameType.idAndNameAndExt);
-                sxr.DicDatas.Add(sxr.VPrefix + "userid" + sIdx, userName);
-            }
-
-            sxr.IsProtect = true; // Excel 加密
-            sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_CMPQ"));
-            this.HideWaitMessage();
         }
 
         private void SetColumn1toText(sxrc.XltRptTable tbl)
