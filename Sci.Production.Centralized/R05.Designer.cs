@@ -43,9 +43,9 @@
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
             this.comboCentralizedFactory1 = new Sci.Production.Class.comboCentralizedFactory(this.components);
-            this.comboCentralizedZone1 = new Sci.Production.Class.comboCentralizedZone(this.components);
             this.comboCentralizedM1 = new Sci.Production.Class.comboCentralizedM(this.components);
             this.txtbrand1 = new Sci.Production.Class.txtbrand();
+            this.comboFtyZone = new Sci.Production.Class.comboFtyZone(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).BeginInit();
             this.SuspendLayout();
             // 
@@ -196,7 +196,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(111, 23);
             this.label4.TabIndex = 110;
-            this.label4.Text = "Zone";
+            this.label4.Text = "FtyZone";
             // 
             // label5
             // 
@@ -234,18 +234,6 @@
             this.comboCentralizedFactory1.Size = new System.Drawing.Size(80, 24);
             this.comboCentralizedFactory1.TabIndex = 101;
             // 
-            // comboCentralizedZone1
-            // 
-            this.comboCentralizedZone1.BackColor = System.Drawing.Color.White;
-            this.comboCentralizedZone1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCentralizedZone1.FormattingEnabled = true;
-            this.comboCentralizedZone1.IsSupportUnselect = true;
-            this.comboCentralizedZone1.Location = new System.Drawing.Point(123, 100);
-            this.comboCentralizedZone1.Name = "comboCentralizedZone1";
-            this.comboCentralizedZone1.OldText = "";
-            this.comboCentralizedZone1.Size = new System.Drawing.Size(80, 24);
-            this.comboCentralizedZone1.TabIndex = 100;
-            // 
             // comboCentralizedM1
             // 
             this.comboCentralizedM1.BackColor = System.Drawing.Color.White;
@@ -267,11 +255,27 @@
             this.txtbrand1.Size = new System.Drawing.Size(80, 23);
             this.txtbrand1.TabIndex = 98;
             // 
+            // comboFtyZone
+            // 
+            this.comboFtyZone.BackColor = System.Drawing.Color.White;
+            this.comboFtyZone.FilteMDivision = false;
+            this.comboFtyZone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFtyZone.FormattingEnabled = true;
+            this.comboFtyZone.IssupportJunk = false;
+            this.comboFtyZone.IsSupportUnselect = true;
+            this.comboFtyZone.Location = new System.Drawing.Point(123, 99);
+            this.comboFtyZone.Name = "comboFtyZone";
+            this.comboFtyZone.OldText = "";
+            this.comboFtyZone.SelectTable = "Factory";
+            this.comboFtyZone.Size = new System.Drawing.Size(80, 24);
+            this.comboFtyZone.TabIndex = 114;
+            // 
             // R05
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(591, 336);
+            this.Controls.Add(this.comboFtyZone);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -285,7 +289,6 @@
             this.Controls.Add(this.chkOrder);
             this.Controls.Add(this.cmbDate);
             this.Controls.Add(this.comboCentralizedFactory1);
-            this.Controls.Add(this.comboCentralizedZone1);
             this.Controls.Add(this.comboCentralizedM1);
             this.Controls.Add(this.txtbrand1);
             this.Controls.Add(this.numYear);
@@ -301,7 +304,6 @@
             this.Controls.SetChildIndex(this.numYear, 0);
             this.Controls.SetChildIndex(this.txtbrand1, 0);
             this.Controls.SetChildIndex(this.comboCentralizedM1, 0);
-            this.Controls.SetChildIndex(this.comboCentralizedZone1, 0);
             this.Controls.SetChildIndex(this.comboCentralizedFactory1, 0);
             this.Controls.SetChildIndex(this.cmbDate, 0);
             this.Controls.SetChildIndex(this.chkOrder, 0);
@@ -315,6 +317,7 @@
             this.Controls.SetChildIndex(this.label5, 0);
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.label7, 0);
+            this.Controls.SetChildIndex(this.comboFtyZone, 0);
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -326,7 +329,6 @@
         private Win.UI.NumericUpDown numYear;
         private Class.txtbrand txtbrand1;
         private Class.comboCentralizedM comboCentralizedM1;
-        private Class.comboCentralizedZone comboCentralizedZone1;
         private Class.comboCentralizedFactory comboCentralizedFactory1;
         private Win.UI.ComboBox cmbDate;
         private Win.UI.CheckBox chkOrder;
@@ -340,5 +342,6 @@
         private Win.UI.Label label5;
         private Win.UI.Label label6;
         private Win.UI.Label label7;
+        private Class.comboFtyZone comboFtyZone;
     }
 }

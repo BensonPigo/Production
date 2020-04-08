@@ -24,11 +24,12 @@ namespace Sci.Production.Centralized
             this.InitializeComponent();
             this.numYear.Value = MyUtility.Convert.GetDecimal(DateTime.Now.Year);
             this.comboCentralizedM1.SetDefalutIndex(Sci.Env.User.Keyword);
-            this.comboCentralizedZone1.SetDefalutIndex();
             this.comboCentralizedFactory1.SetDefalutIndex(Sci.Env.User.Factory, true);
 
             MyUtility.Tool.SetupCombox(this.cmbDate, 2, 1, "1,SCI Delivery Date,2,Buyer Delivery Date");
             this.cmbDate.SelectedValue = "1";
+
+            this.comboFtyZone.setDataSource();
         }
 
         private int Year;
@@ -43,8 +44,9 @@ namespace Sci.Production.Centralized
         private bool ExcludeSampleFactory;
         private DataTable[] printData;
         private DataTable[] dtAllData;
-        private List<DataTable> Detaildt;
         private List<DataTable> Summarydt;
+        private List<string> listFtyZone;
+        private DataTable dtAllDetail;
 
         /// <inheritdoc/>
         protected override bool ValidateInput()
@@ -52,7 +54,7 @@ namespace Sci.Production.Centralized
             this.Year = MyUtility.Convert.GetInt(this.numYear.Value);
             this.Brand = this.txtbrand1.Text;
             this.M = this.comboCentralizedM1.Text;
-            this.Zone = this.comboCentralizedZone1.Text;
+            this.Zone = this.comboFtyZone.Text;
             this.Factory = this.comboCentralizedFactory1.Text;
             this.Date = MyUtility.Convert.GetString(this.cmbDate.SelectedValue);
             this.Order = this.chkOrder.Checked;
@@ -60,9 +62,9 @@ namespace Sci.Production.Centralized
             this.FtyLocalOrder = this.chkFtyLocalOrder.Checked;
             this.ExcludeSampleFactory = this.chkExcludeSampleFactory.Checked;
 
-            if (MyUtility.Check.Empty(this.Year) || MyUtility.Check.Empty(this.M))
+            if (MyUtility.Check.Empty(this.Year))
             {
-                MyUtility.Msg.WarningBox("Please input <Year> and <M> first!");
+                MyUtility.Msg.WarningBox("Please input <Year> first!");
                 return false;
             }
 
@@ -80,10 +82,11 @@ namespace Sci.Production.Centralized
         {
             DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
             this.dtAllData = null;
-            this.Detaildt = new List<DataTable>();
             this.Summarydt = new List<DataTable>();
+            this.listFtyZone = new List<string>();
             #region where
             string where = string.Empty;
+            string whereFty = string.Empty;
             if (!MyUtility.Check.Empty(this.Year) && this.Date == "1")
             {
                 where += $@" and cast(dateadd(day,-7,o.SciDelivery) as date) between '{this.Year}/01/01' and '{this.Year}/12/31'";
@@ -101,22 +104,22 @@ namespace Sci.Production.Centralized
 
             if (!MyUtility.Check.Empty(this.M))
             {
-                where += $@" and o.MDivisionID = '{this.M}'";
+                whereFty += $@" and o.MDivisionID = '{this.M}'";
             }
 
             if (!MyUtility.Check.Empty(this.Zone))
             {
-                where += $@" and SCIFty.zone = '{this.Zone}'";
+                whereFty += $@" and SCIFty.FtyZone = '{this.Zone}'";
             }
 
             if (!MyUtility.Check.Empty(this.Factory))
             {
-                where += $@" and o.FtyGroup = '{this.Factory}'";
+                whereFty += $@" and o.FtyGroup = '{this.Factory}'";
             }
 
             if (this.ExcludeSampleFactory)
             {
-                where += $@" and SCIFty.Type <> 'S'";
+                whereFty += $@" and SCIFty.Type <> 'S'";
             }
 
             #endregion
@@ -135,7 +138,7 @@ namespace Sci.Production.Centralized
 
             if (this.FtyLocalOrder)
             {
-                listWhereSource.Add(" (LocalOrder = 1 and SubconInType=3) ");
+                listWhereSource.Add(" (LocalOrder = 1 and SubconInType <> 1) ");
             }
 
             string whereSource = listWhereSource.JoinToString("or");
@@ -143,6 +146,31 @@ namespace Sci.Production.Centralized
 
             #region sqlcmd
             string sqlCmd = $@"
+
+select  o.ID,o.FactoryID,[TransFtyZone] = ''
+into    #tmpBaseOrderID
+from Orders o with(nolock)
+inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
+left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
+where   IsProduceFty = 1
+        {where + whereFty}
+
+--代工的訂單，以ProgramID抓出自己工廠的資料，後續要顯示在detail並扣除summary的資料
+select  o.ID,[TransFtyZone] = f.FtyZone
+into    #tmpBaseTransOrderID
+from Orders o with(nolock)
+left join Factory f with(nolock) on f.ID = o.ProgramID and f.junk = 0
+where   o.LocalOrder = 1 and o.SubconInType = 2 {where} and
+        o.ProgramID in (select distinct FactoryID from #tmpBaseOrderID)
+
+select * into #tmpBaseStep1
+from (
+    select  ID,TransFtyZone from #tmpBaseOrderID where ID not in (select ID from #tmpBaseTransOrderID)
+    union all
+    select  ID,TransFtyZone from #tmpBaseTransOrderID
+) a
+
+
 select
 o.ID,
 [Date]=format(iif('{this.Date}'='1',dateadd(day,-7,o.SciDelivery),o.BuyerDelivery),'yyyyMM'),
@@ -159,22 +187,23 @@ o.IsForecast,
 o.LocalOrder,
 o.FactoryID,
 o.FtyGroup,
-f.IsProduceFty
+f.IsProduceFty,
+f.FtyZone,
+o.ProgramID,
+tbs.TransFtyZone
 into #tmpBase
-from Orders o with(nolock)
+from #tmpBaseStep1 tbs
+inner join Orders o with(nolock) on o.ID = tbs.ID
 inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
-left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
 left join SewingOutput_Detail_Detail sdd with (nolock) on o.ID = sdd.OrderId
 left join SewingOutput s with (nolock) on sdd.ID = s.ID
 left join Order_Location ol with (nolock) on ol.OrderId = sdd.OrderId and ol.Location = sdd.ComboType
 left join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey and sl.Location = sdd.ComboType
 outer apply (select [CpuRate] = case when o.IsForecast = 1 then (select CpuRate from GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'O'))
-                                     when o.LocalOrder = 1 and o.SubconInType=3 then 1
+                                     when o.LocalOrder = 1 then 1
                                      else (select CpuRate from GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'O')) end
                      ) gcRate
 outer apply (select Qty=sum(shipQty) from Pullout_Detail where orderid = o.id) GetPulloutData
-where   IsProduceFty = 1
-        {where}
 group by o.ID,
 o.SciDelivery,
 o.BuyerDelivery,
@@ -192,7 +221,10 @@ o.FtyGroup,
 f.IsProduceFty,
 gcRate.CpuRate,
 GetPulloutData.Qty,
-o.GMTComplete
+o.GMTComplete,
+f.FtyZone,
+o.ProgramID,
+tbs.TransFtyZone
 
 select  ID,
         FactoryID,
@@ -209,10 +241,13 @@ select  ID,
                                         --正常訂單
                                         ((Qty > 0  And Category in ('B','S')  and (localorder = 0 or SubconInType=2)) or
                                         --當地訂單
-                                        (LocalOrder = 1 and SubconInType=3)),1,0)
+                                        (LocalOrder = 1 )),1,0),
+        FtyZone,
+        ProgramID,
+        TransFtyZone
 into #tmpBaseBySource
 from #tmpBase
-where {whereSource}
+where   {whereSource} or TransFtyZone <> ''
 
 select
 ID,
@@ -220,10 +255,12 @@ Date,
 OrderCPU,
 OrderShortageCPU,
 [SewingOutput] = SUM(SewingOutput),
-[SewingOutputCPU] = SUM(SewingOutputCPU)
+[SewingOutputCPU] = SUM(SewingOutputCPU),
+FtyZone,
+TransFtyZone
 into #tmpBaseByOrderID
 from #tmpBaseBySource
-group by ID,Date,OrderCPU,OrderShortageCPU
+group by ID,Date,OrderCPU,OrderShortageCPU,FtyZone,TransFtyZone
 
 select  oq.ID, [LastBuyerDelivery] = Max(oq.BuyerDelivery), [PartialShipment] = iif(count(1) > 1, 'Y', '')
 into #tmpOrder_QtyShip
@@ -231,8 +268,15 @@ from    Order_QtyShip oq with (nolock)
 where exists (select 1 from #tmpBaseByOrderID tb where tb.ID = oq.ID)
 group by    oq.ID
 
+select  pd.OrderID, [PulloutQty] = sum(pd.shipQty)
+into #tmpPullout_Detail
+from Pullout_Detail pd with (nolock)
+where exists (select 1 from #tmpBaseByOrderID tb where tb.ID = pd.OrderID)
+group by pd.OrderID
+
 select
 	o.MDivisionID,
+    tb.FtyZone,
 	o.FactoryID,
 	o.BuyerDelivery,
 	o.SciDelivery,
@@ -252,6 +296,7 @@ select
 	o.CPU,
 	o.Qty,
 	o.FOCQty,
+    tpd.PulloutQty,
     tb.OrderShortageCPU,
 	tb.OrderCPU,
 	tb.SewingOutput,
@@ -263,10 +308,12 @@ select
 	o.ProgramID,
 	o.CdCodeID,
 	CDCode.ProductionFamilyID,
-    o.FtyGroup
+    o.FtyGroup,
+    tb.TransFtyZone
 from #tmpBaseByOrderID tb with(nolock)
 inner join Orders o with(nolock) on o.id = tb.ID
 left join #tmpOrder_QtyShip toq on toq.ID = tb.ID
+left join #tmpPullout_Detail tpd on tpd.OrderID = tb.ID
 left join CDCode with(nolock) on CDCode.ID = o.CdCodeID
 
 
@@ -275,16 +322,33 @@ select  FtyGroup,
         ID,
         OutputDate,
         [OrderCPU] = iif(isNormalOrderCanceled = 1,0, OrderCPU - OrderShortageCPU),
+        [CanceledCPU] = iif(isNormalOrderCanceled = 1,OrderCPU, 0),
         OrderShortageCPU,
         SewingOutput,
-        SewingOutputCPU
+        SewingOutputCPU,
+        FtyZone,
+        [IsTransOrder] = 0
 from    #tmpBaseBySource
+union all
+select  FtyGroup,
+        [Date] = SUBSTRING(Date,1,4)+'/'+SUBSTRING(Date,5,6),
+        ID,
+        OutputDate,
+        [OrderCPU] = iif(isNormalOrderCanceled = 1,0, (OrderCPU - OrderShortageCPU) * -1),
+        [CanceledCPU] = 0,
+        [OrderShortageCPU] = 0,
+        [SewingOutput] = 0,
+        [SewingOutputCPU] = 0,
+        [FtyZone] = TransFtyZone,
+        [IsTransOrder] = 1
+from    #tmpBaseBySource where TransFtyZone <> ''
 
-select  FtyGroup,OutputDate,[SewingOutputCPU] = sum(SewingOutputCPU) * -1
+select  FtyGroup,OutputDate,[SewingOutputCPU] = sum(SewingOutputCPU) * -1,FtyZone
 from    #tmpBase
-where   Junk=1 and OutputDate is not null group by FtyGroup,OutputDate
+where   Junk=1 and OutputDate is not null 
+group by FtyGroup,OutputDate,FtyZone
 
-drop table #tmpBase,#tmpBaseBySource,#tmpBaseByOrderID,#tmpOrder_QtyShip
+drop table #tmpBaseOrderID,#tmpBaseByOrderID,#tmpBaseTransOrderID,#tmpBaseStep1,#tmpBase,#tmpBaseBySource,#tmpOrder_QtyShip
 ";
             #endregion
 
@@ -344,22 +408,21 @@ drop table #tmpBase,#tmpBaseBySource,#tmpBaseByOrderID,#tmpOrder_QtyShip
                 return Result.F("Data not found!");
             }
 
-            List<string> ftys = this.dtAllData[0].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["FtyGroup"])).Select(s => MyUtility.Convert.GetString(s["FtyGroup"])).Distinct().ToList();
+            var allDetail = this.dtAllData[0].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["FtyZone"]));
+            this.dtAllDetail = allDetail.CopyToDataTable();
+            this.listFtyZone = allDetail.Where(s => MyUtility.Check.Empty(s["TransFtyZone"])).Select(s => MyUtility.Convert.GetString(s["FtyZone"])).Distinct().ToList();
 
-            foreach (string fty in ftys)
+            foreach (string ftyZone in listFtyZone)
             {
-                DataTable detail = this.dtAllData[0].Select($"FtyGroup = '{fty}'").CopyToDataTable();
-                this.Detaildt.Add(detail);
-
                 #region summary
                 string sqlsum = $@"
-select Date,ID,OrderCPU,BalanceCPU=OrderCPU-sum(SewingOutputCPU),OrderShortageCPU
+select Date,ID,OrderCPU,CanceledCPU,BalanceCPU=OrderCPU-sum(SewingOutputCPU),OrderShortageCPU
 into #tmp2_0
 from #tmp
-where FtyGroup = '{fty}'
-group by Date,ID,OrderCPU,OrderShortageCPU
+where FtyZone = '{ftyZone}'
+group by Date,ID,OrderCPU,CanceledCPU,OrderShortageCPU
 
-select Date,OrderCPU=sum(OrderCPU),BalanceCPU=sum(BalanceCPU),[OrderShortageCPU] = sum(OrderShortageCPU)
+select Date,OrderCPU=sum(OrderCPU),CanceledCPU = sum(CanceledCPU),BalanceCPU=sum(BalanceCPU),[OrderShortageCPU] = sum(OrderShortageCPU)
 into #tmp2
 from #tmp2_0
 group by Date
@@ -370,7 +433,7 @@ from(
 	select distinct OutputDate
 	from #tmp
 	where OutputDate<>''
-    and FtyGroup = '{fty}'
+    and FtyZone = '{ftyZone}'
 )x
 order by OutputDate
 for xml path('')
@@ -382,7 +445,7 @@ from(
 	select distinct OutputDate
 	from #tmp
 	where OutputDate<>''
-    and FtyGroup = '{fty}'
+    and FtyZone = '{ftyZone}'
 )x
 order by OutputDate
 for xml path('')
@@ -390,7 +453,7 @@ for xml path('')
 
 declare @sql nvarchar(max)=N'
 select t2.Date,
-	Loading=t2.OrderCPU,[Shortage] = t2.OrderShortageCPU,Balance=t2.BalanceCPU,
+	Loading=t2.OrderCPU,[Shortage] = t2.OrderShortageCPU, [Canceled] = t2.CanceledCPU, Balance=t2.BalanceCPU,
 	'+@col+N'
 into #tmp3
 from #tmp2 t2
@@ -403,7 +466,7 @@ inner join
 		SewingOutputCPU,
 		OutputDate
 		from #tmp t
-        where FtyGroup = ''{fty}''
+        where FtyZone = ''{ftyZone}''
 	)x
 	pivot(sum(SewingOutputCPU) for OutputDate in('+@col+N'))xx
 )xxx on t2.Date=xxx.Date
@@ -411,19 +474,19 @@ order by t2.Date
 
 select*from #tmp3
 union all
-select ''Total'' ,sum(Loading),sum(Shortage), sum(Balance),'+@col2+' from #tmp3
+select ''Total'' ,sum(Loading),sum(Shortage), sum(Canceled), sum(Balance),'+@col2+' from #tmp3
 '
 exec (@sql)
 
 if @sql is null
 begin
-	select Date='',Loading=null,Shortage = null,Balance=null,[ ]=''
+	select Date='',Loading=null,Shortage = null, Canceled = null,Balance=null,[ ]=''
 end
 
-drop table #tmp,#tmp2,#tmp2_0
+drop table #tmp,#tmp2_0,#tmp2
 ";
                 DataTable ftySummarydt;
-                DualResult dual = MyUtility.Tool.ProcessWithDatatable(this.dtAllData[1], "FtyGroup,Date,ID,OrderCPU,SewingOutputCPU,OutputDate,OrderShortageCPU", sqlsum, out ftySummarydt);
+                DualResult dual = MyUtility.Tool.ProcessWithDatatable(this.dtAllData[1], "FtyGroup,Date,ID,OrderCPU,SewingOutputCPU,OutputDate,OrderShortageCPU,FtyZone,CanceledCPU,IsTransOrder", sqlsum, out ftySummarydt);
                 if (!dual)
                 {
                     return dual;
@@ -436,7 +499,7 @@ from(
 	select distinct OutputDate
 	from #tmp
 	where OutputDate<>''
-    and FtyGroup = '{fty}'
+    and FtyZone = '{ftyZone}'
 )x
 order by OutputDate
 for xml path('')
@@ -445,7 +508,7 @@ for xml path('')
 declare @sql nvarchar(max)=N'
 select  a.*,'+@col+N'
 into #tmp3_junk
-from(select Date=''Cancel order'',Loading=null,Shortage = null,Balance=null)a
+from(select Date=''Cancel order'',Loading=null,Shortage = null, Canceled = null,Balance=null)a
 outer apply (
 	select*
 	from(
@@ -453,7 +516,7 @@ outer apply (
 			SewingOutputCPU,
 			OutputDate
 		from #tmp t
-        where FtyGroup = ''{fty}''
+        where FtyZone = ''{ftyZone}''
 	)x
 	pivot(sum(SewingOutputCPU) for OutputDate in('+@col+N'))xx
 )b
@@ -463,7 +526,7 @@ select*from #tmp3_junk
 exec (@sql)
 if @sql is null
 begin
-	select Date='Cancel order',Loading=null,Shortage = null,Balance=null
+	select Date='Cancel order',Loading=null,Shortage = null, Canceled = null,Balance=null
 end
 drop table #tmp
 ";
@@ -513,32 +576,67 @@ drop table #tmp
             {
                 worksheet.Cells[3, 1] = "Buyer delivery";
             }
-
             // 複製分頁
-            for (int j = 1; j < this.Detaildt.Count; j++)
-            {
-                Excel.Worksheet worksheet1 = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[1];
-                Excel.Worksheet worksheet3 = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[j * 2 + 1];
-                worksheet1.Copy(worksheet3);
+            Excel.Worksheet worksheet1 = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[1];
+            Excel.Worksheet newSummarySheet;
 
-                Excel.Worksheet worksheet2 = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[2];
-                Excel.Worksheet worksheet4 = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[j * 2 + 2];
-                worksheet2.Copy(worksheet4);
+            this.dtAllDetail.Columns.Remove(this.dtAllDetail.Columns["FtyGroup"]);
+            this.dtAllDetail.Columns.Remove(this.dtAllDetail.Columns["TransFtyZone"]);
+
+            for (int j = 1; j < this.listFtyZone.Count; j++)
+            {
+                newSummarySheet = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[j];
+                worksheet1.Copy(newSummarySheet);
             }
 
-            for (int j = 1; j <= this.Detaildt.Count; j++)
-            {
-                string ftyGroup = MyUtility.Convert.GetString(this.Detaildt[j - 1].Rows[0]["FtyGroup"]);
-                worksheet = excelApp.ActiveWorkbook.Worksheets[j * 2 - 1];
-                worksheet.Name = ftyGroup + "-Summary";
-                this.Detaildt[j - 1].Columns.Remove(this.Detaildt[j - 1].Columns["FtyGroup"]);
-                MyUtility.Excel.CopyToXls(this.Summarydt[j - 1], string.Empty, xltfile: excelFile, headerRow: 4, excelApp: excelApp, wSheet: excelApp.Sheets[j * 2 - 1], showExcel: false, DisplayAlerts_ForSaveFile: true);
-                worksheet.Cells[1, 1] = "Fty:" + ftyGroup;
+            #region detail data
+            MyUtility.Excel.CopyToXls(this.dtAllDetail, string.Empty, xltfile: excelFile, headerRow: 1, excelApp: excelApp, wSheet: excelApp.Sheets[this.listFtyZone.Count + 1], showExcel: false, DisplayAlerts_ForSaveFile: true);
+            worksheet = excelApp.ActiveWorkbook.Worksheets[this.listFtyZone.Count + 1]; // 取得工作表
+            worksheet.Columns.AutoFit();
 
+            worksheet.Columns[1].ColumnWidth = 5.5;
+            worksheet.Columns[2].ColumnWidth = 8;
+            worksheet.Columns[3].ColumnWidth = 11.13;
+            worksheet.Columns[4].ColumnWidth = 11.88;
+            worksheet.Columns[5].ColumnWidth = 11.88;
+            worksheet.Columns[6].ColumnWidth = 7.88;
+            worksheet.Columns[7].ColumnWidth = 17.75;
+            worksheet.Columns[8].ColumnWidth = 12.75;
+            worksheet.Columns[9].ColumnWidth = 14;
+            worksheet.Columns[10].ColumnWidth = 14;
+            worksheet.Columns[11].ColumnWidth = 15;
+            worksheet.Columns[12].ColumnWidth = 25;
+            worksheet.Columns[13].ColumnWidth = 11.13;
+            worksheet.Columns[14].ColumnWidth = 25.25;
+            worksheet.Columns[15].ColumnWidth = 20;
+            worksheet.Columns[16].ColumnWidth = 7.63;
+            worksheet.Columns[17].ColumnWidth = 13.38;
+            worksheet.Columns[18].ColumnWidth = 11.88;
+            worksheet.Columns[19].ColumnWidth = 15.25;
+            worksheet.Columns[20].ColumnWidth = 15.25;
+            worksheet.Columns[21].ColumnWidth = 15.25;
+            worksheet.Columns[22].ColumnWidth = 25.75;
+            worksheet.Columns[23].ColumnWidth = 16.38;
+            worksheet.Columns[24].ColumnWidth = 17.5;
+            worksheet.Columns[25].ColumnWidth = 18.13;
+            worksheet.Columns[26].ColumnWidth = 8;
+            worksheet.Columns[27].ColumnWidth = 22;
+            worksheet.Columns[28].ColumnWidth = 16.38;
+            worksheet.Columns[29].ColumnWidth = 6.5;
+            worksheet.Columns[30].ColumnWidth = 19.88;
+            #endregion
+
+            for (int j = 1; j <= this.listFtyZone.Count; j++)
+            {
+                string ftyZone = MyUtility.Convert.GetString(this.listFtyZone[j - 1]);
+                worksheet = excelApp.ActiveWorkbook.Worksheets[j];
+                worksheet.Name = ftyZone + "-Summary";
+                MyUtility.Excel.CopyToXls(this.Summarydt[j - 1], string.Empty, xltfile: excelFile, headerRow: 4, excelApp: excelApp, wSheet: excelApp.Sheets[j], showExcel: false, DisplayAlerts_ForSaveFile: true);
+                worksheet.Cells[1, 1] = "Fty:" + ftyZone;
                 int i = 1;
                 foreach (DataColumn col in this.Summarydt[j - 1].Columns)
                 {
-                    if (i > 4)
+                    if (i > 5)
                     {
                         worksheet.Cells[4, i] = col.ColumnName;
                     }
@@ -547,44 +645,15 @@ drop table #tmp
                 }
 
                 i--;
-                worksheet.get_Range((Excel.Range)worksheet.Cells[3, 5], (Excel.Range)worksheet.Cells[3, i]).Merge(false);
+                worksheet.get_Range((Excel.Range)worksheet.Cells[3, 6], (Excel.Range)worksheet.Cells[3, i]).Merge(false);
                 worksheet.get_Range((Excel.Range)worksheet.Cells[3, 1], (Excel.Range)worksheet.Cells[this.Summarydt[j - 1].Rows.Count + 4, i]).Borders.Weight = 3; // 設定全框線
-
-                MyUtility.Excel.CopyToXls(this.Detaildt[j - 1], string.Empty, xltfile: excelFile, headerRow: 1, excelApp: excelApp, wSheet: excelApp.Sheets[j * 2], showExcel: false, DisplayAlerts_ForSaveFile: true);
-                worksheet = excelApp.ActiveWorkbook.Worksheets[j * 2 - 1]; // 取得工作表
                 worksheet.Columns.AutoFit();
-                worksheet.Columns[1].ColumnWidth = 12;
+            }
 
-                worksheet = excelApp.ActiveWorkbook.Worksheets[j * 2]; // 取得工作表
-                worksheet.Name = ftyGroup + "-Balance Detail";
-                worksheet.Columns[1].ColumnWidth = 5.5;
-                worksheet.Columns[2].ColumnWidth = 11.13;
-                worksheet.Columns[3].ColumnWidth = 11.88;
-                worksheet.Columns[4].ColumnWidth = 11.88;
-                worksheet.Columns[5].ColumnWidth = 7.88;
-                worksheet.Columns[6].ColumnWidth = 17.75;
-                worksheet.Columns[7].ColumnWidth = 12.75;
-                worksheet.Columns[8].ColumnWidth = 14;
-                worksheet.Columns[9].ColumnWidth = 14;
-                worksheet.Columns[10].ColumnWidth = 15;
-                worksheet.Columns[11].ColumnWidth = 25;
-                worksheet.Columns[12].ColumnWidth = 11.13;
-                worksheet.Columns[13].ColumnWidth = 25.25;
-                worksheet.Columns[14].ColumnWidth = 20;
-                worksheet.Columns[15].ColumnWidth = 7.63;
-                worksheet.Columns[16].ColumnWidth = 13.38;
-                worksheet.Columns[17].ColumnWidth = 11.88;
-                worksheet.Columns[18].ColumnWidth = 15.25;
-                worksheet.Columns[19].ColumnWidth = 15.25;
-                worksheet.Columns[20].ColumnWidth = 25.75;
-                worksheet.Columns[21].ColumnWidth = 16.38;
-                worksheet.Columns[22].ColumnWidth = 17.5;
-                worksheet.Columns[23].ColumnWidth = 18.13;
-                worksheet.Columns[24].ColumnWidth = 8;
-                worksheet.Columns[25].ColumnWidth = 22;
-                worksheet.Columns[26].ColumnWidth = 16.38;
-                worksheet.Columns[27].ColumnWidth = 6.5;
-                worksheet.Columns[28].ColumnWidth = 19.88;
+            int sheetCnt = excelApp.ActiveWorkbook.Worksheets.Count;
+            for (int i = 1; i < sheetCnt - 1; i++)
+            {
+                excelApp.ActiveWorkbook.Worksheets[i].Columns[1].ColumnWidth = 11.25;
             }
 
             excelApp.Visible = true;
