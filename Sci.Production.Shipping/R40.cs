@@ -836,11 +836,11 @@ select
 	, StockQty=
 		case when t.StockUnit <> t2.StockUnit and t.StockUnit like '%cone%' then
 				StockQty * 
-				(select RateValue from dbo.View_Unitrate where FROM_U = t.StockUnit and TO_U = 'M')*
-				(select RateValue from dbo.View_Unitrate where FROM_U = 'M' and TO_U = t2.StockUnit)
+				isnull((select RateValue from dbo.View_Unitrate where FROM_U = t.StockUnit and TO_U = 'M')*
+				(select RateValue from dbo.View_Unitrate where FROM_U = 'M' and TO_U = t2.StockUnit),1)
 			when t.StockUnit <> t2.StockUnit then
 				StockQty * 
-				(select RateValue from dbo.View_Unitrate where FROM_U = t.StockUnit and TO_U = t2.StockUnit)
+				isnull((select RateValue from dbo.View_Unitrate where FROM_U = t.StockUnit and TO_U = t2.StockUnit),1)
 			else
 				StockQty
 		end
@@ -871,11 +871,11 @@ select 	POID	, HSCode	, NLCode	, Qty     , Refno    , MaterialType    , t2.Descr
 	, StockQty=
 		case when t.StockUnit <> t2.StockUnit and t.StockUnit like '%cone%' then
 				StockQty * 
-				(select RateValue from dbo.View_Unitrate where FROM_U = t.StockUnit and TO_U = 'M')*
-				(select RateValue from dbo.View_Unitrate where FROM_U = 'M' and TO_U = t2.StockUnit)
+				isnull((select RateValue from dbo.View_Unitrate where FROM_U = t.StockUnit and TO_U = 'M')*
+				(select RateValue from dbo.View_Unitrate where FROM_U = 'M' and TO_U = t2.StockUnit),1)
 			when t.StockUnit <> t2.StockUnit then
 				StockQty * 
-				(select RateValue from dbo.View_Unitrate where FROM_U = t.StockUnit and TO_U = t2.StockUnit)
+				isnull((select RateValue from dbo.View_Unitrate where FROM_U = t.StockUnit and TO_U = t2.StockUnit),1)
 			else
 				StockQty
 		end
@@ -909,26 +909,27 @@ select  [HSCode] = IIF(tw.HSCode is not null, tw.HSCode, ti.HSCode)
         , [StockQty] =
 			case when tw.StockUnit is not null and ti.StockUnit like '%cone%'  then -- 資料以 Already Sewing Output(#tmpSPNotCloseSewingOutput) 為主(單位)
 					isnull(ti.StockQty,0)*
-					(select RateValue from dbo.View_Unitrate where FROM_U = ti.StockUnit and TO_U = 'M')*
-					(select RateValue from dbo.View_Unitrate where FROM_U = 'M' and TO_U = tw.StockUnit)
+					isnull((select RateValue from dbo.View_Unitrate where FROM_U = ti.StockUnit and TO_U = 'M')*
+					(select RateValue from dbo.View_Unitrate where FROM_U = 'M' and TO_U = tw.StockUnit),1)
 					-
 					isnull(tw.StockQty,0)
 				when tw.StockUnit is not null then
 					isnull(ti.StockQty,0)*
-					(select RateValue from dbo.View_Unitrate where FROM_U = ti.StockUnit and TO_U = tw.StockUnit)
+					isnull((select RateValue from dbo.View_Unitrate where FROM_U = ti.StockUnit and TO_U = tw.StockUnit),1)
 					-
 					isnull(tw.StockQty,0)					
 				when tw.StockUnit is null and tw.StockUnit like '%cone%' then
 					isnull(ti.StockQty,0)
 					-
 					isnull(tw.StockQty,0)*
-					(select RateValue from dbo.View_Unitrate where FROM_U = tw.StockUnit and TO_U = 'M')*
-					(select RateValue from dbo.View_Unitrate where FROM_U = 'M' and TO_U = ti.StockUnit)
+					isnull((select RateValue from dbo.View_Unitrate where FROM_U = tw.StockUnit and TO_U = 'M')*
+					(select RateValue from dbo.View_Unitrate where FROM_U = 'M' and TO_U = ti.StockUnit),1)
 				else
 					isnull(ti.StockQty,0)
 					-
 					isnull(tw.StockQty,0)*
-					(select RateValue from dbo.View_Unitrate where FROM_U = tw.StockUnit and TO_U = ti.StockUnit)
+					isnull((select RateValue from dbo.View_Unitrate where FROM_U = tw.StockUnit and TO_U = ti.StockUnit),1)
+
 			end
         , [StockUnit] = IIF(tw.StockUnit is not null,tw.StockUnit,ti.StockUnit)
 into #tmpWIPDetail
@@ -1483,19 +1484,20 @@ order by ID, Article, SizeCode, ComboType
 
 -- 8) 未WH關單
 select StyleID
-        , ID
+        , POID
         , FactoryID
         , Refno
         , Color
         , Description
         , NLCode
-        , Qty
+        , Qty = sum (Qty)
         , CustomsUnit
-        , StockQty
+        , StockQty = sum (StockQty)
         , StockUnit
 from #tmpIssueQty
 where Qty != 0  {0} {1} 
-order by ID
+group by StyleID, POID, FactoryID, Refno, Color, Description, NLCode, CustomsUnit, StockUnit
+order by POID
 
 -- 9) 已SewingOutput數量
 select	HSCode
