@@ -35,6 +35,7 @@
     [NLCodeEditDate] DATETIME        NULL,
     [ArtTkt ] VARCHAR(20) NULL DEFAULT (''), 
     [IsCarton] BIT NULL DEFAULT ((0)), 
+    [UnPack] BIT NOT NULL DEFAULT 0, 
     CONSTRAINT [PK_LocalItem] PRIMARY KEY CLUSTERED ([RefNo] ASC)
 );
 
@@ -159,4 +160,17 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1type = N'TABLE',
     @level1name = N'LocalItem',
     @level2type = N'COLUMN',
-    @level2name = N'IsCarton'
+    @level2name = N'IsCarton';
+
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否支援自動開箱',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LocalItem',
+    @level2type = N'COLUMN',
+    @level2name = N'UnPack';
+	
+GO
