@@ -359,7 +359,7 @@
             this.txtDescription.Location = new System.Drawing.Point(92, 101);
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.Size = new System.Drawing.Size(687, 23);
-            this.txtDescription.TabIndex = 4;
+            this.txtDescription.TabIndex = 5;
             // 
             // txtcurrencyPrice
             // 
@@ -396,7 +396,7 @@
             this.comboCartonDimension.Name = "comboCartonDimension";
             this.comboCartonDimension.OldText = "";
             this.comboCartonDimension.Size = new System.Drawing.Size(121, 24);
-            this.comboCartonDimension.TabIndex = 3;
+            this.comboCartonDimension.TabIndex = 10;
             this.comboCartonDimension.SelectedIndexChanged += new System.EventHandler(this.comboCartonDimension_SelectedIndexChanged);
             // 
             // txtThreadType
@@ -407,7 +407,7 @@
             this.txtThreadType.Location = new System.Drawing.Point(408, 25);
             this.txtThreadType.Name = "txtThreadType";
             this.txtThreadType.Size = new System.Drawing.Size(100, 23);
-            this.txtThreadType.TabIndex = 1;
+            this.txtThreadType.TabIndex = 16;
             this.txtThreadType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtThreadType_PopUp);
             this.txtThreadType.Validating += new System.ComponentModel.CancelEventHandler(this.txtThreadType_Validating);
             // 
@@ -468,7 +468,7 @@
             this.dropDownUnpack.Name = "dropDownUnpack";
             this.dropDownUnpack.OldText = "";
             this.dropDownUnpack.Size = new System.Drawing.Size(121, 24);
-            this.dropDownUnpack.TabIndex = 47;
+            this.dropDownUnpack.TabIndex = 14;
             this.dropDownUnpack.Type = "Pms_LocalItem_UnPack";
             // 
             // label3
@@ -484,7 +484,7 @@
             this.btnSetCardboardPads.Location = new System.Drawing.Point(667, 16);
             this.btnSetCardboardPads.Name = "btnSetCardboardPads";
             this.btnSetCardboardPads.Size = new System.Drawing.Size(185, 30);
-            this.btnSetCardboardPads.TabIndex = 45;
+            this.btnSetCardboardPads.TabIndex = 11;
             this.btnSetCardboardPads.Text = "Set Cardboard Pads";
             this.btnSetCardboardPads.UseVisualStyleBackColor = true;
             this.btnSetCardboardPads.Click += new System.EventHandler(this.btnSetCardboardPads_Click);
@@ -514,7 +514,7 @@
             0,
             0});
             this.numCTNWeight.Size = new System.Drawing.Size(100, 23);
-            this.numCTNWeight.TabIndex = 5;
+            this.numCTNWeight.TabIndex = 13;
             this.numCTNWeight.Value = new decimal(new int[] {
             0,
             0,
@@ -562,7 +562,7 @@
             0,
             0});
             this.numH.Size = new System.Drawing.Size(95, 23);
-            this.numH.TabIndex = 2;
+            this.numH.TabIndex = 9;
             this.numH.Value = new decimal(new int[] {
             0,
             0,
@@ -595,7 +595,7 @@
             0,
             0});
             this.numCBM.Size = new System.Drawing.Size(135, 23);
-            this.numCBM.TabIndex = 4;
+            this.numCBM.TabIndex = 12;
             this.numCBM.Value = new decimal(new int[] {
             0,
             0,
@@ -627,7 +627,7 @@
             0,
             0});
             this.numW.Size = new System.Drawing.Size(95, 23);
-            this.numW.TabIndex = 1;
+            this.numW.TabIndex = 8;
             this.numW.Value = new decimal(new int[] {
             0,
             0,
@@ -660,7 +660,7 @@
             0,
             0});
             this.numL.Size = new System.Drawing.Size(95, 23);
-            this.numL.TabIndex = 0;
+            this.numL.TabIndex = 7;
             this.numL.Value = new decimal(new int[] {
             0,
             0,
@@ -700,7 +700,7 @@
             this.btnThread.Location = new System.Drawing.Point(566, 79);
             this.btnThread.Name = "btnThread";
             this.btnThread.Size = new System.Drawing.Size(198, 30);
-            this.btnThread.TabIndex = 23;
+            this.btnThread.TabIndex = 21;
             this.btnThread.Text = "Set Buyer/Color Price";
             this.btnThread.UseVisualStyleBackColor = true;
             this.btnThread.Click += new System.EventHandler(this.btnThread_Click);
@@ -748,7 +748,7 @@
             0,
             0});
             this.numCone.Size = new System.Drawing.Size(100, 23);
-            this.numCone.TabIndex = 0;
+            this.numCone.TabIndex = 15;
             this.numCone.Value = new decimal(new int[] {
             0,
             0,
@@ -780,7 +780,7 @@
             0,
             0});
             this.numWeightofAxle.Size = new System.Drawing.Size(100, 23);
-            this.numWeightofAxle.TabIndex = 4;
+            this.numWeightofAxle.TabIndex = 19;
             this.numWeightofAxle.Value = new decimal(new int[] {
             0,
             0,
@@ -811,7 +811,7 @@
             0,
             0});
             this.numThreadTex.Size = new System.Drawing.Size(100, 23);
-            this.numThreadTex.TabIndex = 2;
+            this.numThreadTex.TabIndex = 17;
             this.numThreadTex.Value = new decimal(new int[] {
             0,
             0,
@@ -843,7 +843,7 @@
             0,
             0});
             this.numWeightGW.Size = new System.Drawing.Size(100, 23);
-            this.numWeightGW.TabIndex = 3;
+            this.numWeightGW.TabIndex = 18;
             this.numWeightGW.Value = new decimal(new int[] {
             0,
             0,
@@ -869,7 +869,7 @@
             this.btnQuotationRecord.Location = new System.Drawing.Point(723, 36);
             this.btnQuotationRecord.Name = "btnQuotationRecord";
             this.btnQuotationRecord.Size = new System.Drawing.Size(157, 30);
-            this.btnQuotationRecord.TabIndex = 12;
+            this.btnQuotationRecord.TabIndex = 23;
             this.btnQuotationRecord.Text = "Quotation Record";
             this.btnQuotationRecord.UseVisualStyleBackColor = true;
             this.btnQuotationRecord.Click += new System.EventHandler(this.btnQuotationRecord_Click);
@@ -881,7 +881,7 @@
             this.btnPaymentHistory.Location = new System.Drawing.Point(723, 65);
             this.btnPaymentHistory.Name = "btnPaymentHistory";
             this.btnPaymentHistory.Size = new System.Drawing.Size(157, 30);
-            this.btnPaymentHistory.TabIndex = 13;
+            this.btnPaymentHistory.TabIndex = 24;
             this.btnPaymentHistory.Text = "Payment History";
             this.btnPaymentHistory.UseVisualStyleBackColor = true;
             this.btnPaymentHistory.Click += new System.EventHandler(this.btnPaymentHistory_Click);
@@ -897,7 +897,7 @@
             this.txtSubconSupplier.Location = new System.Drawing.Point(93, 130);
             this.txtSubconSupplier.Name = "txtSubconSupplier";
             this.txtSubconSupplier.Size = new System.Drawing.Size(159, 23);
-            this.txtSubconSupplier.TabIndex = 5;
+            this.txtSubconSupplier.TabIndex = 6;
             this.txtSubconSupplier.TextBox1Binding = "";
             // 
             // dateQuotDate
@@ -919,7 +919,7 @@
             this.txtunit_ftyUnit.Location = new System.Drawing.Point(92, 72);
             this.txtunit_ftyUnit.Name = "txtunit_ftyUnit";
             this.txtunit_ftyUnit.Size = new System.Drawing.Size(66, 23);
-            this.txtunit_ftyUnit.TabIndex = 21;
+            this.txtunit_ftyUnit.TabIndex = 4;
             // 
             // label2
             // 
@@ -937,7 +937,7 @@
             this.btnBatchApprove.Location = new System.Drawing.Point(701, 3);
             this.btnBatchApprove.Name = "btnBatchApprove";
             this.btnBatchApprove.Size = new System.Drawing.Size(203, 30);
-            this.btnBatchApprove.TabIndex = 3;
+            this.btnBatchApprove.TabIndex = 25;
             this.btnBatchApprove.Text = "Quotation Batch Approve";
             this.btnBatchApprove.UseVisualStyleBackColor = true;
             this.btnBatchApprove.Click += new System.EventHandler(this.btnBatchApprove_Click);
@@ -949,7 +949,7 @@
             this.txtAccountNo.Location = new System.Drawing.Point(105, 423);
             this.txtAccountNo.Name = "txtAccountNo";
             this.txtAccountNo.Size = new System.Drawing.Size(308, 23);
-            this.txtAccountNo.TabIndex = 23;
+            this.txtAccountNo.TabIndex = 22;
             this.txtAccountNo.TextBox1Binding = "";
             // 
             // chkIsCarton
@@ -960,7 +960,7 @@
             this.chkIsCarton.Location = new System.Drawing.Point(334, 41);
             this.chkIsCarton.Name = "chkIsCarton";
             this.chkIsCarton.Size = new System.Drawing.Size(83, 21);
-            this.chkIsCarton.TabIndex = 24;
+            this.chkIsCarton.TabIndex = 3;
             this.chkIsCarton.Text = "Is Carton";
             this.chkIsCarton.UseVisualStyleBackColor = true;
             // 
