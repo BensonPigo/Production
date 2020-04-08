@@ -34,6 +34,20 @@ namespace Sci.Production.Subcon
             this.comboCartonDimension.DisplayMember = "Value";
             this.comboCartonDimension.ValueMember = "Value";
 
+
+            DataTable dt2 = new DataTable();
+            DBProxy.Current.Select(null, @"
+SELECT  [Text]=Name, [Value]= CASE WHEN Name = 'Manual' THEN 0
+                                   WHEN Name = 'Auto' THEN 1
+                              ELSE 0  END
+FROM DropDownList
+WHERE Type='Pms_LocalItem_UnPack'
+", out dt2);
+
+            this.dropDownUnpack.DataSource = dt2;
+            this.dropDownUnpack.DisplayMember = "Text";
+            this.dropDownUnpack.ValueMember = "Value";
+
         }
 
         //
@@ -296,12 +310,24 @@ namespace Sci.Production.Subcon
             if (this.EditMode)
             {
                 this.btnThread.Enabled = false;
+
+                if (CurrentMaintain["Category"].ToString().ToUpper() == "CARTON")
+                {
+                    // Category = Caron 並且為編輯模式下才可以編輯
+                    this.dropDownUnpack.ReadOnly = false;
+                }
+                else
+                {
+                    this.dropDownUnpack.ReadOnly = true;
+                }
             }
             else
             {
                 this.groupBox1.Enabled = true;
                 this.groupBox2.Enabled = true;
                 this.btnThread.Enabled = true;
+
+                this.dropDownUnpack.ReadOnly = true;
             }
 
             if (MyUtility.Convert.GetString(this.CurrentMaintain["category"]).EqualString("Carton"))

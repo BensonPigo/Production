@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.txtartworktype_ftyCategory = new Sci.Production.Class.txtartworktype_fty();
             this.labelCategory = new Sci.Win.UI.Label();
             this.labelCone = new Sci.Win.UI.Label();
@@ -59,6 +60,8 @@
             this.label25 = new Sci.Win.UI.Label();
             this.label26 = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.dropDownUnpack = new Sci.Production.Class.comboDropDownList(this.components);
+            this.label3 = new Sci.Win.UI.Label();
             this.btnSetCardboardPads = new Sci.Win.UI.Button();
             this.numCTNWeight = new Sci.Win.UI.NumericBox();
             this.labelKG = new Sci.Win.UI.Label();
@@ -97,7 +100,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(900, 465);
+            this.detail.Size = new System.Drawing.Size(900, 510);
             // 
             // detailcont
             // 
@@ -125,21 +128,21 @@
             this.detailcont.Controls.Add(this.labelRefno);
             this.detailcont.Controls.Add(this.labelCategory);
             this.detailcont.Controls.Add(this.txtartworktype_ftyCategory);
-            this.detailcont.Size = new System.Drawing.Size(900, 427);
+            this.detailcont.Size = new System.Drawing.Size(900, 472);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 427);
+            this.detailbtm.Location = new System.Drawing.Point(0, 472);
             this.detailbtm.Size = new System.Drawing.Size(900, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(900, 465);
+            this.browse.Size = new System.Drawing.Size(900, 510);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(908, 494);
+            this.tabs.Size = new System.Drawing.Size(908, 539);
             // 
             // createby
             // 
@@ -315,7 +318,7 @@
             // 
             // labelAccountNo
             // 
-            this.labelAccountNo.Location = new System.Drawing.Point(15, 390);
+            this.labelAccountNo.Location = new System.Drawing.Point(15, 423);
             this.labelAccountNo.Name = "labelAccountNo";
             this.labelAccountNo.Size = new System.Drawing.Size(86, 23);
             this.labelAccountNo.TabIndex = 20;
@@ -430,6 +433,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.dropDownUnpack);
+            this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.btnSetCardboardPads);
             this.groupBox1.Controls.Add(this.numCTNWeight);
             this.groupBox1.Controls.Add(this.labelKG);
@@ -447,10 +452,32 @@
             this.groupBox1.Controls.Add(this.comboCartonDimension);
             this.groupBox1.Location = new System.Drawing.Point(15, 159);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(877, 88);
+            this.groupBox1.Size = new System.Drawing.Size(877, 122);
             this.groupBox1.TabIndex = 9;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Carton Only";
+            // 
+            // dropDownUnpack
+            // 
+            this.dropDownUnpack.BackColor = System.Drawing.Color.White;
+            this.dropDownUnpack.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "UnPack", true));
+            this.dropDownUnpack.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.dropDownUnpack.FormattingEnabled = true;
+            this.dropDownUnpack.IsSupportUnselect = true;
+            this.dropDownUnpack.Location = new System.Drawing.Point(90, 87);
+            this.dropDownUnpack.Name = "dropDownUnpack";
+            this.dropDownUnpack.OldText = "";
+            this.dropDownUnpack.Size = new System.Drawing.Size(121, 24);
+            this.dropDownUnpack.TabIndex = 47;
+            this.dropDownUnpack.Type = "Pms_LocalItem_UnPack";
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(11, 87);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(75, 23);
+            this.label3.TabIndex = 46;
+            this.label3.Text = "Unpack";
             // 
             // btnSetCardboardPads
             // 
@@ -660,7 +687,7 @@
             this.groupBox2.Controls.Add(this.labelWeightofAxleg);
             this.groupBox2.Controls.Add(this.txtThreadType);
             this.groupBox2.Controls.Add(this.labelWeightofAxle);
-            this.groupBox2.Location = new System.Drawing.Point(15, 254);
+            this.groupBox2.Location = new System.Drawing.Point(15, 287);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(786, 124);
             this.groupBox2.TabIndex = 10;
@@ -919,7 +946,7 @@
             // 
             this.txtAccountNo.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "AccountID", true));
             this.txtAccountNo.DisplayBox1Binding = "";
-            this.txtAccountNo.Location = new System.Drawing.Point(105, 390);
+            this.txtAccountNo.Location = new System.Drawing.Point(105, 423);
             this.txtAccountNo.Name = "txtAccountNo";
             this.txtAccountNo.Size = new System.Drawing.Size(308, 23);
             this.txtAccountNo.TabIndex = 23;
@@ -939,7 +966,7 @@
             // 
             // B01
             // 
-            this.ClientSize = new System.Drawing.Size(908, 527);
+            this.ClientSize = new System.Drawing.Size(908, 572);
             this.CloseChkValue = "New";
             this.Controls.Add(this.btnBatchApprove);
             this.DefaultControl = "txtRefno";
@@ -1037,5 +1064,7 @@
         private Win.UI.Button btnSetCardboardPads;
         private Class.txtAccountNo txtAccountNo;
         private Win.UI.CheckBox chkIsCarton;
+        private Class.comboDropDownList dropDownUnpack;
+        private Win.UI.Label label3;
     }
 }
