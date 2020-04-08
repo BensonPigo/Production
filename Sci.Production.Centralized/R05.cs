@@ -276,6 +276,7 @@ group by pd.OrderID
 
 select
 	o.MDivisionID,
+    tb.FtyZone,
 	o.FactoryID,
 	o.BuyerDelivery,
 	o.SciDelivery,
@@ -291,7 +292,6 @@ select
 	o.StyleID,
 	o.SeasonID,
 	o.CustPONO,
-    tb.FtyZone,
 	o.BrandID,
 	o.CPU,
 	o.Qty,
@@ -581,6 +581,7 @@ drop table #tmp
             Excel.Worksheet newSummarySheet;
 
             this.dtAllDetail.Columns.Remove(this.dtAllDetail.Columns["FtyGroup"]);
+            this.dtAllDetail.Columns.Remove(this.dtAllDetail.Columns["TransFtyZone"]);
 
             for (int j = 1; j < this.listFtyZone.Count; j++)
             {
@@ -594,19 +595,19 @@ drop table #tmp
             worksheet.Columns.AutoFit();
 
             worksheet.Columns[1].ColumnWidth = 5.5;
-            worksheet.Columns[2].ColumnWidth = 11.13;
-            worksheet.Columns[3].ColumnWidth = 11.88;
+            worksheet.Columns[2].ColumnWidth = 8;
+            worksheet.Columns[3].ColumnWidth = 11.13;
             worksheet.Columns[4].ColumnWidth = 11.88;
-            worksheet.Columns[5].ColumnWidth = 7.88;
-            worksheet.Columns[6].ColumnWidth = 17.75;
-            worksheet.Columns[7].ColumnWidth = 12.75;
-            worksheet.Columns[8].ColumnWidth = 14;
+            worksheet.Columns[5].ColumnWidth = 11.88;
+            worksheet.Columns[6].ColumnWidth = 7.88;
+            worksheet.Columns[7].ColumnWidth = 17.75;
+            worksheet.Columns[8].ColumnWidth = 12.75;
             worksheet.Columns[9].ColumnWidth = 14;
-            worksheet.Columns[10].ColumnWidth = 15;
-            worksheet.Columns[11].ColumnWidth = 25;
-            worksheet.Columns[12].ColumnWidth = 11.13;
-            worksheet.Columns[13].ColumnWidth = 25.25;
-            worksheet.Columns[14].ColumnWidth = 8;
+            worksheet.Columns[10].ColumnWidth = 14;
+            worksheet.Columns[11].ColumnWidth = 15;
+            worksheet.Columns[12].ColumnWidth = 25;
+            worksheet.Columns[13].ColumnWidth = 11.13;
+            worksheet.Columns[14].ColumnWidth = 25.25;
             worksheet.Columns[15].ColumnWidth = 20;
             worksheet.Columns[16].ColumnWidth = 7.63;
             worksheet.Columns[17].ColumnWidth = 13.38;
