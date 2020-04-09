@@ -262,7 +262,7 @@ SELECT [Grade]=MIN(Grade)
 INTO #default
 FROM FIR_Grade f WITH (NOLOCK) 
 WHERE f.WeaveTypeID = '{WeaveTypeid}' 
-AND f.Percentage >= IIF({CurrentData["PointRate"]} > 100, 100, 0)
+AND f.Percentage >= IIF({CurrentData["PointRate"]} > 100, 100, {CurrentData["PointRate"]})
 AND BrandID=''
 
 ---- 2. 取得該品牌布種的等級
@@ -270,7 +270,7 @@ SELECT [Grade]=MIN(Grade)
 INTO #withBrandID
 FROM FIR_Grade WITH (NOLOCK) 
 WHERE WeaveTypeID = '{WeaveTypeid}' 
-AND Percentage >= IIF({CurrentData["PointRate"]} > 100, 100, 0)
+AND Percentage >= IIF({CurrentData["PointRate"]} > 100, 100, {CurrentData["PointRate"]})
 AND BrandID='{displayBrand.Text}'
 
 ---- 若該品牌有另外設定等級，就用該設定，不然用預設（主索引鍵是WeaveTypeID + Percentage + BrandID，因此不會找到多筆預設的Grade）
