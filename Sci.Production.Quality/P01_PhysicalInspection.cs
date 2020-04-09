@@ -277,8 +277,13 @@ AND BrandID='{displayBrand.Text}'
 SELECT [Grade] = ISNULL(Brand.Grade, ISNULL((SELECT Grade FROM #default),'') ) 
 FROM #withBrandID brand
 
+SELECT [Grade] = ISNULL(Brand.Grade, ISNULL((SELECT Grade FROM #default),'') ) 
+,[IsFromBrand] = IIF(Brand.Grade IS NULL, 0,1 ) 
+INTO #BrandInfo
+FROM #withBrandID brand
+
 ---- 結果也區分品牌
-Select	[Result] =	case Result	
+Select TOP 1 [Result] =	case Result	
 						when 'P' then 'Pass'
 						when 'F' then 'Fail'
 					end
@@ -288,9 +293,9 @@ AND Grade = (
 	SELECT ISNULL(Brand.Grade, (SELECT Grade FROM #default)) 
 	FROM #withBrandID brand
 )
-AND BrandID='{displayBrand.Text}'
+AND BrandID = IIF((SELECT IsFromBrand FROM #BrandInfo) = 1  , '{displayBrand.Text}' ,'') 
 
-DROP TABLE #default,#withBrandID
+DROP TABLE #default,#withBrandID ,#BrandInfo
 
 ";
 
@@ -303,18 +308,6 @@ DROP TABLE #default,#withBrandID
                 CurrentData["Result"] = dts[1].Rows[0]["Result"];
 
             }
-//            if (MyUtility.Check.Seek(grade_cmd, out grade_dr))
-//            {
-//                CurrentData["Grade"] = grade_dr["grade"];
-//                CurrentData["Result"] = MyUtility.GetValue.Lookup(string.Format(@"
-//Select	[Result] =	case Result	
-//						when 'P' then 'Pass'
-//						when 'F' then 'Fail'
-//					end
-//from Fir_Grade WITH (NOLOCK) 
-//where	WEAVETYPEID = '{0}' 
-//		and Grade = '{1}'", WeaveTypeid, grade_dr["grade"]), null);
-//            }
 
 #endregion
         }
@@ -448,12 +441,12 @@ DROP TABLE #default,#withBrandID
                     dr["actualwidth"] = 0.00;
                     dr["totalpoint"] = 0.00;
                     dr["pointRate"] = 0.00;
-                    dr["Result"] = "";
-                    dr["Grade"] = "";
                     dr["moisture"] = 0;
                     dr["Remark"] = "";
                     dr.EndEdit();
                     cleanDefect(strNewKey);
+                    dr["Result"] = "";
+                    dr["Grade"] = "";
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!", e.FormattedValue));
                     return;
