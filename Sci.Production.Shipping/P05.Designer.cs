@@ -115,6 +115,7 @@
             this.displayBoxDeclarationID = new Sci.Win.UI.DisplayBox();
             this.displayBoxCustomsNo = new Sci.Win.UI.DisplayBox();
             this.chkFoundry = new Sci.Win.UI.CheckBox();
+            this.btnFoundryList = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -131,6 +132,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnFoundryList);
             this.masterpanel.Controls.Add(this.chkFoundry);
             this.masterpanel.Controls.Add(this.displayBoxCustomsNo);
             this.masterpanel.Controls.Add(this.displayBoxDeclarationID);
@@ -217,7 +219,7 @@
             this.masterpanel.Controls.Add(this.dateETD);
             this.masterpanel.Controls.Add(this.dateETA);
             this.masterpanel.Controls.Add(this.dateInvDate);
-            this.masterpanel.Size = new System.Drawing.Size(1077, 383);
+            this.masterpanel.Size = new System.Drawing.Size(1077, 389);
             this.masterpanel.TabIndex = 43;
             this.masterpanel.Controls.SetChildIndex(this.dateInvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateETA, 0);
@@ -306,15 +308,16 @@
             this.masterpanel.Controls.SetChildIndex(this.displayBoxDeclarationID, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBoxCustomsNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkFoundry, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnFoundryList, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 383);
-            this.detailpanel.Size = new System.Drawing.Size(1077, 201);
+            this.detailpanel.Location = new System.Drawing.Point(0, 389);
+            this.detailpanel.Size = new System.Drawing.Size(1077, 195);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(966, 346);
+            this.gridicon.Location = new System.Drawing.Point(966, 352);
             this.gridicon.TabIndex = 20;
             // 
             // refresh
@@ -323,7 +326,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1077, 201);
+            this.detailgridcont.Size = new System.Drawing.Size(1077, 195);
             // 
             // detail2
             // 
@@ -1342,6 +1345,18 @@
             this.chkFoundry.Text = "Include Foundry";
             this.chkFoundry.UseVisualStyleBackColor = true;
             // 
+            // btnFoundryList
+            // 
+            this.btnFoundryList.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnFoundryList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnFoundryList.Location = new System.Drawing.Point(977, 322);
+            this.btnFoundryList.Name = "btnFoundryList";
+            this.btnFoundryList.Size = new System.Drawing.Size(30, 25);
+            this.btnFoundryList.TabIndex = 88;
+            this.btnFoundryList.Text = "...";
+            this.btnFoundryList.UseVisualStyleBackColor = true;
+            this.btnFoundryList.Click += new System.EventHandler(this.BtnFoundryList_Click);
+            // 
             // P05
             // 
             this.ApvChkValue = "New";
@@ -1473,5 +1488,6 @@
         private Win.UI.DisplayBox displayBoxCustomsNo;
         private Win.UI.DisplayBox displayBoxDeclarationID;
         private Win.UI.CheckBox chkFoundry;
+        private Win.UI.Button btnFoundryList;
     }
 }

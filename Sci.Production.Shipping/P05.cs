@@ -2052,5 +2052,11 @@ where se.InvNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentM
                 return false;
             }
         }
+
+        private void BtnFoundryList_Click(object sender, EventArgs e)
+        {
+            Production.Shipping.P05_FoundryList dialog = new P05_FoundryList(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["ShipModeID"].ToString());
+            dialog.ShowDialog(this);
+        }
     }
 }

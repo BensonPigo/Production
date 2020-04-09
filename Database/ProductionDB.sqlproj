@@ -2477,6 +2477,7 @@
     <Build Include="dbo\Tables\BundleReplacement_Detail_Allpart.sql" />
     <Build Include="dbo\Tables\BundleReplacement_Detail.sql" />
     <Build Include="dbo\Tables\BundleReplacement.sql" />
+    <Build Include="dbo\Tables\GarmentInvoice_Foundry.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
