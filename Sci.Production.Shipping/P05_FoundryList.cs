@@ -30,8 +30,8 @@ namespace Sci.Production.Shipping
             this.grid.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.grid)
             .Text("FactoryGroup", header: "Fty. Group", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Numeric("CBM", header: "CBM", width: Widths.AnsiChars(11), decimal_places: 3, iseditingreadonly: true)
-            .Numeric("Ratio", header: "Ratio", decimal_places: 0, width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Numeric("CBM", header: "CBM / GW", width: Widths.AnsiChars(11), decimal_places: 3, iseditingreadonly: true)
+            .Numeric("Ratio", header: "Ratio (%)", decimal_places: 0, width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
 
             this.Query();
