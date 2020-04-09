@@ -73,6 +73,7 @@
     [QuotationAVG]      NUMERIC (5, 2)  CONSTRAINT [DF_AirPP_QuotationAVG] DEFAULT ((0)) NOT NULL,
     [APReceiveDoxDate] DATE NULL, 
     [APAmountEditDate] DATE NULL, 
+	[ActualAmountWVAT] numeric(13, 2) NOT NULL DEFAULT 0,
     CONSTRAINT [PK_AirPP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
