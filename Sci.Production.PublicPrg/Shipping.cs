@@ -1034,7 +1034,12 @@ group by StyleID, SeasonID, OrderBrandID, Category, SizeCode, Article, GMTQty
          , SCIRefno, Refno, BrandID, NLCode, HSCode, CustomsUnit ,StyleCPU 
          , StyleUKey, Description, Type, SuppID, StockUnit, UsageUnit
 ----Get Thread Data---------------------------------------------------------------------------------------------------------------------------------
-select	s.StyleUkey,
+select distinct StyleUkey,FabricType,ThickFabric,ProgramID,OrderBrandID as BrandID,SeasonID,StyleID 
+into #tmpthreadStyle
+from #tmpAllStyle
+
+
+select 	s.StyleUkey,
 		std.SCIRefNo,
 		f.Refno,
 		f.NLCode,
@@ -1052,8 +1057,8 @@ select	s.StyleUkey,
 		[RateValue] = UnitRate.RateValue,
 		[UnitRate] = UnitRate.Rate
 into #tmpThread
-from #tmpAllStyle s
-inner join Style_ThreadColorCombo st on st.Ukey = s.StyleUkey
+from #tmpthreadStyle s
+inner join Style_ThreadColorCombo st on st.StyleUkey = s.StyleUkey
 inner join Style_ThreadColorCombo_Operation sto on sto.Style_ThreadColorComboUkey = st.Ukey
 outer apply(
 	select distinct 
@@ -1068,7 +1073,7 @@ outer apply (
 												, isnull(bt.UseRatioRule_Thick, b.UseRatioRule_Thick))
 	from Brand b
 	left join Brand_ThreadCalculateRules bt on b.ID = bt.ID and bt.FabricType = s.FabricType and bt.ProgramID = s.ProgramID
-	where s.OrderBrandID = b.ID
+	where s.BrandID = b.ID
 ) b
 inner join Operation op on op.ID = sto.OperationID
 inner join MachineType mt on mt.ID = op.MachineTypeID
@@ -1304,9 +1309,9 @@ drop table #tmpLocalData
 drop table #tmpFixDeclare
 drop table #tmpFinalFixDeclare
 drop table #tlast
-drop table #tmpOpThread
 drop table #tmpThread
-drop table #tmpThreadData");
+drop table #tmpThreadData
+drop table #tmpthreadStyle");
             #endregion
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out dataTable);
 
