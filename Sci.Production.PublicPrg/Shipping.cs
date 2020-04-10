@@ -575,6 +575,7 @@ select  o.StyleUkey
         , sum(oqd.Qty) as GMTQty
         , isnull(s.CPU,0) as StyleCPU
         , isnull(s.CTNQty,0) as CTNQty
+        , s.ProgramID
 into #tmpAllStyle
 from Order_QtyShip oq WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on oq.ID = o.ID
@@ -631,7 +632,7 @@ where   1=1");
 
             sqlCmd.Append($@"
 group by o.StyleUkey, oqd.SizeCode, oqd.Article, o.Category, o.StyleID
-         , o.SeasonID, o.BrandID, isnull(s.CPU,0), isnull(s.CTNQty,0), s.FabricType, s.ThickFabric
+         , o.SeasonID, o.BrandID, isnull(s.CPU,0), isnull(s.CTNQty,0), s.FabricType, s.ThickFabric, s.ProgramID
 		 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 select  ts.*
@@ -1033,26 +1034,12 @@ group by StyleID, SeasonID, OrderBrandID, Category, SizeCode, Article, GMTQty
          , SCIRefno, Refno, BrandID, NLCode, HSCode, CustomsUnit ,StyleCPU 
          , StyleUKey, Description, Type, SuppID, StockUnit, UsageUnit
 ----Get Thread Data---------------------------------------------------------------------------------------------------------------------------------
-select 
-	t.OrderBrandID,
-	st.StyleUkey,
-	st.Ukey,
-	st.MachineTypeID,
-	OpThreadQty = sum(sto.Frequency * op.SeamLength),
-	[UseRatioRule] = iif(t.ThickFabric = 0,
-		isnull(bt.UseRatioRule, b.UseRatioRule), 
-		isnull(bt.UseRatioRule_Thick, b.UseRatioRule_Thick))
-into #tmpOpThread
-from Style_ThreadColorCombo st
-inner join #tmpAllStyle t on t.StyleUkey = st.StyleUkey
-left join Brand_ThreadCalculateRules bt with (nolock) on t.OrderBrandID = bt.ID and bt.FabricType = t.FabricType
-left join Brand b with (nolock) on b.ID = t.OrderBrandID
-inner join Style_ThreadColorCombo_Operation sto with (nolock) on st.Ukey = sto.Style_ThreadColorComboUkey
-inner join Operation op with (nolock) on op.ID = sto.OperationID
-group by t.OrderBrandID,st.StyleUkey,st.Ukey, st.MachineTypeID, 
-			iif(t.ThickFabric = 0,isnull(bt.UseRatioRule, b.UseRatioRule),isnull(bt.UseRatioRule_Thick, b.UseRatioRule_Thick))
+select distinct StyleUkey,FabricType,ThickFabric,ProgramID,OrderBrandID as BrandID,SeasonID,StyleID 
+into #tmpthreadStyle
+from #tmpAllStyle
 
-select	tot.StyleUkey,
+
+select 	s.StyleUkey,
 		std.SCIRefNo,
 		f.Refno,
 		f.NLCode,
@@ -1064,18 +1051,40 @@ select	tot.StyleUkey,
 		f.PcsWidth,
 		f.PcsLength,
 		f.PcsKg,
-		[StockQty] = sum(tot.OpThreadQty * isnull(mtor.UseRatio, mto.UseRatio) ) * vu.RateValue,
+		[UsageQty] = sum(op.SeamLength * sto.Frequency  
+		* iif(op.Hem = 1 and mt.Hem =1 , mtoh.UseRatio,
+		isnull(mtor.UseRatio, mto.UseRatio) )) * vu.RateValue,
 		[RateValue] = UnitRate.RateValue,
 		[UnitRate] = UnitRate.Rate
 into #tmpThread
-from #tmpOpThread tot
-inner join Style_ThreadColorCombo_Detail std with (nolock) on tot.Ukey = std.Style_ThreadColorComboUkey
+from #tmpthreadStyle s
+inner join Style_ThreadColorCombo st on st.StyleUkey = s.StyleUkey
+inner join Style_ThreadColorCombo_Operation sto on sto.Style_ThreadColorComboUkey = st.Ukey
+outer apply(
+	select distinct 
+			std.Seq
+			, std.SCIRefNo
+	from Style_ThreadColorCombo_Detail std
+	where st.Ukey = std.Style_ThreadColorComboUkey
+) std
 inner join Fabric f with (nolock) on std.SCIRefNo = f.SCIRefno
-inner join MachineType_ThreadRatio mto with (nolock) on mto.ID = tot.MachineTypeID and mto.Seq = std.Seq
-left join MachineType_ThreadRatio_Regular mtor with (nolock) on mto.ID = mtor.ID and mto.Seq = mtor.Seq and mtor.UseRatioRule = tot.UseRatioRule
+outer apply (
+	select UseRatioRule = iif(s.ThickFabric = 0,isnull(bt.UseRatioRule, b.UseRatioRule)
+												, isnull(bt.UseRatioRule_Thick, b.UseRatioRule_Thick))
+	from Brand b
+	left join Brand_ThreadCalculateRules bt on b.ID = bt.ID and bt.FabricType = s.FabricType and bt.ProgramID = s.ProgramID
+	where s.BrandID = b.ID
+) b
+inner join Operation op on op.ID = sto.OperationID
+inner join MachineType mt on mt.ID = op.MachineTypeID
+inner join MachineType_ThreadRatio mto with (nolock) on mto.ID = st.MachineTypeID and mto.Seq = std.Seq
+
+left join MachineType_ThreadRatio_Regular mtor with (nolock) on mto.ID = mtor.ID and mto.Seq = mtor.Seq and mtor.UseRatioRule = b.UseRatioRule
+left join MachineType_ThreadRatio_Hem mtoh on mto.ID = mtoh.ID and mto.Seq = mtoh.Seq and mtoh.UseRatioRule = b.UseRatioRule
+
 inner join View_Unitrate vu with (nolock) on vu.FROM_U = 'CM' and vu.TO_U = f.UsageUnit
 outer apply(select RateValue,Rate  from  View_Unitrate where FROM_U = f.UsageUnit and TO_U = iif(f.CustomsUnit = 'M2','M',f.CustomsUnit)) UnitRate
-group by tot.StyleUkey,
+group by s.StyleUkey,
 		std.SCIRefNo,
 		f.Refno,
 		f.NLCode,
@@ -1104,7 +1113,7 @@ select  t.StyleID,
         th.NLCode,
         th.HSCode,
         th.CustomsUnit,
-        [Qty] = [dbo].getVNUnitTransfer(th.Type,StockUnit.val,th.CustomsUnit,StockQty.val,0,th.PcsWidth,th.PcsLength,th.PcsKg,th.RateValue,th.UnitRate,default),
+        [Qty] = [dbo].getVNUnitTransfer(th.Type,th.UsageUnit,th.CustomsUnit,th.UsageQty,0,th.PcsWidth,th.PcsLength,th.PcsKg,th.RateValue,th.UnitRate,default),
         0 as LocalItem,
         t.StyleCPU,
         t.StyleUKey,
@@ -1115,12 +1124,12 @@ select  t.StyleID,
         [StockQty] = StockQty.val,
         [FabricType] = 'A',
         [UsageUnit] = th.UsageUnit,
-		[UsageQty] = th.StockQty
+		[UsageQty] = th.UsageQty
 into #tmpThreadData
 from #tmpAllStyle t
 inner join #tmpThread th on t.StyleUkey = th.StyleUkey
 outer apply(select [val] = dbo.getStockUnit(th.SCIRefNo,default)) as StockUnit
-outer apply(select [val] = dbo.getUnitRate(th.UsageUnit,StockUnit.val) * th.StockQty) as StockQty
+outer apply(select [val] = dbo.getUnitRate(th.UsageUnit,StockUnit.val) * th.UsageQty) as StockQty
 --------------------------------------------------------------------------------------------------------------------------------------------------
 select  t.StyleID
         , t.SeasonID
@@ -1300,9 +1309,9 @@ drop table #tmpLocalData
 drop table #tmpFixDeclare
 drop table #tmpFinalFixDeclare
 drop table #tlast
-drop table #tmpOpThread
 drop table #tmpThread
-drop table #tmpThreadData");
+drop table #tmpThreadData
+drop table #tmpthreadStyle");
             #endregion
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out dataTable);
 

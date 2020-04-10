@@ -59,6 +59,7 @@ a.FromGSD	= b.FromGSD
 ,a.EditName	= b.EditName
 ,a.EditDate	= b.EditDate
 ,a.MasterPlusGroup	= b.MasterPlusGroup
+,a.Hem = b.Hem
 
 from Production.dbo.Operation as a inner join Trade_To_Pms.dbo.Operation as b ON a.id=b.id
 -------------------------- INSERT INTO ��
@@ -98,6 +99,7 @@ ID
 ,EditName
 ,EditDate
 ,MasterPlusGroup
+,Hem
 )
 select 
 ID
@@ -135,6 +137,7 @@ ID
 ,EditName
 ,EditDate
 ,MasterPlusGroup
+,Hem
 from Trade_To_Pms.dbo.Operation as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Operation as a WITH (NOLOCK) where a.id = b.id)
 

@@ -591,6 +591,7 @@ when matched then
 		,t.EditDate			=s.EditDate		
 		,t.isThread         =s.isThread
 		,t.MasterGroupID	=s.MasterGroupID	
+		,t.Hem				=s.Hem
 when not matched by target then
 	insert(
 		ID
@@ -613,6 +614,7 @@ when not matched by target then
 		,EditDate
 		,isThread
 		,MasterGroupID
+		,Hem
 	)
 	values(
 		ID
@@ -635,6 +637,7 @@ when not matched by target then
 		,EditDate
 		,isThread
 		,MasterGroupID
+		,Hem
 	)
 when not matched by source then
 	delete;
@@ -3267,6 +3270,20 @@ when not matched by target then
 when not matched by source then 
 	delete;
 
+-------MachineType_ThreadRatio_Hem-----------
+Merge Production.dbo.MachineType_ThreadRatio_Hem as t
+Using (select * from Trade_To_Pms.dbo.MachineType_ThreadRatio_Hem) as s
+on t.id = s.id
+and t.Seq = s.Seq and t.UseRatioRule = s.UseRatioRule
+when matched then
+	update set
+	t.UseRatio = s.UseRatio,
+	t.ukey = s.ukey
+when not matched by target then
+	insert(ID,Seq,UseRatioRule,UseRatio,Ukey)
+	values(s.ID,s.Seq,s.UseRatioRule,s.UseRatio,s.Ukey)
+when not matched by source then
+	delete;
 
 ------MachineType_ThreadRatio_Regular---------------
 Merge Production.dbo.MachineType_ThreadRatio_Regular as t

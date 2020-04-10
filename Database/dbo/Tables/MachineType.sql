@@ -1,25 +1,29 @@
 ﻿CREATE TABLE [dbo].[MachineType] (
-    [ID]                VARCHAR (10)   CONSTRAINT [DF_MachineType_ID] DEFAULT ('') NOT NULL,
-    [Description]       NVARCHAR (60)  CONSTRAINT [DF_MachineType_Description] DEFAULT ('') NULL,
-    [DescCH]            NVARCHAR (60)  CONSTRAINT [DF_MachineType_DescCH] DEFAULT ('') NULL,
-    [ISO]               VARCHAR (10)   CONSTRAINT [DF_MachineType_ISO] DEFAULT ('') NULL,
-    [ArtworkTypeID]     VARCHAR (20)   CONSTRAINT [DF_MachineType_ArtworkTypeID] DEFAULT ('') NULL,
-    [Mold]              BIT            CONSTRAINT [DF_MachineType_Mold] DEFAULT ((0)) NULL,
-    [RPM]               INT            CONSTRAINT [DF_MachineType_RPM] DEFAULT ((0)) NULL,
-    [Stitches]          NUMERIC (6, 1) CONSTRAINT [DF_MachineType_Stitches] DEFAULT ((0)) NULL,
-    [Picture1]          NVARCHAR (60)  CONSTRAINT [DF_MachineType_Picture1] DEFAULT ('') NULL,
-    [Picture2]          NVARCHAR (60)  CONSTRAINT [DF_MachineType_Picture2] DEFAULT ('') NULL,
-    [MachineAllow]      NUMERIC (4, 2) CONSTRAINT [DF_MachineType_MachineAllow] DEFAULT ((0)) NULL,
-    [ManAllow]          NUMERIC (4, 2) CONSTRAINT [DF_MachineType_ManAllow] DEFAULT ((0)) NULL,
-    [MachineGroupID]    VARCHAR (2)    CONSTRAINT [DF_MachineType_MachineGroupID] DEFAULT ('') NULL,
-    [Junk]              BIT            CONSTRAINT [DF_MachineType_Junk] DEFAULT ((0)) NULL,
-    [AddName]           VARCHAR (10)   CONSTRAINT [DF_MachineType_AddName] DEFAULT ('') NULL,
-    [AddDate]           DATETIME       NULL,
-    [EditName]          VARCHAR (10)   CONSTRAINT [DF_MachineType_EditName] DEFAULT ('') NULL,
-    [EditDate]          DATETIME       NULL,
-    [isThread]			BIT			   NULL, 
+    [ID]             VARCHAR (10)   CONSTRAINT [DF_MachineType_ID] DEFAULT ('') NOT NULL,
+    [Description]    NVARCHAR (60)  CONSTRAINT [DF_MachineType_Description] DEFAULT ('') NULL,
+    [DescCH]         NVARCHAR (60)  CONSTRAINT [DF_MachineType_DescCH] DEFAULT ('') NULL,
+    [ISO]            VARCHAR (10)   CONSTRAINT [DF_MachineType_ISO] DEFAULT ('') NULL,
+    [ArtworkTypeID]  VARCHAR (20)   CONSTRAINT [DF_MachineType_ArtworkTypeID] DEFAULT ('') NULL,
+    [Mold]           BIT            CONSTRAINT [DF_MachineType_Mold] DEFAULT ((0)) NULL,
+    [RPM]            INT            CONSTRAINT [DF_MachineType_RPM] DEFAULT ((0)) NULL,
+    [Stitches]       NUMERIC (6, 1) CONSTRAINT [DF_MachineType_Stitches] DEFAULT ((0)) NULL,
+    [Picture1]       NVARCHAR (60)  CONSTRAINT [DF_MachineType_Picture1] DEFAULT ('') NULL,
+    [Picture2]       NVARCHAR (60)  CONSTRAINT [DF_MachineType_Picture2] DEFAULT ('') NULL,
+    [MachineAllow]   NUMERIC (4, 2) CONSTRAINT [DF_MachineType_MachineAllow] DEFAULT ((0)) NULL,
+    [ManAllow]       NUMERIC (4, 2) CONSTRAINT [DF_MachineType_ManAllow] DEFAULT ((0)) NULL,
+    [MachineGroupID] VARCHAR (2)    CONSTRAINT [DF_MachineType_MachineGroupID] DEFAULT ('') NULL,
+    [Junk]           BIT            CONSTRAINT [DF_MachineType_Junk] DEFAULT ((0)) NULL,
+    [AddName]        VARCHAR (10)   CONSTRAINT [DF_MachineType_AddName] DEFAULT ('') NULL,
+    [AddDate]        DATETIME       NULL,
+    [EditName]       VARCHAR (10)   CONSTRAINT [DF_MachineType_EditName] DEFAULT ('') NULL,
+    [EditDate]       DATETIME       NULL,
+    [isThread]       BIT            NULL,
+    [MasterGroupID]  VARCHAR (2)    NULL,
+    [Hem]            BIT            DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_MachineType] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
