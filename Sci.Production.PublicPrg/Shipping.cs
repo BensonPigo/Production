@@ -1051,7 +1051,7 @@ select 	s.StyleUkey,
 		f.PcsWidth,
 		f.PcsLength,
 		f.PcsKg,
-		[StockQty] = sum(op.SeamLength * sto.Frequency  
+		[UsageQty] = sum(op.SeamLength * sto.Frequency  
 		* iif(op.Hem = 1 and mt.Hem =1 , mtoh.UseRatio,
 		isnull(mtor.UseRatio, mto.UseRatio) )) * vu.RateValue,
 		[RateValue] = UnitRate.RateValue,
@@ -1113,7 +1113,7 @@ select  t.StyleID,
         th.NLCode,
         th.HSCode,
         th.CustomsUnit,
-        [Qty] = [dbo].getVNUnitTransfer(th.Type,StockUnit.val,th.CustomsUnit,StockQty.val,0,th.PcsWidth,th.PcsLength,th.PcsKg,th.RateValue,th.UnitRate,default),
+        [Qty] = [dbo].getVNUnitTransfer(th.Type,th.UsageUnit,th.CustomsUnit,th.UsageQty,0,th.PcsWidth,th.PcsLength,th.PcsKg,th.RateValue,th.UnitRate,default),
         0 as LocalItem,
         t.StyleCPU,
         t.StyleUKey,
@@ -1124,12 +1124,12 @@ select  t.StyleID,
         [StockQty] = StockQty.val,
         [FabricType] = 'A',
         [UsageUnit] = th.UsageUnit,
-		[UsageQty] = th.StockQty
+		[UsageQty] = th.UsageQty
 into #tmpThreadData
 from #tmpAllStyle t
 inner join #tmpThread th on t.StyleUkey = th.StyleUkey
 outer apply(select [val] = dbo.getStockUnit(th.SCIRefNo,default)) as StockUnit
-outer apply(select [val] = dbo.getUnitRate(th.UsageUnit,StockUnit.val) * th.StockQty) as StockQty
+outer apply(select [val] = dbo.getUnitRate(th.UsageUnit,StockUnit.val) * th.UsageQty) as StockQty
 --------------------------------------------------------------------------------------------------------------------------------------------------
 select  t.StyleID
         , t.SeasonID
