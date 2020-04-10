@@ -915,7 +915,7 @@ MERGE Order_SizeCode AS T
 USING(
 	SELECT *
 	FROM Production.dbo.Order_SizeCode
-	FROM (convert(date,AddDate) = @cDate OR convert(date,EditDate) = @cDate)
+	WHERE (convert(date,AddDate) = @cDate OR convert(date,EditDate) = @cDate)
 ) as s
 on t.ID = s.ID AND t.SizeCode = s.SizeCode AND t.Ukey = s.Ukey
 WHEN MATCHED THEN
