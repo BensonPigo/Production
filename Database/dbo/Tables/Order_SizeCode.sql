@@ -4,6 +4,8 @@
     [SizeGroup] VARCHAR (1)  CONSTRAINT [DF_Order_SizeCode_SizeGroup] DEFAULT ('') NULL,
     [SizeCode]  VARCHAR (8)  CONSTRAINT [DF_Order_SizeCode_SizeCode] DEFAULT ('') NOT NULL,
     [Ukey]      BIGINT       NOT NULL DEFAULT ((0)), 
+    [AddDate] DATETIME NULL, 
+    [EditDate] DATETIME NULL, 
     CONSTRAINT [PK_Order_SizeCode] PRIMARY KEY ([Id], [Ukey], [SizeCode]) 
 );
 
@@ -31,3 +33,23 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'SizeCode', 
 
 
 GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'新增日期',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Order_SizeCode',
+    @level2type = N'COLUMN',
+    @level2name = N'AddDate';
+GO	
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'最後修改日期',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Order_SizeCode',
+    @level2type = N'COLUMN',
+    @level2name = N'EditDate';
+GO	

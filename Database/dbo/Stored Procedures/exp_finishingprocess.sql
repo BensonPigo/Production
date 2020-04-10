@@ -303,6 +303,41 @@ CREATE TABLE [dbo].[StyleFPSetting] (
 	)
 END
 
+IF OBJECT_ID(N'Order_SizeCode') IS NULL
+BEGIN 
+CREATE TABLE [dbo].[Order_SizeCode] (
+	ID				[varchar](13) NOT NULL DEFAULT (''),
+	Seq				[varchar](2)  NULL DEFAULT (''),
+	SizeGroup		[varchar](1)  NULL DEFAULT (''),
+	SizeCode		[varchar](8)  NOT NULL DEFAULT (''),
+	Ukey			[bigint]	  NOT NULL DEFAULT (0),
+	Junk			[bit]		  NOT NULL DEFAULT (0),
+	CmdTime			[datetime]	  NOT NULL,
+	SunriseUpdated	[bit]		  NOT NULL DEFAULT (0),
+ CONSTRAINT [PK_Order_SizeCode] PRIMARY KEY CLUSTERED 
+(
+	ID ASC,
+	SizeCode ASC,
+	Ukey ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+
+IF OBJECT_ID(N'LocalItem') IS NULL
+BEGIN 
+CREATE TABLE [dbo].[LocalItem] (
+	Refno				[varchar](21) NOT NULL ,
+	UnPack				[bit]		  NOT NULL DEFAULT (0),
+	Junk				[bit]		  NOT NULL DEFAULT (0),
+	CmdTime				[datetime]	  NULL,
+	SunriseUpdated		[bit]		  NOT NULL DEFAULT (0),
+	GenSongUpdated		[bit]		  NOT NULL DEFAULT (0),
+ CONSTRAINT [PK_LocalItem] PRIMARY KEY CLUSTERED 
+(
+	Refno ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
 
 declare @cDate date = @inputDate;
 declare @yestarDay date =CONVERT(Date, dateAdd(day,-1,GetDate()));
@@ -873,6 +908,57 @@ WHEN NOT MATCHED BY TARGET THEN
 INSERT( [ID], [Size] ,[Width] ,[Length] ,[AddName] ,[AddDate] ,[EditName] ,[EditDate] )
 VALUES( s.[ID], s.[Size] ,s.[Width] ,s.[Length] ,s.[AddName] ,s.[AddDate] ,s.[EditName] ,s.[EditDate] )
 ;
+
+--13. Order_SizeCode  轉出區間 當AddDate or EditDate =今天
+
+MERGE Order_SizeCode AS T
+USING(
+	SELECT *
+	FROM Production.dbo.Order_SizeCode
+	WHERE (convert(date,AddDate) = @cDate OR convert(date,EditDate) = @cDate)
+) as s
+on t.ID = s.ID AND t.SizeCode = s.SizeCode AND t.Ukey = s.Ukey
+WHEN MATCHED THEN
+UPDATE SET
+    t.Seq				= s.Seq,			
+	t.SizeGroup			= s.SizeGroup,			
+	t.Junk				= 0,		
+	t.CmdTime			= GETDATE(),			
+	t.SunriseUpdated	= 0
+WHEN NOT MATCHED BY TARGET THEN
+	INSERT( ID		,Seq		,SizeGroup		,SizeCode		,Ukey		,Junk		,CmdTime		,SunriseUpdated)
+	VALUES( s.ID	,s.Seq		,s.SizeGroup	,s.SizeCode		,s.Ukey		,0			,GETDATE()		,0			   )
+;
+----不刪除，只Junk
+UPDATE t
+SET Junk = 1, CmdTime = GetDate(), SunriseUpdated = 0
+FROM Order_SizeCode t
+WHERE NOT EXISTS(
+	SELECT 1 FROM Production.dbo.Order_SizeCode s
+	WHERE t.ID = s.ID AND t.SizeCode = s.SizeCode AND t.Ukey = s.Ukey
+)
+
+--14. LocalItem  轉出區間 當AddDate or EditDate =今天
+
+MERGE LocalItem AS T
+USING(
+	SELECT *
+	FROM Production.dbo.LocalItem
+	WHERE (convert(date,AddDate) = @cDate OR convert(date,EditDate) = @cDate) AND Category = 'CARTON' 
+) as s
+on t.Refno = s.Refno
+WHEN MATCHED THEN
+UPDATE SET
+    t.UnPack			= s.UnPack,			
+	t.Junk				= s.Junk,			
+	t.CmdTime			= GETDATE(),		
+	t.SunriseUpdated	= 0,			
+	t.GenSongUpdated	= 0
+WHEN NOT MATCHED BY TARGET THEN
+	INSERT( Refno		,UnPack		,Junk		,CmdTime		,SunriseUpdated		,GenSongUpdated		)
+	VALUES( s.Refno		,s.UnPack	,s.Junk		,GETDATE()		,0					,0					)
+;
+
 END try
 Begin Catch
 	DECLARE  @ErrorMessage  NVARCHAR(4000),  

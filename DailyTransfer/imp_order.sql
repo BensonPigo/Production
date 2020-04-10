@@ -805,12 +805,14 @@ BEGIN
 		when matched then
 			update set
 				t.Seq		= s.Seq,
-				t.SizeGroup	= s.SizeGroup
+				t.SizeGroup	= s.SizeGroup,
+				t.AddDate	= s.AddDate,
+				t.EditDate	= s.EditDate
 		When not matched by target then 
 			insert (
-				Id		, Seq	, SizeGroup		, SizeCode		, ukey
+				Id		, Seq	, SizeGroup		, SizeCode		, ukey		, AddDate		, EditDate
 			) values (
-				s.Id	, s.Seq	, s.SizeGroup	, s.SizeCode	, s.ukey
+				s.Id	, s.Seq	, s.SizeGroup	, s.SizeCode	, s.ukey		, s.AddDate		, s.EditDate
 			);
 
 		----------------Order_Sizeitem------------------------------尺寸表 Size Spec(存量法資料)
