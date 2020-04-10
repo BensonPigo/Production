@@ -34,6 +34,20 @@ namespace Sci.Production.Subcon
             this.comboCartonDimension.DisplayMember = "Value";
             this.comboCartonDimension.ValueMember = "Value";
 
+
+            DataTable dt2 = new DataTable();
+            DBProxy.Current.Select(null, @"
+SELECT  [Text]=Name, [Value]= CASE WHEN Name = 'Manual' THEN 0
+                                   WHEN Name = 'Auto' THEN 1
+                              ELSE 0  END
+FROM DropDownList
+WHERE Type='Pms_LocalItem_UnPack'
+", out dt2);
+
+            this.dropDownUnpack.DataSource = dt2;
+            this.dropDownUnpack.DisplayMember = "Text";
+            this.dropDownUnpack.ValueMember = "Value";
+
         }
 
         //
@@ -237,11 +251,15 @@ namespace Sci.Production.Subcon
             if (MyUtility.Convert.GetString(this.CurrentMaintain["category"]).EqualString("Carton"))
             {
                 this.chkIsCarton.Enabled = true;
+                this.dropDownUnpack.ReadOnly = false;
             }
             else
             {
                 this.chkIsCarton.Enabled = false;
+                this.dropDownUnpack.ReadOnly = true;
             }
+            this.dropDownUnpack.SelectedValue = 0;
+            this.CurrentMaintain["Unpack"] = 0;
         }
 
         private void W_H_L_Validated(object sender, EventArgs e)
@@ -296,12 +314,24 @@ namespace Sci.Production.Subcon
             if (this.EditMode)
             {
                 this.btnThread.Enabled = false;
+
+                if (this.txtartworktype_ftyCategory.Text.ToUpper() == "CARTON")
+                {
+                    // Category = Caron 並且為編輯模式下才可以編輯
+                    this.dropDownUnpack.ReadOnly = false;
+                }
+                else
+                {
+                    this.dropDownUnpack.ReadOnly = true;
+                }
             }
             else
             {
                 this.groupBox1.Enabled = true;
                 this.groupBox2.Enabled = true;
                 this.btnThread.Enabled = true;
+
+                this.dropDownUnpack.ReadOnly = true;
             }
 
             if (MyUtility.Convert.GetString(this.CurrentMaintain["category"]).EqualString("Carton"))
