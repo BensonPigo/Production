@@ -938,10 +938,11 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 return;
             }
 
-            bool canEdit = MyUtility.Check.Empty(this.CurrentMaintain["RespDeptConfirmDate"]) && this.Perm.Edit;
+            bool canEdit = this.Perm.Edit && this.Perm.Send && MyUtility.Check.Empty(this.CurrentMaintain["RespDeptConfirmDate"]) && MyUtility.Check.Empty(this.CurrentMaintain["VoucherDate"]);
             var frm = new P21_ResponsibilityDept(canEdit, this.CurrentMaintain["ID"].ToString(), null, null, "Replacement");
             frm.ShowDialog(this);
             frm.Dispose();
+            this.OnRefreshClick();
             this.OnDetailEntered();
         }
 
