@@ -65,6 +65,10 @@ BEGIN
 	-------------MeasurementTranslate-------------------
 	RAISERROR('Export MeasurementTranslate - Starts',0,0)
 	select * into dbo.MeasurementTranslate from (select * from ProductionTPE.dbo.MeasurementTranslate ) as tmp
+	
+	-------------FIR_Grade-------------------
+	RAISERROR('Export FIR_Grade - Starts',0,0)
+	select * into dbo.FIR_Grade from (select * from ProductionTPE.dbo.FIR_Grade ) as tmp
 
 	set transaction isolation level read committed
 END
