@@ -52,7 +52,7 @@
             this.btnPrintSticker = new Sci.Win.UI.Button();
             this.btnAccumulatedQty = new Sci.Win.UI.Button();
             this.btnImportFromExcel = new Sci.Win.UI.Button();
-            this.btnUpdateActkg = new Sci.Win.UI.Button();
+            this.btnUpdateWeight = new Sci.Win.UI.Button();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lbWhenWKNo = new Sci.Win.UI.Label();
@@ -89,7 +89,7 @@
             this.masterpanel.Controls.Add(this.txtLocateForSP);
             this.masterpanel.Controls.Add(this.labelLocateForSP);
             this.masterpanel.Controls.Add(this.lbWhenWKNo);
-            this.masterpanel.Controls.Add(this.btnUpdateActkg);
+            this.masterpanel.Controls.Add(this.btnUpdateWeight);
             this.masterpanel.Controls.Add(this.btnImportFromExcel);
             this.masterpanel.Controls.Add(this.btnAccumulatedQty);
             this.masterpanel.Controls.Add(this.btnPrintSticker);
@@ -142,7 +142,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnPrintSticker, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAccumulatedQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportFromExcel, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnUpdateActkg, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnUpdateWeight, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbWhenWKNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelLocateForSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLocateForSP, 0);
@@ -448,16 +448,16 @@
             this.btnImportFromExcel.UseVisualStyleBackColor = true;
             this.btnImportFromExcel.Click += new System.EventHandler(this.btImportFromExcel_Click);
             // 
-            // btnUpdateActkg
+            // btnUpdateWeight
             // 
-            this.btnUpdateActkg.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnUpdateActkg.Location = new System.Drawing.Point(683, 125);
-            this.btnUpdateActkg.Name = "btnUpdateActkg";
-            this.btnUpdateActkg.Size = new System.Drawing.Size(131, 30);
-            this.btnUpdateActkg.TabIndex = 11;
-            this.btnUpdateActkg.Text = "Update Act. (kg)";
-            this.btnUpdateActkg.UseVisualStyleBackColor = true;
-            this.btnUpdateActkg.Click += new System.EventHandler(this.btUpdateActWeight_Click);
+            this.btnUpdateWeight.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnUpdateWeight.Location = new System.Drawing.Point(683, 125);
+            this.btnUpdateWeight.Name = "btnUpdateWeight";
+            this.btnUpdateWeight.Size = new System.Drawing.Size(131, 30);
+            this.btnUpdateWeight.TabIndex = 11;
+            this.btnUpdateWeight.Text = "Update Weight";
+            this.btnUpdateWeight.UseVisualStyleBackColor = true;
+            this.btnUpdateWeight.Click += new System.EventHandler(this.btUpdateWeight_Click);
             // 
             // shapeContainer1
             // 
@@ -632,7 +632,7 @@
         private Win.UI.DisplayBox displayID;
         private Win.UI.Label labelNotApprove;
         private Win.UI.Label lbWhenWKNo;
-        private Win.UI.Button btnUpdateActkg;
+        private Win.UI.Button btnUpdateWeight;
         private Win.UI.Button btnImportFromExcel;
         private Win.UI.Button btnAccumulatedQty;
         private Win.UI.Button btnPrintSticker;
