@@ -30,6 +30,7 @@ namespace Sci.Production.Sewing
         private Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         private Ict.Win.DataGridViewGeneratorNumericColumnSettings inlineqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
         private Ict.Win.DataGridViewGeneratorTextColumnSettings SewingReasonID = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private Ict.Win.UI.DataGridViewTextBoxColumn textOrderIDSetting;
         private decimal? oldttlqaqty;
         private decimal? oldManHour;
         private string loginFactory;
@@ -91,7 +92,7 @@ where UnLockDate is null and SewingOutputID='{this.CurrentMaintain["ID"]}'";
         /// <inheritdoc/>
         protected override void OnDetailGridDelete()
         {
-            if (CurrentMaintain == null || this.CurrentDetailData == null)
+            if (this.CurrentMaintain == null || this.CurrentDetailData == null)
             {
                 return;
             }
@@ -311,7 +312,7 @@ order by a.OrderId,os.Seq",
                     {
                         if (e.RowIndex != -1)
                         {
-                            if (this.CheckRemoveRow() == false)
+                            if (this.CheckRemoveRow() == false || this.CheckSPEditable() == false)
                             {
                                 return;
                             }
@@ -806,12 +807,11 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
             };
             #endregion
 
-            Ict.Win.UI.DataGridViewTextBoxColumn textOrderIDSetting;
             Ict.Win.UI.DataGridViewTextBoxColumn textArticleSetting;
             Ict.Win.UI.DataGridViewNumericBoxColumn numInLineQtySetting;
             Ict.Win.UI.DataGridViewNumericBoxColumn numWorkHourSetting;
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), settings: this.orderid).Get(out textOrderIDSetting)
+                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), settings: this.orderid).Get(out this.textOrderIDSetting)
                 .Text("ComboType", header: "*", width: Widths.AnsiChars(1), iseditingreadonly: true, settings: this.combotype)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(8), settings: this.article).Get(out textArticleSetting)
                 .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -844,7 +844,6 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                 }
 
                 bool isAutoCreate = data["AutoCreate"].EqualString("True");
-                textOrderIDSetting.IsEditingReadOnly = isAutoCreate;
                 textArticleSetting.IsEditingReadOnly = isAutoCreate;
                 numInLineQtySetting.IsEditingReadOnly = isAutoCreate;
                 numWorkHourSetting.IsEditingReadOnly = isAutoCreate;
@@ -852,6 +851,15 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                 this.DoSubForm.IsSupportDelete = !isAutoCreate;
                 this.DoSubForm.IsSupportUpdate = !isAutoCreate;
                 this.DoSubForm.IsSupportNew = !isAutoCreate;
+
+                if (this.CheckSPEditable() == false)
+                {
+                    this.textOrderIDSetting.IsEditingReadOnly = true;
+                }
+                else
+                {
+                    this.textOrderIDSetting.IsEditingReadOnly = isAutoCreate;
+                }
             };
 
             this.detailgrid.RowsAdded += (s, e) =>
@@ -866,7 +874,15 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                 {
                     DataGridViewRow dr = this.detailgrid.Rows[index];
                     bool isAutoCreate = dr.Cells["AutoCreate"].Value.EqualString("True");
-                    dr.Cells["OrderID"].Style.ForeColor = isAutoCreate ? Color.Black : Color.Red;
+                    if (this.CheckSPEditable() == false)
+                    {
+                        dr.Cells["OrderID"].Style.ForeColor = Color.Black;
+                    }
+                    else
+                    {
+                        dr.Cells["OrderID"].Style.ForeColor = isAutoCreate ? Color.Black : Color.Red;
+                    }
+
                     dr.Cells["Article"].Style.ForeColor = isAutoCreate ? Color.Black : Color.Red;
                     dr.Cells["InlineQty"].Style.ForeColor = isAutoCreate ? Color.Black : Color.Red;
                     dr.Cells["WorkHour"].Style.ForeColor = isAutoCreate ? Color.Black : Color.Red;
@@ -1238,6 +1254,17 @@ order by a.OrderId,os.Seq",
                 this.numWHours.ReadOnly = true;
                 this.txtSubconOutFty.TextBox1.ReadOnly = true;
                 this.txtSubConOutContractNumber.ReadOnly = true;
+            }
+
+            if (this.CheckSPEditable() == false)
+            {
+                this.textOrderIDSetting.IsEditingReadOnly = true;
+                this.gridicon.Enabled = false;
+            }
+            else
+            {
+                this.textOrderIDSetting.IsEditingReadOnly = false;
+                this.gridicon.Enabled = true;
             }
 
             this.txtSubConOutContractNumber.ReadOnly = this.txtSubconOutFty.TextBox1.ReadOnly;
@@ -2500,6 +2527,23 @@ WHERE sewqty < (packqty + adjQty) ";
             }
             #endregion
             return true;
+        }
+
+        /// <summary>
+        /// 有過daily lock紀錄後不得手動修改SP by #ISP20200604
+        /// </summary>
+        /// <returns>bool</returns>
+        private bool CheckSPEditable()
+        {
+            string Automation = MyUtility.GetValue.Lookup("select Automation from System");
+            if (Automation.ToUpper() != "TRUE" && !MyUtility.Check.Empty(this.CurrentMaintain["Status"]))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         /// <summary>
