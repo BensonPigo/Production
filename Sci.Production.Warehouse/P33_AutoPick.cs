@@ -1,30 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using Ict;
 using Ict.Win;
-using Sci;
 using Sci.Data;
-using Ict;
+using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Linq;
+using System.Text;
 
 namespace Sci.Production.Warehouse
 {
     public partial class P33_AutoPick : Sci.Win.Subs.Base
     {
         StringBuilder sbSizecode;
-        string poid, issueid,  orderid;
+        string poid, issueid, orderid;
         public DataTable BOA, BOA_Orderlist, BOA_PO, BOA_PO_Size, dtIssueBreakDown;
         public DataRow[] importRows;
         public List<IssueQtyBreakdown> _IssueQtyBreakdownList = new List<IssueQtyBreakdown>();
         bool combo;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         public Dictionary<DataRow, DataTable> dictionaryDatas = new Dictionary<DataRow, DataTable>();
-        public P33_AutoPick(string _issueid, string _poid, string _orderid, DataTable _dtIssueBreakDown, StringBuilder _sbSizecode, bool _combo , List<IssueQtyBreakdown> IssueQtyBreakdownList)
+        public P33_AutoPick(string _issueid, string _poid, string _orderid, DataTable _dtIssueBreakDown, StringBuilder _sbSizecode, bool _combo, List<IssueQtyBreakdown> IssueQtyBreakdownList)
         {
             InitializeComponent();
             poid = _poid;
@@ -258,7 +255,7 @@ DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final
             {
                 //SqlConnection conn;
                 DBProxy.Current.OpenConnection(null, out sqlConnection);
-                var dualResult = MyUtility.Tool.ProcessWithDatatable(IssueBreakDown_Dt,string.Empty ,sqlcmd, out result, "#tmp", conn: sqlConnection);
+                var dualResult = MyUtility.Tool.ProcessWithDatatable(IssueBreakDown_Dt, string.Empty, sqlcmd, out result, "#tmp", conn: sqlConnection);
 
                 if (!dualResult) ShowErr(dualResult);
                 if (!dualResult) return;
@@ -291,19 +288,41 @@ DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final
                 DataTable detail = (DataTable)listControlBindingSource1.DataSource;
                 DataRow currentRow = detail.Rows[e.RowIndex];
 
+                string SCIRefNo = currentRow["SCIRefNo"].ToString();
+                string SuppColor = currentRow["SuppColor"].ToString();
+                List<string> Articles = _IssueQtyBreakdownList.Where(o => o.Qty > 0).Select(o => o.Article).Distinct().ToList();
+                string cmd = $@"
 
+SELECT Article, [Qty]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance *Segment))) 
+FROM dbo.GetThreadUsedQtyByBOT('{this.poid}')
+WHERE SCIRefNo='{SCIRefNo}' 
+AND SuppColor='{SuppColor}'
+AND Article IN ('{Articles.JoinToString("','")}')
+GROUP BY Article
+
+";
+
+                DataTable dt;
+                DualResult dualResult = DBProxy.Current.Select(null, cmd, out dt);
+                if (!dualResult)
+                {
+                    this.ShowErr(dualResult);
+                    return;
+                }
+
+                MyUtility.Msg.ShowMsgGrid_LockScreen(dt, caption: $"@Qty by Article");
             };
 
             #region --設定Grid1的顯示欄位--
 
-             this.gridAutoPick.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridAutoPick.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.gridAutoPick.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridAutoPick)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                  .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("SuppColor", header: "SuppColor", width: Widths.AnsiChars(7), iseditingreadonly: true)
                  .Text("DescDetail", header: "Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                 .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(15),decimal_places:2, iseditingreadonly: true, settings: Qty)
+                 .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(15), decimal_places: 2, iseditingreadonly: true, settings: Qty)
                  .Numeric("Use Qty By Stock Unit", header: "Use Qty\r\nBy Stock Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
                  .Text("Stock Unit", header: "Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Numeric("Use Qty By Use Unit", header: "Use Qty\r\nBy Use Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
