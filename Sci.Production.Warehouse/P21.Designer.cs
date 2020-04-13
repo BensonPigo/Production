@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.lblReceivingID = new Sci.Win.UI.Label();
             this.lblWK = new Sci.Win.UI.Label();
             this.lblArriveWHDate = new Sci.Win.UI.Label();
@@ -36,7 +36,6 @@
             this.txtRecivingID = new Sci.Win.UI.TextBox();
             this.txtWK = new Sci.Win.UI.TextBox();
             this.txtSP = new Sci.Win.UI.TextBox();
-            this.dateBoxArriveWH = new Sci.Win.UI.DateBox();
             this.btnQuery = new Sci.Win.UI.Button();
             this.gridReceiving = new Sci.Win.UI.Grid();
             this.btnClose = new Sci.Win.UI.Button();
@@ -52,6 +51,7 @@
             this.label5 = new Sci.Win.UI.Label();
             this.txtDyelot = new Sci.Win.UI.TextBox();
             this.labelDyelot = new Sci.Win.UI.Label();
+            this.dateBoxArriveWH = new Sci.Win.UI.DateRange();
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).BeginInit();
             this.SuspendLayout();
             // 
@@ -114,13 +114,6 @@
             this.txtSP.Size = new System.Drawing.Size(112, 23);
             this.txtSP.TabIndex = 4;
             // 
-            // dateBoxArriveWH
-            // 
-            this.dateBoxArriveWH.Location = new System.Drawing.Point(330, 9);
-            this.dateBoxArriveWH.Name = "dateBoxArriveWH";
-            this.dateBoxArriveWH.Size = new System.Drawing.Size(130, 23);
-            this.dateBoxArriveWH.TabIndex = 1;
-            // 
             // btnQuery
             // 
             this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -149,14 +142,14 @@
             this.gridReceiving.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridReceiving.Location = new System.Drawing.Point(9, 76);
             this.gridReceiving.Name = "gridReceiving";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReceiving.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridReceiving.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridReceiving.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridReceiving.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReceiving.RowTemplate.Height = 24;
@@ -195,7 +188,7 @@
             this.cmbMaterialType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cmbMaterialType.FormattingEnabled = true;
             this.cmbMaterialType.IsSupportUnselect = true;
-            this.cmbMaterialType.Location = new System.Drawing.Point(554, 9);
+            this.cmbMaterialType.Location = new System.Drawing.Point(737, 7);
             this.cmbMaterialType.Name = "cmbMaterialType";
             this.cmbMaterialType.OldText = "";
             this.cmbMaterialType.Size = new System.Drawing.Size(91, 24);
@@ -203,7 +196,7 @@
             // 
             // labelMaterialType
             // 
-            this.labelMaterialType.Location = new System.Drawing.Point(463, 9);
+            this.labelMaterialType.Location = new System.Drawing.Point(646, 7);
             this.labelMaterialType.Name = "labelMaterialType";
             this.labelMaterialType.Size = new System.Drawing.Size(88, 23);
             this.labelMaterialType.TabIndex = 14;
@@ -291,11 +284,34 @@
             this.labelDyelot.TabIndex = 22;
             this.labelDyelot.Text = "Dyelot";
             // 
+            // dateBoxArriveWH
+            // 
+            // 
+            // 
+            // 
+            this.dateBoxArriveWH.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateBoxArriveWH.DateBox1.Name = "";
+            this.dateBoxArriveWH.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateBoxArriveWH.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateBoxArriveWH.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateBoxArriveWH.DateBox2.Name = "";
+            this.dateBoxArriveWH.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateBoxArriveWH.DateBox2.TabIndex = 1;
+            this.dateBoxArriveWH.IsRequired = false;
+            this.dateBoxArriveWH.Location = new System.Drawing.Point(330, 7);
+            this.dateBoxArriveWH.Name = "dateBoxArriveWH";
+            this.dateBoxArriveWH.Size = new System.Drawing.Size(280, 23);
+            this.dateBoxArriveWH.TabIndex = 25;
+            // 
             // P21
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 462);
+            this.Controls.Add(this.dateBoxArriveWH);
             this.Controls.Add(this.txtRoll);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.txtColor);
@@ -311,7 +327,6 @@
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.gridReceiving);
             this.Controls.Add(this.btnQuery);
-            this.Controls.Add(this.dateBoxArriveWH);
             this.Controls.Add(this.txtSP);
             this.Controls.Add(this.txtWK);
             this.Controls.Add(this.txtRecivingID);
@@ -329,7 +344,6 @@
             this.Controls.SetChildIndex(this.txtRecivingID, 0);
             this.Controls.SetChildIndex(this.txtWK, 0);
             this.Controls.SetChildIndex(this.txtSP, 0);
-            this.Controls.SetChildIndex(this.dateBoxArriveWH, 0);
             this.Controls.SetChildIndex(this.btnQuery, 0);
             this.Controls.SetChildIndex(this.gridReceiving, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
@@ -345,6 +359,7 @@
             this.Controls.SetChildIndex(this.txtColor, 0);
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.txtRoll, 0);
+            this.Controls.SetChildIndex(this.dateBoxArriveWH, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -360,7 +375,6 @@
         private Win.UI.TextBox txtRecivingID;
         private Win.UI.TextBox txtWK;
         private Win.UI.TextBox txtSP;
-        private Win.UI.DateBox dateBoxArriveWH;
         private Win.UI.Button btnQuery;
         private Win.UI.Grid gridReceiving;
         private Win.UI.Button btnClose;
@@ -376,5 +390,6 @@
         private Win.UI.Label label5;
         private Win.UI.TextBox txtDyelot;
         private Win.UI.Label labelDyelot;
+        private Win.UI.DateRange dateBoxArriveWH;
     }
 }
