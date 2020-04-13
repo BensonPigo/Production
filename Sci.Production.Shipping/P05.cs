@@ -266,6 +266,9 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
             }
             #endregion
 
+            #region Include Foundry : Enable = Foundry.Checked
+            this.btnFoundryList.Enabled = this.chkFoundry.Checked;
+            #endregion
             if (!MyUtility.Check.Empty(this.CurrentMaintain["FBDate"]))
             {
                 this.FBDate_Ori = DateTime.Parse(this.CurrentMaintain["FBDate"].ToString());
@@ -2051,6 +2054,12 @@ where se.InvNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentM
                 this.btnExpenseData.ForeColor = Color.Black;
                 return false;
             }
+        }
+
+        private void BtnFoundryList_Click(object sender, EventArgs e)
+        {
+            Production.Shipping.P05_FoundryList dialog = new P05_FoundryList(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["ShipModeID"].ToString());
+            dialog.ShowDialog(this);
         }
     }
 }

@@ -75,9 +75,18 @@ SELECT distinct b.*
 	   , DataFrom = 'G'
 	   , HCID = '             '
 	   , c.Abb
+	   , [IsShippingAPApprove] = isnull(IsShippingAPApprove.Value,0)
 INTO  #tmpFtyBooking1
 FROM Pullout_Detail  a, Production.dbo.GMTBooking b 
 left join Production.dbo.LocalSupp c on b.Forwarder = c.id
+outer apply(
+	select top 1 [Value]  = 1
+	from Production.dbo.ShareExpense se
+	inner join Production.dbo.ShippingAP sa on sa.ID = se.ShippingAPID
+	where se.InvNo = b.ID
+	and sa.Status = 'Approved'
+	and se.Junk = 0
+) IsShippingAPApprove
 WHERE a. INVNo = b.id 
 ORDER BY b.id 
 
@@ -98,6 +107,7 @@ select ID = a.PackingListID
 	   , HCID = p1. ExpressID
 	   , p1.AddDate
 	   , p1.EditDate
+	   , [IsShippingAPApprove] = 0
 into #tmpFtyBooking2
 from (	
 	select distinct PackingListID 
@@ -155,6 +165,7 @@ from (
 		   , DataFrom
 		   , HCID
 		   , Abb
+		   , [IsShippingAPApprove] 
 	from #tmpFtyBooking1
 
 	union all
@@ -197,6 +208,7 @@ from (
 		   , DataFrom
 		   , HCID
 		   , Abb = null
+		   , [IsShippingAPApprove]
 	from #tmpFtyBooking2
 ) a 
 

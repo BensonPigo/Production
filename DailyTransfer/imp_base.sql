@@ -3200,6 +3200,44 @@ SET
 from Production.dbo.GMTBooking as a 
 inner join Trade_To_Pms.dbo.GarmentInvoice as b ON a.id=b.id
 
+----GarmentInvoice_Foundry
+
+
+UPDATE t
+SET 
+	 t.GW = s.GW
+	,t.CBM=s.CBM
+	,t.Ratio=s.Ratio
+FROM Production.dbo.GarmentInvoice_Foundry t WITH (NOLOCK)
+inner join Trade_To_Pms.dbo.GarmentInvoice_Foundry s WITH (NOLOCK) on t.InvoiceNo=s.InvoiceNo and t.FactoryGroup=s.FactoryGroup
+
+INSERT INTO Production.dbo.GarmentInvoice_Foundry 
+	  (InvoiceNo,FactoryGroup,GW,CBM,Ratio)
+select InvoiceNo,FactoryGroup,GW,CBM,Ratio 
+FROM Trade_To_Pms.dbo.GarmentInvoice_Foundry as b WITH (NOLOCK)
+where not exists(
+	select 1 
+	from Production.dbo.GarmentInvoice_Foundry as a WITH (NOLOCK) 
+	where a.InvoiceNo = b.InvoiceNo
+	and a.FactoryGroup = b.FactoryGroup
+)
+
+delete t
+from Production.dbo.GarmentInvoice_Foundry t
+where exists(
+	select 1
+	from Trade_To_Pms.dbo.GarmentInvoice_Foundry s WITH (NOLOCK)
+	where t.InvoiceNo = s.InvoiceNo
+)
+and not exists(
+	select 1
+	from Trade_To_Pms.dbo.GarmentInvoice_Foundry s WITH (NOLOCK)
+	where t.InvoiceNo = s.InvoiceNo
+	and t.FactoryGroup = s.FactoryGroup
+)
+
+
+
 
 --------SeasonSCI---------------
 truncate table SeasonSCI
