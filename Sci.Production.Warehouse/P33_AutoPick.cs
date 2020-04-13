@@ -282,16 +282,28 @@ DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final
 
             this.gridAutoPick.AutoResizeColumns();
 
+
+
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings Qty = new DataGridViewGeneratorNumericColumnSettings();
+
+            Qty.CellMouseDoubleClick += (s, e) =>
+            {
+                DataTable detail = (DataTable)listControlBindingSource1.DataSource;
+                DataRow currentRow = detail.Rows[e.RowIndex];
+
+
+            };
+
             #region --設定Grid1的顯示欄位--
 
-            this.gridAutoPick.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+             this.gridAutoPick.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.gridAutoPick.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridAutoPick)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                  .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("SuppColor", header: "SuppColor", width: Widths.AnsiChars(7), iseditingreadonly: true)
                  .Text("DescDetail", header: "Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                 .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(15),decimal_places:2, iseditingreadonly: true)
+                 .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(15),decimal_places:2, iseditingreadonly: true, settings: Qty)
                  .Numeric("Use Qty By Stock Unit", header: "Use Qty\r\nBy Stock Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
                  .Text("Stock Unit", header: "Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Numeric("Use Qty By Use Unit", header: "Use Qty\r\nBy Use Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
