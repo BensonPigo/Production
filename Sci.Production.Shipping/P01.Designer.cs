@@ -179,6 +179,8 @@
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.dateAPAmountEditDate = new Sci.Win.UI.DateBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.numericBox1 = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -187,8 +189,14 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1058, 693);
+            // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.numericBox1);
+            this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.dateAPAmountEditDate);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.dateBox1);
@@ -283,15 +291,15 @@
             this.detailcont.Controls.Add(this.numExchangeRate);
             this.detailcont.Controls.Add(this.numVWeight);
             this.detailcont.Controls.Add(this.numGrossWeight);
+            this.detailcont.Controls.Add(this.txttpeuserSMR);
             this.detailcont.Controls.Add(this.txttpeuserPOHandle);
             this.detailcont.Controls.Add(this.txttpeuserPOSMR);
             this.detailcont.Controls.Add(this.txttpeuserMR);
             this.detailcont.Controls.Add(this.txttpeuserTask);
-            this.detailcont.Controls.Add(this.txttpeuserSMR);
             this.detailcont.Controls.Add(this.labelExchangeRate);
             this.detailcont.Controls.Add(this.txtsubcon3);
-            this.detailcont.Controls.Add(this.txtSubconForwarderN);
             this.detailcont.Controls.Add(this.txtSubconForwarder1);
+            this.detailcont.Controls.Add(this.txtSubconForwarderN);
             this.detailcont.Controls.Add(this.txtUserPPICmgr);
             this.detailcont.Controls.Add(this.txtUserFactorymgr);
             this.detailcont.Controls.Add(this.txtuserShipLeader);
@@ -330,7 +338,8 @@
             this.detailcont.Controls.Add(this.labelAirNo);
             this.detailcont.Controls.Add(this.shapeContainer1);
             this.detailcont.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.detailcont.Size = new System.Drawing.Size(897, 347);
+            this.detailcont.Size = new System.Drawing.Size(1058, 645);
+            this.detailcont.Paint += new System.Windows.Forms.PaintEventHandler(this.detailcont_Paint);
             // 
             // detailbtm
             // 
@@ -339,8 +348,8 @@
             this.detailbtm.Controls.Add(this.labelUpdTPEDate);
             this.detailbtm.Controls.Add(this.labelTPEEditDate);
             this.detailbtm.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.detailbtm.Location = new System.Drawing.Point(0, 347);
-            this.detailbtm.Size = new System.Drawing.Size(897, 48);
+            this.detailbtm.Location = new System.Drawing.Point(0, 645);
+            this.detailbtm.Size = new System.Drawing.Size(1058, 48);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
@@ -356,7 +365,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1004, 722);
+            this.tabs.Size = new System.Drawing.Size(1066, 722);
             // 
             // createby
             // 
@@ -591,6 +600,7 @@
             this.dateBuyerDelivery.ReadOnly = true;
             this.dateBuyerDelivery.Size = new System.Drawing.Size(109, 21);
             this.dateBuyerDelivery.TabIndex = 156;
+            this.dateBuyerDelivery.TabStop = false;
             // 
             // dateActETD
             // 
@@ -600,7 +610,8 @@
             this.dateActETD.Name = "dateActETD";
             this.dateActETD.ReadOnly = true;
             this.dateActETD.Size = new System.Drawing.Size(109, 21);
-            this.dateActETD.TabIndex = 26;
+            this.dateActETD.TabIndex = 999;
+            this.dateActETD.TabStop = false;
             // 
             // labelFactory
             // 
@@ -680,9 +691,9 @@
             // 
             // labelExchangeRate
             // 
-            this.labelExchangeRate.Location = new System.Drawing.Point(625, 207);
+            this.labelExchangeRate.Location = new System.Drawing.Point(620, 228);
             this.labelExchangeRate.Name = "labelExchangeRate";
-            this.labelExchangeRate.Size = new System.Drawing.Size(90, 18);
+            this.labelExchangeRate.Size = new System.Drawing.Size(91, 18);
             this.labelExchangeRate.TabIndex = 32;
             this.labelExchangeRate.Text = "Exchange Rate";
             // 
@@ -758,7 +769,7 @@
             this.numExchangeRate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Rate", true));
             this.numExchangeRate.DecimalPlaces = 3;
             this.numExchangeRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numExchangeRate.Location = new System.Drawing.Point(717, 206);
+            this.numExchangeRate.Location = new System.Drawing.Point(712, 227);
             this.numExchangeRate.Maximum = new decimal(new int[] {
             99999999,
             0,
@@ -776,7 +787,7 @@
             0,
             0});
             this.numExchangeRate.Size = new System.Drawing.Size(104, 21);
-            this.numExchangeRate.TabIndex = 14;
+            this.numExchangeRate.TabIndex = 16;
             this.numExchangeRate.Value = new decimal(new int[] {
             0,
             0,
@@ -928,17 +939,17 @@
             // 
             // labelEstAmt
             // 
-            this.labelEstAmt.Location = new System.Drawing.Point(625, 163);
+            this.labelEstAmt.Location = new System.Drawing.Point(620, 163);
             this.labelEstAmt.Name = "labelEstAmt";
-            this.labelEstAmt.Size = new System.Drawing.Size(90, 18);
+            this.labelEstAmt.Size = new System.Drawing.Size(91, 18);
             this.labelEstAmt.TabIndex = 48;
             this.labelEstAmt.Text = "Est. Amt(USD)";
             // 
             // labelActAmt
             // 
-            this.labelActAmt.Location = new System.Drawing.Point(625, 185);
+            this.labelActAmt.Location = new System.Drawing.Point(620, 185);
             this.labelActAmt.Name = "labelActAmt";
-            this.labelActAmt.Size = new System.Drawing.Size(90, 18);
+            this.labelActAmt.Size = new System.Drawing.Size(91, 18);
             this.labelActAmt.TabIndex = 49;
             this.labelActAmt.Text = "Act. Amt(USD)";
             // 
@@ -948,7 +959,7 @@
             this.numEstAmt.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EstAmount", true));
             this.numEstAmt.DecimalPlaces = 4;
             this.numEstAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numEstAmt.Location = new System.Drawing.Point(717, 162);
+            this.numEstAmt.Location = new System.Drawing.Point(712, 162);
             this.numEstAmt.Maximum = new decimal(new int[] {
             1316134911,
             2328,
@@ -966,7 +977,7 @@
             0,
             0});
             this.numEstAmt.Size = new System.Drawing.Size(104, 21);
-            this.numEstAmt.TabIndex = 12;
+            this.numEstAmt.TabIndex = 13;
             this.numEstAmt.Value = new decimal(new int[] {
             0,
             0,
@@ -979,7 +990,7 @@
             this.numActAmt.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ActualAmount", true));
             this.numActAmt.DecimalPlaces = 2;
             this.numActAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numActAmt.Location = new System.Drawing.Point(717, 184);
+            this.numActAmt.Location = new System.Drawing.Point(712, 184);
             this.numActAmt.Maximum = new decimal(new int[] {
             1316134911,
             2328,
@@ -997,7 +1008,7 @@
             0,
             0});
             this.numActAmt.Size = new System.Drawing.Size(104, 21);
-            this.numActAmt.TabIndex = 13;
+            this.numActAmt.TabIndex = 14;
             this.numActAmt.Value = new decimal(new int[] {
             0,
             0,
@@ -1019,12 +1030,12 @@
             this.txtSRNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSRNo.Location = new System.Drawing.Point(53, 228);
             this.txtSRNo.Name = "txtSRNo";
-            this.txtSRNo.Size = new System.Drawing.Size(205, 21);
+            this.txtSRNo.Size = new System.Drawing.Size(103, 21);
             this.txtSRNo.TabIndex = 6;
             // 
             // labelVoucher
             // 
-            this.labelVoucher.Location = new System.Drawing.Point(272, 229);
+            this.labelVoucher.Location = new System.Drawing.Point(156, 229);
             this.labelVoucher.Name = "labelVoucher";
             this.labelVoucher.Size = new System.Drawing.Size(52, 18);
             this.labelVoucher.TabIndex = 54;
@@ -1035,14 +1046,14 @@
             this.displayVoucher.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayVoucher.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Voucher", true));
             this.displayVoucher.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayVoucher.Location = new System.Drawing.Point(326, 228);
+            this.displayVoucher.Location = new System.Drawing.Point(210, 228);
             this.displayVoucher.Name = "displayVoucher";
-            this.displayVoucher.Size = new System.Drawing.Size(288, 21);
+            this.displayVoucher.Size = new System.Drawing.Size(128, 21);
             this.displayVoucher.TabIndex = 55;
             // 
             // labelPayDate
             // 
-            this.labelPayDate.Location = new System.Drawing.Point(625, 229);
+            this.labelPayDate.Location = new System.Drawing.Point(339, 229);
             this.labelPayDate.Name = "labelPayDate";
             this.labelPayDate.Size = new System.Drawing.Size(90, 18);
             this.labelPayDate.TabIndex = 56;
@@ -1051,11 +1062,11 @@
             // datePayDate
             // 
             this.datePayDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PayDate", true));
-            this.datePayDate.Location = new System.Drawing.Point(717, 228);
+            this.datePayDate.Location = new System.Drawing.Point(431, 228);
             this.datePayDate.Name = "datePayDate";
             this.datePayDate.ReadOnly = true;
             this.datePayDate.Size = new System.Drawing.Size(109, 21);
-            this.datePayDate.TabIndex = 15;
+            this.datePayDate.TabIndex = 11;
             // 
             // label30
             // 
@@ -1160,7 +1171,7 @@
             this.txtExplanation.Location = new System.Drawing.Point(78, 275);
             this.txtExplanation.Name = "txtExplanation";
             this.txtExplanation.Size = new System.Drawing.Size(428, 21);
-            this.txtExplanation.TabIndex = 17;
+            this.txtExplanation.TabIndex = 18;
             // 
             // labelRemark
             // 
@@ -1219,7 +1230,7 @@
             this.checkFactory.Location = new System.Drawing.Point(84, 340);
             this.checkFactory.Name = "checkFactory";
             this.checkFactory.Size = new System.Drawing.Size(65, 19);
-            this.checkFactory.TabIndex = 18;
+            this.checkFactory.TabIndex = 19;
             this.checkFactory.Text = "Factory";
             this.checkFactory.UseVisualStyleBackColor = true;
             this.checkFactory.CheckedChanged += new System.EventHandler(this.CheckFactory_CheckedChanged);
@@ -1232,7 +1243,7 @@
             this.checkSubcon.Location = new System.Drawing.Point(84, 364);
             this.checkSubcon.Name = "checkSubcon";
             this.checkSubcon.Size = new System.Drawing.Size(68, 19);
-            this.checkSubcon.TabIndex = 19;
+            this.checkSubcon.TabIndex = 20;
             this.checkSubcon.Text = "Subcon";
             this.checkSubcon.UseVisualStyleBackColor = true;
             this.checkSubcon.CheckedChanged += new System.EventHandler(this.CheckSubcon_CheckedChanged);
@@ -1245,7 +1256,7 @@
             this.checkSCI.Location = new System.Drawing.Point(84, 411);
             this.checkSCI.Name = "checkSCI";
             this.checkSCI.Size = new System.Drawing.Size(45, 19);
-            this.checkSCI.TabIndex = 20;
+            this.checkSCI.TabIndex = 21;
             this.checkSCI.Text = "SCI";
             this.checkSCI.UseVisualStyleBackColor = true;
             this.checkSCI.CheckedChanged += new System.EventHandler(this.CheckSCI_CheckedChanged);
@@ -1258,7 +1269,7 @@
             this.checkSupplier.Location = new System.Drawing.Point(84, 438);
             this.checkSupplier.Name = "checkSupplier";
             this.checkSupplier.Size = new System.Drawing.Size(72, 19);
-            this.checkSupplier.TabIndex = 21;
+            this.checkSupplier.TabIndex = 22;
             this.checkSupplier.Text = "Supplier";
             this.checkSupplier.UseVisualStyleBackColor = true;
             this.checkSupplier.CheckedChanged += new System.EventHandler(this.CheckSupplier_CheckedChanged);
@@ -1271,7 +1282,7 @@
             this.checkBuyer.Location = new System.Drawing.Point(84, 463);
             this.checkBuyer.Name = "checkBuyer";
             this.checkBuyer.Size = new System.Drawing.Size(57, 19);
-            this.checkBuyer.TabIndex = 22;
+            this.checkBuyer.TabIndex = 23;
             this.checkBuyer.Text = "Buyer";
             this.checkBuyer.UseVisualStyleBackColor = true;
             this.checkBuyer.CheckedChanged += new System.EventHandler(this.CheckBuyer_CheckedChanged);
@@ -1340,7 +1351,7 @@
             0,
             0});
             this.numFactoryRatio.Size = new System.Drawing.Size(51, 21);
-            this.numFactoryRatio.TabIndex = 36;
+            this.numFactoryRatio.TabIndex = 24;
             this.numFactoryRatio.Value = new decimal(new int[] {
             0,
             0,
@@ -1371,7 +1382,7 @@
             0,
             0});
             this.numSubconRatio.Size = new System.Drawing.Size(51, 21);
-            this.numSubconRatio.TabIndex = 38;
+            this.numSubconRatio.TabIndex = 25;
             this.numSubconRatio.Value = new decimal(new int[] {
             0,
             0,
@@ -1396,7 +1407,7 @@
             this.txtDebitMemo.Name = "txtDebitMemo";
             this.txtDebitMemo.ReadOnly = true;
             this.txtDebitMemo.Size = new System.Drawing.Size(105, 21);
-            this.txtDebitMemo.TabIndex = 22;
+            this.txtDebitMemo.TabIndex = 30;
             // 
             // displayDebitMemo
             // 
@@ -1425,7 +1436,7 @@
             this.txtSubconName.Location = new System.Drawing.Point(402, 385);
             this.txtSubconName.Name = "txtSubconName";
             this.txtSubconName.Size = new System.Drawing.Size(170, 21);
-            this.txtSubconName.TabIndex = 20;
+            this.txtSubconName.TabIndex = 31;
             // 
             // numSCIRatio
             // 
@@ -1451,7 +1462,7 @@
             0,
             0});
             this.numSCIRatio.Size = new System.Drawing.Size(51, 21);
-            this.numSCIRatio.TabIndex = 39;
+            this.numSCIRatio.TabIndex = 26;
             this.numSCIRatio.Value = new decimal(new int[] {
             0,
             0,
@@ -1471,7 +1482,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(994, 641);
+            this.shapeContainer1.Size = new System.Drawing.Size(1058, 645);
             this.shapeContainer1.TabIndex = 93;
             this.shapeContainer1.TabStop = false;
             // 
@@ -1554,7 +1565,7 @@
             this.displaySCIICRNo.Location = new System.Drawing.Point(401, 410);
             this.displaySCIICRNo.Name = "displaySCIICRNo";
             this.displaySCIICRNo.Size = new System.Drawing.Size(105, 21);
-            this.displaySCIICRNo.TabIndex = 95;
+            this.displaySCIICRNo.TabIndex = 32;
             // 
             // displaySCIICRNo2
             // 
@@ -1590,7 +1601,7 @@
             0,
             0});
             this.numSupplierRatio.Size = new System.Drawing.Size(51, 21);
-            this.numSupplierRatio.TabIndex = 40;
+            this.numSupplierRatio.TabIndex = 27;
             this.numSupplierRatio.Value = new decimal(new int[] {
             0,
             0,
@@ -1623,7 +1634,7 @@
             this.displayDebitNote.Location = new System.Drawing.Point(401, 437);
             this.displayDebitNote.Name = "displayDebitNote";
             this.displayDebitNote.Size = new System.Drawing.Size(105, 21);
-            this.displayDebitNote.TabIndex = 99;
+            this.displayDebitNote.TabIndex = 33;
             // 
             // numBuyerRatio
             // 
@@ -1649,7 +1660,7 @@
             0,
             0});
             this.numBuyerRatio.Size = new System.Drawing.Size(51, 21);
-            this.numBuyerRatio.TabIndex = 41;
+            this.numBuyerRatio.TabIndex = 28;
             this.numBuyerRatio.Value = new decimal(new int[] {
             0,
             0,
@@ -1682,7 +1693,7 @@
             this.displayDebitMemoCustomer.Location = new System.Drawing.Point(401, 462);
             this.displayDebitMemoCustomer.Name = "displayDebitMemoCustomer";
             this.displayDebitMemoCustomer.Size = new System.Drawing.Size(105, 21);
-            this.displayDebitMemoCustomer.TabIndex = 103;
+            this.displayDebitMemoCustomer.TabIndex = 34;
             // 
             // labelBuyerICRNo
             // 
@@ -1710,7 +1721,7 @@
             this.displayBuyerICRNo.Location = new System.Drawing.Point(401, 484);
             this.displayBuyerICRNo.Name = "displayBuyerICRNo";
             this.displayBuyerICRNo.Size = new System.Drawing.Size(105, 21);
-            this.displayBuyerICRNo.TabIndex = 106;
+            this.displayBuyerICRNo.TabIndex = 35;
             // 
             // txtBuyer
             // 
@@ -1721,7 +1732,7 @@
             this.txtBuyer.Location = new System.Drawing.Point(267, 506);
             this.txtBuyer.Name = "txtBuyer";
             this.txtBuyer.Size = new System.Drawing.Size(314, 21);
-            this.txtBuyer.TabIndex = 27;
+            this.txtBuyer.TabIndex = 31;
             // 
             // labelPreparedBy
             // 
@@ -1763,7 +1774,8 @@
             this.datePPICmgr.Name = "datePPICmgr";
             this.datePPICmgr.ReadOnly = true;
             this.datePPICmgr.Size = new System.Drawing.Size(109, 21);
-            this.datePPICmgr.TabIndex = 117;
+            this.datePPICmgr.TabIndex = 40;
+            this.datePPICmgr.TabStop = false;
             // 
             // dateFactorymgr
             // 
@@ -1773,7 +1785,8 @@
             this.dateFactorymgr.Name = "dateFactorymgr";
             this.dateFactorymgr.ReadOnly = true;
             this.dateFactorymgr.Size = new System.Drawing.Size(109, 21);
-            this.dateFactorymgr.TabIndex = 118;
+            this.dateFactorymgr.TabIndex = 21;
+            this.dateFactorymgr.TabStop = false;
             // 
             // labelTask
             // 
@@ -1816,6 +1829,7 @@
             this.dateSMR.ReadOnly = true;
             this.dateSMR.Size = new System.Drawing.Size(113, 21);
             this.dateSMR.TabIndex = 127;
+            this.dateSMR.TabStop = false;
             // 
             // dateTask
             // 
@@ -1826,6 +1840,7 @@
             this.dateTask.ReadOnly = true;
             this.dateTask.Size = new System.Drawing.Size(113, 21);
             this.dateTask.TabIndex = 128;
+            this.dateTask.TabStop = false;
             // 
             // labelTPEEditDate
             // 
@@ -1882,7 +1897,7 @@
             this.txtResponsibilityJustifcation.Name = "txtResponsibilityJustifcation";
             this.txtResponsibilityJustifcation.ReadOnly = true;
             this.txtResponsibilityJustifcation.Size = new System.Drawing.Size(32, 21);
-            this.txtResponsibilityJustifcation.TabIndex = 16;
+            this.txtResponsibilityJustifcation.TabIndex = 17;
             this.txtResponsibilityJustifcation.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtResponsibilityJustifcation_PopUp);
             this.txtResponsibilityJustifcation.Validating += new System.ComponentModel.CancelEventHandler(this.TxtResponsibilityJustifcation_Validating);
             // 
@@ -1938,6 +1953,7 @@
             this.txttpeuserPOSMR.Name = "txttpeuserPOSMR";
             this.txttpeuserPOSMR.Size = new System.Drawing.Size(302, 23);
             this.txttpeuserPOSMR.TabIndex = 123;
+            this.txttpeuserPOSMR.TabStop = false;
             // 
             // txttpeuserSMR
             // 
@@ -1948,6 +1964,7 @@
             this.txttpeuserSMR.Name = "txttpeuserSMR";
             this.txttpeuserSMR.Size = new System.Drawing.Size(302, 23);
             this.txttpeuserSMR.TabIndex = 125;
+            this.txttpeuserSMR.TabStop = false;
             // 
             // txttpeuserPOHandle
             // 
@@ -1958,6 +1975,7 @@
             this.txttpeuserPOHandle.Name = "txttpeuserPOHandle";
             this.txttpeuserPOHandle.Size = new System.Drawing.Size(302, 23);
             this.txttpeuserPOHandle.TabIndex = 116;
+            this.txttpeuserPOHandle.TabStop = false;
             // 
             // txttpeuserTask
             // 
@@ -1968,6 +1986,7 @@
             this.txttpeuserTask.Name = "txttpeuserTask";
             this.txttpeuserTask.Size = new System.Drawing.Size(302, 23);
             this.txttpeuserTask.TabIndex = 126;
+            this.txttpeuserTask.TabStop = false;
             // 
             // txttpeuserMR
             // 
@@ -1978,6 +1997,7 @@
             this.txttpeuserMR.Name = "txttpeuserMR";
             this.txttpeuserMR.Size = new System.Drawing.Size(302, 23);
             this.txttpeuserMR.TabIndex = 124;
+            this.txttpeuserMR.TabStop = false;
             // 
             // txtUserPPICmgr
             // 
@@ -1986,7 +2006,7 @@
             this.txtUserPPICmgr.Location = new System.Drawing.Point(101, 552);
             this.txtUserPPICmgr.Name = "txtUserPPICmgr";
             this.txtUserPPICmgr.Size = new System.Drawing.Size(302, 23);
-            this.txtUserPPICmgr.TabIndex = 23;
+            this.txtUserPPICmgr.TabIndex = 37;
             this.txtUserPPICmgr.TextBox1Binding = "";
             // 
             // txtUserPreparedBy
@@ -1996,7 +2016,7 @@
             this.txtUserPreparedBy.Location = new System.Drawing.Point(101, 530);
             this.txtUserPreparedBy.Name = "txtUserPreparedBy";
             this.txtUserPreparedBy.Size = new System.Drawing.Size(302, 23);
-            this.txtUserPreparedBy.TabIndex = 28;
+            this.txtUserPreparedBy.TabIndex = 36;
             this.txtUserPreparedBy.TextBox1Binding = "";
             // 
             // txtUserFactorymgr
@@ -2006,7 +2026,7 @@
             this.txtUserFactorymgr.Location = new System.Drawing.Point(101, 574);
             this.txtUserFactorymgr.Name = "txtUserFactorymgr";
             this.txtUserFactorymgr.Size = new System.Drawing.Size(302, 23);
-            this.txtUserFactorymgr.TabIndex = 24;
+            this.txtUserFactorymgr.TabIndex = 38;
             this.txtUserFactorymgr.TextBox1Binding = "";
             // 
             // txtfactory
@@ -2022,7 +2042,7 @@
             this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 21);
-            this.txtfactory.TabIndex = 37;
+            this.txtfactory.TabIndex = 29;
             // 
             // txtCountryDestination
             // 
@@ -2048,12 +2068,12 @@
             this.txtuserShipLeader.Location = new System.Drawing.Point(101, 596);
             this.txtuserShipLeader.Name = "txtuserShipLeader";
             this.txtuserShipLeader.Size = new System.Drawing.Size(300, 23);
-            this.txtuserShipLeader.TabIndex = 31;
+            this.txtuserShipLeader.TabIndex = 39;
             this.txtuserShipLeader.TextBox1Binding = "";
             // 
             // labQuotationAVG
             // 
-            this.labQuotationAVG.Location = new System.Drawing.Point(625, 254);
+            this.labQuotationAVG.Location = new System.Drawing.Point(620, 254);
             this.labQuotationAVG.Name = "labQuotationAVG";
             this.labQuotationAVG.Size = new System.Drawing.Size(203, 18);
             this.labQuotationAVG.TabIndex = 165;
@@ -2066,7 +2086,7 @@
             this.numericQuotationAVG.DecimalPlaces = 4;
             this.numericQuotationAVG.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericQuotationAVG.IsSupportEditMode = false;
-            this.numericQuotationAVG.Location = new System.Drawing.Point(830, 253);
+            this.numericQuotationAVG.Location = new System.Drawing.Point(825, 253);
             this.numericQuotationAVG.Maximum = new decimal(new int[] {
             1316134911,
             2328,
@@ -2099,7 +2119,7 @@
             this.numericBoxCW.DecimalPlaces = 2;
             this.numericBoxCW.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.numericBoxCW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBoxCW.Location = new System.Drawing.Point(717, 139);
+            this.numericBoxCW.Location = new System.Drawing.Point(712, 139);
             this.numericBoxCW.Maximum = new decimal(new int[] {
             99999999,
             0,
@@ -2117,7 +2137,7 @@
             0,
             0});
             this.numericBoxCW.Size = new System.Drawing.Size(104, 20);
-            this.numericBoxCW.TabIndex = 11;
+            this.numericBoxCW.TabIndex = 12;
             this.numericBoxCW.Value = new decimal(new int[] {
             0,
             0,
@@ -2126,9 +2146,9 @@
             // 
             // labCW
             // 
-            this.labCW.Location = new System.Drawing.Point(625, 140);
+            this.labCW.Location = new System.Drawing.Point(620, 140);
             this.labCW.Name = "labCW";
-            this.labCW.Size = new System.Drawing.Size(90, 18);
+            this.labCW.Size = new System.Drawing.Size(91, 18);
             this.labCW.TabIndex = 169;
             this.labCW.Text = "C.Weight(Kgs)";
             // 
@@ -2152,7 +2172,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(625, 276);
+            this.label2.Location = new System.Drawing.Point(825, 229);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(109, 18);
             this.label2.TabIndex = 170;
@@ -2162,17 +2182,57 @@
             // 
             this.dateAPAmountEditDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "APAmountEditDate", true));
             this.dateAPAmountEditDate.IsSupportEditMode = false;
-            this.dateAPAmountEditDate.Location = new System.Drawing.Point(737, 275);
+            this.dateAPAmountEditDate.Location = new System.Drawing.Point(937, 228);
             this.dateAPAmountEditDate.Name = "dateAPAmountEditDate";
             this.dateAPAmountEditDate.ReadOnly = true;
             this.dateAPAmountEditDate.Size = new System.Drawing.Size(109, 21);
             this.dateAPAmountEditDate.TabIndex = 16;
+            this.dateAPAmountEditDate.TabStop = false;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(620, 207);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(91, 18);
+            this.label3.TabIndex = 171;
+            this.label3.Text = "Act. Amt(W/Vat)";
+            // 
+            // numericBox1
+            // 
+            this.numericBox1.BackColor = System.Drawing.Color.White;
+            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ActualAmountWVAT", true));
+            this.numericBox1.DecimalPlaces = 2;
+            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox1.Location = new System.Drawing.Point(712, 206);
+            this.numericBox1.Maximum = new decimal(new int[] {
+            1316134911,
+            2328,
+            0,
+            262144});
+            this.numericBox1.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericBox1.Size = new System.Drawing.Size(104, 21);
+            this.numericBox1.TabIndex = 15;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // P01
             // 
             this.ApvChkValue = "Checked";
             this.CheckChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1004, 755);
+            this.ClientSize = new System.Drawing.Size(1066, 755);
             this.DefaultControl = "txtSpNo";
             this.DefaultControlForEdit = "txtSpNo";
             this.DefaultOrder = "CDate";
@@ -2356,5 +2416,7 @@
         private Win.UI.Label label1;
         private Win.UI.DateBox dateAPAmountEditDate;
         private Win.UI.Label label2;
+        private Win.UI.NumericBox numericBox1;
+        private Win.UI.Label label3;
     }
 }

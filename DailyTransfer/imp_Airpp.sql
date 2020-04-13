@@ -86,6 +86,7 @@ SET
 	  ,a.CW				 = b.CW
 	  ,a.APReceiveDoxDate				 = b.APReceiveDoxDate
 	  ,a.APAmountEditDate				 = b.APAmountEditDate
+	  ,a.ActualAmountWVAT				 = b.ActualAmountWVAT
 from Production.dbo.AirPP as a 
 inner join Trade_To_Pms.dbo.AirPP as b ON a.id=b.id
 where isnull(a.TPEEditDate,'') != isnull(b.EditDate,'')

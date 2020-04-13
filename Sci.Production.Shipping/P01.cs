@@ -489,7 +489,7 @@ values ('{0}','Status','','New','{1}',GETDATE())",
             worksheet.Cells[12, 6] = MyUtility.Convert.GetString(this.CurrentMaintain["Quotation2"]) + "/KG";
             worksheet.Cells[13, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["Rate"]);
             worksheet.Cells[13, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["EstAmount"]);
-            worksheet.Cells[13, 8] = MyUtility.Convert.GetString(this.CurrentMaintain["ActualAmount"]);
+            worksheet.Cells[13, 8] = MyUtility.Convert.GetString(this.CurrentMaintain["ActualAmountWVAT"]);
             worksheet.Cells[14, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["ReasonID"]) + "." + this.displayResponsibilityJustifcation.Value;
             worksheet.Cells[15, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleFty"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
             worksheet.Cells[15, 4] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioFty"]) + "%";
@@ -1491,6 +1491,11 @@ and Forwarder = '{this.txtSubconForwarderN.TextBox1.Text}'";
         {
             
             this.numForwarderNQuotationOldValue = this.numForwarderNQuotation.OldValue.HasValue ? this.numForwarderNQuotation.OldValue.Value : 0;
+
+        }
+
+        private void detailcont_Paint(object sender, PaintEventArgs e)
+        {
 
         }
     }
