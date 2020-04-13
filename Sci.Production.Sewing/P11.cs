@@ -762,6 +762,11 @@ end
                         return;
                     }
 
+                    if (!this.UpdateMESInspection())
+                    {
+                        return;
+                    }
+
                     scope.Complete();
                 }
             }
@@ -1280,6 +1285,61 @@ inner join SewingOutput so with(nolock) on so.id = t.id
 
                 MyUtility.Msg.WarningBox(msg);
                 return false;
+            }
+
+            return true;
+        }
+
+        private bool UpdateMESInspection()
+        {
+            // 先準備to OrderID的styleUkey
+            string sqlcmd = $@"
+select 
+    t.FromOrderID,t.FromComboType,t.Article,t.SizeCode,
+    t.ToOrderID,t.ToComboType,t.ToArticle,t.ToSizeCode,o.styleUkey,
+    t.TransferQty,
+    t.ukey
+from #tmp t
+inner join orders o with(nolock) on o.id = t.ToOrderID
+";
+            DataTable dt;
+            DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, string.Empty, sqlcmd, out dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            // 跑表身迴圈
+            foreach (DataRow item in dt.Rows)
+            {
+                // 在MES inspection一筆資料是一件
+                int qty = MyUtility.Convert.GetInt(item["TransferQty"]);
+                sqlcmd = $@"
+update Inspection set 
+	OrderId = '{item["ToOrderID"]}',
+	Location = '{item["ToComboType"]}', 
+	Article = '{item["ToArticle"]}', 
+	Size = '{item["ToSizeCode"]}', 
+	EditDate = GETDATE(), 
+	StyleUkey = {item["styleUkey"]}, 
+	SewingOutputTransfer_DetailUkey = {item["Ukey"]}
+from Inspection with(nolock)
+where Status in ('Pass','Fixed') and OrderId = '{item["FromOrderID"]}' and Location = '{item["FromComboType"]}'
+and Article='{item["Article"]}' and Size='{item["SizeCode"]}'
+and AddDate in (
+	select top {qty} AddDate
+	from Inspection with(nolock)
+	where Status in ('Pass','Fixed') and OrderId = '{item["FromOrderID"]}' and Location = '{item["FromComboType"]}'
+    and Article='{item["Article"]}' and Size='{item["SizeCode"]}'
+	order by AddDate 
+)";
+                result = DBProxy.Current.Execute("ManufacturingExecution", sqlcmd);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
             }
 
             return true;
