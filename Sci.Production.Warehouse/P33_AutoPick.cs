@@ -155,18 +155,15 @@ SELECT  --DISTINCT
         , psd.Refno
 		, psd.SuppColor
 		, f.DescDetail
-		, [@Qty]= ThreadUsedQtyByBOT.Val/*(SELECT dbo.[GetThreadUsedQtyByBOT] (psd.ID,psd.SCIRefno,psd.SuppColor))*/
-		, [Use Qty By Stock Unit] = CEILING(ISNULL(Garment.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) ) --並轉換為Stock Unit
+		, [@Qty]= ThreadUsedQtyByBOT.Val
+		, [Use Qty By Stock Unit] = ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) --並轉換為Stock Unit
 		, [Stock Unit]=StockUnit.StockUnit
-		, [Use Qty By Use Unit]= (ISNULL(Garment.Qty,0) *  ThreadUsedQtyByBOT.Val  )
+		, [Use Qty By Use Unit]= (ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val  )
 		, [Use Unit]='CM'
 		, [Stock Unit Desc.]=StockUnit.Description
-		, [Output Qty(Garment)] = ISNULL(Garment.Qty,0)
+		, [Output Qty(Garment)] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
 		, [Bulk Balance(Stock Unit)] = ISNULL(( Fty.InQty-Fty.OutQty + Fty.AdjustQty ) ,0)
-		--, [FtyInventoryUkey]=Fty.Ukey
         , [POID]=psd.ID
-		--, psd.SEQ1
-		--, psd.SEQ2
 		, [AccuIssued] = (
 					select isnull(sum([IS].qty),0)
 					from dbo.issue I2 WITH (NOLOCK) 
@@ -189,16 +186,29 @@ OUTER APPLY(
 	FROM Unit_Rate
 	WHERE UnitFrom='M' and  UnitTo = StockUnit.StockUnit
 )UnitRate
-OUTER APPLY(
+OUTER APPLY( ----所有 Article 數量總和
 	SELECt [Qty]=sum(b.Qty)
 	FROM #step1 a
-	INNER JOIN #tmp_sumQty b ON a.Article = b.article
+	INNER JOIN #tmp_sumQty b ON a.Article = b.Article
 	WHERE SCIRefNo= psd.SCIRefNo AND SuppColor=psd.SuppColor
-)Garment
+)GarmentTotal
 OUTER APPLY(
-	SELECT [Val]=SUM(((SeamLength  * Frequency * UseRatio ) + Allowance))
-	FROM dbo.GetThreadUsedQtyByBOT(psd.ID)
-	WHERE SCIRefNo = psd.SCIRefNo AND SuppColor = psd.SuppColor
+	SELECT SCIRefNo
+		,SuppColor
+		,[Val]=SUM(((SeamLength  * Frequency * UseRatio ) +  (Allowance * Segment) )) 
+		,[Qty] = (	
+			SELECt [Qty]=SUM(b.Qty)
+			FROM #step1 a
+			INNER JOIN #tmp_sumQty b ON a.Article = b.Article
+			WHERE SCIRefNo=psd.SCIRefNo AND  SuppColor= psd.SuppColor AND a.Article=g.Article
+			GROUP BY a.Article
+		)
+	FROM DBO.GetThreadUsedQtyByBOT(psd.ID) g
+	WHERE SCIRefNo= psd.SCIRefNo AND SuppColor = psd.SuppColor  
+	AND Article IN (
+		SELECt Article FROM #step1 WHERE SCIRefNo = psd.SCIRefNo  AND SuppColor = psd.SuppColor 
+	)
+	GROUP BY SCIRefNo,SuppColor , Article
 )ThreadUsedQtyByBOT
 WHERE psd.ID='{this.poid}'
 AND psd.FabricType ='A'
@@ -216,16 +226,15 @@ SELECT  [Selected]
         , Refno
 		, SuppColor
 		, DescDetail
-		, [@Qty]
-		, [Use Qty By Stock Unit]
+		, [@Qty] = SUM([@Qty])
+		, [Use Qty By Stock Unit] = CEILING (SUM([Use Qty By Stock Unit] ))
 		, [Stock Unit]
-		, [Use Qty By Use Unit]
+		, [Use Qty By Use Unit] = SUM([Use Qty By Use Unit] )
 		, [Use Unit]
 		, [Stock Unit Desc.]
-		, [Output Qty(Garment)]
-		, [Bulk Balance(Stock Unit)] = SUM([Bulk Balance(Stock Unit)])
+		, [Output Qty(Garment)] = SUM([Output Qty(Garment)])
+		, [Bulk Balance(Stock Unit)] = ([Bulk Balance(Stock Unit)])
         , [POID]
-		--, [FtyInventoryUkey]
 		, [AccuIssued]
 FROM #final
 GROUP BY [Selected] 
@@ -233,16 +242,12 @@ GROUP BY [Selected]
         , Refno
 		, SuppColor
 		, DescDetail
-		, [@Qty]
-		, [Use Qty By Stock Unit]
 		, [Stock Unit]
-		, [Use Qty By Use Unit]
 		, [Use Unit]
 		, [Stock Unit Desc.]
-		, [Output Qty(Garment)]
         , [POID]
-		--, [FtyInventoryUkey]
 		, [AccuIssued]
+		, [Bulk Balance(Stock Unit)]
 
 DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final
 

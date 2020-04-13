@@ -153,14 +153,14 @@ SELECT   iis.SCIRefno
 					and [IS].Poid=iis.POID AND [IS].SCIRefno=iis.SCIRefno AND [IS].SuppColor=iis.SuppColor and i2.[EditDate]<I.AddDate AND i2.ID <> i.ID
 				)
 		, [IssueQty]=iis.Qty
-		, [Use Qty By Stock Unit] = CEILING(ISNULL(Garment.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) ) 
+		, [Use Qty By Stock Unit] =CEILING( ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) )
 		, [Stock Unit]=StockUnit.StockUnit
 
 		, [Use Unit]='CM'
-		, [Use Qty By Use Unit]= (ISNULL(Garment.Qty,0) *  ThreadUsedQtyByBOT.Val  )
+		, [Use Qty By Use Unit]=(ThreadUsedQtyByBOT.Qty *  ThreadUsedQtyByBOT.Val  )
 
 		, [Stock Unit Desc.]=StockUnit.Description
-		, [OutputQty] = ISNULL(Garment.Qty,0)
+		, [OutputQty] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
 		, [Balance(Stock Unit)]= ISNULL( fi.InQty - fi.OutQty + fi.AdjustQty ,0)
 		, [Location]=ISNULL(Location.MtlLocationID,'')
         , [POID]=iis.POID
@@ -179,9 +179,37 @@ OUTER APPLY(
 	AND psd.SuppColor=iis.SuppColor
 )Refno
 OUTER APPLY(
-	SELECT Val=SUM((SeamLength * Frequency * UseRatio) + Allowance)
-	FROM dbo.GetThreadUsedQtyByBOT(iis.POID)
-	WHERE SCIRefNo = iis.SCIRefno AND SuppColor = iis.SuppColor
+	SELECT SCIRefNo
+		,SuppColor
+		,[Val]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance*Segment))) 
+		,[Qty] = (	
+			SELECt [Qty]=SUM(b.Qty)
+			FROM (
+					Select distinct o.ID,tcd.SCIRefNo, tcd.SuppColor ,tcd.Article 
+					--INTO #step1
+					From dbo.Orders as o
+					Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
+					Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
+					Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
+					WHERE O.ID=iis.POID AND tcd.Article IN ( SELECT Article FROM Issue_Breakdown WHERE ID=i.ID)
+					) a
+			INNER JOIN (		
+							SELECt Article,[Qty]=SUM(Qty) 
+							FROM Issue_Breakdown
+							WHERE ID=i.ID
+							GROUP BY Article
+						) b ON a.Article = b.Article
+			WHERE SCIRefNo=iis.SCIRefNo AND  SuppColor= iis.SuppColor AND a.Article=g.Article
+			GROUP BY a.Article
+		)
+	FROM DBO.GetThreadUsedQtyByBOT(iis.POID) g
+	WHERE SCIRefNo= iis.SCIRefNo AND SuppColor = iis.SuppColor  
+	AND Article IN (		
+        SELECt Article
+        FROM Issue_Breakdown
+        WHERE ID=i.ID
+	)
+	GROUP BY SCIRefNo,SuppColor , Article
 )ThreadUsedQtyByBOT
 OUTER APPLY(
 	SELECT   [MtlLocationID] = STUFF(
@@ -194,28 +222,6 @@ OUTER APPLY(
 		FOR XML PATH('')
 	), 1, 1, '') 
 )Location
-OUTER APPLY(
-	SELECt [Qty]=sum(b.Qty)
-	FROM (
-        Select distinct tcd.SCIRefNo, tcd.SuppColor ,tcd.Article
-        From dbo.Orders as o
-        Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
-        Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
-        Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
-        INNER JOIN (
-                        SELECt DISTINCT OrderID, Article
-                        FROM Issue_Breakdown
-                        WHERE ID='{masterID}'
-                    ) i On i.OrderID=o.ID AND i.Article=tcd.Article
-    ) a
-	INNER JOIN (
-                    SELECt Article,[Qty]=SUM(Qty) 
-                    FROM Issue_Breakdown
-                    WHERE ID='{masterID}'
-                    GROUP BY Article
-                ) b ON a.Article = b.article
-	WHERE SCIRefNo= iis.SCIRefNo AND SuppColor=iis.SuppColor
-)Garment
 OUTER APPLY(
 	SELECT TOP 1 psd2.StockUnit ,u.Description
 	FROM PO_Supp_Detail psd2
@@ -232,7 +238,7 @@ OUTER APPLY(
 WHERE i.ID='{masterID}' 
 AND iis.SuppColor <> ''
 
-DROP TABLE #tmpIssue_Breakdown ,#step1 ,#tmp_sumQty
+
 ";
 
             return base.OnDetailSelectCommandPrepare(e);
@@ -1979,7 +1985,7 @@ OUTER APPLY(
 	AND PSD2.SuppColor=psd.SuppColor
 )StockUnit
 OUTER APPLY(
-	SELECT Val=SUM((SeamLength * Frequency * UseRatio) + Allowance)
+	SELECT Val=SUM((SeamLength * Frequency * UseRatio) +  (Allowance * Segment) )
 	FROM dbo.GetThreadUsedQtyByBOT(psd.ID)
 	WHERE SCIRefNo = psd.SCIRefno AND SuppColor = psd.SuppColor
 )BOT
