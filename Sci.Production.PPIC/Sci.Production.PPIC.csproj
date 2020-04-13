@@ -422,6 +422,12 @@
     <Compile Include="P05.Designer.cs">
       <DependentUpon>P05.cs</DependentUpon>
     </Compile>
+    <Compile Include="P08_BatchConfirmRespDept.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P08_BatchConfirmRespDept.Designer.cs">
+      <DependentUpon>P08_BatchConfirmRespDept.cs</DependentUpon>
+    </Compile>
     <Compile Include="P08_Download.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -864,6 +870,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P05.resx">
       <DependentUpon>P05.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P08_BatchConfirmRespDept.resx">
+      <DependentUpon>P08_BatchConfirmRespDept.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P08_Download.resx">
       <DependentUpon>P08_Download.cs</DependentUpon>
