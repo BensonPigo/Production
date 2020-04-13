@@ -266,6 +266,9 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
             }
             #endregion
 
+            #region Include Foundry : Enable = Foundry.Checked
+            this.btnFoundryList.Enabled = this.chkFoundry.Checked;
+            #endregion
             if (!MyUtility.Check.Empty(this.CurrentMaintain["FBDate"]))
             {
                 this.FBDate_Ori = DateTime.Parse(this.CurrentMaintain["FBDate"].ToString());

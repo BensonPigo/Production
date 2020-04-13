@@ -3,7 +3,7 @@
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-alter PROCEDURE [dbo].[imp_Base]
+Create PROCEDURE [dbo].[imp_Base]
 	
 AS
 BEGIN
@@ -3221,11 +3221,18 @@ where not exists(
 
 delete t
 from Production.dbo.GarmentInvoice_Foundry t
-where not exists(
+where exists(
 	select 1
 	from Trade_To_Pms.dbo.GarmentInvoice_Foundry s WITH (NOLOCK)
 	where t.InvoiceNo = s.InvoiceNo
 )
+and not exists(
+	select 1
+	from Trade_To_Pms.dbo.GarmentInvoice_Foundry s WITH (NOLOCK)
+	where t.InvoiceNo = s.InvoiceNo
+	and t.FactoryGroup = s.FactoryGroup
+)
+
 
 
 
