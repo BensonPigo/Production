@@ -37,6 +37,7 @@
     [Annotation]          NVARCHAR (200) NULL,
     [MasterPlusGroup]     VARCHAR (4)    DEFAULT ('') NOT NULL,
     [Hem]                 BIT            DEFAULT ((0)) NOT NULL,
+	[Segment]			  INT			 DEFAULT ((0)) NULL,
     CONSTRAINT [PK_Operation] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
