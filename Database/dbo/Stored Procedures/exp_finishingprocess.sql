@@ -1,7 +1,7 @@
 ﻿-- =============================================
 -- Description:	轉出FPS資料
 -- =============================================
-CREATE PROCEDURE [dbo].[exp_finishingprocess]
+Create PROCEDURE [dbo].[exp_finishingprocess]
 	@inputDate date = null
 AS
 Begin try
@@ -27,7 +27,8 @@ BEGIN
 	[CmdTime]			[datetime] NOT NULL,
 	[SunriseUpdated]	[bit] NOT NULL DEFAULT ((0)),
 	[GenSongUpdated]	[bit] NOT NULL DEFAULT ((0)),
-	[CustPONo]			[varchar](30) NULL
+	[CustPONo]			[varchar](30) NULL,
+	[POID]				[varchar](13) NULL  DEFAULT ('')
  CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -355,7 +356,7 @@ USING(
 	SELECT id,BrandID,ProgramID,StyleID,SeasonID,ProjectID,Category,OrderTypeID,Dest,CustCDID,StyleUnit
 	,[SetQty] = (select count(1) cnt from Production.dbo.Style_Location where o.StyleUkey=StyleUkey)
 	,[Location] = sl.Location , o.PulloutComplete, o.Junk,[CmdTime] = GETDATE()
-	,[SunriseUpdated] = 0, [GenSongUpdated] = 0, [CustPONo]
+	,[SunriseUpdated] = 0, [GenSongUpdated] = 0, [CustPONo], o.POID
 	FROM Production.dbo.Orders o
 	outer apply(	
 	select Location = STUFF((
@@ -387,14 +388,15 @@ UPDATE SET
 	t.CmdTime = GetDate(),
 	t.SunriseUpdated = s.SunriseUpdated,
 	t.GenSongUpdated = s.GenSongUpdated,
-	t.CustPONo = s.CustPONo
+	t.CustPONo = s.CustPONo,
+	t.POID = s.POID
 WHEN NOT MATCHED BY TARGET THEN
 INSERT(  id,   BrandID,   ProgramID,   StyleID,   SeasonID,   ProjectID,   Category,   OrderTypeID
 	,  Dest,   CustCDID,   StyleUnit,   SetQty,   Location,   PulloutComplete,   Junk
-	,  CmdTime,   SunriseUpdated,   GenSongUpdated, CustPONo) 
+	,  CmdTime,   SunriseUpdated,   GenSongUpdated, CustPONo, POID) 
 VALUES(s.id, s.BrandID, s.ProgramID, s.StyleID, s.SeasonID, s.ProjectID, s.Category, s.OrderTypeID
 	,s.Dest, s.CustCDID, s.StyleUnit, s.SetQty, s.Location, s.PulloutComplete, s.Junk
-	,s.CmdTime, s.SunriseUpdated, s.GenSongUpdated, s.CustPONo)	;
+	,s.CmdTime, s.SunriseUpdated, s.GenSongUpdated, s.CustPONo, s.POID)	;
 
 --02. 轉出區間 [Production].[dbo].[Order_QtyShip].AddDate or EditDate= 今天
 MERGE Order_QtyShip AS T

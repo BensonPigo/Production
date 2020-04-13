@@ -17,6 +17,7 @@ namespace Sci.Production.Warehouse
     {
         string season, mdivision, orderby, spno1, spno2, fabrictype, refno1, refno2, style, country, supp, factory, wkNo1, wkNo2 ,brand;
         string IncludeJunk, ExcludeMaterial;
+        private string zone;
         DateTime? sciDelivery1, sciDelivery2, suppDelivery1, suppDelivery2, eta1, eta2, ata1, ata2;
         DataTable printData;
 
@@ -29,6 +30,16 @@ namespace Sci.Production.Warehouse
             comboFabricType.SelectedIndex = 0;
             MyUtility.Tool.SetupCombox(comboOrderBy, 1, 1, "Supplier,SP#");
             comboOrderBy.SelectedIndex = 0;
+
+
+            DataTable zone;
+            string strSelectSql = @"select '' as Zone,'' as Fty union all
+select distinct f.Zone,f.Zone+' - '+(select CONCAT(ID,'/') from Factory WITH (NOLOCK) where Zone = f.Zone for XML path('')) as Fty
+from Factory f WITH (NOLOCK) where Zone <> ''";
+
+            DBProxy.Current.Select(null, strSelectSql, out zone);
+            MyUtility.Tool.SetupCombox(this.comboZone, 2, zone);
+            this.comboZone.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
@@ -71,6 +82,7 @@ namespace Sci.Production.Warehouse
             fabrictype = comboFabricType.SelectedValue.ToString();
             orderby = comboOrderBy.Text;
             brand = txtbrand.Text;
+            this.zone = MyUtility.Convert.GetString(this.comboZone.SelectedValue);
 
             if (this.chkIncludeJunk.Checked)
             {
@@ -150,6 +162,8 @@ left join Export ex with (nolock) on ex.ID = exd.ID
             System.Data.SqlClient.SqlParameter sp_wkno2 = new System.Data.SqlClient.SqlParameter();
             sp_wkno2.ParameterName = "@wkno2";
 
+            System.Data.SqlClient.SqlParameter sp_zone = new System.Data.SqlClient.SqlParameter();
+            sp_zone.ParameterName = "@zone";
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             #endregion
@@ -399,6 +413,12 @@ where 1=1
                 cmds.Add(sp_factory);
             }
 
+            if (!MyUtility.Check.Empty(zone))
+            {
+                sqlCmd.Append(" and f.Zone = @Zone");
+                sp_zone.Value = zone;
+                cmds.Add(sp_zone);
+            }
 
             if (!MyUtility.Check.Empty(brand))
             {

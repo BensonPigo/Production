@@ -153,7 +153,6 @@ select	UpdateDate
 		, NewOrder				= IIF (NewOrder = 1, 'V', '') 
 		, DeleteOrder			= iif (DeleteOrder=1, 'V', '')  
 		, JunkOrder				= iif (JunkOrder=1, 'V', '') 
-		, CMPQDate				= iif (NewCMPQDate is null, '', 'V') 
 		, EachConsApv			= iif (NewEachConsApv is null, iif (OriginalEachConsApv is null, '', '★'), 'V') 
 		, NewMnorder			= iif (NewMnorderApv is null, '', 'V')
 		, NewSMnorderApv		= iif (NewSMnorderApv is null, '', 'V')

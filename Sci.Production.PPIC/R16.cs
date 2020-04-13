@@ -216,8 +216,8 @@ select main.KPICode
 	,[PackingQty] = isnull(pd.PackingQty,0)
 	,[ClogReceivedCarton] = isnull(pd.ClogReceivedCarton,0)
 	,[ClogReceivedQty]=IIF(main.PartialShipment='Y' ,'NA' ,CAST( ISNULL( pd.ClogReceivedQty,0)  as varchar))
-	,[LastCMPOutputDate]=LastCMPOutputDate.Value
-    ,[CMPQty]=IIF(PartialShipment='Y' ,'NA', CAST(ISNULL( CMPQty.Value,0)  as varchar))
+	--,[LastCMPOutputDate]=LastCMPOutputDate.Value
+    --,[CMPQty]=IIF(PartialShipment='Y' ,'NA', CAST(ISNULL( CMPQty.Value,0)  as varchar))
 	,ins.LastDQSOutputDate
 	,[DQSQty]=IIF(main.PartialShipment='Y' , 'NA' , CAST( ISNULL( ins.DQSQty,0)  as varchar))
 	,[OST Packing Qty]=IIF(main.PartialShipment='Y' , 'NA' , CAST(( ISNULL(main.OrderQty,0) -  ISNULL(pd.PackingQty,0)) as varchar))
@@ -257,6 +257,7 @@ DROP TABLE #tmpOrderMain,#tmpPackingList_Detail,#tmpInspection,#tmpInspection_St
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
+
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R16.xltx"); //預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "PPIC_R16.xltx", 1, false, null, objApp);// 將datatable copy to excel
 
@@ -264,9 +265,8 @@ DROP TABLE #tmpOrderMain,#tmpPackingList_Detail,#tmpInspection,#tmpInspection_St
             objSheets.get_Range("L:L").ColumnWidth = 8;
             objSheets.get_Range("M:M").ColumnWidth = 9;
             objSheets.get_Range("N:R").ColumnWidth = 8;
-            objSheets.get_Range("U:Z").ColumnWidth = 8;
+            objSheets.get_Range("U:Y").ColumnWidth = 8;
             objSheets.get_Range("G:G").ColumnWidth = 10;
-            objSheets.get_Range("S:S").ColumnWidth = 10;
             objSheets.get_Range("U:U").ColumnWidth = 10;
 
             #region Save & Show Excel

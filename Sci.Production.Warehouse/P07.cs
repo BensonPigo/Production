@@ -1627,18 +1627,6 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
             this.RenewData();
         }
 
-        private void btUpdateActWeight_Click(object sender, EventArgs e)
-        {
-            if (CurrentMaintain["Status"].ToString().ToUpper() != "CONFIRMED")
-            {
-                MyUtility.Msg.InfoBox("Please modify data directly!!");
-                return;
-            }
-            var frm = new Sci.Production.Warehouse.P07_UpdateActualWeight(detailgridbs.DataSource, CurrentMaintain["id"].ToString());
-            frm.ShowDialog(this);
-            this.RenewData();
-        }
-
         private void btFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
@@ -1884,6 +1872,19 @@ The Deylot of
             }
             return true;
         }
+
+        private void btUpdateWeight_Click(object sender, EventArgs e)
+        {
+            if (CurrentMaintain["Status"].ToString().ToUpper() != "CONFIRMED")
+            {
+                MyUtility.Msg.InfoBox("Please modify data directly!!");
+                return;
+            }
+            var frm = new Sci.Production.Warehouse.P07_UpdateWeight(detailgridbs.DataSource, CurrentMaintain["id"].ToString());
+            frm.ShowDialog(this);
+            this.RenewData();
+        }
+
         /// <summary>
         /// 表身新增資料,會將上一筆資料copy並填入新增的資料列裡
         /// </summary>

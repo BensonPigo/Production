@@ -3546,6 +3546,43 @@ left join Trade_To_Pms.dbo.FactoryExpress_SendingScheduleHistory as b
 on a.Ukey=b.Ukey 
 where b.ToID is null
 
+
+
+-------FIR_Grade-------
+UPDATE a
+SET  a.WeaveTypeID	= b.WeaveTypeID
+    ,a.Percentage	= b.Percentage
+    ,a.Grade		= b.Grade
+    ,a.Result		= b.Result
+    ,a.BrandID		= b.BrandID
+FROM Production.dbo.FIR_Grade a 
+INNER JOIN Trade_To_Pms.dbo.FIR_Grade as b  
+ON a.WeaveTypeID=b.WeaveTypeID AND a.Percentage=b.Percentage AND a.BrandID=b.BrandID 
+
+
+INSERT INTO Production.dbo.FIR_Grade
+           (WeaveTypeID
+           ,Percentage
+           ,Grade
+           ,Result
+           ,BrandID)
+SELECT   WeaveTypeID
+		,Percentage
+		,Grade
+		,Result
+		,BrandID
+FROM Trade_To_Pms.dbo.FIR_Grade b
+WHERE NOT EXISTS(
+	SELECT  1
+	FROM Production.dbo.FIR_Grade a WITH (NOLOCK)
+	WHERE a.WeaveTypeID=b.WeaveTypeID AND a.Percentage=b.Percentage AND a.BrandID=b.BrandID 
+)
+
+DELETE Production.dbo.FIR_Grade
+FROM Production.dbo.FIR_Grade a
+LEFT JOIN Trade_To_Pms.dbo.FIR_Grade b ON a.WeaveTypeID=b.WeaveTypeID AND a.Percentage=b.Percentage AND a.BrandID=b.BrandID 
+WHERE b.Grade is null
+
 END
 
 

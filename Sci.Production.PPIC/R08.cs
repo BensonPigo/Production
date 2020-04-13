@@ -10,6 +10,8 @@ using Ict;
 using Sci.Data;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 using System.Runtime.InteropServices;
+using System.Data.SqlClient;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.PPIC
 {
@@ -19,14 +21,20 @@ namespace Sci.Production.PPIC
     public partial class R08 : Sci.Win.Tems.PrintForm
     {
         private DataTable _printData;
-        private DateTime? _cdate1;
-        private DateTime? _cdate2;
-        private DateTime? _apvdate1;
-        private DateTime? _apvdate2;
-        private string _mDivision;
-        private string _factory;
-        private string _type;
-        private string _typedesc;
+        private DateTime? Cdate1;
+        private DateTime? Cdate2;
+        private DateTime? Apvdate1;
+        private DateTime? Apvdate2;
+        private DateTime? Lockdate1;
+        private DateTime? Lockdate2;
+        private DateTime? Cfmdate1;
+        private DateTime? Cfmdate2;
+        private string MDivisionID;
+        private string FtyGroup;
+        private string T;
+        private string Status;
+        private string Sharedept;
+        private string ReportType;
 
         /// <summary>
         /// R08
@@ -39,98 +47,231 @@ namespace Sci.Production.PPIC
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            MyUtility.Tool.SetupCombox(this.comboType, 1, 1, "Fabric,Accessory,");
+            MyUtility.Tool.SetupCombox(this.comboType, 2, 1, "F,Fabric,A,Accessory,");
+            MyUtility.Tool.SetupCombox(this.cmbStatus, 1, 1, "ALL,Approved,Auto.Lock,Checked,Confirmed,Junked,New");
+            MyUtility.Tool.SetupCombox(this.cmbReportType, 2, 1, "0,Detail List,1,Resp. Dept. List");
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboM.Text = Sci.Env.User.Keyword;
             this.comboType.SelectedIndex = 0;
+            this.cmbStatus.SelectedIndex = 0;
+            this.cmbReportType.SelectedIndex = 0;
             this.comboFactory.Text = Sci.Env.User.Factory;
         }
 
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            this._cdate1 = this.dateCreateDate.Value1;
-            this._cdate2 = this.dateCreateDate.Value2;
-            this._apvdate1 = this.dateApvDate.Value1;
-            this._apvdate2 = this.dateApvDate.Value2;
-            this._mDivision = this.comboM.Text;
-            this._type = this.comboType.SelectedIndex == -1 || this.comboType.SelectedIndex == 2 ? string.Empty : this.comboType.SelectedIndex == 0 ? "F" : "A";
-            this._factory = this.comboFactory.Text;
-            this._typedesc = this.comboType.Text;
+            this.Cdate1 = this.dateCreateDate.Value1;
+            this.Cdate2 = this.dateCreateDate.Value2;
+            this.Apvdate1 = this.dateApvDate.Value1;
+            this.Apvdate2 = this.dateApvDate.Value2;
+            this.Lockdate1 = this.dateLock.Value1;
+            this.Lockdate2 = this.dateLock.Value2;
+            this.Cfmdate1 = this.dateCfm.Value1;
+            this.Cfmdate2 = this.dateCfm.Value2;
+            this.MDivisionID = this.comboM.Text;
+            this.FtyGroup = this.comboFactory.Text;
+            this.T = MyUtility.Convert.GetString(this.comboType.SelectedValue);
+            this.Status = this.cmbStatus.Text;
+            this.Sharedept = this.txtSharedept.Text;
+            this.ReportType = this.cmbReportType.Text;
             return base.ValidateInput();
         }
 
         /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            StringBuilder sqlCmd = new StringBuilder();
+            #region SqlParameter
+            List<SqlParameter> sqlpar = new List<SqlParameter>();
+            #endregion
+
+            #region where
+            string where = string.Empty;
+            if (!MyUtility.Check.Empty(this.Cdate1))
+            {
+                where += $@"and rr.CDate >= @CDate1 " + "\r\n";
+                sqlpar.Add(new SqlParameter("@CDate1", this.Cdate1));
+            }
+
+            if (!MyUtility.Check.Empty(this.Cdate2))
+            {
+                where += $@"and rr.CDate <= @CDate2 " + "\r\n";
+                sqlpar.Add(new SqlParameter("@CDate2", this.Cdate2));
+            }
+
+            if (!MyUtility.Check.Empty(this.Apvdate1))
+            {
+                where += $@"and rr.ApvDate >= @ApvDate1 " + "\r\n";
+                sqlpar.Add(new SqlParameter("@ApvDate1", this.Apvdate1));
+            }
+
+            if (!MyUtility.Check.Empty(this.Apvdate2))
+            {
+                where += $@"and rr.ApvDate <= @ApvDate2 " + "\r\n";
+                sqlpar.Add(new SqlParameter("@ApvDate2", this.Apvdate2));
+            }
+
+            if (!MyUtility.Check.Empty(this.Lockdate1))
+            {
+                where += $@"and rr.LockDate >= @Lockdate1 " + "\r\n";
+                sqlpar.Add(new SqlParameter("@Lockdate1", this.Lockdate1));
+            }
+
+            if (!MyUtility.Check.Empty(this.Lockdate2))
+            {
+                where += $@"and rr.LockDate <= @Lockdate2 " + "\r\n";
+                sqlpar.Add(new SqlParameter("@Lockdate2", this.Lockdate2));
+            }
+
+            if (!MyUtility.Check.Empty(this.Cfmdate1))
+            {
+                where += $@"and cast(rr.RespDeptConfirmDate as date) >= @Cfmdate1 " + "\r\n";
+                sqlpar.Add(new SqlParameter("@Cfmdate1", this.Cfmdate1));
+            }
+
+            if (!MyUtility.Check.Empty(this.Cfmdate2))
+            {
+                where += $@"and cast(rr.RespDeptConfirmDate as date) <= @Cfmdate2 " + "\r\n";
+                sqlpar.Add(new SqlParameter("@Cfmdate2", this.Cfmdate2));
+            }
+
+            if (!MyUtility.Check.Empty(this.MDivisionID))
+            {
+                where += $@"and rr.MDivisionID = @MDivisionID " + "\r\n";
+                sqlpar.Add(new SqlParameter("@MDivisionID", this.MDivisionID));
+            }
+
+            if (!MyUtility.Check.Empty(this.FtyGroup))
+            {
+                where += $@"and rr.FactoryID = @FactoryID " + "\r\n";
+                sqlpar.Add(new SqlParameter("@FactoryID", this.FtyGroup));
+            }
+
+            if (!MyUtility.Check.Empty(this.T))
+            {
+                where += $@"and rr.Type = @Type " + "\r\n";
+                sqlpar.Add(new SqlParameter("@Type", this.T));
+            }
+
+            if (this.Status != "ALL")
+            {
+                where += $@"and rr.Status = @Status " + "\r\n";
+                sqlpar.Add(new SqlParameter("@Status", this.Status));
+            }
+
+            if (!MyUtility.Check.Empty(this.Sharedept))
+            {
+                where += $@"and exists(select 1 from ICR_ResponsibilityDept icr with(nolock) where icr.ID = rr.id and icr.DepartmentID =  @DepartmentID) " + "\r\n";
+                sqlpar.Add(new SqlParameter("@DepartmentID", this.Sharedept));
+            }
+            #endregion
+
             #region sqlcmd 主table
-            sqlCmd.Append(@"
-select r.ID,r.CDate,r.ApvDate,r.POID,r.MDivisionID,r.FactoryID,o.StyleID,
-[Seq] = CONCAT(rd.Seq1,'-',rd.Seq2),
-[Type] = IIF(r.Type='F','Fabric','Accessory'),
-f.MtlTypeID,rd.Refno,
-f.DescDetail,rd.ColorID,rd.EstInQty,rd.ActInQty,rd.TotalRequest,rd.AfterCuttingRequest,
-[Responsibility] = 
-	CASE WHEN rd.Responsibility = 'M' THEN 'Mill'
-		 WHEN rd.Responsibility = 'S' THEN 'Subcon in Local'
-		 WHEN rd.Responsibility = 'F' THEN 'Factory'
-		 WHEN rd.Responsibility = 'T' THEN 'SCI dep. (purchase / s. mrs / sample room)'
-	END,
-rd.ResponsibilityReason,rd.Suggested,
-[POSMR] = dbo.[getTPEPass1_ExtNo](p.POSMR),
-[Prepare] = dbo.[getPass1_ExtNo](r.ApplyName)
-from ReplacementReport r WITH (NOLOCK) 
-inner join ReplacementReport_Detail rd WITH (NOLOCK) on rd.ID = r.ID
-left join Orders o WITH (NOLOCK) on o.ID = r.POID
-left join Fabric f WITH (NOLOCK) on f.SCIRefno = rd.SCIRefno
-left join PO p WITH (NOLOCK) on p.ID = r.POID
-where 1=1");
+            string sqlcmd = string.Empty;
+            if (this.ReportType == "Detail List")
+            {
+                sqlcmd = $@"
+select
+	rr.ID,
+	Type = IIF(rr.Type = 'F', 'Fabric', 'Accessory'),
+	M = (Select MDivisionID from Factory with(nolock) where ID = rr.FactoryID),
+    rr.FactoryID,
+	rr.POID,
+	o.StyleID,
+	o.SeasonID,
+	o.BrandID,
+	rr.Status,
+	rr.CDate,
+	rr.ApvDate,
+	rr.CompleteDate,
+	rr.LockDate,
+	Responsibility = (select Name from DropDownList dd with(nolock) where dd.ID = rr.Responsibility and dd.Type = 'Replacement.R'),
+	POSMR = [dbo].[getTPEPass1_ExtNo](PO.POSMR),
+	POHandle = [dbo].[getTPEPass1_ExtNo](PO.POHandle),
+	PCSMR = [dbo].[getTPEPass1_ExtNo](PO.PCSMR),
+	PCHandle = [dbo].[getTPEPass1_ExtNo](PO.PCHandle),
+	Prepared = [dbo].[getPass1_ExtNo](rr.ApplyName),
+	PPICFactorymgr = [dbo].[getPass1_ExtNo](rr.ApvName),
+	rr.RMtlAmt,
+	rr.ActFreight,
+	rr.EstFreight,
+	rr.SurchargeAmt,
+	TTLUS = isnull(rr.RMtlAmt,0) + isnull(rr.ActFreight,0) +isnull(rr.EstFreight,0) + isnull(rr.SurchargeAmt,0),
+	rr.VoucherID,
+	rr.VoucherDate,
+	Junk=iif(rrd.Junk=1,'Y',''),
+	Seq = iif(isnull(rrd.Seq1,'') = '','',CONCAT(rrd.Seq1,'-',rrd.Seq2)),
+	f.MtlTypeID,
+	rrd.Refno,
+	f.DescDetail,
+	rrd.ColorID,
+	rrd.EstInQty,
+	rrd.ActInQty,
+	FinalNeedQty =IIF(rr.Type = 'F', rrd.FinalNeedQty,  rrd.TotalRequest),
+	rrd.TotalRequest,
+	rrd.AfterCuttingRequest,
+	rrd.ResponsibilityReason,
+	rrd.Suggested,
+	rrd.PurchaseID,
+	NewSeq =iif(isnull(rrd.NewSeq1,'') = '','', CONCAT(rrd.NewSeq1,'-',rrd.NewSeq2))
+from ReplacementReport rr with(nolock)
+inner join Orders o with(nolock) on o.ID = rr.POID
+left join ReplacementReport_Detail rrd with(nolock) on rrd.ID = rr.ID
+left join PO with(nolock) on PO.ID = rr.POID
+left join Fabric f with(nolock) on f.SCIRefno = rrd.SCIRefno
+where 1=1
+{where}
+";
+            }
+            else
+            {
+                sqlcmd = $@"
+select
+    rr.ID,
+    Type = IIF(rr.Type = 'F', 'Fabric', 'Accessory'),
+    M = (Select MDivisionID from Factory with(nolock) where ID = rr.FactoryID),
+    rr.FactoryID,
+    rr.POID,
+    o.StyleID,
+    o.SeasonID,
+    o.BrandID,
+    rr.Status,
+    rr.CDate,
+    rr.ApvDate,
+    rr.CompleteDate,
+    rr.LockDate,
+    Responsibility = (select Name from DropDownList dd with(nolock) where dd.ID = rr.Responsibility and dd.Type = 'Replacement.R'),
+    rr.RMtlAmt,
+    rr.ActFreight,
+    rr.EstFreight,
+    rr.SurchargeAmt,
+    TTLUS = isnull(rr.RMtlAmt,0) + isnull(rr.ActFreight,0) +isnull(rr.EstFreight,0) + isnull(rr.SurchargeAmt,0),
+    ResponsibilityFty = icr.FactoryID,
+    icr.DepartmentID,
+    icr.Amount,
+    rr.VoucherID,
+    rr.VoucherDate,
+    POSMR = [dbo].[getTPEPass1_ExtNo](PO.POSMR),
+    POHandle = [dbo].[getTPEPass1_ExtNo](PO.POHandle),
+    PCSMR = [dbo].[getTPEPass1_ExtNo](PO.PCSMR),
+    PCHandle = [dbo].[getTPEPass1_ExtNo](PO.PCHandle),
+    Prepared = [dbo].[getPass1_ExtNo](rr.ApplyName),
+    PPICFactorymgr = [dbo].[getPass1_ExtNo](rr.ApvName)
+from ReplacementReport rr with(nolock)
+inner join Orders o with(nolock) on o.ID = rr.POID
+left join PO with(nolock) on PO.ID = rr.POID
+left join  ICR_ResponsibilityDept icr with(nolock) on icr.ID = rr.ID
+where 1=1
+{where}
+";
+            }
             #endregion
-            #region 使用者輸入條件
-            if (!MyUtility.Check.Empty(this._cdate1))
-            {
-                sqlCmd.Append(string.Format(" and r.CDate >= '{0}'", Convert.ToDateTime(this._cdate1).ToString("d")));
-            }
 
-            if (!MyUtility.Check.Empty(this._cdate2))
-            {
-                sqlCmd.Append(string.Format(" and r.CDate <= '{0}'", Convert.ToDateTime(this._cdate2).ToString("d")));
-            }
-
-            if (!MyUtility.Check.Empty(this._apvdate1))
-            {
-                sqlCmd.Append(string.Format(" and r.ApvDate >= '{0}'", Convert.ToDateTime(this._apvdate1).ToString("d")));
-            }
-
-            if (!MyUtility.Check.Empty(this._apvdate2))
-            {
-                sqlCmd.Append(string.Format(" and r.ApvDate <= '{0}'", Convert.ToDateTime(this._apvdate2).ToString("d")));
-            }
-
-            if (!MyUtility.Check.Empty(this._mDivision))
-            {
-                sqlCmd.Append(string.Format(" and r.MDivisionID = '{0}'", this._mDivision));
-            }
-
-            if (!MyUtility.Check.Empty(this._factory))
-            {
-                sqlCmd.Append(string.Format(" and r.FactoryID = '{0}'", this._factory));
-            }
-
-            if (!MyUtility.Check.Empty(this._type))
-            {
-                sqlCmd.Append(string.Format(" and r.Type = '{0}'", this._type));
-            }
-            #endregion
-            sqlCmd.Append(" order by r.ID,Seq");
-
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this._printData);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, sqlpar, out this._printData);
             if (!result)
             {
-                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
-                return failResult;
+                return result;
             }
 
             return Result.True;
@@ -148,81 +289,43 @@ where 1=1");
                 return false;
             }
 
-            this.ShowWaitMessage("Starting EXCEL...");
-            Microsoft.Office.Interop.Excel.Application excel
-                = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R08_ReplacementReportList.xltx"); // 預先開啟excel app
-            if (excel == null)
+            string filename = string.Empty;
+            if (this.ReportType == "Detail List")
             {
-                return false;
-            }
-
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-
-            // 表頭
-            string strfactory = string.Empty;
-            if (!MyUtility.Check.Empty(this.comboFactory.Text))
-            {
-                strfactory = this.comboFactory.Text;
+                filename = "PPIC_R08_DetailList";
             }
             else
             {
-            strfactory = Sci.Env.User.Factory;
+                filename = "PPIC_R08_RespDeptList";
             }
 
-            worksheet.Cells[1, 1] = MyUtility.GetValue.Lookup("NameEN", strfactory, "Factory", "ID", "Production");
-            worksheet.Cells[3, 2] = string.Format("{0}~{1}", MyUtility.Check.Empty(this._cdate1) ? string.Empty : Convert.ToDateTime(this._cdate1).ToString("d"), MyUtility.Check.Empty(this._cdate2) ? string.Empty : Convert.ToDateTime(this._cdate2).ToString("d"));
-            worksheet.Cells[3, 5] = string.Format("{0}~{1}", MyUtility.Check.Empty(this._apvdate1) ? string.Empty : Convert.ToDateTime(this._apvdate1).ToString("d"), MyUtility.Check.Empty(this._apvdate2) ? string.Empty : Convert.ToDateTime(this._apvdate2).ToString("d"));
-            worksheet.Cells[3, 7] = "M: " + this._mDivision;
-            worksheet.Cells[3, 9] = this._factory;
-            worksheet.Cells[3, 11] = this._typedesc;
+            this.ShowWaitMessage("Excel Processing...");
+            Excel.Application excelapp = new Excel.Application();
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + $"\\{filename}.xltx", excelapp);
+            Excel.Worksheet worksheet;
+            worksheet = excelapp.Sheets[1];
+            com.WriteTable(this._printData, 2);
 
-            // 填內容值
-            int intRowsStart = 5;
-            object[,] objArray = new object[1, 22];
-            foreach (DataRow dr in this._printData.Rows)
-            {
-                objArray[0, 0] = dr["ID"];
-                objArray[0, 1] = dr["CDate"];
-                objArray[0, 2] = dr["ApvDate"];
-                objArray[0, 3] = dr["POID"];
-                objArray[0, 4] = dr["MDivisionID"];
-                objArray[0, 5] = dr["FactoryID"];
-                objArray[0, 6] = dr["StyleID"];
-                objArray[0, 7] = dr["Seq"];
-                objArray[0, 8] = dr["Type"];
-                objArray[0, 9] = dr["MtlTypeID"];
-                objArray[0, 10] = dr["Refno"];
-                objArray[0, 11] = dr["DescDetail"];
-                objArray[0, 12] = dr["ColorID"];
-                objArray[0, 13] = dr["EstInQty"];
-                objArray[0, 14] = dr["ActInQty"];
-                objArray[0, 15] = dr["TotalRequest"];
-                objArray[0, 16] = dr["AfterCuttingRequest"];
-                objArray[0, 17] = dr["Responsibility"];
-                objArray[0, 18] = dr["ResponsibilityReason"];
-                objArray[0, 19] = dr["Suggested"];
-                objArray[0, 20] = dr["POSMR"];
-                objArray[0, 21] = dr["Prepare"];
-                worksheet.Range[string.Format("A{0}:V{0}", intRowsStart)].Value2 = objArray;
-                intRowsStart++;
-            }
-
-            excel.Cells.EntireRow.AutoFit();
-            this.HideWaitMessage();
-
-            #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R08_ReplacementReportList");
-            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
-            workbook.SaveAs(strExcelName);
-            workbook.Close();
-            excel.Quit();
-            Marshal.ReleaseComObject(excel);
+            com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
+            excelapp.Visible = true;
             Marshal.ReleaseComObject(worksheet);
-            Marshal.ReleaseComObject(workbook);
+            Marshal.ReleaseComObject(excelapp);
 
-            strExcelName.OpenFile();
-            #endregion
+            this.HideWaitMessage();
             return true;
+        }
+
+        private void TxtSharedept_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string sql = "select ID,Name from FinanceEN.dbo.Department";
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "12,15", this.txtSharedept.Text);
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtSharedept.Text = item.GetSelectedString();
         }
     }
 }

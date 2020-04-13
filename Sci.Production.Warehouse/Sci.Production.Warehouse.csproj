@@ -602,11 +602,11 @@
     <Compile Include="P07_ModifyRollDyelot.Designer.cs">
       <DependentUpon>P07_ModifyRollDyelot.cs</DependentUpon>
     </Compile>
-    <Compile Include="P07_UpdateActualWeight.cs">
+    <Compile Include="P07_UpdateWeight.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="P07_UpdateActualWeight.Designer.cs">
-      <DependentUpon>P07_UpdateActualWeight.cs</DependentUpon>
+    <Compile Include="P07_UpdateWeight.Designer.cs">
+      <DependentUpon>P07_UpdateWeight.cs</DependentUpon>
     </Compile>
     <Compile Include="P08.cs">
       <SubType>Form</SubType>
@@ -1491,8 +1491,8 @@
     <EmbeddedResource Include="P07_ModifyRollDyelot.resx">
       <DependentUpon>P07_ModifyRollDyelot.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P07_UpdateActualWeight.resx">
-      <DependentUpon>P07_UpdateActualWeight.cs</DependentUpon>
+    <EmbeddedResource Include="P07_UpdateWeight.resx">
+      <DependentUpon>P07_UpdateWeight.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P08.resx">
       <DependentUpon>P08.cs</DependentUpon>

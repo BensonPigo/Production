@@ -9,7 +9,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
 CREATE PROCEDURE [dbo].[insert_Air_Fir]
 (
 	@ID varchar(13),
@@ -255,9 +254,11 @@ WHEN MATCHED THEN
 
 WHEN NOT MATCHED by TARGET THEN 
 	insert  ([ID]           ,[Roll]           ,[Dyelot]           ,[Scale]           ,[Inspdate]           ,[Inspector]           ,[Result]
-            ,[Remark]       ,[AddName]        ,[AddDate]          ,[EditName]        ,[EditDate]           ,[TicketYds])
-	values(  s.FirID   ,s.Roll      ,s.Dyelot      ,''                ,NULL                 ,''                    ,''
-	        ,''             ,@LoginID         ,GETDATE()          ,''                ,NULL                 ,s.StockQty )
+            ,[Remark]       ,[AddName]        ,[AddDate]          ,[EditName]        ,[EditDate]           ,[TicketYds]
+			)
+	values(  s.FirID   ,s.Roll      ,s.Dyelot      ,'4-5'                ,GetDate()                 ,'SCIMIS'                 ,'Pass'
+	        ,''             ,@LoginID         ,GETDATE()          ,''                ,NULL                 ,s.StockQty 
+			)
 ;
 
 END

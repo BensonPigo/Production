@@ -37,5 +37,7 @@
     [EditDate]          DATETIME        NULL,
     [VoucherID]         VARCHAR (16)    DEFAULT ('') NOT NULL,
     [VoucherDate]       DATE            NULL,
+    [RespDeptConfirmDate] DATETIME NULL, 
+    [RespDeptConfirmName] VARCHAR(10) NOT NULL CONSTRAINT [DF_ICR_RespDeptConfirmName] DEFAULT (''), 
     PRIMARY KEY CLUSTERED ([Id] ASC)
 );

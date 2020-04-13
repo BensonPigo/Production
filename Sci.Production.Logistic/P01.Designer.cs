@@ -124,19 +124,18 @@
             this.btnCartonSize = new Sci.Win.UI.Button();
             this.btnCartonStatus = new Sci.Win.UI.Button();
             this.btnOrderRemark = new Sci.Win.UI.Button();
-            this.btnCMPQSheet = new Sci.Win.UI.Button();
             this.btnFabricInspectionList = new Sci.Win.UI.Button();
             this.btnCFARFTList = new Sci.Win.UI.Button();
             this.displayCFAFinalInspDate = new Sci.Win.UI.DisplayBox();
             this.txtdropdownlistCategory = new Sci.Production.Class.txtdropdownlist();
             this.btnAccessoryInspectionList = new Sci.Win.UI.Button();
             this.panel7 = new System.Windows.Forms.Panel();
+            this.numPackErrCTN = new Sci.Win.UI.NumericBox();
+            this.label4 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.numCtnCFA = new Sci.Win.UI.NumericBox();
             this.numCtnTransit = new Sci.Win.UI.NumericBox();
-            this.label4 = new Sci.Win.UI.Label();
-            this.numPackErrCTN = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -158,7 +157,6 @@
             this.detailcont.Controls.Add(this.displayCFAFinalInspDate);
             this.detailcont.Controls.Add(this.btnCFARFTList);
             this.detailcont.Controls.Add(this.btnFabricInspectionList);
-            this.detailcont.Controls.Add(this.btnCMPQSheet);
             this.detailcont.Controls.Add(this.btnOrderRemark);
             this.detailcont.Controls.Add(this.btnCartonStatus);
             this.detailcont.Controls.Add(this.btnCartonSize);
@@ -1301,15 +1299,6 @@
             this.btnOrderRemark.UseVisualStyleBackColor = true;
             this.btnOrderRemark.Click += new System.EventHandler(this.BtnOrderRemark_Click);
             // 
-            // btnCMPQSheet
-            // 
-            this.btnCMPQSheet.Location = new System.Drawing.Point(474, 483);
-            this.btnCMPQSheet.Name = "btnCMPQSheet";
-            this.btnCMPQSheet.Size = new System.Drawing.Size(194, 30);
-            this.btnCMPQSheet.TabIndex = 93;
-            this.btnCMPQSheet.Text = "CMPQ sheet";
-            this.btnCMPQSheet.UseVisualStyleBackColor = true;
-            // 
             // btnFabricInspectionList
             // 
             this.btnFabricInspectionList.Location = new System.Drawing.Point(690, 446);
@@ -1390,6 +1379,36 @@
             this.panel7.Size = new System.Drawing.Size(964, 72);
             this.panel7.TabIndex = 99;
             // 
+            // numPackErrCTN
+            // 
+            this.numPackErrCTN.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numPackErrCTN.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PackErrCTN", true));
+            this.numPackErrCTN.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numPackErrCTN.IsSupportEditMode = false;
+            this.numPackErrCTN.Location = new System.Drawing.Point(106, 35);
+            this.numPackErrCTN.Name = "numPackErrCTN";
+            this.numPackErrCTN.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numPackErrCTN.ReadOnly = true;
+            this.numPackErrCTN.Size = new System.Drawing.Size(65, 23);
+            this.numPackErrCTN.TabIndex = 88;
+            this.numPackErrCTN.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(8, 35);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(95, 23);
+            this.label4.TabIndex = 87;
+            this.label4.Text = "Ctn Pack Error";
+            // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(533, 36);
@@ -1448,36 +1467,6 @@
             0,
             0});
             // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(8, 35);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(95, 23);
-            this.label4.TabIndex = 87;
-            this.label4.Text = "Ctn Pack Error";
-            // 
-            // numPackErrCTN
-            // 
-            this.numPackErrCTN.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numPackErrCTN.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PackErrCTN", true));
-            this.numPackErrCTN.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numPackErrCTN.IsSupportEditMode = false;
-            this.numPackErrCTN.Location = new System.Drawing.Point(106, 35);
-            this.numPackErrCTN.Name = "numPackErrCTN";
-            this.numPackErrCTN.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numPackErrCTN.ReadOnly = true;
-            this.numPackErrCTN.Size = new System.Drawing.Size(65, 23);
-            this.numPackErrCTN.TabIndex = 88;
-            this.numPackErrCTN.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(984, 662);
@@ -1488,6 +1477,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "P01";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "P01. Clog Master List";
             this.UniqueExpress = "ID";
             this.WorkAlias = "Orders";
@@ -1571,7 +1561,6 @@
         private Win.UI.DisplayBox displayCFAFinalInspDate;
         private Win.UI.Button btnCFARFTList;
         private Win.UI.Button btnFabricInspectionList;
-        private Win.UI.Button btnCMPQSheet;
         private Win.UI.Button btnOrderRemark;
         private Win.UI.Button btnCartonStatus;
         private Win.UI.Button btnCartonSize;

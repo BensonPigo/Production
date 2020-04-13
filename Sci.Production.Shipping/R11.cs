@@ -558,6 +558,8 @@ with ExportData as (
 		   , [NoImportChg] = iif(isnull(e.NoImportCharges,0) = 0,'','V')
 		   , LoadingOrigin = Concat (e.ExportPort, '-', e.ExportCountry)
 		   , DoortoDoorDelivery = iif(dtd1.v = 1 or dtd2.v = 1,'Y','')
+		   , e.FactoryID
+		   , e.Consignee
 	from Export e WITH (NOLOCK) 
 	left join Supp s WITH (NOLOCK) on s.ID = e.Forwarder
 	outer apply(
@@ -619,6 +621,8 @@ FtyExportData as (
 		   , [NoImportChg] = iif(isNull(f.NoCharges,0) = 1,'V','')
 		   , LoadingOrigin = Concat (f.ExportPort, '-', f.ExportCountry)
 		   , DoortoDoorDelivery =''
+		   , [FactoryID]=''
+		   , f.Consignee
 	from FtyExport f WITH (NOLOCK) 
 	left join LocalSupp l WITH (NOLOCK) on l.ID = f.Forwarder
 	where not exists (
@@ -655,6 +659,8 @@ FtyExportData as (
 select	IE
 		, Type
 		, ID
+		, FactoryID
+		, Consignee
 		, '' as Shipper
 		, '' as BrandID
 		, '' as Category
@@ -678,6 +684,8 @@ union all
 select	IE
 		, Type
 		, ID
+		, FactoryID
+		, Consignee
 		, Shipper = ''
 		, BrandID = '' 
 		, Category = '' 

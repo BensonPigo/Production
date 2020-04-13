@@ -189,9 +189,34 @@ namespace Sci.Production.Quality
                 }
                 #endregion
 
+                //ISP20200575 Encode全部執行後
+                string sqlcmd = $@"select distinct orderid=o.ID from Orders o with(nolock) where o.poid = '{PoID}'";
+                DataTable dtid;
+                DualResult result1 = DBProxy.Current.Select(string.Empty, sqlcmd, out dtid);
+                if (!result1)
+                {
+                    this.ShowErr(result1);
+                }
+                else
+                {
+                    string sqlup = $@"
+update a 
+set Status = 'Preparing'
+from #tmp t
+inner join AccessoryOrderList a with(nolock) on a.OrderID = t.orderid and a.Status = 'Waiting'
+where dbo.GetAirQaRecord(t.orderid) ='PASS'
+";
+                    SqlConnection sqlConn = null;
+                    DBProxy.Current.OpenConnection("ManufacturingExecution", out sqlConn);
+                    result1 = MyUtility.Tool.ProcessWithDatatable(dtid, string.Empty, sqlup, out dtid, "#tmp", sqlConn);
+                    if (!result1)
+                    {
+                        this.ShowErr(result1);
+                    }
+                }
+
                 btnEncode.Text = "Amend";
                 this.btnEdit.Enabled = false;
-
             }
             else if (btnEncode.Text == "Amend")
             {

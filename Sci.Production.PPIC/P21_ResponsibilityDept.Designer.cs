@@ -34,6 +34,7 @@
             this.labTotal = new Sci.Win.UI.Label();
             this.numPercentage = new Sci.Win.UI.NumericBox();
             this.numAmount = new Sci.Win.UI.NumericBox();
+            this.btnConfirm = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -41,8 +42,15 @@
             // 
             // btmcont
             // 
+            this.btmcont.Controls.Add(this.btnConfirm);
             this.btmcont.Location = new System.Drawing.Point(0, 426);
             this.btmcont.Size = new System.Drawing.Size(528, 40);
+            this.btmcont.Controls.SetChildIndex(this.append, 0);
+            this.btmcont.Controls.SetChildIndex(this.revise, 0);
+            this.btmcont.Controls.SetChildIndex(this.delete, 0);
+            this.btmcont.Controls.SetChildIndex(this.undo, 0);
+            this.btmcont.Controls.SetChildIndex(this.save, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnConfirm, 0);
             // 
             // gridcont
             // 
@@ -151,6 +159,17 @@
             0,
             0});
             // 
+            // btnConfirm
+            // 
+            this.btnConfirm.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.btnConfirm.Location = new System.Drawing.Point(278, 5);
+            this.btnConfirm.Name = "btnConfirm";
+            this.btnConfirm.Size = new System.Drawing.Size(80, 30);
+            this.btnConfirm.TabIndex = 95;
+            this.btnConfirm.Text = "Confirm";
+            this.btnConfirm.UseVisualStyleBackColor = true;
+            this.btnConfirm.Click += new System.EventHandler(this.BtnConfirm_Click);
+            // 
             // P21_ResponsibilityDept
             // 
             this.ClientSize = new System.Drawing.Size(528, 466);
@@ -189,5 +208,6 @@
         private Win.UI.Label labTotal;
         private Win.UI.NumericBox numPercentage;
         private Win.UI.NumericBox numAmount;
+        private Win.UI.Button btnConfirm;
     }
 }
