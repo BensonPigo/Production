@@ -60,6 +60,7 @@ a.FromGSD	= b.FromGSD
 ,a.EditDate	= b.EditDate
 ,a.MasterPlusGroup	= b.MasterPlusGroup
 ,a.Hem = b.Hem
+,a.Segment = b.Segment
 
 from Production.dbo.Operation as a inner join Trade_To_Pms.dbo.Operation as b ON a.id=b.id
 -------------------------- INSERT INTO ��
@@ -100,6 +101,7 @@ ID
 ,EditDate
 ,MasterPlusGroup
 ,Hem
+,Segment
 )
 select 
 ID
@@ -138,6 +140,7 @@ ID
 ,EditDate
 ,MasterPlusGroup
 ,Hem
+,Segment
 from Trade_To_Pms.dbo.Operation as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Operation as a WITH (NOLOCK) where a.id = b.id)
 
