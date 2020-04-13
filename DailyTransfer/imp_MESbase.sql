@@ -98,5 +98,11 @@ BEGIN
 	FROM ManufacturingExecution.dbo.MeasurementTranslate t
 	INNER JOIN #Trade_MeasurementTranslate s ON t.Ukey=s.Ukey
 	;
+
+	update t set MeasurementTranslateUkey = MeasurementTranslateUk.Ukey
+	from ManufacturingExecution.dbo.Measurement t with (nolock)
+	outer apply(select top 1 ukey from ManufacturingExecution.dbo.MeasurementTranslate mt with (nolock) where ManufacturingExecution.dbo.MeasurementTrim(mt.DescEN) = ManufacturingExecution.dbo.MeasurementTrim(t.Description)) MeasurementTranslateUk
+	where t.MeasurementTranslateUkey is null
+
 	DROP TABLE #Trade_MeasurementTranslate
 END
