@@ -1,30 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using Ict;
 using Ict.Win;
-using Sci;
 using Sci.Data;
-using Ict;
+using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Linq;
+using System.Text;
 
 namespace Sci.Production.Warehouse
 {
     public partial class P33_AutoPick : Sci.Win.Subs.Base
     {
         StringBuilder sbSizecode;
-        string poid, issueid,  orderid;
+        string poid, issueid, orderid;
         public DataTable BOA, BOA_Orderlist, BOA_PO, BOA_PO_Size, dtIssueBreakDown;
         public DataRow[] importRows;
         public List<IssueQtyBreakdown> _IssueQtyBreakdownList = new List<IssueQtyBreakdown>();
         bool combo;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         public Dictionary<DataRow, DataTable> dictionaryDatas = new Dictionary<DataRow, DataTable>();
-        public P33_AutoPick(string _issueid, string _poid, string _orderid, DataTable _dtIssueBreakDown, StringBuilder _sbSizecode, bool _combo , List<IssueQtyBreakdown> IssueQtyBreakdownList)
+        public P33_AutoPick(string _issueid, string _poid, string _orderid, DataTable _dtIssueBreakDown, StringBuilder _sbSizecode, bool _combo, List<IssueQtyBreakdown> IssueQtyBreakdownList)
         {
             InitializeComponent();
             poid = _poid;
@@ -155,18 +152,15 @@ SELECT  --DISTINCT
         , psd.Refno
 		, psd.SuppColor
 		, f.DescDetail
-		, [@Qty]= ThreadUsedQtyByBOT.Val/*(SELECT dbo.[GetThreadUsedQtyByBOT] (psd.ID,psd.SCIRefno,psd.SuppColor))*/
-		, [Use Qty By Stock Unit] = CEILING(ISNULL(Garment.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) ) --並轉換為Stock Unit
+		, [@Qty]= ThreadUsedQtyByBOT.Val
+		, [Use Qty By Stock Unit] = ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) --並轉換為Stock Unit
 		, [Stock Unit]=StockUnit.StockUnit
-		, [Use Qty By Use Unit]= (ISNULL(Garment.Qty,0) *  ThreadUsedQtyByBOT.Val  )
+		, [Use Qty By Use Unit]= (ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val  )
 		, [Use Unit]='CM'
 		, [Stock Unit Desc.]=StockUnit.Description
-		, [Output Qty(Garment)] = ISNULL(Garment.Qty,0)
+		, [Output Qty(Garment)] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
 		, [Bulk Balance(Stock Unit)] = ISNULL(( Fty.InQty-Fty.OutQty + Fty.AdjustQty ) ,0)
-		--, [FtyInventoryUkey]=Fty.Ukey
         , [POID]=psd.ID
-		--, psd.SEQ1
-		--, psd.SEQ2
 		, [AccuIssued] = (
 					select isnull(sum([IS].qty),0)
 					from dbo.issue I2 WITH (NOLOCK) 
@@ -189,16 +183,29 @@ OUTER APPLY(
 	FROM Unit_Rate
 	WHERE UnitFrom='M' and  UnitTo = StockUnit.StockUnit
 )UnitRate
-OUTER APPLY(
+OUTER APPLY( ----所有 Article 數量總和
 	SELECt [Qty]=sum(b.Qty)
 	FROM #step1 a
-	INNER JOIN #tmp_sumQty b ON a.Article = b.article
+	INNER JOIN #tmp_sumQty b ON a.Article = b.Article
 	WHERE SCIRefNo= psd.SCIRefNo AND SuppColor=psd.SuppColor
-)Garment
+)GarmentTotal
 OUTER APPLY(
-	SELECT [Val]=SUM(((SeamLength  * Frequency * UseRatio ) + Allowance))
-	FROM dbo.GetThreadUsedQtyByBOT(psd.ID)
-	WHERE SCIRefNo = psd.SCIRefNo AND SuppColor = psd.SuppColor
+	SELECT SCIRefNo
+		,SuppColor
+		,[Val]=SUM(((SeamLength  * Frequency * UseRatio ) +  (Allowance * Segment) )) 
+		,[Qty] = (	
+			SELECt [Qty]=SUM(b.Qty)
+			FROM #step1 a
+			INNER JOIN #tmp_sumQty b ON a.Article = b.Article
+			WHERE SCIRefNo=psd.SCIRefNo AND  SuppColor= psd.SuppColor AND a.Article=g.Article
+			GROUP BY a.Article
+		)
+	FROM DBO.GetThreadUsedQtyByBOT(psd.ID) g
+	WHERE SCIRefNo= psd.SCIRefNo AND SuppColor = psd.SuppColor  
+	AND Article IN (
+		SELECt Article FROM #step1 WHERE SCIRefNo = psd.SCIRefNo  AND SuppColor = psd.SuppColor 
+	)
+	GROUP BY SCIRefNo,SuppColor , Article
 )ThreadUsedQtyByBOT
 WHERE psd.ID='{this.poid}'
 AND psd.FabricType ='A'
@@ -216,16 +223,15 @@ SELECT  [Selected]
         , Refno
 		, SuppColor
 		, DescDetail
-		, [@Qty]
-		, [Use Qty By Stock Unit]
+		, [@Qty] = SUM([@Qty])
+		, [Use Qty By Stock Unit] = CEILING (SUM([Use Qty By Stock Unit] ))
 		, [Stock Unit]
-		, [Use Qty By Use Unit]
+		, [Use Qty By Use Unit] = SUM([Use Qty By Use Unit] )
 		, [Use Unit]
 		, [Stock Unit Desc.]
-		, [Output Qty(Garment)]
-		, [Bulk Balance(Stock Unit)] = SUM([Bulk Balance(Stock Unit)])
+		, [Output Qty(Garment)] = SUM([Output Qty(Garment)])
+		, [Bulk Balance(Stock Unit)] = ([Bulk Balance(Stock Unit)])
         , [POID]
-		--, [FtyInventoryUkey]
 		, [AccuIssued]
 FROM #final
 GROUP BY [Selected] 
@@ -233,16 +239,12 @@ GROUP BY [Selected]
         , Refno
 		, SuppColor
 		, DescDetail
-		, [@Qty]
-		, [Use Qty By Stock Unit]
 		, [Stock Unit]
-		, [Use Qty By Use Unit]
 		, [Use Unit]
 		, [Stock Unit Desc.]
-		, [Output Qty(Garment)]
         , [POID]
-		--, [FtyInventoryUkey]
 		, [AccuIssued]
+		, [Bulk Balance(Stock Unit)]
 
 DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final
 
@@ -253,7 +255,7 @@ DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final
             {
                 //SqlConnection conn;
                 DBProxy.Current.OpenConnection(null, out sqlConnection);
-                var dualResult = MyUtility.Tool.ProcessWithDatatable(IssueBreakDown_Dt,string.Empty ,sqlcmd, out result, "#tmp", conn: sqlConnection);
+                var dualResult = MyUtility.Tool.ProcessWithDatatable(IssueBreakDown_Dt, string.Empty, sqlcmd, out result, "#tmp", conn: sqlConnection);
 
                 if (!dualResult) ShowErr(dualResult);
                 if (!dualResult) return;
@@ -277,6 +279,40 @@ DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final
 
             this.gridAutoPick.AutoResizeColumns();
 
+
+
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings Qty = new DataGridViewGeneratorNumericColumnSettings();
+
+            Qty.CellMouseDoubleClick += (s, e) =>
+            {
+                DataTable detail = (DataTable)listControlBindingSource1.DataSource;
+                DataRow currentRow = detail.Rows[e.RowIndex];
+
+                string SCIRefNo = currentRow["SCIRefNo"].ToString();
+                string SuppColor = currentRow["SuppColor"].ToString();
+                List<string> Articles = _IssueQtyBreakdownList.Where(o => o.Qty > 0).Select(o => o.Article).Distinct().ToList();
+                string cmd = $@"
+
+SELECT Article, [Qty]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance *Segment))) 
+FROM dbo.GetThreadUsedQtyByBOT('{this.poid}')
+WHERE SCIRefNo='{SCIRefNo}' 
+AND SuppColor='{SuppColor}'
+AND Article IN ('{Articles.JoinToString("','")}')
+GROUP BY Article
+
+";
+
+                DataTable dt;
+                DualResult dualResult = DBProxy.Current.Select(null, cmd, out dt);
+                if (!dualResult)
+                {
+                    this.ShowErr(dualResult);
+                    return;
+                }
+
+                MyUtility.Msg.ShowMsgGrid_LockScreen(dt, caption: $"@Qty by Article");
+            };
+
             #region --設定Grid1的顯示欄位--
 
             this.gridAutoPick.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
@@ -286,7 +322,7 @@ DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final
                  .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("SuppColor", header: "SuppColor", width: Widths.AnsiChars(7), iseditingreadonly: true)
                  .Text("DescDetail", header: "Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                 .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(15),decimal_places:2, iseditingreadonly: true)
+                 .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(15), decimal_places: 2, iseditingreadonly: true, settings: Qty)
                  .Numeric("Use Qty By Stock Unit", header: "Use Qty\r\nBy Stock Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
                  .Text("Stock Unit", header: "Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Numeric("Use Qty By Use Unit", header: "Use Qty\r\nBy Use Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
