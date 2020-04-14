@@ -200,7 +200,6 @@ inner join OrderChangeApplication_History h on h.Status = x.Status and h.StatusD
             this.dispSeason.Text = row["SeasonID"].ToString();
             this.cmbCategory.SelectedValue = row["Category"].ToString();
             this.dispBrand.Text = row["BrandID"].ToString();
-            this.dispFactory.Text = row["FactoryID"].ToString();
             this.dispProgram.Text = row["ProgramID"].ToString();
             this.dispOrderType.Text = row["OrderTypeID"].ToString();
             this.dispProject.Text = row["ProjectID"].ToString();
@@ -563,16 +562,25 @@ order by ASeq",
             #endregion
 
             this.txtuserCFM.TextBox1.ReadOnly = true;
-            this.txtuserReject.TextBox1.ReadOnly = true;
         }
 
         private void BtnConfirm_Click(object sender, EventArgs e)
         {
             DualResult result;
+
+            /*
+             * 取消API
             result = Prgs.PostOrderChange(this.CurrentMaintain["ID"].ToString(), "Confirmed", this.CurrentMaintain["FTYComments"].ToString());
             if (!result)
             {
                 this.ShowErr(result);
+                return;
+            }.
+            */
+
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["ConfirmedDate"]))
+            {
+                MyUtility.Msg.ErrorBox("ConfirmedDate must be empty!");
                 return;
             }
 

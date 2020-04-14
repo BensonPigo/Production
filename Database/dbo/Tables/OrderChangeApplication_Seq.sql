@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[OrderChangeApplication_Seq](
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
+	[Ukey] [bigint] NOT NULL,
 	[ID] [varchar](13) NOT NULL,
 	[Seq] [varchar](2) NOT NULL,
 	[NewSeq] [varchar](2) NULL,
