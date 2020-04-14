@@ -50,6 +50,11 @@
             this.txtfactoryByM1 = new Sci.Production.Class.txtfactory();
             this.label2 = new Sci.Win.UI.Label();
             this.numTTCPU = new Sci.Win.UI.NumericBox();
+            this.lineShape4 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.label3 = new Sci.Win.UI.Label();
+            this.btnFind = new Sci.Win.UI.Button();
+            this.txtCutref = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -66,6 +71,9 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnFind);
+            this.masterpanel.Controls.Add(this.txtCutref);
+            this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.numTTCPU);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.txtfactoryByM1);
@@ -88,7 +96,9 @@
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.labelDate);
-            this.masterpanel.Size = new System.Drawing.Size(918, 135);
+            this.masterpanel.Controls.Add(this.shapeContainer1);
+            this.masterpanel.Size = new System.Drawing.Size(918, 158);
+            this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
@@ -112,15 +122,18 @@
             this.masterpanel.Controls.SetChildIndex(this.txtfactoryByM1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTTCPU, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtCutref, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnFind, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 135);
-            this.detailpanel.Size = new System.Drawing.Size(918, 241);
+            this.detailpanel.Location = new System.Drawing.Point(0, 158);
+            this.detailpanel.Size = new System.Drawing.Size(918, 218);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(5, 100);
+            this.gridicon.Location = new System.Drawing.Point(814, 123);
             // 
             // refresh
             // 
@@ -128,7 +141,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(918, 241);
+            this.detailgridcont.Size = new System.Drawing.Size(918, 218);
             // 
             // detail
             // 
@@ -328,9 +341,9 @@
             // 
             this.label8.BackColor = System.Drawing.Color.Transparent;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.label8.Location = new System.Drawing.Point(376, 79);
+            this.label8.Location = new System.Drawing.Point(242, 97);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(278, 23);
+            this.label8.Size = new System.Drawing.Size(213, 23);
             this.label8.TabIndex = 31;
             this.label8.Text = "※Manpower:including spreaders, cutters and sorters";
             this.label8.TextStyle.Color = System.Drawing.Color.Maroon;
@@ -348,9 +361,10 @@
             // btnImportfromWorkOrder
             // 
             this.btnImportfromWorkOrder.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnImportfromWorkOrder.Location = new System.Drawing.Point(448, 102);
+            this.btnImportfromWorkOrder.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImportfromWorkOrder.Location = new System.Drawing.Point(679, 39);
             this.btnImportfromWorkOrder.Name = "btnImportfromWorkOrder";
-            this.btnImportfromWorkOrder.Size = new System.Drawing.Size(200, 30);
+            this.btnImportfromWorkOrder.Size = new System.Drawing.Size(189, 26);
             this.btnImportfromWorkOrder.TabIndex = 7;
             this.btnImportfromWorkOrder.Text = "Import from WorkOrder";
             this.btnImportfromWorkOrder.UseVisualStyleBackColor = true;
@@ -359,9 +373,9 @@
             // btnImportfromRealtimeBundleTracking
             // 
             this.btnImportfromRealtimeBundleTracking.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnImportfromRealtimeBundleTracking.Location = new System.Drawing.Point(657, 81);
+            this.btnImportfromRealtimeBundleTracking.Location = new System.Drawing.Point(679, 72);
             this.btnImportfromRealtimeBundleTracking.Name = "btnImportfromRealtimeBundleTracking";
-            this.btnImportfromRealtimeBundleTracking.Size = new System.Drawing.Size(160, 50);
+            this.btnImportfromRealtimeBundleTracking.Size = new System.Drawing.Size(189, 26);
             this.btnImportfromRealtimeBundleTracking.TabIndex = 8;
             this.btnImportfromRealtimeBundleTracking.Text = "Import from RFID";
             this.btnImportfromRealtimeBundleTracking.UseVisualStyleBackColor = true;
@@ -378,20 +392,23 @@
             // txtfactoryByM1
             // 
             this.txtfactoryByM1.BackColor = System.Drawing.Color.White;
+            this.txtfactoryByM1.boolFtyGroupList = true;
             this.txtfactoryByM1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtfactoryByM1.FilteMDivision = true;
             this.txtfactoryByM1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactoryByM1.IsProduceFty = false;
             this.txtfactoryByM1.IssupportJunk = false;
             this.txtfactoryByM1.Location = new System.Drawing.Point(99, 74);
+            this.txtfactoryByM1.MDivision = null;
             this.txtfactoryByM1.Name = "txtfactoryByM1";
             this.txtfactoryByM1.Size = new System.Drawing.Size(66, 23);
             this.txtfactoryByM1.TabIndex = 43;
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(672, 42);
+            this.label2.Location = new System.Drawing.Point(454, 74);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(88, 23);
+            this.label2.Size = new System.Drawing.Size(142, 23);
             this.label2.TabIndex = 44;
             this.label2.Text = "Act. TT CPU";
             // 
@@ -402,7 +419,7 @@
             this.numTTCPU.DecimalPlaces = 3;
             this.numTTCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTTCPU.IsSupportEditMode = false;
-            this.numTTCPU.Location = new System.Drawing.Point(763, 42);
+            this.numTTCPU.Location = new System.Drawing.Point(599, 74);
             this.numTTCPU.Maximum = new decimal(new int[] {
             100,
             0,
@@ -428,6 +445,53 @@
             0,
             0});
             // 
+            // lineShape4
+            // 
+            this.lineShape4.Name = "lineShape4";
+            this.lineShape4.X1 = 9;
+            this.lineShape4.X2 = 910;
+            this.lineShape4.Y1 = 120;
+            this.lineShape4.Y2 = 120;
+            // 
+            // shapeContainer1
+            // 
+            this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer1.Name = "shapeContainer1";
+            this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
+            this.lineShape4});
+            this.shapeContainer1.Size = new System.Drawing.Size(918, 158);
+            this.shapeContainer1.TabIndex = 46;
+            this.shapeContainer1.TabStop = false;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(14, 126);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(142, 23);
+            this.label3.TabIndex = 47;
+            this.label3.Text = "Locate for CutRef#";
+            // 
+            // btnFind
+            // 
+            this.btnFind.Location = new System.Drawing.Point(310, 122);
+            this.btnFind.Name = "btnFind";
+            this.btnFind.Size = new System.Drawing.Size(70, 30);
+            this.btnFind.TabIndex = 49;
+            this.btnFind.Text = "Find";
+            this.btnFind.UseVisualStyleBackColor = true;
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
+            // 
+            // txtCutref
+            // 
+            this.txtCutref.BackColor = System.Drawing.Color.White;
+            this.txtCutref.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCutref.IsSupportEditMode = false;
+            this.txtCutref.Location = new System.Drawing.Point(159, 126);
+            this.txtCutref.Name = "txtCutref";
+            this.txtCutref.Size = new System.Drawing.Size(145, 23);
+            this.txtCutref.TabIndex = 48;
+            // 
             // P20
             // 
             this.ApvChkValue = "New";
@@ -446,6 +510,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "id";
             this.Name = "P20";
+            this.OnLineHelpID = "Sci.Win.Tems.Input8";
             this.SubDetailKeyField1 = "Ukey";
             this.SubDetailKeyField2 = "CuttingOutput_DetailUKey";
             this.SubGridAlias = "CuttingOutput_Detail_Detail";
@@ -498,5 +563,10 @@
         private Win.UI.Label label1;
         private Win.UI.NumericBox numTTCPU;
         private Win.UI.Label label2;
+        private Win.UI.Label label3;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
+        private Microsoft.VisualBasic.PowerPacks.LineShape lineShape4;
+        private Win.UI.Button btnFind;
+        private Win.UI.TextBox txtCutref;
     }
 }
