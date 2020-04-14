@@ -653,8 +653,6 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             {
                 btnApprove.Enabled = this.CanEdit && !this.EditMode && lCheck == 1 && !MyUtility.Check.Empty(maindr["Result"]) && !MyUtility.Check.Empty(maindr["shadebond"]);
             }
-
-            //btnInspectedallpass.Enabled = this.EditMode;
         }
 
         private void btnToExcel_Click(object sender, EventArgs e)
