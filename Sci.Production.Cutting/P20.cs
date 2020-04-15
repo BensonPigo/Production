@@ -653,5 +653,43 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
             var frm = new P20_Import_RFID(CurrentMaintain, dt);
             frm.ShowDialog(this);
         }
+
+        int index;
+        string find = "";
+        DataRow[] find_dr;
+        private void BtnFind_Click(object sender, EventArgs e)
+        {
+            DataTable detDtb = (DataTable)detailgridbs.DataSource;
+            //移到指定那筆
+            string cutref = txtCutref.Text;
+            string find_new = "";
+
+            if (!MyUtility.Check.Empty(cutref))
+            {
+                find_new = string.Format("Cutref='{0}'", cutref);
+            }
+
+            if (find != find_new)
+            {
+                find = find_new;
+                find_dr = detDtb.Select(find_new);
+                if (find_dr.Length == 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not Found.");
+                    return;
+                }
+                else { index = 0; }
+            }
+            else
+            {
+                index++;
+                if (find_dr == null)
+                {
+                    return;
+                }
+                if (index >= find_dr.Length) index = 0;
+            }
+            detailgridbs.Position = DetailDatas.IndexOf(find_dr[index]);
+        }
     }
 }
