@@ -368,7 +368,7 @@ ORDER BY WOD.OrderID
             {
                 var sameOrderId = dt.AsEnumerable().Where(o => o["OrderID"].ToString() == OrderID);
 
-                if (OrderID == "20040364GG006")
+                if (OrderID == "20041220GG002")
                 {
 
                 }
@@ -407,8 +407,8 @@ SELECT SUM(StdQ)
 FROM (
 	SELECT [StdQ]=(SELECT SUM(StdQ) FROM [dbo].[getDailystdq](APSNo) WHERE Date <= '{realDate.Date.AddDays(LeadTime + PassDayCount).ToString("yyyy/MM/dd")}')
 	FROM SewingSchedule
-	WHERE ( CAST(Inline as Date) <= '{realDate.Date.AddDays(LeadTime + PassDayCount).ToString("yyyy/MM/dd")}'  AND '{realDate.Date.AddDays(LeadTime + PassDayCount).ToString("yyyy/MM/dd")}' <= CAST(Offline as Date) )
-	AND OrderID='{OrderID}'
+	WHERE /*('{realDate.Date.AddDays(LeadTime + PassDayCount).ToString("yyyy/MM/dd")}' >= CAST(Offline as Date) )
+	AND*/ OrderID='{OrderID}'
 )a
                                 ");
 
@@ -439,7 +439,7 @@ FROM (
             // 相同日期GROUP BY
             foreach (var BySP in AllDataTmp)
             {
-                if (BySP.OrderID == "20040364GG006")
+                if (BySP.OrderID == "20041220GG004")
                 {
 
                 }
@@ -591,7 +591,7 @@ FROM (
                 string OrderID = MoveDateData.OrderID;
                 int LeadTime = LeadTimeList.Where(o => o.OrderID == OrderID).FirstOrDefault().LeadTimeDay;
 
-                if (OrderID == "20031144GG001")
+                if (OrderID == "20030643GG001")
                 {
 
                 }
@@ -617,22 +617,15 @@ FROM (
 
                     // 累計標準量
                     int AccuStdQty = 0;
-                    foreach (DataRow dr in obj)
-                    {
-                        string ApsNO = dr["APSNO"].ToString();
-                        string strAccuStdQty = MyUtility.GetValue.Lookup($@"
+                    string strAccuStdQty = MyUtility.GetValue.Lookup($@"
 SELECT SUM(StdQ)
 FROM (
 	SELECT [StdQ]=(SELECT SUM(StdQ) FROM [dbo].[getDailystdq](APSNo) WHERE Date <= '{InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount).ToString("yyyy/MM/dd")}')
 	FROM SewingSchedule
-	WHERE ( CAST(Inline as Date) <= '{InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount).ToString("yyyy/MM/dd")}' AND '{InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount).ToString("yyyy/MM/dd")}' <= CAST(Offline as Date) )
-	AND OrderID='{OrderID}'
+	WHERE OrderID='{OrderID}'
 )a
 ");
-
-                        //第一天的話  放資料庫的資料即可
-                        AccuStdQty += MyUtility.Check.Empty(strAccuStdQty) ? 0 : Convert.ToInt32(strAccuStdQty);
-                    }
+                    AccuStdQty = MyUtility.Check.Empty(strAccuStdQty) ? 0 : Convert.ToInt32(strAccuStdQty);
 
                     if (!accu.Where(o => o.Key == OrderID).Any())
                     {
