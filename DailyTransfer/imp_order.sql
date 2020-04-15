@@ -1666,8 +1666,6 @@ update t set
 	,[SentDate] = s.SentDate
 	,[ApprovedName] = s.ApprovedName
 	,[ApprovedDate] = s.ApprovedDate
-	,[ConfirmedName] = s.ConfirmedName
-	,[ConfirmedDate] = s.ConfirmedDate
 	,[RejectName] = s.RejectName
 	,[RejectDate] = s.RejectDate
 	,[ClosedName] = s.ClosedName
@@ -1710,18 +1708,17 @@ update t set
 	,[MRComment] = s.MRComment
 	,[Remark] = s.Remark
 	,[BuyerRemark] = s.BuyerRemark
-	,[FTYComments] = s.FTYComments
 	,[FactoryID] = s.FactoryID
 from Production.dbo.OrderChangeApplication t
 inner join Trade_To_Pms.dbo.OrderChangeApplication s on s.ID = t.ID
 inner join Factory f on s.FactoryID = f.ID and f.IsProduceFty = 1
 
 insert into Production.dbo.OrderChangeApplication ([ID], [ReasonID], [OrderID], [Status], [SentName], [SentDate]
-, [ApprovedName], [ApprovedDate], [ConfirmedName], [ConfirmedDate], [RejectName], [RejectDate], [ClosedName], [ClosedDate], [JunkName], [JunkDate]
+, [ApprovedName], [ApprovedDate], [RejectName], [RejectDate], [ClosedName], [ClosedDate], [JunkName], [JunkDate]
 , [AddName], [AddDate], [ToOrderID], [NeedProduction], [OldQty], [RatioFty], [RatioSubcon], [RatioSCI], [RatioSupp], [RatioBuyer]
 , [ResponsibleFty], [ResponsibleSubcon], [ResponsibleSCI], [ResponsibleSupp], [ResponsibleBuyer], [FactoryICRDepartment], [FactoryICRNo], [FactoryICRRemark]
 , [SubconDBCNo], [SubconDBCRemark], [SubConName], [SCIICRDepartment], [SCIICRNo], [SCIICRRemark], [SuppDBCNo], [SuppDBCRemark], [BuyerDBCDepartment], [BuyerDBCNo]
-, [BuyerDBCRemark], [BuyerICRNo], [BuyerICRRemark], [MRComment], [Remark], [BuyerRemark], [FTYComments], [FactoryID], [TPEEditName], [TPEEditDate])
+, [BuyerDBCRemark], [BuyerICRNo], [BuyerICRRemark], [MRComment], [Remark], [BuyerRemark], [FactoryID], [TPEEditName], [TPEEditDate])
 select s.ID
 	,s.ReasonID
 	,s.OrderID
@@ -1730,8 +1727,6 @@ select s.ID
 	,s.SentDate
 	,s.ApprovedName
 	,s.ApprovedDate
-	,s.ConfirmedName
-	,s.ConfirmedDate
 	,s.RejectName
 	,s.RejectDate
 	,s.ClosedName
@@ -1772,7 +1767,6 @@ select s.ID
 	,s.MRComment
 	,s.Remark
 	,s.BuyerRemark
-	,s.FTYComments
 	,s.FactoryID
 	,s.EditName
 	,s.EditDate
@@ -1804,9 +1798,20 @@ begin
 	ALTER TABLE [dbo].[OrderChangeApplication_Detail] ADD  CONSTRAINT [DF_OrderChangeApplication_Detail_NowQty]  DEFAULT ((0)) FOR [NowQty]
 end
 
-delete t
+update t
+	set t.Seq =s.Seq
+		,t.Article = s.Article
+		,t.SizeCode = s.SizeCode
+		,t.Qty = s.Qty
+		,t.OriQty = s.OriQty
+		,t.NowQty = s.NowQty
 from Production.dbo.OrderChangeApplication_Detail t
 inner join Trade_To_Pms.dbo.OrderChangeApplication_Detail s on s.ID = t.ID and s.Ukey = t.Ukey
+
+delete t
+from Production.dbo.OrderChangeApplication_Detail t
+inner join Trade_To_Pms.dbo.OrderChangeApplication_Detail s on s.ID = t.ID
+where not exists (select 1 from Trade_To_Pms.dbo.OrderChangeApplication_Detail where t.ID = ID and t.Ukey = Ukey)
 
 insert into Production.dbo.OrderChangeApplication_Detail([Ukey], [ID], [Seq], [Article], [SizeCode], [Qty], [OriQty], [NowQty])
 select s.Ukey
@@ -1848,9 +1853,22 @@ begin
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'修改客戶交期原因' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderChangeApplication_Seq', @level2type=N'COLUMN',@level2name=N'ReasonID'
 end
 
-delete t
+update t
+	set t.Seq =s.Seq
+		,t.NewSeq = s.NewSeq
+		,t.ShipmodeID = s.ShipmodeID
+		,t.BuyerDelivery = s.BuyerDelivery
+		,t.FtyKPI = s.FtyKPI
+		,t.ReasonID = s.ReasonID
+		,t.ReasonRemark = s.ReasonRemark
+		,t.ShipModeRemark = s.ShipModeRemark
 from Production.dbo.OrderChangeApplication_Seq t
 inner join Trade_To_Pms.dbo.OrderChangeApplication_Seq s on s.ID = t.ID and s.Ukey = t.Ukey
+
+delete t
+from Production.dbo.OrderChangeApplication_Seq t
+inner join Trade_To_Pms.dbo.OrderChangeApplication_Seq s on s.ID = t.ID
+where not exists (select 1 from Trade_To_Pms.dbo.OrderChangeApplication_Seq where t.ID = ID and t.Ukey = Ukey)
 
 insert into Production.dbo.OrderChangeApplication_Seq([Ukey], [ID], [Seq], [NewSeq], [ShipmodeID], [BuyerDelivery], [FtyKPI], [ReasonID], [ReasonRemark], [ShipModeRemark])
 select s.Ukey
