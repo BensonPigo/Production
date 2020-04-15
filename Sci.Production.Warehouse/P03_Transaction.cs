@@ -249,10 +249,7 @@ namespace Sci.Production.Warehouse
 			            when 'B' then 'P11. Issue Sewing Material by Transfer Guide' 
 			            when 'C' then 'P12. Issue Packing Material by Transfer Guide' 
 			            when 'D' then 'P13. Issue Material by Item'
-			            when 'E' then 'P72. Transfer Inventory to Bulk (Confirm)'
-			            when 'F' then 'P75. Material Borrow cross M (Confirm)'
-			            when 'G' then 'P77. Material Return Back cross M (Request)'  
-			            when 'H' then 'P14. Issue Thread Allowance'  
+			            when 'E' then 'P33. Issue Thread'
                         end name
 	            ,0 as inqty
                 , sum(Qty) released
