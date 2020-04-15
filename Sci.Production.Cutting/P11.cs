@@ -882,23 +882,6 @@ inner join tmp b WITH (NOLOCK) on  b.sizecode = a.sizecode and b.Ukey = c.Ukey")
                 ShowErr(Excess_cmd, query_dResult);
                 return;
             }
-
-            // 若有勾則自動分配Excess
-            if (chkAEQ.Checked)
-            {
-            }
-            else
-            {
-                if (ExcessTb.Rows.Count > 0)
-                {
-                    var m = MyUtility.Msg.ShowMsgGrid(ExcessTb, "Those detail had <EXCESS> not yet distribute to SP#", "Warning");
-                    m.Width = 650;
-                    m.grid1.Columns[1].Width = 140;
-                    m.text_Find.Width = 140;
-                    m.btn_Find.Location = new Point(150, 6);
-                    m.btn_Find.Anchor = (AnchorStyles.Left | AnchorStyles.Top);
-                }
-            }
             #endregion        
 
             #region articleSizeTb 繞PO 找出QtyTb,PatternTb,AllPartTb
@@ -941,6 +924,23 @@ inner join tmp b WITH (NOLOCK) on  b.sizecode = a.sizecode and b.Ukey = c.Ukey")
             this.gridCutpart.AutoResizeColumns();
 
             this.HideWaitMessage();
+
+            // 若有勾則自動分配Excess
+            if (!chkAEQ.Checked && ExcessTb.Rows.Count > 0)
+            {
+                MsgGridForm m = new MsgGridForm(ExcessTb, "Those detail had <EXCESS> not yet distribute to SP#", "Warning");
+                //var m = MyUtility.Msg.ShowMsgGrid(ExcessTb, "Those detail had <EXCESS> not yet distribute to SP#", "Warning");
+                m.Width = 650;
+                m.grid1.Columns[1].Width = 140;
+                m.text_Find.Width = 140;
+                m.btn_Find.Location = new Point(150, 6);
+                m.btn_Find.Anchor = (AnchorStyles.Left | AnchorStyles.Top);
+                this.FormClosing += (s,args) => {
+                    if (m.Visible)
+                        m.Close();
+                };
+                m.Show(this);
+            }
         }
 
         public void createPattern(string poid, string article, string patternpanel, string cutref, int iden, string ArticleGroup)
