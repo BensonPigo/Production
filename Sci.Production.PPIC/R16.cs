@@ -124,6 +124,7 @@ SELECT
 	,oq.BuyerDelivery
 	,oq.Seq
 	,oq.ShipmodeID
+    ,[Dest] = c.Alias
 	,[Category] =  CASE WHEN o.Category='B' THEN 'Bulk' 
 						WHEN o.Category='G' THEN 'Garment' 
 						ELSE ''
@@ -140,6 +141,7 @@ FROM Orders o WITH(NOLOCK)
 INNER JOIN Factory f WITH(NOLOCK) ON f.ID=o.FactoryID
 LEFT JOIN Order_QtyShip oq WITH(NOLOCK) ON o.ID=oq.ID
 LEFT JOIN OrderType ot WITH(NOLOCK) ON o.OrderTypeID=ot.ID AND o.BrandID = ot.BrandID
+LEFT JOIN Country c WITH(NOLOCK) on c.id = o.dest
 OUTER APPLY(
 	SELECT [Count] = COUNT(ID) FROM Order_QtyShip oqq WITH(NOLOCK) WHERE oqq.Id=o.ID
 )PartialShipment
@@ -204,6 +206,7 @@ select main.KPICode
 	,main.BuyerDelivery
 	,main.Seq
 	,main.ShipmodeID
+    ,main.dest
 	,main.Category
 	,main.PartialShipment
 	,main.Cancelled
@@ -262,12 +265,13 @@ DROP TABLE #tmpOrderMain,#tmpPackingList_Detail,#tmpInspection,#tmpInspection_St
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "PPIC_R16.xltx", 1, false, null, objApp);// 將datatable copy to excel
 
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.get_Range("L:L").ColumnWidth = 8;
-            objSheets.get_Range("M:M").ColumnWidth = 9;
-            objSheets.get_Range("N:R").ColumnWidth = 8;
-            objSheets.get_Range("U:Y").ColumnWidth = 8;
+            objSheets.get_Range("J:J").ColumnWidth = 8;
+            objSheets.get_Range("M:M").ColumnWidth = 8;
+            objSheets.get_Range("N:N").ColumnWidth = 9;
+            objSheets.get_Range("O:S").ColumnWidth = 8;
+            objSheets.get_Range("V:Z").ColumnWidth = 8;
             objSheets.get_Range("G:G").ColumnWidth = 10;
-            objSheets.get_Range("U:U").ColumnWidth = 10;
+            objSheets.get_Range("V:V").ColumnWidth = 10;
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R16");
