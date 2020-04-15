@@ -1415,14 +1415,18 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                 // 處理All Part筆數
                 if (a > 0)
                 {
-                    int allPartQty = MyUtility.Convert.GetInt(dtAllPart.Compute("Sum(Qty)", "PatternCode = 'ALLPARTS'"));
                     DataRow row = dtAllPart.Rows[0];
                     for (int i = 0; i < tone; i++)
                     {
                         row["BundleGroup"] = bundlegroupS + i;
                         int notAllpart = patternTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().Count() - 1;
                         notAllpart = notAllpart == 0 ? 1 : notAllpart;
-                        row["Qty"] = allPartQty / notAllpart;
+                        row["Qty"] = detailTb.AsEnumerable().
+                            Where(w => w.RowState != DataRowState.Deleted &&
+                            MyUtility.Convert.GetString(w["PatternCode"]) != "ALLPARTS" &&
+                            MyUtility.Convert.GetInt(w["BundleGroup"]) == MyUtility.Convert.GetInt(row["BundleGroup"])).
+                            Sum(s => MyUtility.Convert.GetInt(s["Qty"]))
+                            / notAllpart;
                         dtAllPart2.ImportRow(row);
                     }
                     DataRow[] drA = dtAllPart2.AsEnumerable().ToArray();
