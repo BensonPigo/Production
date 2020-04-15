@@ -1379,7 +1379,6 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                 int ukeytone = 1;
                 if (na > 0)
                 {
-                    int maxbundlegroupS = bundlegroupS;
                     for (int i = 0; i < tone; i++)
                     {
                         int tmpNum = 0;
@@ -1387,7 +1386,6 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                         foreach (DataRow item in dtCopy.Rows)
                         {
                             item["bundlegroup"] = bundlegroupS + i; // 重設bundlegroup
-                            maxbundlegroupS = bundlegroupS + i;
 
                             item["tmpNum"] = tmpNum; // 暫時紀錄原本資料對應拆出去的資料,要用來重分配Qty
                             tmpNum++;
@@ -1417,19 +1415,18 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                 // 處理All Part筆數
                 if (a > 0)
                 {
-                    int allPartQty = MyUtility.Convert.GetInt(dtAllPart.Compute("Sum(Qty)", "PatternCode = 'ALLPARTS'"));
                     DataRow row = dtAllPart.Rows[0];
                     for (int i = 0; i < tone; i++)
                     {
                         row["BundleGroup"] = bundlegroupS + i;
-
+                        int notAllpart = patternTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().Count() - 1;
+                        notAllpart = notAllpart == 0 ? 1 : notAllpart;
                         row["Qty"] = detailTb.AsEnumerable().
                             Where(w => w.RowState != DataRowState.Deleted &&
                             MyUtility.Convert.GetString(w["PatternCode"]) != "ALLPARTS" &&
                             MyUtility.Convert.GetInt(w["BundleGroup"]) == MyUtility.Convert.GetInt(row["BundleGroup"])).
                             Sum(s => MyUtility.Convert.GetInt(s["Qty"]))
-                            / (patternTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().Count() - 1)
-                            ;
+                            / notAllpart;
                         dtAllPart2.ImportRow(row);
                     }
                     DataRow[] drA = dtAllPart2.AsEnumerable().ToArray();

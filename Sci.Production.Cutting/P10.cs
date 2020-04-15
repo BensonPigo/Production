@@ -1115,6 +1115,9 @@ where id = '{id}'
 delete 
 from Bundle_Detail_Allpart
 where id = '{id}'
+delete 
+from Bundle_Detail_Art
+where id = '{id}'
 ";
 
             DualResult result = DBProxy.Current.Execute(null, deleteBundleDetailQty);
