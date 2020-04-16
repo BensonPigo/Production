@@ -46,10 +46,12 @@
             this.radioSummary = new Sci.Win.UI.RadioButton();
             this.radioDetail = new Sci.Win.UI.RadioButton();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.radioByAPP = new Sci.Win.UI.RadioButton();
             this.radioByInvWK = new Sci.Win.UI.RadioButton();
             this.dateVoucherDate = new Sci.Win.UI.DateRange();
             this.label1 = new Sci.Win.UI.Label();
-            this.radioByAPP = new Sci.Win.UI.RadioButton();
+            this.comboRateType = new Sci.Win.UI.ComboBox();
+            this.lbRateType = new Sci.Win.UI.Label();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -241,7 +243,7 @@
             // 
             // labelReportType
             // 
-            this.labelReportType.Location = new System.Drawing.Point(13, 295);
+            this.labelReportType.Location = new System.Drawing.Point(13, 331);
             this.labelReportType.Name = "labelReportType";
             this.labelReportType.Size = new System.Drawing.Size(90, 23);
             this.labelReportType.TabIndex = 108;
@@ -277,10 +279,22 @@
             this.radioPanel1.Controls.Add(this.radioByInvWK);
             this.radioPanel1.Controls.Add(this.radioSummary);
             this.radioPanel1.Controls.Add(this.radioDetail);
-            this.radioPanel1.Location = new System.Drawing.Point(106, 294);
+            this.radioPanel1.Location = new System.Drawing.Point(106, 331);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(219, 109);
             this.radioPanel1.TabIndex = 9;
+            // 
+            // radioByAPP
+            // 
+            this.radioByAPP.AutoSize = true;
+            this.radioByAPP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioByAPP.Location = new System.Drawing.Point(3, 81);
+            this.radioByAPP.Name = "radioByAPP";
+            this.radioByAPP.Size = new System.Drawing.Size(141, 21);
+            this.radioByAPP.TabIndex = 13;
+            this.radioByAPP.TabStop = true;
+            this.radioByAPP.Text = "Detail list by APP#";
+            this.radioByAPP.UseVisualStyleBackColor = true;
             // 
             // radioByInvWK
             // 
@@ -323,21 +337,31 @@
             this.label1.TabIndex = 110;
             this.label1.Text = "Voucher Date";
             // 
-            // radioByAPP
+            // comboRateType
             // 
-            this.radioByAPP.AutoSize = true;
-            this.radioByAPP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioByAPP.Location = new System.Drawing.Point(3, 81);
-            this.radioByAPP.Name = "radioByAPP";
-            this.radioByAPP.Size = new System.Drawing.Size(141, 21);
-            this.radioByAPP.TabIndex = 13;
-            this.radioByAPP.TabStop = true;
-            this.radioByAPP.Text = "Detail list by APP#";
-            this.radioByAPP.UseVisualStyleBackColor = true;
+            this.comboRateType.BackColor = System.Drawing.Color.White;
+            this.comboRateType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboRateType.FormattingEnabled = true;
+            this.comboRateType.IsSupportUnselect = true;
+            this.comboRateType.Location = new System.Drawing.Point(106, 294);
+            this.comboRateType.Name = "comboRateType";
+            this.comboRateType.OldText = "";
+            this.comboRateType.Size = new System.Drawing.Size(171, 24);
+            this.comboRateType.TabIndex = 117;
+            // 
+            // lbRateType
+            // 
+            this.lbRateType.Location = new System.Drawing.Point(13, 294);
+            this.lbRateType.Name = "lbRateType";
+            this.lbRateType.Size = new System.Drawing.Size(90, 23);
+            this.lbRateType.TabIndex = 118;
+            this.lbRateType.Text = "Rate Type";
             // 
             // R06
             // 
-            this.ClientSize = new System.Drawing.Size(506, 428);
+            this.ClientSize = new System.Drawing.Size(506, 469);
+            this.Controls.Add(this.comboRateType);
+            this.Controls.Add(this.lbRateType);
             this.Controls.Add(this.dateVoucherDate);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.radioPanel1);
@@ -384,6 +408,8 @@
             this.Controls.SetChildIndex(this.radioPanel1, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.dateVoucherDate, 0);
+            this.Controls.SetChildIndex(this.lbRateType, 0);
+            this.Controls.SetChildIndex(this.comboRateType, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -415,5 +441,7 @@
         private Win.UI.Label label1;
         private Win.UI.RadioButton radioByInvWK;
         private Win.UI.RadioButton radioByAPP;
+        private Win.UI.ComboBox comboRateType;
+        private Win.UI.Label lbRateType;
     }
 }
