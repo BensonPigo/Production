@@ -110,6 +110,7 @@ namespace Sci.Production.Centralized
         protected override bool ValidateInput()
         {
             this.gstrCategory = this.comboDropDownListCategory.SelectedValue.ToString();
+            this.FtyZone = this.comboFtyZone.Text;
             return base.ValidateInput();
         }
 
@@ -132,7 +133,6 @@ namespace Sci.Production.Centralized
             this.gdtData8 = null;
             this.gdtData9 = null;
 
-            this.FtyZone = this.comboFtyZone.Text;
             return true;
         }
 
@@ -277,7 +277,7 @@ and ((o.LocalOrder = 1 and o.SubconInType in ('1','2')) or (o.LocalOrder = 0 and
                     strSQL += " AND f.Type <>'S' ";
                 }
 
-                if (MyUtility.Check.Empty(this.FtyZone))
+                if (!MyUtility.Check.Empty(this.FtyZone))
                 {
                     strSQL += string.Format(" AND f.FtyZone = '{0}' ", this.FtyZone);
                 }

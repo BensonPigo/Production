@@ -60,15 +60,15 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(440, 12);
+            this.print.Location = new System.Drawing.Point(448, 12);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(440, 48);
+            this.toexcel.Location = new System.Drawing.Point(448, 48);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(440, 84);
+            this.close.Location = new System.Drawing.Point(448, 84);
             // 
             // groupBox1
             // 
@@ -371,7 +371,7 @@
             // 
             this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label10.BackColor = System.Drawing.SystemColors.Control;
-            this.label10.Location = new System.Drawing.Point(434, 150);
+            this.label10.Location = new System.Drawing.Point(442, 150);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(101, 23);
             this.label10.TabIndex = 121;
@@ -381,7 +381,7 @@
             // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(520, 341);
+            this.ClientSize = new System.Drawing.Size(528, 370);
             this.ControlBox = false;
             this.Controls.Add(this.label10);
             this.Controls.Add(this.groupBox1);
