@@ -60,15 +60,15 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(440, 12);
+            this.print.Location = new System.Drawing.Point(448, 12);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(440, 48);
+            this.toexcel.Location = new System.Drawing.Point(448, 48);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(440, 84);
+            this.close.Location = new System.Drawing.Point(448, 84);
             // 
             // groupBox1
             // 
@@ -120,7 +120,7 @@
             // 
             // lbFtyZone
             // 
-            this.lbFtyZone.Location = new System.Drawing.Point(4, 180);
+            this.lbFtyZone.Location = new System.Drawing.Point(4, 181);
             this.lbFtyZone.Name = "lbFtyZone";
             this.lbFtyZone.Size = new System.Drawing.Size(127, 23);
             this.lbFtyZone.TabIndex = 224;
@@ -143,7 +143,7 @@
             this.comboDropDownListCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboDropDownListCategory.FormattingEnabled = true;
             this.comboDropDownListCategory.IsSupportUnselect = true;
-            this.comboDropDownListCategory.Location = new System.Drawing.Point(132, 251);
+            this.comboDropDownListCategory.Location = new System.Drawing.Point(132, 253);
             this.comboDropDownListCategory.Name = "comboDropDownListCategory";
             this.comboDropDownListCategory.OldText = "";
             this.comboDropDownListCategory.Size = new System.Drawing.Size(160, 24);
@@ -203,7 +203,7 @@
             // 
             this.txtCountry1.DisplayBox1Binding = "";
             this.txtCountry1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.txtCountry1.Location = new System.Drawing.Point(132, 228);
+            this.txtCountry1.Location = new System.Drawing.Point(133, 229);
             this.txtCountry1.Name = "txtCountry1";
             this.txtCountry1.Size = new System.Drawing.Size(232, 22);
             this.txtCountry1.TabIndex = 17;
@@ -215,7 +215,7 @@
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(132, 157);
+            this.comboBox1.Location = new System.Drawing.Point(132, 156);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.OldText = "";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
@@ -297,7 +297,7 @@
             // 
             // label9
             // 
-            this.label9.Location = new System.Drawing.Point(4, 228);
+            this.label9.Location = new System.Drawing.Point(4, 229);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(127, 23);
             this.label9.TabIndex = 8;
@@ -305,7 +305,7 @@
             // 
             // label8
             // 
-            this.label8.Location = new System.Drawing.Point(4, 252);
+            this.label8.Location = new System.Drawing.Point(4, 253);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(127, 23);
             this.label8.TabIndex = 7;
@@ -313,7 +313,7 @@
             // 
             // label7
             // 
-            this.label7.Location = new System.Drawing.Point(4, 204);
+            this.label7.Location = new System.Drawing.Point(4, 205);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(127, 23);
             this.label7.TabIndex = 6;
@@ -371,7 +371,7 @@
             // 
             this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label10.BackColor = System.Drawing.SystemColors.Control;
-            this.label10.Location = new System.Drawing.Point(434, 150);
+            this.label10.Location = new System.Drawing.Point(442, 150);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(101, 23);
             this.label10.TabIndex = 121;
@@ -381,7 +381,7 @@
             // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(520, 341);
+            this.ClientSize = new System.Drawing.Size(528, 370);
             this.ControlBox = false;
             this.Controls.Add(this.label10);
             this.Controls.Add(this.groupBox1);
