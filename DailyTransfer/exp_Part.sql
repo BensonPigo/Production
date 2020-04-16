@@ -304,6 +304,7 @@ select
 	,SciMachine_Machine.LocationM
 	,SciMachine_Machine.ArriveDate
 	,UsageTime = concat(ym.UsageTime/360,'Y',(ym.UsageTime%360)/30,'M')
+	,SciMachine_MachinePending_Detail.MachineDisposeID
 into MachinePending_Detail
 from Production.dbo.SciMachine_MachinePending_Detail
 inner join MachinePending on MachinePending.ID = SciMachine_MachinePending_Detail.ID
