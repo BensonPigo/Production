@@ -81,8 +81,8 @@ namespace Sci.Production.Cutting
             cmd = $@"
 SELECT *
 FROM SewingSchedule WITH(NOLOCK)
-WHERE Inline >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}'
-AND Offline <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' 
+WHERE Cast(Inline as Date) >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}'
+AND Cast(Offline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' 
 ";
             if (!MyUtility.Check.Empty(this.MDivisionID))
             {
@@ -364,8 +364,8 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
 SELECT  DISTINCT OrderID
 INTO #OrderList
 FROM SewingSchedule WITH(NOLOCK)
-WHERE Inline >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}'
-AND Offline <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' 
+WHERE Cast(Inline as Date) >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}'
+AND Cast(Offline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' 
 ";
             if (!MyUtility.Check.Empty(this.MDivisionID))
             {

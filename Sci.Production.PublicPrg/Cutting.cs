@@ -205,7 +205,7 @@ ORDER BY WOD.OrderID
                 g.EstCutDate = item.EstCutDate;
 
                 int CutPlanQty = 0;
-                if (item.OrderID == "20040364GG006")
+                if (item.OrderID == "20032468LL004")
                 {
 
                 }
@@ -258,7 +258,7 @@ ORDER BY WOD.OrderID
 
                     // 剩餘的裁片數量
                     var finds_Details_Lost = LostInfos.Where(o => o.OrderID == item.OrderID)
-                        .Select(o => new {  o.OrderID, o.Article, o.SizeCode, o.FabricCombo, o.FabricPanelCode, Qty = o.LostQty });
+                        .Select(o => new { o.OrderID, o.Article, o.SizeCode, o.FabricCombo, o.FabricPanelCode, Qty = o.LostQty });
 
                     // 把兩個資料串在一起，再比對是否成套
                     var final = finds_Details.Union(finds_Details_Lost)
@@ -315,6 +315,10 @@ ORDER BY WOD.OrderID
                                     int lost = detail.Qty - minQty;
                                     lostData.FirstOrDefault().LostQty = lost;
                                 }
+                                else
+                                {
+                                    lostData.FirstOrDefault().LostQty = detail.Qty;
+                                }
                             }
                             else
                             {
@@ -368,7 +372,7 @@ ORDER BY WOD.OrderID
             {
                 var sameOrderId = dt.AsEnumerable().Where(o => o["OrderID"].ToString() == OrderID);
 
-                if (OrderID == "20041220GG002")
+                if (OrderID == "MAILO20030015")
                 {
 
                 }
@@ -398,10 +402,24 @@ ORDER BY WOD.OrderID
 
                         if (Later_ThanInline && Eaelier_ThanInline)
                         {
+
                             Day realDate = new Day() { Date = day.Date, IsHoliday = day.IsHoliday };
+
+                            int HolidayCount = 0;
+                            for (int i = 1; i <= LeadTime; i++)
+                            {
+                                realDate.Date.AddDays(i);
+                                bool IsHoliday = Days.Where(o => o.Date == realDate.Date.AddDays(i)).FirstOrDefault().IsHoliday;
+                                if (IsHoliday)
+                                {
+                                    HolidayCount++;
+                                }
+                            }
+                            realDate.Date = realDate.Date.AddDays(-1 * HolidayCount);
+
                             int PassDayCount = 0;
-                            string StdQty = MyUtility.GetValue.Lookup($"SELECT StdQ FROM [dbo].[getDailystdq]('{ApsNO}') WHERE Date = '{realDate.Date.AddDays(LeadTime + PassDayCount).ToString("yyyy/MM/dd")}'");
-                            //string AccuStdQty = MyUtility.GetValue.Lookup($"SELECT SUM(StdQ) FROM [dbo].[getDailystdq]('{ApsNO}') WHERE Date <= '{realDate.Date.AddDays(LeadTime + PassDayCount).ToString("yyyy/MM/dd")}'");
+                            string StdQty = MyUtility.GetValue.Lookup($"SELECT StdQ FROM [dbo].[getDailystdq]('{ApsNO}') WHERE Date = '{realDate.Date.AddDays(LeadTime + PassDayCount + HolidayCount).ToString("yyyy/MM/dd")}'");
+
                             string AccuStdQty = MyUtility.GetValue.Lookup($@"
 SELECT SUM(StdQ)
 FROM (
@@ -410,7 +428,7 @@ FROM (
 	WHERE /*('{realDate.Date.AddDays(LeadTime + PassDayCount).ToString("yyyy/MM/dd")}' >= CAST(Offline as Date) )
 	AND*/ OrderID='{OrderID}'
 )a
-                                ");
+");
 
                             // 取裁剪數量
                             int Cutqty = 0;
@@ -418,7 +436,7 @@ FROM (
                             Cutqty = sameData.Any() ? sameData.FirstOrDefault().Qty : 0;
 
                             // 累計裁剪量 = 先前累計裁剪量 + 當天裁剪量，因此是 <= day.Date.Date
-                            int accuCutQty = GarmentList.Where(o => o.OrderID == OrderID && o.EstCutDate <= day.Date.Date).Sum(o => o.Qty);// accu[OrderID];
+                            int accuCutQty = GarmentList.Where(o => o.OrderID == OrderID && o.EstCutDate <= day.Date.Date).Sum(o => o.Qty);
 
                             InOffLine nLineObj = new InOffLine()
                             {
@@ -446,7 +464,7 @@ FROM (
                 InOffLineList n = new InOffLineList();
                 n.OrderID = BySP.OrderID;
                 n.InOffLines = new List<InOffLine>();
-                var groupData = BySP.InOffLines.GroupBy(o => new { o.DateWithLeadTime, o.AccuCutQty, o.AccuStdQty}).Select( x => new InOffLine
+                var groupData = BySP.InOffLines.GroupBy(o => new { o.DateWithLeadTime, o.AccuCutQty, o.AccuStdQty }).Select(x => new InOffLine
                 {
                     DateWithLeadTime = x.Key.DateWithLeadTime,
                     CutQty = x.Sum(o => o.CutQty),
@@ -591,7 +609,7 @@ FROM (
                 string OrderID = MoveDateData.OrderID;
                 int LeadTime = LeadTimeList.Where(o => o.OrderID == OrderID).FirstOrDefault().LeadTimeDay;
 
-                if (OrderID == "20030643GG001")
+                if (OrderID == "20040364GG002")
                 {
 
                 }
@@ -613,7 +631,7 @@ FROM (
                         StdQty += MyUtility.Check.Empty(strStdQty) ? 0 : Convert.ToInt32(strStdQty);
                     }
                     StdQty = IsBrandNewDay ? 0 : StdQty;
-                    InOffLine.StdQty = StdQty;
+                    //InOffLine.StdQty = StdQty;
 
                     // 累計標準量
                     int AccuStdQty = 0;
@@ -638,7 +656,7 @@ FROM (
                         accu[OrderID] = accu[OrderID] + StdQty;
                     }
 
-                    InOffLine.AccuStdQty = accu[OrderID];
+                    //InOffLine.AccuStdQty = accu[OrderID];
 
                     /*-------------------*/
 
@@ -776,12 +794,22 @@ FROM (
                             }
                             else if (StdQty > 0 && ((AccuCutQty - AccuStdQty) / StdQty) <= 1)
                             {
-                                if (Days.Count - 1 < (DayIndex + 1))
+
+                                Day nextDay = new Day();
+
+                                // /以隔天為起點，開始找下一個非假日，
+                                for (int i = DayIndex + 1; i <= Days.Count - 1; i++)
                                 {
-                                    cellValue = 0;
-                                    continue;
+                                    // 取得下一個不是假日的日期
+                                    if (!Days[i].IsHoliday)
+                                    {
+                                        nextDay.Date = Days[i].Date;
+                                        break;
+                                    }
                                 }
-                                var findData_nextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == Days[DayIndex + 1].Date);
+
+
+                                var findData_nextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == nextDay.Date);
                                 bool hasNextDayData = findData_nextDay.Any();
                                 // 若沒有下一天的資料，則全部視作0 （下一天不一定是明天日期）
                                 if (!hasNextDayData)
@@ -796,13 +824,42 @@ FROM (
                             }
                             else
                             {
-                                if (Days.Count - 1 < (DayIndex + 1) || Days.Count - 1 < (DayIndex + 2))
+                                Day nextDay = new Day();
+                                Day nexNextDay = new Day();
+                                bool HasNextDay = false;
+                                bool HasNexNextDay = false;
+
+                                // /以隔天為起點，開始找下一個非假日
+                                for (int i = DayIndex + 1; i <= Days.Count - 1; i++)
                                 {
-                                    cellValue = 0;
-                                    continue;
+                                    // 取得下一個不是假日的日期
+                                    if (!Days[i].IsHoliday)
+                                    {
+                                        nextDay.Date = Days[i].Date;
+                                        HasNextDay = true;
+                                    }
+                                    if (HasNextDay)
+                                    {
+                                        // 再以這個非假日為起點，找到下一個非假日
+                                        for (int y = i + 1; y <= Days.Count - 1; y++)
+                                        {
+                                            if (!Days[y].IsHoliday)
+                                            {
+                                                nexNextDay.Date = Days[y].Date;
+                                                HasNexNextDay = true;
+                                                // 找完就迴圈掰掰
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (HasNexNextDay)
+                                    {
+                                        break;
+                                    }
                                 }
-                                var findData_nextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == Days[DayIndex + 1].Date);
-                                var findData_nextNextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == Days[DayIndex + 2].Date);
+
+                                var findData_nextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == nextDay.Date);
+                                var findData_nextNextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == nexNextDay.Date);
                                 bool hasNextDayData = findData_nextDay.Any();
                                 bool hasNextNextDayData = findData_nextNextDay.Any();
                                 // 若沒有下一天或下下一天的資料，則全部視作0
@@ -932,8 +989,13 @@ FROM (
             index = 0;
             foreach (var BySP in AllData)
             {
+                if (BySP.OrderID == "MAILO20030015")
+                {
+
+                }
                 foreach (var item in BySP.InOffLines)
                 {
+                    // 紀錄時間軸上的Index
                     int DayIndex = 0;
                     foreach (var day in Days)
                     {
@@ -943,62 +1005,108 @@ FROM (
 
                         if (item.DateWithLeadTime == day.Date)
                         {
-                            decimal CutQty = item.CutQty;
-                            decimal StdQty = item.StdQty;
-                            decimal AccuCutQty = item.AccuCutQty;
-                            decimal AccuStdQty = item.AccuStdQty;
-                            decimal cellValue = 0;
-                            if (AccuCutQty <= AccuStdQty)
+                            if (!day.IsHoliday)
                             {
-                                cellValue = StdQty == 0 ? 0 : (AccuCutQty - AccuStdQty) / StdQty;
-                            }
-                            else if (StdQty == 0 || ((AccuCutQty - AccuStdQty) / StdQty) <= 1)
-                            {
-                                if (Days.Count - 1 < (DayIndex + 1))
+                                decimal CutQty = item.CutQty;
+                                decimal StdQty = item.StdQty;
+                                decimal AccuCutQty = item.AccuCutQty;
+                                decimal AccuStdQty = item.AccuStdQty;
+                                decimal cellValue = 0;
+                                if (AccuCutQty <= AccuStdQty)
                                 {
-                                    cellValue = 0;
-                                    continue;
+                                    cellValue = StdQty == 0 ? 0 : (AccuCutQty - AccuStdQty) / StdQty;
                                 }
-                                var findData_nextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == Days[DayIndex + 1].Date);
-                                bool hasNextDayData = findData_nextDay.Any();
-                                // 若沒有下一天的資料，則全部視作0 （下一天不一定是明天日期）
-                                if (!hasNextDayData)
+                                else if (StdQty == 0 || ((AccuCutQty - AccuStdQty) / StdQty) <= 1)
                                 {
-                                    cellValue = 0;
+
+                                    Day nextDay = new Day();
+
+                                    // /以隔天為起點，開始找下一個非假日，
+                                    for (int i = DayIndex + 1; i <= Days.Count - 1; i++)
+                                    {
+                                        // 取得下一個不是假日的日期
+                                        if (!Days[i].IsHoliday)
+                                        {
+                                            nextDay.Date = Days[i].Date;
+                                            break;
+                                        }
+                                    }
+
+                                    var findData_nextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == nextDay.Date);
+                                    bool hasNextDayData = findData_nextDay.Any();
+                                    // 若沒有下一天的資料，則全部視作0 （下一天不一定是明天日期）
+                                    if (!hasNextDayData)
+                                    {
+                                        cellValue = 0;
+                                    }
+                                    else
+                                    {
+                                        int NextDayStdQty = findData_nextDay.Sum(o => o.StdQty);
+                                        cellValue = NextDayStdQty == 0 ? 0 : (AccuCutQty - AccuStdQty) / NextDayStdQty;
+                                    }
                                 }
                                 else
                                 {
-                                    int NextDayStdQty = findData_nextDay.Sum(o => o.StdQty);
-                                    cellValue = NextDayStdQty == 0 ? 0 : (AccuCutQty - AccuStdQty) / NextDayStdQty;
+
+                                    Day nextDay = new Day();
+                                    Day nexNextDay = new Day();
+                                    bool HasNextDay = false;
+                                    bool HasNexNextDay = false;
+
+                                    // /以隔天為起點，開始找下一個非假日
+                                    for (int i = DayIndex + 1; i <= Days.Count - 1; i++)
+                                    {
+                                        // 取得下一個不是假日的日期
+                                        if (!Days[i].IsHoliday)
+                                        {
+                                            nextDay.Date = Days[i].Date;
+                                            HasNextDay = true;
+                                        }
+                                        if (HasNextDay)
+                                        {
+                                            // 再以這個非假日為起點，找到下一個非假日
+                                            for (int y = i + 1; y <= Days.Count - 1; y++)
+                                            {
+                                                if (!Days[y].IsHoliday)
+                                                {
+                                                    nexNextDay.Date = Days[y].Date;
+                                                    HasNexNextDay = true;
+                                                    // 找完就迴圈掰掰
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        if (HasNexNextDay)
+                                        {
+                                            break;
+                                        }
+                                    }
+
+                                    var findData_nextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == nextDay.Date);
+                                    var findData_nextNextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == nexNextDay.Date);
+                                    bool hasNextDayData = findData_nextDay.Any();
+                                    bool hasNextNextDayData = findData_nextNextDay.Any();
+                                    // 若沒有下一天或下下一天的資料，則全部視作0
+                                    if (!hasNextNextDayData || !hasNextDayData)
+                                    {
+                                        cellValue = 0;
+                                    }
+                                    else
+                                    {
+
+                                        // 沒意外應該只有一筆，不過還是用SUM
+                                        int NextDayStdQty = findData_nextDay.Sum(o => o.StdQty);
+                                        int NextNextDayStdQty = findData_nextNextDay.Sum(o => o.StdQty);
+
+                                        cellValue = NextNextDayStdQty == 0 ? 0 : 1 + ((AccuCutQty - AccuStdQty - NextDayStdQty) / NextNextDayStdQty);
+                                    }
                                 }
+                                summaryDt.Rows[(index)][strDate] = cellValue;
                             }
                             else
                             {
-                                if (Days.Count - 1 < (DayIndex + 1) || Days.Count - 1 < (DayIndex + 2))
-                                {
-                                    cellValue = 0;
-                                    continue;
-                                }
-                                var findData_nextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == Days[DayIndex + 1].Date);
-                                var findData_nextNextDay = BySP.InOffLines.Where(o => o.DateWithLeadTime == Days[DayIndex + 2].Date);
-                                bool hasNextDayData = findData_nextDay.Any();
-                                bool hasNextNextDayData = findData_nextNextDay.Any();
-                                // 若沒有下一天或下下一天的資料，則全部視作0
-                                if (!hasNextNextDayData || !hasNextDayData)
-                                {
-                                    cellValue = 0;
-                                }
-                                else
-                                {
-
-                                    // 沒意外應該只有一筆，不過還是用SUM
-                                    int NextDayStdQty = findData_nextDay.Sum(o => o.StdQty);
-                                    int NextNextDayStdQty = findData_nextNextDay.Sum(o => o.StdQty);
-
-                                    cellValue = NextNextDayStdQty == 0 ? 0 : 1 + ((AccuCutQty - AccuStdQty - NextDayStdQty) / NextNextDayStdQty);
-                                }
+                                //summaryDt.Rows[(index)][strDate] = DBNull.Value;
                             }
-                            summaryDt.Rows[(index)][strDate] = cellValue;
                         }
                         else
                         {
@@ -1027,6 +1135,10 @@ FROM (
 
             foreach (string OrderID in OrderIDs)
             {
+                if (OrderID == "MAILO20030015")
+                {
+
+                }
                 string POID = MyUtility.GetValue.Lookup($"SELECT POID FROM Orders WITH(NOLOCK) WHERE ID='{OrderID}' ");
 
                 PublicPrg.Prgs.GetGarmentListTable(string.Empty, POID, "", out GarmentTb);
