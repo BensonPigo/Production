@@ -261,7 +261,7 @@ namespace Sci.Production.Packing
         public DualResult PrintQRcode(string packingID, string ctn1, string ctn2, string print_type = "", bool country = false)
         {
             DataTable printData;
-            int pageItemCount = 13;
+            int pageItemCount = 1;
             DualResult result = PublicPrg.Prgs.PackingBarcodePrint(MyUtility.Convert.GetString(packingID), ctn1, ctn2, out printData);
             if (!result)
             {
