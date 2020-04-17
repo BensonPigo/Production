@@ -109,7 +109,7 @@ namespace Sci.Production.Warehouse
 
             string sqlcmd = $@"
 select
-	L.EditDate,
+	EditDate = cast(L.EditDate as date),
 	L.ID,
 	LD.Poid,
 	SEQ1 = CONCAT(LD.Seq1, '-' + LD.Seq2),
@@ -129,15 +129,14 @@ select
 	RD.ActualWeight,
 	Differential = isnull(RD.ActualWeight, 0)- isnull(RD.Weight, 0),
 	L.Remark,
-	L.EditName,
+	EditName=dbo.getPass1(L.EditName),
 	L.EditDate,
-	MCHandle = CONCAT(MCHandle, '-'+ TP.Name)
+	MCHandle = dbo.getPass1(MCHandle)
 from LocationTrans L
 inner join LocationTrans_detail LD on L.id=LD.ID
 inner join orders O on LD.Poid=O.ID
 inner join PO_Supp_Detail PSD on LD.Poid=PSD.ID and LD.Seq1=PSD.SEQ1 and LD.Seq2=PSD.SEQ2
 left join FtyInventory FI on LD.FtyInventoryUkey=FI.UKEY
-left join TPEPass1 TP on O.MCHandle=TP.ID
 left join Receiving_Detail RD on LD.Poid=RD.PoId and LD.Seq1=RD.Seq1 and LD.Seq2=RD.Seq2 and LD.Roll=RD.Roll and LD.Dyelot=RD.Dyelot
 left join Receiving R on RD.ID=R.Id
 where L.status='Confirmed'
