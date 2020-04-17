@@ -81,6 +81,10 @@
             this.dispFactoryICRDepartment = new Sci.Win.UI.DisplayBox();
             this.displayBuyerICRInfo = new Sci.Win.UI.DisplayBox();
             this.displaySCIICRInfo = new Sci.Win.UI.DisplayBox();
+            this.txttpeuserPoHandle = new Sci.Production.Class.txttpeuser();
+            this.txttpeuserPoSmr = new Sci.Production.Class.txttpeuser();
+            this.txttpeuserMRHandle = new Sci.Production.Class.txttpeuser();
+            this.txttpeuserSMR = new Sci.Production.Class.txttpeuser();
             this.label16 = new Sci.Win.UI.Label();
             this.label15 = new Sci.Win.UI.Label();
             this.label13 = new Sci.Win.UI.Label();
@@ -178,10 +182,6 @@
             this.txtAddName = new Sci.Production.Class.txttpeuser();
             this.txtuserClose = new Sci.Production.Class.txttpeuser();
             this.txtTPEEditName = new Sci.Production.Class.txttpeuser();
-            this.txttpeuserPoHandle = new Sci.Production.Class.txttpeuser();
-            this.txttpeuserPoSmr = new Sci.Production.Class.txttpeuser();
-            this.txttpeuserMRHandle = new Sci.Production.Class.txttpeuser();
-            this.txttpeuserSMR = new Sci.Production.Class.txttpeuser();
             this.cmbCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.txtuserCFM = new Sci.Production.Class.txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
@@ -478,6 +478,7 @@
             this.labelStatus.TabIndex = 802;
             this.labelStatus.Text = "Status";
             this.labelStatus.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.labelStatus.Visible = false;
             // 
             // dispStyle
             // 
@@ -827,6 +828,42 @@
             this.displaySCIICRInfo.Name = "displaySCIICRInfo";
             this.displaySCIICRInfo.Size = new System.Drawing.Size(146, 21);
             this.displaySCIICRInfo.TabIndex = 975;
+            // 
+            // txttpeuserPoHandle
+            // 
+            this.txttpeuserPoHandle.DisplayBox1Binding = "";
+            this.txttpeuserPoHandle.DisplayBox2Binding = "";
+            this.txttpeuserPoHandle.Location = new System.Drawing.Point(592, 311);
+            this.txttpeuserPoHandle.Name = "txttpeuserPoHandle";
+            this.txttpeuserPoHandle.Size = new System.Drawing.Size(300, 23);
+            this.txttpeuserPoHandle.TabIndex = 973;
+            // 
+            // txttpeuserPoSmr
+            // 
+            this.txttpeuserPoSmr.DisplayBox1Binding = "";
+            this.txttpeuserPoSmr.DisplayBox2Binding = "";
+            this.txttpeuserPoSmr.Location = new System.Drawing.Point(592, 287);
+            this.txttpeuserPoSmr.Name = "txttpeuserPoSmr";
+            this.txttpeuserPoSmr.Size = new System.Drawing.Size(300, 23);
+            this.txttpeuserPoSmr.TabIndex = 972;
+            // 
+            // txttpeuserMRHandle
+            // 
+            this.txttpeuserMRHandle.DisplayBox1Binding = "";
+            this.txttpeuserMRHandle.DisplayBox2Binding = "";
+            this.txttpeuserMRHandle.Location = new System.Drawing.Point(141, 311);
+            this.txttpeuserMRHandle.Name = "txttpeuserMRHandle";
+            this.txttpeuserMRHandle.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuserMRHandle.TabIndex = 971;
+            // 
+            // txttpeuserSMR
+            // 
+            this.txttpeuserSMR.DisplayBox1Binding = "";
+            this.txttpeuserSMR.DisplayBox2Binding = "";
+            this.txttpeuserSMR.Location = new System.Drawing.Point(141, 287);
+            this.txttpeuserSMR.Name = "txttpeuserSMR";
+            this.txttpeuserSMR.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuserSMR.TabIndex = 970;
             // 
             // label16
             // 
@@ -1455,7 +1492,7 @@
             this.tabQtyOrder.Location = new System.Drawing.Point(4, 25);
             this.tabQtyOrder.Name = "tabQtyOrder";
             this.tabQtyOrder.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyOrder.Size = new System.Drawing.Size(1046, 337);
+            this.tabQtyOrder.Size = new System.Drawing.Size(1032, 69);
             this.tabQtyOrder.TabIndex = 0;
             this.tabQtyOrder.Text = "Q\'ty B\'Down by Order";
             // 
@@ -1465,7 +1502,7 @@
             this.panelQtyOrder.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelQtyOrder.Location = new System.Drawing.Point(3, 3);
             this.panelQtyOrder.Name = "panelQtyOrder";
-            this.panelQtyOrder.Size = new System.Drawing.Size(1040, 331);
+            this.panelQtyOrder.Size = new System.Drawing.Size(1026, 63);
             this.panelQtyOrder.TabIndex = 0;
             // 
             // GridQtyOrder
@@ -1499,7 +1536,7 @@
             this.GridQtyOrder.RowTemplate.Height = 24;
             this.GridQtyOrder.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.GridQtyOrder.ShowCellToolTips = false;
-            this.GridQtyOrder.Size = new System.Drawing.Size(1040, 331);
+            this.GridQtyOrder.Size = new System.Drawing.Size(1026, 63);
             this.GridQtyOrder.TabIndex = 0;
             this.GridQtyOrder.TabStop = false;
             // 
@@ -1509,7 +1546,7 @@
             this.tabQtyShipMode.Location = new System.Drawing.Point(4, 25);
             this.tabQtyShipMode.Name = "tabQtyShipMode";
             this.tabQtyShipMode.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyShipMode.Size = new System.Drawing.Size(1046, 337);
+            this.tabQtyShipMode.Size = new System.Drawing.Size(1032, 69);
             this.tabQtyShipMode.TabIndex = 1;
             this.tabQtyShipMode.Text = "Q\'ty B\'Down by Shipmode";
             // 
@@ -1528,8 +1565,8 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.label1);
             this.splitContainer1.Panel2.Controls.Add(this.gridQtyBreakDownbyArticleSizeDetail);
-            this.splitContainer1.Size = new System.Drawing.Size(1040, 331);
-            this.splitContainer1.SplitterDistance = 150;
+            this.splitContainer1.Size = new System.Drawing.Size(1026, 63);
+            this.splitContainer1.SplitterDistance = 28;
             this.splitContainer1.TabIndex = 0;
             // 
             // gridQtyBreakDownByShipmode
@@ -1562,7 +1599,7 @@
             this.gridQtyBreakDownByShipmode.RowTemplate.Height = 24;
             this.gridQtyBreakDownByShipmode.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakDownByShipmode.ShowCellToolTips = false;
-            this.gridQtyBreakDownByShipmode.Size = new System.Drawing.Size(1040, 150);
+            this.gridQtyBreakDownByShipmode.Size = new System.Drawing.Size(1026, 28);
             this.gridQtyBreakDownByShipmode.TabIndex = 1;
             this.gridQtyBreakDownByShipmode.TabStop = false;
             // 
@@ -1612,7 +1649,7 @@
             this.gridQtyBreakDownbyArticleSizeDetail.RowTemplate.Height = 24;
             this.gridQtyBreakDownbyArticleSizeDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakDownbyArticleSizeDetail.ShowCellToolTips = false;
-            this.gridQtyBreakDownbyArticleSizeDetail.Size = new System.Drawing.Size(1040, 151);
+            this.gridQtyBreakDownbyArticleSizeDetail.Size = new System.Drawing.Size(1026, 5);
             this.gridQtyBreakDownbyArticleSizeDetail.TabIndex = 1;
             this.gridQtyBreakDownbyArticleSizeDetail.TabStop = false;
             // 
@@ -1622,7 +1659,7 @@
             this.tabQtyApply.Location = new System.Drawing.Point(4, 25);
             this.tabQtyApply.Name = "tabQtyApply";
             this.tabQtyApply.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyApply.Size = new System.Drawing.Size(1046, 337);
+            this.tabQtyApply.Size = new System.Drawing.Size(1032, 69);
             this.tabQtyApply.TabIndex = 3;
             this.tabQtyApply.Text = "Apply Q\'ty B\'Down by Order";
             // 
@@ -1656,7 +1693,7 @@
             this.GridQtyOrder_Apply.RowTemplate.Height = 24;
             this.GridQtyOrder_Apply.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.GridQtyOrder_Apply.ShowCellToolTips = false;
-            this.GridQtyOrder_Apply.Size = new System.Drawing.Size(1040, 331);
+            this.GridQtyOrder_Apply.Size = new System.Drawing.Size(1026, 63);
             this.GridQtyOrder_Apply.TabIndex = 0;
             this.GridQtyOrder_Apply.TabStop = false;
             // 
@@ -1666,7 +1703,7 @@
             this.tabQtyApplyShipmode.Location = new System.Drawing.Point(4, 25);
             this.tabQtyApplyShipmode.Name = "tabQtyApplyShipmode";
             this.tabQtyApplyShipmode.Padding = new System.Windows.Forms.Padding(3);
-            this.tabQtyApplyShipmode.Size = new System.Drawing.Size(1046, 337);
+            this.tabQtyApplyShipmode.Size = new System.Drawing.Size(1032, 69);
             this.tabQtyApplyShipmode.TabIndex = 4;
             this.tabQtyApplyShipmode.Text = "Apply Q\'ty B\'Down by Shipmode";
             // 
@@ -1685,8 +1722,8 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.label2);
             this.splitContainer2.Panel2.Controls.Add(this.gridQtyBrkApplybyArticleSizeDetail);
-            this.splitContainer2.Size = new System.Drawing.Size(1040, 331);
-            this.splitContainer2.SplitterDistance = 150;
+            this.splitContainer2.Size = new System.Drawing.Size(1026, 63);
+            this.splitContainer2.SplitterDistance = 28;
             this.splitContainer2.TabIndex = 1;
             // 
             // gridQtyBrkApplyByShipmode
@@ -1719,7 +1756,7 @@
             this.gridQtyBrkApplyByShipmode.RowTemplate.Height = 24;
             this.gridQtyBrkApplyByShipmode.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBrkApplyByShipmode.ShowCellToolTips = false;
-            this.gridQtyBrkApplyByShipmode.Size = new System.Drawing.Size(1040, 150);
+            this.gridQtyBrkApplyByShipmode.Size = new System.Drawing.Size(1026, 28);
             this.gridQtyBrkApplyByShipmode.TabIndex = 1;
             this.gridQtyBrkApplyByShipmode.TabStop = false;
             // 
@@ -1769,7 +1806,7 @@
             this.gridQtyBrkApplybyArticleSizeDetail.RowTemplate.Height = 24;
             this.gridQtyBrkApplybyArticleSizeDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBrkApplybyArticleSizeDetail.ShowCellToolTips = false;
-            this.gridQtyBrkApplybyArticleSizeDetail.Size = new System.Drawing.Size(1040, 151);
+            this.gridQtyBrkApplybyArticleSizeDetail.Size = new System.Drawing.Size(1026, 5);
             this.gridQtyBrkApplybyArticleSizeDetail.TabIndex = 1;
             this.gridQtyBrkApplybyArticleSizeDetail.TabStop = false;
             // 
@@ -2086,42 +2123,6 @@
             this.txtTPEEditName.Name = "txtTPEEditName";
             this.txtTPEEditName.Size = new System.Drawing.Size(302, 23);
             this.txtTPEEditName.TabIndex = 847;
-            // 
-            // txttpeuserPoHandle
-            // 
-            this.txttpeuserPoHandle.DisplayBox1Binding = "";
-            this.txttpeuserPoHandle.DisplayBox2Binding = "";
-            this.txttpeuserPoHandle.Location = new System.Drawing.Point(592, 311);
-            this.txttpeuserPoHandle.Name = "txttpeuserPoHandle";
-            this.txttpeuserPoHandle.Size = new System.Drawing.Size(300, 23);
-            this.txttpeuserPoHandle.TabIndex = 973;
-            // 
-            // txttpeuserPoSmr
-            // 
-            this.txttpeuserPoSmr.DisplayBox1Binding = "";
-            this.txttpeuserPoSmr.DisplayBox2Binding = "";
-            this.txttpeuserPoSmr.Location = new System.Drawing.Point(592, 287);
-            this.txttpeuserPoSmr.Name = "txttpeuserPoSmr";
-            this.txttpeuserPoSmr.Size = new System.Drawing.Size(300, 23);
-            this.txttpeuserPoSmr.TabIndex = 972;
-            // 
-            // txttpeuserMRHandle
-            // 
-            this.txttpeuserMRHandle.DisplayBox1Binding = "";
-            this.txttpeuserMRHandle.DisplayBox2Binding = "";
-            this.txttpeuserMRHandle.Location = new System.Drawing.Point(141, 311);
-            this.txttpeuserMRHandle.Name = "txttpeuserMRHandle";
-            this.txttpeuserMRHandle.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuserMRHandle.TabIndex = 971;
-            // 
-            // txttpeuserSMR
-            // 
-            this.txttpeuserSMR.DisplayBox1Binding = "";
-            this.txttpeuserSMR.DisplayBox2Binding = "";
-            this.txttpeuserSMR.Location = new System.Drawing.Point(141, 287);
-            this.txttpeuserSMR.Name = "txttpeuserSMR";
-            this.txttpeuserSMR.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuserSMR.TabIndex = 970;
             // 
             // cmbCategory
             // 

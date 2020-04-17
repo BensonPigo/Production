@@ -130,7 +130,7 @@ namespace Sci.Production.PPIC
                 return;
             }
 
-            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved" && !this.EditMode)
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ConfirmedDate"]) && !this.EditMode)
             {
                 this.BtnConfirm.Enabled = true;
                 this.BtnReject.Enabled = true;
@@ -586,7 +586,7 @@ order by ASeq",
 
             string updateCmd = string.Format(
                 @"
-update OrderChangeApplication set Status = 'Confirmed',ConfirmedName = '{0}',ConfirmedDate = GETDATE(), EditName = '{0}', EditDate = GETDATE(),FTYComments = '{2}' where ID = '{1}'
+update OrderChangeApplication set ConfirmedName = '{0}',ConfirmedDate = GETDATE(), EditName = '{0}', EditDate = GETDATE(),FTYComments = '{2}' where ID = '{1}'
 INSERT INTO [dbo].[OrderChangeApplication_History]([ID],[Status],[StatusUser],[StatusDate])
 VALUES('{1}','Confirmed','{0}',getdate())
 ", Sci.Env.User.UserID,
@@ -599,7 +599,10 @@ MyUtility.Convert.GetString(this.CurrentMaintain["FTYComments"]));
                 return;
             }
 
+            /*
+             * 取消 Send Mail - 因資料交換不再是即時
             this.SendMail("Confirmed");
+            */
 
             this.RenewData();
             this.OnDetailEntered();
