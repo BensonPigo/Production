@@ -856,5 +856,23 @@ select Roll,Dyelot,TicketYds,Scale,Result
                 item["Name"] = MyUtility.GetValue.Lookup("Name", loginID, "Pass1", "ID");
             }
         }
+
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            this.grid.ValidateControl();
+            DataRow[] drs = ((DataTable)this.gridbs.DataSource).Select("Selected = 1");
+            if (drs.Length == 0)
+            {
+                return;
+            }
+
+            foreach (DataRow item in drs)
+            {
+                item["Result"] = "Fail";
+                item["Inspdate"] = DateTime.Now.ToShortDateString();
+                item["Inspector"] = loginID;
+                item["Name"] = MyUtility.GetValue.Lookup("Name", loginID, "Pass1", "ID");
+            }
+        }
     }
 }

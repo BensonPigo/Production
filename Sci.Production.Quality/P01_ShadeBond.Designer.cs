@@ -66,6 +66,7 @@
             this.txtShadeboneInspector = new Sci.Win.UI.TextBox();
             this.labinspector = new Sci.Win.UI.Label();
             this.btnInspectedallpass = new Sci.Win.UI.Button();
+            this.button1 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -73,6 +74,7 @@
             // 
             // btmcont
             // 
+            this.btmcont.Controls.Add(this.button1);
             this.btmcont.Controls.Add(this.btnInspectedallpass);
             this.btmcont.Controls.Add(this.btnPrintFormatReport);
             this.btmcont.Controls.Add(this.btnToExcel);
@@ -86,6 +88,7 @@
             this.btmcont.Controls.SetChildIndex(this.btnToExcel, 0);
             this.btmcont.Controls.SetChildIndex(this.btnPrintFormatReport, 0);
             this.btmcont.Controls.SetChildIndex(this.btnInspectedallpass, 0);
+            this.btmcont.Controls.SetChildIndex(this.button1, 0);
             // 
             // gridcont
             // 
@@ -475,6 +478,17 @@
             this.btnInspectedallpass.UseVisualStyleBackColor = true;
             this.btnInspectedallpass.Click += new System.EventHandler(this.BtnInspectedallpass_Click);
             // 
+            // button1
+            // 
+            this.button1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.button1.Location = new System.Drawing.Point(142, 5);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(161, 30);
+            this.button1.TabIndex = 131;
+            this.button1.Text = "Inspected all Fail";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
+            // 
             // P01_ShadeBond
             // 
             this.ClientSize = new System.Drawing.Size(962, 733);
@@ -606,5 +620,6 @@
         private Win.UI.TextBox txtShadeboneInspector;
         private Win.UI.Label labinspector;
         private Win.UI.Button btnInspectedallpass;
+        private Win.UI.Button button1;
     }
 }
