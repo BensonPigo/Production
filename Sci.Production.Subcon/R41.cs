@@ -406,9 +406,11 @@ drop table #result
 ";
 
             #endregion
-
+            int originalTimeout = DBProxy.Current.DefaultTimeout;
+            DBProxy.Current.DefaultTimeout = 1800;
             DataTable groupByDt;
             DualResult result = DBProxy.Current.Select(null, sqlResult, out groupByDt);
+            DBProxy.Current.DefaultTimeout = originalTimeout;
             if (!result)
             {
                 this.ShowErr(result);
