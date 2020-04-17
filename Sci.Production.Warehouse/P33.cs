@@ -140,104 +140,146 @@ WHERE o.id = '{OrderID}' AND o.sewline != '') t FOR xml path('')
 
             Ismatrix_Reload = true;
             this.DetailSelectCommand = $@"
-SELECT   iis.SCIRefno
-        , [Refno]=Refno.Refno
-		, iis.SuppColor
-		, f.DescDetail
-		, [@Qty]= ThreadUsedQtyByBOT.Val
-		, [AccuIssued] = (
-					select isnull(sum([IS].qty),0)
-					from dbo.issue I2 WITH (NOLOCK) 
-					inner join dbo.Issue_Summary [IS] WITH (NOLOCK) on I2.id = [IS].Id 
-					where I2.type = 'E' and I2.Status = 'Confirmed' 
-					and [IS].Poid=iis.POID AND [IS].SCIRefno=iis.SCIRefno AND [IS].SuppColor=iis.SuppColor and i2.[EditDate]<I.AddDate AND i2.ID <> i.ID
-				)
-		, [IssueQty]=iis.Qty
-		, [Use Qty By Stock Unit] =CEILING( ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) )
-		, [Stock Unit]=StockUnit.StockUnit
 
-		, [Use Unit]='CM'
-		, [Use Qty By Use Unit]=(ThreadUsedQtyByBOT.Qty *  ThreadUsedQtyByBOT.Val  )
 
-		, [Stock Unit Desc.]=StockUnit.Description
-		, [OutputQty] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
-		, [Balance(Stock Unit)]= ISNULL( fi.InQty - fi.OutQty + fi.AdjustQty ,0)
-		, [Location]=ISNULL(Location.MtlLocationID,'')
-        , [POID]=iis.POID
-        , i.MDivisionID
-        , i.ID
-        , iis.Ukey
-FROM Issue i 
-INNER JOIN Issue_Summary iis ON i.ID= iis.Id
-LEFT JOIN Issue_Detail isd ON isd.Issue_SummaryUkey=iis.Ukey
-LEFT JOIN FtyInventory fi ON fi.Ukey = isd.FtyInventoryUkey
-LEFT JOIN Fabric f ON f.SCIRefno = iis.SCIRefno
-OUTER APPLY(
-	SELECT DISTINCT Refno
-	FROM PO_Supp_Detail psd
-	WHERE psd.ID = iis.POID AND psd.SCIRefno = iis.SCIRefno 
-	AND psd.SuppColor=iis.SuppColor
-)Refno
-OUTER APPLY(
-	SELECT SCIRefNo
-		,SuppColor
-		,[Val]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance*Segment))) 
-		,[Qty] = (	
-			SELECt [Qty]=SUM(b.Qty)
-			FROM (
-					Select distinct o.ID,tcd.SCIRefNo, tcd.SuppColor ,tcd.Article 
-					--INTO #step1
-					From dbo.Orders as o
-					Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
-					Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
-					Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
-					WHERE O.ID=iis.POID AND tcd.Article IN ( SELECT Article FROM Issue_Breakdown WHERE ID=i.ID)
-					) a
-			INNER JOIN (		
-							SELECt Article,[Qty]=SUM(Qty) 
-							FROM Issue_Breakdown
-							WHERE ID=i.ID
-							GROUP BY Article
-						) b ON a.Article = b.Article
-			WHERE SCIRefNo=iis.SCIRefNo AND  SuppColor= iis.SuppColor AND a.Article=g.Article
-			GROUP BY a.Article
-		)
-	FROM DBO.GetThreadUsedQtyByBOT(iis.POID) g
-	WHERE SCIRefNo= iis.SCIRefNo AND SuppColor = iis.SuppColor  
-	AND Article IN (		
-        SELECt Article
-        FROM Issue_Breakdown
-        WHERE ID=i.ID
-	)
-	GROUP BY SCIRefNo,SuppColor , Article
-)ThreadUsedQtyByBOT
-OUTER APPLY(
-	SELECT   [MtlLocationID] = STUFF(
-	(
-		SELECT DISTINCT ',' +fid.MtlLocationID 
-		FROM Issue_Detail 
-		INNER JOIN FtyInventory FI ON FI.POID=Issue_Detail.POID AND FI.Seq1=Issue_Detail.Seq1 AND FI.Seq2=Issue_Detail.Seq2
-		INNER JOIN FtyInventory_Detail FID ON FID.Ukey= FI.Ukey
-		WHERE Issue_Detail.ID = i.ID AND  FI.StockType='B' AND  fid.MtlLocationID  <> '' AND Issue_Detail.ukey=isd.ukey
-		FOR XML PATH('')
-	), 1, 1, '') 
-)Location
-OUTER APPLY(
-	SELECT TOP 1 psd2.StockUnit ,u.Description
-	FROM PO_Supp_Detail psd2
-	LEFT JOIN Unit u ON u.ID = psd2.StockUnit
-	WHERE psd2.ID = i.OrderId 
-	AND psd2.SCIRefno = iis.SCIRefno 
-	AND psd2.SuppColor = iis.SuppColor
-)StockUnit
-OUTER APPLY(
-	SELECT RateValue
-	FROM Unit_Rate
-	WHERE UnitFrom='M' and  UnitTo = StockUnit.StockUnit
-)UnitRate
-WHERE i.ID='{masterID}' 
-AND iis.SuppColor <> ''
+----  先By Article撈取資料再加總
+WITH BreakdownByArticle as (
 
+    SELECT   iis.SCIRefno
+            , [Refno]=Refno.Refno
+		    , iis.SuppColor
+		    , f.DescDetail
+		    , [@Qty]= ThreadUsedQtyByBOT.Val
+		    , [AccuIssued] = (
+					    select isnull(sum([IS].qty),0)
+					    from dbo.issue I2 WITH (NOLOCK) 
+					    inner join dbo.Issue_Summary [IS] WITH (NOLOCK) on I2.id = [IS].Id 
+					    where I2.type = 'E' and I2.Status = 'Confirmed' 
+					    and [IS].Poid=iis.POID AND [IS].SCIRefno=iis.SCIRefno AND [IS].SuppColor=iis.SuppColor and i2.[EditDate]<I.AddDate AND i2.ID <> i.ID
+				    )
+		    , [IssueQty]=iis.Qty
+		    , [Use Qty By Stock Unit] = ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1)
+		    , [Stock Unit]=StockUnit.StockUnit
+
+		    , [Use Unit]='CM'
+		    , [Use Qty By Use Unit]=(ThreadUsedQtyByBOT.Qty *  ThreadUsedQtyByBOT.Val  )
+
+		    , [Stock Unit Desc.]=StockUnit.Description
+		    , [OutputQty] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
+		    , [Balance(Stock Unit)]= ISNULL( fi.InQty - fi.OutQty + fi.AdjustQty ,0)
+		    , [Location]=ISNULL(Location.MtlLocationID,'')
+            , [POID]=iis.POID
+            , i.MDivisionID
+            , i.ID
+            , iis.Ukey
+    FROM Issue i 
+    INNER JOIN Issue_Summary iis ON i.ID= iis.Id
+    LEFT JOIN Issue_Detail isd ON isd.Issue_SummaryUkey=iis.Ukey
+    LEFT JOIN FtyInventory fi ON fi.Ukey = isd.FtyInventoryUkey
+    LEFT JOIN Fabric f ON f.SCIRefno = iis.SCIRefno
+    OUTER APPLY(
+	    SELECT DISTINCT Refno
+	    FROM PO_Supp_Detail psd
+	    WHERE psd.ID = iis.POID AND psd.SCIRefno = iis.SCIRefno 
+	    AND psd.SuppColor=iis.SuppColor
+    )Refno
+    OUTER APPLY(
+	    SELECT SCIRefNo
+		    ,SuppColor
+		    ,[Val]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance*Segment))) 
+		    ,[Qty] = (	
+			    SELECt [Qty]=SUM(b.Qty)
+			    FROM (
+					    Select distinct o.ID,tcd.SCIRefNo, tcd.SuppColor ,tcd.Article 
+					    --INTO #step1
+					    From dbo.Orders as o
+					    Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
+					    Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
+					    Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
+					    WHERE O.ID=iis.POID AND tcd.Article IN ( SELECT Article FROM Issue_Breakdown WHERE ID=i.ID)
+					    ) a
+			    INNER JOIN (		
+							    SELECt Article,[Qty]=SUM(Qty) 
+							    FROM Issue_Breakdown
+							    WHERE ID=i.ID
+							    GROUP BY Article
+						    ) b ON a.Article = b.Article
+			    WHERE SCIRefNo=iis.SCIRefNo AND  SuppColor= iis.SuppColor AND a.Article=g.Article
+			    GROUP BY a.Article
+		    )
+	    FROM DBO.GetThreadUsedQtyByBOT(iis.POID) g
+	    WHERE SCIRefNo= iis.SCIRefNo AND SuppColor = iis.SuppColor  
+	    AND Article IN (		
+            SELECt Article
+            FROM Issue_Breakdown
+            WHERE ID=i.ID
+	    )
+	    GROUP BY SCIRefNo,SuppColor , Article
+    )ThreadUsedQtyByBOT
+    OUTER APPLY(
+	    SELECT   [MtlLocationID] = STUFF(
+	    (
+		    SELECT DISTINCT ',' +fid.MtlLocationID 
+		    FROM Issue_Detail 
+		    INNER JOIN FtyInventory FI ON FI.POID=Issue_Detail.POID AND FI.Seq1=Issue_Detail.Seq1 AND FI.Seq2=Issue_Detail.Seq2
+		    INNER JOIN FtyInventory_Detail FID ON FID.Ukey= FI.Ukey
+		    WHERE Issue_Detail.ID = i.ID AND  FI.StockType='B' AND  fid.MtlLocationID  <> '' AND Issue_Detail.ukey=isd.ukey
+		    FOR XML PATH('')
+	    ), 1, 1, '') 
+    )Location
+    OUTER APPLY(
+	    SELECT TOP 1 psd2.StockUnit ,u.Description
+	    FROM PO_Supp_Detail psd2
+	    LEFT JOIN Unit u ON u.ID = psd2.StockUnit
+	    WHERE psd2.ID = i.OrderId 
+	    AND psd2.SCIRefno = iis.SCIRefno 
+	    AND psd2.SuppColor = iis.SuppColor
+    )StockUnit
+    OUTER APPLY(
+	    SELECT RateValue
+	    FROM Unit_Rate
+	    WHERE UnitFrom='M' and  UnitTo = StockUnit.StockUnit
+    )UnitRate
+    WHERE i.ID='{masterID}' 
+    AND iis.SuppColor <> ''
+)
+
+
+SELECt SCIRefno
+	, Refno
+	, SuppColor
+	, DescDetail
+	, [@Qty]=SUM([@Qty])
+	, [AccuIssued]
+	, [IssueQty]
+	, [Use Qty By Stock Unit] = CEILING( SUM([Use Qty By Stock Unit]) )
+	, [Stock Unit]
+	, [Use Unit]='CM'
+	, [Use Qty By Use Unit]=SUM([Use Qty By Use Unit])
+	, [Stock Unit Desc.]
+	, [OutputQty] = SUM([OutputQty])
+	, [Balance(Stock Unit)]
+	, [Location]
+	, [POID]
+	, MDivisionID
+	, ID
+	, Ukey
+FROM BreakdownByArticle
+GROUP BY SCIRefno
+	, Refno
+	, SuppColor
+	, DescDetail
+	, [AccuIssued]
+	, [IssueQty]
+	, [Stock Unit]
+	, [Use Unit]
+	, [Stock Unit Desc.]
+	, [Balance(Stock Unit)]
+	, [Location]
+	, [POID]
+	, MDivisionID
+	, ID
+	, Ukey
 
 ";
 
@@ -532,7 +574,7 @@ SELECT    SCIRefno
 		, SuppColor
 		, DescDetail
 		, [@Qty] = SUM([@Qty])
-        , [AccuIssued]= SUM(AccuIssued)
+        , [AccuIssued]
         , [IssueQty]
         , [Use Qty By Stock Unit] = CEILING (SUM([Use Qty By Stock Unit] ))
         , [Stock Unit]
@@ -549,6 +591,7 @@ GROUP BY SCIRefno
         , Refno
 		, SuppColor
 		, DescDetail
+        , [AccuIssued]
         , [IssueQty]
         , [Stock Unit]
         , [Use Unit]
@@ -791,7 +834,7 @@ SELECT    SCIRefno
 		, SuppColor
 		, DescDetail
 		, [@Qty] = SUM([@Qty])
-        , [AccuIssued]= SUM(AccuIssued)
+        , [AccuIssued]
         , [IssueQty]
         , [Use Qty By Stock Unit] = CEILING (SUM([Use Qty By Stock Unit] ))
         , [Stock Unit]
@@ -808,6 +851,7 @@ GROUP BY SCIRefno
         , Refno
 		, SuppColor
 		, DescDetail
+        , [AccuIssued]
         , [IssueQty]
         , [Stock Unit]
         , [Use Unit]
@@ -1145,7 +1189,7 @@ SELECT    SCIRefno
 		, SuppColor
 		, DescDetail
 		, [@Qty] = SUM([@Qty])
-        , [AccuIssued]= SUM(AccuIssued)
+        , [AccuIssued]
         , [IssueQty]
         , [Use Qty By Stock Unit] = CEILING (SUM([Use Qty By Stock Unit] ))
         , [Stock Unit]
@@ -1162,6 +1206,7 @@ GROUP BY SCIRefno
         , Refno
 		, SuppColor
 		, DescDetail
+        , [AccuIssued]
         , [IssueQty]
         , [Stock Unit]
         , [Use Unit]
@@ -1403,7 +1448,7 @@ SELECT    SCIRefno
 		, SuppColor
 		, DescDetail
 		, [@Qty] = SUM([@Qty])
-        , [AccuIssued]= SUM(AccuIssued)
+        , [AccuIssued]
         , [IssueQty]
         , [Use Qty By Stock Unit] = CEILING (SUM([Use Qty By Stock Unit] ))
         , [Stock Unit]
@@ -1420,6 +1465,7 @@ GROUP BY SCIRefno
         , Refno
 		, SuppColor
 		, DescDetail
+        , [AccuIssued]
         , [IssueQty]
         , [Stock Unit]
         , [Use Unit]
