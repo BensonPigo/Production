@@ -81,8 +81,11 @@ namespace Sci.Production.Cutting
             cmd = $@"
 SELECT *
 FROM SewingSchedule WITH(NOLOCK)
-WHERE Cast(Inline as Date) >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}'
-AND Cast(Offline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' 
+WHERE ( 
+	(Cast(Inline as Date) >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}' AND Cast( Inline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' )
+	OR
+	(Cast(Offline as Date) >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}' AND Cast( Offline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' )
+)
 ";
             if (!MyUtility.Check.Empty(this.MDivisionID))
             {
@@ -118,8 +121,8 @@ AND Cast(Offline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss"
             int minLeadTime = this.LeadTimeList.Min(o => o.LeadTimeDay);
 
             // 起點 = (最早Inline - 最大Lead Time)、終點 = (最晚Offline - 最小Lead Time)
-            DateTime start = Convert.ToDateTime(this.MinInLine.AddDays((-1 * maxLeadTime)).ToString("yyyy/MM/dd"));
-            DateTime end = Convert.ToDateTime(this.MaxOffLine.AddDays((-1 * minLeadTime)).ToString("yyyy/MM/dd"));
+            DateTime start = Convert.ToDateTime(this.SewingDate_s.Value.AddDays((-1 * maxLeadTime)).ToString("yyyy/MM/dd"));
+            DateTime end = Convert.ToDateTime(this.SewingDate_e.Value.AddDays((-1 * minLeadTime)).ToString("yyyy/MM/dd"));
 
             // 算出總天數
             TimeSpan ts = end - start;
@@ -142,11 +145,12 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
             result = DBProxy.Current.Select(null, cmd2, out dt2);
 
             // 開始組合時間軸
+            this.Days.Clear();
 
             for (int Day = 0; Day <= DayCount - 1; Day++)
             {
                 PublicPrg.Prgs.Day day = new PublicPrg.Prgs.Day();
-                day.Date = start.AddDays(Day);
+                day.Date = end.AddDays(-1 * Day);
                 bool IsHoliday = false;
 
                 // 假日或國定假日要註記
@@ -157,6 +161,24 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                 if (day.Date.DayOfWeek == DayOfWeek.Sunday)
                 {
                     IsHoliday = true;
+                    
+                    // 為避免假日推移的影響，讓時間軸不夠長，因此每遇到一次假日，就要加長一次時間軸
+                    DayCount += 1;
+
+
+                    start = start.AddDays(-1);
+                    cmd2 = $@"
+SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
+FROM
+(
+	SElECt * 
+	FROM Holiday WITH(NOLOCK)
+	WHERE HolidayDate >= '{start.ToString("yyyy/MM/dd")}'
+)a
+WHERE HolidayDate <= '{end.ToString("yyyy/MM/dd")}'
+AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
+";
+                    DBProxy.Current.Select(null, cmd2, out dt2);
                 }
 
                 day.IsHoliday = IsHoliday;
@@ -164,6 +186,9 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
             }
 
             #endregion
+
+            this.Days = this.Days.OrderBy(o => o.Date).ToList();
+
             List<string> allOrder = dt.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct().ToList();
 
             this.AllData = GetInOffLineList(dt, this.Days);
@@ -364,8 +389,11 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
 SELECT  DISTINCT OrderID
 INTO #OrderList
 FROM SewingSchedule WITH(NOLOCK)
-WHERE Cast(Inline as Date) >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}'
-AND Cast(Offline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' 
+WHERE ( 
+	(Cast(Inline as Date) >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}' AND Cast( Inline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' )
+	OR
+	(Cast(Offline as Date) >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}' AND Cast( Offline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' )
+)
 ";
             if (!MyUtility.Check.Empty(this.MDivisionID))
             {

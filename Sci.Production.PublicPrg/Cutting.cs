@@ -361,6 +361,8 @@ ORDER BY WOD.OrderID
             List<GarmentQty> GarmentList = GetCutPlanQty(allOrder);
             List<LeadTime> LeadTimeList = GetLeadTimeList(allOrder);
 
+            List<OriPushDayCount> OriPushDayCounts = new List<OriPushDayCount>();
+
             if (LeadTimeList == null)
             {
                 // 表示Lead Time有缺
@@ -372,7 +374,7 @@ ORDER BY WOD.OrderID
             {
                 var sameOrderId = dt.AsEnumerable().Where(o => o["OrderID"].ToString() == OrderID);
 
-                if (OrderID == "MAILO20030015")
+                if (OrderID == "20032470GG")
                 {
 
                 }
@@ -408,25 +410,37 @@ ORDER BY WOD.OrderID
                             int HolidayCount = 0;
                             for (int i = 1; i <= LeadTime; i++)
                             {
-                                realDate.Date.AddDays(i);
-                                bool IsHoliday = Days.Where(o => o.Date == realDate.Date.AddDays(i)).FirstOrDefault().IsHoliday;
-                                if (IsHoliday)
+                                // 超過時間軸最大則不計
+
+                                if ((DateTime.Compare(Days.Max(o => o.Date).Date ,realDate.Date.AddDays(i)) >= 0))
                                 {
-                                    HolidayCount++;
+                                    bool IsHoliday = Days.Where(o => o.Date == realDate.Date.AddDays(i)).FirstOrDefault().IsHoliday;
+                                    if (IsHoliday)
+                                    {
+                                        HolidayCount++;
+                                    }
+
                                 }
+
                             }
                             realDate.Date = realDate.Date.AddDays(-1 * HolidayCount);
+                            OriPushDayCount opd = new OriPushDayCount() {OrderID = OrderID,OriDateWithLeadTime = realDate.Date,OriCount= HolidayCount };
+                            OriPushDayCounts.Add(opd);
 
-                            int PassDayCount = 0;
-                            string StdQty = MyUtility.GetValue.Lookup($"SELECT StdQ FROM [dbo].[getDailystdq]('{ApsNO}') WHERE Date = '{realDate.Date.AddDays(LeadTime + PassDayCount + HolidayCount).ToString("yyyy/MM/dd")}'");
+                            // 原始日期在搜尋條件以外的不顯示
+                            if (realDate.Date.AddDays(LeadTime + HolidayCount) > Days.Max(o=>o.Date) || realDate.Date.AddDays(LeadTime + HolidayCount) < Days.Min(o => o.Date))
+                            {
+                                continue;
+                            }
+
+                            string StdQty = MyUtility.GetValue.Lookup($"SELECT StdQ FROM [dbo].[getDailystdq]('{ApsNO}') WHERE Date = '{realDate.Date.AddDays(LeadTime + HolidayCount).ToString("yyyy/MM/dd")}'");
 
                             string AccuStdQty = MyUtility.GetValue.Lookup($@"
 SELECT SUM(StdQ)
 FROM (
-	SELECT [StdQ]=(SELECT SUM(StdQ) FROM [dbo].[getDailystdq](APSNo) WHERE Date <= '{realDate.Date.AddDays(LeadTime + PassDayCount).ToString("yyyy/MM/dd")}')
+	SELECT [StdQ]=(SELECT SUM(StdQ) FROM [dbo].[getDailystdq](APSNo) WHERE Date <= '{realDate.Date.AddDays(LeadTime + HolidayCount).ToString("yyyy/MM/dd")}')
 	FROM SewingSchedule
-	WHERE /*('{realDate.Date.AddDays(LeadTime + PassDayCount).ToString("yyyy/MM/dd")}' >= CAST(Offline as Date) )
-	AND*/ OrderID='{OrderID}'
+	WHERE OrderID='{OrderID}'
 )a
 ");
 
@@ -506,7 +520,7 @@ FROM (
 
             foreach (var item in hasHolidayDatas)
             {
-                if (item.OrderID == "20050116GG001")
+                if (item.OrderID == "20032470GG")
                 {
 
                 }
@@ -531,6 +545,7 @@ FROM (
                     }
                 }
 
+                // 把是假日的資料，日期往前一天
 
                 int LeadTime = LeadTimeList.Where(o => o.OrderID == item.OrderID).FirstOrDefault().LeadTimeDay;
 
@@ -545,9 +560,24 @@ FROM (
                     MoveDates.Add(m);
                 }
 
+
                 // 日期往前推
-                foreach (var Holiday in AllHoliday)
+                foreach (var Holiday in AllHoliday.OrderBy( x => x))
                 {
+                    if (!item.InOffLines.Where(o => o.DateWithLeadTime == Holiday).Any())
+                    {
+                        continue;
+                    }
+                    // 是假日的資料
+                    var HolidatData = item.InOffLines.Where(o => o.DateWithLeadTime == Holiday).FirstOrDefault();
+
+                    // 找出這個假日的前一個非假日
+                    var otherDatas = Days.Where(o => o.Date < Holiday && !o.IsHoliday).OrderByDescending(o => o.Date).FirstOrDefault();
+
+                    HolidatData.DateWithLeadTime = otherDatas.Date;
+                   
+
+                    /*
                     foreach (var data in item.InOffLines.OrderByDescending(o => o.DateWithLeadTime))
                     {
                         var sameDate = item.InOffLines.Where(o => o.DateWithLeadTime == data.DateWithLeadTime);
@@ -564,6 +594,7 @@ FROM (
                             data.DateWithLeadTime = data.DateWithLeadTime.AddDays(-1);
                         }
                     }
+                    */
                 }
 
                 //把推完的日期 扣去 原始日期，得到每筆資料推了幾天
@@ -609,7 +640,7 @@ FROM (
                 string OrderID = MoveDateData.OrderID;
                 int LeadTime = LeadTimeList.Where(o => o.OrderID == OrderID).FirstOrDefault().LeadTimeDay;
 
-                if (OrderID == "20040364GG002")
+                if (OrderID == "20041232GG003")
                 {
 
                 }
@@ -618,8 +649,11 @@ FROM (
                     // 沒有Ukey代表是補上的日期
                     bool IsBrandNewDay = InOffLine.UKey == null;
 
-                    //這日期推過幾天
+
+                    //這日期第二次推過幾天
                     int movecount = MoveDates.Where(o => o.OrderID == OrderID && o.UKey == InOffLine.UKey).Any() ? MoveDates.Where(o => o.OrderID == OrderID && o.UKey == InOffLine.UKey).FirstOrDefault().MoveCount : 0;
+
+                    int FirstMoveCount = OriPushDayCounts.Where(o => o.OrderID == OrderID && o.OriDateWithLeadTime == InOffLine.DateWithLeadTime.AddDays(movecount)).FirstOrDefault().OriCount;
 
                     // 標準量
                     var obj = dt.AsEnumerable().Where(o => o["OrderID"].ToString() == OrderID).ToList();
@@ -627,18 +661,18 @@ FROM (
                     foreach (DataRow dr in obj)
                     {
                         string ApsNO = dr["APSNO"].ToString();
-                        string strStdQty = MyUtility.GetValue.Lookup($"SELECT StdQ FROM [dbo].[getDailystdq]('{ApsNO}') WHERE Date = '{InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount).ToString("yyyy/MM/dd")}'");
+                        string strStdQty = MyUtility.GetValue.Lookup($"SELECT StdQ FROM [dbo].[getDailystdq]('{ApsNO}') WHERE Date = '{InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount + FirstMoveCount).ToString("yyyy/MM/dd")}'");
                         StdQty += MyUtility.Check.Empty(strStdQty) ? 0 : Convert.ToInt32(strStdQty);
                     }
                     StdQty = IsBrandNewDay ? 0 : StdQty;
-                    //InOffLine.StdQty = StdQty;
+                    InOffLine.StdQty = StdQty;
 
                     // 累計標準量
                     int AccuStdQty = 0;
                     string strAccuStdQty = MyUtility.GetValue.Lookup($@"
 SELECT SUM(StdQ)
 FROM (
-	SELECT [StdQ]=(SELECT SUM(StdQ) FROM [dbo].[getDailystdq](APSNo) WHERE Date <= '{InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount).ToString("yyyy/MM/dd")}')
+	SELECT [StdQ]=(SELECT SUM(StdQ) FROM [dbo].[getDailystdq](APSNo) WHERE Date <= '{InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount + FirstMoveCount).ToString("yyyy/MM/dd")}')
 	FROM SewingSchedule
 	WHERE OrderID='{OrderID}'
 )a
@@ -656,7 +690,7 @@ FROM (
                         accu[OrderID] = accu[OrderID] + StdQty;
                     }
 
-                    //InOffLine.AccuStdQty = accu[OrderID];
+                    InOffLine.AccuStdQty = MyUtility.Check.Empty(AccuStdQty) ? 0 : Convert.ToInt32(AccuStdQty);
 
                     /*-------------------*/
 
@@ -1345,6 +1379,12 @@ WHERE Subprocess.IDs = '{AnnotationStr}'
             public decimal WIP { get; set; }
         }
 
+        public class OriPushDayCount
+        {
+            public string OrderID { get; set; }
+            public DateTime OriDateWithLeadTime { get; set; }
+            public int OriCount { get; set; }
+        }
         #endregion
     }
 
