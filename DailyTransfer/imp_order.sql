@@ -1708,7 +1708,7 @@ update t set
 	,[MRComment] = s.MRComment
 	,[Remark] = s.Remark
 	,[BuyerRemark] = s.BuyerRemark
-	,[FactoryID] = s.FactoryID
+	,[FactoryID] = isnull(s.FactoryID, '')
 from Production.dbo.OrderChangeApplication t
 inner join Trade_To_Pms.dbo.OrderChangeApplication s on s.ID = t.ID
 inner join Factory f on s.FactoryID = f.ID and f.IsProduceFty = 1
@@ -1767,7 +1767,7 @@ select s.ID
 	,s.MRComment
 	,s.Remark
 	,s.BuyerRemark
-	,s.FactoryID
+	,isnull(s.FactoryID, '')
 	,s.EditName
 	,s.EditDate
 from Trade_To_Pms.dbo.OrderChangeApplication  s
@@ -1810,8 +1810,12 @@ inner join Trade_To_Pms.dbo.OrderChangeApplication_Detail s on s.ID = t.ID and s
 
 delete t
 from Production.dbo.OrderChangeApplication_Detail t
-inner join Trade_To_Pms.dbo.OrderChangeApplication_Detail s on s.ID = t.ID
 where not exists (select 1 from Trade_To_Pms.dbo.OrderChangeApplication_Detail where t.ID = ID and t.Ukey = Ukey)
+and exists (
+	select 1 from Trade_To_Pms.dbo.OrderChangeApplication oc  
+	inner join Production.dbo.Factory f on oc.FactoryID = f.ID and f.IsProduceFty = 1
+	where oc.ID = t.ID	
+)
 
 insert into Production.dbo.OrderChangeApplication_Detail([Ukey], [ID], [Seq], [Article], [SizeCode], [Qty], [OriQty], [NowQty])
 select s.Ukey
@@ -1824,7 +1828,11 @@ select s.Ukey
 	,s.NowQty
 from Trade_To_Pms.dbo.OrderChangeApplication_Detail s
 where not exists (select 1 from Production.dbo.OrderChangeApplication_Detail t where t.ID = s.ID and t.Ukey = s.Ukey)
-
+and exists (
+	select 1 from Trade_To_Pms.dbo.OrderChangeApplication oc  
+	inner join Production.dbo.Factory f on oc.FactoryID = f.ID and f.IsProduceFty = 1
+	where oc.ID = s.ID	
+)
 ----------------OrderChangeApplication_Seq-----------------
 --ISP20200602
 if cast(getdate() as date) = cast('20200420' as date)
@@ -1867,8 +1875,12 @@ inner join Trade_To_Pms.dbo.OrderChangeApplication_Seq s on s.ID = t.ID and s.Uk
 
 delete t
 from Production.dbo.OrderChangeApplication_Seq t
-inner join Trade_To_Pms.dbo.OrderChangeApplication_Seq s on s.ID = t.ID
 where not exists (select 1 from Trade_To_Pms.dbo.OrderChangeApplication_Seq where t.ID = ID and t.Ukey = Ukey)
+and exists (
+	select 1 from Trade_To_Pms.dbo.OrderChangeApplication oc  
+	inner join Production.dbo.Factory f on oc.FactoryID = f.ID and f.IsProduceFty = 1
+	where oc.ID = t.ID	
+)
 
 insert into Production.dbo.OrderChangeApplication_Seq([Ukey], [ID], [Seq], [NewSeq], [ShipmodeID], [BuyerDelivery], [FtyKPI], [ReasonID], [ReasonRemark], [ShipModeRemark])
 select s.Ukey
@@ -1883,7 +1895,11 @@ select s.Ukey
 	,s.ShipModeRemark
 from Trade_To_Pms.dbo.OrderChangeApplication_Seq s
 where not exists (select 1 from Production.dbo.OrderChangeApplication_Seq t where t.ID = s.ID and t.Ukey = s.Ukey)
-
+and exists (
+	select 1 from Trade_To_Pms.dbo.OrderChangeApplication oc  
+	inner join Production.dbo.Factory f on oc.FactoryID = f.ID and f.IsProduceFty = 1
+	where oc.ID = s.ID	
+)
 ----------------OrderChangeApplication_History-----------------
 INSERT INTO [dbo].[OrderChangeApplication_History]([ID],[Status],[StatusUser],[StatusDate])
 select s.ID,s.Status,s.[StatusUser],s.[StatusDate]
