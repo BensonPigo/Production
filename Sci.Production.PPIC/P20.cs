@@ -130,7 +130,7 @@ namespace Sci.Production.PPIC
                 return;
             }
 
-            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved" && !this.EditMode)
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ConfirmedDate"]) && !this.EditMode)
             {
                 this.BtnConfirm.Enabled = true;
                 this.BtnReject.Enabled = true;
@@ -200,7 +200,6 @@ inner join OrderChangeApplication_History h on h.Status = x.Status and h.StatusD
             this.dispSeason.Text = row["SeasonID"].ToString();
             this.cmbCategory.SelectedValue = row["Category"].ToString();
             this.dispBrand.Text = row["BrandID"].ToString();
-            this.dispFactory.Text = row["FactoryID"].ToString();
             this.dispProgram.Text = row["ProgramID"].ToString();
             this.dispOrderType.Text = row["OrderTypeID"].ToString();
             this.dispProject.Text = row["ProjectID"].ToString();
@@ -563,22 +562,31 @@ order by ASeq",
             #endregion
 
             this.txtuserCFM.TextBox1.ReadOnly = true;
-            this.txtuserReject.TextBox1.ReadOnly = true;
         }
 
         private void BtnConfirm_Click(object sender, EventArgs e)
         {
             DualResult result;
+
+            /*
+             * 取消API
             result = Prgs.PostOrderChange(this.CurrentMaintain["ID"].ToString(), "Confirmed", this.CurrentMaintain["FTYComments"].ToString());
             if (!result)
             {
                 this.ShowErr(result);
                 return;
+            }.
+            */
+
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["ConfirmedDate"]))
+            {
+                MyUtility.Msg.ErrorBox("ConfirmedDate must be empty!");
+                return;
             }
 
             string updateCmd = string.Format(
                 @"
-update OrderChangeApplication set Status = 'Confirmed',ConfirmedName = '{0}',ConfirmedDate = GETDATE(), EditName = '{0}', EditDate = GETDATE(),FTYComments = '{2}' where ID = '{1}'
+update OrderChangeApplication set ConfirmedName = '{0}',ConfirmedDate = GETDATE(), EditName = '{0}', EditDate = GETDATE(),FTYComments = '{2}' where ID = '{1}'
 INSERT INTO [dbo].[OrderChangeApplication_History]([ID],[Status],[StatusUser],[StatusDate])
 VALUES('{1}','Confirmed','{0}',getdate())
 ", Sci.Env.User.UserID,
@@ -591,7 +599,10 @@ MyUtility.Convert.GetString(this.CurrentMaintain["FTYComments"]));
                 return;
             }
 
+            /*
+             * 取消 Send Mail - 因資料交換不再是即時
             this.SendMail("Confirmed");
+            */
 
             this.RenewData();
             this.OnDetailEntered();

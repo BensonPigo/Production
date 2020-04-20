@@ -52,7 +52,10 @@
 	[Remark] [nvarchar](max) NULL,
 	[BuyerRemark] [nvarchar](max) NULL,
 	[FTYComments] [nvarchar](max) NULL,
- CONSTRAINT [PK_OrderChangeApplication] PRIMARY KEY CLUSTERED 
+ [FactoryID] VARCHAR(8) NOT NULL DEFAULT (''), 
+    [TPEEditName] VARCHAR(10) NULL DEFAULT (''), 
+    [TPEEditDate] DATETIME NULL, 
+    CONSTRAINT [PK_OrderChangeApplication] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
@@ -94,3 +97,30 @@ GO
 
 ALTER TABLE [dbo].[OrderChangeApplication] ADD  CONSTRAINT [DF_OrderChangeApplication_ResponsibleBuyer]  DEFAULT ((0)) FOR [ResponsibleBuyer]
 GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'工廠代號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'OrderChangeApplication',
+    @level2type = N'COLUMN',
+    @level2name = N'FactoryID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'台北最後編輯人員',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'OrderChangeApplication',
+    @level2type = N'COLUMN',
+    @level2name = N'TPEEditName'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'台北最後編輯日期',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'OrderChangeApplication',
+    @level2type = N'COLUMN',
+    @level2name = N'TPEEditDate'
