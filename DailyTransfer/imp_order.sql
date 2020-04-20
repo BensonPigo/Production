@@ -1659,50 +1659,248 @@ BEGIN
 		
 ----------------OrderChangeApplication-----------------
 update t set	
-	[Status]  =s.[Status]
-	,[SentName] = s.[SentName]
-	,[SentDate] = s.[SentDate]
-	,[ApprovedName] = s.[ApprovedName]
-	,[ApprovedDate] = s.[ApprovedDate]
-	,[ClosedName] = s.[ClosedName]
-	,[ClosedDate] = s.[ClosedDate]
-	,[JunkName] = s.[JunkName]
-	,[JunkDate] = s.[JunkDate]
-	,[EditName]=s.[EditName]
-	,[EditDate]=s.[EditDate]
-	,[MRComment] = s.MRComment
-	,[Remark] = s.Remark
-	,[ResponsibleFty] = s.ResponsibleFty
+	[ReasonID] = s.ReasonID
+	,[OrderID] = s.OrderID	
+	,[Status]  =s.Status
+	,[SentName] = s.SentName
+	,[SentDate] = s.SentDate
+	,[ApprovedName] = s.ApprovedName
+	,[ApprovedDate] = s.ApprovedDate
+	,[RejectName] = s.RejectName
+	,[RejectDate] = s.RejectDate
+	,[ClosedName] = s.ClosedName
+	,[ClosedDate] = s.ClosedDate
+	,[JunkName] = s.JunkName
+	,[JunkDate] = s.JunkDate
+	,[AddName] = s.AddName
+	,[AddDate] = s.AddDate
+	,[TPEEditName] = s.EditName
+	,[TPEEditDate] = s.EditDate
+	,[ToOrderID] = s.ToOrderID
+	,[NeedProduction] = s.NeedProduction
+	,[OldQty] = s.OldQty
 	,[RatioFty] = s.RatioFty
-	,[FactoryICRDepartment] = s.FactoryICRDepartment
-	,[BuyerICRNo] = s.BuyerICRNo
-	,[FactoryICRRemark] = s.FactoryICRRemark
-	,[ResponsibleSubcon] = s.ResponsibleSubcon
 	,[RatioSubcon] = s.RatioSubcon
+	,[RatioSCI] = s.RatioSCI
+	,[RatioSupp] = s.RatioSupp
+	,[RatioBuyer] = s.RatioBuyer
+	,[ResponsibleFty] = s.ResponsibleFty 
+	,[ResponsibleSubcon] = s.ResponsibleSubcon
+	,[ResponsibleSCI] = s.ResponsibleSCI
+	,[ResponsibleSupp] = s.ResponsibleSupp
+	,[ResponsibleBuyer] = s.ResponsibleBuyer
+	,[FactoryICRDepartment] = s.FactoryICRDepartment
+	,[FactoryICRNo] = s.FactoryICRNo
+	,[FactoryICRRemark] = s.FactoryICRRemark
 	,[SubconDBCNo] = s.SubconDBCNo
 	,[SubconDBCRemark] = s.SubconDBCRemark
 	,[SubConName] = s.SubConName
-	,[ResponsibleSCI] = s.ResponsibleSCI
-	,[RatioSCI] = s.RatioSCI
 	,[SCIICRDepartment] = s.SCIICRDepartment
 	,[SCIICRNo] = s.SCIICRNo
 	,[SCIICRRemark] = s.SCIICRRemark
-	,[ResponsibleSupp] = s.ResponsibleSupp
-	,[RatioSupp] = s.RatioSupp
 	,[SuppDBCNo] = s.SuppDBCNo
 	,[SuppDBCRemark] = s.SuppDBCRemark
-	,[ResponsibleBuyer] = s.ResponsibleBuyer
-	,[RatioBuyer] = s.RatioBuyer
+	,[BuyerDBCDepartment] = s.BuyerDBCDepartment
 	,[BuyerDBCNo] = s.BuyerDBCNo
 	,[BuyerDBCRemark] = s.BuyerDBCRemark
-	,[BuyerDBCDepartment] = s.BuyerDBCDepartment
+	,[BuyerICRNo] = s.BuyerICRNo
 	,[BuyerICRRemark] = s.BuyerICRRemark
+	,[MRComment] = s.MRComment
+	,[Remark] = s.Remark
 	,[BuyerRemark] = s.BuyerRemark
-	,[ToOrderID] = s.ToOrderID
+	,[FactoryID] = isnull(s.FactoryID, '')
 from Production.dbo.OrderChangeApplication t
 inner join Trade_To_Pms.dbo.OrderChangeApplication s on s.ID = t.ID
---where s.Status = 'Closed'
+inner join Factory f on s.FactoryID = f.ID and f.IsProduceFty = 1
 
+insert into Production.dbo.OrderChangeApplication ([ID], [ReasonID], [OrderID], [Status], [SentName], [SentDate]
+, [ApprovedName], [ApprovedDate], [RejectName], [RejectDate], [ClosedName], [ClosedDate], [JunkName], [JunkDate]
+, [AddName], [AddDate], [ToOrderID], [NeedProduction], [OldQty], [RatioFty], [RatioSubcon], [RatioSCI], [RatioSupp], [RatioBuyer]
+, [ResponsibleFty], [ResponsibleSubcon], [ResponsibleSCI], [ResponsibleSupp], [ResponsibleBuyer], [FactoryICRDepartment], [FactoryICRNo], [FactoryICRRemark]
+, [SubconDBCNo], [SubconDBCRemark], [SubConName], [SCIICRDepartment], [SCIICRNo], [SCIICRRemark], [SuppDBCNo], [SuppDBCRemark], [BuyerDBCDepartment], [BuyerDBCNo]
+, [BuyerDBCRemark], [BuyerICRNo], [BuyerICRRemark], [MRComment], [Remark], [BuyerRemark], [FactoryID], [TPEEditName], [TPEEditDate])
+select s.ID
+	,s.ReasonID
+	,s.OrderID
+	,s.Status
+	,s.SentName
+	,s.SentDate
+	,s.ApprovedName
+	,s.ApprovedDate
+	,s.RejectName
+	,s.RejectDate
+	,s.ClosedName
+	,s.ClosedDate
+	,s.JunkName
+	,s.JunkDate
+	,s.AddName
+	,s.AddDate
+	,s.ToOrderID
+	,s.NeedProduction
+	,s.OldQty
+	,s.RatioFty
+	,s.RatioSubcon
+	,s.RatioSCI
+	,s.RatioSupp
+	,s.RatioBuyer
+	,s.ResponsibleFty
+	,s.ResponsibleSubcon
+	,s.ResponsibleSCI
+	,s.ResponsibleSupp
+	,s.ResponsibleBuyer
+	,s.FactoryICRDepartment
+	,s.FactoryICRNo
+	,s.FactoryICRRemark
+	,s.SubconDBCNo
+	,s.SubconDBCRemark
+	,s.SubConName
+	,s.SCIICRDepartment
+	,s.SCIICRNo
+	,s.SCIICRRemark
+	,s.SuppDBCNo
+	,s.SuppDBCRemark
+	,s.BuyerDBCDepartment
+	,s.BuyerDBCNo
+	,s.BuyerDBCRemark
+	,s.BuyerICRNo
+	,s.BuyerICRRemark
+	,s.MRComment
+	,s.Remark
+	,s.BuyerRemark
+	,isnull(s.FactoryID, '')
+	,s.EditName
+	,s.EditDate
+from Trade_To_Pms.dbo.OrderChangeApplication  s
+inner join Production.dbo.Factory f on s.FactoryID =f.ID and f.IsProduceFty = 1
+where not exists(select 1 from Production.dbo.OrderChangeApplication t where s.ID = t.ID)
+
+----------------OrderChangeApplication_Detail-----------------
+--ISP20200602
+if cast(getdate() as date) = cast('20200420' as date)
+begin
+	drop table Production.dbo.OrderChangeApplication_Detail
+
+	CREATE TABLE [dbo].[OrderChangeApplication_Detail](
+		[Ukey] [bigint] NOT NULL,
+		[ID] [varchar](13) NULL,
+		[Seq] [varchar](2) NULL,
+		[Article] [varchar](8) NULL,
+		[SizeCode] [varchar](8) NULL,
+		[Qty] [numeric](6, 0) NULL,
+		[OriQty] [numeric](6, 0) NULL,
+		[NowQty] [numeric](6, 0) NULL,
+	 CONSTRAINT [PK_OrderChangeApplication_Detail] PRIMARY KEY CLUSTERED 
+	(
+		[Ukey] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+
+	ALTER TABLE [dbo].[OrderChangeApplication_Detail] ADD  CONSTRAINT [DF_OrderChangeApplication_Detail_NowQty]  DEFAULT ((0)) FOR [NowQty]
+end
+
+update t
+	set t.Seq =s.Seq
+		,t.Article = s.Article
+		,t.SizeCode = s.SizeCode
+		,t.Qty = s.Qty
+		,t.OriQty = s.OriQty
+		,t.NowQty = s.NowQty
+from Production.dbo.OrderChangeApplication_Detail t
+inner join Trade_To_Pms.dbo.OrderChangeApplication_Detail s on s.ID = t.ID and s.Ukey = t.Ukey
+
+delete t
+from Production.dbo.OrderChangeApplication_Detail t
+where not exists (select 1 from Trade_To_Pms.dbo.OrderChangeApplication_Detail where t.ID = ID and t.Ukey = Ukey)
+and exists (
+	select 1 from Trade_To_Pms.dbo.OrderChangeApplication oc  
+	inner join Production.dbo.Factory f on oc.FactoryID = f.ID and f.IsProduceFty = 1
+	where oc.ID = t.ID	
+)
+
+insert into Production.dbo.OrderChangeApplication_Detail([Ukey], [ID], [Seq], [Article], [SizeCode], [Qty], [OriQty], [NowQty])
+select s.Ukey
+	,s.ID
+	,s.Seq
+	,s.Article
+	,s.SizeCode
+	,s.Qty
+	,s.OriQty
+	,s.NowQty
+from Trade_To_Pms.dbo.OrderChangeApplication_Detail s
+where not exists (select 1 from Production.dbo.OrderChangeApplication_Detail t where t.ID = s.ID and t.Ukey = s.Ukey)
+and exists (
+	select 1 from Trade_To_Pms.dbo.OrderChangeApplication oc  
+	inner join Production.dbo.Factory f on oc.FactoryID = f.ID and f.IsProduceFty = 1
+	where oc.ID = s.ID	
+)
+----------------OrderChangeApplication_Seq-----------------
+--ISP20200602
+if cast(getdate() as date) = cast('20200420' as date)
+begin
+	drop table OrderChangeApplication_Seq
+
+	CREATE TABLE [dbo].[OrderChangeApplication_Seq](
+		[Ukey] [bigint] NOT NULL,
+		[ID] [varchar](13) NOT NULL,
+		[Seq] [varchar](2) NOT NULL,
+		[NewSeq] [varchar](2) NULL,
+		[ShipmodeID] [varchar](10) NOT NULL,
+		[BuyerDelivery] [date] NOT NULL,
+		[FtyKPI] [date] NULL,
+		[ReasonID] [varchar](5) NULL,
+		[ReasonRemark] [nvarchar](150) NULL,
+		[ShipModeRemark] [nvarchar](150) NULL,
+	 CONSTRAINT [PK_OrderChangeApplication_Seq] PRIMARY KEY CLUSTERED 
+	(
+		[Ukey] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+
+	ALTER TABLE [dbo].[OrderChangeApplication_Seq] ADD  CONSTRAINT [DF_OrderChangeApplication_Seq_ReasonID]  DEFAULT ('') FOR [ReasonID]
+
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'修改客戶交期原因' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderChangeApplication_Seq', @level2type=N'COLUMN',@level2name=N'ReasonID'
+end
+
+update t
+	set t.Seq =s.Seq
+		,t.NewSeq = s.NewSeq
+		,t.ShipmodeID = s.ShipmodeID
+		,t.BuyerDelivery = s.BuyerDelivery
+		,t.FtyKPI = s.FtyKPI
+		,t.ReasonID = s.ReasonID
+		,t.ReasonRemark = s.ReasonRemark
+		,t.ShipModeRemark = s.ShipModeRemark
+from Production.dbo.OrderChangeApplication_Seq t
+inner join Trade_To_Pms.dbo.OrderChangeApplication_Seq s on s.ID = t.ID and s.Ukey = t.Ukey
+
+delete t
+from Production.dbo.OrderChangeApplication_Seq t
+where not exists (select 1 from Trade_To_Pms.dbo.OrderChangeApplication_Seq where t.ID = ID and t.Ukey = Ukey)
+and exists (
+	select 1 from Trade_To_Pms.dbo.OrderChangeApplication oc  
+	inner join Production.dbo.Factory f on oc.FactoryID = f.ID and f.IsProduceFty = 1
+	where oc.ID = t.ID	
+)
+
+insert into Production.dbo.OrderChangeApplication_Seq([Ukey], [ID], [Seq], [NewSeq], [ShipmodeID], [BuyerDelivery], [FtyKPI], [ReasonID], [ReasonRemark], [ShipModeRemark])
+select s.Ukey
+	,s.ID
+	,s.Seq
+	,s.NewSeq
+	,s.ShipmodeID
+	,s.BuyerDelivery
+	,s.FtyKPI
+	,s.ReasonID
+	,s.ReasonRemark
+	,s.ShipModeRemark
+from Trade_To_Pms.dbo.OrderChangeApplication_Seq s
+where not exists (select 1 from Production.dbo.OrderChangeApplication_Seq t where t.ID = s.ID and t.Ukey = s.Ukey)
+and exists (
+	select 1 from Trade_To_Pms.dbo.OrderChangeApplication oc  
+	inner join Production.dbo.Factory f on oc.FactoryID = f.ID and f.IsProduceFty = 1
+	where oc.ID = s.ID	
+)
+----------------OrderChangeApplication_History-----------------
 INSERT INTO [dbo].[OrderChangeApplication_History]([ID],[Status],[StatusUser],[StatusDate])
 select s.ID,s.Status,s.[StatusUser],s.[StatusDate]
 from Trade_To_Pms.dbo.[OrderChangeApplication_History] s
