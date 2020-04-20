@@ -16,6 +16,9 @@ using System.Linq;
 using Sci.Utility;
 using Sci.Win.Tems;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Cutting
 {
@@ -2769,6 +2772,21 @@ select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrd
                     return upResult;
                 }
             }
+
+            #region sent data to GZ WebAPI
+            string compareCol = "CutRef,EstCutDate,ID,OrderID,CutCellID";
+            var listChangedDetail = ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+                .Where(s =>
+                {
+                    return s.RowState == DataRowState.Added || (s.RowState == DataRowState.Modified && s.CompareDataRowVersionValue(compareCol));
+                });
+
+            if (listChangedDetail.Any())
+            {
+                Task.Run(() => new Guozi().SentWorkOrderToAGV(listChangedDetail.CopyToDataTable()));
+            }
+            #endregion
+
             return base.ClickSavePost();
         }
 

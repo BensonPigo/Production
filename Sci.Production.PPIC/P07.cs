@@ -9,6 +9,8 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 using System.Transactions;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.PPIC
 {
@@ -60,21 +62,34 @@ namespace Sci.Production.PPIC
             this.ShowWaitMessage("Data Downloading....");
 
             string sqlCmd = string.Format(
-                @"exec dbo.usp_APSDataDownLoad '{0}','{1}','{2}','{3}'
+                @"
+exec dbo.usp_APSDataDownLoad '{0}','{1}','{2}','{3}'
 update factory set LastDownloadAPSDate  = getdate() where id = '{2}'
+
 ", MyUtility.Convert.GetString(dr["SQLServerName"]),
                 MyUtility.Convert.GetString(dr["APSDatabaseName"]),
                 Sci.Env.User.Factory,
                 Sci.Env.User.UserID);
 
             DBProxy.Current.DefaultTimeout = 1200;
-            DualResult result = DBProxy.Current.Execute(null, sqlCmd);
+            DataTable[] dsForAutomation;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out dsForAutomation);
             if (!result)
             {
                 MyUtility.Msg.WaitClear();
                 this.ShowErr(sqlCmd, result);
                 this.HideWaitMessage();
                 return;
+            }
+
+            if (dsForAutomation[0].Rows.Count > 0)
+            {
+                Task.Run(() => new Guozi().SentSewingLineToAGV(dsForAutomation[0]));
+            }
+
+            if (dsForAutomation[1].Rows.Count > 0)
+            {
+                Task.Run(() => new Guozi().SentSewingScheduleToAGV(dsForAutomation[1]));
             }
 
             this.Setcuttingdate();

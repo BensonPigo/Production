@@ -1,6 +1,9 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.Automation;
+using Sci.Production.Prg;
 using System.Data;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Centralized
@@ -38,6 +41,18 @@ namespace Sci.Production.Centralized
             }
 
             return base.ClickSaveBefore();
+        }
+
+        protected override DualResult ClickSavePost()
+        {
+            if (this.CurrentMaintain.RowState == DataRowState.Added ||
+               (this.CurrentMaintain.RowState == DataRowState.Modified && this.CurrentMaintain.CompareDataRowVersionValue("Junk")))
+            {
+                DataTable dtSentSubprocess = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                Task.Run(() => new Guozi().SentSubprocessToAGV(dtSentSubprocess));
+            }
+
+            return base.ClickSavePost();
         }
 
         /// <inheritdoc/>

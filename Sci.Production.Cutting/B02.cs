@@ -4,7 +4,11 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using Ict;
+using Sci.Production.Automation;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Cutting
 {
@@ -27,6 +31,18 @@ namespace Sci.Production.Cutting
         {
             base.ClickEditAfter();
             txtCellNo.ReadOnly = true;
+        }
+
+        protected override DualResult ClickSavePost()
+        {
+            if (this.CurrentMaintain.RowState == DataRowState.Added || 
+                (this.CurrentMaintain.RowState == DataRowState.Modified && this.CurrentMaintain.CompareDataRowVersionValue("Junk")))
+            {
+                DataTable dtCuttingCell = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                Task.Run(() => new Guozi().SentCutCellToAGV(dtCuttingCell));
+            }
+
+            return base.ClickSavePost();
         }
     }
 }

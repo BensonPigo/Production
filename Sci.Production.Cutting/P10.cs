@@ -13,6 +13,10 @@ using Ict;
 using Sci.Win.Tools;
 using System.Linq;
 using System.Transactions;
+using static Sci.Production.Automation.Guozi;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Cutting
 {
@@ -588,7 +592,55 @@ order by bundlegroup"
                 }
                 scope.Complete();
             }
+
+            #region sent data to GZ WebAPI
+            string compareCol = "CutRef,OrderID,Article,PatternPanel,FabricPanelCode,SewingLineID,AddDate";
+            string compareDetailCol = "ID,BundleNo,PatternCode,PatternDesc,BundleGroup,SizeCode,Qty";
+            var listChangedDetail = ((DataTable)this.detailgridbs.DataSource).AsEnumerable();
+            if (this.CurrentMaintain.CompareDataRowVersionValue(compareCol))
+            {
+                listChangedDetail = listChangedDetail
+                    .Where(s => s.RowState == DataRowState.Added || s.RowState == DataRowState.Modified);
+            }
+            else
+            {
+                listChangedDetail = listChangedDetail
+                        .Where(s => s.RowState == DataRowState.Added || (s.RowState == DataRowState.Modified && s.CompareDataRowVersionValue(compareDetailCol)));
+            }
+            
+
+            if (listChangedDetail.Any())
+            {
+                List<BundleToAGV_PostBody> listBundleToAGV_PostBody = listChangedDetail.Select(
+                    dr => new BundleToAGV_PostBody()
+                    {
+                        ID = dr["ID"].ToString(),
+                        BundleNo = dr["BundleNo"].ToString(),
+                        CutRef = this.CurrentMaintain["CutRef"].ToString(),
+                        OrderID = this.CurrentMaintain["OrderID"].ToString(),
+                        Article = this.CurrentMaintain["Article"].ToString(),
+                        PatternPanel = this.CurrentMaintain["PatternPanel"].ToString(),
+                        FabricPanelCode = this.CurrentMaintain["FabricPanelCode"].ToString(),
+                        PatternCode = dr["PatternCode"].ToString(),
+                        PatternDesc = dr["PatternDesc"].ToString(),
+                        BundleGroup = (decimal)dr["BundleGroup"],
+                        SizeCode = dr["SizeCode"].ToString(),
+                        Qty = (decimal)dr["Qty"],
+                        SewingLineID = this.CurrentMaintain["SewingLineID"].ToString(),
+                        AddDate = (DateTime?)this.CurrentMaintain["AddDate"]
+                    }
+                    ).ToList();
+
+                Task.Run(() => new Guozi().SentBundleToAGV(() => listBundleToAGV_PostBody));
+            }
+            #endregion
+
             return base.ClickSavePost();
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
         }
 
         private void clear()

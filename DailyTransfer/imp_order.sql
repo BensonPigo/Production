@@ -599,6 +599,15 @@ BEGIN
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
 	--------------Order_Qty--------------------------Qty BreakDown
+	--抓出轉入order_qty有異動的資料，作為後續傳送給廠商資料的依據
+	Delete Production.dbo.AutomationOrderQty;
+
+	insert into Production.dbo.AutomationOrderQty(ID, Article, SizeCode)
+	select tradeoq.ID, tradeoq.Article, tradeoq.SizeCode
+	from Trade_To_Pms.dbo.order_qty tradeoq with (nolock)
+	inner join #Torder  b on tradeoq.id=b.id
+	left join Production.dbo.Order_Qty oq with (nolock) on tradeoq.id=oq.id AND tradeoq.ARTICLE=oq.ARTICLE AND tradeoq.sizeCode=oq.sizeCode
+	where oq.Qty <> tradeoq.Qty or oq.Qty is null
 
 	Merge Production.dbo.Order_Qty as t
 	Using (select a.* from Trade_To_Pms.dbo.order_qty a WITH (NOLOCK) inner join #Torder  b on a.id=b.id) as s

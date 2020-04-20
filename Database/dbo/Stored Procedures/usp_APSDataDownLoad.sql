@@ -33,6 +33,20 @@ BEGIN
 		EXECUTE usp_GetErrorInfo;
 	End Catch
 	
+	--sent data to GZ WebAPI 會在PPIC P07使用此temp table傳送異動資料
+	Create table #tmpSewingLineGZ
+	(
+		ID varchar(2) null,
+		FactoryID varchar(8) null,
+		[Action] varchar(5) null
+	)
+
+	Create table #tmpSewingScheduleGZ
+	(
+		ID bigint null,
+		[Action] varchar(5) null
+	)
+
 	DECLARE @sewingcell varchar(2),
 			@sewinglineid varchar(2),
 			@description nvarchar(500),
@@ -62,6 +76,7 @@ BEGIN
 			BEGIN
 				--當資料已存在PMS且值有改變就更新
 				IF isnull(@tmpcell,'') <> isnull(@sewingcell,'') or isnull(@tmpdesc,'') <> isnull(@description,'') or isnull(@tmpsewer,'') <> isnull(@sewer,'') or isnull(@Junk,0) <> isnull(@STATE,0)
+				begin
 					update SewingLine 
 					set SewingCell = isnull(@sewingcell,'')
 						, Description = isnull(@description,'')
@@ -69,16 +84,26 @@ BEGIN
 						, EditName = @login
 						, EditDate = GETDATE()
 						, Junk =@STATE  
+					output	INSERTED.ID,
+							INSERTED.FactoryID,
+							'U' as [Action]
+					into #tmpSewingLineGZ
 					where ID = @sewinglineid 
 						  and FactoryID = @factoryid;
+				end
 			END
 		ELSE
 			BEGIN
 				--當資料不存在PMS就新增資料
 				insert into SewingLine
 				(ID,Description,FactoryID,SewingCell,Sewer,AddName,AddDate,Junk) 
+				output	INSERTED.ID,
+						INSERTED.FactoryID,
+						'I' as [Action]
+				into #tmpSewingLineGZ
 				values 
 				(@sewinglineid,isnull(@description,''),@factoryid,isnull(@sewingcell,''),isnull(@sewer,0),@login, GETDATE(),@STATE);
+
 			END
 		FETCH NEXT FROM cursor_sewingline 
 		INTO @sewingcell,@sewinglineid,@description,@sewer,@STATE
@@ -113,6 +138,10 @@ BEGIN
 	BEGIN
 		delete 
 		from SewingLine 
+		output	deleted.ID,
+				deleted.FactoryID,
+				'D' as [Action]
+		into #tmpSewingLineGZ
 		where ID = @sewinglineid 
 			  and FactoryID = @factoryid;
 
@@ -942,6 +971,9 @@ BEGIN
 				
 				delete 
 				from SewingSchedule 
+				output	deleted.ID,
+						'D' as [Action]
+				into #tmpSewingScheduleGZ
 				where FactoryID = @factoryid 
 					  and APSNo = @apsno 
 					  and OrderID = @orderid 
@@ -1172,6 +1204,9 @@ BEGIN
 						,LNCSERIALNumber
 						,SwitchTime
 						)
+						output	inserted.ID,
+								'I' as [Action]
+						into #tmpSewingScheduleGZ
 						values (
 						@orderid
 						,@combotype
@@ -1364,6 +1399,9 @@ BEGIN
 									, SewLineEff = CONVERT(numeric(5,2),isnull( @SewLineEff*100,100))
 									, LNCSERIALNumber = @LNCSERIALNumber
 									, SwitchTime = isnull(@SwitchTime,0)
+								output	inserted.ID,
+										'U' as [Action]
+								into #tmpSewingScheduleGZ
 								where ID = @sewingscheduleid;
 
 								--更新SewingSchedule_Detail
@@ -1578,8 +1616,23 @@ BEGIN
 	)a
 
 	delete SewingSchedule 
+	output	deleted.ID,
+			'D' as [Action]
+	into #tmpSewingScheduleGZ
 	where id in (select id from #tmpID)
 
 	delete SewingSchedule_Detail 
 	where id in (select id from #tmpID)
+
+	select  s.ID,s.Junk from dbo.SewingLine s with (nolock) 
+        where   exists (select 1 from #tmpSewingLineGZ t where t.Action in ('I','U') and s.ID = t.ID and s.FactoryID = t.FactoryID)
+
+	select  s.ID,
+	        s.OrderID,
+	        s.SewingLineID,
+	        s.Inline,
+	        s.Offline,
+	        [StdOutput] = iif(isnull(s.TotalSewingTime,0) = 0, 0, (3600*s.Sewer)/s.TotalSewingTime) 
+	from    SewingSchedule s with (nolock)
+	where   exists (select 1 from #tmpSewingScheduleGZ t where t.Action in ('I','U') and s.ID = t.ID)
 END
