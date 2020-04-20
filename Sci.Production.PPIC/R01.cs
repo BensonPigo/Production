@@ -1232,7 +1232,9 @@ select  s.SewingLineID
                      ), '') as ClogQty
             , o.InspDate
             , s.StandardOutput
-            , [Eff] = ROUND(CONVERT(float ,(s.AlloQty * s.TotalSewingTime) / (s.sewer * s.workhour * 3600)) * 100,2)
+            , [Eff] = case when (s.sewer * s.workhour) = 0 then 0
+                      ELSE ROUND(CONVERT(float ,(s.AlloQty * s.TotalSewingTime) / (s.sewer * s.workhour * 3600)) * 100,2)
+                      END
             , o.KPILETA
             , o.MTLETA
             , o.MTLExport
@@ -1495,7 +1497,9 @@ select  s.SewingLineID
             , o.StyleID 
             , o.InspDate
             , s.StandardOutput 
-            , [Eff] = ROUND(CONVERT(float ,(s.AlloQty * s.TotalSewingTime) / (s.sewer * s.workhour * 3600)) * 100,2)
+            , [Eff] = case when (s.sewer * s.workhour) = 0 then 0
+                      ELSE ROUND(CONVERT(float ,(s.AlloQty * s.TotalSewingTime) / (s.sewer * s.workhour * 3600)) * 100,2)
+                      END
             , o.KPILETA  
             , o.MTLETA
             , o.MTLExport
