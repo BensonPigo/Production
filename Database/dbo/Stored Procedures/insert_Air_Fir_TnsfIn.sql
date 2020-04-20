@@ -244,11 +244,9 @@ WHEN MATCHED THEN
 
 WHEN NOT MATCHED by TARGET THEN 
 	insert  ([ID]           ,[Roll]           ,[Dyelot]           ,[Scale]           ,[Inspdate]           ,[Inspector]           ,[Result]
-            ,[Remark]       ,[AddName]        ,[AddDate]          ,[EditName]        ,[EditDate]           ,[TicketYds]
-			)
-	values(  s.FirID   ,s.Roll      ,s.Dyelot      ,'4-5'                ,GetDate()                 ,'SCIMIS'                 ,'Pass'
-	        ,''             ,@LoginID         ,GETDATE()          ,''                ,NULL                 ,s.TransferInQty 
-			)
+            ,[Remark]       ,[AddName]        ,[AddDate]          ,[EditName]        ,[EditDate]           ,[TicketYds])
+	values(  s.FirID   ,s.Roll      ,s.Dyelot      ,''                ,NULL                 ,''                    ,''
+	        ,''             ,@LoginID         ,GETDATE()          ,''                ,NULL                 ,s.TransferInQty )
 ;
 
 END

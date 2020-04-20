@@ -65,6 +65,8 @@
             this.txtsupplier = new Sci.Production.Class.txtsupplier();
             this.txtShadeboneInspector = new Sci.Win.UI.TextBox();
             this.labinspector = new Sci.Win.UI.Label();
+            this.btnInspectedallpass = new Sci.Win.UI.Button();
+            this.button1 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -72,6 +74,8 @@
             // 
             // btmcont
             // 
+            this.btmcont.Controls.Add(this.button1);
+            this.btmcont.Controls.Add(this.btnInspectedallpass);
             this.btmcont.Controls.Add(this.btnPrintFormatReport);
             this.btmcont.Controls.Add(this.btnToExcel);
             this.btmcont.Location = new System.Drawing.Point(0, 693);
@@ -83,6 +87,8 @@
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.btnToExcel, 0);
             this.btmcont.Controls.SetChildIndex(this.btnPrintFormatReport, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnInspectedallpass, 0);
+            this.btmcont.Controls.SetChildIndex(this.button1, 0);
             // 
             // gridcont
             // 
@@ -383,7 +389,7 @@
             this.btnToExcel.Location = new System.Drawing.Point(627, 5);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(90, 30);
-            this.btnToExcel.TabIndex = 132;
+            this.btnToExcel.TabIndex = 130;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
             this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
@@ -419,7 +425,7 @@
             this.btnPrintFormatReport.Location = new System.Drawing.Point(476, 5);
             this.btnPrintFormatReport.Name = "btnPrintFormatReport";
             this.btnPrintFormatReport.Size = new System.Drawing.Size(145, 30);
-            this.btnPrintFormatReport.TabIndex = 140;
+            this.btnPrintFormatReport.TabIndex = 129;
             this.btnPrintFormatReport.Text = "Print Format Report";
             this.btnPrintFormatReport.UseVisualStyleBackColor = true;
             this.btnPrintFormatReport.Click += new System.EventHandler(this.btnPrintFormatReport_Click);
@@ -460,6 +466,28 @@
             this.labinspector.Size = new System.Drawing.Size(143, 23);
             this.labinspector.TabIndex = 229;
             this.labinspector.Text = "Shadebone Inspector";
+            // 
+            // btnInspectedallpass
+            // 
+            this.btnInspectedallpass.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnInspectedallpass.Location = new System.Drawing.Point(309, 5);
+            this.btnInspectedallpass.Name = "btnInspectedallpass";
+            this.btnInspectedallpass.Size = new System.Drawing.Size(161, 30);
+            this.btnInspectedallpass.TabIndex = 128;
+            this.btnInspectedallpass.Text = "Inspected all pass";
+            this.btnInspectedallpass.UseVisualStyleBackColor = true;
+            this.btnInspectedallpass.Click += new System.EventHandler(this.BtnInspectedallpass_Click);
+            // 
+            // button1
+            // 
+            this.button1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.button1.Location = new System.Drawing.Point(142, 5);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(161, 30);
+            this.button1.TabIndex = 131;
+            this.button1.Text = "Inspected all Fail";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
             // P01_ShadeBond
             // 
@@ -504,6 +532,7 @@
             this.GridUniqueKey = "Roll,Dyelot";
             this.KeyField1 = "ID";
             this.Name = "P01_ShadeBond";
+            this.OnLineHelpID = "Sci.Win.Subs.Input4";
             this.Text = "Shade Band ";
             this.WorkAlias = "Fir_shadebone";
             this.Controls.SetChildIndex(this.labelSP, 0);
@@ -590,5 +619,7 @@
         private System.Windows.Forms.Button btnPrintFormatReport;
         private Win.UI.TextBox txtShadeboneInspector;
         private Win.UI.Label labinspector;
+        private Win.UI.Button btnInspectedallpass;
+        private Win.UI.Button button1;
     }
 }

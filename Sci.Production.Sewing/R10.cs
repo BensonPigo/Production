@@ -163,7 +163,8 @@ select distinct
     ,o.SewLine
 into #tmp_orders
 from Orders o WITH (NOLOCK) 
-where o.Category in ('B','S')
+inner join Factory F on o.FactoryID=F.ID 
+where o.Category in ('B','S') and F.IsProduceFty=1
 {0}
 
 select o.*

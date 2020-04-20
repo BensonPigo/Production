@@ -125,6 +125,7 @@ namespace Sci.Production.Quality
         {
             
             base.OnRequeryPost(datas);
+            datas.Columns.Add("Selected", typeof(bool));
             datas.Columns.Add("Name", typeof(string));
             datas.Columns.Add("POID", typeof(string));
             datas.Columns.Add("SEQ1", typeof(string));
@@ -132,6 +133,7 @@ namespace Sci.Production.Quality
 
             foreach (DataRow dr in datas.Rows)
             {
+                dr["Selected"] = false;
                 dr["Name"] = MyUtility.GetValue.Lookup("Name", dr["Inspector"].ToString(), "Pass1", "ID");
                 dr["poid"] = maindr["poid"];
                 dr["SEQ1"] = maindr["SEQ1"];
@@ -146,65 +148,7 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorTextColumnSettings Scalecell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings ResulCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
             DataGridViewGeneratorTextColumnSettings InspectorCell = new DataGridViewGeneratorTextColumnSettings();
-
-            #region Roll
-            // 2018/12/13 ISP20181179 Benson註解
-            //Rollcell.EditingMouseDown += (s, e) =>
-            //{
-            //    if (this.EditMode == false) return;
-            //    if (e.RowIndex == -1) return;
-            //    if (e.Button == MouseButtons.Right)
-            //    {
-            //        // Parent form 若是非編輯狀態就 return 
-            //        DataRow dr = grid.GetDataRow(e.RowIndex);
-            //        SelectItem sele;
-            //        string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
-            //        sele = new SelectItem(roll_cmd, "15,10,10",dr["roll"].ToString(), false, ",");
-            //        DialogResult result = sele.ShowDialog();
-            //        if (result == DialogResult.Cancel) { return; }
-            //        dr["Roll"] = sele.GetSelecteds()[0]["Roll"].ToString().Trim();
-            //        dr["Dyelot"] = sele.GetSelecteds()[0]["Dyelot"].ToString().Trim();
-            //        dr["Ticketyds"] = sele.GetSelecteds()[0]["StockQty"].ToString().Trim();
-            //    }
-            //};
-            //Rollcell.CellValidating += (s, e) =>
-            //{
-            //    DataRow dr = grid.GetDataRow(e.RowIndex);
-            //    string oldvalue = dr["Roll"].ToString();
-            //    string newvalue = e.FormattedValue.ToString();
-            //    if (!this.EditMode) return;//非編輯模式 
-            //    if (e.RowIndex == -1) return; //沒東西 return
-            //    if (MyUtility.Check.Empty(e.FormattedValue))//沒填入資料,清空dyelot
-            //    {
-            //        dr["Roll"] = "";
-            //        dr["Dyelot"] = "";
-            //        dr["Ticketyds"] = 0.00;
-            //        return;
-            //    }
-
-            //    if (oldvalue == newvalue) return;
-            //    string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
-            //    DataRow roll_dr;
-            //    if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
-            //    {
-            //        dr["Roll"] = roll_dr["Roll"];
-            //        dr["Dyelot"] = roll_dr["Dyelot"];
-            //        dr["Ticketyds"] = roll_dr["StockQty"];
-            //        dr.EndEdit();
-            //    }
-            //    else
-            //    {
-            //        dr["Roll"] = "";
-            //        dr["Dyelot"] = "";
-            //        dr["Ticketyds"] = 0.00;
-            //        dr.EndEdit();
-            //        e.Cancel = true;
-            //        MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!", e.FormattedValue));
-            //        return;
-            //    }  
-            //};
-            #endregion
-
+            
             #region Scale
             Scalecell.CellValidating += (s, e) =>
             {
@@ -313,6 +257,7 @@ namespace Sci.Production.Quality
 
 
             Helper.Controls.Grid.Generator(this.grid)
+            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0, iseditable: true)
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: Rollcell)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Ticketyds", header: "Ticket Yds", width: Widths.AnsiChars(7), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
@@ -360,42 +305,6 @@ namespace Sci.Production.Quality
         protected override bool OnSaveBefore()
         {
             DataTable gridTb = (DataTable)gridbs.DataSource;
-            #region 判斷空白不可存檔
-            // 2018/12/13 ISP20181179 取消save時,Roll,Scale,Result,Inspdate,Inspector 空白不可存檔的判斷 
-            //DataRow[] drArray;
-            //drArray = gridTb.Select("Roll=''");
-            //if (drArray.Length != 0)
-            //{
-            //    MyUtility.Msg.WarningBox("<Roll> can not be empty.");
-            //    return false;
-            //}
-            //drArray = gridTb.Select("Scale=''");
-            //if (drArray.Length != 0)
-            //{
-            //    MyUtility.Msg.WarningBox("<Scale> can not be empty.");
-            //    return false;
-            //}
-
-            //drArray = gridTb.Select("Result=''");
-            //if (drArray.Length != 0)
-            //{
-            //    MyUtility.Msg.WarningBox("<Rresult> can not be empty.");
-            //    return false;
-            //}
-            //drArray = gridTb.Select("Inspdate is null");
-            //if (drArray.Length != 0)
-            //{
-            //    MyUtility.Msg.WarningBox("<Insection Date> can not be empty.");
-            //    return false;
-            //}
-            //drArray = gridTb.Select("inspector=''");
-            //if (drArray.Length != 0)
-            //{
-            //    MyUtility.Msg.WarningBox("<Inspector> can not be empty.");
-            //    return false;
-            //}
-            #endregion
-
 
             return base.OnSaveBefore();
         }
@@ -717,7 +626,6 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             this.delete.Visible = false;
         }
 
-
         private void button_enable()
         {
             if (maindr == null) return;
@@ -928,6 +836,43 @@ select Roll,Dyelot,TicketYds,Scale,Result
             frm.MdiParent = MdiParent;
             frm.Show();
 
+        }
+
+        private void BtnInspectedallpass_Click(object sender, EventArgs e)
+        {
+            this.grid.ValidateControl();
+            DataRow[] drs = ((DataTable)this.gridbs.DataSource).Select("Selected = 1");
+            if (drs.Length == 0)
+            {
+                return;
+            }
+
+            foreach (DataRow item in drs)
+            {
+                item["Scale"] = "4-5";
+                item["Result"] = "Pass";
+                item["Inspdate"] = DateTime.Now.ToShortDateString();
+                item["Inspector"] = loginID;
+                item["Name"] = MyUtility.GetValue.Lookup("Name", loginID, "Pass1", "ID");
+            }
+        }
+
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            this.grid.ValidateControl();
+            DataRow[] drs = ((DataTable)this.gridbs.DataSource).Select("Selected = 1");
+            if (drs.Length == 0)
+            {
+                return;
+            }
+
+            foreach (DataRow item in drs)
+            {
+                item["Result"] = "Fail";
+                item["Inspdate"] = DateTime.Now.ToShortDateString();
+                item["Inspector"] = loginID;
+                item["Name"] = MyUtility.GetValue.Lookup("Name", loginID, "Pass1", "ID");
+            }
         }
     }
 }
