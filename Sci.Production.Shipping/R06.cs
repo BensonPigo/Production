@@ -186,7 +186,8 @@ select
 		,[Invoice ]= s.InvNo
 		,[ExportINV] =  sp.InvNo
 		,[CurrencyID]= sp.CurrencyID
-		,[Amount]= isnull(sp.AmtFty,0) + isnull(sp.AmtOther,0) / iif(isnull(s.APPExchageRate,0) = 0 or '{this.rateType}' = '' ,1 ,s.APPExchageRate)
+		,[Amount]= iif(isnull(s.APPExchageRate,0) = 0, 0,
+            (isnull(sp.AmtFty,0) + isnull(sp.AmtOther,0)) / iif('{this.rateType}' = '' ,1 ,s.APPExchageRate))
 		,[AccountID]= ISNULL(sp.AccountID , ShippingAP_Deatai.AccountID)
 		,[AccountName]= ISNULL(an.Name, ShippingAP_Deatai.AccountName)
         ,[SPNO] = air.OrderID
