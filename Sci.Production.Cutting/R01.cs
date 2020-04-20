@@ -80,20 +80,22 @@ namespace Sci.Production.Cutting
             #region 起手資料
             cmd = $@"
 SELECT *
-FROM SewingSchedule WITH(NOLOCK)
-WHERE ( 
-	(Cast(Inline as Date) >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}' AND Cast( Inline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' )
+FROM SewingSchedule s WITH(NOLOCK)
+INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID
+WHERE o.LocalOrder = 0
+AND ( 
+	(Cast(s.Inline as Date) >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}' AND Cast( s.Inline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' )
 	OR
-	(Cast(Offline as Date) >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}' AND Cast( Offline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' )
+	(Cast(s.Offline as Date) >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}' AND Cast( s.Offline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' )
 )
 ";
             if (!MyUtility.Check.Empty(this.MDivisionID))
             {
-                cmd += Environment.NewLine + $@"AND MDivisionID='{this.MDivisionID}'";
+                cmd += Environment.NewLine + $@"AND s.MDivisionID='{this.MDivisionID}'";
             }
             if (!MyUtility.Check.Empty(this.FactoryID))
             {
-                cmd += Environment.NewLine + $@"AND FactoryID='{this.FactoryID}'";
+                cmd += Environment.NewLine + $@"AND s.FactoryID='{this.FactoryID}'";
             }
 
             result = DBProxy.Current.Select(null, cmd, out dt);
@@ -388,23 +390,26 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
 
 SELECT  DISTINCT OrderID
 INTO #OrderList
-FROM SewingSchedule WITH(NOLOCK)
-WHERE ( 
-	(Cast(Inline as Date) >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}' AND Cast( Inline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' )
+FROM SewingSchedule s WITH(NOLOCK)
+INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID
+WHERE o.LocalOrder = 0
+AND ( 
+	(Cast(s.Inline as Date) >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}' AND Cast( s.Inline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' )
 	OR
-	(Cast(Offline as Date) >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}' AND Cast( Offline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' )
+	(Cast(s.Offline as Date) >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}' AND Cast( s.Offline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' )
 )
 ";
             if (!MyUtility.Check.Empty(this.MDivisionID))
             {
-                cmd += Environment.NewLine + $@"AND MDivisionID='{this.MDivisionID}'";
+                cmd += Environment.NewLine + $@"AND s.MDivisionID='{this.MDivisionID}'";
             }
             if (!MyUtility.Check.Empty(this.FactoryID))
             {
-                cmd += Environment.NewLine + $@"AND FactoryID='{this.FactoryID}'";
+                cmd += Environment.NewLine + $@"AND s.FactoryID='{this.FactoryID}'";
             }
 
             cmd += $@"
+
 SELECT DIStINCT  b.POID ,a.OrderID ,b.FtyGroup
 FROM #OrderList a
 INNER JOIN Orders b ON a.OrderID= b.ID 
