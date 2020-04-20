@@ -27,6 +27,7 @@ namespace Sci.Production.Shipping
         private string blno2;
         private string supplier;
         private string mDivision;
+        private string rateType;
         private int orderby;
         private DataTable printData;
 
@@ -47,6 +48,7 @@ namespace Sci.Production.Shipping
             this.comboM.Text = Sci.Env.User.Keyword;
 
             MyUtility.Tool.SetupCombox(this.comboOrderby, 1, 1, "M,B/L No.");
+            MyUtility.Tool.SetupCombox(this.comboRateType, 2, 1, ",Original currency,FX,Fixed exchange rate,KP,KPI exchange rate");
             this.comboOrderby.SelectedIndex = 0;
             this.radioDetail.Checked = true;
         }
@@ -71,6 +73,7 @@ namespace Sci.Production.Shipping
             this.blno2 = this.txtBLNoEnd.Text;
             this.supplier = this.txtSubconSupplier.TextBox1.Text;
             this.orderby = this.comboOrderby.SelectedIndex;
+            this.rateType = this.comboRateType.SelectedValue.ToString();
 
             return base.ValidateInput();
         }
@@ -81,7 +84,7 @@ namespace Sci.Production.Shipping
             StringBuilder sqlCmd = new StringBuilder();
             if (this.radioDetail.Checked == true)
             {
-                sqlCmd.Append(@"select	s.Type,
+                sqlCmd.Append($@"select	s.Type,
         s.SubType,
 		Supplier = s.LocalSuppID+'-'+ISNULL(ls.Abb,''),
 		s.ID,
@@ -90,7 +93,7 @@ namespace Sci.Production.Shipping
 		s.[ApvDate],
 		s.[MDivisionID],
 		s.[CurrencyID],
-		s.[Amount],
+		[Amount] = s.[Amount] * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID, 'USD', s.CDate)),
 		s.[BLNo],
 		s.[Remark],
 		s.[InvNo],
@@ -106,7 +109,7 @@ namespace Sci.Production.Shipping
 		sd.[CurrencyID],
 		sd.[Price],
 		sd.[Rate],
-		sd.[Amount],
+		[Amount] = sd.[Amount] * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID, 'USD', s.CDate)),
 		sd.[Remark],
 		se.AccountID,
 		an.Name
@@ -119,7 +122,7 @@ where s.Status = 'Approved'");
             }
             else if (this.radioByInvWK.Checked)
             {
-                sqlCmd.Append(@"select
+                sqlCmd.Append($@"select
         s.Type,
         s.SubType,
 		Supplier = s.LocalSuppID+'-'+ISNULL(ls.Abb,''),
@@ -130,7 +133,7 @@ where s.Status = 'Approved'");
 		s.[ApvDate],
 		s.[MDivisionID],
 		s.[CurrencyID],
-		[APAmt]=s.[Amount],
+		[APAmt]=s.[Amount] * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate)),
 		s.[BLNo],
 		s.[Remark],
 		[Invoice ]= s.InvNo,
@@ -141,7 +144,7 @@ where s.Status = 'Approved'");
                             else ''
                         end
 		,[CurrencyID]= ISNULL(sh.CurrencyID , ShippingAP_Deatai.CurrencyID)
-		,[Amount]= ISNULL(sh.Amount , ShippingAP_Deatai.Amount)
+		,[Amount]= ISNULL(sh.Amount , ShippingAP_Deatai.Amount) * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
 		,[AccountID]= ISNULL(sh.AccountID , ShippingAP_Deatai.AccountID)
 		,[AccountName]= ISNULL(an.Name, ShippingAP_Deatai.AccountName)
 from ShippingAP s WITH (NOLOCK)
@@ -165,7 +168,7 @@ where s.Status = 'Approved'");
             }
             else if (this.radioByAPP.Checked)
             {
-                sqlCmd.Append(@"
+                sqlCmd.Append($@"
 select
         s.Type
         ,s.SubType
@@ -177,13 +180,14 @@ select
 		,s.[ApvDate]
 		,s.[MDivisionID]
 		,s.[CurrencyID]
-		,[APAmt]=s.[Amount]
+		,[APAmt]=s.[Amount] * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
 		,s.[BLNo]
 		,s.[Remark]
 		,[Invoice ]= s.InvNo
 		,[ExportINV] =  sp.InvNo
 		,[CurrencyID]= sp.CurrencyID
-		,[Amount]= isnull(sp.AmtFty,0) + isnull(sp.AmtOther,0)
+		,[Amount]= iif(isnull(s.APPExchageRate,0) = 0, 0,
+            (isnull(sp.AmtFty,0) + isnull(sp.AmtOther,0)) / iif('{this.rateType}' = '' ,1 ,s.APPExchageRate))
 		,[AccountID]= ISNULL(sp.AccountID , ShippingAP_Deatai.AccountID)
 		,[AccountName]= ISNULL(an.Name, ShippingAP_Deatai.AccountName)
         ,[SPNO] = air.OrderID
@@ -218,7 +222,7 @@ where s.Status = 'Approved'");
             }
             else
             {
-                sqlCmd.Append(@"
+                sqlCmd.Append($@"
 select s.Type
         ,s.SubType
         ,s.LocalSuppID+'-'+ISNULL(l.Abb,'') as Supplier
@@ -228,7 +232,7 @@ select s.Type
         ,CONVERT(DATE,s.ApvDate) as ApvDate
         ,s.MDivisionID
         ,s.CurrencyID
-        ,s.Amount+s.VAT as Amt
+        ,[Amt] = (s.Amount + s.VAT) * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID, 'USD', s.CDate))
         ,s.BLNo
         ,s.Remark
         ,s.InvNo
@@ -346,7 +350,7 @@ where s.Status = 'Approved'");
             {
                 strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetail.xltx";
             }
-            else if (this.radioSummary.Checked)
+            else if (this.radioByInvWK.Checked)
             {
                 strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByInvWK.xltx";
             }
@@ -370,16 +374,34 @@ where s.Status = 'Approved'");
             if (this.radioDetail.Checked == true)
             {
                 Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetail.xltx", excel);
+                if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
+                {
+                    excel.ActiveWorkbook.Worksheets[1].Cells[1, 10] = excel.ActiveWorkbook.Worksheets[1].Cells[1, 10].Value + "\r\n(USD)";
+                    excel.ActiveWorkbook.Worksheets[1].Cells[1, 22] = excel.ActiveWorkbook.Worksheets[1].Cells[1, 22].Value + "\r\n(USD)";
+                }
+
                 com.WriteTable(this.printData, 2);
             }
             else if (this.radioByInvWK.Checked == true)
             {
                 Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByInvWK.xltx", excel);
+                if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
+                {
+                    excel.ActiveWorkbook.Worksheets[1].Cells[1, 11] = excel.ActiveWorkbook.Worksheets[1].Cells[1, 11].Value + "\r\n(USD)";
+                    excel.ActiveWorkbook.Worksheets[1].Cells[1, 17] = excel.ActiveWorkbook.Worksheets[1].Cells[1, 17].Value + "\r\n(USD)";
+                }
+
                 com.WriteTable(this.printData, 2);
             }
             else if (this.radioByAPP.Checked == true)
             {
                 Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByAPP.xltx", excel);
+                if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
+                {
+                    excel.ActiveWorkbook.Worksheets[1].Cells[1, 11] = excel.ActiveWorkbook.Worksheets[1].Cells[1, 11].Value + "\r\n(USD)";
+                    excel.ActiveWorkbook.Worksheets[1].Cells[1, 17] = excel.ActiveWorkbook.Worksheets[1].Cells[1, 17].Value + "\r\n(USD)";
+                }
+
                 com.WriteTable(this.printData, 2);
             }
             else
@@ -405,6 +427,11 @@ where s.Status = 'Approved'");
                     objArray[0, 13] = MyUtility.Check.Empty(dr["ExportInv"]) ? string.Empty : dr["ExportInv"];
                     worksheet.Range[string.Format("A{0}:N{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
+                }
+
+                if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
+                {
+                    worksheet.Cells[2, 10] = worksheet.Cells[2, 10].Value + "\r\n(USD)";
                 }
             }
 
