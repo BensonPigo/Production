@@ -121,6 +121,7 @@ namespace Sci.Production.PPIC
 	                    ,[Description] = isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),PPICReasonID)
 	                    ,[OnTime] = IIF(l.Status = 'Received',IIF(DATEDIFF(ss,l.ApvDate,l.EditDate) <= {1},'Y','N'),'N')
 	                    ,l.Remark
+                        ,ld.Process
                     from Lack l WITH (NOLOCK) 
                     inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
                     left join SewingLine s WITH (NOLOCK) on s.ID = l.SewingLineID AND S.FactoryID=L.FactoryID
@@ -252,7 +253,7 @@ order by MDivisionID,FactoryID",
             // 填各工廠的明細資料
             string xlsFactory = string.Empty;
             int xlsSheet = 1, ttlCount = 0, intRowsStart = 7;
-            object[,] objArray = new object[1, 17];
+            object[,] objArray = new object[1, 18];
             foreach (DataRow dr in this.printData.Rows)
             {
                 if (MyUtility.Convert.GetString(dr["FactoryID"]) != xlsFactory)
@@ -262,12 +263,12 @@ order by MDivisionID,FactoryID",
                         worksheet.Cells[3, 5] = string.Format("=COUNTA(C7:C{0})", MyUtility.Convert.GetString(ttlCount + 6));
                         if (this.reportType == 0)
                         {
-                            worksheet.Cells[4, 5] = string.Format("=COUNTIF(P7:P{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
+                            worksheet.Cells[4, 5] = string.Format("=COUNTIF(Q7:Q{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
                             worksheet.Cells[3, 16] = string.Format("=SUM(L7:L{0})", MyUtility.Convert.GetString(ttlCount + 6));
                         }
                         else
                         {
-                            worksheet.Cells[4, 5] = string.Format("=COUNTIF(O7:O{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
+                            worksheet.Cells[4, 5] = string.Format("=COUNTIF(P7:P{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
                             worksheet.Cells[3, 15] = string.Format("=SUM(J7:J{0})", MyUtility.Convert.GetString(ttlCount + 6));
                         }
                     }
@@ -300,9 +301,10 @@ order by MDivisionID,FactoryID",
                     objArray[0, 11] = dr["IssueQty"];
                     objArray[0, 12] = dr["FinishedDate"];
                     objArray[0, 13] = dr["Type"];
-                    objArray[0, 14] = dr["Description"];
-                    objArray[0, 15] = dr["OnTime"];
-                    objArray[0, 16] = dr["Remark"];
+                    objArray[0, 14] = dr["Process"];
+                    objArray[0, 15] = dr["Description"];
+                    objArray[0, 16] = dr["OnTime"];
+                    objArray[0, 17] = dr["Remark"];
                 }
                 else
                 {
@@ -310,25 +312,26 @@ order by MDivisionID,FactoryID",
                     objArray[0, 10] = dr["IssueQty"];
                     objArray[0, 11] = dr["FinishedDate"];
                     objArray[0, 12] = dr["Type"];
-                    objArray[0, 13] = dr["Description"];
-                    objArray[0, 14] = dr["OnTime"];
-                    objArray[0, 15] = dr["Remark"];
-                    objArray[0, 16] = string.Empty;
+                    objArray[0, 13] = dr["Process"];
+                    objArray[0, 14] = dr["Description"];
+                    objArray[0, 15] = dr["OnTime"];
+                    objArray[0, 16] = dr["Remark"];
+                    objArray[0, 17] = string.Empty;
                 }
 
-                worksheet.Range[string.Format("A{0}:Q{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:P{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
             worksheet.Cells[3, 5] = string.Format("=COUNTA(C7:C{0})", MyUtility.Convert.GetString(ttlCount + 6));
             if (this.reportType == 0)
             {
-                worksheet.Cells[4, 5] = string.Format("=COUNTIF(P7:P{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
+                worksheet.Cells[4, 5] = string.Format("=COUNTIF(Q7:Q{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
                 worksheet.Cells[3, 16] = string.Format("=SUM(L7:L{0})", MyUtility.Convert.GetString(ttlCount + 6));
             }
             else
             {
-                worksheet.Cells[4, 5] = string.Format("=COUNTIF(O7:O{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
+                worksheet.Cells[4, 5] = string.Format("=COUNTIF(P7:P{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
                 worksheet.Cells[3, 15] = string.Format("=SUM(J7:J{0})", MyUtility.Convert.GetString(ttlCount + 6));
             }
 
