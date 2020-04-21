@@ -128,7 +128,8 @@ namespace Sci.Production.PublicPrg
                     }
                 }
             }
-
+        }
+        #endregion;
         /// <summary>
         /// 取得Cutting成套的數量
         /// </summary>
