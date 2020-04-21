@@ -19,7 +19,6 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.dateConfirm.Value2 = DateTime.Today.AddDays(-1);
             this.dateConfirm.Focus1();
         }
 

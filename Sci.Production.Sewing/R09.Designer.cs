@@ -110,6 +110,7 @@
             this.dateConfirm.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateConfirm.DateBox2.TabIndex = 1;
             this.dateConfirm.DateBox2.Validating += new System.ComponentModel.CancelEventHandler(this.DateRange1_DateBox2_Validating);
+            this.dateConfirm.IsRequired = false;
             this.dateConfirm.Location = new System.Drawing.Point(120, 12);
             this.dateConfirm.Name = "dateConfirm";
             this.dateConfirm.Size = new System.Drawing.Size(280, 23);
@@ -118,6 +119,8 @@
             // chkOnlyshowBalanceQty
             // 
             this.chkOnlyshowBalanceQty.AutoSize = true;
+            this.chkOnlyshowBalanceQty.Checked = true;
+            this.chkOnlyshowBalanceQty.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkOnlyshowBalanceQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkOnlyshowBalanceQty.Location = new System.Drawing.Point(22, 129);
             this.chkOnlyshowBalanceQty.Name = "chkOnlyshowBalanceQty";
