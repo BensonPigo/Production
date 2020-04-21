@@ -215,6 +215,30 @@ where sd.ID = '{0}'", masterID);
             string sql = "select top 1 Vessel from Export where blno = @blno";
             this.disVesselName.Text = this.CurrentMaintain["Type"].ToString().Equals("IMPORT") && !MyUtility.Check.Empty(this.CurrentMaintain["BLNo"]) ? MyUtility.GetValue.Lookup(sql, listPara) : string.Empty;
             this.IncludeFoundryRefresh(MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"]));
+
+            if ( this.CurrentMaintain["Status"].ToString() != "Approved" && this.EditMode)
+            {
+                string LocalSuppID = this.CurrentMaintain["LocalSuppID"].ToString();
+
+                string IsFactory =MyUtility.GetValue.Lookup($@"SELECT IsFactory FROM LocalSupp WHERE ID = '{LocalSuppID}'");
+
+                if (MyUtility.Check.Empty(IsFactory) ? false : Convert.ToBoolean(IsFactory))
+                {
+                    this.txtcurrency.ReadOnly = false;
+                    this.txtcurrency.IsSupportEditMode = true;
+                }
+                else
+                {
+                    this.txtcurrency.ReadOnly = true;
+                    this.txtcurrency.IsSupportEditMode = false;
+                }
+            }
+            else
+            {
+                this.txtcurrency.ReadOnly = true;
+                this.txtcurrency.IsSupportEditMode = false;
+            }
+
         }
 
         private void IncludeFoundryRefresh(string blNo)
@@ -504,7 +528,7 @@ and Junk = 0",
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["CurrencyID"]))
             {
-                this.displayCurrency.Focus();
+                this.txtcurrency.Focus();
                 MyUtility.Msg.WarningBox("Currency cannot be empty!!");
                 return false;
             }
@@ -1188,6 +1212,41 @@ Non SP# Sample/Mock-up
                 };
                 string sql = "select top 1 Vessel from Export where blno = @blno";
                 this.disVesselName.Text = MyUtility.GetValue.Lookup(sql, listPara);
+            }
+        }
+
+        private void txtSubconSupplier_Validating(object sender, CancelEventArgs e)
+        {
+
+            string LocalSuppID = this.txtSubconSupplier.TextBox1.Text;
+
+            DataTable dt;
+            DBProxy.Current.Select(null, $@"SELECT * FROM LocalSupp WHERE ID = '{LocalSuppID}'", out dt);
+
+            if (dt.Rows.Count > 0)
+            {
+                string IsFactory = dt.Rows[0]["IsFactory"].ToString();
+                string CurrencyID = dt.Rows[0]["CurrencyID"].ToString();
+
+                this.CurrentMaintain["LocalSuppID"] = LocalSuppID;
+                this.CurrentMaintain["CurrencyID"] = CurrencyID;
+
+                if (MyUtility.Check.Empty(IsFactory) ? false : Convert.ToBoolean(IsFactory))
+                {
+                    this.txtcurrency.ReadOnly = false;
+                    this.txtcurrency.IsSupportEditMode = true;
+                }
+                else
+                {
+                    this.txtcurrency.ReadOnly = true;
+                    this.txtcurrency.IsSupportEditMode = false;
+                }
+
+            }
+            else
+            {
+                this.txtcurrency.ReadOnly = true;
+                this.txtcurrency.IsSupportEditMode = false;
             }
         }
     }
