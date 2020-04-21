@@ -70,6 +70,7 @@ namespace Sci.Production.Warehouse
             grid2Data.Columns.Add("DataFrom", typeof(String));
             grid2Data.Columns.Add("ErrMsg", typeof(String));
             grid2Data.Columns.Add("CanWriteIn", typeof(bool));
+            grid2Data.Columns.Add("Fabric", typeof(String));
 
             listControlBindingSource2.DataSource = grid2Data;
             gridPoid.DataSource = listControlBindingSource2;
@@ -79,6 +80,7 @@ namespace Sci.Production.Warehouse
             Helper.Controls.Grid.Generator(this.gridPoid)
                 .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //1
                 .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
+                .Text("Fabric", header: "Fabric \r\n Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: false)    //3
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: false)    //4
                 .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 7, iseditingreadonly: true)
