@@ -19,7 +19,6 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.dateConfirm.Value2 = DateTime.Today.AddDays(-1);
             this.dateConfirm.Focus1();
         }
 
@@ -28,13 +27,6 @@ namespace Sci.Production.Sewing
 
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(this.dateConfirm.Value1) || MyUtility.Check.Empty(this.dateConfirm.Value2))
-            {
-                MyUtility.Msg.WarningBox("Confirm Date must enter!");
-                this.dateConfirm.Focus1();
-                return false;
-            }
-
             string where = string.Empty;
 
             if (!MyUtility.Check.Empty(this.dateConfirm.Value1))
@@ -56,10 +48,29 @@ namespace Sci.Production.Sewing
             {
                 where += "\r\n" + $"and o.FtyGroup='{this.txtfactory1.Text}'";
             }
-
-            if (this.chkNotComplete.Checked)
+            if (!MyUtility.Check.Empty(this.txtSP1.Text) || !MyUtility.Check.Empty(this.txtSP2.Text))
             {
-                where += "\r\n" + $"and isnull(s.QAQty,0)-isnull(oq.Qty,0) < 0";
+                if (!MyUtility.Check.Empty(this.txtSP1.Text) && !MyUtility.Check.Empty(this.txtSP2.Text))
+                {
+                    where += string.Format(
+                        @" and ((oca.OrderID = '{0}' or oca.ToOrderID = '{0}')
+                                or (oca.OrderID = '{1}' or oca.ToOrderID = '{1}'))",
+                        this.txtSP1.Text,
+                        this.txtSP2.Text);
+                }
+                else if (!MyUtility.Check.Empty(this.txtSP1.Text))
+                {
+                    where += string.Format(" and (oca.OrderID = '{0}' or oca.ToOrderID = '{0}')", this.txtSP1.Text);
+                }
+                else if (!MyUtility.Check.Empty(this.txtSP2.Text))
+                {
+                    where += string.Format(" and (oca.OrderID = '{0}' or oca.ToOrderID = '{0}')", this.txtSP2.Text);
+                }
+            }
+
+            if (this.chkOnlyshowBalanceQty.Checked)
+            {
+                where += "\r\n" + $"and isnull(sF.QAQty,0)-isnull(oqF.Qty,0) > 0";
             }
 
             // 列出異動清單，可以讓工廠清楚的知道訂單數量的去向
@@ -69,6 +80,7 @@ namespace Sci.Production.Sewing
 select distinct
 	o.MDivisionID,
 	o.FactoryID,
+    oca.ID,
 	oca.OrderID,
 	o.StyleID,
 	o.SeasonID,
@@ -76,20 +88,33 @@ select distinct
 	ocad.Article,
 	ocad.SizeCode,
 	oca.ToOrderID,
+	OriSPQty=isnull(oqF.Qty,0),
+	OriSPSewingOutputQty=isnull(sF.QAQty,0), --完整的成衣數
 	TransferQty = Sum(ocad.NowQty) over(partition by oca.ID,ocad.Article,ocad.SizeCode)- sum(ocad.Qty) over(partition by oca.ID,ocad.Article,ocad.SizeCode),
 	NewSPQty=isnull(oq.Qty,0),
-	NewSPSewingOutputQty=isnull(s.QAQty,0), --完整的成衣數
-	Balance=isnull(s.QAQty,0)-isnull(oq.Qty,0),
-	oca.ID
+	NewSPSewingOutputQty=isnull(s.QAQty,0) --完整的成衣數
+into #tmp
 from OrderChangeApplication oca with(nolock)
 Inner Join OrderChangeApplication_Detail ocad with(nolock) on ocad.ID = oca.ID
 Inner Join Orders o with(nolock) on o.ID = oca.OrderID
+Left Join Order_Qty oqF with(nolock) on oqF.ID = oca.OrderID and oqF.Article = ocad.Article and oqF.SizeCode = ocad.SizeCode
 Left Join Order_Qty oq with(nolock) on oq.ID = oca.ToOrderID and oq.Article = ocad.Article and oq.SizeCode = ocad.SizeCode
+outer apply(select QAQty= dbo.getMinCompleteSewQty(oca.OrderID ,ocad.Article ,ocad.SizeCode))sF
 outer apply(select QAQty= dbo.getMinCompleteSewQty(oca.ToOrderID ,ocad.Article ,ocad.SizeCode))s
 where 1=1
 and oca.Status in ('Confirmed','Closed')
 and IIF(oca.ToOrderID is null,'', oca.ToOrderID) <> ''
 {where}
+
+select *,
+	Balance=concat('=MAX(0,(L',
+        ROW_NUMBER() over(order by 	MDivisionID,FactoryID,ID,OrderID,StyleID,SeasonID,BrandID)+1
+        ,'-K',
+        ROW_NUMBER() over(order by 	MDivisionID,FactoryID,ID,OrderID,StyleID,SeasonID,BrandID)+1,'))')	
+from #tmp
+order by MDivisionID,FactoryID,ID,OrderID,StyleID,SeasonID,BrandID
+
+drop table #tmp
 ";
             return base.ValidateInput();
         }
@@ -109,8 +134,6 @@ and IIF(oca.ToOrderID is null,'', oca.ToOrderID) <> ''
 
             this.SetCount(this.printData.Rows.Count);
 
-            this.printData.Columns.Remove("ID");
-
             string excelFile = "Sewing_R09";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + excelFile + ".xltx"); // 開excelapp
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, excelFile + ".xltx", 1, false, null, excelApp, false, null, false);
@@ -119,12 +142,11 @@ and IIF(oca.ToOrderID is null,'', oca.ToOrderID) <> ''
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(excelFile);
             Microsoft.Office.Interop.Excel.Workbook workbook = excelApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
-            workbook.Close();
-            excelApp.Quit();
-            Marshal.ReleaseComObject(excelApp);
-            Marshal.ReleaseComObject(workbook);
 
-            strExcelName.OpenFile();
+            excelApp.Visible = true;
+            Marshal.ReleaseComObject(workbook);
+            Marshal.ReleaseComObject(excelApp);
+
             #endregion
             return true;
         }
