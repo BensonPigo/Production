@@ -84,7 +84,8 @@ outer apply(select top 1 v.ID,v.DeclareNo from VNImportDeclaration v with(nolock
 outer apply(select top 1 v.ID,v.DeclareNo from VNImportDeclaration v with(nolock) where v.WKNo = e.ID and v.IsFtyExport = 0and isnull(DeclareNo,'')<>'')b
 outer apply(select ID=isnull(iif(isnull(e.Blno,'')<>'',a.id,b.id),''),DeclareNo= isnull(iif(isnull(e.Blno,'')<>'',a.DeclareNo,b.DeclareNo),''))c
 where e.NonDeclare = 0
-and (isnull(c.ID,'') ='' or isnull(c.DeclareNo,'') = '')
+AND e.Junk = 0
+AND (isnull(c.ID,'') ='' or isnull(c.DeclareNo,'') = '') 
 {whereP03}
 
 union all
