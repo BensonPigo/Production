@@ -1775,29 +1775,6 @@ inner join Production.dbo.Factory f on s.FactoryID =f.ID and f.IsProduceFty = 1
 where not exists(select 1 from Production.dbo.OrderChangeApplication t where s.ID = t.ID)
 
 ----------------OrderChangeApplication_Detail-----------------
---ISP20200602
-if cast(getdate() as date) = cast('20200420' as date)
-begin
-	drop table Production.dbo.OrderChangeApplication_Detail
-
-	CREATE TABLE [dbo].[OrderChangeApplication_Detail](
-		[Ukey] [bigint] NOT NULL,
-		[ID] [varchar](13) NULL,
-		[Seq] [varchar](2) NULL,
-		[Article] [varchar](8) NULL,
-		[SizeCode] [varchar](8) NULL,
-		[Qty] [numeric](6, 0) NULL,
-		[OriQty] [numeric](6, 0) NULL,
-		[NowQty] [numeric](6, 0) NULL,
-	 CONSTRAINT [PK_OrderChangeApplication_Detail] PRIMARY KEY CLUSTERED 
-	(
-		[Ukey] ASC
-	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-	) ON [PRIMARY]
-
-	ALTER TABLE [dbo].[OrderChangeApplication_Detail] ADD  CONSTRAINT [DF_OrderChangeApplication_Detail_NowQty]  DEFAULT ((0)) FOR [NowQty]
-end
-
 update t
 	set t.Seq =s.Seq
 		,t.Article = s.Article
@@ -1834,33 +1811,6 @@ and exists (
 	where oc.ID = s.ID	
 )
 ----------------OrderChangeApplication_Seq-----------------
---ISP20200602
-if cast(getdate() as date) = cast('20200420' as date)
-begin
-	drop table OrderChangeApplication_Seq
-
-	CREATE TABLE [dbo].[OrderChangeApplication_Seq](
-		[Ukey] [bigint] NOT NULL,
-		[ID] [varchar](13) NOT NULL,
-		[Seq] [varchar](2) NOT NULL,
-		[NewSeq] [varchar](2) NULL,
-		[ShipmodeID] [varchar](10) NOT NULL,
-		[BuyerDelivery] [date] NOT NULL,
-		[FtyKPI] [date] NULL,
-		[ReasonID] [varchar](5) NULL,
-		[ReasonRemark] [nvarchar](150) NULL,
-		[ShipModeRemark] [nvarchar](150) NULL,
-	 CONSTRAINT [PK_OrderChangeApplication_Seq] PRIMARY KEY CLUSTERED 
-	(
-		[Ukey] ASC
-	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-	) ON [PRIMARY]
-
-	ALTER TABLE [dbo].[OrderChangeApplication_Seq] ADD  CONSTRAINT [DF_OrderChangeApplication_Seq_ReasonID]  DEFAULT ('') FOR [ReasonID]
-
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'修改客戶交期原因' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderChangeApplication_Seq', @level2type=N'COLUMN',@level2name=N'ReasonID'
-end
-
 update t
 	set t.Seq =s.Seq
 		,t.NewSeq = s.NewSeq
