@@ -48,7 +48,6 @@
             this.labelVAT = new Sci.Win.UI.Label();
             this.labelTotal = new Sci.Win.UI.Label();
             this.labelBLNo = new Sci.Win.UI.Label();
-            this.displayCurrency = new Sci.Win.UI.DisplayBox();
             this.numAmount = new Sci.Win.UI.NumericBox();
             this.numVATRate = new Sci.Win.UI.NumericBox();
             this.numVAT = new Sci.Win.UI.NumericBox();
@@ -88,6 +87,7 @@
             this.chkIncludeFoundry = new Sci.Win.UI.CheckBox();
             this.lbSisFtyAPID = new Sci.Win.UI.Label();
             this.txtSisFtyAPID = new Sci.Win.UI.TextBox();
+            this.txtcurrency = new Sci.Production.Class.txtcurrency();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -104,6 +104,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtcurrency);
             this.masterpanel.Controls.Add(this.txtSisFtyAPID);
             this.masterpanel.Controls.Add(this.lbSisFtyAPID);
             this.masterpanel.Controls.Add(this.chkIncludeFoundry);
@@ -138,7 +139,6 @@
             this.masterpanel.Controls.Add(this.numVAT);
             this.masterpanel.Controls.Add(this.numVATRate);
             this.masterpanel.Controls.Add(this.numAmount);
-            this.masterpanel.Controls.Add(this.displayCurrency);
             this.masterpanel.Controls.Add(this.labelBLNo);
             this.masterpanel.Controls.Add(this.labelTotal);
             this.masterpanel.Controls.Add(this.labelVAT);
@@ -189,7 +189,6 @@
             this.masterpanel.Controls.SetChildIndex(this.labelVAT, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelTotal, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelBLNo, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayCurrency, 0);
             this.masterpanel.Controls.SetChildIndex(this.numAmount, 0);
             this.masterpanel.Controls.SetChildIndex(this.numVATRate, 0);
             this.masterpanel.Controls.SetChildIndex(this.numVAT, 0);
@@ -225,6 +224,7 @@
             this.masterpanel.Controls.SetChildIndex(this.chkIncludeFoundry, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbSisFtyAPID, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSisFtyAPID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtcurrency, 0);
             // 
             // detailpanel
             // 
@@ -459,16 +459,6 @@
             this.labelBLNo.Size = new System.Drawing.Size(90, 23);
             this.labelBLNo.TabIndex = 99;
             this.labelBLNo.Text = "B/L No.";
-            // 
-            // displayCurrency
-            // 
-            this.displayCurrency.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayCurrency.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CurrencyID", true));
-            this.displayCurrency.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCurrency.Location = new System.Drawing.Point(491, 30);
-            this.displayCurrency.Name = "displayCurrency";
-            this.displayCurrency.Size = new System.Drawing.Size(50, 23);
-            this.displayCurrency.TabIndex = 14;
             // 
             // numAmount
             // 
@@ -735,6 +725,7 @@
             this.txtSubconSupplier.Size = new System.Drawing.Size(170, 23);
             this.txtSubconSupplier.TabIndex = 4;
             this.txtSubconSupplier.TextBox1Binding = "";
+            this.txtSubconSupplier.Validating += new System.ComponentModel.CancelEventHandler(this.txtSubconSupplier_Validating);
             // 
             // lbExVoucherID
             // 
@@ -951,6 +942,18 @@
             this.txtSisFtyAPID.Size = new System.Drawing.Size(100, 23);
             this.txtSisFtyAPID.TabIndex = 105;
             // 
+            // txtcurrency
+            // 
+            this.txtcurrency.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtcurrency.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CurrencyID", true));
+            this.txtcurrency.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtcurrency.IsSupportEditMode = false;
+            this.txtcurrency.Location = new System.Drawing.Point(493, 30);
+            this.txtcurrency.Name = "txtcurrency";
+            this.txtcurrency.ReadOnly = true;
+            this.txtcurrency.Size = new System.Drawing.Size(48, 23);
+            this.txtcurrency.TabIndex = 14;
+            // 
             // P08
             // 
             this.ClientSize = new System.Drawing.Size(1008, 628);
@@ -1005,7 +1008,6 @@
         private Win.UI.NumericBox numVAT;
         private Win.UI.NumericBox numVATRate;
         private Win.UI.NumericBox numAmount;
-        private Win.UI.DisplayBox displayCurrency;
         private Win.UI.Label labelBLNo;
         private Win.UI.Label labelTotal;
         private Win.UI.Label labelVAT;
@@ -1049,5 +1051,6 @@
         private Win.UI.CheckBox chkIncludeFoundry;
         private Win.UI.TextBox txtSisFtyAPID;
         private Win.UI.Label lbSisFtyAPID;
+        private Class.txtcurrency txtcurrency;
     }
 }
