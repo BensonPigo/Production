@@ -1275,9 +1275,24 @@ WHERE OrderID='{OrderID}'
 AND (SELECT SUM(StdQ) FROM [dbo].[getDailystdq](APSNo) WHERE Date = '{SewingDate.ToString("yyyy/MM/dd")}') IS NOT NULL
 
 ---- 計算之前剩下的裁片數
-SELECT [ComboType]=(SELECT TOP 1 ComboType FROM #beforeTmp WHERE StdQ = StdQ)  , [LeftQty]=MAX(StdQ) - MIN(StdQ)
+---- 判斷不同部位相差多少數量，即是剩餘的裁片，並且把比較多的那個數量記下來，此時還不知道是哪個部位
+SELECT [LeftQty]=MAX(StdQ) - MIN(StdQ) ,[MaxStdQ]=MAX(StdQ) 
+INTO #tmp
+FROM (
+	SELECT  s.Location ,[StdQ]=ISNULL(u.StdQ,0)
+	FROM Orders o
+	INNER JOIN Style_Location s ON o.StyleUkey = s.StyleUkey
+	LEFT JOIN #beforeTmp u ON u.ComboType = s.Location
+	WHERE o.ID='{OrderID}'
+)a
+
+
+---- 回去「該日期之前」，用比較多的數量，回去找是哪個部位，如果會找到兩個一樣的數量，表示沒有剩餘的裁片，都剛好成套
+SELECT b.ComboType,t.LeftQty
 INTO #before
-FROM #beforeTmp
+FROM #beforeTmp b
+INNER JOIN #tmp t ON b.StdQ=t.MaxStdQ
+WHERE t.LeftQty > 0
 
 ---- 計算當天 + 之前剩餘的裁片數
 SELECT ComboType,[StdQ]=SUM(StdQ)
@@ -1297,7 +1312,7 @@ LEFT JOIN #sum u ON u.ComboType = s.Location
 WHERE o.ID='{OrderID}'
 
 
-DROP TABLE #today,#beforeTmp,#before,#sum
+DROP TABLE #today,#beforeTmp,#before,#sum,#tmp
 ");
             int rtn = MyUtility.Check.Empty(StdQty) ? 0 : Convert.ToInt32(StdQty);
             return rtn;
