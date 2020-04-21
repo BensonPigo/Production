@@ -84,12 +84,12 @@ update factory set LastDownloadAPSDate  = getdate() where id = '{2}'
 
             if (dsForAutomation[0].Rows.Count > 0)
             {
-                Task.Run(() => new Guozi().SentSewingLineToAGV(dsForAutomation[0]));
+                Task.Run(() => new Guozi_AGV().SentSewingLineToAGV(dsForAutomation[0]));
             }
 
             if (dsForAutomation[1].Rows.Count > 0)
             {
-                Task.Run(() => new Guozi().SentSewingScheduleToAGV(dsForAutomation[1]));
+                Task.Run(() => new Guozi_AGV().SentSewingScheduleToAGV(dsForAutomation[1]));
             }
 
             this.Setcuttingdate();

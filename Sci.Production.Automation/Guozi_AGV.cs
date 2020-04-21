@@ -12,14 +12,14 @@ using static Sci.Production.Automation.UtilityAutomation;
 
 namespace Sci.Production.Automation
 {
-    public class Guozi
+    public class Guozi_AGV
     {
         private static string baseUrl = string.Empty;
         private string guoziSuppID = "3A0197";
         private string moduleName = "AGV";
         private AutomationErrMsgPMS automationErrMsg;
 
-        public Guozi()
+        public Guozi_AGV()
         {
             this.automationErrMsg = new AutomationErrMsgPMS()
             {

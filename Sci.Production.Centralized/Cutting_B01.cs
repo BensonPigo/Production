@@ -43,18 +43,6 @@ namespace Sci.Production.Centralized
             return base.ClickSaveBefore();
         }
 
-        protected override DualResult ClickSavePost()
-        {
-            if (this.CurrentMaintain.RowState == DataRowState.Added ||
-               (this.CurrentMaintain.RowState == DataRowState.Modified && this.CurrentMaintain.CompareDataRowVersionValue("Junk")))
-            {
-                DataTable dtSentSubprocess = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                Task.Run(() => new Guozi().SentSubprocessToAGV(dtSentSubprocess));
-            }
-
-            return base.ClickSavePost();
-        }
-
         /// <inheritdoc/>
         protected override void ClickEditAfter()
         {

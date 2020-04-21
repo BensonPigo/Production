@@ -2484,6 +2484,7 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="dbo\Stored Procedures\BatchReSentJsonToAGV.sql" />
+    <Build Include="dbo\Tables\AutomationSubProcess.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

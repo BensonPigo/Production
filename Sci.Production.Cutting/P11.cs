@@ -16,7 +16,7 @@ using Sci.Production.PublicPrg;
 using System.Transactions;
 using System.Text.RegularExpressions;
 using System.Reflection;
-using static Sci.Production.Automation.Guozi;
+using static Sci.Production.Automation.Guozi_AGV;
 using System.Threading.Tasks;
 using Sci.Production.Automation;
 
@@ -2025,7 +2025,7 @@ inner join Bundle b with (nolock) on bd.ID = b.ID
                     return null;
                 }
             };
-            Task.Run(() => new Guozi().SentBundleToAGV(funListBundle));
+            Task.Run(() => new Guozi_AGV().SentBundleToAGV(funListBundle));
 
             #endregion
 

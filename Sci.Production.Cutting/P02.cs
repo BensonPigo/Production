@@ -2783,7 +2783,7 @@ select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrd
 
             if (listChangedDetail.Any())
             {
-                Task.Run(() => new Guozi().SentWorkOrderToAGV(listChangedDetail.CopyToDataTable()));
+                Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(listChangedDetail.CopyToDataTable()));
             }
             #endregion
 

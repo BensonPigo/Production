@@ -2958,6 +2958,13 @@ when not matched by source then
 
 
 --------SubProcess---------------
+delete Production.dbo.AutomationSubProcess
+
+insert into Production.dbo.AutomationSubProcess(ID)
+select s.ID
+from Trade_To_Pms.dbo.SubProcess s with (nolock)
+left Join Production.dbo.SubProcess t with (nolock) on s.ID = t.ID
+where s.Junk <> t.Junk or t.Junk is null
 
 Merge Production.dbo.SubProcess as t
 Using Trade_To_Pms.dbo.SubProcess as s

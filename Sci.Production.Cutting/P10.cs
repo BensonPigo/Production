@@ -13,7 +13,7 @@ using Ict;
 using Sci.Win.Tools;
 using System.Linq;
 using System.Transactions;
-using static Sci.Production.Automation.Guozi;
+using static Sci.Production.Automation.Guozi_AGV;
 using System.Threading.Tasks;
 using Sci.Production.Automation;
 using Sci.Production.Prg;
@@ -631,7 +631,7 @@ order by bundlegroup"
                     }
                     ).ToList();
 
-                Task.Run(() => new Guozi().SentBundleToAGV(() => listBundleToAGV_PostBody));
+                Task.Run(() => new Guozi_AGV().SentBundleToAGV(() => listBundleToAGV_PostBody));
             }
             #endregion
 
