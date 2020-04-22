@@ -864,14 +864,15 @@ and s.StyleUnit='PCS'
             #endregion
 
             // 回寫表頭的Total Sewing Time與表身的Sewer，只把ArtworkTypeID = 'SEWING'的秒數抓進來加總
-            string TotalSewingTime = MyUtility.GetValue.Lookup($@"
-SELECT ISNULL(SUM(tsd.SMV),0)
-FROM TimeStudy_Detail tsd 
-INNER JOIN Machinetype mt ON tsd.MachineTypeID=mt.ID
-WHERE tsd.ID = {this.CurrentMaintain["ID"]}
-AND mt.ArtworkTypeID = 'SEWING'
-");
-            decimal ttlSewingTime = MyUtility.Convert.GetDecimal(TotalSewingTime);
+            var machineSMV_List = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Select(o => new { MachineTypeID = o["MachineTypeID"].ToString(), SMV = MyUtility.Convert.GetDecimal(o["SMV"]) }).ToList();
+
+            DataTable tmp;
+
+            DBProxy.Current.Select(null, " SELECT ID FROM Machinetype WHERE ArtworkTypeID = 'SEWING' ", out tmp);
+            List<string> sewingMachine_List = tmp.AsEnumerable().Select(o => o["ID"].ToString()).ToList();
+
+            decimal ttlSewingTime = machineSMV_List.Where(o => sewingMachine_List.Contains(o.MachineTypeID)).Sum(o => o.SMV);
+
             this.CurrentMaintain["TotalSewingTime"] = Convert.ToInt32(ttlSewingTime); // MyUtility.Convert.GetInt(ttlSewingTime);
 
             string totalSewing = this.CurrentMaintain["TotalSewingTime"].ToString();
