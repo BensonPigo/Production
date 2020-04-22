@@ -30,17 +30,11 @@
         {
             this.panel1 = new Sci.Win.UI.Panel();
             this.dateActCuttingDate = new Sci.Win.UI.DateRange();
-            this.label8 = new Sci.Win.UI.Label();
             this.dateSewingInline = new Sci.Win.UI.DateRange();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.txtstyle1 = new Sci.Production.Class.txtstyle();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
             this.dateEarliestBuyerDelivery = new Sci.Win.UI.DateRange();
-            this.label1 = new Sci.Win.UI.Label();
             this.txtCuttingSPEnd = new Sci.Win.UI.TextBox();
             this.label9 = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
@@ -51,11 +45,17 @@
             this.dateEarliestSewingInline = new Sci.Win.UI.DateRange();
             this.dateEarliestSCIDelivery = new Sci.Win.UI.DateRange();
             this.dateEstCutDate = new Sci.Win.UI.DateRange();
-            this.labelEarliestSewingInline = new Sci.Win.UI.Label();
-            this.labelEarliestSCIDelivery = new Sci.Win.UI.Label();
-            this.labelCuttingSP = new Sci.Win.UI.Label();
-            this.labelEstCutDate = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
+            this.lbEstCutDate = new Sci.Win.UI.Label();
+            this.lbActCuttingDate = new Sci.Win.UI.Label();
+            this.lbCuttingSP = new Sci.Win.UI.Label();
+            this.lbBuyerDelivery = new Sci.Win.UI.Label();
+            this.lbSCIDelivery = new Sci.Win.UI.Label();
+            this.lbSewingInline = new Sci.Win.UI.Label();
+            this.lbStyle = new Sci.Win.UI.Label();
+            this.lbEarliestBuyerDelivery = new Sci.Win.UI.Label();
+            this.lbEarliestSCIDelivery = new Sci.Win.UI.Label();
+            this.lbEarliestSewingInline = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -76,18 +76,22 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.lbEarliestSewingInline);
+            this.panel1.Controls.Add(this.lbEarliestSCIDelivery);
+            this.panel1.Controls.Add(this.lbEarliestBuyerDelivery);
+            this.panel1.Controls.Add(this.lbStyle);
+            this.panel1.Controls.Add(this.lbSewingInline);
+            this.panel1.Controls.Add(this.lbSCIDelivery);
+            this.panel1.Controls.Add(this.lbBuyerDelivery);
+            this.panel1.Controls.Add(this.lbCuttingSP);
+            this.panel1.Controls.Add(this.lbActCuttingDate);
+            this.panel1.Controls.Add(this.lbEstCutDate);
             this.panel1.Controls.Add(this.dateActCuttingDate);
-            this.panel1.Controls.Add(this.label8);
             this.panel1.Controls.Add(this.dateSewingInline);
             this.panel1.Controls.Add(this.dateSCIDelivery);
             this.panel1.Controls.Add(this.dateBuyerDelivery);
             this.panel1.Controls.Add(this.txtstyle1);
-            this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.dateEarliestBuyerDelivery);
-            this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.txtCuttingSPEnd);
             this.panel1.Controls.Add(this.label9);
             this.panel1.Controls.Add(this.labelFactory);
@@ -98,10 +102,6 @@
             this.panel1.Controls.Add(this.dateEarliestSewingInline);
             this.panel1.Controls.Add(this.dateEarliestSCIDelivery);
             this.panel1.Controls.Add(this.dateEstCutDate);
-            this.panel1.Controls.Add(this.labelEarliestSewingInline);
-            this.panel1.Controls.Add(this.labelEarliestSCIDelivery);
-            this.panel1.Controls.Add(this.labelCuttingSP);
-            this.panel1.Controls.Add(this.labelEstCutDate);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(472, 381);
@@ -128,14 +128,6 @@
             this.dateActCuttingDate.Name = "dateActCuttingDate";
             this.dateActCuttingDate.Size = new System.Drawing.Size(280, 23);
             this.dateActCuttingDate.TabIndex = 3;
-            // 
-            // label8
-            // 
-            this.label8.Location = new System.Drawing.Point(16, 105);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(147, 23);
-            this.label8.TabIndex = 105;
-            this.label8.Text = "Act. Cutting Date";
             // 
             // dateSewingInline
             // 
@@ -215,38 +207,6 @@
             this.txtstyle1.tarBrand = null;
             this.txtstyle1.tarSeason = null;
             // 
-            // label5
-            // 
-            this.label5.Location = new System.Drawing.Point(16, 221);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(147, 23);
-            this.label5.TabIndex = 101;
-            this.label5.Text = "Sewing Inline";
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(16, 192);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(147, 23);
-            this.label4.TabIndex = 100;
-            this.label4.Text = "SCI Delivery";
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(16, 163);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(147, 23);
-            this.label3.TabIndex = 99;
-            this.label3.Text = "BuyerDelivery";
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(16, 250);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(147, 23);
-            this.label2.TabIndex = 98;
-            this.label2.Text = "Style";
-            // 
             // dateEarliestBuyerDelivery
             // 
             // 
@@ -268,14 +228,6 @@
             this.dateEarliestBuyerDelivery.Name = "dateEarliestBuyerDelivery";
             this.dateEarliestBuyerDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateEarliestBuyerDelivery.TabIndex = 10;
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(16, 279);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(147, 23);
-            this.label1.TabIndex = 97;
-            this.label1.Text = "Earliest Buyer Delivery ";
             // 
             // txtCuttingSPEnd
             // 
@@ -416,38 +368,6 @@
             this.dateEstCutDate.Size = new System.Drawing.Size(280, 23);
             this.dateEstCutDate.TabIndex = 2;
             // 
-            // labelEarliestSewingInline
-            // 
-            this.labelEarliestSewingInline.Location = new System.Drawing.Point(16, 337);
-            this.labelEarliestSewingInline.Name = "labelEarliestSewingInline";
-            this.labelEarliestSewingInline.Size = new System.Drawing.Size(147, 23);
-            this.labelEarliestSewingInline.TabIndex = 5;
-            this.labelEarliestSewingInline.Text = "Earliest Sewing Inline";
-            // 
-            // labelEarliestSCIDelivery
-            // 
-            this.labelEarliestSCIDelivery.Location = new System.Drawing.Point(16, 308);
-            this.labelEarliestSCIDelivery.Name = "labelEarliestSCIDelivery";
-            this.labelEarliestSCIDelivery.Size = new System.Drawing.Size(147, 23);
-            this.labelEarliestSCIDelivery.TabIndex = 4;
-            this.labelEarliestSCIDelivery.Text = "Earliest SCI Delivery";
-            // 
-            // labelCuttingSP
-            // 
-            this.labelCuttingSP.Location = new System.Drawing.Point(16, 134);
-            this.labelCuttingSP.Name = "labelCuttingSP";
-            this.labelCuttingSP.Size = new System.Drawing.Size(147, 23);
-            this.labelCuttingSP.TabIndex = 3;
-            this.labelCuttingSP.Text = "Cutting SP#";
-            // 
-            // labelEstCutDate
-            // 
-            this.labelEstCutDate.Location = new System.Drawing.Point(16, 76);
-            this.labelEstCutDate.Name = "labelEstCutDate";
-            this.labelEstCutDate.Size = new System.Drawing.Size(147, 23);
-            this.labelEstCutDate.TabIndex = 2;
-            this.labelEstCutDate.Text = "Est. Cut Date";
-            // 
             // label7
             // 
             this.label7.Location = new System.Drawing.Point(502, 221);
@@ -455,6 +375,106 @@
             this.label7.Size = new System.Drawing.Size(97, 22);
             this.label7.TabIndex = 97;
             this.label7.Text = "Paper Size A4";
+            // 
+            // lbEstCutDate
+            // 
+            this.lbEstCutDate.Location = new System.Drawing.Point(16, 76);
+            this.lbEstCutDate.Name = "lbEstCutDate";
+            this.lbEstCutDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbEstCutDate.Size = new System.Drawing.Size(147, 23);
+            this.lbEstCutDate.TabIndex = 129;
+            this.lbEstCutDate.Text = "Est. Cut Date";
+            this.lbEstCutDate.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbActCuttingDate
+            // 
+            this.lbActCuttingDate.Location = new System.Drawing.Point(16, 105);
+            this.lbActCuttingDate.Name = "lbActCuttingDate";
+            this.lbActCuttingDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbActCuttingDate.Size = new System.Drawing.Size(147, 23);
+            this.lbActCuttingDate.TabIndex = 130;
+            this.lbActCuttingDate.Text = "Act. Cutting Date";
+            this.lbActCuttingDate.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbCuttingSP
+            // 
+            this.lbCuttingSP.Location = new System.Drawing.Point(16, 134);
+            this.lbCuttingSP.Name = "lbCuttingSP";
+            this.lbCuttingSP.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbCuttingSP.Size = new System.Drawing.Size(147, 23);
+            this.lbCuttingSP.TabIndex = 131;
+            this.lbCuttingSP.Text = "Cutting SP#";
+            this.lbCuttingSP.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbBuyerDelivery
+            // 
+            this.lbBuyerDelivery.Location = new System.Drawing.Point(16, 163);
+            this.lbBuyerDelivery.Name = "lbBuyerDelivery";
+            this.lbBuyerDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbBuyerDelivery.Size = new System.Drawing.Size(147, 23);
+            this.lbBuyerDelivery.TabIndex = 132;
+            this.lbBuyerDelivery.Text = "Buyer Delivery";
+            this.lbBuyerDelivery.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbSCIDelivery
+            // 
+            this.lbSCIDelivery.Location = new System.Drawing.Point(16, 192);
+            this.lbSCIDelivery.Name = "lbSCIDelivery";
+            this.lbSCIDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbSCIDelivery.Size = new System.Drawing.Size(147, 23);
+            this.lbSCIDelivery.TabIndex = 133;
+            this.lbSCIDelivery.Text = "SCI Delivery";
+            this.lbSCIDelivery.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbSewingInline
+            // 
+            this.lbSewingInline.Location = new System.Drawing.Point(16, 221);
+            this.lbSewingInline.Name = "lbSewingInline";
+            this.lbSewingInline.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbSewingInline.Size = new System.Drawing.Size(147, 23);
+            this.lbSewingInline.TabIndex = 134;
+            this.lbSewingInline.Text = "Sewing Inline";
+            this.lbSewingInline.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbStyle
+            // 
+            this.lbStyle.Location = new System.Drawing.Point(16, 250);
+            this.lbStyle.Name = "lbStyle";
+            this.lbStyle.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbStyle.Size = new System.Drawing.Size(147, 23);
+            this.lbStyle.TabIndex = 135;
+            this.lbStyle.Text = "Style";
+            this.lbStyle.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbEarliestBuyerDelivery
+            // 
+            this.lbEarliestBuyerDelivery.Location = new System.Drawing.Point(16, 279);
+            this.lbEarliestBuyerDelivery.Name = "lbEarliestBuyerDelivery";
+            this.lbEarliestBuyerDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbEarliestBuyerDelivery.Size = new System.Drawing.Size(147, 23);
+            this.lbEarliestBuyerDelivery.TabIndex = 136;
+            this.lbEarliestBuyerDelivery.Text = "Earliest Buyer Delivery ";
+            this.lbEarliestBuyerDelivery.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbEarliestSCIDelivery
+            // 
+            this.lbEarliestSCIDelivery.Location = new System.Drawing.Point(16, 308);
+            this.lbEarliestSCIDelivery.Name = "lbEarliestSCIDelivery";
+            this.lbEarliestSCIDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbEarliestSCIDelivery.Size = new System.Drawing.Size(147, 23);
+            this.lbEarliestSCIDelivery.TabIndex = 137;
+            this.lbEarliestSCIDelivery.Text = "Earliest SCI Delivery";
+            this.lbEarliestSCIDelivery.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbEarliestSewingInline
+            // 
+            this.lbEarliestSewingInline.Location = new System.Drawing.Point(16, 337);
+            this.lbEarliestSewingInline.Name = "lbEarliestSewingInline";
+            this.lbEarliestSewingInline.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbEarliestSewingInline.Size = new System.Drawing.Size(147, 23);
+            this.lbEarliestSewingInline.TabIndex = 138;
+            this.lbEarliestSewingInline.Text = "Earliest Sewing Inline";
+            this.lbEarliestSewingInline.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // R03
             // 
@@ -467,14 +487,14 @@
             this.Name = "R03";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R03.Cutting Schedule List    ";
+            this.Controls.SetChildIndex(this.panel1, 0);
+            this.Controls.SetChildIndex(this.label7, 0);
             this.Controls.SetChildIndex(this.buttonCustomized, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.panel1, 0);
-            this.Controls.SetChildIndex(this.label7, 0);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
@@ -491,26 +511,26 @@
         private Win.UI.DateRange dateEarliestSewingInline;
         private Win.UI.DateRange dateEarliestSCIDelivery;
         private Win.UI.DateRange dateEstCutDate;
-        private Win.UI.Label labelEarliestSewingInline;
-        private Win.UI.Label labelEarliestSCIDelivery;
-        private Win.UI.Label labelCuttingSP;
-        private Win.UI.Label labelEstCutDate;
         private Win.UI.Label labelM;
         private Win.UI.Label labelFactory;
         private Win.UI.TextBox txtCuttingSPEnd;
         private Win.UI.Label label9;
         private Win.UI.Label label7;
         private Win.UI.DateRange dateEarliestBuyerDelivery;
-        private Win.UI.Label label1;
         private Win.UI.DateRange dateSewingInline;
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.DateRange dateBuyerDelivery;
         private Class.txtstyle txtstyle1;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
         private Win.UI.DateRange dateActCuttingDate;
-        private Win.UI.Label label8;
+        private Win.UI.Label lbActCuttingDate;
+        private Win.UI.Label lbEstCutDate;
+        private Win.UI.Label lbEarliestSewingInline;
+        private Win.UI.Label lbEarliestSCIDelivery;
+        private Win.UI.Label lbEarliestBuyerDelivery;
+        private Win.UI.Label lbStyle;
+        private Win.UI.Label lbSewingInline;
+        private Win.UI.Label lbSCIDelivery;
+        private Win.UI.Label lbBuyerDelivery;
+        private Win.UI.Label lbCuttingSP;
     }
 }
