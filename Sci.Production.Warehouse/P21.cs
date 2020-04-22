@@ -97,7 +97,7 @@ namespace Sci.Production.Warehouse
             Helper.Controls.Grid.Generator(this.gridReceiving)
                  .CheckBox("select", header: "", trueValue: 1, falseValue: 0)
                  .Text("ExportID", header: "WK#", width: Widths.AnsiChars(14), iseditingreadonly: true)
-                 .Text("ID", header: "Receiving ID", width: Widths.AnsiChars(14), iseditingreadonly: true)
+                 //.Text("ID", header: "Receiving ID", width: Widths.AnsiChars(14), iseditingreadonly: true)
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("Seq", header: "Seq", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
