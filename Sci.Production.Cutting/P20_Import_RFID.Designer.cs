@@ -30,17 +30,17 @@
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panelTOP = new Sci.Win.UI.Panel();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.lbFactory = new Sci.Win.UI.Label();
             this.dateRFID = new Sci.Win.UI.DateRange();
             this.txtSP = new Sci.Win.UI.TextBox();
-            this.labelLocateForSP = new Sci.Win.UI.Label();
-            this.labelRFIDDate = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
             this.panelBOTTOM = new Sci.Win.UI.Panel();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnImport = new Sci.Win.UI.Button();
             this.gridImport = new Sci.Win.UI.Grid();
-            this.lbFactory = new Sci.Win.UI.Label();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.lbRFIDDate = new Sci.Win.UI.Label();
+            this.lbSP = new Sci.Win.UI.Label();
             this.panelTOP.SuspendLayout();
             this.panelBOTTOM.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
@@ -48,18 +48,40 @@
             // 
             // panelTOP
             // 
+            this.panelTOP.Controls.Add(this.lbSP);
+            this.panelTOP.Controls.Add(this.lbRFIDDate);
             this.panelTOP.Controls.Add(this.txtfactory1);
             this.panelTOP.Controls.Add(this.lbFactory);
             this.panelTOP.Controls.Add(this.dateRFID);
             this.panelTOP.Controls.Add(this.txtSP);
-            this.panelTOP.Controls.Add(this.labelLocateForSP);
-            this.panelTOP.Controls.Add(this.labelRFIDDate);
             this.panelTOP.Controls.Add(this.btnQuery);
             this.panelTOP.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTOP.Location = new System.Drawing.Point(0, 0);
             this.panelTOP.Name = "panelTOP";
             this.panelTOP.Size = new System.Drawing.Size(883, 44);
             this.panelTOP.TabIndex = 1;
+            // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.boolFtyGroupList = true;
+            this.txtfactory1.FilteMDivision = false;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.IsProduceFty = false;
+            this.txtfactory1.IssupportJunk = false;
+            this.txtfactory1.Location = new System.Drawing.Point(650, 11);
+            this.txtfactory1.MDivision = null;
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 21;
+            // 
+            // lbFactory
+            // 
+            this.lbFactory.Location = new System.Drawing.Point(589, 11);
+            this.lbFactory.Name = "lbFactory";
+            this.lbFactory.Size = new System.Drawing.Size(58, 23);
+            this.lbFactory.TabIndex = 20;
+            this.lbFactory.Text = "Factory:";
             // 
             // dateRFID
             // 
@@ -91,22 +113,6 @@
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(145, 23);
             this.txtSP.TabIndex = 17;
-            // 
-            // labelLocateForSP
-            // 
-            this.labelLocateForSP.Location = new System.Drawing.Point(398, 11);
-            this.labelLocateForSP.Name = "labelLocateForSP";
-            this.labelLocateForSP.Size = new System.Drawing.Size(40, 23);
-            this.labelLocateForSP.TabIndex = 18;
-            this.labelLocateForSP.Text = "SP#";
-            // 
-            // labelRFIDDate
-            // 
-            this.labelRFIDDate.Location = new System.Drawing.Point(13, 12);
-            this.labelRFIDDate.Name = "labelRFIDDate";
-            this.labelRFIDDate.Size = new System.Drawing.Size(99, 23);
-            this.labelRFIDDate.TabIndex = 5;
-            this.labelRFIDDate.Text = "RFID Date";
             // 
             // btnQuery
             // 
@@ -177,28 +183,30 @@
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport.ShowCellToolTips = false;
             this.gridImport.Size = new System.Drawing.Size(883, 374);
             this.gridImport.TabIndex = 9;
             this.gridImport.TabStop = false;
             // 
-            // lbFactory
+            // lbRFIDDate
             // 
-            this.lbFactory.Location = new System.Drawing.Point(589, 11);
-            this.lbFactory.Name = "lbFactory";
-            this.lbFactory.Size = new System.Drawing.Size(58, 23);
-            this.lbFactory.TabIndex = 20;
-            this.lbFactory.Text = "Factory:";
+            this.lbRFIDDate.Location = new System.Drawing.Point(14, 11);
+            this.lbRFIDDate.Name = "lbRFIDDate";
+            this.lbRFIDDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbRFIDDate.Size = new System.Drawing.Size(98, 23);
+            this.lbRFIDDate.TabIndex = 130;
+            this.lbRFIDDate.Text = "RFID Date";
+            this.lbRFIDDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // txtfactory1
+            // lbSP
             // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.FilteMDivision = false;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.IssupportJunk = false;
-            this.txtfactory1.Location = new System.Drawing.Point(650, 11);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 21;
+            this.lbSP.Location = new System.Drawing.Point(402, 11);
+            this.lbSP.Name = "lbSP";
+            this.lbSP.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbSP.Size = new System.Drawing.Size(36, 23);
+            this.lbSP.TabIndex = 131;
+            this.lbSP.Text = "SP#";
+            this.lbSP.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // P20_Import_RFID
             // 
@@ -207,6 +215,7 @@
             this.Controls.Add(this.panelBOTTOM);
             this.Controls.Add(this.panelTOP);
             this.Name = "P20_Import_RFID";
+            this.OnLineHelpID = "Sci.Win.Forms.Base";
             this.Text = "Import From RFID";
             this.panelTOP.ResumeLayout(false);
             this.panelTOP.PerformLayout();
@@ -220,8 +229,6 @@
 
         private Win.UI.Panel panelTOP;
         private Win.UI.TextBox txtSP;
-        private Win.UI.Label labelLocateForSP;
-        private Win.UI.Label labelRFIDDate;
         private Win.UI.Button btnQuery;
         private Win.UI.Panel panelBOTTOM;
         private Win.UI.Button btnClose;
@@ -230,5 +237,7 @@
         private Win.UI.DateRange dateRFID;
         private Class.txtfactory txtfactory1;
         private Win.UI.Label lbFactory;
+        private Win.UI.Label lbSP;
+        private Win.UI.Label lbRFIDDate;
     }
 }
