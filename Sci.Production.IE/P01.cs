@@ -864,7 +864,7 @@ and s.StyleUnit='PCS'
             #endregion
 
             // 回寫表頭的Total Sewing Time與表身的Sewer，只把ArtworkTypeID = 'SEWING'的秒數抓進來加總
-            var machineSMV_List = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Select(o => new { MachineTypeID = o["MachineTypeID"].ToString(), SMV = MyUtility.Convert.GetDecimal(o["SMV"]) }).ToList();
+            var machineSMV_List = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(o => o.RowState != DataRowState.Deleted).Select(o => new { MachineTypeID = o["MachineTypeID"].ToString(), SMV = MyUtility.Convert.GetDecimal(o["SMV"]) }).ToList();
 
             DataTable tmp;
 
