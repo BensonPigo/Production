@@ -478,7 +478,8 @@ ORDER BY WOD.OrderID
                             OriPushDayCounts.Add(opd);
 
                             // 原始日期在搜尋條件以外的不顯示
-                            if (realDate.Date.AddDays(LeadTime + HolidayCount) > Days.Max(o=>o.Date) || realDate.Date.AddDays(LeadTime + HolidayCount) < Days.Min(o => o.Date))
+                            // Days的時間已經扣除了LeadTime，因此realDate不用把LeadTime加回去
+                            if (realDate.Date.AddDays(/*LeadTime +*/ HolidayCount) > Days.Max(o => o.Date) || realDate.Date.AddDays(/*LeadTime +*/ HolidayCount) < Days.Min(o => o.Date))
                             {
                                 continue;
                             }
