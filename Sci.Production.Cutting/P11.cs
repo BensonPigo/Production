@@ -673,7 +673,7 @@ Where   a.ukey = b.workorderukey
         and a.orderid = ord.id 
         and ord.mDivisionid = '{0}' 
         and a.id = ord.cuttingsp 
-        and a.CutRef is not null ", keyWord);
+        and isnull(a.CutRef,'') <> '' ", keyWord);
 
             string distru_cmd = string.Format(@"
 Select  distinct 0 as sel
@@ -708,7 +708,7 @@ Select  distinct 0 as sel
 from workorder a WITH (NOLOCK) 
 inner join orders ord WITH (NOLOCK) on a.id = ord.cuttingsp
 inner join workorder_Distribute b WITH (NOLOCK) on a.ukey = b.workorderukey and a.id = b.id and b.orderid = ord.id
-Where   a.CutRef is not null  
+Where   isnull(a.CutRef,'') <> ''
         and ord.mDivisionid = '{0}'", keyWord);
 
             string distru_cmd_Excess = $@"
@@ -750,7 +750,7 @@ outer apply(
 	order by wd.OrderID desc
 )l
 inner join orders ord WITH (NOLOCK) on a.id = ord.cuttingsp and l.OrderID = ord.id
-Where   a.CutRef is not null  
+Where   isnull(a.CutRef,'') <> '' 
         and ord.mDivisionid = '{keyWord}'  and b.orderid ='EXCESS'
 ";
 
@@ -765,7 +765,7 @@ Where   a.ukey = b.workorderukey
         and a.id = b.id 
         and b.orderid = 'EXCESS' 
         and a.id = ord.cuttingsp 
-        and a.CutRef is not null ", keyWord);
+        and isnull(a.CutRef,'') <> '' ", keyWord);
 
             StringBuilder SizeRatio = new StringBuilder();
             SizeRatio.Append(string.Format(@"
@@ -777,7 +777,7 @@ Where   a.ukey = b.workorderukey
 	inner join orders ord WITH (NOLOCK) on a.id = ord.cuttingsp
 	inner join workorder_Distribute b WITH (NOLOCK) on a.ukey = b.workorderukey and a.id = b.id and b.orderid = ord.id
 	inner join workorder_PatternPanel c WITH (NOLOCK) on a.ukey = c.workorderukey and c.id = a.id
-	Where   a.CutRef is not null 
+	Where   isnull(a.CutRef,'') <> '' 
             and ord.mDivisionid = '{0}'
 ", keyWord));
             #endregion
@@ -841,7 +841,7 @@ Where   a.ukey = b.workorderukey
             }
 
             //Mantis_7045 將PatternPanel改成FabricPanelCode,不然會有些值不正確
-            distru_cmd = distru_cmd + @" and b.orderid !='EXCESS' and a.CutRef is not null  
+            distru_cmd = distru_cmd + @" and b.orderid !='EXCESS' and isnull(a.CutRef,'') <> '' 
 group by a.cutref,b.orderid,b.article,a.colorid,b.sizecode,ord.Sewline,ord.factoryid,ord.poid,a.Fabriccombo,a.FabricPanelCode,a.cutno,ord.styleukey,a.CutCellid,a.Ukey  --,ag.ArticleGroup
 ";
             if (chkAEQ.Checked)
