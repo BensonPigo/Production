@@ -106,14 +106,16 @@ namespace Sci.Production.Cutting
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(dateEstCutDate.Value))
+            if (MyUtility.Check.Empty(dateEstCutDate.Value) &&
+                MyUtility.Check.Empty(txtSP.Text) &&
+                MyUtility.Check.Empty(txtCutRef.Text))
             {
-                MyUtility.Msg.WarningBox("<Est. Cut Date> can not be empty.");
+                MyUtility.Msg.WarningBox("<Est. Cut Date>, <SP#>, <CutRef#> can not be empty.");
                 return;
             }
             gridImport.DataSource = null;
             StringBuilder strSQLCmd = new StringBuilder();
-            string estcutdate = dateEstCutDate.Text;
+            DateTime? estcutdate = dateEstCutDate.Value;
             string cutRef = this.txtCutRef.Text;
             string SPNo = this.txtSP.Text;
             string FactoryID = this.txtfactory.Text;
@@ -144,10 +146,15 @@ Select sel = 0,
 from WorkOrder a WITH (NOLOCK)
 outer apply(select AccuCuttingLayer = sum(b.Layer) from cuttingoutput_Detail b where b.WorkOrderUkey = a.Ukey)acc
 outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b where b.WorkOrderUkey = a.Ukey)SRQ
-where mDivisionid = '{0}' and a.estcutdate = '{1}'
+where mDivisionid = '{0}'
 and a.Layer > isnull(acc.AccuCuttingLayer,0)
 and CutRef != ''
-and a.ukey not in ( {2} ) ", keyWord, estcutdate, condition));
+and a.ukey not in ( {1} ) ", keyWord, condition));
+            if (estcutdate.HasValue)
+            {
+                strSQLCmd.Append(string.Format(@" 
+                and a.estcutdate = '{0}'", estcutdate.Value.ToString("yyyy/MM/dd")));
+            }
             if (!MyUtility.Check.Empty(cutRef))
             {
                 strSQLCmd.Append(string.Format(@" 
@@ -170,6 +177,11 @@ and a.ukey not in ( {2} ) ", keyWord, estcutdate, condition));
             DualResult dResult = DBProxy.Current.Select(null, strSQLCmd.ToString(), out detailTable);
             if (dResult)
             {
+                if (detailTable.Rows.Count == 0)
+                {
+                    MyUtility.Msg.InfoBox("Data not Found!");
+                }
+
                 gridTable = detailTable.Copy();
                 gridImport.DataSource = gridTable;
             }
