@@ -60,13 +60,17 @@ namespace Sci.Production.Cutting
             EarliestBuyerDelivery1 = dateEarliestBuyerDelivery.Value1;
             EarliestBuyerDelivery2 = dateEarliestBuyerDelivery.Value2;
 
-            //不可 Est. Cut Date, Cutting SP#, Earliest SCI Delivery, Earliest Sewing Inline5項全為空值
-            if (MyUtility.Check.Empty(Est_CutDate1) && MyUtility.Check.Empty(Est_CutDate2) 
-                && MyUtility.Check.Empty(CuttingSP1) && MyUtility.Check.Empty(CuttingSP2) 
+            // 除了M與Factory外, 不可全為空值
+            if (MyUtility.Check.Empty(Est_CutDate1) && MyUtility.Check.Empty(Est_CutDate2)
+                && MyUtility.Check.Empty(ActCuttingDate1) && MyUtility.Check.Empty(ActCuttingDate2)
+                && MyUtility.Check.Empty(CuttingSP1) && MyUtility.Check.Empty(CuttingSP2)
+                && MyUtility.Check.Empty(BuyerDelivery1) && MyUtility.Check.Empty(BuyerDelivery2)
+                && MyUtility.Check.Empty(SCIDelivery1) && MyUtility.Check.Empty(SCIDelivery2)
+                && MyUtility.Check.Empty(SewingInline1) && MyUtility.Check.Empty(SewingInline2)
+                && MyUtility.Check.Empty(Style)
+                && MyUtility.Check.Empty(EarliestBuyerDelivery1) && MyUtility.Check.Empty(EarliestBuyerDelivery2)
                 && MyUtility.Check.Empty(EarliestSCIDelivery1) && MyUtility.Check.Empty(EarliestSCIDelivery2) 
                 && MyUtility.Check.Empty(EarliestSewingInline1) && MyUtility.Check.Empty(EarliestSewingInline2)
-                && MyUtility.Check.Empty(EarliestBuyerDelivery1) && MyUtility.Check.Empty(EarliestBuyerDelivery2)
-                && MyUtility.Check.Empty(ActCuttingDate1) && MyUtility.Check.Empty(ActCuttingDate2)
                 )
             {
                 MyUtility.Msg.WarningBox("Can't all empty!!");
