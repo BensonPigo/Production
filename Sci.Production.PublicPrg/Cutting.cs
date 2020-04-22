@@ -478,7 +478,8 @@ ORDER BY WOD.OrderID
                             OriPushDayCounts.Add(opd);
 
                             // 原始日期在搜尋條件以外的不顯示
-                            if (realDate.Date.AddDays(LeadTime + HolidayCount) > Days.Max(o=>o.Date) || realDate.Date.AddDays(LeadTime + HolidayCount) < Days.Min(o => o.Date))
+                            // Days的時間已經扣除了LeadTime，因此realDate不用把LeadTime加回去
+                            if (realDate.Date.AddDays(/*LeadTime +*/ HolidayCount) > Days.Max(o => o.Date) || realDate.Date.AddDays(/*LeadTime +*/ HolidayCount) < Days.Min(o => o.Date))
                             {
                                 continue;
                             }
@@ -685,12 +686,18 @@ ORDER BY WOD.OrderID
                 string OrderID = MoveDateData.OrderID;
                 int LeadTime = LeadTimeList.Where(o => o.OrderID == OrderID).FirstOrDefault().LeadTimeDay;
 
-                if (OrderID == "20040358GG")
+                if (OrderID == "20030643GG001")
                 {
 
                 }
                 foreach (var InOffLine in MoveDateData.InOffLines.OrderBy(o => o.DateWithLeadTime))
                 {
+                    // 超過時間軸範圍則跳過
+                    if (InOffLine.DateWithLeadTime > Days.Max(o => o.Date) || InOffLine.DateWithLeadTime < Days.Min(o => o.Date))
+                    {
+                        continue;
+                    }
+
                     // 沒有Ukey代表是補上的日期
                     bool IsBrandNewDay = InOffLine.UKey == null;
 
@@ -707,41 +714,11 @@ ORDER BY WOD.OrderID
 
 
                     bool IsHoliday = Days.Where(o => o.Date == InOffLine.DateWithLeadTime).FirstOrDefault().IsHoliday;
-                    /*int StdQty = 0;
-                    foreach (DataRow dr in obj)
-                    {
-                        string ApsNO = dr["APSNO"].ToString();
-                        string strStdQty = MyUtility.GetValue.Lookup($"SELECT StdQ FROM [dbo].[getDailystdq]('{ApsNO}') WHERE Date = '{InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount + FirstMoveCount).ToString("yyyy/MM/dd")}'");
-                        StdQty += MyUtility.Check.Empty(strStdQty) ? 0 : Convert.ToInt32(strStdQty);
-                    }
-                    StdQty = IsBrandNewDay ? 0 : StdQty;*/
-                    //InOffLine.StdQty = StdQty;
+
+
                     InOffLine.StdQty = IsHoliday ? 0 : GetStdQtyByDate(OrderID, InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount + FirstMoveCount));
 
                     // 累計標準量
-                    /*int AccuStdQty = 0;
-                    string strAccuStdQty = MyUtility.GetValue.Lookup($@"
-SELECT SUM(StdQ)
-FROM (
-	SELECT [StdQ]=(SELECT SUM(StdQ) FROM [dbo].[getDailystdq](APSNo) WHERE Date <= '{InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount + FirstMoveCount).ToString("yyyy/MM/dd")}')
-	FROM SewingSchedule
-	WHERE OrderID='{OrderID}'
-)a
-");
-                    AccuStdQty = MyUtility.Check.Empty(strAccuStdQty) ? 0 : Convert.ToInt32(strAccuStdQty);
-
-                    if (!accu.Where(o => o.Key == OrderID).Any())
-                    {
-                        // 如果是第一天，累計標準量 = 當天標準量
-                        accu.Add(OrderID, AccuStdQty);
-                    }
-                    else
-                    {
-                        // 如果不是第一天，累計標準量 = 之前累計的標準量 + 當天標準量
-                        accu[OrderID] = accu[OrderID] + StdQty;
-                    }
-
-                    InOffLine.AccuStdQty = MyUtility.Check.Empty(AccuStdQty) ? 0 : Convert.ToInt32(AccuStdQty);*/
                     InOffLine.AccuStdQty = GetAccuStdQtyByDate(OrderID, InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount + FirstMoveCount));
 
                     /*-------------------*/

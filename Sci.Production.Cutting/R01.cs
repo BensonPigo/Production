@@ -243,7 +243,8 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
             int dataCount = this.detailData.Rows.Count / 4;
 
             //Detail Sheet
-            string columnName = "";
+            string columnName = "D";   // 預設值為D開始
+            lastColumnName_detail = columnName;
             for (int i = 4; i <= (dateCount + 3) - 1; i++)  //注意 dateCount + i-1
             {
                 // 從D開始貼
@@ -257,7 +258,8 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
 
             // Summary Sheet
             string lastColumnName_summary = "";
-            columnName = "";
+            columnName = "C";  // 預設值為C開始
+            lastColumnName_summary = columnName;
             for (int i = 3; i <= (dateCount + 2) - 1; i++) //注意 dateCount + i-1
             {
                 // 從C開始貼
