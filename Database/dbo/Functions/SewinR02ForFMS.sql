@@ -20,7 +20,7 @@ CREATE function [dbo].[SewinR02ForFMS]
 	  @BeginDate    date
 	 ,@EndDate      date	
 	 ,@Factorys		varchar(100)				
-	 ,@Exclused_Non_Sister_Subcon bit
+	 ,@Exclused_Non_Sister_Subcon varchar(1)   ----Y  or N
 )
 RETURNS @Return TABLE
 (
@@ -273,33 +273,43 @@ Begin
 	;
 
 	---- 若要排除姊妹廠，則算出姊妹場的數量，再用總數去扣掉
-	IF @Exclused_Non_Sister_Subcon = 1
-	BEGIN
-		/*non Sister SubCon In*/
-		;with tmpQty as (
-			select StdTMS
-				   , QAQty = Sum(QAQty)
-				   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
-				   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
+	IF @Exclused_Non_Sister_Subcon = 'Y'
+		BEGIN
+			/*non Sister SubCon In*/
+			;with tmpQty as (
+				select StdTMS
+					   , QAQty = Sum(QAQty)
+					   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
+					   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
+				from @AllDetail
+				where LastShift = 'I' and SubconInType in ('0','3')
+				group by StdTMS
+			)
+			INSERT INTO @Return
+			SELECT   TotalCPU = ISNULL( ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3) ,0)   - ISNULL((select q.TotalCPU from tmpQty q),0)
+				   , ManHour = ISNULL( ROUND(Sum(WorkHour * ActManPower), 2) ,0)   - ISNULL((select q.ManHour from tmpQty q),0)
 			from @AllDetail
-			where LastShift = 'I' and SubconInType in ('0','3')
-			group by StdTMS
-		)
-		INSERT INTO @Return
-		SELECT   TotalCPU = ISNULL( ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3) ,0)   - ISNULL((select q.TotalCPU from tmpQty q),0)
-			   , ManHour = ISNULL( ROUND(Sum(WorkHour * ActManPower), 2) ,0)   - ISNULL((select q.ManHour from tmpQty q),0)
-		from @AllDetail
-		where LastShift <> 'O'
-	END
-	ELSE
-	BEGIN
-		INSERT INTO @Return
-		/*Total CPU & Manhours*/
-		select  TotalCPU = ISNULL( ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)  ,0) 
-				,ManHour = ISNULL( ROUND(Sum(WorkHour * ActManPower), 2) ,0) 
-		from @AllDetail
-		where LastShift <> 'O' 
-	END
+			where LastShift <> 'O'
+		END
+	ELSE IF @Exclused_Non_Sister_Subcon = 'N'
+		BEGIN
+			INSERT INTO @Return
+			/*Total CPU & Manhours*/
+			select  TotalCPU = ISNULL( ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)  ,0) 
+					,ManHour = ISNULL( ROUND(Sum(WorkHour * ActManPower), 2) ,0) 
+			from @AllDetail
+			where LastShift <> 'O' 
+		END
+	
+	ELSE   ---- 其餘狀況預設帶不排除姊妹廠資料
+		BEGIN
+			INSERT INTO @Return
+			/*Total CPU & Manhours*/
+			select  TotalCPU = ISNULL( ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)  ,0) 
+					,ManHour = ISNULL( ROUND(Sum(WorkHour * ActManPower), 2) ,0) 
+			from @AllDetail
+			where LastShift <> 'O' 
+		END
 	;
 	return;
 end
