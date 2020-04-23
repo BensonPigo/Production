@@ -319,7 +319,7 @@ order by MDivisionID,FactoryID",
                     objArray[0, 17] = string.Empty;
                 }
 
-                worksheet.Range[string.Format("A{0}:P{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:R{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
