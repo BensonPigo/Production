@@ -230,7 +230,7 @@ SELECT  [Selected]
 		, [Use Unit]
 		, [Stock Unit Desc.]
 		, [Output Qty(Garment)] = SUM([Output Qty(Garment)])
-		, [Bulk Balance(Stock Unit)] = ([Bulk Balance(Stock Unit)])
+		, [Bulk Balance(Stock Unit)] = SUM([Bulk Balance(Stock Unit)])
         , [POID]
 		, [AccuIssued]
 FROM #final
@@ -244,7 +244,7 @@ GROUP BY [Selected]
 		, [Stock Unit Desc.]
         , [POID]
 		, [AccuIssued]
-		, [Bulk Balance(Stock Unit)]
+		--, [Bulk Balance(Stock Unit)]
 
 DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final
 

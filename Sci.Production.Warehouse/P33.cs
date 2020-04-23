@@ -258,7 +258,7 @@ SELECt SCIRefno
 	, [Use Qty By Use Unit]=SUM([Use Qty By Use Unit])
 	, [Stock Unit Desc.]
 	, [OutputQty] = SUM([OutputQty])
-	, [Balance(Stock Unit)]
+	, [Balance(Stock Unit)] = SUM([Balance(Stock Unit)])
 	, [Location]
 	, [POID]
 	, MDivisionID
@@ -274,7 +274,7 @@ GROUP BY SCIRefno
 	, [Stock Unit]
 	, [Use Unit]
 	, [Stock Unit Desc.]
-	, [Balance(Stock Unit)]
+	--, [Balance(Stock Unit)]
 	, [Location]
 	, [POID]
 	, MDivisionID
@@ -582,7 +582,7 @@ SELECT    SCIRefno
         , [Use Unit]
         , [Stock Unit Desc.]
         , [OutputQty] = SUM([OutputQty])
-        , [Balance(Stock Unit)]
+        , [Balance(Stock Unit)] = SUM([Balance(Stock Unit)])
         , [Location] 
         , [POID]
         , MDivisionID
@@ -596,7 +596,7 @@ GROUP BY SCIRefno
         , [Stock Unit]
         , [Use Unit]
         , [Stock Unit Desc.]
-        , [Balance(Stock Unit)]
+        --, [Balance(Stock Unit)]
         , [Location] 
         , [POID]
         , MDivisionID
@@ -842,7 +842,7 @@ SELECT    SCIRefno
         , [Use Unit]
         , [Stock Unit Desc.]
         , [OutputQty] = SUM([OutputQty])
-        , [Balance(Stock Unit)]
+        , [Balance(Stock Unit)] = SUM([Balance(Stock Unit)])
         , [Location] 
         , [POID]
         , MDivisionID
@@ -856,7 +856,7 @@ GROUP BY SCIRefno
         , [Stock Unit]
         , [Use Unit]
         , [Stock Unit Desc.]
-        , [Balance(Stock Unit)]
+        --, [Balance(Stock Unit)]
         , [Location] 
         , [POID]
         , MDivisionID
@@ -1197,7 +1197,7 @@ SELECT    SCIRefno
         , [Use Unit]
         , [Stock Unit Desc.]
         , [OutputQty] = SUM([OutputQty])
-        , [Balance(Stock Unit)]
+        , [Balance(Stock Unit)] = SUM([Balance(Stock Unit)])
         , [Location] 
         , [POID]
         , MDivisionID
@@ -1211,7 +1211,7 @@ GROUP BY SCIRefno
         , [Stock Unit]
         , [Use Unit]
         , [Stock Unit Desc.]
-        , [Balance(Stock Unit)]
+        --, [Balance(Stock Unit)]
         , [Location] 
         , [POID]
         , MDivisionID
@@ -1456,7 +1456,7 @@ SELECT    SCIRefno
         , [Use Unit]
         , [Stock Unit Desc.]
         , [OutputQty] = SUM([OutputQty])
-        , [Balance(Stock Unit)]
+        , [Balance(Stock Unit)] = SUM([Balance(Stock Unit)])
         , [Location] 
         , [POID]
         , MDivisionID
@@ -1470,7 +1470,7 @@ GROUP BY SCIRefno
         , [Stock Unit]
         , [Use Unit]
         , [Stock Unit Desc.]
-        , [Balance(Stock Unit)]
+        --, [Balance(Stock Unit)]
         , [Location] 
         , [POID]
         , MDivisionID
