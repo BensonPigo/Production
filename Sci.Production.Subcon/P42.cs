@@ -290,11 +290,11 @@ outer apply(
 where 1=1
 {where}
 
-select b.Orderid,bd.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
+select [Orderid]=o.ID,bd.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
 into #tmpBundleNo
-from Bundle b with(nolock)
-inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
-inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
+from #tmpOrders o
+LEFT join Bundle b with(nolock) on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
+LEFT join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
 	from SubProcess s
@@ -412,6 +412,7 @@ select
 	t.SubProcessID,
 	Status=case when CompleteCount > 0 AND OnGoingCount=0 AND NotYetCount=0 then 'Complete'
 				when NotYetCount > 0 AND OnGoingCount = 0 AND CompleteCount=0 then 'Not Yet Load'
+				when NotYetCount = 0 AND OnGoingCount = 0 AND CompleteCount=0 then 'Not Yet Load'
 				ELSE 'OnGoing'
 				end
 into #tmp
