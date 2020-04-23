@@ -32,10 +32,17 @@ namespace Sci.Production.Cutting
 
         protected override bool ClickSaveBefore()
         {
+            if (MyUtility.Check.Empty(this.txtMdivision.Text))
+            {
+                MyUtility.Msg.WarningBox("M can't empty, can't save !!");
+                return false;
+            }
+
             string sqlchk = $@"
 select 1
 from SubprocessLeadTime s
 where id <> '{this.CurrentMaintain["ID"]}'
+and MDivisionID = '{this.txtMdivision.Text}'
 and (select stuff((select concat('+', SubprocessID) from SubprocessLeadTime_Detail sd where s.ID = sd.ID order by sd.SubprocessID for xml path('')),1,1,''))='{this.txtSubprocess.Text}' 
 ";
             if (MyUtility.Check.Seek(sqlchk))
@@ -72,6 +79,10 @@ and (select stuff((select concat('+', SubprocessID) from SubprocessLeadTime_Deta
         private string Subprocess;
         private string ArtworkType;
 
+        protected override void ClickNewAfter()
+        {
+            this.txtMdivision.Text = Env.User.Keyword;
+        }
         protected override bool ClickCopyBefore()
         {
             this.LeadTime = this.numLeadTime.Value;

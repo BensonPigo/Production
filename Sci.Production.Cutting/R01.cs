@@ -390,7 +390,7 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
 
             string cmd = $@"
 
-SELECT  DISTINCT OrderID
+SELECT  DISTINCT OrderID, s.MDivisionID
 INTO #OrderList
 FROM SewingSchedule s WITH(NOLOCK)
 INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID
@@ -412,9 +412,11 @@ AND (
 
             cmd += $@"
 
-SELECT DIStINCT  b.POID ,a.OrderID ,b.FtyGroup
+SELECT DIStINCT  b.POID ,a.OrderID ,b.FtyGroup, a.MDivisionID
 FROM #OrderList a
 INNER JOIN Orders b ON a.OrderID= b.ID 
+
+drop table #OrderList
 ";
             result = DBProxy.Current.Select(null, cmd, out PoID_dt);
 
@@ -433,6 +435,7 @@ INNER JOIN Orders b ON a.OrderID= b.ID
             {
                 string POID = dr["POID"].ToString();
                 string OrderID = dr["OrderID"].ToString();
+                string MDivisionID = dr["MDivisionID"].ToString();
 
                 PublicPrg.Prgs.GetGarmentListTable(string.Empty, POID, "", out GarmentTb);
 
@@ -467,8 +470,9 @@ INNER JOIN Orders b ON a.OrderID= b.ID
                 string chk_LeadTime = $@"
 SELECT DISTINCT SD.ID
                 ,Subprocess.IDs
-                ,LeadTime=(SELECt LeadTime FROM SubprocessLeadTime WITH(NOLOCK) WHERE ID = sd.ID)
-FROM SubprocessLeadTime_Detail SD WITH(NOLOCK)
+                ,LeadTime= s.LeadTime
+FROM SubprocessLeadTime s WITH(NOLOCK)
+INNER JOIN SubprocessLeadTime_Detail SD WITH(NOLOCK) on s.ID = sd.ID
 OUTER APPLY(
 	SELECT IDs=STUFF(
 	 (
@@ -480,6 +484,7 @@ OUTER APPLY(
 	,1,1,'')
 )Subprocess
 WHERE Subprocess.IDs = '{AnnotationStr}'
+and s.MDivisionID = '{MDivisionID}'
 ";
                 result = DBProxy.Current.Select(null, chk_LeadTime, out LeadTime_dt);
                 if (!result)
@@ -491,7 +496,7 @@ WHERE Subprocess.IDs = '{AnnotationStr}'
                 // 收集需要顯示訊息的Subprocess ID
                 if (LeadTime_dt.Rows.Count == 0 && AnnotationStr != string.Empty)
                 {
-                    Msg.Add(AnnotationStr);
+                    Msg.Add(MDivisionID+";"+AnnotationStr);
                 }
                 else
                 {
@@ -507,12 +512,13 @@ WHERE Subprocess.IDs = '{AnnotationStr}'
 
             if (Msg.Count > 0)
             {
-                string Message = "<" + Msg.Distinct().JoinToString(">" + Environment.NewLine + "<") + ">";
-                Message += Environment.NewLine + @"Please set cutting lead time in [Cutting_B09. Subprocess Lead Time].
+                string message = "<" + Msg.Distinct().OrderBy(o => o).JoinToString(">" + Environment.NewLine + "<") + ">";
+                message = message.Replace(";", "><");
+                message += Environment.NewLine + @"Please set cutting lead time in [Cutting_B09. Subprocess Lead Time].
 When the settings are complete, can be export excel!
 ";
 
-                MyUtility.Msg.InfoBox(Message);
+                MyUtility.Msg.InfoBox(message);
                 return false;
             }
             return true;
