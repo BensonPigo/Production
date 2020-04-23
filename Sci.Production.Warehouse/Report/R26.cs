@@ -159,7 +159,7 @@ where L.status='Confirmed'
 
             Excel.Application objApp = new Excel.Application();
             Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R26.xltx", objApp);
-
+            com.UseInnerFormating = false;
             com.WriteTable(dt, 2);
 
             com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
