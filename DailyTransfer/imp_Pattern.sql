@@ -270,7 +270,45 @@ from Trade_To_Pms.dbo.Pattern_GL_Article as b WITH (NOLOCK)
 inner join Trade_To_Pms.dbo.Pattern as c WITH (NOLOCK) on b.ID=c.ID and b.Version=c.Version
 where not exists(select id from Production.dbo.Pattern_GL_Article as a WITH (NOLOCK) where a.id = b.id and a.SEQ=b.SEQ and a.Version=b.Version and a.ArticleGroup=b.ArticleGroup and a.Article=b.Article)
 
+------Pattern_Annotation_Artwork------
+DELETE Production.dbo.Pattern_Annotation_Artwork  
+from Production.dbo.Pattern_Annotation_Artwork as a
+left join Trade_To_Pms.dbo.Pattern_Annotation_Artwork as b on a.id = b.id
+where b.id is null
 
+UPDATE a
+SET    a.ArtworkTypeID	  =b.ArtworkTypeID		
+      ,a.NameCH			  =b.NameCH		
+      ,a.NameEN			  =b.NameEN		
+      ,a.IEPatternCode	  =b.IEPatternCode		
+      ,a.Combine	      =b.Combine
+
+from Production.dbo.Pattern_Annotation_Artwork as a 
+inner join Trade_To_Pms.dbo.Pattern_Annotation_Artwork as b ON a.id = b.id
+
+
+INSERT INTO Production.dbo.Pattern_Annotation_Artwork(
+	 ID
+	,ArtworkTypeID
+	,NameCH
+	,NameEN
+	,IEPatternCode
+	,Combine
+)
+select 	 ID
+		,ArtworkTypeID
+		,NameCH
+		,NameEN
+		,IEPatternCode
+		,Combine
+from Trade_To_Pms.dbo.Pattern_Annotation_Artwork as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Pattern_Annotation_Artwork as a WITH (NOLOCK) where a.id = b.id )
+
+UPDATE a
+SET a.IsBoundedProcess  = b.Combine
+FROM Production.dbo.SubProcess a WITH (NOLOCK)
+INNER JOIN Production.dbo.Pattern_Annotation_Artwork b  WITH (NOLOCK) ON a.ID=b.ID
+------------------------------------------------------------------------------------------
 
 END
 
