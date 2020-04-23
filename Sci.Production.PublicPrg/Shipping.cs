@@ -784,8 +784,7 @@ select  t.*
         , sb.SCIRefno
         , sb.SuppIDBulk
         , sb.SizeItem
-        , sb.PatternPanel
-        , sb.BomTypeArticle
+        , sb.FabricPanelCode
         , sb.BomTypeColor
         , sb.ConsPC
         , sc.ColorID
@@ -804,7 +803,7 @@ into #tmpBOA
 from #tmpAllStyle t
 inner join Style_BOA sb WITH (NOLOCK) on t.StyleUkey = sb.StyleUkey
 left join Style_ColorCombo sc WITH (NOLOCK) on sc.StyleUkey = sb.StyleUkey 
-                                               and sc.PatternPanel = sb.PatternPanel 
+                                               and sc.FabricPanelCode = sb.FabricPanelCode 
                                                and sc.Article = t.Article
 inner join Fabric f WITH (NOLOCK) on sb.SCIRefno = f.SCIRefno
 where   sb.IsCustCD <> 2
@@ -833,8 +832,8 @@ outer apply(
 outer apply(select [val] = IIF(t.BomTypeCalculate = 1, isnull(dbo.GetDigitalValue(s.SizeSpec),0), ConsPC)) as SizeSpec
 outer apply(select [val] = dbo.getStockUnit(t.SCIRefno,default)) as StockUnit
 outer apply(select [val] = dbo.getUnitRate(t.UsageUnit,StockUnit.val) * SizeSpec.val) as StockQty
-where   (t.BomTypeArticle = 0 and t.BomTypeColor = 0) 
-        or ((t.BomTypeArticle = 1 or t.BomTypeColor = 1) and t.ColorID is not null)
+where   (t.BomTypeColor = 0) 
+        or (t.BomTypeColor = 1 and t.ColorID is not null)
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 select  StyleID
@@ -919,7 +918,6 @@ inner join LocalPO_Detail ld WITH (NOLOCK) on ld.OrderId = (select TOP 1 ID
 inner join  LocalPO l with (nolock) on ld.ID = l.ID and l.Category not in ('SP_THREAD','EMB_THREAD')
 left join LocalItem li WITH (NOLOCK) on li.RefNo = ld.Refno
 left join Orders o WITH (NOLOCK) on ld.OrderId = o.ID
-left join View_VNNLCodeWaste vd WITH (NOLOCK) on  vd.NLCode = li.NLCode
 where li.NoDeclare = 0
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
