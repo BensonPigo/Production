@@ -286,7 +286,7 @@ namespace Sci.Production.Packing
             {
                 document.Activate();
                 Word.Tables table = document.Tables;
-
+                //winword.Visible = true;
                 #region 計算頁數
                 winword.Selection.Tables[1].Select();
                 winword.Selection.Copy();
@@ -327,23 +327,25 @@ namespace Sci.Production.Packing
                         tables.Cell(((p % pageItemCount) * 3) + 2, 1).Range.Text = sizeQty + "  " + cartonNo;
 
                         Bitmap oriBitmap = this.NewQRcode(barcode);
-
                         Clipboard.SetImage(oriBitmap);
                         tables.Cell(((p % pageItemCount) * 3) + 1, 2).Range.Paste();
                         Word.Shape qrCodeImg = tables.Cell(((p % pageItemCount) * 3) + 1, 2).Range.InlineShapes[1].ConvertToShape();
+                        qrCodeImg.Width = 34;
+                        qrCodeImg.Height = 34;
+                        Timer timer = new Timer();
                         qrCodeImg.WrapFormat.Type = Word.WdWrapType.wdWrapBehind;
                         qrCodeImg.RelativeHorizontalPosition = Word.WdRelativeHorizontalPosition.wdRelativeHorizontalPositionColumn;
+                        qrCodeImg.RelativeVerticalPosition = Word.WdRelativeVerticalPosition.wdRelativeVerticalPositionParagraph;
+                        qrCodeImg.Top = MyUtility.Convert.GetFloat(0.05);
                     }
                 }
                 #endregion
                 winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
-                #region Save & Show Word
                 winword.Visible = true;
                 Marshal.ReleaseComObject(winword);
                 Marshal.ReleaseComObject(document);
                 Marshal.ReleaseComObject(table);
-                #endregion
             }
             catch (Exception ex)
             {
@@ -402,8 +404,8 @@ namespace Sci.Production.Packing
                 Options = new QrCodeEncodingOptions
                 {
                     //Create Photo 
-                    Height = 43,
-                    Width = 43,
+                    Height = 120,
+                    Width = 120,
                     Margin = 0,
                     CharacterSet = "UTF-8",
                     PureBarcode = true,
@@ -416,7 +418,6 @@ namespace Sci.Production.Packing
                 }
 
             };
-
 
             return writer.Write(strBarcode);
         }
