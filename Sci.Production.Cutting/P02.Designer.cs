@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelCuttingSP = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
@@ -49,7 +49,7 @@
             this.displayColor = new Sci.Win.UI.DisplayBox();
             this.numTotalLayer = new Sci.Win.UI.NumericBox();
             this.numBalanceLayer = new Sci.Win.UI.NumericBox();
-            this.btnBatchAssignCellEstCutDate = new Sci.Win.UI.Button();
+            this.btnBatchAssign = new Sci.Win.UI.Button();
             this.btnQuantityBreakdown = new Sci.Win.UI.Button();
             this.btnPackingMethod = new Sci.Win.UI.Button();
             this.labelMarkerLengthY = new Sci.Win.UI.Label();
@@ -108,6 +108,7 @@
             this.label1 = new Sci.Win.UI.Label();
             this.lbshc = new System.Windows.Forms.Label();
             this.btnCutplanChangeHistory = new Sci.Win.UI.Button();
+            this.btnStdQtyWIP = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -140,11 +141,12 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnStdQtyWIP);
             this.masterpanel.Controls.Add(this.numBalanceLayer);
             this.masterpanel.Controls.Add(this.numTotalLayer);
             this.masterpanel.Controls.Add(this.labelBalanceLayer);
             this.masterpanel.Controls.Add(this.labelTotalLayer);
-            this.masterpanel.Controls.Add(this.btnBatchAssignCellEstCutDate);
+            this.masterpanel.Controls.Add(this.btnBatchAssign);
             this.masterpanel.Controls.Add(this.downloadid_Text);
             this.masterpanel.Controls.Add(this.displayColor);
             this.masterpanel.Controls.Add(this.displayMarkerName);
@@ -169,12 +171,13 @@
             this.masterpanel.Controls.SetChildIndex(this.displayMarkerName, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayColor, 0);
             this.masterpanel.Controls.SetChildIndex(this.downloadid_Text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnBatchAssignCellEstCutDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnBatchAssign, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelTotalLayer, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelBalanceLayer, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTotalLayer, 0);
             this.masterpanel.Controls.SetChildIndex(this.numBalanceLayer, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnStdQtyWIP, 0);
             // 
             // detailpanel
             // 
@@ -196,7 +199,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(6833, 561);
+            this.refresh.Location = new System.Drawing.Point(7057, 561);
             // 
             // detailgridcont
             // 
@@ -205,7 +208,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(0, 93);
-            this.detailgridcont.Size = new System.Drawing.Size(631, 587);
+            this.detailgridcont.Size = new System.Drawing.Size(627, 585);
             // 
             // detail
             // 
@@ -444,16 +447,16 @@
             0,
             0});
             // 
-            // btnBatchAssignCellEstCutDate
+            // btnBatchAssign
             // 
-            this.btnBatchAssignCellEstCutDate.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnBatchAssignCellEstCutDate.Location = new System.Drawing.Point(304, 61);
-            this.btnBatchAssignCellEstCutDate.Name = "btnBatchAssignCellEstCutDate";
-            this.btnBatchAssignCellEstCutDate.Size = new System.Drawing.Size(215, 30);
-            this.btnBatchAssignCellEstCutDate.TabIndex = 17;
-            this.btnBatchAssignCellEstCutDate.Text = "Batch assign Cell/Est. Cut Date";
-            this.btnBatchAssignCellEstCutDate.UseVisualStyleBackColor = true;
-            this.btnBatchAssignCellEstCutDate.Click += new System.EventHandler(this.btnBatchAssignCellEstCutDate_Click);
+            this.btnBatchAssign.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnBatchAssign.Location = new System.Drawing.Point(292, 61);
+            this.btnBatchAssign.Name = "btnBatchAssign";
+            this.btnBatchAssign.Size = new System.Drawing.Size(107, 30);
+            this.btnBatchAssign.TabIndex = 17;
+            this.btnBatchAssign.Text = "Batch assign";
+            this.btnBatchAssign.UseVisualStyleBackColor = true;
+            this.btnBatchAssign.Click += new System.EventHandler(this.btnBatchAssign_Click);
             // 
             // btnQuantityBreakdown
             // 
@@ -678,14 +681,14 @@
             this.gridSizeRatio.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridSizeRatio.Location = new System.Drawing.Point(0, 13);
             this.gridSizeRatio.Name = "gridSizeRatio";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridSizeRatio.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridSizeRatio.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSizeRatio.RowTemplate.Height = 24;
@@ -760,14 +763,14 @@
             this.gridDistributetoSPNo.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridDistributetoSPNo.Location = new System.Drawing.Point(0, 18);
             this.gridDistributetoSPNo.Name = "gridDistributetoSPNo";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridDistributetoSPNo.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridDistributetoSPNo.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridDistributetoSPNo.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridDistributetoSPNo.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDistributetoSPNo.RowTemplate.Height = 24;
@@ -818,14 +821,14 @@
             this.gridQtyBreakdown.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQtyBreakdown.Location = new System.Drawing.Point(0, 14);
             this.gridQtyBreakdown.Name = "gridQtyBreakdown";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBreakdown.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBreakdown.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.gridQtyBreakdown.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQtyBreakdown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBreakdown.RowTemplate.Height = 24;
@@ -1149,6 +1152,16 @@
             this.btnCutplanChangeHistory.UseVisualStyleBackColor = true;
             this.btnCutplanChangeHistory.Click += new System.EventHandler(this.btnCutplanChangeHistory_Click);
             // 
+            // btnStdQtyWIP
+            // 
+            this.btnStdQtyWIP.Location = new System.Drawing.Point(405, 61);
+            this.btnStdQtyWIP.Name = "btnStdQtyWIP";
+            this.btnStdQtyWIP.Size = new System.Drawing.Size(119, 30);
+            this.btnStdQtyWIP.TabIndex = 54;
+            this.btnStdQtyWIP.Text = "Std. Qty/WIP";
+            this.btnStdQtyWIP.UseVisualStyleBackColor = true;
+            this.btnStdQtyWIP.Click += new System.EventHandler(this.BtnStdQtyWIP_Click);
+            // 
             // P02
             // 
             this.ClientSize = new System.Drawing.Size(1012, 775);
@@ -1168,7 +1181,7 @@
             this.SubDetailKeyField1 = "ukey";
             this.SubDetailKeyField2 = "WorkOrderUkey";
             this.SubGridAlias = "WorkOrder_PatternPanel";
-            this.Text = "() () ";
+            this.Text = "() () () ";
             this.WorkAlias = "Cutting";
             this.Controls.SetChildIndex(this.tabs, 0);
             this.Controls.SetChildIndex(this.btnCutplanChangeHistory, 0);
@@ -1227,7 +1240,7 @@
         private Win.UI.DisplayBox displayMarkerName;
         private Win.UI.Label downloadid_Text;
         private Win.UI.Button btnPackingMethod;
-        private Win.UI.Button btnBatchAssignCellEstCutDate;
+        private Win.UI.Button btnBatchAssign;
         private Win.UI.NumericBox numBalanceLayer;
         private Win.UI.NumericBox numTotalLayer;
         private Win.UI.DisplayBox displayColor;
@@ -1287,5 +1300,6 @@
         private Win.UI.DisplayBox displayTime;
         private Win.UI.Button btnAdditionalrevisedmarker;
         private Win.UI.Button btnCutplanChangeHistory;
+        private Win.UI.Button btnStdQtyWIP;
     }
 }
