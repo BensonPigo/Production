@@ -16,6 +16,9 @@ using Sci.Production.PublicPrg;
 using System.Transactions;
 using System.Text.RegularExpressions;
 using System.Reflection;
+using static Sci.Production.Automation.Guozi_AGV;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Cutting
 {
@@ -1711,6 +1714,8 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
             Insert_Bundle_Detail_AllPart.Columns.Add("Insert", typeof(string));
             DataTable Insert_Bundle_Detail_Qty = new DataTable();
             Insert_Bundle_Detail_Qty.Columns.Add("Insert", typeof(string));
+            DataTable Insert_BundleNo = new DataTable();
+            Insert_BundleNo.Columns.Add("BundleNo", typeof(string));
             #endregion
 
             #region
@@ -1916,6 +1921,7 @@ values
                             return;
                         }
 
+
                         #region Bundle_Detail 改成先準備Datatable
                         DataRow BundleDetail_pre = tmpBundle_Detail.NewRow();
                         BundleDetail_pre["ID"] = id_list[idcount];
@@ -2116,6 +2122,10 @@ values
                         item["ID"], item["Bundleno"], item["BundleGroup"], item["PatternCode"]
                         , item["PatternDesc"], item["SizeCode"], item["Qty"], item["Parts"], MyUtility.Convert.GetBool(item["isPair"]) ? 1 : 0, item["Location"]);
                     Insert_Bundle_Detail.Rows.Add(nBundleDetail_dr);
+
+                    DataRow drBundleNo = Insert_BundleNo.NewRow();
+                    drBundleNo["BundleNo"] = item["Bundleno"];
+                    Insert_BundleNo.Rows.Add(drBundleNo);
                 }
 
                 foreach (DataRow item in tmpBundle_Detail_Art.Rows)
@@ -2180,9 +2190,65 @@ values
                         return;
                     }
                 }
-                MyUtility.Msg.InfoBox("Successfully");
                 _transactionscope.Complete();
             }
+
+            #region sent data to GZ WebAPI
+            Func<List<BundleToAGV_PostBody>> funListBundle = () =>
+            {
+                string sqlGetData = $@"
+select  bd.ID          ,
+        bd.BundleNo    ,
+        b.CutRef             ,
+        b.OrderID            ,
+        b.Article            ,
+        b.PatternPanel       ,
+        b.FabricPanelCode    ,
+        bd.PatternCode ,
+        bd.PatternDesc ,
+        bd.BundleGroup ,
+        bd.SizeCode    ,
+        bd.Qty         ,
+        b.SewingLineID       ,
+        b.AddDate
+from #tmp t
+inner join Bundle_Detail bd with (nolock) on t.BundleNo = bd.BundleNo
+inner join Bundle b with (nolock) on bd.ID = b.ID
+";
+                DataTable dtBundleGZ;
+                result = MyUtility.Tool.ProcessWithDatatable(Insert_BundleNo, "BundleNo", sqlGetData, out dtBundleGZ);
+
+                if (dtBundleGZ.Rows.Count > 0)
+                {
+                    return  dtBundleGZ.AsEnumerable().Select(
+                       dr => new BundleToAGV_PostBody()
+                       {
+                           ID = dr["ID"].ToString(),
+                           BundleNo = dr["BundleNo"].ToString(),
+                           CutRef = dr["CutRef"].ToString(),
+                           OrderID = dr["OrderID"].ToString(),
+                           Article = dr["Article"].ToString(),
+                           PatternPanel = dr["PatternPanel"].ToString(),
+                           FabricPanelCode = dr["FabricPanelCode"].ToString(),
+                           PatternCode = dr["PatternCode"].ToString(),
+                           PatternDesc = dr["PatternDesc"].ToString(),
+                           BundleGroup = (decimal)dr["BundleGroup"],
+                           SizeCode = dr["SizeCode"].ToString(),
+                           Qty = (decimal)dr["Qty"],
+                           SewingLineID = dr["SewingLineID"].ToString(),
+                           AddDate = (DateTime?)dr["AddDate"]
+                       }
+                       ).ToList();
+                }
+                else {
+                    return null;
+                }
+            };
+            Task.Run(() => new Guozi_AGV().SentBundleToAGV(funListBundle));
+
+            #endregion
+
+            MyUtility.Msg.InfoBox("Successfully");
         }
 
         private void gridArticleSize_RowEnter(object sender, DataGridViewCellEventArgs e)

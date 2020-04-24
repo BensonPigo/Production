@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[WebApiURL]
+(
+	[SuppID] VARCHAR(6) NOT NULL , 
+    [ModuleName] VARCHAR(20) NOT NULL, 
+    [URL] VARCHAR(100) NOT NULL CONSTRAINT [DF_WebApiURL_URL] DEFAULT ('') , 
+    [Description] VARCHAR(200) NOT NULL CONSTRAINT [DF_WebApiURL_AddName] DEFAULT ('') ,
+    CONSTRAINT [PK_WebApiURL] PRIMARY KEY CLUSTERED ([SuppID], [ModuleName] ASC)
+)
