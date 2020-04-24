@@ -75,16 +75,21 @@ namespace Sci.Production.Warehouse
 
             // 整理出#tmp傳進 SQL 使用
             DataTable IssueBreakDown_Dt = new DataTable();
-            IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "OrderID", DataType = typeof(string) });
+            //IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "OrderID", DataType = typeof(string) });
             IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Article", DataType = typeof(string) });
             IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Qty", DataType = typeof(int) });
 
-            foreach (var model in _IssueQtyBreakdownList)
+            var groupByData = _IssueQtyBreakdownList.GroupBy(o => new { o.Article }).Select(o => new
+            {
+                o.Key.Article,
+                Qty = o.Sum(x => x.Qty)
+            }).ToList();
+            foreach (var model in groupByData)
             {
                 if (model.Qty > 0)
                 {
                     DataRow newDr = IssueBreakDown_Dt.NewRow();
-                    newDr["OrderID"] = model.OrderID;
+                    //newDr["OrderID"] = model.OrderID;
                     newDr["Article"] = model.Article;
                     newDr["Qty"] = model.Qty;
 
@@ -216,6 +221,36 @@ SELECT  [Selected]
         , Refno
 		, SuppColor
 		, DescDetail
+		, [@Qty] = SUM([@Qty])
+		, [Use Qty By Stock Unit] = CEILING (SUM([Use Qty By Stock Unit] ))
+		, [Stock Unit]
+		, [Use Qty By Use Unit] = SUM([Use Qty By Use Unit] )
+		, [Use Unit]
+		, [Stock Unit Desc.]
+		, [Output Qty(Garment)] = SUM([Output Qty(Garment)])
+		, [Bulk Balance(Stock Unit)] 
+        , [POID]
+		, [AccuIssued]
+INTO #final2
+FROM #final
+GROUP BY [Selected] 
+		, SCIRefno 
+        , Refno
+		, SuppColor
+		, DescDetail
+		, [Stock Unit]
+		, [Use Unit]
+		, [Stock Unit Desc.]
+        , [POID]
+		, [AccuIssued]
+		, [Bulk Balance(Stock Unit)] 
+
+
+SELECT  [Selected] 
+		, SCIRefno 
+        , Refno
+		, SuppColor
+		, DescDetail
 		, [@Qty] 
 		, [Use Qty By Stock Unit]
 		, [Stock Unit]
@@ -226,7 +261,7 @@ SELECT  [Selected]
 		, [Bulk Balance(Stock Unit)] = Balance.Qty
         , [POID]
 		, [AccuIssued]
-FROM #final t
+FROM #final2 t
 OUTER APPLY(
 	SELECT [Qty]=ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0)
 	FROM PO_Supp_Detail psd 
@@ -235,7 +270,7 @@ OUTER APPLY(
 )Balance 
 
 
-DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final,#tmp,#tmp_sumQty
+DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final,#final2,#tmp,#tmp_sumQty
 
 
 ";
