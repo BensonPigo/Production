@@ -198,6 +198,12 @@
     <Compile Include="txtCustomsContract.Designer.cs">
       <DependentUpon>txtCustomsContract.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtmultiSeason.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtmultiSeason.Designer.cs">
+      <DependentUpon>txtmultiSeason.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtMultiSubconNoConfirm.cs">
       <SubType>Component</SubType>
     </Compile>
