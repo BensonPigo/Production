@@ -145,7 +145,8 @@ WHERE o.id = '{OrderID}' AND o.sewline != '') t FOR xml path('')
 ----  先By Article撈取資料再加總
 WITH BreakdownByArticle as (
 
-    SELECT   iis.SCIRefno
+    SELECT   DISTINCT
+              iis.SCIRefno
             , [Refno]=Refno.Refno
 		    , iis.SuppColor
 		    , f.DescDetail
@@ -158,7 +159,7 @@ WITH BreakdownByArticle as (
 					    and [IS].Poid=iis.POID AND [IS].SCIRefno=iis.SCIRefno AND [IS].SuppColor=iis.SuppColor and i2.[EditDate]<I.AddDate AND i2.ID <> i.ID
 				    )
 		    , [IssueQty]=iis.Qty
-		    , [Use Qty By Stock Unit] = ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1)
+		    , [Use Qty By Stock Unit] = CEILING( ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1))
 		    , [Stock Unit]=StockUnit.StockUnit
 
 		    , [Use Unit]='CM'
@@ -166,7 +167,7 @@ WITH BreakdownByArticle as (
 
 		    , [Stock Unit Desc.]=StockUnit.Description
 		    , [OutputQty] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
-		    , [Balance(Stock Unit)]= ISNULL( fi.InQty - fi.OutQty + fi.AdjustQty ,0)
+		    , [Balance(Stock Unit)]= 0
 		    , [Location]=ISNULL(Location.MtlLocationID,'')
             , [POID]=iis.POID
             , i.MDivisionID
@@ -175,7 +176,6 @@ WITH BreakdownByArticle as (
     FROM Issue i 
     INNER JOIN Issue_Summary iis ON i.ID= iis.Id
     LEFT JOIN Issue_Detail isd ON isd.Issue_SummaryUkey=iis.Ukey
-    LEFT JOIN FtyInventory fi ON fi.Ukey = isd.FtyInventoryUkey
     LEFT JOIN Fabric f ON f.SCIRefno = iis.SCIRefno
     OUTER APPLY(
 	    SELECT DISTINCT Refno
@@ -244,42 +244,72 @@ WITH BreakdownByArticle as (
     AND iis.SuppColor <> ''
 )
 
+, Final as(
+
+	SELECt SCIRefno
+		, Refno
+		, SuppColor
+		, DescDetail
+		, [@Qty] = SUM([@Qty])
+		, [AccuIssued]
+		, [IssueQty]
+		, [Use Qty By Stock Unit] = CEILING (SUM([Use Qty By Stock Unit] ))
+		, [Stock Unit]
+		, [Use Unit]='CM'
+		, [Use Qty By Use Unit] = SUM([Use Qty By Use Unit])
+		, [Stock Unit Desc.]
+		, [OutputQty] = SUM([OutputQty])
+		, [Balance(Stock Unit)] 
+		, [Location]
+		, [POID]
+		, MDivisionID
+		, ID
+		, Ukey
+	FROM BreakdownByArticle t
+	GROUP BY SCIRefno
+		, Refno
+		, SuppColor
+		, DescDetail
+		, [AccuIssued]
+		, [IssueQty]
+		, [Stock Unit]
+		, [Use Unit]
+		, [Stock Unit Desc.]
+		, [Balance(Stock Unit)]
+		, [Location]
+		, [POID]
+		, MDivisionID
+		, ID
+		, Ukey
+)
 
 SELECt SCIRefno
-	, Refno
-	, SuppColor
-	, DescDetail
-	, [@Qty]=SUM([@Qty])
-	, [AccuIssued]
-	, [IssueQty]
-	, [Use Qty By Stock Unit] = CEILING( SUM([Use Qty By Stock Unit]) )
-	, [Stock Unit]
-	, [Use Unit]='CM'
-	, [Use Qty By Use Unit]=SUM([Use Qty By Use Unit])
-	, [Stock Unit Desc.]
-	, [OutputQty] = SUM([OutputQty])
-	, [Balance(Stock Unit)]
-	, [Location]
-	, [POID]
-	, MDivisionID
-	, ID
-	, Ukey
-FROM BreakdownByArticle
-GROUP BY SCIRefno
-	, Refno
-	, SuppColor
-	, DescDetail
-	, [AccuIssued]
-	, [IssueQty]
-	, [Stock Unit]
-	, [Use Unit]
-	, [Stock Unit Desc.]
-	, [Balance(Stock Unit)]
-	, [Location]
-	, [POID]
-	, MDivisionID
-	, ID
-	, Ukey
+		, Refno
+		, SuppColor
+		, DescDetail
+		, [@Qty]
+		, [AccuIssued]
+		, [IssueQty]
+		, [Use Qty By Stock Unit]
+		, [Stock Unit]
+		, [Use Unit]='CM'
+		, [Use Qty By Use Unit]
+		, [Stock Unit Desc.]
+		, [OutputQty]
+		, [Balance(Stock Unit)] = Balance.Qty
+		, [Location]
+		, [POID]
+		, MDivisionID
+		, ID
+		, Ukey
+FROM final t
+OUTER APPLY(
+	SELECT [Qty]=ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0)
+	FROM PO_Supp_Detail psd 
+	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
+	WHERE psd.SCIRefno=t.SCIRefno AND psd.SuppColor=t.SuppColor AND psd.ID='{this.poid}'
+)Balance 
+
 
 ";
 
@@ -513,7 +543,7 @@ SELECT  DISTINCT
 					and [IS].Poid=psd.id AND [IS].SCIRefno=PSD.SCIRefno AND [IS].SuppColor=PSD.SuppColor and i.[EditDate]<GETDATE()
 				)
 , [IssueQty]=0.00
-, [Use Qty By Stock Unit] = ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1)
+, [Use Qty By Stock Unit] = CEILING (ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) )
 , [Stock Unit]=StockUnit.StockUnit
 , [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty *  ThreadUsedQtyByBOT.Val )
 , [Use Unit]='CM'
@@ -564,10 +594,8 @@ WHERE psd.id ='{this.poid}'
 AND m.IsThread=1 
 AND psd.FabricType ='A'
 and psd.SuppColor <> ''
-
 AND psd.Refno='{Refno}'
 AND psd.SuppColor='{SuppColor}'
-
 
 SELECT    SCIRefno 
         , Refno
@@ -582,10 +610,11 @@ SELECT    SCIRefno
         , [Use Unit]
         , [Stock Unit Desc.]
         , [OutputQty] = SUM([OutputQty])
-        , [Balance(Stock Unit)]
+        , [Balance(Stock Unit)] = 0
         , [Location] 
         , [POID]
         , MDivisionID
+INTO #final2
 FROM #final
 GROUP BY SCIRefno 
         , Refno
@@ -601,7 +630,33 @@ GROUP BY SCIRefno
         , [POID]
         , MDivisionID
 
-DROP TABLE #tmp_sumQty,#step1,#tmp,#final
+
+SELECT    SCIRefno 
+        , Refno
+		, SuppColor
+		, DescDetail
+		, [@Qty] 
+        , [AccuIssued]
+        , [IssueQty]
+        , [Use Qty By Stock Unit]
+        , [Stock Unit]
+        , [Use Qty By Use Unit] 
+        , [Use Unit]
+        , [Stock Unit Desc.]
+        , [OutputQty]
+        , [Balance(Stock Unit)] = Balance.Qty
+        , [Location] 
+        , [POID]
+        , MDivisionID
+FROM #final2 t
+OUTER APPLY(
+	SELECT [Qty]=ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0)
+	FROM PO_Supp_Detail psd 
+	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
+	WHERE psd.SCIRefno=t.SCIRefno AND psd.SuppColor=t.SuppColor AND psd.ID='{this.poid}'
+)Balance 
+
+DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
 ";
 
                     DataRow row;
@@ -764,7 +819,7 @@ SELECT  DISTINCT
 					and [IS].Poid=psd.id AND [IS].SCIRefno=PSD.SCIRefno AND [IS].SuppColor=PSD.SuppColor and i.[EditDate]<GETDATE()
 				)
 , [IssueQty]=0.00
-, [Use Qty By Stock Unit] = ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1)
+, [Use Qty By Stock Unit] = CEILING( ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) )
 , [Stock Unit]=StockUnit.StockUnit
 , [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty *  ThreadUsedQtyByBOT.Val )
 , [Use Unit]='CM'
@@ -842,10 +897,11 @@ SELECT    SCIRefno
         , [Use Unit]
         , [Stock Unit Desc.]
         , [OutputQty] = SUM([OutputQty])
-        , [Balance(Stock Unit)]
+        , [Balance(Stock Unit)] = 0
         , [Location] 
         , [POID]
         , MDivisionID
+INTO #final2
 FROM #final
 GROUP BY SCIRefno 
         , Refno
@@ -861,7 +917,33 @@ GROUP BY SCIRefno
         , [POID]
         , MDivisionID
 
-DROP TABLE #tmp_sumQty,#step1,#tmp,#final
+
+SELECT    SCIRefno 
+        , Refno
+		, SuppColor
+		, DescDetail
+		, [@Qty] 
+        , [AccuIssued]
+        , [IssueQty]
+        , [Use Qty By Stock Unit]
+        , [Stock Unit]
+        , [Use Qty By Use Unit] 
+        , [Use Unit]
+        , [Stock Unit Desc.]
+        , [OutputQty]
+        , [Balance(Stock Unit)] = Balance.Qty
+        , [Location] 
+        , [POID]
+        , MDivisionID
+FROM #final2 t
+OUTER APPLY(
+	SELECT [Qty]=ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0)
+	FROM PO_Supp_Detail psd 
+	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
+	WHERE psd.SCIRefno=t.SCIRefno AND psd.SuppColor=t.SuppColor AND psd.ID='{this.poid}'
+)Balance 
+
+DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
 ";
 
                         #endregion
@@ -1113,7 +1195,6 @@ Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
 Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
 WHERE O.ID='{this.poid}' AND tcd.Article IN ( SELECT Article FROM #tmp )
 
-
 SELECT  DISTINCT
   psd.SCIRefno
 , psd.Refno
@@ -1128,7 +1209,7 @@ SELECT  DISTINCT
 					and [IS].Poid=psd.id AND [IS].SCIRefno=PSD.SCIRefno AND [IS].SuppColor=PSD.SuppColor and i.[EditDate]<GETDATE()
 				)
 , [IssueQty]=0.00
-, [Use Qty By Stock Unit] = ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1)
+, [Use Qty By Stock Unit] = CEILING (ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) )
 , [Stock Unit]=StockUnit.StockUnit
 , [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty *  ThreadUsedQtyByBOT.Val )
 , [Use Unit]='CM'
@@ -1174,15 +1255,13 @@ OUTER APPLY(
 	FROM Unit_Rate
 	WHERE UnitFrom='M' and  UnitTo = StockUnit.StockUnit
 )UnitRate
+
 WHERE psd.id ='{this.poid}' 
 AND m.IsThread=1 
 AND psd.FabricType ='A'
 and psd.SuppColor <> ''
-
 AND psd.Refno='{Refno}'
 AND psd.SuppColor='{SuppColor}'
-
-
 
 SELECT    SCIRefno 
         , Refno
@@ -1197,10 +1276,11 @@ SELECT    SCIRefno
         , [Use Unit]
         , [Stock Unit Desc.]
         , [OutputQty] = SUM([OutputQty])
-        , [Balance(Stock Unit)]
+        , [Balance(Stock Unit)] = 0
         , [Location] 
         , [POID]
         , MDivisionID
+INTO #final2
 FROM #final
 GROUP BY SCIRefno 
         , Refno
@@ -1216,7 +1296,33 @@ GROUP BY SCIRefno
         , [POID]
         , MDivisionID
 
-DROP TABLE #tmp_sumQty,#step1,#tmp,#final
+
+SELECT    SCIRefno 
+        , Refno
+		, SuppColor
+		, DescDetail
+		, [@Qty] 
+        , [AccuIssued]
+        , [IssueQty]
+        , [Use Qty By Stock Unit]
+        , [Stock Unit]
+        , [Use Qty By Use Unit] 
+        , [Use Unit]
+        , [Stock Unit Desc.]
+        , [OutputQty]
+        , [Balance(Stock Unit)] = Balance.Qty
+        , [Location] 
+        , [POID]
+        , MDivisionID
+FROM #final2 t
+OUTER APPLY(
+	SELECT [Qty]=ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0)
+	FROM PO_Supp_Detail psd 
+	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
+	WHERE psd.SCIRefno=t.SCIRefno AND psd.SuppColor=t.SuppColor AND psd.ID='{this.poid}'
+)Balance 
+
+DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
 ";
                     DataRow row;
                     DataTable rtn = null;
@@ -1378,7 +1484,7 @@ SELECT  DISTINCT
 					and [IS].Poid=psd.id AND [IS].SCIRefno=PSD.SCIRefno AND [IS].SuppColor=PSD.SuppColor and i.[EditDate]<GETDATE()
 				)
 , [IssueQty]=0.00
-, [Use Qty By Stock Unit] = ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1)
+, [Use Qty By Stock Unit] = CEILING( ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) )
 , [Stock Unit]=StockUnit.StockUnit
 , [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty *  ThreadUsedQtyByBOT.Val )
 , [Use Unit]='CM'
@@ -1443,6 +1549,7 @@ AND psd.SuppColor='{e.FormattedValue}'
                         }
 
                         sqlcmd += $@"
+
 SELECT    SCIRefno 
         , Refno
 		, SuppColor
@@ -1456,10 +1563,11 @@ SELECT    SCIRefno
         , [Use Unit]
         , [Stock Unit Desc.]
         , [OutputQty] = SUM([OutputQty])
-        , [Balance(Stock Unit)]
+        , [Balance(Stock Unit)] = 0
         , [Location] 
         , [POID]
         , MDivisionID
+INTO #final2
 FROM #final
 GROUP BY SCIRefno 
         , Refno
@@ -1475,7 +1583,33 @@ GROUP BY SCIRefno
         , [POID]
         , MDivisionID
 
-DROP TABLE #tmp_sumQty,#step1,#tmp,#final
+
+SELECT    SCIRefno 
+        , Refno
+		, SuppColor
+		, DescDetail
+		, [@Qty] 
+        , [AccuIssued]
+        , [IssueQty]
+        , [Use Qty By Stock Unit]
+        , [Stock Unit]
+        , [Use Qty By Use Unit] 
+        , [Use Unit]
+        , [Stock Unit Desc.]
+        , [OutputQty]
+        , [Balance(Stock Unit)] = Balance.Qty
+        , [Location] 
+        , [POID]
+        , MDivisionID
+FROM #final2 t
+OUTER APPLY(
+	SELECT [Qty]=ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0)
+	FROM PO_Supp_Detail psd 
+	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
+	WHERE psd.SCIRefno=t.SCIRefno AND psd.SuppColor=t.SuppColor AND psd.ID='{this.poid}'
+)Balance 
+
+DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
 ";
 
                         #endregion
