@@ -177,38 +177,40 @@ namespace Sci.Production.Subcon
                 ParameterList.Add(new SqlParameter("@ReceiveDate2", ReceiveDate2.Value.AddDays(1).AddSeconds(-1)));
             } 
 
-            int needSettleData = 0;
+            //int needSettleData = 0;
 
             if (!this.dateSettledDate.Value1.Empty())
             {
                 sqlWheres.Add("MaxVoucherDate.VoucherDate >= @SettledDate1");
                 ParameterList.Add(new SqlParameter("@SettledDate1", SettledDate1));
-                needSettleData = 1;
+                //needSettleData = 1;
             }
             if (!this.dateSettledDate.Value2.Empty())
             {
                 sqlWheres.Add("MaxVoucherDate.VoucherDate <= @SettledDate2");
                 ParameterList.Add(new SqlParameter("@SettledDate2", SettledDate2.Value.AddDays(1).AddSeconds(-1)));
-                needSettleData = 1;
+                //needSettleData = 1;
             } 
             if (this.comboPaymentSettled.Text == "Settled")
             {
-                sqlWheres.Add(" (a.Amount+a.Tax) = Settled.Amount ");
-                ParameterList.Add(new SqlParameter("@payment", payment));
-                needSettleData = 1;
+                //sqlWheres.Add(" (a.Amount+a.Tax) = Settled.Amount ");
+                //ParameterList.Add(new SqlParameter("@payment", payment));
+                //needSettleData = 1;
+                sqlWheres.Add(" d.Settled = 'Y' ");
             }
             if (this.comboPaymentSettled.Text == "Not Settled")
             {
-                sqlWheres.Add(" (a.Amount+a.Tax) <> Settled.Amount");
-                ParameterList.Add(new SqlParameter("@payment", payment));
-                needSettleData = 0;
+                //sqlWheres.Add(" (a.Amount+a.Tax) <> Settled.Amount");
+                //ParameterList.Add(new SqlParameter("@payment", payment));
+                //needSettleData = 0;
+                sqlWheres.Add(" d.Settled = '' ");
             }
             if (this.comboPaymentSettled.Text == " ")
             {
-                needSettleData = 1;
+                //needSettleData = 1;
             }
           
-            ParameterList.Add(new SqlParameter("@NeedSettleData", needSettleData));
+            //ParameterList.Add(new SqlParameter("@NeedSettleData", needSettleData));
 
             if (this.comboOrderBy.Text == "By Handle")
             {
@@ -278,6 +280,7 @@ select
 	,a.editdate
 INTO #TEMP
 from DBO.LocalDebit a WITH (NOLOCK) 
+left join dbo.Debit d WITH (NOLOCK) on d.ID = a.ID
 left join dbo.LocalSupp s WITH (NOLOCK) on a.localsuppid = s.ID
 left join dbo.Reason R WITH (NOLOCK) on a.AddName = R.AddName
 outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
@@ -363,6 +366,7 @@ select a.ID
 ,ttl.ttlRA
 into #TEMP
 from DBO.LocalDebit a WITH (NOLOCK) 
+left join dbo.Debit d WITH (NOLOCK) on d.ID = a.ID
 left join dbo.LocalSupp s WITH (NOLOCK) on a.localsuppid = s.ID
 inner join LocalDebit_Detail b WITH (NOLOCK) on a.id = b.id
 left join dbo.Reason R WITH (NOLOCK) on a.AddName = R.AddName
@@ -465,6 +469,7 @@ select a.ID
 ,b.Description
 into #TEMP
 from DBO.LocalDebit a WITH (NOLOCK) 
+left join dbo.Debit d WITH (NOLOCK) on d.ID = a.ID
 left join dbo.LocalSupp s WITH (NOLOCK) on a.localsuppid = s.ID
 inner join LocalDebit_Detail b WITH (NOLOCK) on a.id = b.id
 left join dbo.Reason R WITH (NOLOCK) on b.Reasonid = R.id and R.ReasonTypeID = 'DebitNote_Factory'
@@ -558,6 +563,7 @@ select a.ID
 ,vs7.Name_Extno as SEN
 	  
 from DBO.LocalDebit a WITH (NOLOCK) 
+left join dbo.Debit d WITH (NOLOCK) on d.ID = a.ID
 inner join dbo.debit_schedule c WITH (NOLOCK) on a.id = c.id
 outer apply(select * from LocalSupp s WITH (NOLOCK) where a.localsuppid = s.ID)s
 outer apply (select VoucherDate from SciFMS_Voucher Fv where Fv.id = c.VoucherID ) V
