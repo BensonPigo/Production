@@ -40,11 +40,11 @@ namespace Sci.Production.PPIC
         {
             base.OnFormLoaded();
 
-            MyUtility.Tool.SetupCombox(this.queryfors, 2, 1, "0,SMR Approved,1,Fty Confirmed,2,Fty Reject,3,MR Junked,4,All");
+            MyUtility.Tool.SetupCombox(this.queryfors, 2, 1, "0,Not yet confirm,1,All");
 
             // 預設查詢為 Exclude Junk
             this.queryfors.SelectedIndex = 0;
-            this.DefaultWhere = $"Status = 'Approved' and (select MDivisionID from Orders WITH (NOLOCK) where Orders.ID = OrderChangeApplication.OrderID) = '{Sci.Env.User.Keyword}'";
+            this.DefaultWhere = $"(select f.MDivisionID from Factory f WITH (NOLOCK) where f.ID = OrderChangeApplication.FactoryID) = '{Sci.Env.User.Keyword}' and isnull(OrderChangeApplication.ConfirmedName,'') = '' and OrderChangeApplication.ConfirmedDate is null";
             this.ReloadDatas();
             this.queryfors.SelectedIndexChanged += (s, e) =>
             {
@@ -52,20 +52,11 @@ namespace Sci.Production.PPIC
                 switch (hasJunk)
                 {
                     case "0":
-                        this.DefaultWhere = $"Status = 'Approved' and (select MDivisionID from Orders WITH (NOLOCK) where Orders.ID = OrderChangeApplication.OrderID) = '{Sci.Env.User.Keyword}'";
+                    default:
+                        this.DefaultWhere = $"(select f.MDivisionID from Factory f WITH (NOLOCK) where f.ID = OrderChangeApplication.FactoryID) = '{Sci.Env.User.Keyword}' and isnull(OrderChangeApplication.ConfirmedName,'') = '' and OrderChangeApplication.ConfirmedDate is null";
                         break;
                     case "1":
-                        this.DefaultWhere = $"Status = 'Confirmed' and (select MDivisionID from Orders WITH (NOLOCK) where Orders.ID = OrderChangeApplication.OrderID) = '{Sci.Env.User.Keyword}'";
-                        break;
-                    case "2":
-                        this.DefaultWhere = $"Status = 'Reject' and (select MDivisionID from Orders WITH (NOLOCK) where Orders.ID = OrderChangeApplication.OrderID) = '{Sci.Env.User.Keyword}'";
-                        break;
-                    case "3":
-                        this.DefaultWhere = $"Status = 'Junked' and (select MDivisionID from Orders WITH (NOLOCK) where Orders.ID = OrderChangeApplication.OrderID) = '{Sci.Env.User.Keyword}'";
-                        break;
-                    case "4":
-                    default:
-                        this.DefaultWhere = $"(select MDivisionID from Orders WITH (NOLOCK) where Orders.ID = OrderChangeApplication.OrderID) = '{Sci.Env.User.Keyword}'";
+                        this.DefaultWhere = $"(select f.MDivisionID from Factory f WITH (NOLOCK) where f.ID = OrderChangeApplication.FactoryID) = '{Sci.Env.User.Keyword}'";
                         break;
                 }
                 this.ReloadDatas();
