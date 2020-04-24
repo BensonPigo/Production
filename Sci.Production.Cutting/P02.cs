@@ -230,8 +230,10 @@ Select
 
     ,isbyAdditionalRevisedMarker = cast(0 as int)
     ,fromukey = a.ukey
+    ,CuttingLayer = iif(isnull(cs.CuttingLayer,0) = 0, 100 ,cs.CuttingLayer)
 from Workorder a WITH (NOLOCK)
 left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
+left join Construction cs WITH (NOLOCK) on cs.ID = ConstructionID
 left join dbo.order_Eachcons e WITH (NOLOCK) on e.Ukey = a.Order_EachconsUkey 
 outer apply(select RefNo from ShrinkageConcern WITH (NOLOCK) where RefNo=a.RefNo and Junk=0) shc
 outer apply
@@ -538,7 +540,7 @@ where WorkOrderUkey={0}", masterID);
             breakqty.EditingMouseDoubleClick += (s, e) =>
             {
                 gridValid();
-                grid.ValidateControl();
+                detailgrid.ValidateControl();
                 Sci.Production.Cutting.P01_Cutpartchecksummary callNextForm = new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToString());
                 callNextForm.ShowDialog(this);
             };
@@ -1838,7 +1840,7 @@ where WorkOrderUkey={0}", masterID);
         
         private void sorting(string sort)
         {
-            grid.ValidateControl();
+            detailgrid.ValidateControl();
             if (CurrentDetailData == null) return;
             DataView dv = ((DataTable)detailgridbs.DataSource).DefaultView;
             switch (sort)
@@ -1867,7 +1869,7 @@ where WorkOrderUkey={0}", masterID);
         private void AutoRef_Click(object sender, EventArgs e)
         {
             gridValid();
-            grid.ValidateControl();
+            detailgrid.ValidateControl();
             #region 變更先將同d,Cutref, FabricPanelCode, CutNo, MarkerName, estcutdate 且有cutref,Cuno無cutplanid 的cutref值找出來Group by→cutref 會相同
             string cmdsql = string.Format(@"
             SELECT isnull(Cutref,'') as cutref, isnull(FabricCombo,'') as FabricCombo, CutNo,
@@ -1978,36 +1980,61 @@ END";
 
         private void AutoCut_Click(object sender, EventArgs e)
         {
+            // 2020/03/20 ISP20200430調整編碼規則
+            // 增加合併CutNo規則
+            // 無預計裁剪日不處理
+            // 相同[Fabric Combo]為編碼組合
+            // 合併CutNo組合, [Fabric Combo]+[Fab_Panel Code]+[Marker No]+[Marker Name]+[Est. Cut Date]再加Size Ratio通常Size Ratio會一樣, 但可以手改
+            // 合併CutNo組合的6欄一樣的資料,算裁剪總和,判斷有沒有超過最大裁剪數Construction.CuttingLayer, 若沒超過則CutNo編碼一樣
+
             gridValid();
-            grid.ValidateControl();
-            #region 找出各部位最大Cutno
-            int maxcutno;
+            detailgrid.ValidateControl();
+
             foreach (DataRow dr in DetailDatas)
             {
-                if (MyUtility.Check.Empty(dr["cutno"]))
+                if (MyUtility.Check.Empty(dr["cutno"]) && !MyUtility.Check.Empty(dr["estcutdate"]))
                 {
+                    string estcutdate = ((DateTime)dr["estcutdate"]).ToString("d");
                     DataTable wk = (DataTable)detailgridbs.DataSource;
-                    string temp = wk.Compute("Max(cutno)", string.Format("FabricCombo ='{0}'", dr["FabricCombo"])).ToString();
-                    if (MyUtility.Check.Empty(temp))
+
+                    // 編碼組合找出最大 + 1
+                    decimal maxNo = 1 + MyUtility.Convert.GetDecimal(wk.Compute("Max(cutno)", $"FabricCombo ='{dr["FabricCombo"]}'"));
+
+                    // 找合併組合相同資料, 且還沒產生Cutref
+                    DataRow[] sdr = wk.Select($"FabricCombo ='{dr["FabricCombo"]}' and FabricPanelCode ='{dr["FabricPanelCode"]}' and MarkerNo ='{dr["MarkerNo"]}' and Markername ='{dr["Markername"]}' and estcutdate ='{estcutdate}' and SizeCode ='{dr["SizeCode"]}' and isnull(CutRef,'') = ''");
+
+                    decimal sumLayer = MyUtility.Convert.GetDecimal(sdr.CopyToDataTable().Compute("sum(Layer)", ""));
+
+                    if (sumLayer >　MyUtility.Convert.GetDecimal(dr["CuttingLayer"])) // 最大裁剪數看其中一筆即可
                     {
-                        maxcutno = 1;
+                        dr["cutno"] = maxNo;
                     }
                     else
                     {
-                        int maxno = Convert.ToInt32(wk.Compute("Max(cutno)", string.Format("FabricCombo ='{0}'", dr["FabricCombo"])));
-                        maxcutno = maxno + 1;
+                        decimal hm = sdr.AsEnumerable().Max(m => MyUtility.Convert.GetDecimal(m["cutno"]));
+                        if (hm != 0)
+                        {
+                            foreach (var item in sdr.AsEnumerable().Where(w => MyUtility.Check.Empty(w["cutno"])))
+                            {
+                                item["cutno"] = hm;
+                            }
+                        }
+                        else
+                        {
+                            foreach (var item in sdr)
+                            {
+                                item["cutno"] = maxNo;
+                            }
+                        }
                     }
-
-                    dr["cutno"] = maxcutno;
                 }
             }
-            #endregion
         }
 
         private void Packing_Click(object sender, EventArgs e)
         {
             gridValid();
-            grid.ValidateControl();
+            detailgrid.ValidateControl();
             var dr = this.CurrentMaintain; if (null == dr) return;
             var frm = new Sci.Production.Cutting.P02_PackingMethod(false, CurrentMaintain["id"].ToString(), null, null);
             frm.ShowDialog(this);
@@ -2019,7 +2046,7 @@ END";
         private void btnBatchAssignCellEstCutDate_Click(object sender, EventArgs e)
         {
             gridValid();
-            grid.ValidateControl();
+            detailgrid.ValidateControl();
             var frm = new Sci.Production.Cutting.P02_BatchAssignCellCutDate((DataTable)(detailgridbs.DataSource));
             frm.ShowDialog(this);
         }
@@ -3024,7 +3051,7 @@ where   id = '{0}'
         private void comboBox1_SelectedValueChanged(object sender, EventArgs e)
         {
             gridValid();
-            grid.ValidateControl();
+            detailgrid.ValidateControl();
             sorting(comboBox1.Text);
         }
         
