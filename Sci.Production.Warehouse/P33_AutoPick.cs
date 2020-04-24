@@ -75,16 +75,21 @@ namespace Sci.Production.Warehouse
 
             // 整理出#tmp傳進 SQL 使用
             DataTable IssueBreakDown_Dt = new DataTable();
-            IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "OrderID", DataType = typeof(string) });
+            //IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "OrderID", DataType = typeof(string) });
             IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Article", DataType = typeof(string) });
             IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Qty", DataType = typeof(int) });
 
-            foreach (var model in _IssueQtyBreakdownList)
+            var groupByData = _IssueQtyBreakdownList.GroupBy(o => new { o.Article }).Select(o => new
+            {
+                o.Key.Article,
+                Qty = o.Sum(x => x.Qty)
+            }).ToList();
+            foreach (var model in groupByData)
             {
                 if (model.Qty > 0)
                 {
                     DataRow newDr = IssueBreakDown_Dt.NewRow();
-                    newDr["OrderID"] = model.OrderID;
+                    //newDr["OrderID"] = model.OrderID;
                     newDr["Article"] = model.Article;
                     newDr["Qty"] = model.Qty;
 
@@ -144,7 +149,7 @@ WHERE OrderID IS NOT NULL
 --------------取得哪些要打勾--------------
 
 
-SELECT  --DISTINCT 
+SELECT  DISTINCT 
 		[Selected] = IIF(   EXISTS(SELECT 1 FROM #SelectList1 WHERE SCIRefno =psd.SCIRefno AND SuppColor=psd.SuppColor) OR
 							EXISTS(SELECT 1 FROM #SelectList2 WHERE SCIRefno =psd.SCIRefno AND SuppColor=psd.SuppColor)
 						,1 ,0)
@@ -153,13 +158,13 @@ SELECT  --DISTINCT
 		, psd.SuppColor
 		, f.DescDetail
 		, [@Qty]= ThreadUsedQtyByBOT.Val
-		, [Use Qty By Stock Unit] = ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) --並轉換為Stock Unit
+		, [Use Qty By Stock Unit] = CEILING (ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) )--並轉換為Stock Unit
 		, [Stock Unit]=StockUnit.StockUnit
 		, [Use Qty By Use Unit]= (ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val  )
 		, [Use Unit]='CM'
 		, [Stock Unit Desc.]=StockUnit.Description
 		, [Output Qty(Garment)] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
-		, [Bulk Balance(Stock Unit)] = ISNULL(( Fty.InQty-Fty.OutQty + Fty.AdjustQty ) ,0)
+		, [Bulk Balance(Stock Unit)] = 0
         , [POID]=psd.ID
 		, [AccuIssued] = (
 					select isnull(sum([IS].qty),0)
@@ -171,7 +176,6 @@ SELECT  --DISTINCT
 INTO #final
 FROM PO_Supp_Detail psd
 INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
-LEFT JOIN FtyInventory Fty ON Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
 OUTER APPLY(
 	SELECT TOP 1 a.StockUnit ,u.Description
 	FROM PO_Supp_Detail a
@@ -183,12 +187,6 @@ OUTER APPLY(
 	FROM Unit_Rate
 	WHERE UnitFrom='M' and  UnitTo = StockUnit.StockUnit
 )UnitRate
-OUTER APPLY( ----所有 Article 數量總和
-	SELECt [Qty]=sum(b.Qty)
-	FROM #step1 a
-	INNER JOIN #tmp_sumQty b ON a.Article = b.Article
-	WHERE SCIRefNo= psd.SCIRefNo AND SuppColor=psd.SuppColor
-)GarmentTotal
 OUTER APPLY(
 	SELECT SCIRefNo
 		,SuppColor
@@ -230,9 +228,10 @@ SELECT  [Selected]
 		, [Use Unit]
 		, [Stock Unit Desc.]
 		, [Output Qty(Garment)] = SUM([Output Qty(Garment)])
-		, [Bulk Balance(Stock Unit)] = ([Bulk Balance(Stock Unit)])
+		, [Bulk Balance(Stock Unit)] 
         , [POID]
 		, [AccuIssued]
+INTO #final2
 FROM #final
 GROUP BY [Selected] 
 		, SCIRefno 
@@ -244,9 +243,35 @@ GROUP BY [Selected]
 		, [Stock Unit Desc.]
         , [POID]
 		, [AccuIssued]
-		, [Bulk Balance(Stock Unit)]
+		, [Bulk Balance(Stock Unit)] 
 
-DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final
+
+SELECT  [Selected] 
+		, SCIRefno 
+        , Refno
+		, SuppColor
+		, DescDetail
+		, [@Qty] 
+		, [Use Qty By Stock Unit]
+		, [Stock Unit]
+		, [Use Qty By Use Unit]
+		, [Use Unit]
+		, [Stock Unit Desc.]
+		, [Output Qty(Garment)]
+		, [Bulk Balance(Stock Unit)] = Balance.Qty
+        , [POID]
+		, [AccuIssued]
+FROM #final2 t
+OUTER APPLY(
+	SELECT [Qty]=ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0)
+	FROM PO_Supp_Detail psd 
+	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
+	WHERE psd.SCIRefno=t.SCIRefno AND psd.SuppColor=t.SuppColor AND psd.ID='{this.poid}'
+)Balance 
+
+
+DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final,#final2,#tmp,#tmp_sumQty
+
 
 ";
             #endregion
