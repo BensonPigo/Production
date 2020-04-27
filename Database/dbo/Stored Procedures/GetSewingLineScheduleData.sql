@@ -304,7 +304,9 @@ declare @APSColumnGroup TABLE(
 	[Category] [varchar](1) NULL,
 	[SCIDelivery] [date] NULL,
 	[BuyerDelivery] [date] NULL,
-	[BrandID] [nvarchar](8) NULL
+	[BrandID] [nvarchar](8) NULL,
+	[OrderID] [varchar](13) NULL,
+	[FirststCuttingOutputDate] [Date] NULL
 )
 insert into @APSColumnGroup
 select
@@ -324,11 +326,20 @@ o.Category,
 o.SCIDelivery,
 o.BuyerDelivery,
 [BrandID] = o.BrandID
+,s.OrderID
+,[FirststCuttingOutputDate]=FirststCuttingOutputDate.Date
 from SewingSchedule s with (nolock)
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
 inner join CDCode cd with (nolock) on o.CdCodeID = cd.ID
 left join @tmpOrderArtwork oa on oa.StyleID = o.StyleID
 left join Country c WITH (NOLOCK) on o.Dest = c.ID 
+OUTER APPLY(	
+	SELECT [Date]=MIN(co2.cDate)
+	FROM  WorkOrder_Distribute wd2 WITH (NOLOCK)
+	INNER JOIN CuttingOutput_Detail cod2 WITH (NOLOCK) on cod2.WorkOrderUkey = wd2.WorkOrderUkey
+	INNER JOIN CuttingOutput co2 WITH (NOLOCK) on co2.id = cod2.id and co2.Status <> 'New'
+	where wd2.OrderID =o.ID
+)FirststCuttingOutputDate
 where exists( select 1 from @APSList where APSNo = s.APSNo)
 
 --填入資料串連欄位 by APSNo
@@ -357,6 +368,7 @@ declare @APSMain TABLE(
 	[ArtworkType] [nvarchar](max) NULL,
 	[InspDate] [date] NULL,
 	[Remarks] [nvarchar](max) NULL,
+	[FirststCuttingOutputDate] [Date] NULL,
 	[CuttingOutput] [numeric](38, 2) NOT NULL,
 	[ScannedQty] [int] NOT NULL,
 	[ClogQty] [int] NOT NULL,
@@ -399,6 +411,7 @@ select
 	[ArtworkType] = ArtworkType.val,
 	OrderMax.InspDate,
 	[Remarks] = Remarks.val,
+	SP.FirststCuttingOutputDate,
 	[CuttingOutput] = isnull(aco.CuttingOutput,0),
 	[ScannedQty] = isnull(apo.ScannedQty,0),
 	[ClogQty] = isnull(apo.ClogQty,0),
@@ -419,7 +432,16 @@ left join @APSCuttingOutput aco on al.APSNo = aco.APSNo
 left join @APSOrderQty aoo on al.APSNo = aoo.APSNo
 left join @APSPackingQty apo on al.APSNo = apo.APSNo
 outer apply (SELECT val =  Stuff((select distinct concat( ',',CustPONo)   from @APSColumnGroup where APSNo = al.APSNo and CustPONo <> '' FOR XML PATH('')),1,1,'') ) as CustPO
-outer apply (SELECT val =  Stuff((select distinct concat( ',',SP)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as SP
+outer apply (
+	SELECT val =  Stuff((select distinct concat( ',',SP)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') 
+			,FirststCuttingOutputDate=(
+				SELECT [Date]=MIN(co2.cDate)
+				FROM  WorkOrder_Distribute wd2 WITH (NOLOCK)
+				INNER JOIN CuttingOutput_Detail cod2 WITH (NOLOCK) on cod2.WorkOrderUkey = wd2.WorkOrderUkey
+				INNER JOIN CuttingOutput co2 WITH (NOLOCK) on co2.id = cod2.id and co2.Status <> 'New'
+				where wd2.OrderID IN (SELECT OrderID from @APSColumnGroup where APSNo = al.APSNo )
+			)
+) as SP
 outer apply (SELECT val =  Stuff((select distinct concat( '+',Category)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Category
 outer apply (SELECT val =  Stuff((select distinct concat( ',',Colorway)   from @APSListArticle where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Colorway
 outer apply (SELECT val =  Stuff((select distinct concat( ',',CdCodeID)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as CDCode
@@ -854,6 +876,7 @@ select
 	[ArtworkType]=apm.ArtworkType,
 	[InspectionDate]=apm.InspDate,
 	[Remarks]=apm.Remarks,
+	[FirststCuttingOutputDate]=apm.FirststCuttingOutputDate,
 	[CuttingOutput]=round(apm.CuttingOutput,2),
 	[SewingOutput]=apf.SewingOutput,
 	[ScannedQty]=apm.ScannedQty,

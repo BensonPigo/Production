@@ -43,4 +43,10 @@ GO
 CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
     ON [dbo].[WorkOrder_Distribute]([ID] ASC)
     INCLUDE([WorkOrderUkey], [OrderID], [Article], [SizeCode], [Qty]);
-
+GO
+CREATE NONCLUSTERED INDEX [IDX_WorkOrder_Distribute_OrderID] ON [dbo].[WorkOrder_Distribute]
+(
+	[OrderID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+;
+GO
