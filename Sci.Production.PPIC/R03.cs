@@ -239,7 +239,7 @@ with tmpOrders as (
             , CFACTN=isnull(o.CFACTN,0)
             , o.VasShas
             , o.TissuePaper
-            , o.MTLExport
+            , [MTLExport]=IIF(o.MTLExport='OK','Y',o.MTLExport)
             , o.SewLine
             , o.ShipModeList
             , o.PlanDate
@@ -1664,7 +1664,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                 objArray[intRowsStart, 72] = dr["PackETA"];
                 objArray[intRowsStart, 73] = MyUtility.Convert.GetString(dr["MTLDelay"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
                 objArray[intRowsStart, 74] = MyUtility.Check.Empty(dr["MTLExport"]) ? dr["MTLExportTimes"] : dr["MTLExport"];
-                objArray[intRowsStart, 75] = MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper();
+                objArray[intRowsStart, 75] = MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : "N";
                 objArray[intRowsStart, 76] = dr["ArriveWHDate"];
                 objArray[intRowsStart, 77] = dr["SewInLine"];
                 objArray[intRowsStart, 78] = dr["SewOffLine"];
