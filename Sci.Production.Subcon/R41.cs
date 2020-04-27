@@ -107,7 +107,7 @@ namespace Sci.Production.Subcon
             }
             if (!MyUtility.Check.Empty(dateBundle1))
             {
-                sqlWhere.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(dateBundle1).ToString("d")));
+                sqlWhereWorkOrder.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(dateBundle1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(dateBundle2))
             {
