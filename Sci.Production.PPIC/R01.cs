@@ -1230,6 +1230,7 @@ select  s.SewingLineID
                         where   pd.OrderID = s.OrderID 
                                 and pd.ReceiveDate is not null
                      ), '') as ClogQty
+			, [FirststCuttingOutputDate]=FirststCuttingOutputDate.Date
             , o.InspDate
             , s.StandardOutput
             , [Eff] = case when (s.sewer * s.workhour) = 0 then 0
@@ -1260,6 +1261,13 @@ select  s.SewingLineID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
     outer apply(select value = dbo.GetOrderLocation_Rate(o.id,s.ComboType) ) ol_rate
     outer apply(select value = dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType) ) sl_rate
+	OUTER APPLY(	
+		SELECT [Date]=MIN(co2.cDate)
+		FROM  WorkOrder_Distribute wd2 WITH (NOLOCK)
+		INNER JOIN CuttingOutput_Detail cod2 WITH (NOLOCK) on cod2.WorkOrderUkey = wd2.WorkOrderUkey
+		INNER JOIN CuttingOutput co2 WITH (NOLOCK) on co2.id = cod2.id and co2.Status <> 'New'
+		where wd2.OrderID =o.ID
+	)FirststCuttingOutputDate
     where 1=1
 ");
             #endregion
@@ -1429,6 +1437,7 @@ select  SewingLineID
         , CutQty
         , SewingQty
         , ClogQty
+		, FirststCuttingOutputDate
         , InspDate
         , StandardOutput * WorkHour as TotalStandardOutput
         , WorkHour
@@ -1522,11 +1531,19 @@ select  s.SewingLineID
 			,o.CPUFactor
 			,s.ID
             ,o.FtyGroup
+			,[FirststCuttingOutputDate] = FirststCuttingOutputDate.Date
 	into #tmp_main
     from SewingSchedule s WITH (NOLOCK) 
 	inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID
 	inner join SewingSchedule_Detail sd WITH (NOLOCK) on s.ID=sd.ID 
     left join Country c WITH (NOLOCK) on o.Dest = c.ID 
+	OUTER APPLY(	
+		SELECT [Date]=MIN(co2.cDate)
+		FROM  WorkOrder_Distribute wd2 WITH (NOLOCK)
+		INNER JOIN CuttingOutput_Detail cod2 WITH (NOLOCK) on cod2.WorkOrderUkey = wd2.WorkOrderUkey
+		INNER JOIN CuttingOutput co2 WITH (NOLOCK) on co2.id = cod2.id and co2.Status <> 'New'
+		where wd2.OrderID =o.ID
+	)FirststCuttingOutputDate
     where 1 = 1 
 ");
             #endregion
@@ -1746,6 +1763,7 @@ select  SewingLineID
         , CutQty
         , SewingQty
         , ClogQty
+		, FirststCuttingOutputDate
         , InspDate
         , StandardOutput * WorkHour as TotalStandardOutput
         , WorkHour
