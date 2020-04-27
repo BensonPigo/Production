@@ -307,7 +307,7 @@ select m.[ID]
     ,m.[AddDate]
     ,m.[EditName]
     ,m.[EditDate]
-    ,m.[TPEComplete],d.EditDate
+    ,m.[TPEComplete]
 from Production.dbo.SciMachine_MachinePending m
 INNER JOIN Production.dbo.SciMachine_MachinePending_Detail md ON m.ID = md.ID
 INNER JOIN Production.dbo.SciMachine_MachineDispose d ON  md.MachineDisposeID = d.ID
