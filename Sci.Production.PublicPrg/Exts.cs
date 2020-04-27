@@ -75,13 +75,13 @@ namespace Sci.Production.Prg
                 switch (Type.GetTypeCode(dr[col].GetType()))
                 {
                     case TypeCode.Boolean:
-                        if ((bool)dr[col, DataRowVersion.Current] != (bool)dr[col, DataRowVersion.Original])
+                        if (MyUtility.Convert.GetBool(dr[col, DataRowVersion.Current]) != MyUtility.Convert.GetBool(dr[col, DataRowVersion.Original]))
                         {
                             return true;
                         }
                         break;
                     case TypeCode.DateTime:
-                        if ((DateTime)dr[col, DataRowVersion.Current] != (DateTime)dr[col, DataRowVersion.Original])
+                        if (MyUtility.Convert.GetDate(dr[col, DataRowVersion.Current]) != MyUtility.Convert.GetDate(dr[col, DataRowVersion.Original]))
                         {
                             return true;
                         }
