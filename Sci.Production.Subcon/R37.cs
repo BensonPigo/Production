@@ -108,11 +108,13 @@ namespace Sci.Production.Subcon
             }
             if (this.comboPaymentSettled.Text == "Settled")
             {
-                sqlWheres.Add("ISNULL(IsSettled.Val , 0) = 1");
+                //sqlWheres.Add("ISNULL(IsSettled.Val , 0) = 1");
+                sqlWheres.Add(" a.Settled = 'Y' ");
             }
             if (this.comboPaymentSettled.Text == "Not Settled")
             {
-                sqlWheres.Add("ISNULL(IsSettled.Val , 0) = 0");
+                //sqlWheres.Add("ISNULL(IsSettled.Val , 0) = 0");
+                sqlWheres.Add(" a.Settled = '' ");
             }
             if (!this.dateSettledDate.Value1.Empty())
             {
