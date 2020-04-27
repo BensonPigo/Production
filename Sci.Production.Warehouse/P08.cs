@@ -845,5 +845,11 @@ Where a.id = '{0}' ", masterID);
             { detailgridbs.Position = index; }
         }
 
+        private void btnImport_Click(object sender, EventArgs e)
+        {
+            P08_Import form = new P08_Import();
+
+            form.ShowDialog();
+        }
     }
 }

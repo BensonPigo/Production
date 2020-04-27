@@ -44,6 +44,7 @@
             this.btnDeleteAll = new Sci.Win.UI.Button();
             this.labelRemark = new Sci.Win.UI.Label();
             this.editRemark = new Sci.Win.UI.EditBox();
+            this.btnImport = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -60,6 +61,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnImport);
             this.masterpanel.Controls.Add(this.editRemark);
             this.masterpanel.Controls.Add(this.labelRemark);
             this.masterpanel.Controls.Add(this.btnDeleteAll);
@@ -75,7 +77,7 @@
             this.masterpanel.Controls.Add(this.labelArriveWHDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(932, 155);
+            this.masterpanel.Size = new System.Drawing.Size(932, 177);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelArriveWHDate, 0);
@@ -92,16 +94,17 @@
             this.masterpanel.Controls.SetChildIndex(this.btnDeleteAll, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 155);
-            this.detailpanel.Size = new System.Drawing.Size(932, 322);
+            this.detailpanel.Location = new System.Drawing.Point(0, 177);
+            this.detailpanel.Size = new System.Drawing.Size(932, 338);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(802, 115);
+            this.gridicon.Location = new System.Drawing.Point(802, 135);
             this.gridicon.TabIndex = 15;
             // 
             // refresh
@@ -111,7 +114,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(932, 322);
+            this.detailgridcont.Size = new System.Drawing.Size(932, 338);
             // 
             // detail2
             // 
@@ -127,15 +130,15 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(932, 515);
+            this.detail.Size = new System.Drawing.Size(932, 553);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(932, 477);
+            this.detailcont.Size = new System.Drawing.Size(932, 515);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 477);
+            this.detailbtm.Location = new System.Drawing.Point(0, 515);
             this.detailbtm.Size = new System.Drawing.Size(932, 38);
             // 
             // browse
@@ -144,7 +147,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(940, 544);
+            this.tabs.Size = new System.Drawing.Size(940, 582);
             // 
             // createby
             // 
@@ -242,7 +245,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(932, 155);
+            this.shapeContainer1.Size = new System.Drawing.Size(932, 177);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -251,13 +254,13 @@
             this.lineShape1.Name = "lineShape1";
             this.lineShape1.X1 = 17;
             this.lineShape1.X2 = 912;
-            this.lineShape1.Y1 = 106;
-            this.lineShape1.Y2 = 106;
+            this.lineShape1.Y1 = 124;
+            this.lineShape1.Y2 = 124;
             // 
             // btnFind
             // 
             this.btnFind.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnFind.Location = new System.Drawing.Point(279, 115);
+            this.btnFind.Location = new System.Drawing.Point(279, 135);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(70, 30);
             this.btnFind.TabIndex = 5;
@@ -270,14 +273,14 @@
             this.txtLocateForSP.BackColor = System.Drawing.Color.White;
             this.txtLocateForSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLocateForSP.IsSupportEditMode = false;
-            this.txtLocateForSP.Location = new System.Drawing.Point(128, 119);
+            this.txtLocateForSP.Location = new System.Drawing.Point(128, 139);
             this.txtLocateForSP.Name = "txtLocateForSP";
             this.txtLocateForSP.Size = new System.Drawing.Size(145, 23);
             this.txtLocateForSP.TabIndex = 4;
             // 
             // labelLocateForSP
             // 
-            this.labelLocateForSP.Location = new System.Drawing.Point(16, 119);
+            this.labelLocateForSP.Location = new System.Drawing.Point(16, 139);
             this.labelLocateForSP.Name = "labelLocateForSP";
             this.labelLocateForSP.Size = new System.Drawing.Size(109, 23);
             this.labelLocateForSP.TabIndex = 58;
@@ -286,7 +289,7 @@
             // btnDeleteAll
             // 
             this.btnDeleteAll.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnDeleteAll.Location = new System.Drawing.Point(355, 115);
+            this.btnDeleteAll.Location = new System.Drawing.Point(355, 135);
             this.btnDeleteAll.Name = "btnDeleteAll";
             this.btnDeleteAll.Size = new System.Drawing.Size(80, 30);
             this.btnDeleteAll.TabIndex = 7;
@@ -310,13 +313,25 @@
             this.editRemark.Location = new System.Drawing.Point(94, 47);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
-            this.editRemark.Size = new System.Drawing.Size(658, 51);
+            this.editRemark.Size = new System.Drawing.Size(658, 63);
             this.editRemark.TabIndex = 60;
+            // 
+            // btnImport
+            // 
+            this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImport.Location = new System.Drawing.Point(764, 79);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(83, 31);
+            this.btnImport.TabIndex = 61;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // P08
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(940, 577);
+            this.ClientSize = new System.Drawing.Size(940, 615);
             this.DefaultControl = "dateArriveWHDate";
             this.DefaultControlForEdit = "dateArriveWHDate";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
@@ -331,6 +346,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P08";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P08. Receiving From Factory Supply";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "id";
@@ -373,5 +389,6 @@
         private Win.UI.Button btnDeleteAll;
         private Win.UI.EditBox editRemark;
         private Win.UI.Label labelRemark;
+        private Win.UI.Button btnImport;
     }
 }
