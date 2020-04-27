@@ -88,105 +88,114 @@ namespace Sci.Production.Subcon
         {
             #region Append畫面上的條件
             StringBuilder sqlWhere = new StringBuilder();
-            StringBuilder sqlWhereWorkOrder = new StringBuilder();
+            StringBuilder sqlWhereFirstQuery = new StringBuilder();
+            String joinWorkOrder = "";
             if (!MyUtility.Check.Empty(SubProcess))
             {
                 sqlWhere.Append($@" and s.id in ('{SubProcess.Replace(",", "','")}') ");
             }
             if (!MyUtility.Check.Empty(CutRef1))
             {
-                sqlWhereWorkOrder.Append(string.Format(@" and w.CutRef >= '{0}' ", CutRef1));
+                joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid ";
+                sqlWhereFirstQuery.Append(string.Format(@" and w.CutRef >= '{0}' ", CutRef1));
             }
             if (!MyUtility.Check.Empty(CutRef2))
             {
-                sqlWhereWorkOrder.Append(string.Format(@" and w.CutRef <= '{0}' ", CutRef2));
+                joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid ";
+                sqlWhereFirstQuery.Append(string.Format(@" and w.CutRef <= '{0}' ", CutRef2));
             }
             if (!MyUtility.Check.Empty(SP))
             {
-                sqlWhereWorkOrder.Append(string.Format(@" and b.Orderid = '{0}'", SP));
+                sqlWhereFirstQuery.Append(string.Format(@" and b.Orderid = '{0}'", SP));
             }
             if (!MyUtility.Check.Empty(dateBundle1))
             {
-                sqlWhereWorkOrder.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(dateBundle1).ToString("d")));
+                sqlWhereFirstQuery.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(dateBundle1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(dateBundle2))
             {
-                sqlWhereWorkOrder.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(dateBundle2).ToString("d")));
+                sqlWhereFirstQuery.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(dateBundle2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(dateBundleScanDate1) && !MyUtility.Check.Empty(dateBundleScanDate2))
             {
                 sqlWhere.Append(string.Format(@" and ((convert (date, bio.InComing) >= '{0}' and convert (date, bio.InComing) <= '{1}' ) or (convert (date, bio.OutGoing) >= '{0}' and convert (date, bio.OutGoing) <= '{1}'))", Convert.ToDateTime(dateBundleScanDate1).ToString("d"), Convert.ToDateTime(dateBundleScanDate2).ToString("d")));
-                sqlWhereWorkOrder.Append(string.Format(@" and ((convert (date, bio.InComing) >= '{0}' and convert (date, bio.InComing) <= '{1}' ) or (convert (date, bio.OutGoing) >= '{0}' and convert (date, bio.OutGoing) <= '{1}'))", Convert.ToDateTime(dateBundleScanDate1).ToString("d"), Convert.ToDateTime(dateBundleScanDate2).ToString("d")));
+                sqlWhereFirstQuery.Append(string.Format(@" and ((convert (date, bio.InComing) >= '{0}' and convert (date, bio.InComing) <= '{1}' ) or (convert (date, bio.OutGoing) >= '{0}' and convert (date, bio.OutGoing) <= '{1}'))", Convert.ToDateTime(dateBundleScanDate1).ToString("d"), Convert.ToDateTime(dateBundleScanDate2).ToString("d")));
             }
             else
             {
                 if (!MyUtility.Check.Empty(dateBundleScanDate1))
                 {
                     sqlWhere.Append(string.Format(@" and (convert (date, bio.InComing)  >= '{0}' or convert (date, bio.OutGoing) >= '{0}')", Convert.ToDateTime(dateBundleScanDate1).ToString("d")));
-                    sqlWhereWorkOrder.Append(string.Format(@" and (convert (date, bio.InComing)  >= '{0}' or convert (date, bio.OutGoing) >= '{0}')", Convert.ToDateTime(dateBundleScanDate1).ToString("d")));
+                    sqlWhereFirstQuery.Append(string.Format(@" and (convert (date, bio.InComing)  >= '{0}' or convert (date, bio.OutGoing) >= '{0}')", Convert.ToDateTime(dateBundleScanDate1).ToString("d")));
                 }
                 if (!MyUtility.Check.Empty(dateBundleScanDate2))
                 {
                     sqlWhere.Append(string.Format(@" and (convert (date, bio.InComing)  <= '{0}' or convert (date, bio.OutGoing) <= '{0}')", Convert.ToDateTime(dateBundleScanDate2).ToString("d")));
-                    sqlWhereWorkOrder.Append(string.Format(@" and (convert (date, bio.InComing)  <= '{0}' or convert (date, bio.OutGoing) <= '{0}')", Convert.ToDateTime(dateBundleScanDate2).ToString("d")));
+                    sqlWhereFirstQuery.Append(string.Format(@" and (convert (date, bio.InComing)  <= '{0}' or convert (date, bio.OutGoing) <= '{0}')", Convert.ToDateTime(dateBundleScanDate2).ToString("d")));
                 }
             } 
             if (!MyUtility.Check.Empty(M))
             {
-                sqlWhereWorkOrder.Append(string.Format(@" and b.MDivisionid = '{0}'", M));
+                sqlWhereFirstQuery.Append(string.Format(@" and b.MDivisionid = '{0}'", M));
             }
             if (!MyUtility.Check.Empty(Factory))
             {
-                sqlWhereWorkOrder.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
+                sqlWhereFirstQuery.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
             }
 
             if (this.processLocation != "ALL")
             {
                 sqlWhere.Append(string.Format(@" and isnull(bio.RFIDProcessLocationID,'') = '{0}'", this.processLocation));
-                sqlWhereWorkOrder.Append(string.Format(@" and isnull(bio.RFIDProcessLocationID,'') = '{0}'", this.processLocation));
+                sqlWhereFirstQuery.Append(string.Format(@" and isnull(bio.RFIDProcessLocationID,'') = '{0}'", this.processLocation));
             }
 
             if (!MyUtility.Check.Empty(dateBDelivery1))
             {
-                sqlWhereWorkOrder.Append(string.Format(@" and o.BuyerDelivery >= convert(date,'{0}')", Convert.ToDateTime(dateBDelivery1).ToString("d")));
+                sqlWhereFirstQuery.Append(string.Format(@" and o.BuyerDelivery >= convert(date,'{0}')", Convert.ToDateTime(dateBDelivery1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(dateBDelivery2))
             {
-                sqlWhereWorkOrder.Append(string.Format(@" and o.BuyerDelivery <= convert(date,'{0}')", Convert.ToDateTime(dateBDelivery2).ToString("d")));
+                sqlWhereFirstQuery.Append(string.Format(@" and o.BuyerDelivery <= convert(date,'{0}')", Convert.ToDateTime(dateBDelivery2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(dateSewInLine1))
             {
-                sqlWhereWorkOrder.Append(string.Format(@" and o.SewInLine >= convert(date,'{0}')", Convert.ToDateTime(dateSewInLine1).ToString("d")));
+                sqlWhereFirstQuery.Append(string.Format(@" and o.SewInLine >= convert(date,'{0}')", Convert.ToDateTime(dateSewInLine1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(dateSewInLine2))
             {
-                sqlWhereWorkOrder.Append(string.Format(@" and o.SewInLine <= convert(date,'{0}')", Convert.ToDateTime(dateSewInLine2).ToString("d")));
+                sqlWhereFirstQuery.Append(string.Format(@" and o.SewInLine <= convert(date,'{0}')", Convert.ToDateTime(dateSewInLine2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(dateEstCutDate1))
             {
-                sqlWhereWorkOrder.Append(string.Format(@" and w.EstCutDate >= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate1).ToString("d")));
+                joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid ";
+                sqlWhereFirstQuery.Append(string.Format(@" and w.EstCutDate >= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(dateEstCutDate2))
             {
-                sqlWhereWorkOrder.Append(string.Format(@" and w.EstCutDate <= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate2).ToString("d")));
+                joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid ";
+                sqlWhereFirstQuery.Append(string.Format(@" and w.EstCutDate <= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate2).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(dateEstCutDate1) || !MyUtility.Check.Empty(dateEstCutDate2))
+            {
+                sqlWhereFirstQuery.Append(@" and w.CutRef <> '' ");
             }
             #endregion
 
             #region sqlcmd
             string sqlCmd = string.Empty;
             sqlCmd += $@"
-select distinct w.MDivisionId, bd.BundleNo 
+select distinct bd.BundleNo 
 into #tmp_Workorder
 from Bundle b WITH (NOLOCK)
-inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid 
+{joinWorkOrder}
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id 
 inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
 left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno --and bio.SubProcessId = s.Id
 where 1=1
 
-{sqlWhereWorkOrder} and w.CutRef <> '' and EstCutDate is not null
+{sqlWhereFirstQuery} 
 ";
 
             sqlCmd += $@" 
@@ -256,7 +265,7 @@ into #result
 from #tmp_Workorder w 
 inner join Bundle_Detail bd WITH (NOLOCK, Index(PK_Bundle_Detail)) on bd.BundleNo = w.BundleNo 
 inner join Bundle b WITH (NOLOCK, index(PK_Bundle)) on b.ID = bd.ID
-inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = w.MDivisionID 
+inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
 outer apply(
     select s.ID,s.InOutRule,s.ArtworkTypeId
     from SubProcess s
