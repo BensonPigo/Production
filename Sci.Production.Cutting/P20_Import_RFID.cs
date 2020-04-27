@@ -217,12 +217,27 @@ select 0 as sel,
 	),
 	WorkOderLayer = wo.Layer,
 	AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0),
-	CuttingLayer = wo.Layer-isnull(acc.AccuCuttingLayer,0),
+	CuttingLayer = isnull(x3.Qty,0)-isnull(acc.AccuCuttingLayer,0),
 	LackingLayers = 0,
     SRQ.SizeRatioQty
 from WorkOrder WO WITH (NOLOCK) 
 left join #AccuCuttingLayer acc on wo.Ukey = acc.WorkOrderUkey
 outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b WITH (NOLOCK)  where b.WorkOrderUkey = wo.Ukey)SRQ
+outer apply(
+	select Qty = min(x2.Qty) -- 正常狀況,在同裁次內 每個size計算出來要一樣, 取min只是個保險
+	from(
+		select Qty = CEILING(iif( ws.Qty = 0, 0, cast(min(x.qty)as float) / ws.Qty)) 
+		from(
+			select Qty=SUM(bd.Qty),bd.SizeCode
+			from Bundle b with(nolock)
+			inner join Bundle_Detail bd with(nolock) on bd.Id = b.ID
+			where b.CutRef = WO.CutRef
+			group by bd.SizeCode, bd.Patterncode, bd.PatternDesc
+		)x
+		left join WorkOrder_SizeRatio ws with(nolock) on x.SizeCode = ws.SizeCode and ws.WorkOrderUkey = WO.Ukey
+		group by x.SizeCode,ws.Qty
+	)x2
+)x3
 where mDivisionid = '{0}' 
 and wo.Layer >  isnull(acc.AccuCuttingLayer,0)
 and WO.CutRef != ''
