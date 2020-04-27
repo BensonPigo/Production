@@ -587,7 +587,7 @@ order by ld.No, ld.GroupKey", masterID);
                 #endregion
             };
 
-            DataGridViewGeneratorNumericColumnSettings ac = new DataGridViewGeneratorNumericColumnSettings();
+            /*DataGridViewGeneratorNumericColumnSettings ac = new DataGridViewGeneratorNumericColumnSettings();
             ac.CellValidating += (s, e) =>
             {
                 if (e.RowIndex == -1)
@@ -614,33 +614,33 @@ order by ld.No, ld.GroupKey", masterID);
                 {
                     item["ActCycle"] = dr["ActCycle"];
                 }
-            };
+            };*/
 
             Ict.Win.UI.DataGridViewNumericBoxColumn act;
             this.Helper.Controls.Grid.Generator(this.grid1)
             .Text("No", header: "No.", width: Widths.AnsiChars(4), iseditingreadonly: true)
-            .Numeric("ActCycle", header: "Act.\r\nCycle\r\nTime", width: Widths.AnsiChars(3), integer_places: 5, decimal_places: 2, iseditingreadonly: false, settings: ac).Get(out act)
+            .Numeric("TotalCycle", header: "Act.\r\nCycle\r\nTime", width: Widths.AnsiChars(3), integer_places: 5, decimal_places: 2, iseditingreadonly: true/*, settings: ac*/).Get(out act)
             .Numeric("TotalGSD", header: "Ttl\r\nGSD\r\nTime", width: Widths.AnsiChars(3), decimal_places: 2, iseditingreadonly: true)
-            .Numeric("TotalCycle", header: "Ttl\r\nCycle\r\nTime", width: Widths.AnsiChars(3), decimal_places: 2, iseditingreadonly: true);
+            /*.Numeric("TotalCycle", header: "Ttl\r\nCycle\r\nTime", width: Widths.AnsiChars(0), decimal_places: 2, iseditingreadonly: true)*/;
 
-            act.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
+            //act.CellFormatting += (s, e) =>
+            //{
+            //    if (e.RowIndex == -1)
+            //    {
+            //        return;
+            //    }
 
-                if (!this.EditMode)
-                {
-                    e.CellStyle.BackColor = Color.White;
-                    e.CellStyle.ForeColor = Color.Black;
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                    e.CellStyle.ForeColor = Color.Red;
-                }
-            };
+            //    if (!this.EditMode)
+            //    {
+            //        e.CellStyle.BackColor = Color.White;
+            //        e.CellStyle.ForeColor = Color.Black;
+            //    }
+            //    else
+            //    {
+            //        e.CellStyle.BackColor = Color.Pink;
+            //        e.CellStyle.ForeColor = Color.Red;
+            //    }
+            //};
         }
 
         // 撈出Employee資料
@@ -1047,6 +1047,7 @@ WHERE Ukey={item["Ukey"]}
                 {
                     dr["TotalGSD"] = gSD;
                     dr["TotalCycle"] = cycle;
+                    dr["ActCycle"] = cycle;
                     dr.EndEdit();
                 }
             }

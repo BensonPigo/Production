@@ -32,10 +32,17 @@ namespace Sci.Production.Cutting
 
         protected override bool ClickSaveBefore()
         {
+            if (MyUtility.Check.Empty(this.txtMdivision.Text))
+            {
+                MyUtility.Msg.WarningBox("M can't empty, can't save !!");
+                return false;
+            }
+
             string sqlchk = $@"
 select 1
 from SubprocessLeadTime s
 where id <> '{this.CurrentMaintain["ID"]}'
+and MDivisionID = '{this.txtMdivision.Text}'
 and (select stuff((select concat('+', SubprocessID) from SubprocessLeadTime_Detail sd where s.ID = sd.ID order by sd.SubprocessID for xml path('')),1,1,''))='{this.txtSubprocess.Text}' 
 ";
             if (MyUtility.Check.Seek(sqlchk))
@@ -72,6 +79,10 @@ and (select stuff((select concat('+', SubprocessID) from SubprocessLeadTime_Deta
         private string Subprocess;
         private string ArtworkType;
 
+        protected override void ClickNewAfter()
+        {
+            this.txtMdivision.Text = Env.User.Keyword;
+        }
         protected override bool ClickCopyBefore()
         {
             this.LeadTime = this.numLeadTime.Value;
@@ -106,7 +117,7 @@ and (select stuff((select concat('+', SubprocessID) from SubprocessLeadTime_Deta
         {
             string sqlcmd = $@"
 Select s.id as [Subprocess],s.ArtworkTypeId AS [Artwork Type] from subprocess S 
-inner join ArtworkType a on a.id=s.ArtworkTypeId
+LEFT join ArtworkType a on a.id=s.ArtworkTypeId
 where S.junk=0 and s.IsSelection=1
 order by s.id asc
 ";

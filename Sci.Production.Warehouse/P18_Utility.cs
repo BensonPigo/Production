@@ -75,6 +75,9 @@ select  pounit
         , qty
         , scirefno
         , [description] = dbo.getmtldesc(id,seq1,seq2,2,0)
+        , [Fabric] = case when FabricType = 'F' then 'Fabric' 
+                             when FabricType = 'A' then 'Accessory'
+                        else '' end
 from po_supp_detail WITH (NOLOCK) 
 where   id = '{0}' 
         and seq1 ='{1}'
@@ -84,6 +87,7 @@ where   id = '{0}'
                     CurrentDetailData["stockunit"] = dr["stockunit"];
                     CurrentDetailData["Description"] = dr["description"];
                     CurrentDetailData["fabrictype"] = dr["fabrictype"];
+                    CurrentDetailData["Fabric"] = dr["Fabric"];
                 }
                 else
                 {
@@ -111,6 +115,7 @@ where   poid = '{0}'
                         CurrentDetailData["stockunit"] = "";
                         CurrentDetailData["Description"] = dr["description"];
                         CurrentDetailData["fabrictype"] = dr["fabrictype"];
+                        CurrentDetailData["Fabric"] = "";
                     }
                 }
                 #endregion

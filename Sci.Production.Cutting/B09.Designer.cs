@@ -39,6 +39,8 @@
             this.numLeadTime = new Sci.Win.UI.NumericBox();
             this.txtSubprocess = new Sci.Win.UI.TextBox();
             this.disArtworkType = new Sci.Win.UI.DisplayBox();
+            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.lbM = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -47,14 +49,26 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(918, 352);
+            // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.lbM);
+            this.detailcont.Controls.Add(this.txtMdivision);
             this.detailcont.Controls.Add(this.disArtworkType);
             this.detailcont.Controls.Add(this.txtSubprocess);
             this.detailcont.Controls.Add(this.numLeadTime);
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Size = new System.Drawing.Size(918, 314);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 314);
+            this.detailbtm.Size = new System.Drawing.Size(918, 38);
             // 
             // browse
             // 
@@ -161,7 +175,7 @@
             0,
             0});
             this.numLeadTime.Minimum = new decimal(new int[] {
-            0,
+            1,
             0,
             0,
             0});
@@ -200,6 +214,24 @@
             this.disArtworkType.Name = "disArtworkType";
             this.disArtworkType.Size = new System.Drawing.Size(528, 23);
             this.disArtworkType.TabIndex = 5;
+            // 
+            // txtMdivision
+            // 
+            this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MDivisionID", true));
+            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision.Location = new System.Drawing.Point(342, 24);
+            this.txtMdivision.Name = "txtMdivision";
+            this.txtMdivision.Size = new System.Drawing.Size(92, 23);
+            this.txtMdivision.TabIndex = 6;
+            // 
+            // lbM
+            // 
+            this.lbM.Location = new System.Drawing.Point(295, 24);
+            this.lbM.Name = "lbM";
+            this.lbM.Size = new System.Drawing.Size(44, 23);
+            this.lbM.TabIndex = 7;
+            this.lbM.Text = "M";
             // 
             // B09
             // 
@@ -240,5 +272,7 @@
         private Win.UI.Label label4;
         private Win.UI.Label label3;
         private Win.UI.DisplayBox disArtworkType;
+        private Win.UI.Label lbM;
+        private Class.txtMdivision txtMdivision;
     }
 }

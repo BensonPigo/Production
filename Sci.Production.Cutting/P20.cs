@@ -159,7 +159,7 @@ Select
     ),1,1,'')
 	,WorkOderLayer = a.Layer
 	,AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0)
-	,CuttingLayer = a.Layer-isnull(acc.AccuCuttingLayer,0) 
+	,CuttingLayer = isnull(x3.Qty,0)-isnull(acc.AccuCuttingLayer,0)
 	,LackingLayers = 0
 	,a.ConsPC
 	,SRQ.SizeRatioQty
@@ -167,6 +167,21 @@ Select
 from WorkOrder a WITH (NOLOCK)
 outer apply(select AccuCuttingLayer = sum(b.Layer) from cuttingoutput_Detail b where b.WorkOrderUkey = a.Ukey and id <> '{this.CurrentMaintain["ID"]}')acc
 outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b where b.WorkOrderUkey = a.Ukey)SRQ
+outer apply(
+	select Qty = min(x2.Qty) -- 正常狀況,在同裁次內 每個size計算出來要一樣, 取min只是個保險
+	from(
+		select Qty = CEILING(iif( ws.Qty = 0, 0, cast(min(x.qty)as float) / ws.Qty)) -- 正常狀況,在同裁次內 每個size計算出來要一樣, 取min只是個保險
+		from(
+			select Qty=SUM(bd.Qty),bd.SizeCode
+			from Bundle b with(nolock)
+			inner join Bundle_Detail bd with(nolock) on bd.Id = b.ID
+			where b.CutRef = a.CutRef
+			group by bd.SizeCode, bd.Patterncode, bd.PatternDesc
+		)x
+		left join WorkOrder_SizeRatio ws with(nolock) on x.SizeCode = ws.SizeCode and ws.WorkOrderUkey = a.Ukey
+		group by x.SizeCode,ws.Qty
+	)x2
+)x3
 where a.CutRef = '{e.FormattedValue}'
 and a.CutRef != ''
 --and a.Layer > isnull(acc.AccuCuttingLayer,0)

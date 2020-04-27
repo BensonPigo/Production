@@ -52,7 +52,9 @@
     [MarkerOutputPath]           NVARCHAR (80)  NULL, 
     [ReplacementReport ] VARCHAR(80) NULL
 	CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC), 
-    [CuttingP10mustCutRef] BIT NOT NULL DEFAULT ((0))
+    [CuttingP10mustCutRef] BIT NOT NULL DEFAULT ((0)), 
+    [Automation] BIT NOT NULL CONSTRAINT [DF_System_Automation] DEFAULT ((0)), 
+    [AutomationAutoRunTime] TINYINT NOT NULL  CONSTRAINT [DF_System_AutomationAutoRunTime] DEFAULT ((0))
 );
 
 

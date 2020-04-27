@@ -237,9 +237,13 @@ and ((o.LocalOrder = 1 and o.SubconInType in ('1','2')) or (o.LocalOrder = 0 and
                     strSQL += string.Format(" and o.SCIDelivery  <= '{0}'", ((DateTime)this.dateRange3.Value2).ToString("yyyy-MM-dd"));
                 }
 
-                if (this.txtSeason1.Text != string.Empty)
+                //if (this.txtSeason1.Text != string.Empty)
+                //{
+                //    strSQL += string.Format(" AND o.SeasonID = '{0}' ", this.txtSeason1.Text);
+                //}
+                if (this.txtmultiSeason.Text != string.Empty)
                 {
-                    strSQL += string.Format(" AND o.SeasonID = '{0}' ", this.txtSeason1.Text);
+                    strSQL += string.Format(" AND o.SeasonID IN ('{0}') ", this.txtmultiSeason.Text.Replace(",", "','"));
                 }
 
                 if (this.txtBrand1.Text != string.Empty)

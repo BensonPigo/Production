@@ -57,5 +57,46 @@ namespace Sci.Production.Prg
             }
             return dic;
         }
+
+        public static bool CompareDataRowVersionValue(this DataRow dr, string compareColumns)
+        {
+            if (MyUtility.Check.Empty(compareColumns))
+            {
+                return false;
+            }
+
+            if (dr.RowState != DataRowState.Modified)
+            {
+                return false;
+            }
+
+            foreach (string col in compareColumns.Split(','))
+            {
+                switch (Type.GetTypeCode(dr[col].GetType()))
+                {
+                    case TypeCode.Boolean:
+                        if (MyUtility.Convert.GetBool(dr[col, DataRowVersion.Current]) != MyUtility.Convert.GetBool(dr[col, DataRowVersion.Original]))
+                        {
+                            return true;
+                        }
+                        break;
+                    case TypeCode.DateTime:
+                        if (MyUtility.Convert.GetDate(dr[col, DataRowVersion.Current]) != MyUtility.Convert.GetDate(dr[col, DataRowVersion.Original]))
+                        {
+                            return true;
+                        }
+                        break;
+                    default:
+                        if (dr[col, DataRowVersion.Current].ToString() != dr[col, DataRowVersion.Original].ToString())
+                        {
+                            return true;
+                        }
+                        break;
+                }
+                
+            }
+
+            return false;
+        }
     }
 }

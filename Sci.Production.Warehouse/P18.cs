@@ -592,6 +592,7 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", CurrentDet
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("poid", header: "SP#", width: Widths.AnsiChars(13), settings: ts3)  //0
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts)  //1
+            .Text("Fabric", header: "Fabric \r\n Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("roll", header: "Roll", width: Widths.AnsiChars(6)).Get(out cbb_Roll)  //2
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8)).Get(out cbb_Dyelot)  //3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
@@ -1186,6 +1187,9 @@ select  a.id
         , DataFrom = iif(p.FabricType is null,'Invtrans','Po_Supp_Detail')
 		,a.Weight
 		,a.Remark
+        ,[Fabric] = case when p.FabricType = 'F' then 'Fabric' 
+                             when p.FabricType = 'A' then 'Accessory'
+                        else '' end
 from dbo.TransferIn_Detail a WITH (NOLOCK) 
 left join Po_Supp_Detail p WITH (NOLOCK)  on a.poid = p.id
                               and a.seq1 = p.seq1

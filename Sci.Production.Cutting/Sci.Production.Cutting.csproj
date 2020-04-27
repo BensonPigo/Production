@@ -458,6 +458,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="R01.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R01.Designer.cs">
+      <DependentUpon>R01.cs</DependentUpon>
+    </Compile>
     <Compile Include="R02.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -670,6 +676,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="R01.resx">
+      <DependentUpon>R01.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
     </EmbeddedResource>
@@ -696,6 +705,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sci.Production.Automation\Sci.Production.Automation.csproj">
+      <Project>{cb61a07f-7d72-490e-aeb6-ba5080f8d652}</Project>
+      <Name>Sci.Production.Automation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
       <Project>{0E35FD31-4A86-4D4E-A393-B6C5E3D7C956}</Project>
       <Name>Sci.Production.Class</Name>
