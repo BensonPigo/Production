@@ -289,30 +289,54 @@ and SciMachine_MachinePending.CyApvDate between DATEADD(Day,-30,getdate()) and D
 and SciMachine_MachinePending.SendToTPE is null
 and SciMachine_MachinePending.TPEComplete=0
 
+
+----30天內有Dispose的MachinePending資料另外撈
+INSERT MachinePending ( [ID],[cDate],[MDivisionID],[FtyApvName],[FtyApvDate],[CyApvName],[CyApvDate],[ReasonID]
+					   ,[Remark],[Status],[AddName],[AddDate],[EditName],[EditDate],[TPEComplete])
+select m.[ID]
+    ,m.[cDate]
+    ,m.[MDivisionID]
+    ,m.[FtyApvName]
+    ,m.[FtyApvDate]
+    ,m.[CyApvName]
+    ,m.[CyApvDate]
+    ,m.[ReasonID]
+    ,m.[Remark]
+    ,m.[Status]
+    ,m.[AddName]
+    ,m.[AddDate]
+    ,m.[EditName]
+    ,m.[EditDate]
+    ,m.[TPEComplete],d.EditDate
+from Production.dbo.SciMachine_MachinePending m
+INNER JOIN Production.dbo.SciMachine_MachinePending_Detail md ON m.ID = md.ID
+INNER JOIN Production.dbo.SciMachine_MachineDispose d ON  md.MachineDisposeID = d.ID
+where (d.AddDate  between DATEADD(Day,-30,getdate()) and DATEADD(Day,30,getdate())   OR
+      d.EditDate  between DATEADD(Day,-30,getdate()) and DATEADD(Day,30,getdate()) ) 
+AND NOT EXISTS( SELECT  1 FROM MachinePending mp WHERE mp.ID = m.ID)
+
+
 ----MachinePending_Detail----
 select 
-	p.ID
-	,p.Seq
-	,p.MachineID
-	,p.OldStatus
-	,p.Results
-	,p.Remark
-	,MasterGroupID=SciMachine_Machine.MasterGroupID+SciMachine_Machine.MachineGroupID
-	,SciMachine_Machine.MachineBrandID
-	,SciMachine_Machine.Model
-	,SciMachine_Machine.SerialNo
-	,SciMachine_Machine.LocationM
-	,SciMachine_Machine.ArriveDate
-	,UsageTime = concat(ym.UsageTime/360,'Y',(ym.UsageTime%360)/30,'M')
-	,p.MachineDisposeID
+  SciMachine_MachinePending_Detail.ID
+  ,SciMachine_MachinePending_Detail.Seq
+  ,SciMachine_MachinePending_Detail.MachineID
+  ,SciMachine_MachinePending_Detail.OldStatus
+  ,SciMachine_MachinePending_Detail.Results
+  ,SciMachine_MachinePending_Detail.Remark
+  ,MasterGroupID=SciMachine_Machine.MasterGroupID+SciMachine_Machine.MachineGroupID
+  ,SciMachine_Machine.MachineBrandID
+  ,SciMachine_Machine.Model
+  ,SciMachine_Machine.SerialNo
+  ,SciMachine_Machine.LocationM
+  ,SciMachine_Machine.ArriveDate
+  ,UsageTime = concat(ym.UsageTime/360,'Y',(ym.UsageTime%360)/30,'M')
+  ,SciMachine_MachinePending_Detail.MachineDisposeID
 into MachinePending_Detail
-FROM SciMachine_MachineDispose d
-LEFT JOIN Production.dbo.SciMachine_MachinePending_Detail p ON p.MachineDisposeID = d.ID
-INNER join MachinePending on MachinePending.ID = p.ID
-LEFT join Production.dbo.SciMachine_Machine with (nolock) on SciMachine_Machine.ID = p.MachineID
-OUTER APPLY(select UsageTime=DATEDIFF(DAY,SciMachine_Machine.ArriveDate,MachinePending.cDate)+1)ym
-WHERE d.editdate between DATEADD(Day,-30,getdate()) and DATEADD(Day,30,getdate())
- or d.AddDate between DATEADD(Day,-30,getdate()) and DATEADD(Day,30,getdate())
+from Production.dbo.SciMachine_MachinePending_Detail
+inner join MachinePending on MachinePending.ID = SciMachine_MachinePending_Detail.ID
+left join Production.dbo.SciMachine_Machine with (nolock) on SciMachine_Machine.ID = SciMachine_MachinePending_Detail.MachineID
+outer apply(select UsageTime=DATEDIFF(DAY,SciMachine_Machine.ArriveDate,MachinePending.cDate)+1)ym
 
 END
 
