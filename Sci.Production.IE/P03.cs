@@ -1047,6 +1047,7 @@ WHERE Ukey={item["Ukey"]}
                 {
                     dr["TotalGSD"] = gSD;
                     dr["TotalCycle"] = cycle;
+                    dr["ActCycle"] = cycle;
                     dr.EndEdit();
                 }
             }
