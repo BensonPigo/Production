@@ -291,12 +291,12 @@ and SciMachine_MachinePending.TPEComplete=0
 
 ----MachinePending_Detail----
 select 
-	SciMachine_MachinePending_Detail.ID
-	,SciMachine_MachinePending_Detail.Seq
-	,SciMachine_MachinePending_Detail.MachineID
-	,SciMachine_MachinePending_Detail.OldStatus
-	,SciMachine_MachinePending_Detail.Results
-	,SciMachine_MachinePending_Detail.Remark
+	p.ID
+	,p.Seq
+	,p.MachineID
+	,p.OldStatus
+	,p.Results
+	,p.Remark
 	,MasterGroupID=SciMachine_Machine.MasterGroupID+SciMachine_Machine.MachineGroupID
 	,SciMachine_Machine.MachineBrandID
 	,SciMachine_Machine.Model
@@ -304,12 +304,15 @@ select
 	,SciMachine_Machine.LocationM
 	,SciMachine_Machine.ArriveDate
 	,UsageTime = concat(ym.UsageTime/360,'Y',(ym.UsageTime%360)/30,'M')
-	,SciMachine_MachinePending_Detail.MachineDisposeID
+	,p.MachineDisposeID
 into MachinePending_Detail
-from Production.dbo.SciMachine_MachinePending_Detail
-inner join MachinePending on MachinePending.ID = SciMachine_MachinePending_Detail.ID
-left join Production.dbo.SciMachine_Machine with (nolock) on SciMachine_Machine.ID = SciMachine_MachinePending_Detail.MachineID
-outer apply(select UsageTime=DATEDIFF(DAY,SciMachine_Machine.ArriveDate,MachinePending.cDate)+1)ym
+FROM SciMachine_MachineDispose d
+LEFT JOIN Production.dbo.SciMachine_MachinePending_Detail p ON p.MachineDisposeID = d.ID
+INNER join MachinePending on MachinePending.ID = p.ID
+LEFT join Production.dbo.SciMachine_Machine with (nolock) on SciMachine_Machine.ID = p.MachineID
+OUTER APPLY(select UsageTime=DATEDIFF(DAY,SciMachine_Machine.ArriveDate,MachinePending.cDate)+1)ym
+WHERE d.editdate between DATEADD(Day,-30,getdate()) and DATEADD(Day,30,getdate())
+ or d.AddDate between DATEADD(Day,-30,getdate()) and DATEADD(Day,30,getdate())
 
 END
 
