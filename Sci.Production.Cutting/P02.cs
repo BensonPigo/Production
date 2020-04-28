@@ -588,7 +588,7 @@ where WorkOrderUkey={0}", masterID);
                 .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 5, maximum: 9999M).Get(out col_layer)
+                .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 5, maximum: 99999).Get(out col_layer)
                 .Text("CutQty", header: "Total CutQty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("orderid", header: "SP#", width: Widths.AnsiChars(13)).Get(out col_sp)
                 .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3)).Get(out col_seq1)
@@ -619,20 +619,20 @@ where WorkOrderUkey={0}", masterID);
                 ;
             Helper.Controls.Grid.Generator(this.gridSizeRatio)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(5)).Get(out col_sizeRatio_size)
-                .Numeric("Qty", header: "Ratio", width: Widths.AnsiChars(5), integer_places: 6).Get(out col_sizeRatio_qty);
+                .Numeric("Qty", header: "Ratio", width: Widths.AnsiChars(5), integer_places: 6, maximum: 999999, minimum: 0).Get(out col_sizeRatio_qty);
 
             Helper.Controls.Grid.Generator(this.gridDistributetoSPNo)
                 .Text("orderid", header: "SP#", width: Widths.AnsiChars(15)).Get(out col_dist_sp)
                 .Text("article", header: "Article", width: Widths.AnsiChars(8)).Get(out col_dist_article)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(4)).Get(out col_dist_size)
-                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(3), integer_places: 6).Get(out col_dist_qty);
+                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(3), integer_places: 6, maximum: 999999, minimum: 0).Get(out col_dist_qty);
 
             Helper.Controls.Grid.Generator(this.gridQtyBreakdown)
                 .Text("id", header: "SP#", width: Widths.AnsiChars(13))
                 .Text("article", header: "Article", width: Widths.AnsiChars(7))
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(3))
-                .Numeric("Qty", header: "Order \nQty", width: Widths.AnsiChars(3), integer_places: 6)
-                .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(5), integer_places: 6, settings: breakqty);
+                .Numeric("Qty", header: "Order \nQty", width: Widths.AnsiChars(3), integer_places: 6, maximum: 999999, minimum: 0)
+                .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(5), integer_places: 6, maximum: 999999, minimum: 0, settings: breakqty);
 
             this.detailgrid.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 8F);
             #endregion
@@ -2515,14 +2515,22 @@ END";
                 return false;
             }
 
-            MyUtility.Tool.ProcessWithDatatable(distqtyTb, "OrderID,Article,SizeCode,WorkOrderUkey,NewKey", "Select OrderID,Article,SizeCode,WorkOrderUkey,NewKey,Count() as countN from #tmp having countN >1 Group by OrderID,Article,SizeCode,WorkOrderUkey,NewKey", out dt);
-            if (dt != null)
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(distqtyTb, string.Empty, @"
+Select OrderID,Article,SizeCode,WorkOrderUkey,NewKey,Count(1) as countN
+from #tmp
+Group by OrderID,Article,SizeCode,WorkOrderUkey,NewKey
+having Count(1) >1", out dt);
+            if (!result)
             {
-                foreach (DataRow dr in dt.Rows)
-                {
-                    msg2 = msg2 + dr["WorkOrderUkey"].ToString() + "\n";
-                }
+                this.ShowErr(result);
+                return false;
             }
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                msg2 = msg2 + dr["WorkOrderUkey"].ToString() + "\n";
+            }
+
             if (!MyUtility.Check.Empty(msg2))
             {
                 MyUtility.Msg.WarningBox("The Distribute Qty data duplicate ,Please see below <Ukey> \n" + msg2);
@@ -2736,7 +2744,15 @@ select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrd
             #region 修改
             foreach (DataRow dr in distqtyTb.AsEnumerable().Where(x => x.RowState == DataRowState.Modified)) 
             {
-                updatesql = updatesql + string.Format("Update WorkOrder_distribute set Qty = {0},SizeCode = '{6}' where WorkOrderUkey ={1} and SizeCode = '{2}' and Article = '{3}' and OrderID = '{4}' and ID ='{5}'; ", dr["Qty"], dr["WorkOrderUkey"], dr["SizeCode", DataRowVersion.Original], dr["Article"], dr["OrderID"], cId, dr["SizeCode"]);
+                updatesql += $@"
+Update WorkOrder_distribute
+set Qty = {dr["Qty"]},SizeCode = '{dr["SizeCode"]}',Article = '{dr["Article"]}',OrderID = '{dr["OrderID"]}'
+where WorkOrderUkey ={dr["WorkOrderUkey"]} 
+and SizeCode = '{dr["SizeCode", DataRowVersion.Original]}'
+and Article = '{ dr["Article", DataRowVersion.Original]}'
+and OrderID = '{ dr["OrderID", DataRowVersion.Original]}'
+and ID ='{dr["ID", DataRowVersion.Original]}'; ";
+
             }
             #endregion
             #region 新增
