@@ -33,15 +33,12 @@
             this.label25 = new Sci.Win.UI.Label();
             this.displayID = new Sci.Win.UI.DisplayBox();
             this.dateIssueDate = new Sci.Win.UI.DateBox();
-            this.btnImport = new Sci.Win.UI.Button();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.btnFind = new Sci.Win.UI.Button();
             this.labelLocateForSEQ = new Sci.Win.UI.Label();
-            this.btnClearQtyIsEmpty = new Sci.Win.UI.Button();
             this.labelRemark = new Sci.Win.UI.Label();
             this.editRemark = new Sci.Win.UI.EditBox();
-            this.btnAccumulatedQty = new Sci.Win.UI.Button();
             this.txtSeq = new Sci.Production.Class.txtSeq();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -60,13 +57,10 @@
             // masterpanel
             // 
             this.masterpanel.Controls.Add(this.txtSeq);
-            this.masterpanel.Controls.Add(this.btnAccumulatedQty);
             this.masterpanel.Controls.Add(this.editRemark);
             this.masterpanel.Controls.Add(this.labelRemark);
-            this.masterpanel.Controls.Add(this.btnClearQtyIsEmpty);
             this.masterpanel.Controls.Add(this.btnFind);
             this.masterpanel.Controls.Add(this.labelLocateForSEQ);
-            this.masterpanel.Controls.Add(this.btnImport);
             this.masterpanel.Controls.Add(this.dateIssueDate);
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.label25);
@@ -81,13 +75,10 @@
             this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelLocateForSEQ, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFind, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnClearQtyIsEmpty, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnAccumulatedQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSeq, 0);
             // 
             // detailpanel
@@ -203,18 +194,6 @@
             this.dateIssueDate.Size = new System.Drawing.Size(130, 23);
             this.dateIssueDate.TabIndex = 1;
             // 
-            // btnImport
-            // 
-            this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(879, 43);
-            this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(89, 31);
-            this.btnImport.TabIndex = 4;
-            this.btnImport.Text = "Import";
-            this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
-            // 
             // shapeContainer1
             // 
             this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
@@ -253,17 +232,6 @@
             this.labelLocateForSEQ.TabIndex = 58;
             this.labelLocateForSEQ.Text = "Locate for SEQ";
             // 
-            // btnClearQtyIsEmpty
-            // 
-            this.btnClearQtyIsEmpty.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnClearQtyIsEmpty.Location = new System.Drawing.Point(273, 125);
-            this.btnClearQtyIsEmpty.Name = "btnClearQtyIsEmpty";
-            this.btnClearQtyIsEmpty.Size = new System.Drawing.Size(148, 30);
-            this.btnClearQtyIsEmpty.TabIndex = 7;
-            this.btnClearQtyIsEmpty.Text = "Clear Qty is empty";
-            this.btnClearQtyIsEmpty.UseVisualStyleBackColor = true;
-            this.btnClearQtyIsEmpty.Click += new System.EventHandler(this.btnClearQtyIsEmpty_Click);
-            // 
             // labelRemark
             // 
             this.labelRemark.Location = new System.Drawing.Point(17, 43);
@@ -282,18 +250,6 @@
             this.editRemark.Name = "editRemark";
             this.editRemark.Size = new System.Drawing.Size(658, 68);
             this.editRemark.TabIndex = 3;
-            // 
-            // btnAccumulatedQty
-            // 
-            this.btnAccumulatedQty.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnAccumulatedQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAccumulatedQty.Location = new System.Drawing.Point(823, 80);
-            this.btnAccumulatedQty.Name = "btnAccumulatedQty";
-            this.btnAccumulatedQty.Size = new System.Drawing.Size(145, 31);
-            this.btnAccumulatedQty.TabIndex = 63;
-            this.btnAccumulatedQty.Text = "Accumulated Qty";
-            this.btnAccumulatedQty.UseVisualStyleBackColor = true;
-            this.btnAccumulatedQty.Click += new System.EventHandler(this.btnAccumulatedQty_Click);
             // 
             // txtSeq
             // 
@@ -320,6 +276,7 @@
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
             this.IsSupportNew = false;
             this.KeyField1 = "ID";
             this.Name = "P25";
@@ -354,16 +311,13 @@
         private Win.UI.Label labelID;
         private Win.UI.DisplayBox displayID;
         private Win.UI.Label label25;
-        private Win.UI.Button btnImport;
         private Win.UI.DateBox dateIssueDate;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
         private Win.UI.Button btnFind;
         private Win.UI.Label labelLocateForSEQ;
-        private Win.UI.Button btnClearQtyIsEmpty;
         private Win.UI.EditBox editRemark;
         private Win.UI.Label labelRemark;
-        private Win.UI.Button btnAccumulatedQty;
         private Class.txtSeq txtSeq;
     }
 }

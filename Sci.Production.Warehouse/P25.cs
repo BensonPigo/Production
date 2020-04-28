@@ -32,7 +32,8 @@ namespace Sci.Production.Warehouse
             gridicon.Append.Visible = false;
             gridicon.Insert.Enabled = false;
             gridicon.Insert.Visible = false;
-
+            gridicon.Remove.Enabled = false;
+            gridicon.Remove.Visible = false;
         }
 
         public P25(ToolStripMenuItem menuitem, string transID)
@@ -49,7 +50,8 @@ namespace Sci.Production.Warehouse
             gridicon.Append.Visible = false;
             gridicon.Insert.Enabled = false;
             gridicon.Insert.Visible = false;
-
+            gridicon.Remove.Enabled = false;
+            gridicon.Remove.Visible = false;
         }
 
         // 新增時預設資料
@@ -774,31 +776,6 @@ left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.
 left join FtyInventory f WITH (NOLOCK) on a.FromPOID=f.POID and a.FromSeq1=f.Seq1 and a.FromSeq2=f.Seq2 and a.FromRoll=f.Roll and a.FromDyelot=f.Dyelot and a.FromStockType=f.StockType
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
-        }
-
-        //delete all
-        private void btnClearQtyIsEmpty_Click(object sender, EventArgs e)
-        {
-            detailgrid.ValidateControl();
-            //detailgridbs.EndEdit();
-            ((DataTable)detailgridbs.DataSource).Select("qty=0.00 or qty is null").ToList().ForEach(r => r.Delete());
-
-        }
-
-        //Import
-        private void btnImport_Click(object sender, EventArgs e)
-        {
-            var frm = new Sci.Production.Warehouse.P25_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
-            frm.ShowDialog(this);
-            this.RenewData();
-        }
-
-        // Accumulated
-        private void btnAccumulatedQty_Click(object sender, EventArgs e)
-        {
-            var frm = new Sci.Production.Warehouse.P25_AccumulatedQty(CurrentMaintain);
-            frm.P25 = this;
-            frm.ShowDialog(this);
         }
 
         // Locate
