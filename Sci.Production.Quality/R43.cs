@@ -107,33 +107,37 @@ order by M desc");
             }
             DualResult result;
 
-            string sqlcmd = string.Format(@"select DISTINCT
-                                                   a.AGCCode [Factory ID]
-                                                  ,b.SeasonId [Season]
-                                                  ,b.BulkMR [DevMR]
-                                                  ,b.SampleMR [BulkMR]
-                                                  ,b.SuppID [Supplier]
-                                                  ,b.FactoryID [Factory]
-                                                  ,b.Refno [Shell]
-                                                  ,b.SalesName [Sales_Org_Name]
-                                                  ,b.StyleID [Style]
-                                                  ,b.Article [Article_ID]
-                                                  ,b.ArticleName [ArticleName]
-                                                  ,b.OrderID [SP]
-                                                  ,b.CustPONo [PO]
-                                                  ,b.ProductionDate [ProductionDate]
-                                                  ,b.DefectMainID [DefectMainID]
-                                                  ,b.DefectSubID [DefectSubID]
-                                                  ,b.FOB [FOB_Price]
-                                                  ,b.Qty [Qty]
-                                                  ,b.ValueinUSD [Complaint_Value]
-                                                  ,b.ValueINExRate [Exrate]
-                                                  ,c.Name [Defect_Main_Name]
-                                                  ,d.SubName [Defect_Sub_Name]
-                                         from dbo.ADIDASComplain a WITH (NOLOCK) 
-                                         inner join dbo.ADIDASComplain_Detail b WITH (NOLOCK) on a.id=b.ID
-                                         left join dbo.ADIDASComplainDefect c WITH (NOLOCK) on b.DefectMainID=c.ID
-                                         left join dbo.ADIDASComplainDefect_Detail d WITH (NOLOCK) on d.ID=b.DefectMainID and d.SubID=b.DefectSubID " + sqlWhere);
+            string sqlcmd = string.Format(@"
+select DISTINCT
+		 [Year] = YEAR(a.StartDate)
+		,[Month] = MONTH(a.StartDate)
+        ,a.AGCCode [Factory ID]
+        ,b.SeasonId [Season]
+        ,b.BulkMR [DevMR]
+        ,b.SampleMR [BulkMR]
+        ,b.SuppID [Supplier]
+        ,b.FactoryID [Factory]
+        ,b.Refno [Shell]
+        ,b.SalesName [Sales_Org_Name]
+        ,b.StyleID [Style]
+        ,b.Article [Article_ID]
+        ,b.ArticleName [ArticleName]
+        ,b.OrderID [SP]
+        ,b.CustPONo [PO]
+        ,b.ProductionDate [ProductionDate]
+        ,b.DefectMainID [DefectMainID]
+        ,b.DefectSubID [DefectSubID]
+        ,b.FOB [FOB_Price]
+        ,b.Qty [Qty]
+        ,b.ValueinUSD [Complaint_Value]
+        ,b.ValueINExRate [Exrate]
+        ,c.Name [Defect_Main_Name]
+        ,d.SubName [Defect_Sub_Name]
+from dbo.ADIDASComplain a WITH (NOLOCK) 
+inner join dbo.ADIDASComplain_Detail b WITH (NOLOCK) on a.id=b.ID
+left join dbo.ADIDASComplainDefect c WITH (NOLOCK) on b.DefectMainID=c.ID
+left join dbo.ADIDASComplainDefect_Detail d WITH (NOLOCK) on d.ID=b.DefectMainID and d.SubID=b.DefectSubID 
+" + sqlWhere);
            result = DBProxy.Current.Select("", sqlcmd,lis, out dt);
             
 
