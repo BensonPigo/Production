@@ -17,6 +17,11 @@ namespace Sci.Production.Warehouse
     public partial class R21 : Sci.Win.Tems.PrintForm
     {
         string StartSPNo, EndSPNo, MDivision, Factory, StartRefno, EndRefno, Color, MT, ST ,WorkNo;
+        private bool bulk;
+        private bool sample;
+        private bool material;
+        private bool smtl;
+        private bool complete;
         DateTime? BuyerDelivery1, BuyerDelivery2;
         DateTime? ETA1, ETA2;
         DateTime? arriveWH1, arriveWH2;
@@ -24,9 +29,19 @@ namespace Sci.Production.Warehouse
 	[M] = o.MDivisionID
 	,[Factory] = o.FactoryID
 	,[SP#] = psd.id
+    ,[Category] = case when o.Category='B'then'Bulk'
+						when o.Category='G'then'Garment'
+						when o.Category='M'then'Material'
+						when o.Category='S'then'Sample'
+						when o.Category='T'then'Sample mtl.'
+						when isnull(o.Category,'')=''and isnull(o.ForecastSampleGroup,'')='' then'Bulk fc'
+						when isnull(o.Category,'')=''and isnull(o.ForecastSampleGroup,'')='D' then'Dev. sample fc'
+						when isnull(o.Category,'')=''and isnull(o.ForecastSampleGroup,'')='S' then'Sa. sample fc'
+					end
 	,[OrderType] = o.OrderTypeID
 	,[WeaveType] = d.WeaveTypeID
     ,[BuyerDelivery]=o.BuyerDelivery
+    ,[MaterialComplete] = case when psd.Complete = 1 then 'Y' else '' end
     ,[ETA] = psd.FinalETA
     ,[ArriveWHDate] = stuff((
 	            	select concat(char(10),isnull(Format(Export.whsearrival,'yyyy/MM/dd'),'　'))
@@ -76,7 +91,7 @@ namespace Sci.Production.Warehouse
 	,[Location] = f.MtlLocationID
     ,[MCHandle] = isnull(dbo.getPassEmail(o.MCHandle) ,'')
 	,[POHandle] = isnull(dbo.getPassEmail(p.POHandle) ,'')
-	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'') 
+	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'')     
     ";
 
         string sqlcolumn_sum = @"select
@@ -195,6 +210,11 @@ namespace Sci.Production.Warehouse
             arriveWH2 = dateArriveDate.Value2;
             WorkNo = txtWorkNo.Text;
 
+            bulk = checkBulk.Checked;
+            sample = checkSample.Checked;
+            material = checkMaterial.Checked;
+            smtl = checkSMTL.Checked;
+            complete = chkComplete.Checked;
             if (MyUtility.Check.Empty(StartSPNo) &&
                 MyUtility.Check.Empty(EndSPNo) &&
                 !dateETA.HasValue &&
@@ -361,6 +381,37 @@ where 1=1
             if (!MyUtility.Check.Empty(ETA2))
             {
                 sqlcmd.Append($" and psd.FinalETA <='{((DateTime)ETA2).ToString("yyyy/MM/dd")}'");
+            }
+
+            if (this.bulk || this.sample || this.material || this.smtl) 
+            {
+                sqlcmd.Append(" and (1=0");
+                if (this.bulk)
+                {
+                    sqlcmd.Append(" or o.Category = 'B'");
+                }
+
+                if (this.sample)
+                {
+                    sqlcmd.Append(" or o.Category = 'S'");
+                }
+
+                if (this.material)
+                {
+                    sqlcmd.Append(" or o.Category = 'M'");
+                }
+
+                if (this.smtl)
+                {
+                    sqlcmd.Append(" or o.Category = 'T'");
+                }
+
+                sqlcmd.Append(")");
+            }
+
+            if (this.complete)
+            {
+                sqlcmd.Append(" and psd.Complete = '1'");
             }
 
             if (!MyUtility.Check.Empty(arriveWH1) && !MyUtility.Check.Empty(arriveWH2))

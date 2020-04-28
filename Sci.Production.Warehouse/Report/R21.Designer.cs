@@ -58,22 +58,28 @@
             this.dateArriveDate = new Sci.Win.UI.DateRange();
             this.label5 = new Sci.Win.UI.Label();
             this.txtWorkNo = new Sci.Win.UI.TextBox();
+            this.checkSMTL = new Sci.Win.UI.CheckBox();
+            this.checkMaterial = new Sci.Win.UI.CheckBox();
+            this.checkSample = new Sci.Win.UI.CheckBox();
+            this.checkBulk = new Sci.Win.UI.CheckBox();
+            this.labelCategory = new Sci.Win.UI.Label();
+            this.chkComplete = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(424, 79);
+            this.print.Location = new System.Drawing.Point(437, 79);
             this.print.TabIndex = 18;
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(424, 9);
+            this.toexcel.Location = new System.Drawing.Point(437, 9);
             this.toexcel.TabIndex = 16;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(424, 45);
+            this.close.Location = new System.Drawing.Point(437, 45);
             this.close.TabIndex = 17;
             // 
             // buttonCustomized
@@ -88,7 +94,7 @@
             // 
             this.rdbtnSummary.AutoSize = true;
             this.rdbtnSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdbtnSummary.Location = new System.Drawing.Point(194, 329);
+            this.rdbtnSummary.Location = new System.Drawing.Point(194, 359);
             this.rdbtnSummary.Name = "rdbtnSummary";
             this.rdbtnSummary.Size = new System.Drawing.Size(85, 21);
             this.rdbtnSummary.TabIndex = 14;
@@ -100,7 +106,7 @@
             this.rdbtnDetail.AutoSize = true;
             this.rdbtnDetail.Checked = true;
             this.rdbtnDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdbtnDetail.Location = new System.Drawing.Point(126, 329);
+            this.rdbtnDetail.Location = new System.Drawing.Point(126, 359);
             this.rdbtnDetail.Name = "rdbtnDetail";
             this.rdbtnDetail.Size = new System.Drawing.Size(62, 21);
             this.rdbtnDetail.TabIndex = 13;
@@ -134,7 +140,7 @@
             // 
             // labelReportType
             // 
-            this.labelReportType.Location = new System.Drawing.Point(8, 329);
+            this.labelReportType.Location = new System.Drawing.Point(8, 359);
             this.labelReportType.Name = "labelReportType";
             this.labelReportType.Size = new System.Drawing.Size(114, 23);
             this.labelReportType.TabIndex = 130;
@@ -180,7 +186,7 @@
             this.checkQty.Checked = true;
             this.checkQty.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkQty.Location = new System.Drawing.Point(8, 358);
+            this.checkQty.Location = new System.Drawing.Point(8, 389);
             this.checkQty.Name = "checkQty";
             this.checkQty.Size = new System.Drawing.Size(73, 21);
             this.checkQty.TabIndex = 15;
@@ -431,9 +437,78 @@
             this.txtWorkNo.Size = new System.Drawing.Size(121, 23);
             this.txtWorkNo.TabIndex = 9;
             // 
+            // checkSMTL
+            // 
+            this.checkSMTL.AutoSize = true;
+            this.checkSMTL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkSMTL.Location = new System.Drawing.Point(345, 331);
+            this.checkSMTL.Name = "checkSMTL";
+            this.checkSMTL.Size = new System.Drawing.Size(64, 21);
+            this.checkSMTL.TabIndex = 147;
+            this.checkSMTL.Text = "SMTL";
+            this.checkSMTL.UseVisualStyleBackColor = true;
+            // 
+            // checkMaterial
+            // 
+            this.checkMaterial.AutoSize = true;
+            this.checkMaterial.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkMaterial.Location = new System.Drawing.Point(267, 331);
+            this.checkMaterial.Name = "checkMaterial";
+            this.checkMaterial.Size = new System.Drawing.Size(77, 21);
+            this.checkMaterial.TabIndex = 144;
+            this.checkMaterial.Text = "Material";
+            this.checkMaterial.UseVisualStyleBackColor = true;
+            // 
+            // checkSample
+            // 
+            this.checkSample.AutoSize = true;
+            this.checkSample.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkSample.Location = new System.Drawing.Point(187, 331);
+            this.checkSample.Name = "checkSample";
+            this.checkSample.Size = new System.Drawing.Size(74, 21);
+            this.checkSample.TabIndex = 143;
+            this.checkSample.Text = "Sample";
+            this.checkSample.UseVisualStyleBackColor = true;
+            // 
+            // checkBulk
+            // 
+            this.checkBulk.AutoSize = true;
+            this.checkBulk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBulk.Location = new System.Drawing.Point(126, 331);
+            this.checkBulk.Name = "checkBulk";
+            this.checkBulk.Size = new System.Drawing.Size(54, 21);
+            this.checkBulk.TabIndex = 142;
+            this.checkBulk.Text = "Bulk";
+            this.checkBulk.UseVisualStyleBackColor = true;
+            // 
+            // labelCategory
+            // 
+            this.labelCategory.Location = new System.Drawing.Point(8, 329);
+            this.labelCategory.Name = "labelCategory";
+            this.labelCategory.Size = new System.Drawing.Size(114, 23);
+            this.labelCategory.TabIndex = 148;
+            this.labelCategory.Text = "Category";
+            // 
+            // chkComplete
+            // 
+            this.chkComplete.AutoSize = true;
+            this.chkComplete.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkComplete.Location = new System.Drawing.Point(87, 389);
+            this.chkComplete.Name = "chkComplete";
+            this.chkComplete.Size = new System.Drawing.Size(138, 21);
+            this.chkComplete.TabIndex = 149;
+            this.chkComplete.Text = "Material complete";
+            this.chkComplete.UseVisualStyleBackColor = true;
+            // 
             // R21
             // 
-            this.ClientSize = new System.Drawing.Size(514, 431);
+            this.ClientSize = new System.Drawing.Size(527, 441);
+            this.Controls.Add(this.chkComplete);
+            this.Controls.Add(this.checkSMTL);
+            this.Controls.Add(this.checkMaterial);
+            this.Controls.Add(this.checkSample);
+            this.Controls.Add(this.checkBulk);
+            this.Controls.Add(this.labelCategory);
             this.Controls.Add(this.txtWorkNo);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
@@ -503,6 +578,12 @@
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.txtWorkNo, 0);
+            this.Controls.SetChildIndex(this.labelCategory, 0);
+            this.Controls.SetChildIndex(this.checkBulk, 0);
+            this.Controls.SetChildIndex(this.checkSample, 0);
+            this.Controls.SetChildIndex(this.checkMaterial, 0);
+            this.Controls.SetChildIndex(this.checkSMTL, 0);
+            this.Controls.SetChildIndex(this.chkComplete, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -540,5 +621,11 @@
         private Win.UI.DateRange dateArriveDate;
         private Win.UI.Label label5;
         private Win.UI.TextBox txtWorkNo;
+        private Win.UI.CheckBox checkSMTL;
+        private Win.UI.CheckBox checkMaterial;
+        private Win.UI.CheckBox checkSample;
+        private Win.UI.CheckBox checkBulk;
+        private Win.UI.Label labelCategory;
+        private Win.UI.CheckBox chkComplete;
     }
 }
