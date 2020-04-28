@@ -86,12 +86,12 @@ namespace Sci.Production.Quality
 
             if (!this.dateArriveWHDate.Value1.Empty())
             {
-                RWheres.Add("R.WhseArrival >= @ArrDate1");
+                RWheres.Add("rd.WhseArrival >= @ArrDate1");
                 lis.Add(new SqlParameter("@ArrDate1", DateArrStart));
             }
             if (!this.dateArriveWHDate.Value2.Empty())
             {
-                RWheres.Add("R.WhseArrival <= @ArrDate2");
+                RWheres.Add("rd.WhseArrival <= @ArrDate2");
                 lis.Add(new SqlParameter("@ArrDate2", DateArrEnd));
             }
             
@@ -140,7 +140,7 @@ namespace Sci.Production.Quality
 
             if (!MyUtility.Check.Empty(wkStrat))
             {
-                RWheres.Add("R.ExportId between @wk1 and @wk2");
+                RWheres.Add("rd.ExportId between @wk1 and @wk2");
                 lis.Add(new SqlParameter("@wk1", wkStrat));
                 lis.Add(new SqlParameter("@wk2", wkEnd));
             }
@@ -224,8 +224,7 @@ SET ARITHABORT ON
     ,rd.seq2
     ,RD.ID
     INTO #balanceTmp
-from Receiving_Detail rd
-INNER JOIN Receiving r on RD.Id = R.Id 
+from dbo.View_AllReceivingDetail rd
 inner join FIR f on f.ReceivingID = rd.id AND f.POID=rd.poid AND  f.seq1 = rd.seq1 and f.seq2 = rd.Seq2
 inner join FtyInventory fit on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit.seq2 = rd.Seq2 AND fit.StockType=rd.StockType and fit.Roll=rd.Roll and fit.Dyelot=rd.Dyelot
     where 1=1
@@ -293,10 +292,9 @@ inner join FtyInventory fit on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit
 	[CFInspector] = cfd.Name,
     ps1.LocalMR
 from dbo.FIR F WITH (NOLOCK) 
-    inner join (select R.WhseArrival,R.InvNo,R.ExportId,R.Id,rd.PoId,RD.seq1,RD.seq2,RD.StockQty,
-				TotalRollsCalculated=sum(iif(RD.StockQty>0,1,0)) over (partition by rd.id,rd.PoId,RD.seq1,RD.seq2,R.ExportId)
-			    from dbo.Receiving R WITH (NOLOCK) 
-			    inner join dbo.Receiving_Detail RD WITH (NOLOCK) on RD.Id = R.Id"
+    inner join (select rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2,RD.StockQty,
+				TotalRollsCalculated=sum(iif(RD.StockQty>0,1,0)) over (partition by rd.id,rd.PoId,RD.seq1,RD.seq2,rd.ExportId)
+			    from dbo.View_AllReceivingDetail rd WITH (NOLOCK) "
                 + RWhere+ @" 
 			    ) t
     on t.PoId = F.POID and t.Seq1 = F.SEQ1 and t.Seq2 = F.SEQ2 AND T.Id=F.ReceivingID

@@ -2479,6 +2479,14 @@
     <Build Include="dbo\Tables\BundleReplacement.sql" />
     <Build Include="dbo\Tables\MachineType_ThreadRatio_Hem.sql" />
     <Build Include="dbo\Tables\GarmentInvoice_Foundry.sql" />
+    <Build Include="dbo\Views\View_AllReceiving.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Views\View_AllReceivingDetail.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

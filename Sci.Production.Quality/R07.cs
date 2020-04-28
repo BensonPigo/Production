@@ -222,11 +222,10 @@ namespace Sci.Production.Quality
             ,PS.SuppID
             ,Weave.WeaveTypeID
             ,t.id [ReceivingID]
-            from (select r.WhseArrival,r.InvNo,r.ExportId,r.Id,rd.PoId,rd.seq1,rd.seq2{byRoll},sum(stockqty) stockqty
-			             from dbo.Receiving r WITH (NOLOCK) 
-			            inner join dbo.Receiving_Detail rd WITH (NOLOCK) on rd.Id = r.Id 
+            from (select r.WhseArrival,r.InvNo,r.ExportId,r.Id,r.PoId,r.seq1,r.seq2{byRoll},sum(stockqty) stockqty
+			             from dbo.View_AllReceivingDetail r WITH (NOLOCK) 
 			            where r.type='A'" + RWhere+ $@"
-			            group by r.WhseArrival,r.InvNo,r.ExportId,r.Id,rd.PoId,rd.seq1,rd.seq2{byRoll}) t
+			            group by r.WhseArrival,r.InvNo,r.ExportId,r.Id,r.PoId,r.seq1,r.seq2{byRoll}) t
             inner join (select distinct id,Category,KPILETA from dbo.Orders o WITH (NOLOCK) 
 			            where 1=1
 			           " + OWhere+ @" ) x on x.id = T.POID
