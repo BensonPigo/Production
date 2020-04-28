@@ -298,6 +298,8 @@ select distinct t.FactoryID
 	,t.MDivisionID
     ,t.artworktypeid
     ,t.POID
+    ,aa.Category
+    ,[Cancel] = IIF(aa.Junk=1,'Y','N')
     ,aa.StyleID
     ,cc.BuyerID
     ,aa.BrandID 
