@@ -241,8 +241,10 @@ rd.Dyelot,
 rd.ActualQty,
 [StockTypeDesc] = st.Name,
 rd.StockType,
-rd.Location,
-[OldLocation] = rd.Location,
+--rd.Location,
+--[OldLocation] = rd.Location,
+[Location]=Location.MtlLocationID ,
+[OldLocation] = Location.MtlLocationID ,
 rd.Weight,
 rd.ActualWeight,
 [OldActualWeight] = rd.ActualWeight,
@@ -272,6 +274,16 @@ OUTER APPLY(
 	WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey=fi.Ukey 
     order by lt.EditDate desc
 )LastEditDate
+OUTER APPLY(
+
+	SELECT [MtlLocationID] = STUFF(
+			(
+			SELECT DISTINCT IIF(fid.MtlLocationID IS NULL OR fid.MtlLocationID = '' ,'' , ','+fid.MtlLocationID)
+			FROM FtyInventory_Detail fid
+			WHERE fid.Ukey = fi.Ukey
+			FOR XML PATH('') )
+			, 1, 1, '')
+)Location
 
 where r.MDivisionID  = '{Env.User.Keyword}' {sqlWhere}
 ";
