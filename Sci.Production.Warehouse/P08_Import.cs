@@ -119,6 +119,11 @@ WHERE   StockType='{0}'
             cbb_Roll.MaxLength = 8;
             cbb_Dyelot.MaxLength = 8;
             #endregion 欄位設定
+
+            this.grid.Columns["Roll"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["Dyelot"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["StockQty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["Location"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void BtnQuery_Click(object sender, EventArgs e)

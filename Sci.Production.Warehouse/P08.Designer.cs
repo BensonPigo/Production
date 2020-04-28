@@ -230,10 +230,10 @@
             // 
             this.btnAccumulatedQty.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnAccumulatedQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAccumulatedQty.Location = new System.Drawing.Point(764, 39);
+            this.btnAccumulatedQty.Location = new System.Drawing.Point(757, 79);
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
             this.btnAccumulatedQty.Size = new System.Drawing.Size(145, 31);
-            this.btnAccumulatedQty.TabIndex = 9;
+            this.btnAccumulatedQty.TabIndex = 10;
             this.btnAccumulatedQty.Text = "Accumulated Qty";
             this.btnAccumulatedQty.UseVisualStyleBackColor = true;
             this.btnAccumulatedQty.Click += new System.EventHandler(this.btnAccumulatedQty_Click);
@@ -320,10 +320,10 @@
             // 
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(764, 79);
+            this.btnImport.Location = new System.Drawing.Point(758, 39);
             this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(83, 31);
-            this.btnImport.TabIndex = 61;
+            this.btnImport.Size = new System.Drawing.Size(145, 31);
+            this.btnImport.TabIndex = 9;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
