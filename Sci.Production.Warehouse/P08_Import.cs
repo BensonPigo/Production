@@ -153,9 +153,11 @@ select  [Selected] = 0
         , p.FinalETA
         , isnull(m.InQty, 0) as InQty
         , StockUnit = dbo.GetStockUnitBySPSeq (p.id, p.seq1, p.seq2)
+        , p.pounit
         , p.seq1
         , p.seq2
         , p.scirefno
+        , p.FabricType
 		,[Roll]=''
 		,[Dyelot]=''
 		,[StockQty]=0
