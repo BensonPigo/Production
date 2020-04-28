@@ -228,6 +228,15 @@ where p.junk = 1
             labelNotApprove.Text = CurrentMaintain["status"].ToString();
 
             #endregion Status Label
+
+            if (this.EditMode)
+            {
+                this.btnImport.Enabled = true;
+            }
+            else
+            {
+                this.btnImport.Enabled = false;
+            }
         }
 
         // detail 新增時設定預設值
@@ -847,9 +856,9 @@ Where a.id = '{0}' ", masterID);
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            P08_Import form = new P08_Import();
-
-            form.ShowDialog();
+            P08_Import form = new P08_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
+            form.ShowDialog(this);
+            this.RenewData();
         }
     }
 }
