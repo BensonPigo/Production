@@ -438,7 +438,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
             foreach (DataRow dr in gridData.Rows)
             {
                 j++;
-                int row = 36 * ((int)Math.Ceiling(MyUtility.Convert.GetDecimal(j) / 2) - 1);
+                int row = 35 * ((int)Math.Ceiling(MyUtility.Convert.GetDecimal(j) / 2) - 1);
                 int column = 7;
 
                 // 填表頭資料
