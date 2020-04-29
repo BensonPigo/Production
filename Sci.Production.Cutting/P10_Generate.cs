@@ -347,6 +347,10 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             {
                 garmentarRC = garmentTb.Select(w2.ToString()).CopyToDataTable();
             }
+            else
+            {
+                garmentarRC = garmentTb.Clone();
+            }
         }
 
         public void grid_setup()
