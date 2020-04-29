@@ -486,8 +486,8 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
                 worksheet.Cells[row + 28, 3] = responsibility == "S" ? "V" : string.Empty;
                 worksheet.Cells[row + 28, column] = responsibility == "S" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : string.Empty;
                 worksheet.Cells[row + 29, column] = MyUtility.Convert.GetString(dr["Suggested"]);
-                worksheet.Cells[row + 29, column] = apply;
-                worksheet.Cells[row + 31, column + 1] = approve;
+                worksheet.Cells[row + 30, column] = apply;
+                worksheet.Cells[row + 30, column + 1] = approve;
                 worksheet.Cells[row + 32, column] = MyUtility.Convert.GetString(dr["OccurCost"]);
                 worksheet.Cells[row + 33, column] = confirm;
             }
