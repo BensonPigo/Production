@@ -420,6 +420,8 @@ drop table #tmp_Workorder
             #endregion
             
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R41_Bundle tracking list (RFID).xltx"); //預先開啟excel app
+
+            //勿動!! 超過這個數字，DY的電腦會跑不動
             decimal excelMaxrow = 1010000;
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet1 = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1]);
@@ -435,7 +437,7 @@ drop table #tmp_Workorder
             SqlConnection conn = null;
             DBProxy.Current.OpenConnection(this.ConnectionName, out conn);
             var cmd = new SqlCommand(sqlResult, conn);
-            cmd.CommandTimeout = 300;
+            cmd.CommandTimeout = 3000;
             var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             int loadCounts = 0;
             int loadCounts2 = 0;
