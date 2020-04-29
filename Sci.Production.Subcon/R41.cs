@@ -418,72 +418,115 @@ drop table #tmp_Workorder
 ";
 
             #endregion
-            int originalTimeout = DBProxy.Current.DefaultTimeout;
-            DBProxy.Current.DefaultTimeout = 1800;
-            DataTable groupByDt;
-            DualResult result = DBProxy.Current.Select(null, sqlResult, out groupByDt);
-            DBProxy.Current.DefaultTimeout = originalTimeout;
-            if (!result)
-            {
-                this.ShowErr(result);
-                return false;
-            }
-            int ct = groupByDt.Rows.Count;
-            SetCount(ct);
-            if (ct <= 0)
-            {
-                MyUtility.Msg.WarningBox("Data not found!");
-                return false;
-            }
-            if (ct > 1000000)
-            {
-                MyUtility.Msg.WarningBox("The number of data more than one million, please use more condition !!");
-                return false;
-            }
-            //預先開啟excel app
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R41_Bundle tracking list (RFID).xltx");
+            
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R41_Bundle tracking list (RFID).xltx"); //預先開啟excel app
+            decimal excelMaxrow = 1010000;
 
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
-            int num = 100000;
-            int start = 0;
-            DataTable dt = groupByDt.AsEnumerable().Skip(start).Take(num).CopyToDataTable();
-            while (dt.Rows.Count > 0)
-            {
-                System.Diagnostics.Debug.WriteLine("load {0} records", dt.Rows.Count);
+            Microsoft.Office.Interop.Excel.Worksheet worksheet1 = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1]);
+            Microsoft.Office.Interop.Excel.Worksheet worksheetn = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[2]);
+            worksheet1.Copy(worksheetn);
 
-                //do some jobs   
-                ShowLoadingText($"Write data to excel - {(start + dt.Rows.Count).ToString("N0")}");
-                MyUtility.Excel.CopyToXls(dt, string.Empty, "Subcon_R41_Bundle tracking list (RFID).xltx", 1 + start, false, null, objApp, wSheet: objSheets);
-                start += num;
-                if (start > ct)
+
+            int sheet = 1;
+            //因為一次載入太多筆資料到DataTable 會造成程式佔用大量記憶體，改為每1萬筆載入一次並貼在excel上
+            #region 分段抓取資料填入excel
+            this.ShowLoadingText($"Data Loading , please wait …");
+            DataTable tmpDatas = new DataTable();
+            SqlConnection conn = null;
+            DBProxy.Current.OpenConnection(this.ConnectionName, out conn);
+            var cmd = new SqlCommand(sqlResult, conn);
+            cmd.CommandTimeout = 300;
+            var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
+            int loadCounts = 0;
+            int loadCounts2 = 0;
+            using (conn)
+            {
+                using (reader)
                 {
-                    break;
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        tmpDatas.Columns.Add(reader.GetName(i), reader.GetFieldType(i));
+                    }
+
+                    while (reader.Read())
+                    {
+                        object[] items = new object[reader.FieldCount];
+                        reader.GetValues(items);
+                        tmpDatas.LoadDataRow(items, true);
+                        loadCounts++;
+                        loadCounts2++;
+                        if (loadCounts % 10000 == 0)
+                        {
+                            if (sheet != 1 + loadCounts / (int)excelMaxrow)
+                            {
+                                Microsoft.Office.Interop.Excel.Worksheet worksheetA = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[sheet + 1]);
+                                Microsoft.Office.Interop.Excel.Worksheet worksheetB = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[sheet + 2]);
+                                worksheetA.Copy(worksheetB); ;
+                            }
+                            sheet = 1 + loadCounts / (int)excelMaxrow;
+                            if (loadCounts - ((sheet - 1) * (int)excelMaxrow) <= 0)
+                            {
+                                loadCounts2 = loadCounts - ((sheet - 1) * (int)excelMaxrow) + 10000;
+                            }
+                            else
+                            {
+                                loadCounts2 = loadCounts - ((sheet - 1) * (int)excelMaxrow);
+                            }
+                            this.ShowLoadingText($"Data Loading – {loadCounts} , please wait …");
+                            MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R41_Bundle tracking list (RFID).xltx", loadCounts2 - 9999, false, null, objApp, wSheet: objApp.Sheets[sheet]);// 將datatable copy to excel
+
+                            this.DataTableClearAll(tmpDatas);
+                            for (int i = 0; i < reader.FieldCount; i++)
+                            {
+                                tmpDatas.Columns.Add(reader.GetName(i), reader.GetFieldType(i));
+                            }
+                        }
+                    }
+                    if (loadCounts > 0)
+                    {
+                        MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R41_Bundle tracking list (RFID).xltx", loadCounts2 - (loadCounts2 % 10000) + 1, false, null, objApp, wSheet: objApp.Sheets[sheet]);// 將datatable copy to excel
+                        this.DataTableClearAll(tmpDatas);
+                    }
+                    else
+                    {
+                        MyUtility.Msg.WarningBox("Data not found!");
+                        this.HideLoadingText();
+                        return false;
+                    }
                 }
-                dt = groupByDt.AsEnumerable().Skip(start).Take(num).CopyToDataTable();
             }
-            HideLoadingText();
+            SetCount((long)loadCounts);
+            objApp.DisplayAlerts = false;
+            ((Microsoft.Office.Interop.Excel.Worksheet)objApp.Sheets[sheet + 1]).Delete();
+            ((Microsoft.Office.Interop.Excel.Worksheet)objApp.Sheets[1]).Select();
+            objApp.DisplayAlerts = true;
+            this.HideLoadingText();
+            #endregion
+
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R41_Bundle tracking list (RFID)");
-            objApp.ActiveWorkbook.SaveAs(strExcelName);
-            if (objSheets != null)
-            {
-                Marshal.FinalReleaseComObject(objSheets);
-                objSheets = null;
-            }
-            if (objApp != null)
-            {
-                objApp.Quit();
-                Marshal.FinalReleaseComObject(objApp);
-                objApp = null;
-            }
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-
+            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);          //釋放objApp
+            Marshal.ReleaseComObject(workbook);
+            //printData.Clear();
+            //printData.Dispose();
             strExcelName.OpenFile();
-            #endregion
+            #endregion             
             return true;
         }
         #endregion
+        private void DataTableClearAll(DataTable target)
+        {
+            target.Rows.Clear();
+            target.Constraints.Clear();
+            target.Columns.Clear();
+            target.ExtendedProperties.Clear();
+            target.ChildRelations.Clear();
+            target.ParentRelations.Clear();
+        }
     }
 }
