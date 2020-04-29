@@ -343,7 +343,10 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             {
                 w2.Append(string.Format(" or {0} = '{1}' ", dr[0], maindatarow["FabricPanelCode"]));
             }
-            garmentarRC = garmentTb.Select(w2.ToString()).CopyToDataTable();
+            if (garmentTb.Rows.Count > 0)
+            {
+                garmentarRC = garmentTb.Select(w2.ToString()).CopyToDataTable();
+            }
         }
 
         public void grid_setup()
@@ -692,7 +695,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partsCell1)
             .CheckBox("IsPair", header: "IsPair", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: isPair)
             .Text("PostSewingSubProcess_String", header: "Post Sewing\r\nSubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: PostSewingSubProcess_String)
-            .Text("NoBundleCardAfterSubprocess_String", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("NoBundleCardAfterSubprocess_String", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: NoBundleCardAfterSubprocess_String)
             ;
             grid_art.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
             grid_art.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
