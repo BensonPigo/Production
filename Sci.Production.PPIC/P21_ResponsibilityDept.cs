@@ -18,9 +18,10 @@ namespace Sci.Production.PPIC
         private string ID;
         private string FormType;
         private bool canConfirm;
+        private bool canUnConfirm;
         private string checkTable;
 
-        public P21_ResponsibilityDept(bool canedit, string id, string keyvalue2, string keyvalue3, string formType, bool canConfirm)
+        public P21_ResponsibilityDept(bool canedit, string id, string keyvalue2, string keyvalue3, string formType, bool canConfirm, bool canUnConfirm)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
             this.InitializeComponent();
@@ -29,6 +30,7 @@ namespace Sci.Production.PPIC
             this.FormType = formType;
 
             this.canConfirm = canConfirm;
+            this.canUnConfirm = canUnConfirm;
             this.checkTable = formType == "Replacement" ? "ReplacementReport" : "ICR";
             this.ConfirmStatusCheck();
         }
@@ -291,19 +293,28 @@ namespace Sci.Production.PPIC
                 return;
             }
 
-            if (!this.EditMode && this.canConfirm && IsRespDeptConfirmDateNull())
+            if (this.EditMode)
             {
-                this.btnConfirm.Enabled = true;
+                this.btnConfirm.Enabled = false;
+                this.btnUnConfirm.Enabled = false;
+                return;
+            }
+
+            if (this.IsRespDeptConfirmDateNull())
+            {
+                this.btnConfirm.Enabled = this.canConfirm;
+                this.btnUnConfirm.Enabled = false;
             }
             else
             {
                 this.btnConfirm.Enabled = false;
+                this.btnUnConfirm.Enabled = this.canUnConfirm;
             }
         }
 
         private bool IsRespDeptConfirmDateNull()
         {
-            return MyUtility.Check.Seek($"select 1 from {this.checkTable} with (nolock) where ID = '{this.ID}' and RespDeptConfirmDate is null");
+            return MyUtility.Check.Seek($"select 1 from {this.checkTable} with (nolock) where ID = '{this.ID}' and RespDeptConfirmDate is null and RespDeptConfirmName = '' ");
         }
 
         protected override void OnDelete()
@@ -448,6 +459,31 @@ where ICR.id = '{this.ID}'
             this.ConfirmStatusCheck();
             MyUtility.Msg.InfoBox("Confirm success!");
             this.save.Visible = false;
+        }
+
+        private void BtnUnConfirm_Click(object sender, EventArgs e)
+        {
+            if (this.IsRespDeptConfirmDateNull())
+            {
+                this.ConfirmStatusCheck();
+                return;
+            }
+
+            string sqlConfirm = $@"
+            update {this.checkTable} set RespDeptConfirmDate = null, RespDeptConfirmName  = '' where ID = '{this.ID}'
+";
+
+            DualResult result = DBProxy.Current.Execute(null, sqlConfirm);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.ConfirmStatusCheck();
+            MyUtility.Msg.InfoBox("UnConfirm success!");
+            this.save.Visible = true;
         }
     }
 }

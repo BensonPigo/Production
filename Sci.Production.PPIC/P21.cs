@@ -219,7 +219,7 @@ where ICR.ID = '{masterID}';
                 canEdit = MyUtility.Check.Seek($"select 1 from ICR with (nolock) where ID = '{this.CurrentMaintain["ID"]}' and RespDeptConfirmDate is null");
             }
 
-            var frm = new P21_ResponsibilityDept(canEdit, this.CurrentMaintain["ID"].ToString(), null, null, string.Empty, this.Perm.Confirm);
+            var frm = new P21_ResponsibilityDept(canEdit, this.CurrentMaintain["ID"].ToString(), null, null, string.Empty, this.Perm.Confirm, this.Perm.Unconfirm);
             frm.ShowDialog(this);
             frm.Dispose();
             this.OnRefreshClick();
