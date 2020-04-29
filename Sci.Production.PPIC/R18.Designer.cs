@@ -41,6 +41,8 @@
             this.txtShareDept = new Sci.Win.UI.TextBox();
             this.comboReportType = new Sci.Win.UI.ComboBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.lbstatus = new Sci.Win.UI.Label();
+            this.comboStatus = new Sci.Win.UI.ComboBox();
             this.SuspendLayout();
             // 
             // print
@@ -102,7 +104,7 @@
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(9, 167);
+            this.label6.Location = new System.Drawing.Point(9, 198);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(103, 23);
             this.label6.TabIndex = 102;
@@ -183,7 +185,7 @@
             this.comboReportType.Items.AddRange(new object[] {
             "Detail List",
             "Resp. Dept. List"});
-            this.comboReportType.Location = new System.Drawing.Point(115, 165);
+            this.comboReportType.Location = new System.Drawing.Point(115, 197);
             this.comboReportType.Name = "comboReportType";
             this.comboReportType.OldText = "";
             this.comboReportType.Size = new System.Drawing.Size(141, 24);
@@ -201,11 +203,41 @@
             this.comboFactory.Size = new System.Drawing.Size(80, 24);
             this.comboFactory.TabIndex = 109;
             // 
+            // lbstatus
+            // 
+            this.lbstatus.Location = new System.Drawing.Point(9, 167);
+            this.lbstatus.Name = "lbstatus";
+            this.lbstatus.Size = new System.Drawing.Size(103, 23);
+            this.lbstatus.TabIndex = 110;
+            this.lbstatus.Text = "Status";
+            // 
+            // comboStatus
+            // 
+            this.comboStatus.BackColor = System.Drawing.Color.White;
+            this.comboStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboStatus.FormattingEnabled = true;
+            this.comboStatus.IsSupportUnselect = true;
+            this.comboStatus.Items.AddRange(new object[] {
+            "Approved",
+            "Confirmed",
+            "Received",
+            "Cancel",
+            "New",
+            "Send",
+            "All"});
+            this.comboStatus.Location = new System.Drawing.Point(115, 166);
+            this.comboStatus.Name = "comboStatus";
+            this.comboStatus.OldText = "";
+            this.comboStatus.Size = new System.Drawing.Size(141, 24);
+            this.comboStatus.TabIndex = 111;
+            // 
             // R18
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(518, 229);
+            this.ClientSize = new System.Drawing.Size(518, 261);
+            this.Controls.Add(this.comboStatus);
+            this.Controls.Add(this.lbstatus);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.comboReportType);
             this.Controls.Add(this.txtShareDept);
@@ -239,6 +271,8 @@
             this.Controls.SetChildIndex(this.txtShareDept, 0);
             this.Controls.SetChildIndex(this.comboReportType, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
+            this.Controls.SetChildIndex(this.lbstatus, 0);
+            this.Controls.SetChildIndex(this.comboStatus, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -258,5 +292,7 @@
         private Win.UI.TextBox txtShareDept;
         private Win.UI.ComboBox comboReportType;
         private Win.UI.ComboBox comboFactory;
+        private Win.UI.Label lbstatus;
+        private Win.UI.ComboBox comboStatus;
     }
 }

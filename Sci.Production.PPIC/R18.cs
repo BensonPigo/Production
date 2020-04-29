@@ -42,6 +42,7 @@ namespace Sci.Production.PPIC
             this.comboFactory.ValueMember = "ID";
             this.comboFactory.DisplayMember = "ID";
             this.comboReportType.SelectedIndex = 0;
+            this.comboStatus.SelectedIndex = 6;
             this.comboMDivision.setDefalutIndex(true);
         }
 
@@ -95,6 +96,11 @@ namespace Sci.Production.PPIC
                 sqlWhereResponsibilityDept += $" and icrrd.DepartmentID = '{this.txtShareDept.Text}' ";
             }
 
+            if (!this.comboStatus.Text.EqualString("All"))
+            {
+                sqlWhere += $" and ICR.Status = '{this.comboStatus.Text}' ";
+            }
+
             this.sqlGetData = $@"
 select
 ICR.ID,
@@ -118,7 +124,8 @@ ICR.ActFreightUSD,
 ICR.VoucherID,
 ICR.VoucherDate,
 o.POID,
-ICR.IrregularPOCostID
+ICR.IrregularPOCostID,
+ICR.Status
 into #tmpBaseICR
 from ICR with (nolock)
 left join Orders o with (nolock) on ICR.OrderID = o.ID
@@ -130,6 +137,7 @@ if ('{this.comboReportType.Text}' = 'Detail List')
 begin
     select
     ICR.ID,
+    ICR.Status,
     ICR.MDivisionID,
     ICR.Department,
     ICR.KPICode,
@@ -171,6 +179,7 @@ begin
 
     select 
     ICR.ID,
+    ICR.Status,
     ICR.MDivisionID,
     ICR.Department,
     ICR.KPICode,
