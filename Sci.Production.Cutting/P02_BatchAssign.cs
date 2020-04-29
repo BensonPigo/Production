@@ -45,8 +45,6 @@ namespace Sci.Production.Cutting
 
             ID = id;
             DistqtyTb = distqtyTb;
-            this.gridGarment.AutoGenerateColumns = true;
-            this.gridFabric_Panel_Code.AutoGenerateColumns = true;
         }
 
         protected override void OnFormLoaded()
@@ -957,10 +955,10 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
             DataTable dtG = this.summaryData.Clone();
             foreach (DataRow item in this.summaryData.Rows)
             {
-                DataRow drdStdQty = this.detailData.Select($"SP='{item["SP"]}' and [Desc./Sewing Date] = 'Std. Qty'")[0];
+                DataRow drdStdQty = this.detailData.Select($"SP='{item["SP"]}' and [Desc./Sewing Date] = 'Accu. Std. Qty'")[0];
                 dtG.ImportRow(drdStdQty);
 
-                DataRow drdCutPlan = this.detailData.Select($"SP='{item["SP"]}' and [Desc./Sewing Date] = 'Cut Plan Qty'")[0];
+                DataRow drdCutPlan = this.detailData.Select($"SP='{item["SP"]}' and [Desc./Sewing Date] = 'Accu. Cut Plan Qty'")[0];
                 for (int i = 2; i < this.detailData.Columns.Count; i++) // 2 是日期欄位開始
                 {
                     string bal = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(drdCutPlan[i]) - MyUtility.Convert.GetDecimal(drdStdQty[i]), 0));
@@ -985,6 +983,13 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                 dtG.ImportRow(drdCutPlan);
             }
             this.listControlBindingSource1.DataSource = dtG;
+            foreach (DataColumn item in dtG.Columns)
+            {
+                this.Helper.Controls.Grid.Generator(this.gridGarment)
+                .Text(item.ColumnName, header: item.ColumnName, width: Widths.Auto(), iseditingreadonly: true)
+                ;
+            }
+
             this.gridGarment.AutoResizeColumns();
 
             int ColumnIndex = 1;
@@ -1039,7 +1044,12 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                 ColumnIndex++;
             }
 
-            this.RowColor(this.gridFabric_Panel_Code);
+            #region 關閉排序功能
+            for (int i = 0; i < this.gridGarment.ColumnCount; i++)
+            {
+                this.gridGarment.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
+            #endregion
         }
 
         private void Query2()
@@ -1212,10 +1222,10 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
             DataTable dtF = this.summaryData.Clone();
             foreach (DataRow item in this.summaryData.Rows)
             {
-                DataRow drdStdQty = this.detailData.Select($"SP='{item["SP"]}' and [Fab. Panel Code] = '{item["Fab. Panel Code"]}' and [Desc./Sewing Date] = 'Std. Qty'")[0];
+                DataRow drdStdQty = this.detailData.Select($"SP='{item["SP"]}' and [Fab. Panel Code] = '{item["Fab. Panel Code"]}' and [Desc./Sewing Date] = 'Accu. Std. Qty'")[0];
                 dtF.ImportRow(drdStdQty);
 
-                DataRow drdCutPlan = this.detailData.Select($"SP='{item["SP"]}' and [Fab. Panel Code] = '{item["Fab. Panel Code"]}' and [Desc./Sewing Date] = 'Cut Plan Qty'")[0];
+                DataRow drdCutPlan = this.detailData.Select($"SP='{item["SP"]}' and [Fab. Panel Code] = '{item["Fab. Panel Code"]}' and [Desc./Sewing Date] = 'Accu. Cut Plan Qty'")[0];
                 for (int i = 3; i < this.detailData.Columns.Count; i++) // 2 是日期欄位開始
                 {
                     string bal = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(drdCutPlan[i]) - MyUtility.Convert.GetDecimal(drdStdQty[i]), 0));
@@ -1241,6 +1251,12 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
             }
 
             this.listControlBindingSource2.DataSource = dtF;
+            foreach (DataColumn item in dtF.Columns)
+            {
+                this.Helper.Controls.Grid.Generator(this.gridFabric_Panel_Code)
+                .Text(item.ColumnName, header: item.ColumnName, width: Widths.Auto(), iseditingreadonly: true)
+                ;
+            }
 
             int ColumnIndex = 2;
             foreach (var day in this.Days)
@@ -1296,7 +1312,12 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
 
             this.gridFabric_Panel_Code.Columns[0].Width = 115;
 
-            this.RowColor(this.gridFabric_Panel_Code);
+            #region 關閉排序功能
+            for (int i = 0; i < this.gridFabric_Panel_Code.ColumnCount; i++)
+            {
+                this.gridFabric_Panel_Code.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
+            #endregion
         }
 
         public bool Check_Subprocess_LeadTime(List<string> orderIDs)
@@ -1418,7 +1439,7 @@ WHERE Subprocess.IDs = '{AnnotationStr}'
             {
                 string Message = "<" + Msg.Distinct().JoinToString(">" + Environment.NewLine + "<") + ">";
                 Message += Environment.NewLine + @"Please set cutting lead time in [Cutting_B09. Subprocess Lead Time].
-When the settings are complete, can be export excel!
+When the settings are complete, can be export data!
 ";
 
                 MyUtility.Msg.InfoBox(Message);
@@ -1426,21 +1447,47 @@ When the settings are complete, can be export excel!
             }
             return true;
         }
-
-        private void RowColor(DataGridView dgv)
+        private void Grid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
-            if (dgv.Rows.Count != 0)
+            if (e.RowIndex < 0 || e.ColumnIndex > 0)
             {
-                for (int i = 0; i < dgv.Rows.Count; i++)
+                return;
+            }
+
+            if (e.RowIndex > 0)
+            {
+                e.AdvancedBorderStyle.Top = DataGridViewAdvancedCellBorderStyle.None;
+            }
+
+            if (!this.IsEmptyCellValue(e.RowIndex, (Win.UI.Grid)sender))
+            {
+                e.AdvancedBorderStyle.Bottom = DataGridViewAdvancedCellBorderStyle.None;
+            }
+            else
+            {
+                e.AdvancedBorderStyle.Bottom = ((Win.UI.Grid)sender).AdvancedCellBorderStyle.Bottom;
+            }
+        }
+
+        private bool IsEmptyCellValue(int row, Win.UI.Grid grid)
+        {
+            if (row == grid.Rows.Count - 1)
+            {
+                return true;
+            }
+
+            DataGridViewCell cell1 = grid["SP", row];
+
+            return MyUtility.Check.Empty(cell1.Value);
+        }
+
+        private void Grid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.ColumnIndex > 0 && e.RowIndex > -1)
+            {
+                if (e.RowIndex % 4 > 1)
                 {
-                    if ((i % 2) == 1)
-                    {
-                        dgv.Rows[i].DefaultCellStyle.BackColor = System.Drawing.Color.Snow;
-                    }
-                    else
-                    {
-                        dgv.Rows[i].DefaultCellStyle.BackColor = System.Drawing.Color.LightBlue;
-                    }
+                    e.CellStyle.BackColor = Color.FromArgb(128, 255, 255);
                 }
             }
         }
