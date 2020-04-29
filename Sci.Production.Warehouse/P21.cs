@@ -150,6 +150,7 @@ namespace Sci.Production.Warehouse
                 curDr["Location"] = selectItem2.GetSelecteds().Select(s => s["ID"].ToString()).JoinToString(",");
                 this.gridReceiving.Rows[rowIndex].Cells["Location"].Value = curDr["Location"];
             }
+            curDr.EndEdit();
         }
 
         private void Query()
@@ -241,8 +242,10 @@ rd.Dyelot,
 rd.ActualQty,
 [StockTypeDesc] = st.Name,
 rd.StockType,
-rd.Location,
-[OldLocation] = rd.Location,
+--rd.Location,
+--[OldLocation] = rd.Location,
+[Location]=Location.MtlLocationID ,
+[OldLocation] = Location.MtlLocationID ,
 rd.Weight,
 rd.ActualWeight,
 [OldActualWeight] = rd.ActualWeight,
@@ -272,6 +275,16 @@ OUTER APPLY(
 	WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey=fi.Ukey 
     order by lt.EditDate desc
 )LastEditDate
+OUTER APPLY(
+
+	SELECT [MtlLocationID] = STUFF(
+			(
+			SELECT DISTINCT IIF(fid.MtlLocationID IS NULL OR fid.MtlLocationID = '' ,'' , ','+fid.MtlLocationID)
+			FROM FtyInventory_Detail fid
+			WHERE fid.Ukey = fi.Ukey
+			FOR XML PATH('') )
+			, 1, 1, '')
+)Location
 
 where r.MDivisionID  = '{Env.User.Keyword}' {sqlWhere}
 ";
@@ -324,14 +337,50 @@ where r.MDivisionID  = '{Env.User.Keyword}' {sqlWhere}
                 return;
             }
 
-            DataRow[] drArryExistRemark = dtReceiving.Select("select = 1 and Remark <> ''");
+            // 排除Location沒有修改的資料
+            DataRow[] drArryExistRemark = dtReceiving.Select("select = 1 and Remark <> '' AND Location <> OldLocation ");
             DataRow[] drArryNotExistRemark = dtReceiving.Select("select = 1 and Remark = ''");
 
-            int cntID = ((drArryNotExistRemark.Length >= 1) ? 1 : 0) + drArryExistRemark.Length; //產生表頭數
+            // Remark沒資料則統一合併後寫入P26 同ID，排除Location沒有修改的資料
+            var selectedReceivingSummary = drArryNotExistRemark
+                                        .Where(s => s["Location"].ToString() != s["OldLocation"].ToString())
+                                        .GroupBy(s => new
+                                        {
+                                            POID = s["POID"].ToString(),
+                                            Seq1 = s["Seq1"].ToString(),
+                                            Seq2 = s["Seq2"].ToString(),
+                                            Roll = s["Roll"].ToString(),
+                                            Dyelot = s["Dyelot"].ToString(),
+                                            StockType = s["StockType"].ToString(),
+                                            FtyInventoryQty = (decimal)s["FtyInventoryQty"],
+                                            FtyInventoryUkey = (Int64)s["FtyInventoryUkey"]
+                                        })
+                                        .Select(s => new
+                                        {
+                                            s.Key.POID,
+                                            s.Key.Seq1,
+                                            s.Key.Seq2,
+                                            s.Key.Roll,
+                                            s.Key.Dyelot,
+                                            s.Key.StockType,
+                                            s.Key.FtyInventoryQty,
+                                            s.Key.FtyInventoryUkey,
+                                            Location = s.Select(d => d["Location"].ToString()).Distinct().JoinToString(","),
+                                            OldLocation = s.Select(d => d["OldLocation"].ToString()).Distinct().JoinToString(",")
+                                        });
+
+            int cntID = ((selectedReceivingSummary.Count() >= 1) ? 1 : 0) + drArryExistRemark.Length; //產生表頭數
 
             string sqlInsertLocationTrans = string.Empty;
             List<string> id_list = MyUtility.GetValue.GetBatchID(Sci.Env.User.Keyword + "LH", "LocationTrans", batchNumber: cntID, sequenceMode: 2); // 批次產生ID
             int idcnt = 0;
+
+
+            if (id_list.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("There is no Location changed.");
+                return;
+            }
 
             // Remark有資料要分開寫入到P26 不同ID
             foreach (var item in drArryExistRemark)
@@ -384,33 +433,6 @@ Insert into LocationTrans_Detail(   ID,
                 idcnt++;
             }
 
-            // Remark沒資料則統一合併後寫入P26 同ID
-            var selectedReceivingSummary = drArryNotExistRemark
-                                        .Where(s => s["Location"].ToString() != s["OldLocation"].ToString())
-                                        .GroupBy(s => new
-                                        {
-                                            POID = s["POID"].ToString(),
-                                            Seq1 = s["Seq1"].ToString(),
-                                            Seq2 = s["Seq2"].ToString(),
-                                            Roll = s["Roll"].ToString(),
-                                            Dyelot = s["Dyelot"].ToString(),
-                                            StockType = s["StockType"].ToString(),
-                                            FtyInventoryQty = (decimal)s["FtyInventoryQty"],
-                                            FtyInventoryUkey = (Int64)s["FtyInventoryUkey"]
-                                        })
-                                        .Select(s => new
-                                        {
-                                            s.Key.POID,
-                                            s.Key.Seq1,
-                                            s.Key.Seq2,
-                                            s.Key.Roll,
-                                            s.Key.Dyelot,
-                                            s.Key.StockType,
-                                            s.Key.FtyInventoryQty,
-                                            s.Key.FtyInventoryUkey,
-                                            Location = s.Select(d => d["Location"].ToString()).Distinct().JoinToString(","),
-                                            OldLocation = s.Select(d => d["OldLocation"].ToString()).Distinct().JoinToString(",")
-                                        });
 
             if (selectedReceivingSummary.Any())
             {
@@ -465,8 +487,7 @@ Insert into LocationTrans_Detail(   ID,
             string sqlUpdateReceiving_Detail = string.Empty;
             foreach (var receivingDetailItem in selectedReceiving)
             {
-                sqlUpdateReceiving_Detail += $@"update Receiving_Detail set ActualWeight  = {receivingDetailItem["ActualWeight"]},
-                                                                            Location = '{receivingDetailItem["Location"]}'
+                sqlUpdateReceiving_Detail += $@"update Receiving_Detail set ActualWeight  = {receivingDetailItem["ActualWeight"]}
                                                     where   ID = '{receivingDetailItem["ID"]}' and
                                                             POID = '{receivingDetailItem["POID"]}' and
                                                             Seq1 = '{receivingDetailItem["Seq1"]}' and
