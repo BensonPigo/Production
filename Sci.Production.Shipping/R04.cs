@@ -106,6 +106,7 @@ namespace Sci.Production.Shipping
 										, 'Sample')
         ,oq.seq
 		,pkid.pkid
+        ,pkstatus.v
 		,pkINVNo.pkINVNo
 		,gb.FCRDate
 		,pkPulloutDate.PulloutDate
@@ -118,6 +119,9 @@ namespace Sci.Production.Shipping
 					where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) - [dbo].getInvAdjQty(o.ID,oq.Seq) 
 		,OrderTtlQty=o.Qty
 		,ShipTtlQty=isnull(plds.ShipQty,0)
+        ,gb2.SONo
+        ,gb2.SOCFMDate
+        ,gb2.CutOffDate
 		,[ShipPlanID] = gb2.ShipPlanID
 		,o.MDivisionID
 		,o.FactoryID
@@ -165,6 +169,19 @@ outer apply(
 		for xml path('')
 	),1,1,'')
 )pkid
+outer apply(
+	select v = stuff((
+		select concat(',',a.Status)
+		from(
+			select distinct pd.id,p.Status
+			from packinglist_detail pd
+            inner join packinglist p on p.id = pd.id
+			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+		)a
+		order by a.id
+		for xml path('')
+	),1,1,'')
+)pkstatus
 outer apply(
 	select pkINVNo = stuff((
 		select concat(',',a.INVNo)
@@ -228,7 +245,7 @@ outer apply(
 )pkPulloutDate
 left join
 (
-	select distinct gb.FCRDate,pd.orderid, pd.OrderShipmodeSeq,p.ShipPlanID
+	select distinct gb.FCRDate,pd.orderid, pd.OrderShipmodeSeq,p.ShipPlanID,gb.SONo,gb.SOCFMDate,gb.CutOffDate
 	from packinglist_detail pd
 	inner join PackingList p on p.id = pd.id
 	inner join GMTBooking gb on gb.id = p.INVNo 
