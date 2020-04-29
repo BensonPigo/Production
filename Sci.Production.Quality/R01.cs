@@ -214,7 +214,7 @@ namespace Sci.Production.Quality
             }
             #region --撈ListExcel資料--
 
-            cmd = string.Format($@"
+            cmd = $@"
 SET ARITHABORT ON
 
     select 
@@ -232,6 +232,14 @@ inner join FtyInventory fit on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit
     {sqlWhere.Replace("where", "AND").Replace("SP.", "f.").Replace("P.","f.")}
     GROUP BY rd.poid,rd.seq1,rd.seq2,RD.ID
 
+    select rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2,RD.StockQty,
+				TotalRollsCalculated=sum(iif(RD.StockQty>0,1,0)) over (partition by rd.id,rd.PoId,RD.seq1,RD.seq2,rd.ExportId),
+                [InvStock] = iif(rd.StockType = 'I', RD.StockQty, 0),
+                [BulkStock] = iif(rd.StockType = 'B', RD.StockQty, 0)
+    into #AllReceivingDetail
+	from dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
+    {RWhere}  
+
     select  
 	F.POID
 	,(F.SEQ1+'-'+F.SEQ2)SEQ
@@ -243,6 +251,8 @@ inner join FtyInventory fit on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit
 	,t.InvNo
 	,t.WhseArrival
 	,SUM(t.StockQty) AS StockQty1
+    ,[InvStock] = SUM(t.InvStock)
+    ,[BulkStock] = SUM(t.BulkStock)
 	,[BalanceQty]=IIF(BalanceQty.BalanceQty=0,NULL,BalanceQty.BalanceQty)
 	,t.TotalRollsCalculated
     ,mp.ALocation
@@ -256,10 +266,9 @@ inner join FtyInventory fit on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit
 	F.Result,
 	F.Physical,
 	[PhysicalInspector] = (select name from Pass1 where id = f.PhysicalInspector),
-	--F.PhysicalInspector,
 	F.PhysicalDate,
 	fta.ActualYds,
-    ROUND(iif(SUM(t.StockQty) = 0,0,CAST (fta.ActualYds/SUM(t.StockQty) AS FLOAT)) ,3),
+    [InspectionRate] = ROUND(iif(SUM(t.StockQty) = 0,0,CAST (fta.ActualYds/SUM(t.StockQty) AS FLOAT)) ,3),
 	ftp.TotalPoint,
 	F.Weight,
 	[WeightInspector] = (select name from Pass1 where id = f.WeightInspector),
@@ -291,15 +300,11 @@ inner join FtyInventory fit on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit
 	CFD.Result AS RESULT4,
 	[CFInspector] = cfd.Name,
     ps1.LocalMR
+into #tmpFinal
 from dbo.FIR F WITH (NOLOCK) 
-    inner join (select rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2,RD.StockQty,
-				TotalRollsCalculated=sum(iif(RD.StockQty>0,1,0)) over (partition by rd.id,rd.PoId,RD.seq1,RD.seq2,rd.ExportId)
-			    from dbo.View_AllReceivingDetail rd WITH (NOLOCK) "
-                + RWhere+ @" 
-			    ) t
-    on t.PoId = F.POID and t.Seq1 = F.SEQ1 and t.Seq2 = F.SEQ2 AND T.Id=F.ReceivingID
-    inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id from dbo.Orders o WITH (NOLOCK)  "
-                + OWhere+ @"
+    inner join #AllReceivingDetail t  on t.PoId = F.POID and t.Seq1 = F.SEQ1 and t.Seq2 = F.SEQ2 AND T.Id=F.ReceivingID
+    inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id from dbo.Orders o WITH (NOLOCK)  
+                {OWhere}
 		        ) O on O.id = F.POID
     inner join dbo.PO_Supp SP WITH (NOLOCK) on SP.id = F.POID and SP.SEQ1 = F.SEQ1
     inner join dbo.PO_Supp_Detail P WITH (NOLOCK) on P.ID = F.POID and P.SEQ1 = F.SEQ1 and P.SEQ2 = F.SEQ2
@@ -359,15 +364,7 @@ outer apply
 	WHERE a.status = 'Confirmed' and b.stocktype='B'
 	AND b.Poid=f.POID and b.Seq1=f.SEQ1 and b.Seq2=f.SEQ2
 )LT
---OUTER APPLY(
---	 select [BalanceQty]=sum(fit.inqty) - sum(fit.outqty) + sum(fit.adjustqty) 
---	 from Receiving_Detail rd
---	 inner join FIR fir on fir.ReceivingID = rd.id
---	 inner join FtyInventory fit on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit.seq2 = rd.Seq2
---	 where FIt.StockType IN('B','I') AND rd.poid = f.POID and rd.seq1 = f.seq1 and rd.seq2 =f.seq2 AND RD.ID = f.ReceivingID
---)BalanceQty
-
-" + sqlWhere) + @" 
+{sqlWhere} 
 GROUP BY 
 F.POID,F.SEQ1,F.SEQ2,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,
 t.ExportId,t.InvNo,t.WhseArrival,
@@ -383,9 +380,74 @@ ftp.TotalPoint,F.Odor,F.OdorDate,f.PhysicalInspector,f.WeightInspector
 ,t.TotalRollsCalculated
 ,BalanceQty.BalanceQty
 ,mp.ALocation,mp.BLocation,LT.BulkLocationDate
-
 ORDER BY POID,SEQ
 OPTION (OPTIMIZE FOR UNKNOWN)
+
+
+select
+     tf.POID
+	,tf.SEQ
+	,tf.factoryid
+	,tf.BrandID
+	,tf.StyleID
+	,tf.SeasonID
+	,tf.ExportId
+	,tf.InvNo
+	,tf.WhseArrival
+	,tf.StockQty1
+    ,tf.InvStock
+    ,tf.BulkStock
+	,tf.BalanceQty
+	,tf.TotalRollsCalculated
+    ,tf.ALocation
+    ,tf.BulkLocationDate
+	,tf.BLocation	
+	,tf.MinSciDelivery
+	,tf.MinBuyerDelivery
+	,tf.Refno
+    ,tf.ColorID
+    ,tf.Supplier
+	,tf.WeaveTypeID
+	,tf.[N/A Physical]
+	,tf.Result
+	,tf.Physical
+	,tf.[PhysicalInspector]
+	,tf.PhysicalDate
+	,tf.ActualYds
+    ,tf.InspectionRate
+	,tf.TotalPoint
+	,tf.Weight
+	,tf.WeightInspector
+	,tf.WeightDate
+	,tf.ShadeBond
+	,tf.ShadeboneInspector
+	,tf.ShadeBondDate
+	,tf.Continuity
+	,tf.ContinuityInspector
+	,tf.ContinuityDate
+	,tf.Odor
+	,tf.OdorInspector
+	,tf.OdorDate
+	,tf.Result2
+	,tf.[N/A Crocking]
+	,tf.Crocking
+	,tf.CrockingInspector
+	,tf.CrockingDate
+	,tf.[N/A Heat Shrinkage]
+	,tf.Heat
+	,tf.HeatInspector
+	,tf.HeatDate
+	,tf.[N/A Wash Shrinkage]
+	,tf.Wash
+	,tf.WashInspector
+	,tf.WashDate
+	,tf.RESULT3
+	,tf.OvenInspector
+	,tf.RESULT4
+	,tf.CFInspector
+    ,tf.LocalMR
+from #tmpFinal tf
+
 ";
             #endregion
             return base.ValidateInput();
