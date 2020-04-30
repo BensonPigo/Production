@@ -250,6 +250,8 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             {
                 this.ui_pnlBatchUpdate.Visible = false;
             }
+
+            this.numTotalSMV.Value = Convert.ToInt32(MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("SUM(SMV)", string.Empty)));
         }
 
         /// <summary>
@@ -865,8 +867,7 @@ and s.StyleUnit='PCS'
 
             #region 回寫表頭的Total SMV
             decimal ttlSMV = MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("sum(SMV)", string.Empty));
-            string totalSMV = ttlSMV.ToString();
-            this.numTotalSMV.Text = totalSMV;
+            this.numTotalSMV.Text = Convert.ToInt32(ttlSMV).ToString();
             #endregion
 
             #region 寫表頭的Total Sewing Time與表身的Sewer，只把ArtworkTypeID = 'SEWING'的秒數抓進來加總
