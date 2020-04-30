@@ -183,7 +183,6 @@ namespace Sci.Production.Quality
 UPDATE f SET 
 Lock = 1 , LockName='{Sci.Env.User.UserID}' ,LockDate=GETDATE(), F.Remark='Auto Lock by QA_P02.Accessory Inspection'
 FROM FtyInventory f 
-INNER JOIN Receiving_Detail rd ON rd.PoId=f.POID AND rd.Seq1=f.seq1 AND rd.seq2=f.Seq2 AND rd.StockType=f.StockType 
 WHERE f.POID='{this.poid}' AND f.Seq1='{this.seq1}' AND f.Seq2='{this.seq2}'";
                             break;
 
@@ -224,7 +223,6 @@ AND ID<>'{this.id}' AND ReceivingID<>'{this.receivingID}'
 UPDATE f SET 
 Lock = 0 , LockName='{Sci.Env.User.UserID}' ,LockDate=GETDATE(), F.Remark='Auto unLock by QA_P02.Accessory Inspection'
 FROM FtyInventory f 
-INNER JOIN Receiving_Detail rd ON rd.PoId=f.POID AND rd.Seq1=f.seq1 AND rd.seq2=f.Seq2 AND rd.StockType=f.StockType 
 WHERE f.POID='{this.poid}' AND f.Seq1='{this.seq1}' AND f.Seq2='{this.seq2}'";
                             }
 

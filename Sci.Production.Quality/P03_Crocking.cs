@@ -151,7 +151,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     if (MyUtility.Check.Empty(selectedDyelot))
                     {
                         sqlcmd = $@" Select roll,dyelot 
-                                        from Receiving_Detail WITH (NOLOCK) 
+                                        from dbo.View_AllReceivingDetail WITH (NOLOCK) 
                                         Where id='{maindr["Receivingid"]}'
                                                 and poid ='{maindr["Poid"]}' 
                                                 and seq1 = '{maindr["seq1"]}' 
@@ -160,7 +160,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     else
                     {
                         sqlcmd = $@" Select roll,dyelot 
-                                        from Receiving_Detail WITH (NOLOCK) 
+                                        from dbo.View_AllReceivingDetail WITH (NOLOCK) 
                                         Where id='{maindr["Receivingid"]}'
                                                 and poid ='{maindr["Poid"]}' 
                                                 and seq1 = '{maindr["seq1"]}' 
@@ -192,7 +192,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     if (MyUtility.Check.Empty(selectedRoll))
                     {
                         sqlcmd = $@" Select roll,dyelot 
-                                        from Receiving_Detail WITH (NOLOCK) 
+                                        from dbo.View_AllReceivingDetail WITH (NOLOCK) 
                                         Where id='{maindr["Receivingid"]}'
                                                 and poid ='{maindr["Poid"]}' 
                                                 and seq1 = '{maindr["seq1"]}' 
@@ -201,7 +201,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     else
                     {
                         sqlcmd = $@" Select roll,dyelot 
-                                        from Receiving_Detail WITH (NOLOCK) 
+                                        from dbo.View_AllReceivingDetail WITH (NOLOCK) 
                                         Where id='{maindr["Receivingid"]}'
                                                 and poid ='{maindr["Poid"]}' 
                                                 and seq1 = '{maindr["seq1"]}' 
@@ -325,7 +325,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     if (oldvalue == newvalue) return;
                 }
 
-                string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
+                string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from dbo.View_AllReceivingDetail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
                 DataRow roll_dr;
                 if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
                 {
@@ -363,7 +363,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     if (oldvalue == newvalue) return;
                 }
 
-                string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and Dyelot='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
+                string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from dbo.View_AllReceivingDetail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and Dyelot='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
                 DataRow roll_dr;
                 if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
                 {
@@ -849,7 +849,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
         //maindr where id,poid重新query 
         private void mainDBQuery()
         {
-            string cmd = @"select a.id,a.poid,(a.SEQ1+a.SEQ2) as seq,a.SEQ1,a.SEQ2,Receivingid,Refno,a.SCIRefno,
+            string cmd = @"select a.id,a.poid,(a.SEQ1+a.SEQ2) as seq,a.SEQ1,a.SEQ2,a.Receivingid,Refno,a.SCIRefno,
                 b.CrockingEncode,b.HeatEncode,b.WashEncode,
                 ArriveQty,
 				 (

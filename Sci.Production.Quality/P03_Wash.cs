@@ -207,7 +207,7 @@ where a.ID='{0}'"
                     if (MyUtility.Check.Empty(selectedDyelot))
                     {
                         sqlcmd = $@" Select roll,dyelot 
-                                        from Receiving_Detail WITH (NOLOCK) 
+                                        from dbo.View_AllReceivingDetail WITH (NOLOCK) 
                                         Where id='{maindr["Receivingid"]}'
                                                 and poid ='{maindr["Poid"]}' 
                                                 and seq1 = '{maindr["seq1"]}' 
@@ -216,7 +216,7 @@ where a.ID='{0}'"
                     else
                     {
                         sqlcmd = $@" Select roll,dyelot 
-                                        from Receiving_Detail WITH (NOLOCK) 
+                                        from dbo.View_AllReceivingDetail WITH (NOLOCK) 
                                         Where id='{maindr["Receivingid"]}'
                                                 and poid ='{maindr["Poid"]}' 
                                                 and seq1 = '{maindr["seq1"]}' 
@@ -248,7 +248,7 @@ where a.ID='{0}'"
                     if (MyUtility.Check.Empty(selectedRoll))
                     {
                         sqlcmd = $@" Select roll,dyelot 
-                                        from Receiving_Detail WITH (NOLOCK) 
+                                        from dbo.View_AllReceivingDetail WITH (NOLOCK) 
                                         Where id='{maindr["Receivingid"]}'
                                                 and poid ='{maindr["Poid"]}' 
                                                 and seq1 = '{maindr["seq1"]}' 
@@ -257,7 +257,7 @@ where a.ID='{0}'"
                     else
                     {
                         sqlcmd = $@" Select roll,dyelot 
-                                        from Receiving_Detail WITH (NOLOCK) 
+                                        from dbo.View_AllReceivingDetail WITH (NOLOCK) 
                                         Where id='{maindr["Receivingid"]}'
                                                 and poid ='{maindr["Poid"]}' 
                                                 and seq1 = '{maindr["seq1"]}' 
@@ -319,7 +319,7 @@ where a.ID='{0}'"
                     if (oldvalue == newvalue) return;
                 }
 
-                string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
+                string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from dbo.View_AllReceivingDetail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
                 DataRow roll_dr;
                 if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
                 {
@@ -357,7 +357,7 @@ where a.ID='{0}'"
                     if (oldvalue == newvalue) return;
                 }
 
-                string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and Dyelot='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
+                string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from dbo.View_AllReceivingDetail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and Dyelot='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
                 DataRow roll_dr;
                 if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
                 {
@@ -980,7 +980,7 @@ where a.ID='{0}'"
         //maindr where id,poid重新query 
         private void mainDBQuery()
         {
-            string cmd = @"select a.id,a.poid,(a.SEQ1+a.SEQ2) as seq,a.SEQ1,a.SEQ2,Receivingid,Refno,a.SCIRefno,
+            string cmd = @"select a.id,a.poid,(a.SEQ1+a.SEQ2) as seq,a.SEQ1,a.SEQ2,a.ReceivingID,Refno,a.SCIRefno,
                 b.CrockingEncode,b.HeatEncode,b.WashEncode,
                 ArriveQty,
 				 (
@@ -1016,7 +1016,7 @@ where a.ID='{0}'"
                     DataTable dyelotdt;
                     string cmd = string.Format(
                         @"
-Select DISTINCT Dyelot from Receiving_Detail
+Select DISTINCT Dyelot from dbo.View_AllReceivingDetail
 Where id='{0}' and poid ='{1}' and seq1 = '{2} ' and seq2 ='{3}'
 and Dyelot not in (SELECT DISTINCT Dyelot FROM FIR_Laboratory_Wash FLW INNER JOIN FIR_Laboratory FL ON FLW.ID=FL.ID WHERE FL.POID='{1}' AND FL.SEQ1='{2}' AND FL.SEQ2='{3}')"
                         , maindr["receivingid"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
@@ -1041,7 +1041,7 @@ Each Dyelot must be tested!", d));
                     //至少檢驗一卷 並且出現在Fir_Continuity.Roll
                     DataTable rolldt;
                     string cmd = string.Format(
-                        @"Select roll from Receiving_Detail a WITH (NOLOCK) where 
+                        @"Select roll from dbo.View_AllReceivingDetail a WITH (NOLOCK) where 
                         a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
                         and exists 
                         (Select distinct dyelot from FIR_Laboratory_Wash b WITH (NOLOCK) where b.id='{1}' and a.roll = b.roll)"

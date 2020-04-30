@@ -93,7 +93,7 @@ SELECT [Inspected Date] = FP.InspDate
        ,[SP#] = F.POID
        ,[SEQ#] = concat(RTRIM(F.SEQ1) ,'-',F.SEQ2)
        ,[StockType]=(select Name from DropDownList ddl  where ddl.id like '%'+rd. StockType+'%' and ddl.Type = 'Pms_StockType')
-       ,[WK#] = re.ExportID
+       ,[WK#] = rd.ExportID
 	   ,[Supplier]=f.SuppID
 	   ,[Supplier Name]=(select AbbEN from Supp where id = f.SuppID)
 	   ,[ATA] = p.FinalETA 
@@ -118,8 +118,7 @@ SELECT [Inspected Date] = FP.InspDate
 into #tmp
 FROM System,FIR_Physical AS FP
 LEFT JOIN FIR AS F ON FP.ID=F.ID
-LEFT JOIN Receiving re ON re.Id=F.ReceivingID
-LEFT JOIN Receiving_Detail RD ON RD.PoId= F.POID AND RD.Seq1 = F.SEQ1 AND RD.Seq2 = F.SEQ2
+LEFT JOIN View_AllReceivingDetail RD ON RD.PoId= F.POID AND RD.Seq1 = F.SEQ1 AND RD.Seq2 = F.SEQ2
 								AND RD.Roll = FP.Roll AND RD.Dyelot = FP.Dyelot
 LEFT join PO_Supp_Detail p on p.ID = f.poid and p.seq1 = f.seq1 and p.seq2 = f.seq2
 LEFT join orders o on o.id=f.POID

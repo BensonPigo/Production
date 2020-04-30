@@ -21,7 +21,7 @@ BEGIN
 		BEGIN
 			DECLARE dyelot_cursor CURSOR FOR 
 			select r.Dyelot from (
-									Select distinct a.Dyelot from dbo.Receiving_Detail a WITH (NOLOCK)
+									Select distinct a.Dyelot from dbo.View_AllReceivingDetail a WITH (NOLOCK)
 									inner join dbo.FIR b WITH (NOLOCK)
 									on b.POID = a.PoId and b.SEQ1 =a.Seq1 and b.SEQ2 = a.Seq2 and b.ReceivingID = a.Id
 									where b.Id=@FirID

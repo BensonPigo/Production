@@ -69,7 +69,7 @@ Odor,
 OdorEncode,
 OdorDate,
 a.PhysicalInspector,a.WeightInspector,a.ShadeboneInspector,a.ContinuityInspector,a.OdorInspector  
-From FIR a WITH (NOLOCK) Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
+From FIR a WITH (NOLOCK) Left join dbo.View_AllReceiving c WITH (NOLOCK) on c.id = a.receivingid
 Where a.poid = @poid and a.seq1 = @seq1 and a.seq2 = @seq2 and c.InvNo = @InvNo and a.receivingid = @receivingid  order by seq1,seq2 ";
             List<SqlParameter> sqlPar = new List<SqlParameter>();
             sqlPar.Add(new SqlParameter("@poid", dr["id"].ToString()));
@@ -178,7 +178,7 @@ Where a.poid = @poid and a.seq1 = @seq1 and a.seq2 = @seq2 and c.InvNo = @InvNo 
 ,a.id
 ,a.ReceivingID
 from dbo.FIR a WITH (NOLOCK) 
-inner join dbo.Receiving b WITH (NOLOCK) on b.Id= a.ReceivingID
+inner join dbo.View_AllReceiving b WITH (NOLOCK) on b.Id= a.ReceivingID
 outer apply ( 
 	select Id, isnull(sum(c.ActualYds),0) as ActualYds
 	from FIR_Physical c
@@ -306,7 +306,7 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
 ,b.ReceivingID
 from dbo.FIR_Laboratory a WITH (NOLOCK) 
 inner join dbo.FIR b WITH (NOLOCK) on b.id = a.id
-inner join dbo.Receiving c WITH (NOLOCK) on c.Id = b.ReceivingID
+inner join dbo.View_AllReceiving c WITH (NOLOCK) on c.Id = b.ReceivingID
 outer apply(select (case when  sum(iif(od.Result = 'Fail' ,1,0)) > 0 then 'Fail'
 						 when  sum(iif(od.Result = 'Pass' ,1,0)) > 0 then 'Pass'
 				         else 'Blank' end) as Result,
@@ -419,7 +419,8 @@ END as [Result]--,a.seq1,a.seq2
 ,a.RejectQty
 ,a.Defect
 ,a.id
- from dbo.AIR a WITH (NOLOCK) inner join dbo.Receiving b WITH (NOLOCK) on b.Id= a.ReceivingID
+ from dbo.AIR a WITH (NOLOCK) 
+inner join dbo.View_AllReceiving b WITH (NOLOCK) on b.Id= a.ReceivingID
 where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr["seq2"]));
                 DataTable dtFIR_Laboratory;
                 selectResult1 = DBProxy.Current.Select(null, sqlcmd.ToString(), out dtFIR_Laboratory);

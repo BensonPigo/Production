@@ -590,7 +590,7 @@ from #ArticleForThread_Detail a
 	    end
     from dbo.FIR_Laboratory a WITH (NOLOCK) 
     inner join dbo.FIR b WITH (NOLOCK) on b.id = a.id
-    inner join dbo.Receiving c WITH (NOLOCK) on c.Id = b.ReceivingID
+    left join dbo.Receiving c WITH (NOLOCK) on c.Id = b.ReceivingID
     outer apply(select (case when  sum(iif(od.Result = 'Fail' ,1,0)) > 0 then 'Fail'
 						     when  sum(iif(od.Result = 'Pass' ,1,0)) > 0 then 'Pass'
 				             else '' end) as Result,
