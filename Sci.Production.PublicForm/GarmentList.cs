@@ -109,6 +109,7 @@ namespace Sci.Production.PublicForm
                 .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Artwork", header: "Artwork", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .CheckBox("Main", header: "Main", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0, iseditable: false)
                 .Text("Alone", header: "Alone", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("Pair", header: "Pair", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("DV", header: "DV", width: Widths.AnsiChars(2), iseditingreadonly: true)
