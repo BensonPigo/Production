@@ -47,21 +47,22 @@
             this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.comboShift = new Sci.Win.UI.ComboBox();
             this.lbShift = new Sci.Win.UI.Label();
+            this.chkOnlyCancelOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(467, 12);
+            this.print.Location = new System.Drawing.Point(476, 12);
             this.print.TabIndex = 6;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(467, 48);
+            this.toexcel.Location = new System.Drawing.Point(476, 48);
             this.toexcel.TabIndex = 7;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(467, 84);
+            this.close.Location = new System.Drawing.Point(476, 84);
             this.close.TabIndex = 8;
             // 
             // labelOoutputDate
@@ -74,7 +75,7 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Location = new System.Drawing.Point(23, 43);
+            this.labelCategory.Location = new System.Drawing.Point(23, 48);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(88, 23);
             this.labelCategory.TabIndex = 95;
@@ -82,7 +83,7 @@
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(23, 74);
+            this.labelM.Location = new System.Drawing.Point(23, 83);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(88, 23);
             this.labelM.TabIndex = 96;
@@ -90,7 +91,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(23, 104);
+            this.labelFactory.Location = new System.Drawing.Point(23, 119);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(88, 23);
             this.labelFactory.TabIndex = 97;
@@ -98,7 +99,7 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Location = new System.Drawing.Point(23, 137);
+            this.labelBrand.Location = new System.Drawing.Point(23, 155);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(88, 23);
             this.labelBrand.TabIndex = 98;
@@ -106,7 +107,7 @@
             // 
             // labelCDCode
             // 
-            this.labelCDCode.Location = new System.Drawing.Point(23, 168);
+            this.labelCDCode.Location = new System.Drawing.Point(23, 190);
             this.labelCDCode.Name = "labelCDCode";
             this.labelCDCode.Size = new System.Drawing.Size(88, 23);
             this.labelCDCode.TabIndex = 99;
@@ -138,7 +139,7 @@
             // 
             this.chk_Accumulate_output.AutoSize = true;
             this.chk_Accumulate_output.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chk_Accumulate_output.Location = new System.Drawing.Point(235, 143);
+            this.chk_Accumulate_output.Location = new System.Drawing.Point(291, 173);
             this.chk_Accumulate_output.Name = "chk_Accumulate_output";
             this.chk_Accumulate_output.Size = new System.Drawing.Size(193, 21);
             this.chk_Accumulate_output.TabIndex = 100;
@@ -151,7 +152,7 @@
             this.chk_Include_Artwork.Checked = true;
             this.chk_Include_Artwork.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chk_Include_Artwork.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chk_Include_Artwork.Location = new System.Drawing.Point(235, 116);
+            this.chk_Include_Artwork.Location = new System.Drawing.Point(291, 146);
             this.chk_Include_Artwork.Name = "chk_Include_Artwork";
             this.chk_Include_Artwork.Size = new System.Drawing.Size(155, 21);
             this.chk_Include_Artwork.TabIndex = 101;
@@ -162,7 +163,7 @@
             // 
             this.chkSewingReasonID.AutoSize = true;
             this.chkSewingReasonID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkSewingReasonID.Location = new System.Drawing.Point(235, 170);
+            this.chkSewingReasonID.Location = new System.Drawing.Point(291, 227);
             this.chkSewingReasonID.Name = "chkSewingReasonID";
             this.chkSewingReasonID.Size = new System.Drawing.Size(267, 21);
             this.chkSewingReasonID.TabIndex = 102;
@@ -173,7 +174,7 @@
             // 
             this.chkType.AutoSize = true;
             this.chkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkType.Location = new System.Drawing.Point(235, 89);
+            this.chkType.Location = new System.Drawing.Point(291, 119);
             this.chkType.Name = "chkType";
             this.chkType.Size = new System.Drawing.Size(172, 21);
             this.chkType.TabIndex = 227;
@@ -186,7 +187,7 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(115, 104);
+            this.comboFactory.Location = new System.Drawing.Point(115, 119);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(80, 24);
@@ -198,7 +199,7 @@
             this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboM.FormattingEnabled = true;
             this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(115, 74);
+            this.comboM.Location = new System.Drawing.Point(115, 83);
             this.comboM.Name = "comboM";
             this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(80, 24);
@@ -208,7 +209,7 @@
             // 
             this.txtCDCode.BackColor = System.Drawing.Color.White;
             this.txtCDCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCDCode.Location = new System.Drawing.Point(115, 168);
+            this.txtCDCode.Location = new System.Drawing.Point(115, 190);
             this.txtCDCode.Name = "txtCDCode";
             this.txtCDCode.Size = new System.Drawing.Size(80, 23);
             this.txtCDCode.TabIndex = 5;
@@ -217,7 +218,7 @@
             // 
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(115, 137);
+            this.txtbrand.Location = new System.Drawing.Point(115, 155);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(80, 23);
             this.txtbrand.TabIndex = 4;
@@ -228,7 +229,7 @@
             this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCategory.FormattingEnabled = true;
             this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(115, 43);
+            this.comboCategory.Location = new System.Drawing.Point(115, 47);
             this.comboCategory.Name = "comboCategory";
             this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(160, 24);
@@ -241,7 +242,7 @@
             this.comboShift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboShift.FormattingEnabled = true;
             this.comboShift.IsSupportUnselect = true;
-            this.comboShift.Location = new System.Drawing.Point(115, 198);
+            this.comboShift.Location = new System.Drawing.Point(115, 225);
             this.comboShift.Name = "comboShift";
             this.comboShift.OldText = "";
             this.comboShift.Size = new System.Drawing.Size(170, 24);
@@ -249,15 +250,27 @@
             // 
             // lbShift
             // 
-            this.lbShift.Location = new System.Drawing.Point(23, 199);
+            this.lbShift.Location = new System.Drawing.Point(23, 225);
             this.lbShift.Name = "lbShift";
             this.lbShift.Size = new System.Drawing.Size(88, 23);
             this.lbShift.TabIndex = 229;
             this.lbShift.Text = "Shift";
             // 
+            // chkOnlyCancelOrder
+            // 
+            this.chkOnlyCancelOrder.AutoSize = true;
+            this.chkOnlyCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkOnlyCancelOrder.Location = new System.Drawing.Point(291, 200);
+            this.chkOnlyCancelOrder.Name = "chkOnlyCancelOrder";
+            this.chkOnlyCancelOrder.Size = new System.Drawing.Size(144, 21);
+            this.chkOnlyCancelOrder.TabIndex = 231;
+            this.chkOnlyCancelOrder.Text = "Only Cancel Order";
+            this.chkOnlyCancelOrder.UseVisualStyleBackColor = true;
+            // 
             // R04
             // 
-            this.ClientSize = new System.Drawing.Size(559, 256);
+            this.ClientSize = new System.Drawing.Size(568, 298);
+            this.Controls.Add(this.chkOnlyCancelOrder);
             this.Controls.Add(this.comboShift);
             this.Controls.Add(this.lbShift);
             this.Controls.Add(this.comboCategory);
@@ -306,6 +319,7 @@
             this.Controls.SetChildIndex(this.comboCategory, 0);
             this.Controls.SetChildIndex(this.lbShift, 0);
             this.Controls.SetChildIndex(this.comboShift, 0);
+            this.Controls.SetChildIndex(this.chkOnlyCancelOrder, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -331,5 +345,6 @@
         private Class.comboDropDownList comboCategory;
         private Win.UI.ComboBox comboShift;
         private Win.UI.Label lbShift;
+        private Win.UI.CheckBox chkOnlyCancelOrder;
     }
 }
