@@ -250,6 +250,8 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             {
                 this.ui_pnlBatchUpdate.Visible = false;
             }
+
+            this.numTotalSMV.Value = Convert.ToInt32(MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("SUM(SMV)", string.Empty)));
         }
 
         /// <summary>
@@ -863,7 +865,12 @@ and s.StyleUnit='PCS'
 
             #endregion
 
-            // 回寫表頭的Total Sewing Time與表身的Sewer，只把ArtworkTypeID = 'SEWING'的秒數抓進來加總
+            #region 回寫表頭的Total SMV
+            decimal ttlSMV = MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("sum(SMV)", string.Empty));
+            this.numTotalSMV.Text = Convert.ToInt32(ttlSMV).ToString();
+            #endregion
+
+            #region 寫表頭的Total Sewing Time與表身的Sewer，只把ArtworkTypeID = 'SEWING'的秒數抓進來加總
             var machineSMV_List = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(o => o.RowState != DataRowState.Deleted).Select(o => new { MachineTypeID = o["MachineTypeID"].ToString(), SMV = MyUtility.Convert.GetDecimal(o["SMV"]) }).ToList();
 
             DataTable tmp;
@@ -877,6 +884,7 @@ and s.StyleUnit='PCS'
 
             string totalSewing = this.CurrentMaintain["TotalSewingTime"].ToString();
             this.numTotalSewingTimePc.Text = totalSewing;
+            #endregion
 
             #region Total GSD 檢查
 
