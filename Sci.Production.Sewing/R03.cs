@@ -93,7 +93,7 @@ with tmp1stData as (
             , o.StyleID
             , o.SeasonID
             , [BrandID] = iif(o.BrandID='SUBCON-I' and Order2.BrandID is not null,Order2.BrandID,o.BrandID)
-            , o.MDivisionID
+            , [FtyZone] = f.FtyZone
             , o.FactoryID
             , o.CdCodeID
             , o.CPU
@@ -209,15 +209,15 @@ with tmp1stData as (
 		   , StyleID
 		   , Rate
 		   , IIF(Shift <> 'O' and Category NOT IN ('M','A') and LocalOrder = 1, 'I',Shift) as LastShift
-		   , MDivisionID
+		   , FtyZone
 	from tmp1stData
-	group by OutputDate, Category, Shift, SewingLineID, Team, OrderId, ComboType, SCategory, LocalOrder, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,MDivisionID,ActManPower
+	group by OutputDate, Category, Shift, SewingLineID, Team, OrderId, ComboType, SCategory, LocalOrder, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,FtyZone,ActManPower
 ),tmp2ndData as (
     Select  ProgramID
             , StyleID
             , SeasonID
             , BrandID
-            , MDivisionID
+            , FtyZone
             , FactoryID
             , CdCodeID
             , StyleDesc
@@ -234,7 +234,7 @@ with tmp1stData as (
             , StyleID
             , SeasonID
             , BrandID
-            , MDivisionID
+            , FtyZone
             , FactoryID
             , CdCodeID
             , StyleDesc
@@ -244,13 +244,13 @@ with tmp1stData as (
             , ModularParent
             , CPUAdjusted
             , TotalCPU = (select Sum(Round(CPU * CPUFactor * Rate * QAQty,2))  from forttlcpu f 
-			where  f.MDivisionID = a.MDivisionID and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID and (select POID from orders where id = f.OrderId) = a.POID)
+			where  f.FtyZone = a.FtyZone and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID and (select POID from orders where id = f.OrderId) = a.POID)
             --, TtlManhour = Sum(ManHour)
             , TtlManhour = (select sum(ROUND( ActManPower * WorkHour, 2))  from forttlcpu f 
-			where  f.MDivisionID = a.MDivisionID and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID and (select POID from orders where id = f.OrderId) = a.POID)
+			where  f.FtyZone = a.FtyZone and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID and (select POID from orders where id = f.OrderId) = a.POID)
             , Output = Sum(RateOutput)  
     from tmp2ndData a
-    group by ProgramID, StyleID, SeasonID, BrandID, MDivisionID, FactoryID
+    group by ProgramID, StyleID, SeasonID, BrandID, FtyZone, FactoryID
              , CdCodeID, StyleDesc, CDDesc, POID, SewingLineID, ModularParent
              , CPUAdjusted
 ),");
@@ -263,15 +263,15 @@ with tmp1stData as (
             querySql = string.Format(
                 @"
 {0}tmp4thData as (
-    select  MDivisionID
+    select  FtyZone
             , FactoryID 
             , TtlQty = sum(Output)
             , TtlCPU = SUM(TotalCPU)
             , TtlManhour = SUM(TtlManhour)
     from tmp3rdData
-    group by MDivisionID, FactoryID
+    group by FtyZone, FactoryID
 )
-select  MDivisionID
+select  FtyZone
         , FactoryID
         , TtlQty
         , TtlCPU
@@ -279,7 +279,7 @@ select  MDivisionID
         , PPH = IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2))
         ,EFF = IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2))
 from tmp4thData
-Order by MDivisionID,FactoryID",
+Order by FtyZone,FactoryID",
                 sqlCmd.ToString());
 
             result = DBProxy.Current.Select(null, querySql, out this.Factory);
@@ -324,16 +324,16 @@ Order by BrandID",
                 @"
 {0}tmp4thData as (
     select  BrandID
-            , MDivisionID
+            , FtyZone
             , FactoryID
             , sum(Output) AS TtlQty
             , SUM(TotalCPU) AS TtlCPU
             , SUM(TtlManhour) AS TtlManhour
     from tmp3rdData
-    group by BrandID, MDivisionID, FactoryID
+    group by BrandID, FtyZone, FactoryID
 )
 select  BrandID
-        , MDivisionID
+        , FtyZone
         , FactoryID
         , TtlQty
         , TtlCPU
@@ -341,7 +341,7 @@ select  BrandID
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
-Order by BrandID, MDivisionID, FactoryID",
+Order by BrandID, FtyZone, FactoryID",
                 sqlCmd.ToString());
 
             result = DBProxy.Current.Select(null, querySql, out this.BrandFactory);
@@ -427,15 +427,15 @@ Order by CdCodeID",
             querySql = string.Format(
                 @"
 {0} tmp4thData as (
-    select  MDivisionID
+    select  FtyZone
             , FactoryID
             , SewingLineID
             , sum(Output) AS TtlQty
             , SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
     from tmp3rdData
-    group by MDivisionID, FactoryID, SewingLineID
+    group by FtyZone, FactoryID, SewingLineID
 )
-select  MDivisionID
+select  FtyZone
         , FactoryID
         , SewingLineID
         , TtlQty
@@ -444,7 +444,7 @@ select  MDivisionID
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
-Order by MDivisionID, FactoryID, SewingLineID",
+Order by FtyZone, FactoryID, SewingLineID",
                 sqlCmd.ToString());
 
             result = DBProxy.Current.Select(null, querySql, out this.FactoryLine);
@@ -460,17 +460,17 @@ Order by MDivisionID, FactoryID, SewingLineID",
                 @"
 {0}tmp4thData as (
     select  BrandID
-            , MDivisionID
+            , FtyZone
             , FactoryID
             , CdCodeID
             , CDDesc
             , sum(Output) AS TtlQty
             , SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
     from tmp3rdData
-    group by BrandID, MDivisionID, FactoryID, CdCodeID, CDDesc
+    group by BrandID, FtyZone, FactoryID, CdCodeID, CDDesc
 )
 select  BrandID
-        , MDivisionID
+        , FtyZone
         , FactoryID
         , CdCodeID
         , CDDesc
@@ -480,7 +480,7 @@ select  BrandID
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
-Order by BrandID, MDivisionID, FactoryID, CdCodeID",
+Order by BrandID, FtyZone, FactoryID, CdCodeID",
                 sqlCmd.ToString());
 
             result = DBProxy.Current.Select(null, querySql, out this.BrandFactoryCD);
@@ -579,7 +579,7 @@ Order by ProgramID, StyleID, BrandID, CdCodeID, SeasonID",
             querySql = string.Format(
                 @"
 {0}tmp4thData as (
-    select  MDivisionID
+    select  FtyZone
             , FactoryID
             , SewingLineID
             , CdCodeID
@@ -588,9 +588,9 @@ Order by ProgramID, StyleID, BrandID, CdCodeID, SeasonID",
             , SUM(TotalCPU) AS TtlCPU
             , SUM(TtlManhour) AS TtlManhour
     from tmp3rdData
-    group by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc
+    group by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc
 )
-select  MDivisionID
+select  FtyZone
         , FactoryID
         , SewingLineID
         , CdCodeID
@@ -601,7 +601,7 @@ select  MDivisionID
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF
 from tmp4thData
-Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc",
+Order by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc",
                 sqlCmd.ToString());
 
             result = DBProxy.Current.Select(null, querySql, out this.FactoryLineCD);
@@ -644,7 +644,7 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc",
             object[,] objArray = new object[1, 7];
             foreach (DataRow dr in this.Factory.Rows)
             {
-                objArray[0, 0] = dr["MDivisionID"];
+                objArray[0, 0] = dr["FtyZone"];
                 objArray[0, 1] = dr["FactoryID"];
                 objArray[0, 2] = dr["TtlQty"];
                 objArray[0, 3] = dr["TtlCPU"];
@@ -690,7 +690,7 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc",
             foreach (DataRow dr in this.BrandFactory.Rows)
             {
                 objArray[0, 0] = dr["BrandID"];
-                objArray[0, 1] = dr["MDivisionID"];
+                objArray[0, 1] = dr["FtyZone"];
                 objArray[0, 2] = dr["FactoryID"];
                 objArray[0, 3] = dr["TtlQty"];
                 objArray[0, 4] = dr["TtlCPU"];
@@ -763,7 +763,7 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc",
             objArray = new object[1, 8];
             foreach (DataRow dr in this.FactoryLine.Rows)
             {
-                objArray[0, 0] = dr["MDivisionID"];
+                objArray[0, 0] = dr["FtyZone"];
                 objArray[0, 1] = dr["FactoryID"];
                 objArray[0, 2] = dr["SewingLineID"];
                 objArray[0, 3] = dr["TtlQty"];
@@ -787,7 +787,7 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc",
             foreach (DataRow dr in this.BrandFactoryCD.Rows)
             {
                 objArray[0, 0] = dr["BrandID"];
-                objArray[0, 1] = dr["MDivisionID"];
+                objArray[0, 1] = dr["FtyZone"];
                 objArray[0, 2] = dr["FactoryID"];
                 objArray[0, 3] = dr["CdCodeID"];
                 objArray[0, 4] = dr["CDDesc"];
@@ -866,7 +866,7 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc",
             objArray = new object[1, 10];
             foreach (DataRow dr in this.FactoryLineCD.Rows)
             {
-                objArray[0, 0] = dr["MDivisionID"];
+                objArray[0, 0] = dr["FtyZone"];
                 objArray[0, 1] = dr["FactoryID"];
                 objArray[0, 2] = dr["SewingLineID"];
                 objArray[0, 3] = dr["CdCodeID"];
