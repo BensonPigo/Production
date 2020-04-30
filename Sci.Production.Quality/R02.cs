@@ -193,8 +193,8 @@ PS.SizeSpec,
 ,AIRL.NonOven,AIRL.Oven,AIRL.OvenScale,AIRL.OvenDate,AIRL.NonWash,AIRL.Wash,AIRL.WashScale,
 	                   AIRL.WashDate
                 from dbo.AIR A WITH (NOLOCK) 
-                inner join (select r.WhseArrival,r.InvNo,r.ExportId,r.Id,rd.PoId,rd.seq1,rd.seq2,RD.StockQty from dbo.Receiving r WITH (NOLOCK) 
-			                inner join dbo.Receiving_Detail rd WITH (NOLOCK) on rd.Id = r.Id "
+                inner join (select r.WhseArrival,r.InvNo,r.ExportId,r.Id,r.PoId,r.seq1,r.seq2,r.StockQty 
+                            from dbo.View_AllReceivingDetail r WITH (NOLOCK)  "
                  + RWhere + @"
 			                ) t
                 on t.PoId = A.POID and t.Seq1 = A.SEQ1 and t.Seq2 = A.SEQ2 AND T.ID=a.ReceivingID

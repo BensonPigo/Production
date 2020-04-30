@@ -19,13 +19,12 @@ BEGIN
 		from
 		(
 		--Receiving
-		select max(WhseArrival) as [Fabric receiving]
-		from Receiving_Detail RD
-		left join  Receiving R on R.Id=RD.Id
+		select max(RD.WhseArrival) as [Fabric receiving]
+		from dbo.View_AllReceivingDetail RD with (nolock)
 		outer apply (select Id,SEQ1,SEQ2,SCIRefno from PO_Supp_Detail where ID=@POID and FabricType='F' and Complete =0) PD
 		inner join fabric f WITH (NOLOCK) on f.SCIRefno=PD.SCIRefno 
 		inner join MtlType m on m.id = f.MtlTypeID 
-		where m.IssueType!='Packing' and RD.PoId=PD.ID and RD.Seq1=PD.SEQ1 and RD.Seq2=PD.SEQ2 and StockType !='O'
+		where m.IssueType!='Packing' and RD.PoId=PD.ID and RD.Seq1=PD.SEQ1 and RD.Seq2=PD.SEQ2 and RD.StockType !='O'
 
 		union
 
@@ -56,13 +55,12 @@ BEGIN
 		from
 		(
 		--Receiving
-		select max(WhseArrival) as [Accessory receiving]
-		from Receiving_Detail RD
-		left join  Receiving R on R.Id=RD.Id
+		select max(RD.WhseArrival) as [Accessory receiving]
+		from dbo.View_AllReceivingDetail RD with (nolock)
 		outer apply (select Id,SEQ1,SEQ2,SCIRefno from PO_Supp_Detail where ID=@POID and FabricType='A' and Complete =0) PD
 		inner join fabric f WITH (NOLOCK) on f.SCIRefno=PD.SCIRefno 
 		inner join MtlType m on m.id = f.MtlTypeID 
-		where m.IssueType!='Packing' and RD.PoId=PD.ID and RD.Seq1=PD.SEQ1 and RD.Seq2=PD.SEQ2 and StockType !='O'
+		where m.IssueType!='Packing' and RD.PoId=PD.ID and RD.Seq1=PD.SEQ1 and RD.Seq2=PD.SEQ2 and RD.StockType !='O'
 
 		union
 
@@ -93,13 +91,12 @@ BEGIN
 		from
 		(
 		--Receiving
-		select max(PackingReceive) as [Packing receiving]
-		from Receiving_Detail RD
-		left join  Receiving R on R.Id=RD.Id
+		select max(RD.PackingReceive) as [Packing receiving]
+		from dbo.View_AllReceivingDetail RD with (nolock)
 		outer apply (select Id,SEQ1,SEQ2,SCIRefno from PO_Supp_Detail where ID=@POID and Complete =0) PD
 		inner join fabric f WITH (NOLOCK) on f.SCIRefno=PD.SCIRefno 
 		inner join MtlType m on m.id = f.MtlTypeID 
-		where m.IssueType='Packing' and RD.PoId=PD.ID and RD.Seq1=PD.SEQ1 and RD.Seq2=PD.SEQ2 and StockType !='O'
+		where m.IssueType='Packing' and RD.PoId=PD.ID and RD.Seq1=PD.SEQ1 and RD.Seq2=PD.SEQ2 and RD.StockType !='O'
 
 		union
 

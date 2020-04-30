@@ -2489,6 +2489,14 @@
     </Build>
     <Build Include="dbo\Stored Procedures\BatchReSentJsonToAGV.sql" />
     <Build Include="dbo\Tables\AutomationSubProcess.sql" />
+    <Build Include="dbo\Views\View_AllReceiving.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Views\View_AllReceivingDetail.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

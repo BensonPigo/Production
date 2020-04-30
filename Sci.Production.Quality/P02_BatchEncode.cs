@@ -73,13 +73,13 @@ namespace Sci.Production.Quality
             DataTable encodeData;
                 
             string sqlCmd = $@"
-Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,C.exportid,
+Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,a.ReceivingID,Refno,SCIRefno,Suppid,C.exportid,
                 ArriveQty,InspDeadline,a.ReplacementReportID,
                 a.Status,ReplacementReportID,(seq1+seq2) as seq,
                 (
                     Select weavetypeid from Fabric b WITH (NOLOCK) where b.SCIRefno =a.SCIrefno
                 ) as weavetypeid,
-                c.ID AS ReceivingID,c.whseArrival,
+                c.whseArrival,
                 (
                     dbo.GetColorMultipleID((select top 1 o.BrandID from orders o where o.POID =a.poid) ,(Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2))
                 ) as Colorid,
@@ -254,7 +254,6 @@ Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,C.ex
 UPDATE f SET 
 Lock = 1 , LockName='{Sci.Env.User.UserID}' ,LockDate=GETDATE(), F.Remark='Auto Lock by QA_P02.Accessory Inspection'
 FROM FtyInventory f 
-INNER JOIN Receiving_Detail rd ON rd.PoId=f.POID AND rd.Seq1=f.seq1 AND rd.seq2=f.Seq2 AND rd.StockType=f.StockType 
 WHERE f.POID='{item["POID"].ToString().Trim()}' AND f.Seq1='{item["Seq1"].ToString().Trim()}' AND f.Seq2='{item["Seq2"].ToString().Trim()}'";
                             break;
 
@@ -295,7 +294,6 @@ AND ID<>'{item["ID"].ToString().Trim()}' AND ReceivingID<>'{item["ReceivingID"].
 UPDATE f SET 
 Lock = 0 , LockName='{Sci.Env.User.UserID}' ,LockDate=GETDATE(), F.Remark='Auto unLock by QA_P02.Accessory Inspection'
 FROM FtyInventory f 
-INNER JOIN Receiving_Detail rd ON rd.PoId=f.POID AND rd.Seq1=f.seq1 AND rd.seq2=f.Seq2 AND rd.StockType=f.StockType 
 WHERE f.POID='{item["POID"].ToString().Trim()}' AND f.Seq1='{item["Seq1"].ToString().Trim()}' AND f.Seq2='{item["Seq2"].ToString().Trim()}'";
                             }
 
