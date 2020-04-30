@@ -166,7 +166,6 @@ where POID='{0}'
     c.WhseArrival,
     a.SEQ1,
     a.SEQ2,
-    Receivingid,
     a.Refno,
     a.SCIRefno, 
     b.CrockingEncode,b.HeatEncode,b.WashEncode,

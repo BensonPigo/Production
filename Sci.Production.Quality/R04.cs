@@ -146,7 +146,7 @@ namespace Sci.Production.Quality
            " + sqlWhere + @"
             )
                 select (select exportid from dbo.Receiving WITH (NOLOCK) where id = b.ReceivingID) [exportid]
-                ,(select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = b.ReceivingID) [WhseArrival]
+                ,(select WhseArrival from  dbo.View_AllReceiving WITH (NOLOCK) where id = b.ReceivingID) [WhseArrival]
                 ,(select top 1 orders.FactoryID from orders WITH (NOLOCK) where id = b.POID) [factory]
                 ,b.POID,b.seq1+'-'+b.seq2 [seq],c.ReceiveSampleDate
                 ,(select suppid+'-'+supp.AbbEN from dbo.po_supp p WITH (NOLOCK) inner join dbo.supp WITH (NOLOCK) on supp.id = p.SuppID where p.id = b.POID and seq1 = b.seq1) [supplier]
@@ -155,8 +155,8 @@ namespace Sci.Production.Quality
                 ,(select top 1 orders.[category] from orders WITH (NOLOCK) where id = b.POID) [category]
                 ,b.ArriveQty,oven_result.Result,c.Crocking,c.Heat,ColorFastness_result.Result,c.Wash
                 from  FIR b WITH (NOLOCK) 
-                inner join (select distinct a.id,a1.PoId,a1.Seq1,a1.seq2,a.MDivisionID,a.factoryid from Receiving a WITH (NOLOCK) 
-				                inner join Receiving_Detail a1 WITH (NOLOCK) on a1.Id = a.Id
+                inner join (select distinct a.id,a.PoId,a.Seq1,a.seq2,a.MDivisionID,a.factoryid 
+                            from dbo.View_AllReceivingDetail a WITH (NOLOCK) 
                             where 1=1" + sqlArr + @")
                 r on r.id = b.ReceivingID and r.PoId = b.POID and r.seq1 = b.seq1 and r.seq2 = b.SEQ2
                 inner join FIR_Laboratory c WITH (NOLOCK) on c.ID = b.Id

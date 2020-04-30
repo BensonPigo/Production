@@ -117,9 +117,8 @@ select distinct a.PoId,a.Seq1,a.Seq2,ps.SuppID,psd.Refno ,psd.ColorID,f.Clima
 into #tmp1
 from
 (
-	select rd.PoId,rd.Seq1,rd.Seq2
-	from Receiving r
-	inner join Receiving_Detail rd on r.Id = rd.Id
+	select r.PoId,r.Seq1,r.Seq2
+	from dbo.View_AllReceivingDetail r with (nolock)
 	where 1=1
     { sqlRWhere }
 	and r.Status = 'Confirmed'
@@ -150,7 +149,7 @@ where psd.FabricType = 'F'
 select rd.PoId,rd.Seq1,rd.Seq2,rd.ActualQty,rd.Dyelot,rd.Roll,t.SuppID,t.Refno,t.Colorid ,t.Clima
 into #tmpAllData
 from #tmp1 t
-inner join Receiving_Detail rd on t.PoId = rd.PoId and t.Seq1 = rd.Seq1 and t.Seq2 = rd.Seq2
+inner join dbo.View_AllReceivingDetail rd on t.PoId = rd.PoId and t.Seq1 = rd.Seq1 and t.Seq2 = rd.Seq2
 ------------Group by Supp 
 select PoId,Seq1,Seq2,{groupby_col},ActualQty = sum(ActualQty)  
 into #GroupBySupp
@@ -366,7 +365,8 @@ select distinct SHRINKAGEyards = stockqty,{groupby_col}
 into #SHtmp
 from(
 	select Sum(rd1.stockqty) stockqty, {groupby_col}	
-	from  #tmp2groupbyDyelot rd WITH (NOLOCK) inner join Receiving_Detail rd1 on rd.PoId = rd1.PoId and rd.Seq1 = rd1.Seq1 and rd.Seq2 = rd1.Seq2
+	from  #tmp2groupbyDyelot rd WITH (NOLOCK) 
+    inner join dbo.View_AllReceivingDetail rd1 with (nolock) on rd.PoId = rd1.PoId and rd.Seq1 = rd1.Seq1 and rd.Seq2 = rd1.Seq2
 	Where exists(select * from #SH1 where POID = rd.PoId and SEQ1 = RD.seq1 and seq2 = seq2 and Dyelot = RD.dyelot)
 	or exists(select * from #SH2 where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2 and Dyelot = RD.dyelot)
 	group by {groupby_col}
@@ -395,7 +395,7 @@ select [MIGRATIONyards] =sum(a.StockQty),tmp.{groupby_col}
 into #mtmp
 from(
 	select rd.poid,rd.seq1,rd.seq2,rd.dyelot,rd.StockQty,ps.SuppID,psd.Refno 
-	from Receiving_Detail rd WITH (NOLOCK) 
+	from dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
 	inner join #GroupBySupp r on rd.PoId=r.POID AND rd.Seq1=r.SEQ1 and rd.Seq2=r.SEQ2
 	left join PO_Supp_Detail psd on psd.id=r.PoId and psd.SEQ1 = r.Seq1 and psd.SEQ2 = r.Seq2
 	left join  PO_Supp ps on ps.id=psd.Id and ps.seq1=psd.seq1
@@ -422,7 +422,7 @@ select [SHADINGyards] =sum(a.StockQty),tmp.{groupby_col}
 into #Stmp
 from(
 	select rd.poid,rd.seq1,rd.seq2,rd.dyelot,rd.StockQty,ps.SuppID,psd.Refno 
-	from Receiving_Detail rd WITH (NOLOCK) 
+	from dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
 	inner join #GroupBySupp r on rd.PoId=r.POID AND rd.Seq1=r.SEQ1 and rd.Seq2=r.SEQ2
 	left join PO_Supp_Detail psd on psd.id=r.PoId and psd.SEQ1 = r.Seq1 and psd.SEQ2 = r.Seq2
 	left join  PO_Supp ps on ps.id=psd.Id and ps.seq1=psd.seq1

@@ -142,19 +142,21 @@ namespace Sci.Production.Quality
                 where p.id = psd.ID and p.seq1 = psd.SEQ1 ) [Supplier]
                 ,psd.Refno
                 ,dbo.getMtlDesc(psd.id,psd.seq1,psd.seq2,1,0) [description]
-                ,(select sum(dbo.getUnitRate(n.PoUnit,'YDS')*n.ShipQty) from dbo.Receiving m WITH (NOLOCK) inner join dbo.Receiving_Detail n WITH (NOLOCK) on n.Id = m.Id 
-                where m.id = f.ReceivingID and n.PoId = psd.ID and n.seq1 = psd.seq1 and n.seq2 = psd.SEQ2) [ShipQty]
-                ,(select sum(dbo.getUnitRate(n.StockUnit,'YDS')*n.StockQty) from dbo.Receiving m WITH (NOLOCK) inner join dbo.Receiving_Detail n WITH (NOLOCK) on n.Id = m.Id 
-                where m.id = f.ReceivingID and n.PoId = psd.ID and n.seq1 = psd.seq1 and n.seq2 = psd.SEQ2) [ArriveQty]
+                ,[ShipQty] = (select sum(iif(m.DataFrom = 'Receiving', dbo.getUnitRate(m.PoUnit,'YDS')*m.ShipQty, m.ShipQty)) 
+                              from dbo.View_AllReceivingDetail m WITH (NOLOCK) 
+                              where m.id = f.ReceivingID and m.PoId = psd.ID and m.seq1 = psd.seq1 and m.seq2 = psd.SEQ2) 
+                ,[ArriveQty] =  (select sum(iif(m.DataFrom = 'Receiving', dbo.getUnitRate(m.PoUnit,'YDS')*m.StockQty, m.StockQty)) 
+                              from dbo.View_AllReceivingDetail m WITH (NOLOCK) 
+                              where m.id = f.ReceivingID and m.PoId = psd.ID and m.seq1 = psd.seq1 and m.seq2 = psd.SEQ2) 
                 ,f.Physical
-                ,(select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = f.ReceivingID)[WhseArrival]
+                ,va.WhseArrival
                 ,(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID)[scidelivery]
-                ,iif('B' in " + CATEGORY + @",iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = f.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
-		        ,iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = f.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID) )<15,'Y','')
+                ,iif('B' in " + CATEGORY + @",iif(DATEDIFF(day, va.WhseArrival,(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
+		        ,iif(DATEDIFF(day, va.WhseArrival,(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID) )<15,'Y','')
 		                ) [Delay]
                 ,psd.ID
                 ,psd.seq1+'-'+psd.seq2[SEQ#]
-                ,(select ExportId from dbo.Receiving WITH (NOLOCK) where id = f.ReceivingID)[ExportId]
+                ,va.ExportId
                 ,f.ReceivingID
                 ,[defectYDS]= defect.count*5
                 ,f.TotalInspYds
@@ -162,6 +164,7 @@ namespace Sci.Production.Quality
                 from order_rawdata a
                 inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.POID
                 inner join FIR f WITH (NOLOCK) on f.POID = psd.ID and f.SEQ1 = psd.Seq1 and f.seq2 = psd.Seq2
+                left join dbo.View_AllReceiving va with (nolock) on va.ID = f.ReceivingID
                 outer apply(
 	                select count(1) [count] from dbo.FIR_Physical x 
 	                inner join dbo.FIR_Physical_Defect y on y.FIR_PhysicalDetailUKey = x.DetailUkey 
@@ -180,24 +183,24 @@ namespace Sci.Production.Quality
                 where p.id = psd.ID and p.seq1 = psd.SEQ1 ) [Supplier]
                 ,AR.Refno
                 ,dbo.getMtlDesc(psd.id,psd.seq1,psd.seq2,1,0) [description]
-              	,(select sum(R.ShipQty) from dbo.Receiving m WITH (NOLOCK) inner join dbo.Receiving_Detail R WITH (NOLOCK) on R.Id = m.Id 
-				where m.id = AR.ReceivingID and R.PoId = psd.ID and R.seq1 = psd.seq1 and R.seq2 = psd.SEQ2)[ShipQty]
-				,(select sum(n.StockQty) from dbo.Receiving m WITH (NOLOCK) inner join dbo.Receiving_Detail n WITH (NOLOCK) on n.Id = m.Id 
-				where m.id = AR.ReceivingID and n.PoId = psd.ID and n.seq1 = psd.seq1 and n.seq2 = psd.SEQ2)[ArriveQty]
+              	,[ShipQty] = (select sum(m.ShipQty) from dbo.View_AllReceivingDetail m WITH (NOLOCK)
+				                where m.id = AR.ReceivingID and m.PoId = psd.ID and m.seq1 = psd.seq1 and m.seq2 = psd.SEQ2)
+				,[ArriveQty] = (select sum(m.StockQty) from dbo.View_AllReceivingDetail m WITH (NOLOCK)
+				                where m.id = AR.ReceivingID and m.PoId = psd.ID and m.seq1 = psd.seq1 and m.seq2 = psd.SEQ2)
                ,AR.Result
-                ,(select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = AR.ReceivingID)[WhseArrival]
+                ,va.WhseArrival
                 ,(select scidelivery from dbo.orders WITH (NOLOCK) where id = AR.POID)[scidelivery]
-                ,iif(  'B' in " + CATEGORY + @",iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = AR.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
-		        ,iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = AR.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID) )<15,'Y','')
+                ,iif(  'B' in " + CATEGORY + @",iif(DATEDIFF(day, va.WhseArrival,(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
+		        ,iif(DATEDIFF(day, va.WhseArrival,(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID) )<15,'Y','')
 		                ) [Delay]
                 ,AR.POID
                 ,AR.seq1+'-'+AR.seq2[SEQ#]
-                ,(select ExportId from dbo.Receiving WITH (NOLOCK) where id = AR.ReceivingID)[ExportId]
+                ,va.ExportId
                 ,AR.ReceivingID
-            
                 from order_rawdata a
                 inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.POID
                 inner join AIR AR WITH (NOLOCK) on AR.POID = psd.ID and AR.SEQ1 = psd.Seq1 and AR.seq2 = psd.Seq2
+                left join dbo.View_AllReceiving va with (nolock) on va.ID = AR.ReceivingID
                 where " + sqlWhere + @" AND  psd.SEQ1 NOT BETWEEN '50'AND'79' AND AR.Result<>''
 and ar.Status='Confirmed' ");
             #endregion
@@ -232,25 +235,21 @@ inner join FIR f WITH (NOLOCK) on f.POID = psd.ID
 inner join dbo.PO_Supp as ps WITH (NOLOCK) on ps.ID = psd.ID 
 											  and ps.SEQ1 = psd.SEQ1
 inner join dbo.Supp as s WITH (NOLOCK) on s.ID = ps.SuppID
-inner join dbo.Receiving as m WITH (NOLOCK) on m.id = f.ReceivingID
-inner join dbo.Receiving_Detail as n WITH (NOLOCK) on n.Id = m.Id 
+inner join dbo.View_AllReceivingDetail as n WITH (NOLOCK) on n.Id = f.ReceivingID
 													  and n.PoId = psd.ID 
 													  and n.seq1 = psd.seq1 
 													  and n.seq2 = psd.SEQ2
+left join dbo.View_AllReceiving va with (nolock) on va.ID = f.ReceivingID
 OUTER APPLY (
 	SELECT TF = iif('b' = 'B', iif(DATEDIFF(day
-									   		, (select WhseArrival 
-										  	   from dbo.Receiving WITH (NOLOCK) 
-										  	   where id = f.ReceivingID)
+									   		, va.WhseArrival
 									   		, (select scidelivery 
 									   		   from dbo.orders WITH (NOLOCK) 
 									   		   where id = a.POID)) < 25
 							  	   , 'Y'
 							  	   , '')
 				        	 , iif(DATEDIFF(day
-				        	    	   		, (select WhseArrival 
-				        	    	   		   from dbo.Receiving WITH (NOLOCK) 
-				        	    	   		   where id = f.ReceivingID)
+				        	    	   		, va.WhseArrival
 				        	    	   		, (select scidelivery 
 				        	    	   			from dbo.orders WITH (NOLOCK) 
 				        	    	   			where id = a.POID)) < 15
@@ -369,10 +368,10 @@ drop table #tmp");
             inner join AIR ai WITH (NOLOCK) on  ai.POID = psd.ID and ai.SEQ1 = psd.Seq1 and ai.seq2 = psd.Seq2
             inner join dbo.PO_Supp as ps WITH (NOLOCK) on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
             inner join dbo.Supp as s WITH (NOLOCK) on s.ID = ps.SuppID
-            inner join dbo.Receiving as m WITH (NOLOCK) on m.id = ai.ReceivingID
-            inner join dbo.Receiving_Detail as n WITH (NOLOCK) on n.Id = m.Id and n.PoId = psd.ID and n.seq1 = psd.seq1 and n.seq2 = psd.SEQ2
-            OUTER APPLY (SELECT iif('B' in " + CATEGORY + @",iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = ai.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
-                                                     ,iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = ai.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID) )<15,'Y',''))  
+            inner join dbo.View_AllReceivingDetail as n WITH (NOLOCK) on n.Id = ai.ReceivingID and n.PoId = psd.ID and n.seq1 = psd.seq1 and n.seq2 = psd.SEQ2
+            left join dbo.View_AllReceiving va with (nolock) on va.ID = ai.ReceivingID
+            OUTER APPLY (SELECT iif('B' in " + CATEGORY + @",iif(DATEDIFF(day, va.WhseArrival, (select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
+                                                     ,iif(DATEDIFF(day, va.WhseArrival, (select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID) )<15,'Y',''))  
                                                        TF)DelayItemsRef
             WHERE " + sqlWhere + @" AND psd.SEQ1 NOT BETWEEN '50'AND'79' AND Ai.Result<>''
 and ai.Status='Confirmed' 
