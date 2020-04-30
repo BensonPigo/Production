@@ -64,6 +64,9 @@
             this.txtInsertPosition = new Sci.Win.UI.TextBox();
             this.ui_btnBatchDelete = new Sci.Win.UI.Button();
             this.ui_btnBatchCopy = new Sci.Win.UI.Button();
+            this.label2 = new Sci.Win.UI.Label();
+            this.label3 = new Sci.Win.UI.Label();
+            this.numTotalSMV = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -81,6 +84,9 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.label3);
+            this.masterpanel.Controls.Add(this.numTotalSMV);
+            this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.ui_pnlBatchUpdate);
             this.masterpanel.Controls.Add(this.btnCIPF);
             this.masterpanel.Controls.Add(this.labVersionWarning);
@@ -112,7 +118,7 @@
             this.masterpanel.Controls.Add(this.labelBrand);
             this.masterpanel.Controls.Add(this.labelSeason);
             this.masterpanel.Controls.Add(this.labelStyle);
-            this.masterpanel.Size = new System.Drawing.Size(987, 155);
+            this.masterpanel.Size = new System.Drawing.Size(987, 181);
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelBrand, 0);
@@ -145,15 +151,18 @@
             this.masterpanel.Controls.SetChildIndex(this.btnCIPF, 0);
             this.masterpanel.Controls.SetChildIndex(this.ui_pnlBatchUpdate, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTotalSMV, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 155);
-            this.detailpanel.Size = new System.Drawing.Size(987, 288);
+            this.detailpanel.Location = new System.Drawing.Point(0, 181);
+            this.detailpanel.Size = new System.Drawing.Size(987, 294);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(797, 119);
+            this.gridicon.Location = new System.Drawing.Point(797, 145);
             this.gridicon.TabIndex = 9;
             // 
             // refresh
@@ -163,7 +172,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(987, 288);
+            this.detailgridcont.Size = new System.Drawing.Size(987, 294);
             // 
             // detail2
             // 
@@ -179,16 +188,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(987, 481);
+            this.detail.Size = new System.Drawing.Size(987, 513);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(987, 443);
+            this.detailcont.Size = new System.Drawing.Size(987, 475);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.btnStdGSDList);
-            this.detailbtm.Location = new System.Drawing.Point(0, 443);
+            this.detailbtm.Location = new System.Drawing.Point(0, 475);
             this.detailbtm.Size = new System.Drawing.Size(987, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
@@ -199,11 +208,11 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(987, 481);
+            this.browse.Size = new System.Drawing.Size(987, 513);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(995, 510);
+            this.tabs.Size = new System.Drawing.Size(995, 542);
             // 
             // createby
             // 
@@ -364,6 +373,7 @@
             this.numTotalSewingTimePc.ReadOnly = true;
             this.numTotalSewingTimePc.Size = new System.Drawing.Size(59, 23);
             this.numTotalSewingTimePc.TabIndex = 5;
+            this.numTotalSewingTimePc.TabStop = false;
             this.numTotalSewingTimePc.Value = new decimal(new int[] {
             0,
             0,
@@ -602,9 +612,52 @@
             this.ui_btnBatchCopy.UseVisualStyleBackColor = true;
             this.ui_btnBatchCopy.Click += new System.EventHandler(this.BtnBatchCopy_Click);
             // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(5, 148);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(133, 23);
+            this.label2.TabIndex = 170;
+            this.label2.Text = "Total SMV(sec)";
+            // 
+            // label3
+            // 
+            this.label3.BackColor = System.Drawing.Color.Transparent;
+            this.label3.Location = new System.Drawing.Point(203, 147);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(29, 23);
+            this.label3.TabIndex = 172;
+            this.label3.Text = "sec";
+            this.label3.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label3.TextStyle.Color = System.Drawing.Color.Black;
+            this.label3.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.label3.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // numTotalSMV
+            // 
+            this.numTotalSMV.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTotalSMV.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTotalSMV.IsSupportEditMode = false;
+            this.numTotalSMV.Location = new System.Drawing.Point(142, 148);
+            this.numTotalSMV.Name = "numTotalSMV";
+            this.numTotalSMV.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTotalSMV.ReadOnly = true;
+            this.numTotalSMV.Size = new System.Drawing.Size(59, 23);
+            this.numTotalSMV.TabIndex = 171;
+            this.numTotalSMV.TabStop = false;
+            this.numTotalSMV.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // P01
             // 
-            this.ClientSize = new System.Drawing.Size(995, 543);
+            this.ClientSize = new System.Drawing.Size(995, 575);
             this.DefaultControl = "txtStyle";
             this.DefaultControlForEdit = "txtStyle";
             this.DefaultOrder = "StyleID";
@@ -679,5 +732,8 @@
         private Win.UI.Button ui_btnBatchCopy;
         private Win.UI.Label label1;
         private Win.UI.TextBox txtInsertPosition;
+        private Win.UI.Label label2;
+        private Win.UI.Label label3;
+        private Win.UI.NumericBox numTotalSMV;
     }
 }
