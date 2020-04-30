@@ -35,6 +35,7 @@
             this.numPercentage = new Sci.Win.UI.NumericBox();
             this.numAmount = new Sci.Win.UI.NumericBox();
             this.btnConfirm = new Sci.Win.UI.Button();
+            this.btnUnConfirm = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -42,28 +43,30 @@
             // 
             // btmcont
             // 
+            this.btmcont.Controls.Add(this.btnUnConfirm);
             this.btmcont.Controls.Add(this.btnConfirm);
             this.btmcont.Location = new System.Drawing.Point(0, 426);
-            this.btmcont.Size = new System.Drawing.Size(528, 40);
+            this.btmcont.Size = new System.Drawing.Size(642, 40);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
             this.btmcont.Controls.SetChildIndex(this.revise, 0);
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.btnConfirm, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnUnConfirm, 0);
             // 
             // gridcont
             // 
             this.gridcont.Location = new System.Drawing.Point(12, 39);
-            this.gridcont.Size = new System.Drawing.Size(504, 352);
+            this.gridcont.Size = new System.Drawing.Size(618, 352);
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(438, 5);
+            this.undo.Location = new System.Drawing.Point(552, 5);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(358, 5);
+            this.save.Location = new System.Drawing.Point(472, 5);
             // 
             // txtID
             // 
@@ -120,7 +123,7 @@
             this.numPercentage.DecimalPlaces = 2;
             this.numPercentage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numPercentage.IsSupportEditMode = false;
-            this.numPercentage.Location = new System.Drawing.Point(301, 397);
+            this.numPercentage.Location = new System.Drawing.Point(415, 397);
             this.numPercentage.Name = "numPercentage";
             this.numPercentage.NullValue = new decimal(new int[] {
             0,
@@ -143,7 +146,7 @@
             this.numAmount.DecimalPlaces = 2;
             this.numAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numAmount.IsSupportEditMode = false;
-            this.numAmount.Location = new System.Drawing.Point(401, 397);
+            this.numAmount.Location = new System.Drawing.Point(515, 397);
             this.numAmount.Name = "numAmount";
             this.numAmount.NullValue = new decimal(new int[] {
             0,
@@ -161,8 +164,9 @@
             // 
             // btnConfirm
             // 
+            this.btnConfirm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnConfirm.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.btnConfirm.Location = new System.Drawing.Point(278, 5);
+            this.btnConfirm.Location = new System.Drawing.Point(288, 5);
             this.btnConfirm.Name = "btnConfirm";
             this.btnConfirm.Size = new System.Drawing.Size(80, 30);
             this.btnConfirm.TabIndex = 95;
@@ -170,9 +174,21 @@
             this.btnConfirm.UseVisualStyleBackColor = true;
             this.btnConfirm.Click += new System.EventHandler(this.BtnConfirm_Click);
             // 
+            // btnUnConfirm
+            // 
+            this.btnUnConfirm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUnConfirm.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.btnUnConfirm.Location = new System.Drawing.Point(369, 5);
+            this.btnUnConfirm.Name = "btnUnConfirm";
+            this.btnUnConfirm.Size = new System.Drawing.Size(101, 30);
+            this.btnUnConfirm.TabIndex = 96;
+            this.btnUnConfirm.Text = "UnConfirm";
+            this.btnUnConfirm.UseVisualStyleBackColor = true;
+            this.btnUnConfirm.Click += new System.EventHandler(this.BtnUnConfirm_Click);
+            // 
             // P21_ResponsibilityDept
             // 
-            this.ClientSize = new System.Drawing.Size(528, 466);
+            this.ClientSize = new System.Drawing.Size(642, 466);
             this.Controls.Add(this.numAmount);
             this.Controls.Add(this.numPercentage);
             this.Controls.Add(this.numTotalAmt);
@@ -209,5 +225,6 @@
         private Win.UI.NumericBox numPercentage;
         private Win.UI.NumericBox numAmount;
         private Win.UI.Button btnConfirm;
+        private Win.UI.Button btnUnConfirm;
     }
 }
