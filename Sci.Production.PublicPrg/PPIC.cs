@@ -11,6 +11,7 @@ using Ict.Win;
 using System.Configuration;
 using PostJobLog;
 using Newtonsoft.Json;
+using Sci.Production.Prg;
 
 namespace Sci.Production.PublicPrg
 {
@@ -134,17 +135,7 @@ from ReplacementReport_Detail where ID = '{replacementID}'
             }
 
             var postBody = new { ReplacementReport = dtReplacementReport, ReplacementReport_Detail = dtReplacementReportDetail };
-            string tradeWebApiUri;
-
-            if (DBProxy.Current.DefaultModuleName.Contains("testing") ||
-                DBProxy.Current.DefaultModuleName.Contains("Dummy"))
-            {
-                tradeWebApiUri = ConfigurationManager.AppSettings["TradeWebAPI_Test"];
-            }
-            else
-            {
-                tradeWebApiUri = ConfigurationManager.AppSettings["TradeWebAPI"];
-            }
+            string tradeWebApiUri = PmsWebAPI.TradeWebApiUri;
 
             CallTPEWebAPI callTPEWebAPI = new CallTPEWebAPI(tradeWebApiUri);
 
@@ -163,7 +154,7 @@ from ReplacementReport_Detail where ID = '{replacementID}'
             };
 
             DualResult result;
-            string tradeWebApiUri = ConfigurationManager.AppSettings["TradeWebAPI"]; 
+            string tradeWebApiUri = PmsWebAPI.TradeWebApiUri; 
             CallTPEWebAPI callTPEWebAPI = new CallTPEWebAPI(tradeWebApiUri);
 
             result = callTPEWebAPI.CallWebApiPost("api/OrderChange/Receive", orderChangeModel);

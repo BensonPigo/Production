@@ -146,6 +146,7 @@
     <Compile Include="Exts.cs" />
     <Compile Include="Logistic.cs" />
     <Compile Include="Packing.cs" />
+    <Compile Include="PmsWebAPI.cs" />
     <Compile Include="Thread.cs" />
     <Compile Include="Planning.cs" />
     <Compile Include="PPIC.cs" />
