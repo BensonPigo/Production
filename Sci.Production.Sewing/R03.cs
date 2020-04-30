@@ -93,7 +93,7 @@ with tmp1stData as (
             , o.StyleID
             , o.SeasonID
             , [BrandID] = iif(o.BrandID='SUBCON-I' and Order2.BrandID is not null,Order2.BrandID,o.BrandID)
-            , o.MDivisionID
+            , [MDivisionID] = f.FtyZone
             , o.FactoryID
             , o.CdCodeID
             , o.CPU

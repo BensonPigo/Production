@@ -186,7 +186,9 @@ Select o.ID, o.ProgramID, o.StyleID, o.SeasonID
 ,StyleDesc = s.Description
 ,s.ModularParent, s.CPUAdjusted
 ,OutputDate,Shift, Team
-,SCategory = so.Category, CPUFactor, o.MDivisionID,orderid
+,SCategory = so.Category, CPUFactor
+, [MDivisionID]=f.FtyZone
+,orderid
 ,Rate = isnull([dbo].[GetOrderLocation_Rate]( o.id ,sod.ComboType)/100,1) 
 ,ActManPower= so.Manpower
 ,c.ProductionFamilyID
