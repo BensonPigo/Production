@@ -2553,7 +2553,6 @@ DROP TABLE #tmpOrders ,#tmp ,#ExistsB03
             Image bmp = doc.SaveAsImage(0, PdfImageType.Bitmap, 300, 300);
 
             // bmp.Save(imageOutputPath + imageName + "_tmpOri.bmp");
-
             byte[] data = null;
 
             if (!System.IO.Directory.Exists(imageOutputPath))
@@ -2561,25 +2560,31 @@ DROP TABLE #tmpOrders ,#tmp ,#ExistsB03
                 Directory.CreateDirectory(imageOutputPath);
             }
 
-            int picWidth = 1200;
-            int picHeight = 2100;
+            int picWidth = 1300;
+            int picHeight = 1838;
 
-            Bitmap pic = new Bitmap(picWidth, picHeight);
+            // Note : 工廠換了變出PDF的軟體，因此不需要裁切圖片了，直接把Source轉出
+            Bitmap pic = new Bitmap(bmp);
+
+            #region 裁切圖片
+
+            // Bitmap pic = new Bitmap(picWidth, picHeight);
 
             // 建立圖片
-            Graphics graphic = Graphics.FromImage(pic);
+            //Graphics graphic = Graphics.FromImage(pic);
 
-            int cutWidth = 95;
-            int cutHeight = 160;
+            //int cutWidth = 95;
+            //int cutHeight = 160;
 
             // 建立畫板
-            graphic.DrawImage(bmp,
-                     //將被切割的圖片畫在新圖片上面，第一個參數是被切割的原圖片
-                     new Rectangle(0, 0, picWidth, picHeight),
-                     //指定繪製影像的位置和大小，基本上是同pic大小
-                     new Rectangle(cutWidth, cutHeight, picWidth, picHeight),
-                     //指定被切割的圖片要繪製的部分
-                     GraphicsUnit.Pixel);
+            //graphic.DrawImage(bmp,
+            //         //將被切割的圖片畫在新圖片上面，第一個參數是被切割的原圖片
+            //         new Rectangle(0, 0, picWidth, picHeight),
+            //         //指定繪製影像的位置和大小，基本上是同pic大小
+            //         new Rectangle(cutWidth, cutHeight, picWidth, picHeight),
+            //         //指定被切割的圖片要繪製的部分
+            //         GraphicsUnit.Pixel);
+            #endregion
 
             // 準備要寫入DB的資料
             using (var stream = new MemoryStream())
@@ -2593,7 +2598,7 @@ DROP TABLE #tmpOrders ,#tmp ,#ExistsB03
 
             doc.Dispose();
             bmp.Dispose();
-            graphic.Dispose();
+            //graphic.Dispose();
             pic.Dispose();
 
             // 寫入DB
