@@ -187,7 +187,7 @@ Select o.ID, o.ProgramID, o.StyleID, o.SeasonID
 ,s.ModularParent, s.CPUAdjusted
 ,OutputDate,Shift, Team
 ,SCategory = so.Category, CPUFactor
-, [MDivisionID]=f.FtyZone
+, [FtyZone]=f.FtyZone
 ,orderid
 ,Rate = isnull([dbo].[GetOrderLocation_Rate]( o.id ,sod.ComboType)/100,1) 
 ,ActManPower= so.Manpower
@@ -303,7 +303,7 @@ select OutputDate
 , CPUFactor
 , StyleID
 , Rate
-, MDivisionID
+, FtyZone
 , ProductionFamilyID
 , QAQty = sum(QAQty)
 , ActManPower= ActManPower
@@ -311,10 +311,10 @@ select OutputDate
 into #stmp2		
 from #stmp
 group by OutputDate, Category, Shift, SewingLineID, Team, orderid, ComboType, SCategory, FactoryID
-, ProgramID, CPU, CPUFactor, StyleID, Rate,MDivisionID, ProductionFamilyID, ActManPower
+, ProgramID, CPU, CPUFactor, StyleID, Rate,FtyZone, ProductionFamilyID, ActManPower
 
 select 
-a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.MDivisionID,a.FactoryID, a.POID , a.Category, a.CdCodeID 
+a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.FtyZone,a.FactoryID, a.POID , a.Category, a.CdCodeID 
 , CPU = sum(a.CPU)
 , CPURate = sum(a.CPURate)
 , a.BuyerDelivery, a.SCIDelivery, a.SewingLineID , a.ComboType
@@ -325,7 +325,7 @@ a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.MDivisionID,a.FactoryID,
 , TotalManHour =
     (select sum(ROUND( ActManPower * WorkHour, 2)) 
 	from #stmp2 f 
-	where f.MDivisionID = a.MDivisionID and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID 
+	where f.FtyZone = a.FtyZone and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID 
 	and f.orderid = a.orderid
 	and f.CPU = a.CPU and f.CPUFactor = a.CPUFactor and f.Rate = a.Rate
 	and f.OutputDate=a.OutputDate and f.Category = a.Category and f.Shift = a.Shift and f.Team = a.Team and f.ComboType = a.ComboType and f.SCategory = a.SCategory)
@@ -338,17 +338,17 @@ a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.MDivisionID,a.FactoryID,
 ,TotalCPUOut =
 	(select sum(Round(CPU * CPUFactor * Rate * QAQty,2))  
 	from #stmp2 f 
-	where f.MDivisionID = a.MDivisionID and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID 
+	where f.FtyZone = a.FtyZone and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID 
 	and f.orderid = a.orderid
 	and f.CPU = a.CPU and f.CPUFactor = a.CPUFactor and f.Rate = a.Rate
 	and f.OutputDate=a.OutputDate and f.Category = a.Category and f.Shift = a.Shift and f.Team = a.Team and f.ComboType = a.ComboType and f.SCategory = a.SCategory)
 into #tmpz
 from #stmp a
 group by a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.FactoryID, a.POID , a.Category, a.CdCodeID ,a.BuyerDelivery, a.SCIDelivery, a.SewingLineID 
-, a.CDDesc, a.StyleDesc,a.ComboType,a.ModularParent, a.ProductionFamilyID,OutputDate, Category, Shift, SewingLineID, Team, orderid, ComboType, SCategory, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,MDivisionID
+, a.CDDesc, a.StyleDesc,a.ComboType,a.ModularParent, a.ProductionFamilyID,OutputDate, Category, Shift, SewingLineID, Team, orderid, ComboType, SCategory, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,FtyZone
 ";
                 #region 1.	By Factory
-                string strFactory = string.Format(@"{0} Select A=MDivisionID,B=FactoryID, QARate, TotalCPUOut, TotalManHour FROM #tmpz ", strSQL);
+                string strFactory = string.Format(@"{0} Select A=FtyZone,B=FactoryID, QARate, TotalCPUOut, TotalManHour FROM #tmpz ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -402,7 +402,7 @@ F=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalMan
                 string strFBrand = string.Format(
                     @"
 {0} 
-Select A=BrandID, B=MDivisionID,C=FactoryID, QARate, TotalCPUOut,TotalManHour
+Select A=BrandID, B=FtyZone,C=FactoryID, QARate, TotalCPUOut,TotalManHour
 FROM #tmpz ",
 strSQL);
                 foreach (string conString in connectionString)
@@ -492,7 +492,7 @@ from #tmp Group BY A,B order by A";
                 #endregion 5.	By CD
 
                 #region 6.	By Factory Line
-                string strFactoryLine = string.Format(@"{0}  Select A=MDivisionID,B=FactoryID,C=SewingLineID, QARate, TotalCPUOut,TotalManHour FROM #tmpz ", strSQL);
+                string strFactoryLine = string.Format(@"{0}  Select A=FtyZone,B=FactoryID,C=SewingLineID, QARate, TotalCPUOut,TotalManHour FROM #tmpz ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -519,7 +519,7 @@ from #tmp Group BY A,B,C order by A,B,C";
 
                 #region 7.	By Factory, Brand , CDCode
                 string strFBCDCode = string.Format(
-                    @"{0}  Select A=BrandID, B=MDivisionID,C=FactoryID, D=CdCodeID,E=CDDesc, QARate, TotalCPUOut,TotalManHour
+                    @"{0}  Select A=BrandID, B=FtyZone,C=FactoryID, D=CdCodeID,E=CDDesc, QARate, TotalCPUOut,TotalManHour
 FROM #tmpz  ",
                     strSQL);
                 foreach (string conString in connectionString)
@@ -550,7 +550,7 @@ from #tmp Group BY A,B,C,D,E order by A,B,C,D,E";
                 string strPOCombo = string.Format(
                     @"
 {0} 
-Select A=MDivisionID,POID AS B, StyleID AS C, BrandID AS D, CdCodeID AS E, CDDesc AS F,G=ProductionFamilyID, StyleDesc AS H, SeasonID AS I, ProgramID AS J, QARate, TotalCPUOut, TotalManHour
+Select A=FtyZone,POID AS B, StyleID AS C, BrandID AS D, CdCodeID AS E, CDDesc AS F,G=ProductionFamilyID, StyleDesc AS H, SeasonID AS I, ProgramID AS J, QARate, TotalCPUOut, TotalManHour
 FROM #tmpz  ",
 strSQL);
                 foreach (string conString in connectionString)
@@ -579,7 +579,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,G";
                 #endregion 8.	By PO Combo
 
                 #region 9.	By Program
-                string strProgram = string.Format(@"{0}  Select ProgramID AS A, StyleID AS B, C=MDivisionID,D=FactoryID, BrandID AS E, CdCodeID AS F, CDDesc AS G,H=ProductionFamilyID, StyleDesc AS I, SeasonID AS J, QARate,TotalCPUOut, TotalManHour FROM #tmpz ", strSQL);
+                string strProgram = string.Format(@"{0}  Select ProgramID AS A, StyleID AS B, C=FtyZone,D=FactoryID, BrandID AS E, CdCodeID AS F, CDDesc AS G,H=ProductionFamilyID, StyleDesc AS I, SeasonID AS J, QARate,TotalCPUOut, TotalManHour FROM #tmpz ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
