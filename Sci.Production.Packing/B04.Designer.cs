@@ -43,10 +43,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(792, 388);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtSize);
@@ -55,12 +51,6 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(792, 350);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 350);
-            this.detailbtm.Size = new System.Drawing.Size(792, 38);
             // 
             // browse
             // 
@@ -178,9 +168,13 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.EnableGridJunkColor = true;
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
+            this.IsSupportJunk = true;
             this.IsSupportPrint = false;
+            this.IsSupportUnJunk = true;
             this.Name = "B04";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B04. Sticker Size Setting (For SNP)";

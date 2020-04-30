@@ -20,6 +20,8 @@ namespace Sci.Production.PPIC
     public partial class P04 : Sci.Win.Tems.Input1
     {
         private string destination_path; // 放圖檔的路徑
+        DataTable dtFinishingProcess;
+        DataTable dtFinishingProcessAll;
 
         /// <summary>
         /// P04
@@ -57,16 +59,47 @@ namespace Sci.Production.PPIC
 	                    union all
 	                    select distinct DM300 
 	                    from FinishingProcess
+                        where junk <> 1
                     )a ");
-            DataTable dtFinishingProcess;
-            DualResult selectResult = DBProxy.Current.Select(null, sql, out dtFinishingProcess);
+            DualResult selectResult = DBProxy.Current.Select(null, sql, out this.dtFinishingProcess);
             if (!selectResult) { this.ShowErr(sql, selectResult); }
-            foreach (DataRow dr in dtFinishingProcess.Rows)
-            {
-                this.comboPressing2.Add(dr["DM300"].ToString(), dtFinishingProcess.Rows.IndexOf(dr));
-            }
 
-            this.comboPressing2.SelectedIndex = 0;
+            sql = string.Format(
+                @" select distinct DM300
+                    from (
+	                    select 0 as DM300
+	                    union all
+	                    select distinct DM300 
+	                    from FinishingProcess
+                    )a ");
+            selectResult = DBProxy.Current.Select(null, sql, out this.dtFinishingProcessAll);
+            if (!selectResult) { this.ShowErr(sql, selectResult); }
+        }
+
+        protected override void OnEditModeChanged()
+        {
+            base.OnEditModeChanged();
+            this.comboPressing2DataSource();
+        }
+
+        private void comboPressing2DataSource()
+        {
+            if (this.comboPressing2 != null && this.CurrentMaintain != null)
+            {
+                if (this.EditMode && this.dtFinishingProcess != null)
+                {
+                    MyUtility.Tool.SetupCombox(this.comboPressing2, 1, this.dtFinishingProcess);
+                    this.comboPressing2.DisplayMember = "DM300";
+                }
+
+                if (!this.EditMode && this.dtFinishingProcessAll != null)
+                {
+                    MyUtility.Tool.SetupCombox(this.comboPressing2, 1, this.dtFinishingProcessAll);
+                    this.comboPressing2.DisplayMember = "DM300";
+                }
+
+                this.comboPressing2.Text = MyUtility.Convert.GetString(this.CurrentMaintain["Pressing2"]);
+            }
         }
 
         /// <inheritdoc/>
@@ -174,6 +207,8 @@ select Name = s.TPEEditName+' '+ isnull(p.Name,'')+' '+isnull(format(s.TPEEditDa
 from Style s
 left join Pass1 p on s.TPEEditName = p.ID
 where s.ukey = {this.CurrentMaintain["ukey"]}");
+
+            this.comboPressing2DataSource();
         }
 
         /// <inheritdoc/>

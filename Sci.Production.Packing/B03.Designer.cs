@@ -347,9 +347,13 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(778, 436);
+            this.EnableGridJunkColor = true;
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
+            this.IsSupportJunk = true;
             this.IsSupportPrint = false;
+            this.IsSupportUnJunk = true;
             this.Name = "B03";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B03. Shipping Mark Pic Setting (for GenSong)";

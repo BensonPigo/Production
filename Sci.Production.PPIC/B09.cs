@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,6 +16,22 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             InitializeComponent();
+        }
+
+        protected override void EnsureToolbarExt()
+        {
+            base.EnsureToolbarExt();
+            if (!this.EditMode && this.CurrentMaintain != null && this.tabs.SelectedIndex == 1)
+            {
+                bool junk = MyUtility.Convert.GetBool(this.CurrentMaintain["junk"]);
+                this.toolbar.cmdJunk.Enabled = !junk && this.Perm.Junk;
+                this.toolbar.cmdUnJunk.Enabled = junk && this.Perm.Junk;
+            }
+            else
+            {
+                this.toolbar.cmdJunk.Enabled = false;
+                this.toolbar.cmdUnJunk.Enabled = false;
+            }
         }
 
         protected override void ClickNewAfter()
@@ -34,6 +52,28 @@ from FinishingProcess");
             }
 
             return base.ClickSaveBefore();
+        }
+
+        protected override void ClickJunk()
+        {
+            base.ClickJunk();
+            string sqlcmd = $@"update FinishingProcess set junk = 1 where DM300 = '{this.CurrentMaintain["DM300"]}'";
+            DualResult result = DBProxy.Current.Execute(null, sqlcmd);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+        }
+
+        protected override void ClickUnJunk()
+        {
+            base.ClickUnJunk();
+            string sqlcmd = $@"update FinishingProcess set junk = 0 where DM300 = '{this.CurrentMaintain["DM300"]}'";
+            DualResult result = DBProxy.Current.Execute(null, sqlcmd);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
         }
     }
 }

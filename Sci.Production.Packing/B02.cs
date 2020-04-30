@@ -21,6 +21,8 @@ namespace Sci.Production.Packing
         private bool Upload_flag = false;
         string Destination_fileName;
         private Hashtable ht = new Hashtable();
+        DataTable sizes;
+        DataTable sizesAll;
 
         public B02(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -37,30 +39,83 @@ namespace Sci.Production.Packing
 
             #region ComboBox
             DualResult result;
-            DataTable sizes;
             string cmd = $@"
 SELECT [ID]='' ,[SIze]='' 
 UNION
 SELECT ID, SIze 
-FROM StickerSize WITH (NOLOCK) ";
-
-            if (result = DBProxy.Current.Select(null, cmd, out sizes))
+FROM StickerSize WITH (NOLOCK) 
+where junk <> 1";
+            result = DBProxy.Current.Select(null, cmd, out this.sizes);
+            if (!result)
             {
-                MyUtility.Tool.SetupCombox(this.comboStickerSize, 1, sizes);
-                this.comboStickerSize.DisplayMember = "Size";
+                this.ShowErr(result);
             }
-            else
+
+            cmd = $@"
+SELECT [ID]='' ,[SIze]='' 
+UNION
+SELECT ID, SIze 
+FROM StickerSize WITH (NOLOCK) 
+";
+            result = DBProxy.Current.Select(null, cmd, out this.sizesAll);
+            if (!result)
             {
                 this.ShowErr(result);
             }
             #endregion
         }
 
+        /// <inheritdoc/>
+        protected override void OnEditModeChanged()
+        {
+            base.OnEditModeChanged();
+            this.ComboPressing2DataSource();
+        }
+
+        private void ComboPressing2DataSource()
+        {
+            if (this.comboStickerSize != null && this.CurrentMaintain != null)
+            {
+                if (this.EditMode && this.sizes != null)
+                {
+                    MyUtility.Tool.SetupCombox(this.comboStickerSize, 1, this.sizes);
+                    this.comboStickerSize.DisplayMember = "Size";
+                }
+
+                if (!this.EditMode && this.sizesAll != null)
+                {
+                    MyUtility.Tool.SetupCombox(this.comboStickerSize, 1, this.sizesAll);
+                    this.comboStickerSize.DisplayMember = "Size";
+                }
+
+                this.comboStickerSize.SelectedValue = this.CurrentMaintain["StickerSizeID"];
+            }
+        }
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
             this.btnDownload.Enabled = !MyUtility.Check.Empty(this.CurrentMaintain["FileName"]);
-            this.comboStickerSize.SelectedValue = this.CurrentMaintain["StickerSizeID"];
+            this.toolbar.cmdJunk.Enabled = !MyUtility.Convert.GetBool(this.CurrentMaintain["junk"]);
+            this.ComboPressing2DataSource();
+        }
+
+        /// <inheritdoc/>
+        protected override void EnsureToolbarExt()
+        {
+            base.EnsureToolbarExt();
+            if (!this.EditMode && this.CurrentMaintain != null && this.tabs.SelectedIndex == 1)
+            {
+                bool junk = MyUtility.Convert.GetBool(this.CurrentMaintain["junk"]);
+                this.toolbar.cmdJunk.Enabled = !junk && this.Perm.Junk;
+                this.toolbar.cmdUnJunk.Enabled = junk && this.Perm.Junk;
+            }
+            else
+            {
+                this.toolbar.cmdJunk.Enabled = false;
+                this.toolbar.cmdUnJunk.Enabled = false;
+            }
         }
 
         private void TxtCTNRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -137,6 +192,7 @@ FROM StickerSize WITH (NOLOCK) ";
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
@@ -166,6 +222,7 @@ FROM StickerSize WITH (NOLOCK) ";
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
             // Upload_flag
@@ -194,6 +251,7 @@ FROM StickerSize WITH (NOLOCK) ";
             return base.ClickSavePost();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickDelete()
         {
             string fileName = this.CurrentMaintain["FileName"].ToString();
@@ -210,6 +268,38 @@ FROM StickerSize WITH (NOLOCK) ";
             }
 
             return base.ClickDelete();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickJunk()
+        {
+            base.ClickJunk();
+            string sqlcmd = $@"update ShippingMarkStamp set junk = 1 
+where BrandID = '{this.CurrentMaintain["BrandID"]}'
+and CTNRefno = '{this.CurrentMaintain["CTNRefno"]}'
+and Side = '{this.CurrentMaintain["Side"]}'
+";
+            DualResult result = DBProxy.Current.Execute(null, sqlcmd);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickUnJunk()
+        {
+            base.ClickUnJunk();
+            string sqlcmd = $@"update ShippingMarkStamp set junk = 0
+where BrandID = '{this.CurrentMaintain["BrandID"]}'
+and CTNRefno = '{this.CurrentMaintain["CTNRefno"]}'
+and Side = '{this.CurrentMaintain["Side"]}'
+";
+            DualResult result = DBProxy.Current.Execute(null, sqlcmd);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
         }
 
         private void GetFilenNme(string from_path_file)
@@ -257,11 +347,6 @@ FROM StickerSize WITH (NOLOCK) ";
             else
             {
                 this.ShowErr(result);
-            }
-
-            if (this.CurrentMaintain != null)
-            {
-                this.CurrentMaintain["StickerSizeID"] = id;
             }
         }
     }
