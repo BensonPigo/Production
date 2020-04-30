@@ -224,7 +224,7 @@ namespace Sci.Production.Quality
             ,t.id [ReceivingID]
             from (select r.WhseArrival,r.InvNo,r.ExportId,r.Id,r.PoId,r.seq1,r.seq2{byRoll},sum(stockqty) stockqty
 			             from dbo.View_AllReceivingDetail r WITH (NOLOCK) 
-			            where r.type='A'" + RWhere+ $@"
+			            where (r.type='A' or r.DataFrom = 'TransferIn')" + RWhere+ $@"
 			            group by r.WhseArrival,r.InvNo,r.ExportId,r.Id,r.PoId,r.seq1,r.seq2{byRoll}) t
             inner join (select distinct id,Category,KPILETA from dbo.Orders o WITH (NOLOCK) 
 			            where 1=1
