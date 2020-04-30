@@ -308,13 +308,18 @@ namespace Sci.Production.PPIC
             else
             {
                 this.btnConfirm.Enabled = false;
-                this.btnUnConfirm.Enabled = this.canUnConfirm;
+                this.btnUnConfirm.Enabled = this.canUnConfirm && this.IsVoucherNull();
             }
         }
 
         private bool IsRespDeptConfirmDateNull()
         {
             return MyUtility.Check.Seek($"select 1 from {this.checkTable} with (nolock) where ID = '{this.ID}' and RespDeptConfirmDate is null and RespDeptConfirmName = '' ");
+        }
+
+        private bool IsVoucherNull()
+        {
+            return MyUtility.Check.Seek($"select 1 from {this.checkTable} with (nolock) where ID = '{this.ID}' and VoucherDate is null and VoucherID = ''");
         }
 
         protected override void OnDelete()
@@ -463,7 +468,7 @@ where ICR.id = '{this.ID}'
 
         private void BtnUnConfirm_Click(object sender, EventArgs e)
         {
-            if (this.IsRespDeptConfirmDateNull())
+            if (!this.IsVoucherNull())
             {
                 this.ConfirmStatusCheck();
                 return;
