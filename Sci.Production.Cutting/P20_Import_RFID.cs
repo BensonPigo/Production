@@ -138,14 +138,15 @@ namespace Sci.Production.Cutting
             .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerLength", header: "Marker Length", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Numeric("WorkOderLayer", header: "WorkOder\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
+            .Numeric("WorkOderLayer", header: "WorkOrder\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Numeric("AccuCuttingLayer", header: "Accu. Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
-            .Numeric("CuttingLayer", header: "Cutting Layer", width: Widths.AnsiChars(5), integer_places: 8, settings: Layer)
+            .Numeric("CuttingLayer", header: "Cutting Layer", width: Widths.AnsiChars(5), integer_places: 5, maximum: 99999, minimum: 0)
             .Numeric("LackingLayers", header: "Lacking\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), integer_places: 7, decimal_places: 2)
             .Text("sizeRatio", header: "Size Ratio", width: Widths.AnsiChars(15), iseditingreadonly: true);
             this.gridImport.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["CuttingLayer"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void btnQuery_Click(object sender, EventArgs e)
@@ -217,7 +218,7 @@ select 0 as sel,
 	),
 	WorkOderLayer = wo.Layer,
 	AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0),
-	CuttingLayer = isnull(x3.Qty,0)-isnull(acc.AccuCuttingLayer,0),
+	CuttingLayer = case when cl.CuttingLayer > 99999 then 99999 when cl.CuttingLayer  < 0 then 0 else cl.CuttingLayer end,
 	LackingLayers = 0,
     SRQ.SizeRatioQty
 from WorkOrder WO WITH (NOLOCK) 
@@ -238,6 +239,7 @@ outer apply(
 		group by x.SizeCode,ws.Qty
 	)x2
 )x3
+outer apply(select CuttingLayer = isnull(x3.Qty,0)-isnull(acc.AccuCuttingLayer,0))cl
 where mDivisionid = '{0}' 
 and wo.Layer >  isnull(acc.AccuCuttingLayer,0)
 and WO.CutRef != ''

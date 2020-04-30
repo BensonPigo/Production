@@ -360,7 +360,7 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
             .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerLength", header: "Marker Length", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Numeric("WorkOderLayer", header: "WorkOder\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
+            .Numeric("WorkOderLayer", header: "WorkOrder\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Numeric("AccuCuttingLayer", header: "Accu. Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Numeric("Layer", header: "Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, settings: Layer)
             .Numeric("LackingLayers", header: "Lacking\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
@@ -368,6 +368,7 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
             .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), integer_places: 7, decimal_places: 2, iseditingreadonly: true)
             .Text("sizeRatio", header: "Size Ratio", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: sizeratio);
             this.detailgrid.Columns["Cutref"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["Layer"].DefaultCellStyle.BackColor = Color.Pink;
         }
         protected override void ClickNewAfter()
         {
@@ -705,6 +706,22 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                 if (index >= find_dr.Length) index = 0;
             }
             detailgridbs.Position = DetailDatas.IndexOf(find_dr[index]);
+        }
+
+        private void BtnCopyBal_Click(object sender, EventArgs e)
+        {
+            foreach (DataRow item in this.DetailDatas.AsEnumerable().Where(w => MyUtility.Check.Empty(w["Layer"])))
+            {
+                item["Layer"] = MyUtility.Convert.GetInt(item["WorkOderLayer"]) - MyUtility.Convert.GetInt(item["AccuCuttingLayer"]);
+            }
+        }
+
+        private void BtnRemove_Click(object sender, EventArgs e)
+        {
+            foreach (DataRow item in ((DataTable)this.detailgridbs.DataSource).Select("Layer = 0"))
+            {
+                item.Delete();
+            }
         }
     }
 }
