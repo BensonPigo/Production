@@ -672,6 +672,7 @@ and c.ClogReceiveCFADate is null
 update o
 set ActPulloutDate = ActPulloutDate.value
 	, PulloutComplete = PulloutComplete.value
+    , PulloutCmplDate = CAST(GetDate() AS DATE)
 from Orders o
 outer apply (
 	SELECT value =  Max(p.pulloutdate)
@@ -718,7 +719,6 @@ where	exists (
                 MyUtility.Msg.WarningBox("Confirmed fail!!\r\n" + result.ToString());
                 return;
             }
-
         }
 
         /// <inheritdoc/>
@@ -781,10 +781,16 @@ left join PulloutDate pd on pd.OrderID = po.OrderID", MyUtility.Convert.GetStrin
 
             foreach (DataRow dr in updateOrderData.Rows)
             {
-                sqlCmds.Add(string.Format(
-                    "update Orders set ActPulloutDate = {0}, PulloutComplete = case when exists(select 1 from Order_Finish ox where ox.ID = orders.id) then pulloutcomplete else 0 end where ID = '{1}';",
-                    MyUtility.Check.Empty(dr["PulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["PulloutDate"]).ToString("d") + "'",
-                    MyUtility.Convert.GetString(dr["OrderID"])));
+                string actPulloutDate = MyUtility.Check.Empty(dr["PulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["PulloutDate"]).ToString("d") + "'";
+                string orderid = MyUtility.Convert.GetString(dr["OrderID"]);
+                sqlCmds.Add($@"
+update Orders set 
+ActPulloutDate = {actPulloutDate}, 
+PulloutComplete = case when exists(select 1 from Order_Finish ox where ox.ID = orders.id) 
+                       then pulloutcomplete else 0 end,
+PulloutCmplDate  = Cast(GetDate() as date)
+where ID = '{orderid}'
+;");
             }
 
             result = DBProxy.Current.Executes(null, sqlCmds);

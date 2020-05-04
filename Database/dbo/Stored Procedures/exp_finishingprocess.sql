@@ -365,7 +365,7 @@ USING(
 		where StyleUkey=o.StyleUkey
 		for xml path('')
 	),1,1,'')) SL
-	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
+	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate or convert(date,PulloutCmplDate) = @cDate)
 ) as S
 on T.ID = S.ID
 WHEN MATCHED THEN
