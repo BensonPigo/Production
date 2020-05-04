@@ -537,7 +537,8 @@ BEGIN
 				t.ChangeMemoDate       = s.ChangeMemoDate,
 				t.ForecastCategory     = s.ForecastCategory,
 				t.OnSiteSample		   = s.OnSiteSample,
-				t.PulloutCmplDate	   = s.PulloutCmplDate
+				t.PulloutCmplDate	   = s.PulloutCmplDate,
+				t.NeedProduction	   = s.NeedProduction
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -567,7 +568,7 @@ BEGIN
 			, KPICmpq				, KPIMNotice			, GFR					, SDPDate				, PulloutComplete		
 			, SewINLINE				, FtyGroup				, ForecastSampleGroup	, DyeingLoss			, SubconInType
 			, LastProductionDate	, EstPODD				, AirFreightByBrand		, AllowanceComboID      , ChangeMemoDate
-			, ForecastCategory		, OnSiteSample			, PulloutCmplDate
+			, ForecastCategory		, OnSiteSample			, PulloutCmplDate		, NeedProduction
 
 		) values (
 			s.ID					, s.BrandID				, s.ProgramID			, s.StyleID				, s.SeasonID 
@@ -597,7 +598,7 @@ BEGIN
 			, s.KPICmpq 			, s.KPIMNotice			, s.GFR					, s.SDPDate				, s.PulloutComplete		
 			, s.SewINLINE           , s.FTY_Group			, s.ForecastSampleGroup , s.DyeingLoss          , '0'
 			, s.LastProductionDate	, s.EstPODD				, s.AirFreightByBrand	, s.AllowanceComboID    , s.ChangeMemoDate
-			, s.ForecastCategory	, s.OnSiteSample		, s.PulloutCmplDate
+			, s.ForecastCategory	, s.OnSiteSample		, s.PulloutCmplDate		, s.NeedProduction
 		)
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
