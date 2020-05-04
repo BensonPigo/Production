@@ -46,6 +46,7 @@ update t set t.Description = s.Description
 			 , t.Lock = s.Lock
 			 , t.MasterGroupID = s.MasterGroupID
 			 , t.MachineGroupID = s.MachineGroupID		
+			 , t.MachineBrandID = s.MachineBrandID
 			 , t.Needle = s.Needle
 			 , t.ControlPart = s.ControlParts
 			 , t.MOQ = isnull(convert(int, s.MOQ),0)

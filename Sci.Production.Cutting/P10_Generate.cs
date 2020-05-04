@@ -183,13 +183,16 @@ order by ArticleGroup", patternukey);
                 }
                 else
                 {
+                    //取得哪些 annotation 是次要
+                    List<string> notMainList = this.GetNotMain(dr, garmentar);
+                    string noBundleCardAfterSubprocess_String = string.Join("+", notMainList);
+
                     //Annotation 
-                    string[] ann = Regex.Replace(dr["annotation"].ToString(), @"[\d]", string.Empty).Split('+'); //剖析Annotation
+                    string[] ann = Regex.Replace(dr["annotation"].ToString(), @"[\d]", string.Empty).Split('+'); //剖析Annotation 去除字串中數字
                     string art = "";
                     #region Annotation有在Subprocess 內需要寫入bundle_detail_art，寫入Bundle_Detail_pattern
                     if (ann.Length > 0)
                     {
-
                         bool lallpart;
                         #region 算Subprocess
                         art = Prgs.BundleCardCheckSubprocess(ann, dr["PatternCode"].ToString(), artTb, out lallpart);
@@ -208,6 +211,7 @@ order by ArticleGroup", patternukey);
                                     ndr2["Parts"] = 1;
                                     ndr2["art"] = art;
                                     ndr2["IsPair"] = MyUtility.Convert.GetInt(dr["PAIR"]) == 1;
+                                    ndr2["NoBundleCardAfterSubprocess_String"] = noBundleCardAfterSubprocess_String;
                                     patternTb.Rows.Add(ndr2);
                                 }
                             }
@@ -220,6 +224,7 @@ order by ArticleGroup", patternukey);
                                 ndr2["art"] = art;
                                 ndr2["Parts"] = dr["alone"];
                                 ndr2["IsPair"] = MyUtility.Convert.GetInt(dr["PAIR"]) == 1;
+                                ndr2["NoBundleCardAfterSubprocess_String"] = noBundleCardAfterSubprocess_String;
                                 patternTb.Rows.Add(ndr2);
                             }
                         }
@@ -338,7 +343,14 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             {
                 w2.Append(string.Format(" or {0} = '{1}' ", dr[0], maindatarow["FabricPanelCode"]));
             }
-            garmentarRC = garmentTb.Select(w2.ToString()).CopyToDataTable();
+            if (garmentTb.Rows.Count > 0)
+            {
+                garmentarRC = garmentTb.Select(w2.ToString()).CopyToDataTable();
+            }
+            else
+            {
+                garmentarRC = garmentTb.Clone();
+            }
         }
 
         public void grid_setup()
@@ -346,9 +358,10 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             DataGridViewGeneratorNumericColumnSettings NoCell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings qtyCell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorTextColumnSettings subcell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings patternDesc = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings patterncell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings patterncell2 = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings partsCell1 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings partsCell1 = new DataGridViewGeneratorNumericColumnSettings();            
             DataGridViewGeneratorNumericColumnSettings partsCell2 = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings isPair = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorTextColumnSettings NoBundleCardAfterSubprocess_String = new DataGridViewGeneratorTextColumnSettings();
@@ -407,6 +420,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     dr.EndEdit();
                     calAllPart();
                     caltotalpart();
+                    CheckNotMain(dr);
                 }
             };
             patterncell.CellValidating += (s, e) =>
@@ -447,8 +461,18 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     dr["Parts"] = 0;
                 }
                 dr.EndEdit();
+                CheckNotMain(dr);
 
             };
+
+            patternDesc.CellValidating += (s, e) =>
+            {
+                DataRow dr = grid_art.GetDataRow(e.RowIndex);
+                dr["PatternDesc"] = e.FormattedValue;
+                dr.EndEdit();
+                CheckNotMain(dr);
+            };
+
             subcell.EditingMouseDown += (s, e) =>
             {
                 DataRow dr = grid_art.GetDataRow(e.RowIndex);
@@ -467,11 +491,11 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
 
                     string[] arts = MyUtility.Convert.GetString(dr["art"]).Split('+');
                     string[] pssps = MyUtility.Convert.GetString(dr["PostSewingSubProcess_String"]).Split('+');
-                    string nbcass = MyUtility.Convert.GetString(dr["NoBundleCardAfterSubprocess_String"]);
-                    if (!arts.Contains(nbcass))
-                    {
-                        dr["NoBundleCardAfterSubprocess_String"] = string.Empty;
-                    }
+                    //string nbcass = MyUtility.Convert.GetString(dr["NoBundleCardAfterSubprocess_String"]);
+                    //if (!arts.Contains(nbcass))
+                    //{
+                    //    dr["NoBundleCardAfterSubprocess_String"] = string.Empty;
+                    //}
                     List<string> recordPS = new List<string>();
                     foreach (var item in arts)
                     {
@@ -482,6 +506,8 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     }
                     dr["PostSewingSubProcess_String"] = string.Join("+", recordPS);
                     dr.EndEdit();
+
+
 
                     DataRow[] artdr = artTb.Select(string.Format("PatternCode='{0}'", dr["PatternCode"]));
                     foreach (DataRow adr in artdr)
@@ -495,6 +521,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                         ndr["subprocessid"] = dt["id"];
                         artTb.Rows.Add(ndr);
                     }
+                    CheckNotMain(dr);
                 }
             };
             PostSewingSubProcess_String.EditingMouseDown += (s, e) =>
@@ -666,7 +693,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             grid_art.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid_art)
             .Text("PatternCode", header: "CutPart", width: Widths.AnsiChars(10), settings: patterncell)
-            .Text("PatternDesc", header: "CutPart Name", width: Widths.AnsiChars(15))
+            .Text("PatternDesc", header: "CutPart Name", width: Widths.AnsiChars(15), settings: patternDesc)
             .Text("Location", header: "Location", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("art", header: "Artwork", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: subcell)
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partsCell1)
@@ -1492,7 +1519,71 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             this.listControlBindingSource1.DataSource = null;
         }
 
+        private List<string> GetNotMain(DataRow dr, DataRow[] drs)
+        {
+            List<string> annList = new List<string>();
+            if (MyUtility.Convert.GetBool(dr["Main"]))
+            {
+                return annList;
+            }
 
+            string[] ann = MyUtility.Convert.GetString(dr["annotation"]).Split('+'); //剖析Annotation 不去除數字 EX:AT01
+
+            // 每一筆 Annotation 去回找是否有標記主裁片
+            foreach (string item in ann)
+            {
+                string anno = Regex.Replace(item, @"[\d]", string.Empty);
+                // 判斷此 Annotation 在Cutting B01 是否為 IsBoundedProcess
+                string sqlcmd = $@"select 1 from Subprocess with(nolock) where id = '{anno}' and IsBoundedProcess =1 ";
+                bool IsBoundedProcess = MyUtility.Check.Seek(sqlcmd);
+                
+                // 是否有主裁片存在
+                bool hasMain = drs.AsEnumerable().
+                    Where(w => MyUtility.Convert.GetString(w["annotation"]).Split('+').Contains(item) && MyUtility.Convert.GetBool(w["Main"])).Any();
+
+                if (IsBoundedProcess && hasMain)
+                {
+                    annList.Add(anno); // 去除字串中數字並加入List
+                }
+            }
+
+            return annList;
+        }
+
+        private void CheckNotMain(DataRow dr)
+        {
+            // 1.先判斷 PatternCode + PatternDesc 是否存在 garmentarRC (為 garmentTb 篩選後)
+            // 2.判斷選擇的 Artwork  EX:選擇 AT+HT, 在PatternCode + PatternDes找到 HT+AT01, 才算此筆為 garmentarRC 內的資料
+            // 3.判斷是否為次要裁
+            DataRow[] drs = garmentarRC.Select($"PatternCode='{dr["PatternCode"]}'and PatternDesc = '{dr["PatternDesc"]}'");
+            if (drs.Length == 0)
+            {
+                dr["NoBundleCardAfterSubprocess_String"] = string.Empty;
+                dr.EndEdit();
+                return;
+            }
+            DataRow dr1 = drs[0]; // 找到也只會有一筆
+            string[] ann = Regex.Replace(dr1["annotation"].ToString(), @"[\d]", string.Empty).Split('+'); //剖析Annotation 去除字串中數字
+            string[] anns = dr["art"].ToString().Split('+'); //剖析Annotation, 已經是去除數字
+            if (!compareArr(ann, anns)) // 兩個陣列內容要完全一樣，不管順序
+            {
+                dr["NoBundleCardAfterSubprocess_String"] = string.Empty;
+                dr.EndEdit();
+                return;
+            }
+            List<string> notMainList = this.GetNotMain(dr1, garmentarRC.Select()); // 帶入未去除數字的annotation資料
+            string noBundleCardAfterSubprocess_String = string.Join("+", notMainList);
+            dr["NoBundleCardAfterSubprocess_String"] = noBundleCardAfterSubprocess_String;
+            dr.EndEdit();
+        }
+
+        public static bool compareArr(string[] arr1, string[] arr2)
+        {
+            var q = from a in arr1 join b in arr2 on a equals b select a;
+            bool flag = arr1.Length == arr2.Length && q.Count() == arr1.Length;
+
+            return flag;//內容相同返回true,反之返回false。
+        }
 
         private DataTable ToDataTable<T>(List<T> items)
         {
@@ -1520,9 +1611,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
 
             return tb;
         }
-        /// <summary>
-        /// Determine of specified type is nullable
-        /// </summary>
+         
         public static bool IsNullable(Type t)
         {
             return !t.IsValueType || (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>));

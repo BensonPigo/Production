@@ -287,9 +287,11 @@
             // 
             this.chkIsBoundedProcess.AutoSize = true;
             this.chkIsBoundedProcess.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsBoundedProcess", true));
-            this.chkIsBoundedProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIsBoundedProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkIsBoundedProcess.IsSupportEditMode = false;
             this.chkIsBoundedProcess.Location = new System.Drawing.Point(315, 221);
             this.chkIsBoundedProcess.Name = "chkIsBoundedProcess";
+            this.chkIsBoundedProcess.ReadOnly = true;
             this.chkIsBoundedProcess.Size = new System.Drawing.Size(153, 21);
             this.chkIsBoundedProcess.TabIndex = 26;
             this.chkIsBoundedProcess.Text = "Is Bounded Process";

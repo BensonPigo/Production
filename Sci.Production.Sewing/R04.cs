@@ -117,6 +117,7 @@ select s.id
     ,[SewingReasonDesc] = isnull(sr.SewingReasonDesc,'')
 	,[Remark] = isnull(ssd.SewingOutputRemark,'')
     ,o.SciDelivery 
+    ,Cancel=iif(o.Junk=1,'Y','' )
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
@@ -188,6 +189,11 @@ where 1=1 "));
                 sqlCmd.Append($@" and f.Type != 'S'" + Environment.NewLine);
             }
 
+            if (this.chkOnlyCancelOrder.Checked)
+            {
+                sqlCmd.Append($@" and o.Junk = 1 " + Environment.NewLine);
+            }
+
             if (!MyUtility.Check.Empty(this.shift))
             {
                 switch (this.shift)
@@ -249,6 +255,7 @@ select distinct OutputDate
     ,SubconInType
     ,SewingReasonDesc
     ,Remark
+    ,Cancel
 into #tmpSewingGroup
 from #tmpSewingDetail t
 outer apply(
@@ -400,6 +407,7 @@ select * from(
         ,CustPONo
         ,t.BuyerDelivery
 		,t.SciDelivery
+        ,t.Cancel
         ,t.OrderQty
 		,Brand = IIF(t.Category=''M'',MockupBrandID,OrderBrandID)
 		,Category = IIF(t.OrderCategory=''M'',''Mockup'',IIF(LocalOrder = 1,''Local Order'',IIF(t.OrderCategory=''B'',''Bulk'',IIF(t.OrderCategory=''S'',''Sample'',IIF(t.OrderCategory=''G'',''Garment'','''')))))

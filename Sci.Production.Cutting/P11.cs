@@ -60,6 +60,7 @@ namespace Sci.Production.Cutting
             DataGridViewGeneratorNumericColumnSettings partQtyCell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings partQtyCell2 = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorTextColumnSettings subcell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings patternDesc = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings chcutref = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorTextColumnSettings itemsetting = new DataGridViewGeneratorTextColumnSettings();
 
@@ -230,6 +231,7 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
                     dr["art"] = art;
                     dr["parts"] = 1;
                     dr.EndEdit();
+                    CheckNotMain(dr);
                 }
             };
             patterncell.CellValidating += (s, e) =>
@@ -264,6 +266,7 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
                 }
                 dr.EndEdit();
                 calpart();
+                CheckNotMain(dr);
             };
             patterncell2.EditingMouseDown += (s, e) =>
             {
@@ -285,6 +288,15 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
                     calpart();
                 }
             };
+
+            patternDesc.CellValidating += (s, e) =>
+            {
+                DataRow dr = gridCutpart.GetDataRow(e.RowIndex);
+                dr["PatternDesc"] = e.FormattedValue;
+                dr.EndEdit();
+                CheckNotMain(dr);
+            };
+
             subcell.EditingMouseDown += (s, e) =>
             {
                 DataRow dr = gridCutpart.GetDataRow(e.RowIndex);
@@ -318,6 +330,7 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
                     }
                     dr["PostSewingSubProcess_String"] = string.Join("+", recordPS);
                     dr.EndEdit();
+                    CheckNotMain(dr);
                 }
             };
             PostSewingSubProcess_String.EditingMouseDown += (s, e) =>
@@ -566,7 +579,7 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
             gridCutpart.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.gridCutpart)
             .Text("PatternCode", header: "CutPart", width: Widths.AnsiChars(10), settings: patterncell)
-            .Text("PatternDesc", header: "CutPart Name", width: Widths.AnsiChars(15))
+            .Text("PatternDesc", header: "CutPart Name", width: Widths.AnsiChars(15), settings: patternDesc)
             .Text("Location", header: "Location", iseditingreadonly: true, width: Widths.AnsiChars(5))
             .Text("art", header: "Artwork", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: subcell)
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partQtyCell)
@@ -1040,6 +1053,10 @@ order by ArticleGroup", patternukey);
                 }
                 else
                 {
+                    //取得哪些 annotation 是次要
+                    List<string> notMainList = this.GetNotMain(dr, garmentar);
+                    string noBundleCardAfterSubprocess_String = string.Join("+", notMainList);
+
                     //Annotation 
                     string[] ann = Regex.Replace(dr["annotation"].ToString(), @"[\d]", string.Empty).Split('+'); //剖析Annotation
                     string art = "";
@@ -1069,6 +1086,7 @@ order by ArticleGroup", patternukey);
                                     ndr2["Cutref"] = cutref;
                                     ndr2["iden"] = iden;
                                     ndr2["isPair"] = MyUtility.Convert.GetInt(dr["Pair"]) == 1;
+                                    ndr2["NoBundleCardAfterSubprocess_String"] = noBundleCardAfterSubprocess_String;
                                     patternTb.Rows.Add(ndr2);
                                 }
                             }
@@ -1084,6 +1102,7 @@ order by ArticleGroup", patternukey);
                                 ndr2["Cutref"] = cutref;
                                 ndr2["iden"] = iden;
                                 ndr2["isPair"] = MyUtility.Convert.GetInt(dr["Pair"]) == 1;
+                                ndr2["NoBundleCardAfterSubprocess_String"] = noBundleCardAfterSubprocess_String;
                                 patternTb.Rows.Add(ndr2);
                             }
                         }
@@ -2303,6 +2322,72 @@ inner join Bundle b with (nolock) on bd.ID = b.ID
             }
             
             gridArticleSize.Refresh();
+        }
+
+        private List<string> GetNotMain(DataRow dr, DataRow[] drs)
+        {
+            List<string> annList = new List<string>();
+            if (MyUtility.Convert.GetBool(dr["Main"]))
+            {
+                return annList;
+            }
+
+            string[] ann = MyUtility.Convert.GetString(dr["annotation"]).Split('+'); //剖析Annotation 不去除數字 EX:AT01
+
+            // 每一筆 Annotation 去回找是否有標記主裁片
+            foreach (string item in ann)
+            {
+                string anno = Regex.Replace(item, @"[\d]", string.Empty);
+                // 判斷此 Annotation 在Cutting B01 是否為 IsBoundedProcess
+                string sqlcmd = $@"select 1 from Subprocess with(nolock) where id = '{anno}' and IsBoundedProcess =1 ";
+                bool IsBoundedProcess = MyUtility.Check.Seek(sqlcmd);
+
+                // 是否有主裁片存在
+                bool hasMain = drs.AsEnumerable().
+                    Where(w => MyUtility.Convert.GetString(w["annotation"]).Split('+').Contains(item) && MyUtility.Convert.GetBool(w["Main"])).Any();
+
+                if (IsBoundedProcess && hasMain)
+                {
+                    annList.Add(anno); // 去除字串中數字並加入List
+                }
+            }
+
+            return annList;
+        }
+
+        private void CheckNotMain(DataRow dr)
+        {
+            // 1.先判斷 PatternCode + PatternDesc 是否存在 GarmentTb
+            // 2.判斷選擇的 Artwork  EX:選擇 AT+HT, 在PatternCode + PatternDes找到 HT+AT01, 才算此筆為 GarmentTb 內的資料
+            // 3.判斷是否為次要裁
+            DataRow[] drs = GarmentTb.Select($"PatternCode='{dr["PatternCode"]}'and PatternDesc = '{dr["PatternDesc"]}'");
+            if (drs.Length == 0)
+            {
+                dr["NoBundleCardAfterSubprocess_String"] = string.Empty;
+                dr.EndEdit();
+                return;
+            }
+            DataRow dr1 = drs[0]; // 找到也只會有一筆
+            string[] ann = Regex.Replace(dr1["annotation"].ToString(), @"[\d]", string.Empty).Split('+'); //剖析Annotation 去除字串中數字
+            string[] anns = dr["art"].ToString().Split('+'); //剖析Annotation, 已經是去除數字
+            if (!compareArr(ann, anns)) // 兩個陣列內容要完全一樣，不管順序
+            {
+                dr["NoBundleCardAfterSubprocess_String"] = string.Empty;
+                dr.EndEdit();
+                return;
+            }
+            List<string> notMainList = this.GetNotMain(dr1, GarmentTb.Select()); // 帶入未去除數字的annotation資料
+            string noBundleCardAfterSubprocess_String = string.Join("+", notMainList);
+            dr["NoBundleCardAfterSubprocess_String"] = noBundleCardAfterSubprocess_String;
+            dr.EndEdit();
+        }
+
+        public static bool compareArr(string[] arr1, string[] arr2)
+        {
+            var q = from a in arr1 join b in arr2 on a equals b select a;
+            bool flag = arr1.Length == arr2.Length && q.Count() == arr1.Length;
+
+            return flag;//內容相同返回true,反之返回false。
         }
 
         private DataTable ToDataTable<T>(List<T> items)

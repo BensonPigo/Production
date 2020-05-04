@@ -31,8 +31,14 @@
     [CompleteDate]        DATE            NULL,
     [RespDeptConfirmDate] DATETIME        NULL,
     [RespDeptConfirmName] VARCHAR (10)    DEFAULT ('') NOT NULL,
+    [TransferName]        VARCHAR (10)    NULL,
+    [TransferDate]        DATETIME        NULL,
+    [TransferResponsible] VARCHAR (1)     DEFAULT ('') NULL,
+    [TransferNo]          VARCHAR (13)    NULL,
     CONSTRAINT [PK_ReplacementReport] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

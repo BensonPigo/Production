@@ -291,28 +291,39 @@ and SciMachine_MachinePending.TPEComplete=0
 
 ----MachinePending_Detail----
 select 
-	SciMachine_MachinePending_Detail.ID
-	,SciMachine_MachinePending_Detail.Seq
-	,SciMachine_MachinePending_Detail.MachineID
-	,SciMachine_MachinePending_Detail.OldStatus
-	,SciMachine_MachinePending_Detail.Results
-	,SciMachine_MachinePending_Detail.Remark
-	,MasterGroupID=SciMachine_Machine.MasterGroupID+SciMachine_Machine.MachineGroupID
-	,SciMachine_Machine.MachineBrandID
-	,SciMachine_Machine.Model
-	,SciMachine_Machine.SerialNo
-	,SciMachine_Machine.LocationM
-	,SciMachine_Machine.ArriveDate
-	,UsageTime = concat(ym.UsageTime/360,'Y',(ym.UsageTime%360)/30,'M')
-	,SciMachine_MachinePending_Detail.MachineDisposeID
+  SciMachine_MachinePending_Detail.ID
+  ,SciMachine_MachinePending_Detail.Seq
+  ,SciMachine_MachinePending_Detail.MachineID
+  ,SciMachine_MachinePending_Detail.OldStatus
+  ,SciMachine_MachinePending_Detail.Results
+  ,SciMachine_MachinePending_Detail.Remark
+  ,MasterGroupID=SciMachine_Machine.MasterGroupID+SciMachine_Machine.MachineGroupID
+  ,SciMachine_Machine.MachineBrandID
+  ,SciMachine_Machine.Model
+  ,SciMachine_Machine.SerialNo
+  ,SciMachine_Machine.LocationM
+  ,SciMachine_Machine.ArriveDate
+  ,UsageTime = concat(ym.UsageTime/360,'Y',(ym.UsageTime%360)/30,'M')
+  ,SciMachine_MachinePending_Detail.MachineDisposeID
 into MachinePending_Detail
 from Production.dbo.SciMachine_MachinePending_Detail
-inner join MachinePending on MachinePending.ID = SciMachine_MachinePending_Detail.ID
+inner join (
+	---- 除了申請 Machine to Dispose 等待台北 Approved的資料以外
+	---- 再將30天內從台北 approve 後, 從工廠端轉 Dispose的MachinePending detail資料傳回台北更新 Result , MachineDisposeID
+	select id, Cdate from MachinePending
+	union
+	select m.id , m.Cdate
+	from Production.dbo.SciMachine_MachinePending m
+	INNER JOIN Production.dbo.SciMachine_MachinePending_Detail md ON m.ID = md.ID
+	INNER JOIN Production.dbo.SciMachine_MachineDispose d ON  md.MachineDisposeID = d.ID
+	where (d.AddDate  between DATEADD(Day,-30,getdate()) and DATEADD(Day,30,getdate())   OR
+		  d.EditDate  between DATEADD(Day,-30,getdate()) and DATEADD(Day,30,getdate()) ) 
+	
+)MP on MP.ID = SciMachine_MachinePending_Detail.ID
 left join Production.dbo.SciMachine_Machine with (nolock) on SciMachine_Machine.ID = SciMachine_MachinePending_Detail.MachineID
-outer apply(select UsageTime=DATEDIFF(DAY,SciMachine_Machine.ArriveDate,MachinePending.cDate)+1)ym
+outer apply(select UsageTime=DATEDIFF(DAY,SciMachine_Machine.ArriveDate, MP.cDate)+1)ym
+
 
 END
-
-
 
 
