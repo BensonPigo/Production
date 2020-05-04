@@ -1320,8 +1320,7 @@ update Inspection set
 	OrderId = '{item["ToOrderID"]}',
 	Location = '{item["ToComboType"]}', 
 	Article = '{item["ToArticle"]}', 
-	Size = '{item["ToSizeCode"]}', 
-	EditDate = GETDATE(), 
+	Size = '{item["ToSizeCode"]}',  
 	StyleUkey = {item["styleUkey"]}, 
 	SewingOutputTransfer_DetailUkey = {item["Ukey"]}
 from Inspection with(nolock)
