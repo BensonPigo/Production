@@ -161,6 +161,7 @@
     [ForecastCategory] VARCHAR NULL DEFAULT (''), 
     [OnSiteSample] BIT NULL DEFAULT ((0)), 
     [PulloutCmplDate] DATE NULL, 
+    [NeedProduction] BIT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
