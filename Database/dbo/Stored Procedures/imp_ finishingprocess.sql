@@ -119,6 +119,40 @@ Begin
 	) ON [PRIMARY]
 
 	END
+	
+	IF OBJECT_ID(N'CompleteCFAReceive') IS NULL
+	BEGIN
+		CREATE TABLE [dbo].[CompleteCFAReceive](
+		[SCICtnNo] [varchar](15) NOT NULL,
+		[Time] [datetime] NULL,
+		[SCIUpdate] [bit] NOT NULL DEFAULT ((0)),
+	 CONSTRAINT [PK_CompleteCFAReceive] PRIMARY KEY CLUSTERED 
+	(
+		[SCICtnNo] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+	;	
+	EXECUTE sp_addextendedproperty N'MS_Description', N'SCI箱號', N'SCHEMA', N'dbo', N'TABLE', N'CompleteCFAReceive', N'COLUMN', N'SCICtnNo';
+	EXECUTE sp_addextendedproperty N'MS_Description', N'WMS完成時間', N'SCHEMA', N'dbo', N'TABLE', N'CompleteCFAReceive', N'COLUMN', N'Time';
+	EXECUTE sp_addextendedproperty N'MS_Description', N'SCI是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'CompleteCFAReceive', N'COLUMN', N'SCIUpdate';
+	END
+	
+	IF OBJECT_ID(N'CompleteCFAReturn') IS NULL
+	BEGIN
+		CREATE TABLE [dbo].CompleteCFAReturn(
+		[SCICtnNo] [varchar](15) NOT NULL,
+		[Time] [datetime] NULL,
+		[SCIUpdate] [bit] NOT NULL DEFAULT ((0)),
+	 CONSTRAINT [PK_CompleteCFAReturn] PRIMARY KEY CLUSTERED 
+	(
+		[SCICtnNo] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+	;	
+	EXECUTE sp_addextendedproperty N'MS_Description', N'SCI箱號', N'SCHEMA', N'dbo', N'TABLE', N'CompleteCFAReturn', N'COLUMN', N'SCICtnNo';
+	EXECUTE sp_addextendedproperty N'MS_Description', N'WMS完成時間', N'SCHEMA', N'dbo', N'TABLE', N'CompleteCFAReturn', N'COLUMN', N'Time';
+	EXECUTE sp_addextendedproperty N'MS_Description', N'SCI是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'CompleteCFAReturn', N'COLUMN', N'SCIUpdate';
+	END
 End
 
 -- Create Tmp Table
@@ -433,7 +467,108 @@ Begin
 			where t.ID = tmp.id)
 	End
 
+	
+	-- 09 CompleteCFAReceive
+	Begin
+		SELECT * 
+		INTO #tmpCompleteCFAReceive
+		FROM CompleteCFAReceive
+		WHERE SCIUpdate = 0
+		;
+		----先拉出需要的資訊
+		SELECT DISTINCT 
+		     [ReceiveDate] = Time
+			,o.MDivisionID 
+			,pd.OrderID 
+			,[PackingListID] = pd.ID 
+			,pd.CTNStartNo 
+			,[AddName] = 'SCIMIS' 
+			,[AddDate] = GETDATE()
+			,[PackingList_Detail_Ukey] = pd.Ukey
+		INTO #tmpCompleteCFAReceive_WithUkey
+		FROM #tmpCompleteCFAReceive c
+		INNER JOIN Production.dbo.PackingList_Detail pd ON c.SCICtnNo = pd.SCICtnNo
+		INNER JOIN Production.dbo.PackingList p ON p.ID = pd.ID
+		INNER JOIN Production.dbo.Orders o ON o.id = pd.OrderID
+		;
+		----1. 將 CFA 收箱的紀錄寫入資料表 CFAReceive
+		INSERT INTO Production.dbo.CFAReceive 
+			(ReceiveDate 
+			 ,MDivisionID ,OrderID ,PackingListID ,CTNStartNo ,AddName ,AddDate)
+		SELECT DISTINCT 
+		     [ReceiveDate] = Cast(ReceiveDate As Date)  
+			 ,MDivisionID ,OrderID ,PackingListID ,CTNStartNo ,AddName ,AddDate
+		FROM #tmpCompleteCFAReceive_WithUkey
+		;
+		----2. 更新 PackingList_Detail 的資訊
+		UPDATE pd
+		SET  ClogLocationID = '' 
+			,CFAReceiveDate = Cast( s.ReceiveDate as Date) 
+			,CFALocationID  = 'CFA'
+		FROM Production.dbo.PackingList_Detail pd
+		INNER JOIN #tmpCompleteCFAReceive_WithUkey s ON pd.Ukey = s.PackingList_Detail_Ukey
+		;
+		----3. 將 CompleteCFAReceive.SCIUpdate 改為 1
+		UPDATE t
+		SET t.SCIUpdate  = 1
+		FROM CompleteCFAReceive t
+		INNER JOIN #tmpCompleteCFAReceive s ON t.SCICtnNo = s.SCICtnNo
+		;
+	End
+	
+	-- 10 CompleteCFAReturn
+	Begin
+		SELECT * 
+		INTO #tmpCompleteCFAReturn
+		FROM CompleteCFAReturn
+		WHERE SCIUpdate = 0
+		;
+		----先拉出需要的資訊
+		SELECT DISTINCT 
+		     [ReturnDate] = Time
+			,o.MDivisionID 
+			,pd.OrderID 
+			,[PackingListID] = pd.ID 
+			,pd.CTNStartNo 
+			,[AddName] = 'SCIMIS' 
+			,[AddDate] = GETDATE()
+			,pd.SCICtnNo
+			,[PackingList_Detail_Ukey] = pd.Ukey
+		INTO #tmpCompleteCFAReturn_WithUkey
+		FROM #tmpCompleteCFAReturn c
+		INNER JOIN Production.dbo.PackingList_Detail pd ON c.SCICtnNo = pd.SCICtnNo
+		INNER JOIN Production.dbo.PackingList p ON p.ID = pd.ID
+		INNER JOIN Production.dbo.Orders o ON o.id = pd.OrderID
+		;
+		----1. 將 CFA 退箱的紀錄寫入資料表 CFAReturn
+		INSERT INTO Production.dbo.CFAReturn 
+			(ReturnDate 
+			 ,MDivisionID ,OrderID ,PackingListID ,CTNStartNo ,AddName ,AddDate ,ReturnTo ,SCICtnNo)
+		SELECT DISTINCT 
+		     [ReturnDate] = Cast(ReturnDate As Date)  
+			 ,MDivisionID ,OrderID ,PackingListID ,CTNStartNo ,AddName ,AddDate ,'Clog'   ,SCICtnNo
+		FROM #tmpCompleteCFAReturn_WithUkey
+		;
+		----2. 更新 PackingList_Detail 的資訊
+		UPDATE pd
+		SET  TransferCFADate = NULL
+			,CFAReceiveDate = NULL
+			,CFALocationID  = ''
+			,CFAReturnClogDate  = Cast( s.ReturnDate as Date) 
+			,ClogLocationID = '2Clog'
+		FROM Production.dbo.PackingList_Detail pd
+		INNER JOIN #tmpCompleteCFAReturn_WithUkey s ON pd.Ukey = s.PackingList_Detail_Ukey
+		;
+		----3. 將 CompleteCFAReceive.SCIUpdate 改為 1
+		UPDATE t
+		SET t.SCIUpdate  = 1
+		FROM CompleteCFAReturn t
+		INNER JOIN #tmpCompleteCFAReturn s ON t.SCICtnNo = s.SCICtnNo
+		;
+	End
+
 	drop table #tmp_LastLocation,#tmpCompleteClogReturn,#tmpCompletePullout,#tmpCompleteSacnPack,#tmpCompleteTransferToCFA,#tmpTransferLocation
+	,#tmpCompleteCFAReceive ,#tmpCompleteCFAReceive_WithUkey ,#tmpCompleteCFAReturn ,#tmpCompleteCFAReturn_WithUkey
 End
 
 -- 跑迴圈執行procedure(UpdateOrdersCTN, CreateOrderCTNData)

@@ -340,6 +340,42 @@ CREATE TABLE [dbo].[LocalItem] (
 ) ON [PRIMARY]
 END
 
+IF OBJECT_ID(N'CFANeedInsp') IS NULL
+BEGIN 
+CREATE TABLE [dbo].[CFANeedInsp] (
+    [SCICtnNo]			varchar(15) NOT NULL,
+	[CmdTime]			Datetime NOT NULL,
+    [GenSongUpdated]	bit   NOT NULL DEFAULT ((0)) ,
+	CONSTRAINT [PK_CFANeedInsp] PRIMARY KEY CLUSTERED 
+	(
+		[SCICtnNo] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+	;	
+	EXECUTE sp_addextendedproperty N'MS_Description', N'SCI箱號', N'SCHEMA', N'dbo', N'TABLE', N'CFANeedInsp', N'COLUMN', N'SCICtnNo';
+	EXECUTE sp_addextendedproperty N'MS_Description', N'SCI寫入/更新此筆資料時間', N'SCHEMA', N'dbo', N'TABLE', N'CFANeedInsp', N'COLUMN', N'CmdTime';
+	EXECUTE sp_addextendedproperty N'MS_Description', N'GenSong是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'CFANeedInsp', N'COLUMN', N'GenSongUpdated';
+END
+
+IF OBJECT_ID(N'ClogGarmentDispose') IS NULL
+BEGIN 
+CREATE TABLE [dbo].[ClogGarmentDispose] (
+    [SCICtnNo]			varchar(15) NOT NULL,
+	[CmdTime]			Datetime NOT NULL,
+    [Dispose]			bit   NOT NULL DEFAULT ((1)) ,
+    [GenSongUpdated]	bit   NOT NULL DEFAULT ((0)) ,
+	CONSTRAINT [PK_ClogGarmentDispose] PRIMARY KEY CLUSTERED 
+	(
+		[SCICtnNo] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+	;	
+	EXECUTE sp_addextendedproperty N'MS_Description', N'SCI箱號', N'SCHEMA', N'dbo', N'TABLE', N'ClogGarmentDispose', N'COLUMN', N'SCICtnNo';
+	EXECUTE sp_addextendedproperty N'MS_Description', N'SCI寫入/更新此筆資料時間', N'SCHEMA', N'dbo', N'TABLE', N'ClogGarmentDispose', N'COLUMN', N'CmdTime';
+	EXECUTE sp_addextendedproperty N'MS_Description', N'0:轉回倉庫; 1:轉出倉庫報廢', N'SCHEMA', N'dbo', N'TABLE', N'ClogGarmentDispose', N'COLUMN', N'Dispose';
+	EXECUTE sp_addextendedproperty N'MS_Description', N'GenSong是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'ClogGarmentDispose', N'COLUMN', N'GenSongUpdated';
+END
+
 declare @cDate date = @inputDate;
 declare @yestarDay date =CONVERT(Date, dateAdd(day,-1,GetDate()));
 --declare @cDate date = CONVERT(date, DATEADD(DAY,-10, GETDATE()));-- for test
@@ -959,6 +995,45 @@ UPDATE SET
 WHEN NOT MATCHED BY TARGET THEN
 	INSERT( Refno		,UnPack		,Junk		,CmdTime		,SunriseUpdated		,GenSongUpdated		)
 	VALUES( s.Refno		,s.UnPack	,s.Junk		,GETDATE()		,0					,0					)
+;
+
+--15. CFANeedInsp
+MERGE CFANeedInsp AS T
+USING(
+	SELECT DISTINCT pd.SCICtnNo, [CmdTime]=GETDATE(), [GenSongUpdated]=0
+	FROM Production.dbo.PackingList p
+	INNER JOIN Production.dbo.PackingList_Detail pd ON p.ID= pd.ID
+	where pd.CFASelectInspDate = @cDate AND pd.CFANeedInsp = 1
+) as S
+on t.SCICtnNo = s.SCICtnNo
+WHEN MATCHED THEN
+UPDATE SET
+	t.CmdTime = s.CmdTime,
+	t.GenSongUpdated = s.GenSongUpdated
+WHEN NOT MATCHED BY TARGET THEN
+INSERT(SCICtnNo, CmdTime, GenSongUpdated )
+Values(s.SCICtnNo, s.CmdTime, s.GenSongUpdated )
+;
+
+--16. ClogGarmentDispose
+MERGE ClogGarmentDispose AS T
+USING(
+	SELECT DISTINCT pd.SCICtnNo, [CmdTime]=GETDATE(), [Dispose] = IIF(a.Status='Confirmed',1,0), [GenSongUpdated]=0
+	FROM Production.dbo.ClogGarmentDispose a 
+	INNER JOIN Production.dbo.ClogGarmentDispose_Detail b ON a.ID= b.ID
+	INNER JOIN Production.dbo.PackingList p ON p.ID = b.PackingListID
+	INNER JOIN Production.dbo.PackingList_Detail pd On p.ID = pd.ID
+	WHERE (Cast(a.EditDate as Date) = @cDate OR Cast(a.AddDate as Date) = @cDate)
+) as S
+on t.SCICtnNo = s.SCICtnNo
+WHEN MATCHED THEN
+UPDATE SET
+	t.CmdTime = s.CmdTime,
+	t.Dispose = s.Dispose,
+	t.GenSongUpdated = s.GenSongUpdated
+WHEN NOT MATCHED BY TARGET THEN
+INSERT(SCICtnNo, CmdTime, Dispose, GenSongUpdated )
+Values(s.SCICtnNo, s.CmdTime, s.Dispose,  s.GenSongUpdated )
 ;
 
 END try
