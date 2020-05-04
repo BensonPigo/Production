@@ -924,7 +924,7 @@ group by i.Location,i.ArtworkTypeID";
                 if (dtGSD_Summary.Rows.Count == 0)
                 {
                     sqlCmd = $@" 
-select cast(round(sum(isnull(o.smv,0)*id.Frequency*(isnull(id.MtlFactorRate,0)/100+1)*60),0) as decimal(20,2)) as tms 
+select cast(round(sum(isnull(id.smv,0)*id.Frequency*(isnull(id.MtlFactorRate,0)/100+1)*60),0) as decimal(20,2)) as tms 
 from Style s WITH (NOLOCK) 
 inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
 inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
