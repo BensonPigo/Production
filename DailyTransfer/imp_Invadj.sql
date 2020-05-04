@@ -142,6 +142,7 @@ SET
  )
 ,a.PulloutComplete = 1
 ,a.MDClose = GETDATE()
+,a.PulloutCmplDate = CAST(GETDATE() as date)
 FROM Production.dbo.Orders as a 
 WHERE a.Qty = 
 	(

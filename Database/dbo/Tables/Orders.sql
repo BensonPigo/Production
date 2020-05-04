@@ -160,6 +160,7 @@
     [BuyBackOrderID] VARCHAR(13) NULL, 
     [ForecastCategory] VARCHAR NULL DEFAULT (''), 
     [OnSiteSample] BIT NULL DEFAULT ((0)), 
+    [PulloutCmplDate] DATE NULL, 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -806,3 +807,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'除溼室�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'預估單分類', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'ForecastCategory';
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'PulloutComplete 最後的更新時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Orders',
+    @level2type = N'COLUMN',
+    @level2name = N'PulloutCmplDate'

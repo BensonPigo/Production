@@ -34,7 +34,8 @@ BEGIN
 			cast (null as date) as SDPDate,
 			cast(0 as bit) as PulloutComplete,
 			cast('' as varchar(10) ) as MCHandle,
-			cast(null as date) as MDClose
+			cast(null as date) as MDClose,
+			cast(null as date) as PulloutCmplDate 
 	into #TOrder
 	from Trade_To_Pms.dbo.Orders a WITH (NOLOCK)
 	inner join Production.dbo.Factory b WITH (NOLOCK) on a.FactoryID=b.ID
@@ -98,7 +99,8 @@ BEGIN
 				, t.PulloutComplete = iif((t.GMTComplete='P' OR t.GMTComplete='' or t.GMTComplete is null), 0, 1)
 				, t.MDClose = iif((t.GMTComplete='P' OR t.GMTComplete='' or t.GMTComplete is null) 
 				, t.MDClose
-				, convert(date,getdate()))                                                                                             
+				, convert(date,getdate()))
+				, PulloutCmplDate = IIF(t.CMPLTDATE > s1.PulloutCmplDate or (t.CMPLTDATE is not null and s1.PulloutCmplDate is null), cast(GETDATE() as date), s1.PulloutCmplDate)
 		from #TOrder as t
 		left join Production.dbo.Orders as s1 on t.ID=s1.ID
 		where s1.ID is null
@@ -534,7 +536,8 @@ BEGIN
 				t.AllowanceComboID = s.AllowanceComboID,
 				t.ChangeMemoDate       = s.ChangeMemoDate,
 				t.ForecastCategory     = s.ForecastCategory,
-				t.OnSiteSample		   = s.OnSiteSample
+				t.OnSiteSample		   = s.OnSiteSample,
+				t.PulloutCmplDate	   = s.PulloutCmplDate
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -564,7 +567,7 @@ BEGIN
 			, KPICmpq				, KPIMNotice			, GFR					, SDPDate				, PulloutComplete		
 			, SewINLINE				, FtyGroup				, ForecastSampleGroup	, DyeingLoss			, SubconInType
 			, LastProductionDate	, EstPODD				, AirFreightByBrand		, AllowanceComboID      , ChangeMemoDate
-			, ForecastCategory		, OnSiteSample
+			, ForecastCategory		, OnSiteSample			, PulloutCmplDate
 
 		) values (
 			s.ID					, s.BrandID				, s.ProgramID			, s.StyleID				, s.SeasonID 
@@ -594,7 +597,7 @@ BEGIN
 			, s.KPICmpq 			, s.KPIMNotice			, s.GFR					, s.SDPDate				, s.PulloutComplete		
 			, s.SewINLINE           , s.FTY_Group			, s.ForecastSampleGroup , s.DyeingLoss          , '0'
 			, s.LastProductionDate	, s.EstPODD				, s.AirFreightByBrand	, s.AllowanceComboID    , s.ChangeMemoDate
-			, s.ForecastCategory	, s.OnSiteSample
+			, s.ForecastCategory	, s.OnSiteSample		, s.PulloutCmplDate
 		)
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
