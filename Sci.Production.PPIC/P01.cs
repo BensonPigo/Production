@@ -435,6 +435,17 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 }
             }
 
+            if (this.CurrentMaintain["LocalOrder"].ToString().ToUpper() == "TRUE" && this.CurrentMaintain["Junk"].ToString().ToUpper() == "TRUE" && this.dataType == "1" && this.EditMode)
+            {
+                this.chkNeedProduction.ReadOnly = false;
+                this.chkNeedProduction.IsSupportEditMode = true;
+            }
+            else
+            {
+                this.chkNeedProduction.ReadOnly = true;
+                this.chkNeedProduction.IsSupportEditMode = false;
+            }
+
             GetIsDevSample();
         }
 

@@ -299,6 +299,7 @@
             this.labBBSP = new Sci.Win.UI.Label();
             this.chkOnSiteSample = new Sci.Win.UI.CheckBox();
             this.chkBuyBack = new Sci.Win.UI.CheckBox();
+            this.chkNeedProduction = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -315,6 +316,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkNeedProduction);
             this.detailcont.Controls.Add(this.chkOnSiteSample);
             this.detailcont.Controls.Add(this.labBBSP);
             this.detailcont.Controls.Add(this.labBuyBack);
@@ -3328,6 +3330,20 @@
             this.chkBuyBack.Text = "Buy Back";
             this.chkBuyBack.UseVisualStyleBackColor = true;
             // 
+            // chkNeedProduction
+            // 
+            this.chkNeedProduction.AutoSize = true;
+            this.chkNeedProduction.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NeedProduction", true));
+            this.chkNeedProduction.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkNeedProduction.IsSupportEditMode = false;
+            this.chkNeedProduction.Location = new System.Drawing.Point(647, 166);
+            this.chkNeedProduction.Name = "chkNeedProduction";
+            this.chkNeedProduction.ReadOnly = true;
+            this.chkNeedProduction.Size = new System.Drawing.Size(201, 19);
+            this.chkNeedProduction.TabIndex = 16;
+            this.chkNeedProduction.Text = "Still need to continue production";
+            this.chkNeedProduction.UseVisualStyleBackColor = true;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 722);
@@ -3630,5 +3646,6 @@
         private Win.UI.Label labBuyBack;
         private Win.UI.CheckBox chkOnSiteSample;
         private Win.UI.CheckBox chkBuyBack;
+        private Win.UI.CheckBox chkNeedProduction;
     }
 }
