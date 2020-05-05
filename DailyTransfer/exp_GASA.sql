@@ -25,7 +25,7 @@ SELECT [Export_DetailUkey]
       ,[TestReportCheckClima]
 INTO SentReport
 FROM Production.dbo.SentReport
-WHERE EditDate < Convert(DATE,DATEADD(day,-30,GETDATE()))
+WHERE EditDate >= Convert(DATE,DATEADD(day,-30,GETDATE()))
 ;
 
 SELECT [TestDocFactoryGroup]
@@ -39,5 +39,5 @@ SELECT [TestDocFactoryGroup]
       ,[EditDate]
 INTO FirstDyelot
 FROM Production.dbo.FirstDyelot
-WHERE EditDate < Convert(DATE,DATEADD(day,-30,GETDATE()))
+WHERE EditDate >= Convert(DATE,DATEADD(day,-30,GETDATE()))
 ;
