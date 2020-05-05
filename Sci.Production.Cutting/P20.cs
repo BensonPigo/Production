@@ -152,7 +152,10 @@ Select
     ),1,1,'')
 	,WorkOderLayer = a.Layer
 	,AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0)
-	,CuttingLayer = iif(cl.CuttingLayer > a.Layer - isnull(acc.AccuCuttingLayer,0),  a.Layer - isnull(acc.AccuCuttingLayer,0), cl.CuttingLayer)
+	,CuttingLayer = case when cl.CuttingLayer > a.Layer - isnull(acc.AccuCuttingLayer,0) then a.Layer - isnull(acc.AccuCuttingLayer,0)
+                    when cl.CuttingLayer < 0 then 0
+                    else cl.CuttingLayer
+                    end
 	,LackingLayers = 0
 	,a.ConsPC
 	,SRQ.SizeRatioQty
@@ -329,14 +332,14 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                     return;
                 }
                 var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                if (MyUtility.Convert.GetInt(e.FormattedValue) + MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) > MyUtility.Convert.GetInt(dr["WorkOderLayer"]))
-                {
-                    MyUtility.Msg.WarningBox("Cutting Layer can not more than LackingLayers");
-                    dr["Layer"] = 0;
-                    dr["Cons"] = 0;
-                    dr.EndEdit();
-                    return;
-                }
+                //if (MyUtility.Convert.GetInt(e.FormattedValue) + MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) > MyUtility.Convert.GetInt(dr["WorkOderLayer"]))
+                //{
+                //    MyUtility.Msg.WarningBox("Cutting Layer can not more than LackingLayers");
+                //    dr["Layer"] = 0;
+                //    dr["Cons"] = 0;
+                //    dr.EndEdit();
+                //    return;
+                //}
                 dr["Layer"] = e.FormattedValue;
                 dr["Cons"] = MyUtility.Convert.GetDecimal(e.FormattedValue) * MyUtility.Convert.GetDecimal(dr["ConsPC"]) * MyUtility.Convert.GetDecimal(dr["SizeRatioQty"]);
                 dr["LackingLayers"] = MyUtility.Convert.GetInt(dr["WorkOderLayer"]) - MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) - MyUtility.Convert.GetInt(dr["Layer"]);
@@ -356,7 +359,7 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
             .Text("MarkerLength", header: "Marker Length", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("WorkOderLayer", header: "WorkOrder\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Numeric("AccuCuttingLayer", header: "Accu. Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
-            .Numeric("Layer", header: "Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, maximum: 99999, minimum: 0)
+            .Numeric("Layer", header: "Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, maximum: 99999, minimum: 0, settings: Layer)
             .Numeric("LackingLayers", header: "Lacking\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), integer_places: 7, decimal_places: 2, iseditingreadonly: true)
