@@ -45,7 +45,7 @@ namespace Sci.Production.Cutting
                 this.Close();
                 return;
             }
-            if (Query2())
+            if (!Query2())
             {
                 this.Close();
                 return;

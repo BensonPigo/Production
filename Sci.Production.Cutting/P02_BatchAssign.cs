@@ -1446,7 +1446,7 @@ WHERE Subprocess.IDs = '{AnnotationStr}'
 When the settings are complete, can be export data!
 ";
 
-                MyUtility.Msg.InfoBox(Message);
+                //MyUtility.Msg.InfoBox(Message);
                 return false;
             }
             return true;
