@@ -57,7 +57,9 @@ from Production.dbo.ICR as a
 left join #Trade_ICR as b
 on a.id = b.id
 where b.id is null
-and a.EditDate between @DateStart and @DateEnd
+and (a.EditDate between @DateStart and @DateEnd
+	or a.AddDate between @DateStart and @DateEnd
+)
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET 
@@ -276,6 +278,11 @@ where not exists(
 	where a.id = b.id 
 	and a.ReplacementNo=b.ReplacementNo
 )
+
+--------------------------delete ICR_ResponsibilityDept
+delete i
+from Production.dbo.ICR_ResponsibilityDept i
+where not exists (select 1 from Production.dbo.ICR where i.ID = ID)
 
 
 END
