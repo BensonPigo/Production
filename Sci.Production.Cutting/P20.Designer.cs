@@ -47,7 +47,6 @@
             this.btnImportfromWorkOrder = new Sci.Win.UI.Button();
             this.btnImportfromRealtimeBundleTracking = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtfactoryByM1 = new Sci.Production.Class.txtfactory();
             this.label2 = new Sci.Win.UI.Label();
             this.numTTCPU = new Sci.Win.UI.NumericBox();
             this.lineShape4 = new Microsoft.VisualBasic.PowerPacks.LineShape();
@@ -55,6 +54,9 @@
             this.label3 = new Sci.Win.UI.Label();
             this.btnFind = new Sci.Win.UI.Button();
             this.txtCutref = new Sci.Win.UI.TextBox();
+            this.btnCopyBal = new Sci.Win.UI.Button();
+            this.btnRemove = new Sci.Win.UI.Button();
+            this.txtfactoryByM1 = new Sci.Production.Class.txtfactory();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -71,6 +73,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnRemove);
+            this.masterpanel.Controls.Add(this.btnCopyBal);
             this.masterpanel.Controls.Add(this.btnFind);
             this.masterpanel.Controls.Add(this.txtCutref);
             this.masterpanel.Controls.Add(this.label3);
@@ -97,7 +101,7 @@
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.labelDate);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(918, 158);
+            this.masterpanel.Size = new System.Drawing.Size(985, 158);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -125,15 +129,17 @@
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCutref, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFind, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCopyBal, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnRemove, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 158);
-            this.detailpanel.Size = new System.Drawing.Size(918, 218);
+            this.detailpanel.Size = new System.Drawing.Size(985, 218);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(814, 123);
+            this.gridicon.Location = new System.Drawing.Point(876, 123);
             // 
             // refresh
             // 
@@ -141,28 +147,28 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(918, 218);
+            this.detailgridcont.Size = new System.Drawing.Size(985, 218);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(918, 414);
+            this.detail.Size = new System.Drawing.Size(985, 414);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(918, 376);
+            this.detailcont.Size = new System.Drawing.Size(985, 376);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 376);
-            this.detailbtm.Size = new System.Drawing.Size(918, 38);
+            this.detailbtm.Size = new System.Drawing.Size(985, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(918, 414);
+            this.browse.Size = new System.Drawing.Size(947, 414);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(926, 443);
+            this.tabs.Size = new System.Drawing.Size(993, 443);
             // 
             // createby
             // 
@@ -389,21 +395,6 @@
             this.label1.TabIndex = 42;
             this.label1.Text = "Factory";
             // 
-            // txtfactoryByM1
-            // 
-            this.txtfactoryByM1.BackColor = System.Drawing.Color.White;
-            this.txtfactoryByM1.boolFtyGroupList = true;
-            this.txtfactoryByM1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
-            this.txtfactoryByM1.FilteMDivision = true;
-            this.txtfactoryByM1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactoryByM1.IsProduceFty = false;
-            this.txtfactoryByM1.IssupportJunk = false;
-            this.txtfactoryByM1.Location = new System.Drawing.Point(99, 74);
-            this.txtfactoryByM1.MDivision = null;
-            this.txtfactoryByM1.Name = "txtfactoryByM1";
-            this.txtfactoryByM1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactoryByM1.TabIndex = 43;
-            // 
             // label2
             // 
             this.label2.Location = new System.Drawing.Point(454, 74);
@@ -449,7 +440,7 @@
             // 
             this.lineShape4.Name = "lineShape4";
             this.lineShape4.X1 = 9;
-            this.lineShape4.X2 = 910;
+            this.lineShape4.X2 = 975;
             this.lineShape4.Y1 = 120;
             this.lineShape4.Y2 = 120;
             // 
@@ -460,7 +451,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape4});
-            this.shapeContainer1.Size = new System.Drawing.Size(918, 158);
+            this.shapeContainer1.Size = new System.Drawing.Size(985, 158);
             this.shapeContainer1.TabIndex = 46;
             this.shapeContainer1.TabStop = false;
             // 
@@ -492,10 +483,49 @@
             this.txtCutref.Size = new System.Drawing.Size(145, 23);
             this.txtCutref.TabIndex = 48;
             // 
+            // btnCopyBal
+            // 
+            this.btnCopyBal.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnCopyBal.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnCopyBal.Location = new System.Drawing.Point(386, 122);
+            this.btnCopyBal.Name = "btnCopyBal";
+            this.btnCopyBal.Size = new System.Drawing.Size(231, 30);
+            this.btnCopyBal.TabIndex = 50;
+            this.btnCopyBal.Text = "Copy Bal. Layer to Cut Layer";
+            this.btnCopyBal.UseVisualStyleBackColor = true;
+            this.btnCopyBal.Click += new System.EventHandler(this.BtnCopyBal_Click);
+            // 
+            // btnRemove
+            // 
+            this.btnRemove.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnRemove.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnRemove.Location = new System.Drawing.Point(623, 123);
+            this.btnRemove.Name = "btnRemove";
+            this.btnRemove.Size = new System.Drawing.Size(247, 30);
+            this.btnRemove.TabIndex = 51;
+            this.btnRemove.Text = "Remove Cutting Layer = 0 data";
+            this.btnRemove.UseVisualStyleBackColor = true;
+            this.btnRemove.Click += new System.EventHandler(this.BtnRemove_Click);
+            // 
+            // txtfactoryByM1
+            // 
+            this.txtfactoryByM1.BackColor = System.Drawing.Color.White;
+            this.txtfactoryByM1.boolFtyGroupList = true;
+            this.txtfactoryByM1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtfactoryByM1.FilteMDivision = true;
+            this.txtfactoryByM1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactoryByM1.IsProduceFty = false;
+            this.txtfactoryByM1.IssupportJunk = false;
+            this.txtfactoryByM1.Location = new System.Drawing.Point(99, 74);
+            this.txtfactoryByM1.MDivision = null;
+            this.txtfactoryByM1.Name = "txtfactoryByM1";
+            this.txtfactoryByM1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactoryByM1.TabIndex = 43;
+            // 
             // P20
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(926, 476);
+            this.ClientSize = new System.Drawing.Size(993, 476);
             this.DefaultControl = "numWorkingHourPerDay";
             this.DefaultControlForEdit = "numWorkingHourPerDay";
             this.DefaultDetailOrder = "Cutref,OrderID";
@@ -568,5 +598,7 @@
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape4;
         private Win.UI.Button btnFind;
         private Win.UI.TextBox txtCutref;
+        private Win.UI.Button btnRemove;
+        private Win.UI.Button btnCopyBal;
     }
 }

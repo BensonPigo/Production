@@ -123,14 +123,7 @@ ORDER BY CutRef
                 string oldvalue = dr["Cutref"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (newvalue == oldvalue || newvalue.Trim() == "") return;
-
-                //if (((DataTable)this.detailgridbs.DataSource).Select($"cutref = '{newvalue}'").Length>0)
-                //{
-                //    MyUtility.Msg.WarningBox($"Already have cutref {newvalue}");
-                //    dr["cutref"] = DBNull.Value;
-                //    return;
-                //}
-
+                
                 DataTable dt;
                 string cutrefsql = $@"
 Select
@@ -159,7 +152,7 @@ Select
     ),1,1,'')
 	,WorkOderLayer = a.Layer
 	,AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0)
-	,CuttingLayer = isnull(x3.Qty,0)-isnull(acc.AccuCuttingLayer,0)
+	,CuttingLayer = iif(cl.CuttingLayer > a.Layer - isnull(acc.AccuCuttingLayer,0),  a.Layer - isnull(acc.AccuCuttingLayer,0), cl.CuttingLayer)
 	,LackingLayers = 0
 	,a.ConsPC
 	,SRQ.SizeRatioQty
@@ -182,6 +175,7 @@ outer apply(
 		group by x.SizeCode,ws.Qty
 	)x2
 )x3
+outer apply(select CuttingLayer = isnull(x3.Qty,0)-isnull(acc.AccuCuttingLayer,0)) cl
 where a.CutRef = '{e.FormattedValue}'
 and a.CutRef != ''
 --and a.Layer > isnull(acc.AccuCuttingLayer,0)
@@ -360,14 +354,15 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
             .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerLength", header: "Marker Length", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Numeric("WorkOderLayer", header: "WorkOder\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
+            .Numeric("WorkOderLayer", header: "WorkOrder\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Numeric("AccuCuttingLayer", header: "Accu. Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
-            .Numeric("Layer", header: "Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, settings: Layer)
+            .Numeric("Layer", header: "Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, maximum: 99999, minimum: 0)
             .Numeric("LackingLayers", header: "Lacking\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), integer_places: 7, decimal_places: 2, iseditingreadonly: true)
             .Text("sizeRatio", header: "Size Ratio", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: sizeratio);
             this.detailgrid.Columns["Cutref"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["Layer"].DefaultCellStyle.BackColor = Color.Pink;
         }
         protected override void ClickNewAfter()
         {
@@ -705,6 +700,22 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                 if (index >= find_dr.Length) index = 0;
             }
             detailgridbs.Position = DetailDatas.IndexOf(find_dr[index]);
+        }
+
+        private void BtnCopyBal_Click(object sender, EventArgs e)
+        {
+            foreach (DataRow item in this.DetailDatas.AsEnumerable().Where(w => MyUtility.Check.Empty(w["Layer"])))
+            {
+                item["Layer"] = MyUtility.Convert.GetInt(item["WorkOderLayer"]) - MyUtility.Convert.GetInt(item["AccuCuttingLayer"]);
+            }
+        }
+
+        private void BtnRemove_Click(object sender, EventArgs e)
+        {
+            foreach (DataRow item in ((DataTable)this.detailgridbs.DataSource).Select("Layer = 0"))
+            {
+                item.Delete();
+            }
         }
     }
 }
