@@ -101,7 +101,7 @@
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.labelDate);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(918, 158);
+            this.masterpanel.Size = new System.Drawing.Size(947, 158);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -135,11 +135,11 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 158);
-            this.detailpanel.Size = new System.Drawing.Size(918, 218);
+            this.detailpanel.Size = new System.Drawing.Size(947, 218);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(814, 123);
+            this.gridicon.Location = new System.Drawing.Point(837, 123);
             // 
             // refresh
             // 
@@ -147,20 +147,20 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(918, 218);
+            this.detailgridcont.Size = new System.Drawing.Size(947, 218);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(918, 414);
+            this.detail.Size = new System.Drawing.Size(947, 414);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(918, 376);
+            this.detailcont.Size = new System.Drawing.Size(947, 376);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 376);
-            this.detailbtm.Size = new System.Drawing.Size(918, 38);
+            this.detailbtm.Size = new System.Drawing.Size(947, 38);
             // 
             // browse
             // 
@@ -168,7 +168,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(926, 443);
+            this.tabs.Size = new System.Drawing.Size(955, 443);
             // 
             // createby
             // 
@@ -440,7 +440,7 @@
             // 
             this.lineShape4.Name = "lineShape4";
             this.lineShape4.X1 = 9;
-            this.lineShape4.X2 = 910;
+            this.lineShape4.X2 = 935;
             this.lineShape4.Y1 = 120;
             this.lineShape4.Y2 = 120;
             // 
@@ -451,7 +451,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape4});
-            this.shapeContainer1.Size = new System.Drawing.Size(918, 158);
+            this.shapeContainer1.Size = new System.Drawing.Size(947, 158);
             this.shapeContainer1.TabIndex = 46;
             this.shapeContainer1.TabStop = false;
             // 
@@ -487,7 +487,7 @@
             // 
             this.btnCopyBal.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnCopyBal.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCopyBal.Location = new System.Drawing.Point(387, 122);
+            this.btnCopyBal.Location = new System.Drawing.Point(386, 122);
             this.btnCopyBal.Name = "btnCopyBal";
             this.btnCopyBal.Size = new System.Drawing.Size(231, 30);
             this.btnCopyBal.TabIndex = 50;
@@ -499,11 +499,11 @@
             // 
             this.btnRemove.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnRemove.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnRemove.Location = new System.Drawing.Point(624, 122);
+            this.btnRemove.Location = new System.Drawing.Point(623, 123);
             this.btnRemove.Name = "btnRemove";
-            this.btnRemove.Size = new System.Drawing.Size(184, 30);
+            this.btnRemove.Size = new System.Drawing.Size(208, 30);
             this.btnRemove.TabIndex = 51;
-            this.btnRemove.Text = "Remove Cutting Layer";
+            this.btnRemove.Text = "Remove Cutting Layer = 0 data";
             this.btnRemove.UseVisualStyleBackColor = true;
             this.btnRemove.Click += new System.EventHandler(this.BtnRemove_Click);
             // 
@@ -525,7 +525,7 @@
             // P20
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(926, 476);
+            this.ClientSize = new System.Drawing.Size(955, 476);
             this.DefaultControl = "numWorkingHourPerDay";
             this.DefaultControlForEdit = "numWorkingHourPerDay";
             this.DefaultDetailOrder = "Cutref,OrderID";

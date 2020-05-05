@@ -141,7 +141,7 @@ Select sel = 0,
     ),
 	WorkOderLayer = a.Layer,
 	AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0),
-	CuttingLayer = case when cl.CuttingLayer > 99999 then 99999 when cl.CuttingLayer  < 0 then 0 else cl.CuttingLayer end,
+	CuttingLayer = iif(cl.CuttingLayer > a.Layer - isnull(acc.AccuCuttingLayer,0),  a.Layer - isnull(acc.AccuCuttingLayer,0), cl.CuttingLayer),
 	LackingLayers = 0,
     SRQ.SizeRatioQty
 from WorkOrder a WITH (NOLOCK)

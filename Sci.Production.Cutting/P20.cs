@@ -123,14 +123,7 @@ ORDER BY CutRef
                 string oldvalue = dr["Cutref"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (newvalue == oldvalue || newvalue.Trim() == "") return;
-
-                //if (((DataTable)this.detailgridbs.DataSource).Select($"cutref = '{newvalue}'").Length>0)
-                //{
-                //    MyUtility.Msg.WarningBox($"Already have cutref {newvalue}");
-                //    dr["cutref"] = DBNull.Value;
-                //    return;
-                //}
-
+                
                 DataTable dt;
                 string cutrefsql = $@"
 Select
@@ -159,7 +152,7 @@ Select
     ),1,1,'')
 	,WorkOderLayer = a.Layer
 	,AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0)
-	,CuttingLayer = isnull(x3.Qty,0)-isnull(acc.AccuCuttingLayer,0)
+	,CuttingLayer = iif(cl.CuttingLayer > a.Layer - isnull(acc.AccuCuttingLayer,0),  a.Layer - isnull(acc.AccuCuttingLayer,0), cl.CuttingLayer)
 	,LackingLayers = 0
 	,a.ConsPC
 	,SRQ.SizeRatioQty
@@ -182,6 +175,7 @@ outer apply(
 		group by x.SizeCode,ws.Qty
 	)x2
 )x3
+outer apply(select CuttingLayer = isnull(x3.Qty,0)-isnull(acc.AccuCuttingLayer,0)) cl
 where a.CutRef = '{e.FormattedValue}'
 and a.CutRef != ''
 --and a.Layer > isnull(acc.AccuCuttingLayer,0)
@@ -362,7 +356,7 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
             .Text("MarkerLength", header: "Marker Length", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("WorkOderLayer", header: "WorkOrder\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Numeric("AccuCuttingLayer", header: "Accu. Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
-            .Numeric("Layer", header: "Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, settings: Layer)
+            .Numeric("Layer", header: "Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, maximum: 99999, minimum: 0)
             .Numeric("LackingLayers", header: "Lacking\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), integer_places: 7, decimal_places: 2, iseditingreadonly: true)
