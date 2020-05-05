@@ -385,7 +385,10 @@ SELECT * FROM FTY
                         }
                         else
                         {
-                            string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountID != ''", MyUtility.Convert.GetString(this.apData["ID"])));
+                            string accNo = MyUtility.GetValue.Lookup($@"
+select sd.AccountID
+from ShippingAP_Detail sd WITH (NOLOCK)
+where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
                             for (int i = 0; i < dtExp.Rows.Count; i++)
                             {
                                 string strSqlcmd = $@"
@@ -455,7 +458,10 @@ select * from FtyExportData ", e.FormattedValue.ToString());
                         }
                         else
                         {
-                            string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountID != ''", MyUtility.Convert.GetString(this.apData["ID"])));
+                            string accNo = MyUtility.GetValue.Lookup($@"
+select sd.AccountID
+from ShippingAP_Detail sd WITH (NOLOCK)
+where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
                             for (int i = 0; i < dtImp.Rows.Count; i++)
                             {
                                 string strSqlcmd = $@"
@@ -587,8 +593,8 @@ using (
 ,[ShipModeID] = ShipModeID
 ,[FtyWK] = 0
 ,[AccountID] = (
-	select top 1 se.AccountID from ShippingAP_Detail sd WITH(NOLOCK) , ShipExpense se WITH(NOLOCK)
-   where sd.ID = '{this.apData["ID"]}' and sd.ShipExpenseID = se.ID and se.AccountID != '')
+	select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
+   where sd.ID = '{this.apData["ID"]}' and sd.AccountID != '')
 ,[Junk] = 0
 from GMTBooking g WITH (NOLOCK) 
 where BLNo='{this.apData["BLNO"]}' or BL2No='{this.apData["BLNO"]}' ) as s 
@@ -647,9 +653,8 @@ from (
                 @"
 select [Amount] = Sum(sd.Amount)
 from ShippingAP_Detail sd WITH (NOLOCK)
-left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
 where sd.ID = '{0}'
-and not (dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1)", MyUtility.Convert.GetString(this.apData["ID"]));
+and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)", MyUtility.Convert.GetString(this.apData["ID"]));
             MyUtility.Check.Seek(sqlCmd, out queryData);
             this.numTtlAmt.Value = MyUtility.Convert.GetDecimal(queryData["Amount"]);
 
@@ -842,7 +847,10 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
             else
             {
                 this.gridBLNo.ValidateControl();
-                bool forwarderFee = MyUtility.Check.Seek(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and (se.AccountID = '61022001' or se.AccountID = '61012001')", MyUtility.Convert.GetString(this.apData["ID"])));
+                bool forwarderFee = MyUtility.Check.Seek($@"
+select sd.AccountID
+from ShippingAP_Detail sd WITH (NOLOCK)
+where sd.ID = '{this.apData["ID"]}'and (sd.AccountID = '61022001' or sd.AccountID = '61012001')");
                 bool haveSea = false, noExistNotSea = true;
                 DualResult resultCheckShareExpense;
                 bool bolNoImportCharges = true;
@@ -851,14 +859,12 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                 DBProxy.Current.Select(null, "select BLNo,WKNo,InvNo from ShareExpense WITH (NOLOCK) where 1=0", out duplicData);
 
                 // 取得AccountNo
-                string accNo = MyUtility.GetValue.Lookup(string.Format(
-                    @"select se.AccountID 
-                      from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) 
-                      where sd.ID = '{0}' 
-                      and sd.ShipExpenseID = se.ID 
-                      and se.AccountID != ''
-                      and not (dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1)",
-                    MyUtility.Convert.GetString(this.apData["ID"])));
+                string accNo = MyUtility.GetValue.Lookup($@"
+select sd.AccountID 
+from ShippingAP_Detail sd WITH (NOLOCK)
+where sd.ID = '{this.apData["ID"]}'
+and sd.AccountID != ''
+and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)");
 
                 List<CheckResult> listCheckResult = new List<CheckResult>();
                 StringBuilder msg = new StringBuilder();

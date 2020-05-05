@@ -262,23 +262,20 @@ BEGIN
 					  and dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 0 
 					  and dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 0
 					  and not exists (
-							select distinct se.AccountID
+							select 1
 							from ShippingAP_Detail sd WITH (NOLOCK) 
-							left join ShipExpense shipE WITH (NOLOCK) on shipE.ID = sd.ShipExpenseID
-							where sd.ID = @ShippingAPID
-								  and shipE.AccountID = se.AccountID								  
+							where sd.ID = @ShippingAPID and sd.AccountID = se.AccountID								  
 					  )
 			)
 			union
 			(
 				-- AP 不可分攤的會科清單 --
-				select distinct se.AccountID
+				select distinct sd.AccountID
 				from ShippingAP_Detail sd WITH (NOLOCK) 
-				left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
 				where sd.ID = @ShippingAPID
 						and (
-							dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 
-							or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1
+							dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+							or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1
 						)
 			)
 
@@ -315,17 +312,16 @@ BEGIN
 							, b.ShipModeID
 							, b.FtyWK
 					from (
-						select isnull(se.AccountID,'') as AccountID, sum(sd.Amount) as Amount, s.CurrencyID
+						select isnull(sd.AccountID,'') as AccountID, sum(sd.Amount) as Amount, s.CurrencyID
 						from ShippingAP_Detail sd WITH (NOLOCK) 
-						left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
-						left join SciFMS_AccountNo a on a.ID = se.AccountID
+						left join SciFMS_AccountNo a on a.ID = sd.AccountID
 						left join ShippingAP s WITH (NOLOCK) on s.ID = sd.ID
 						where sd.ID = @ShippingAPID
 								and not (
-									dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 
-									or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1
+									dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+									or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1
 								)
-						group by se.AccountID, a.Name, s.CurrencyID
+						group by sd.AccountID, a.Name, s.CurrencyID
 					) a
 					, ( 
 						select BLNo,WKNo,InvNo,Type,GW,CBM,ShipModeID,FtyWK

@@ -146,12 +146,14 @@ and FKMenu= (select PKey from MenuDetail where FormName='Sci.Production.Shipping
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
                 @"
-select sd.*,isnull(se.Description,'') as Description, (isnull(se.AccountID,'') + '-' + isnull(a.Name,'')) as Account,se.UnitID
+select sd.*,isnull(se.Description,'') as Description
+    , (isnull(sd.AccountID,'') + '-' + isnull(a.Name,'')) as Account
+    ,se.UnitID
     ,a.IsAPP ,a.IsShippingVAT,a2.AdvancePaymentTPE
 from ShippingAP_Detail sd WITH (NOLOCK) 
 left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
-left join SciFMS_AccountNO a on a.ID = se.AccountID
-left join SciFMS_AccountNO a2 on a2.ID = substring(se.AccountID,1,4)
+left join SciFMS_AccountNO a on a.ID = sd.AccountID
+left join SciFMS_AccountNO a2 on a2.ID = substring(sd.AccountID,1,4)
 where sd.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -293,7 +295,7 @@ where sd.ID = '{0}'", masterID);
                         cmds.Add(sp2);
 
                         DataTable expenseData;
-                        string sqlCmd = "select ID,Description,LocalSuppID,CurrencyID,Price,BrandID,UnitID from ShipExpense WITH (NOLOCK) where Junk = 0 and LocalSuppID = @localsuppid and ID = @shipexpenseid  and AccountID != ''";
+                        string sqlCmd = "select ID,Description,LocalSuppID,CurrencyID,Price,BrandID,UnitID,AccountID from ShipExpense WITH (NOLOCK) where Junk = 0 and LocalSuppID = @localsuppid and ID = @shipexpenseid  and AccountID != ''";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out expenseData);
                         if (!result || expenseData.Rows.Count <= 0)
                         {
@@ -314,6 +316,7 @@ where sd.ID = '{0}'", masterID);
                             dr["Rate"] = 0;
                             dr["Amount"] = 0;
                             dr["UnitID"] = string.Empty;
+                            dr["AccountID"] = string.Empty;
                             dr.EndEdit();
                             e.Cancel = true;
                             return;
@@ -328,6 +331,9 @@ where sd.ID = '{0}'", masterID);
                             dr["Rate"] = 1;
                             dr["Amount"] = MyUtility.Convert.GetDecimal(expenseData.Rows[0]["Price"]);
                             dr["UnitID"] = expenseData.Rows[0]["UnitID"];
+                            dr["AccountID"] = expenseData.Rows[0]["AccountID"];
+                            string sqlcmd = $@"select a.Name from SciFMS_AccountNO a  where a.ID = '{dr["AccountID"]}'";
+                            dr["Account"] = MyUtility.Convert.GetString(dr["AccountID"]) + "-" + MyUtility.GetValue.Lookup(sqlcmd);
                             dr.EndEdit();
                         }
                     }
@@ -699,12 +705,11 @@ and Junk = 0",
 
             DataTable tmpdt;
             sqlcmd = $@"
-select [IsAPP] = dbo.GetAccountNoExpressType(se.AccountID, 'IsAPP')
-    ,[vat] = dbo.GetAccountNoExpressType(se.AccountID, 'vat')
-    ,[AdvancePaymentTPE] = dbo.GetAccountNoExpressType(se.AccountID, 'AdvancePaymentTPE')
-    ,[SisFty] = dbo.GetAccountNoExpressType(se.AccountID, 'SisFty')
+select [IsAPP] = dbo.GetAccountNoExpressType(sd.AccountID, 'IsAPP')
+    ,[vat] = dbo.GetAccountNoExpressType(sd.AccountID, 'vat')
+    ,[AdvancePaymentTPE] = dbo.GetAccountNoExpressType(sd.AccountID, 'AdvancePaymentTPE')
+    ,[SisFty] = dbo.GetAccountNoExpressType(sd.AccountID, 'SisFty')
 from #tmp sd
-left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
 ";
             var dtldt = this.DetailDatas.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted);
             if (dtldt.Count() > 0)
