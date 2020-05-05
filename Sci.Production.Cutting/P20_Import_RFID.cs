@@ -106,20 +106,20 @@ namespace Sci.Production.Cutting
                     return;
                 }
                 var dr = this.gridImport.GetDataRow<DataRow>(e.RowIndex);
-                if (MyUtility.Convert.GetInt(e.FormattedValue).EqualDecimal(0))
-                {
-                    MyUtility.Msg.WarningBox("Cutting layer can not be zero.");
-                    dr["CuttingLayer"] = dr["CuttingLayer", DataRowVersion.Original];
-                    e.Cancel = true;
-                    return;
-                }
-                if (MyUtility.Convert.GetInt(e.FormattedValue) + MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) > MyUtility.Convert.GetInt(dr["WorkOderLayer"]))
-                {
-                    MyUtility.Msg.WarningBox("Cutting Layer can not more than LackingLayers");
-                    dr["CuttingLayer"] = dr["CuttingLayer", DataRowVersion.Original];
-                    e.Cancel = true;
-                    return;
-                }
+                //if (MyUtility.Convert.GetInt(e.FormattedValue).EqualDecimal(0))
+                //{
+                //    MyUtility.Msg.WarningBox("Cutting layer can not be zero.");
+                //    dr["CuttingLayer"] = dr["CuttingLayer", DataRowVersion.Original];
+                //    e.Cancel = true;
+                //    return;
+                //}
+                //if (MyUtility.Convert.GetInt(e.FormattedValue) + MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) > MyUtility.Convert.GetInt(dr["WorkOderLayer"]))
+                //{
+                //    MyUtility.Msg.WarningBox("Cutting Layer can not more than LackingLayers");
+                //    dr["CuttingLayer"] = dr["CuttingLayer", DataRowVersion.Original];
+                //    e.Cancel = true;
+                //    return;
+                //}
                 dr["CuttingLayer"] = e.FormattedValue;
                 dr["Cons"] = MyUtility.Convert.GetDecimal(e.FormattedValue) * MyUtility.Convert.GetDecimal(dr["ConsPC"]) * MyUtility.Convert.GetDecimal(dr["SizeRatioQty"]);
                 dr["LackingLayers"] = MyUtility.Convert.GetInt(dr["WorkOderLayer"]) - MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) - MyUtility.Convert.GetInt(dr["CuttingLayer"]);
@@ -140,7 +140,7 @@ namespace Sci.Production.Cutting
             .Text("MarkerLength", header: "Marker Length", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("WorkOderLayer", header: "WorkOrder\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Numeric("AccuCuttingLayer", header: "Accu. Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
-            .Numeric("CuttingLayer", header: "Cutting Layer", width: Widths.AnsiChars(5), integer_places: 5, maximum: 99999, minimum: 0)
+            .Numeric("CuttingLayer", header: "Cutting Layer", width: Widths.AnsiChars(5), integer_places: 5, maximum: 99999, minimum: 0, settings: Layer)
             .Numeric("LackingLayers", header: "Lacking\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), integer_places: 7, decimal_places: 2)
@@ -218,8 +218,11 @@ select 0 as sel,
 	),
 	WorkOderLayer = wo.Layer,
 	AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0),
-	CuttingLayer = iif(cl.CuttingLayer > WO.Layer - isnull(acc.AccuCuttingLayer,0),  WO.Layer - isnull(acc.AccuCuttingLayer,0), cl.CuttingLayer),
-	LackingLayers = 0,
+	CuttingLayer = case when cl.CuttingLayer > WO.Layer - isnull(acc.AccuCuttingLayer,0) then WO.Layer - isnull(acc.AccuCuttingLayer,0)
+                    when cl.CuttingLayer < 0 then 0
+                    else cl.CuttingLayer
+                    end,
+	LackingLayers =  wo.Layer - isnull(acc.AccuCuttingLayer,0) - final.CuttingLayer,
     SRQ.SizeRatioQty
 from WorkOrder WO WITH (NOLOCK) 
 left join #AccuCuttingLayer acc on wo.Ukey = acc.WorkOrderUkey
@@ -240,6 +243,10 @@ outer apply(
 	)x2
 )x3
 outer apply(select CuttingLayer = isnull(x3.Qty,0)-isnull(acc.AccuCuttingLayer,0))cl
+outer apply(select CuttingLayer = case when cl.CuttingLayer > WO.Layer - isnull(acc.AccuCuttingLayer,0) then WO.Layer - isnull(acc.AccuCuttingLayer,0)
+                    when cl.CuttingLayer < 0 then 0
+                    else cl.CuttingLayer
+                    end) final
 where mDivisionid = '{0}' 
 and wo.Layer >  isnull(acc.AccuCuttingLayer,0)
 and WO.CutRef != ''
