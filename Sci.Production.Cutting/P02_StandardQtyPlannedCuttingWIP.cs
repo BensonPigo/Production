@@ -42,10 +42,14 @@ namespace Sci.Production.Cutting
             base.OnFormLoaded();
             if (!Query1())
             {
+                this.Close();
                 return;
             }
-            Query2();
-
+            if (Query2())
+            {
+                this.Close();
+                return;
+            }
         }
 
         private void BtnClose_Click(object sender, EventArgs e)
