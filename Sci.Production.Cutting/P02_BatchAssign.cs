@@ -50,7 +50,10 @@ namespace Sci.Production.Cutting
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Query1();
+            if (!Query1())
+            {
+                return;
+            }
             Query2();
         }
         private void gridsetup()
@@ -784,7 +787,7 @@ where   id = '{0}'
         List<InOffLineList_byFabricPanelCode> AllData2 = new List<InOffLineList_byFabricPanelCode>();
         List<PublicPrg.Prgs.Day> Days = new List<PublicPrg.Prgs.Day>();
         List<LeadTime> LeadTimeList = new List<LeadTime>();
-        private void Query1()
+        private bool Query1()
         {
             List<string> orderIDs = DistqtyTb.AsEnumerable()
                 .Select(s => new { ID = MyUtility.Convert.GetString(s["OrderID"]) })
@@ -795,7 +798,7 @@ where   id = '{0}'
 
             if (!Check_Subprocess_LeadTime(orderIDs))
             {
-                return;
+                return false;
             }
 
             #region 起手資料
@@ -811,12 +814,12 @@ AND (
             if (!result)
             {
                 this.ShowErr(result);
-                return;
+                return false;
             }
 
             if (dt.Rows.Count == 0)
             {
-                return;
+                return false;
             }
             #endregion
 
@@ -1050,6 +1053,7 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                 this.gridGarment.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
             #endregion
+            return true;
         }
 
         private void Query2()

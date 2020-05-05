@@ -40,7 +40,10 @@ namespace Sci.Production.Cutting
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Query1();
+            if (!Query1())
+            {
+                return;
+            }
             Query2();
 
         }
@@ -50,7 +53,7 @@ namespace Sci.Production.Cutting
             this.Close();
         }
 
-        private void Query1()
+        private bool Query1()
         {
             List<string> orderIDs = DistqtyTb.AsEnumerable()
                 .Select(s => new { ID = MyUtility.Convert.GetString(s["OrderID"]) })
@@ -61,7 +64,7 @@ namespace Sci.Production.Cutting
 
             if (!Check_Subprocess_LeadTime(orderIDs))
             {
-                return;
+                return false;
             }
 
             #region 起手資料
@@ -71,12 +74,12 @@ namespace Sci.Production.Cutting
             if (!result)
             {
                 this.ShowErr(result);
-                return;
+                return false;
             }
 
             if (dt.Rows.Count == 0)
             {
-                return;
+                return false;
             }
             #endregion
 
@@ -307,9 +310,10 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                 this.gridGarment.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
             #endregion
+            return true;
         }
 
-        private void Query2()
+        private bool Query2()
         {
             List<string> orderIDs = DistqtyTb.AsEnumerable()
                 .Select(s => new { ID = MyUtility.Convert.GetString(s["OrderID"]) })
@@ -320,7 +324,7 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
 
             if (!Check_Subprocess_LeadTime(orderIDs))
             {
-                return;
+                return false;
             }
 
             #region 起手資料
@@ -330,12 +334,12 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
             if (!result)
             {
                 this.ShowErr(result);
-                return;
+                return false;
             }
 
             if (dt.Rows.Count == 0)
             {
-                return;
+                return false;
             }
             #endregion
 
@@ -567,6 +571,7 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                 this.gridFabric_Panel_Code.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
             #endregion
+            return true;
         }
 
         public bool Check_Subprocess_LeadTime(List<string> orderIDs)
