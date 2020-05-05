@@ -162,7 +162,6 @@ FROM StickerSize WITH (NOLOCK)
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-
             this.ComboPressing2DataSource();
         }
 
@@ -243,6 +242,11 @@ and Seq = '{this.CurrentMaintain["Seq"]}'
             else
             {
                 this.ShowErr(result);
+            }
+
+            if (this.CurrentMaintain != null && this.EditMode)
+            {
+                this.CurrentMaintain["StickerSizeID"] = id;
             }
         }
     }

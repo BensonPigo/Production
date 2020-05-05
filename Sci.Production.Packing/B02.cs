@@ -348,6 +348,11 @@ and Side = '{this.CurrentMaintain["Side"]}'
             {
                 this.ShowErr(result);
             }
+
+            if (this.CurrentMaintain != null && this.EditMode)
+            {
+                this.CurrentMaintain["StickerSizeID"] = id;
+            }
         }
     }
 }

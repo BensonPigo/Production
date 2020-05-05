@@ -59,6 +59,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(787, 375);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.label11);
@@ -83,7 +87,13 @@
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Size = new System.Drawing.Size(787, 337);
             this.detailcont.TabStop = true;
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 337);
+            this.detailbtm.Size = new System.Drawing.Size(787, 38);
             // 
             // browse
             // 
