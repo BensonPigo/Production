@@ -557,9 +557,17 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                                     {
                                         HolidayCount++;
                                     }
-
                                 }
+                            }
 
+                            for (int i = 1; i <= HolidayCount; i++)
+                            {
+                                Day nDay = new Day() { Date = realDate.Date.AddDays(-1 * i) };
+
+                                if (Days.Where(o => o.Date == nDay.Date && o.IsHoliday).Any())
+                                {
+                                    HolidayCount++;
+                                }
                             }
                             realDate.Date = realDate.Date.AddDays(-1 * HolidayCount);
                             OriPushDayCount opd = new OriPushDayCount() {OrderID = OrderID,OriDateWithLeadTime = realDate.Date,OriCount= HolidayCount };
@@ -901,6 +909,16 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 
                                 }
 
+                            }
+
+                            for (int i = 1; i <= HolidayCount; i++)
+                            {
+                                Day nDay = new Day() { Date = realDate.Date.AddDays(-1 * i) };
+
+                                if (Days.Where(o => o.Date == nDay.Date && o.IsHoliday).Any())
+                                {
+                                    HolidayCount++;
+                                }
                             }
                             realDate.Date = realDate.Date.AddDays(-1 * HolidayCount);
                             OriPushDayCount opd = new OriPushDayCount() { OrderID = OrderID, OriDateWithLeadTime = realDate.Date, OriCount = HolidayCount };
