@@ -124,7 +124,7 @@ AND (
 
             // 起點 = (最早Inline - 最大Lead Time)、終點 = (最晚Offline - 最小Lead Time)
             DateTime start = Convert.ToDateTime(this.SewingDate_s.Value.AddDays((-1 * maxLeadTime)).ToString("yyyy/MM/dd"));
-            DateTime end = Convert.ToDateTime(this.SewingDate_e.Value.AddDays((-1 * minLeadTime)).ToString("yyyy/MM/dd"));
+            DateTime end = this.MaxOffLine.Date;
 
             // 算出總天數
             TimeSpan ts = end - start;
