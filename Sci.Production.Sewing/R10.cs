@@ -1,21 +1,17 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Sewing
 {
-    public partial class R10 : Sci.Win.Tems.PrintForm
+    public partial class R10 : Win.Tems.PrintForm
     {
-        private DataTable printData;
+        private DataTable PrintData;
         private string MDivisionID;
         private string FactoryID;
         private DateTime? BuyerDev_S;
@@ -24,7 +20,7 @@ namespace Sci.Production.Sewing
         private DateTime? SCiDev_E;
         private DateTime? SewingOutputDate_S;
         private DateTime? SewingOutputDate_E;
-        private bool bolOutstanding;
+        private bool BolOutstanding;
 
         /// <inheritdoc/>
         public R10(ToolStripMenuItem menuitem)
@@ -38,8 +34,8 @@ namespace Sci.Production.Sewing
         {
             base.OnFormLoaded();
 
-            this.txtMdivision.Text = Sci.Env.User.Keyword;
-            this.txtfactory.Text = Sci.Env.User.Factory;
+            this.txtMdivision.Text = Env.User.Keyword;
+            this.txtfactory.Text = Env.User.Factory;
         }
 
         /// <inheritdoc/>
@@ -62,13 +58,13 @@ namespace Sci.Production.Sewing
             this.SewingOutputDate_E = this.dateRangeSewingOutputDate.Value2;
             this.MDivisionID = this.txtMdivision.Text;
             this.FactoryID = this.txtfactory.Text;
-            this.bolOutstanding = this.chkOutstanding.Checked;
+            this.BolOutstanding = this.chkOutstanding.Checked;
 
             return base.ValidateInput();
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlcmd = new StringBuilder();
             StringBuilder sqlWhere = new StringBuilder();
@@ -132,7 +128,7 @@ where 1=1
                 sqlWhere.Append($"AND o.FtyGroup = '{this.FactoryID}'" + Environment.NewLine);
             }
 
-            if (this.bolOutstanding)
+            if (this.BolOutstanding)
             {
                 sqlWhereOutstanding.Append("And (o.OrderQty - o.SewingOutputQty) < 0" + Environment.NewLine);
             }
@@ -147,6 +143,7 @@ select distinct
     ,o.FactoryID
     ,o.ID
     ,Cancelorder = iif(o.junk=1,'Y','')
+    ,NeedProduction = iif(o.NeedProduction=1, 'Y', '')
     ,Category= case 
             when o.Category = 'S' then 'Sample' 
             when o.Category = 'B' then 'Bulk' 
@@ -156,6 +153,7 @@ select distinct
         end
     ,o.CustPONo
     ,o.StyleID
+    ,o.CPU
     ,o.SeasonID
     ,o.BrandID
     ,o.BuyerDelivery
@@ -176,9 +174,11 @@ from
         ,o.FactoryID
         ,o.ID
         ,o.Cancelorder
+        ,o.NeedProduction
         ,o.Category
         ,o.CustPONo
         ,o.StyleID
+        ,o.CPU
         ,o.SeasonID
         ,o.BrandID
         ,o.BuyerDelivery
@@ -218,13 +218,8 @@ IF object_id('tempdb..#tmp_orders') IS NOT NULL drop table #tmp_orders",
             #endregion
 
             DBProxy.Current.DefaultTimeout = 900;  // timeout時間改為15分鐘
-            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd.ToString(), out this.printData);
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd.ToString(), out this.PrintData);
             DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
-            if (!result)
-            {
-                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
-                return failResult;
-            }
 
             return result;
         }
@@ -232,27 +227,36 @@ IF object_id('tempdb..#tmp_orders') IS NOT NULL drop table #tmp_orders",
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            this.SetCount(this.printData.Rows.Count);
+            this.SetCount(this.PrintData.Rows.Count);
 
-            if (this.printData.Rows.Count <= 0)
+            if (this.PrintData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Sewing_R10.xltx"); // 預先開啟excel app
-            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Sewing_R10.xltx", 1, false, null, objApp); // 將datatable copy to excel
+            string excelName = "Sewing_R10";
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.PrintData, string.Empty, $"{excelName}.xltx", 1, false, null, excelApp); // 將datatable copy to excel
 
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
+            worksheet.Columns[5].ColumnWidth = 14; // ISP20200770 要求[Still need to continue production]欄寬 14
+
+            #region 設定 Balance CPU 欄位公式
+            int balanceCPU_Col = 21;
+            int rowct = this.PrintData.Rows.Count + 1;
+            excelApp.Range[excelApp.Cells[2, balanceCPU_Col], excelApp.Cells[2, balanceCPU_Col]].Copy(); // 複製以在範本上的 Excel 公式
+            excelApp.Range[excelApp.Cells[3, balanceCPU_Col], excelApp.Cells[rowct, balanceCPU_Col]]
+                .PasteSpecial(Excel.XlPasteType.xlPasteAll, Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false); // 貼上公式
+            excelApp.Range[excelApp.Cells[2, 1], excelApp.Cells[2, 1]].Select();
+            #endregion
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Sewing_R10");
-            objApp.ActiveWorkbook.SaveAs(strExcelName);
-            objApp.Quit();
-            Marshal.ReleaseComObject(objApp);
-            Marshal.ReleaseComObject(objSheets);
-
-            strExcelName.OpenFile();
+            string strExcelName = Class.MicrosoftFile.GetName(excelName);
+            excelApp.ActiveWorkbook.SaveAs(strExcelName);
+            excelApp.Visible = true;
+            Marshal.ReleaseComObject(excelApp);
+            Marshal.ReleaseComObject(worksheet);
             #endregion
 
             return true;
