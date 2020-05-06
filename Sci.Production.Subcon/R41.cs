@@ -473,6 +473,12 @@ drop table #tmp_Workorder
                             else
                             {
                                 loadCounts2 = loadCounts - ((sheet - 1) * (int)excelMaxrow);
+
+                                // 每100萬的下一個一萬筆，會跟下下一個一萬筆重複，因此大於100萬筆，之後的2萬~100萬就要加進來
+                                if (sheet > 1 )
+                                {
+                                    loadCounts2 += 10000;
+                                }
                             }
                             this.ShowLoadingText($"Data Loading – {loadCounts} , please wait …");
                             MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R41_Bundle tracking list (RFID).xltx", loadCounts2 - 9999, false, null, objApp, wSheet: objApp.Sheets[sheet]);// 將datatable copy to excel
