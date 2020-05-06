@@ -99,7 +99,7 @@ namespace Sci.Production.Cutting
 
             // 起點 = (最早Inline - 最大Lead Time)、終點 = (最晚Offline - 最小Lead Time)
             DateTime start = Convert.ToDateTime(this.MinInLine.AddDays((-1 * maxLeadTime)).ToString("yyyy/MM/dd"));
-            DateTime end = Convert.ToDateTime(this.MaxOffLine.AddDays((-1 * minLeadTime)).ToString("yyyy/MM/dd"));
+            DateTime end = this.MaxOffLine.Date;
 
             // 算出總天數
             TimeSpan ts = end - start;
@@ -359,7 +359,7 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
 
             // 起點 = (最早Inline - 最大Lead Time)、終點 = (最晚Offline - 最小Lead Time)
             DateTime start = Convert.ToDateTime(this.MinInLine.AddDays((-1 * maxLeadTime)).ToString("yyyy/MM/dd"));
-            DateTime end = Convert.ToDateTime(this.MaxOffLine.AddDays((-1 * minLeadTime)).ToString("yyyy/MM/dd"));
+            DateTime end = this.MaxOffLine.Date;
 
             // 算出總天數
             TimeSpan ts = end - start;
