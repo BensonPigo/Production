@@ -110,6 +110,7 @@ WHERE   StockType='{0}'
                 .Text("SizeSpec", header: "Size", iseditingreadonly: true)
                 .Date("FinalETA", header: "ETA", iseditingreadonly: true)
                 .Numeric("InQty", header: "In Qty", width: Widths.AnsiChars(11), decimal_places: 0, integer_places: 10, iseditingreadonly: true)
+                .Numeric("useqty", header: "Use Qty", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //6
                 .Text("StockUnit", header: "Stock Unit", iseditingreadonly: true)
                 .Text("Roll", header: "Roll",  iseditingreadonly: false).Get(out cbb_Roll)
                 .Text("Dyelot", header: "Dyelot",  iseditingreadonly: false).Get(out cbb_Dyelot)
