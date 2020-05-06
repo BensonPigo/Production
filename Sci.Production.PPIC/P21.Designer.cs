@@ -89,6 +89,7 @@
             this.dateConfirmedDate = new Sci.Win.UI.DateBox();
             this.lblConfirmDept = new Sci.Win.UI.Label();
             this.btnBatchConfirmResponsibilityDept = new Sci.Win.UI.Button();
+            this.lbStatus = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -107,6 +108,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.lbStatus);
             this.masterpanel.Controls.Add(this.lblConfirmDept);
             this.masterpanel.Controls.Add(this.txtVoucher);
             this.masterpanel.Controls.Add(this.gridReplacement);
@@ -163,6 +165,7 @@
             this.masterpanel.Controls.SetChildIndex(this.gridReplacement, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtVoucher, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblConfirmDept, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbStatus, 0);
             // 
             // detailpanel
             // 
@@ -582,7 +585,7 @@
             // btnResponsibilitydept
             // 
             this.btnResponsibilitydept.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnResponsibilitydept.Location = new System.Drawing.Point(824, 20);
+            this.btnResponsibilitydept.Location = new System.Drawing.Point(825, 39);
             this.btnResponsibilitydept.Name = "btnResponsibilitydept";
             this.btnResponsibilitydept.Size = new System.Drawing.Size(164, 33);
             this.btnResponsibilitydept.TabIndex = 7;
@@ -911,7 +914,7 @@
             // 
             this.lblConfirmDept.BackColor = System.Drawing.Color.Transparent;
             this.lblConfirmDept.Font = new System.Drawing.Font("Microsoft Sans Serif", 17F, System.Drawing.FontStyle.Bold);
-            this.lblConfirmDept.Location = new System.Drawing.Point(812, 54);
+            this.lblConfirmDept.Location = new System.Drawing.Point(813, 73);
             this.lblConfirmDept.Name = "lblConfirmDept";
             this.lblConfirmDept.Size = new System.Drawing.Size(183, 34);
             this.lblConfirmDept.TabIndex = 58;
@@ -928,6 +931,18 @@
             this.btnBatchConfirmResponsibilityDept.Text = "Batch Confirm Responsibility Dept.";
             this.btnBatchConfirmResponsibilityDept.UseVisualStyleBackColor = true;
             this.btnBatchConfirmResponsibilityDept.Click += new System.EventHandler(this.BtnBatchConfirmResponsibilityDept_Click);
+            // 
+            // lbStatus
+            // 
+            this.lbStatus.BackColor = System.Drawing.Color.Transparent;
+            this.lbStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
+            this.lbStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 17F, System.Drawing.FontStyle.Bold);
+            this.lbStatus.Location = new System.Drawing.Point(828, 1);
+            this.lbStatus.Name = "lbStatus";
+            this.lbStatus.Size = new System.Drawing.Size(161, 35);
+            this.lbStatus.TabIndex = 59;
+            this.lbStatus.Text = "Confirmed";
+            this.lbStatus.TextStyle.Color = System.Drawing.Color.Red;
             // 
             // P21
             // 
@@ -1032,5 +1047,6 @@
         private Class.txttpeuser txtPOHandle;
         private Win.UI.Label lblConfirmDept;
         private Win.UI.Button btnBatchConfirmResponsibilityDept;
+        private Win.UI.Label lbStatus;
     }
 }
