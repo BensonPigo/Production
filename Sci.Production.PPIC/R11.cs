@@ -14,6 +14,7 @@ using Sci.Utility.Excel;
 
 namespace Sci.Production.PPIC
 {
+    /// <inheritdoc/>
     public partial class R11 : Sci.Win.Tems.PrintForm
     {
         private string F;
@@ -33,6 +34,7 @@ namespace Sci.Production.PPIC
         private Color FontGreen = Color.FromArgb(0, 126, 15);
         private Color BackGray = Color.FromArgb(217, 217, 217);
 
+        /// <inheritdoc/>
         public R11(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -40,6 +42,7 @@ namespace Sci.Production.PPIC
             this.numDateGap.Text = "2";
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.F = this.txtfactory.Text;
@@ -110,6 +113,7 @@ and convert(date,s.offline) between '{this.dateRangeReady1}' and '{this.dateRang
             return true;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             #region Sql Command
@@ -673,6 +677,7 @@ drop table #Calendar,#CalendarData,#tmp,#tmp1,#tmp2
             return new Ict.DualResult(true);
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
             #region check resultDT
@@ -685,14 +690,14 @@ drop table #Calendar,#CalendarData,#tmp,#tmp1,#tmp2
             this.SetCount(this.dtList[0].Rows.Count);
             string xltPath = System.IO.Path.Combine(Sci.Env.Cfg.XltPathDir + "\\PPIC_R11.xltx");
             sxrc sxr = new sxrc(xltPath, keepApp: true);
-            sxr.boOpenFile = true;
-            sxrc.xltRptTable xrtSummery1 = new sxrc.xltRptTable(this.dtList[1]);
+            sxr.BoOpenFile = true;
+            sxrc.XltRptTable xrtSummery1 = new sxrc.XltRptTable(this.dtList[1]);
             xrtSummery1.ShowHeader = false;
-            sxr.dicDatas.Add("##Summery", xrtSummery1);
+            sxr.DicDatas.Add("##Summery", xrtSummery1);
 
-            sxrc.xltRptTable xrtDetail = new sxrc.xltRptTable(this.dtList[0]);
+            sxrc.XltRptTable xrtDetail = new sxrc.XltRptTable(this.dtList[0]);
             xrtDetail.ShowHeader = false;
-            sxr.dicDatas.Add("##detail", xrtDetail);
+            sxr.DicDatas.Add("##detail", xrtDetail);
 
             Microsoft.Office.Interop.Excel.Workbook wkb = sxr.ExcelApp.ActiveWorkbook;
             Microsoft.Office.Interop.Excel.Worksheet wkcolor = wkb.Sheets[1];
