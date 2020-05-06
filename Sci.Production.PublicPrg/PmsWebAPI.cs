@@ -13,6 +13,7 @@ namespace Sci.Production.Prg
         public static string TradeWebApiUri {
             get {
                 if (DBProxy.Current.DefaultModuleName.Contains("testing") ||
+                    DBProxy.Current.DefaultModuleName.Contains("Training") ||
                    DBProxy.Current.DefaultModuleName.Contains("Dummy"))
                 {
                     return ConfigurationManager.AppSettings["TradeWebAPI_Test"];
