@@ -72,7 +72,7 @@
             this.txtSONo = new Sci.Win.UI.TextBox();
             this.dateSOCfmDate = new Sci.Win.UI.DateBox();
             this.txtVslvoyFltNo = new Sci.Win.UI.TextBox();
-            this.dateETD = new Sci.Win.UI.DateBox();
+            this.dateOnBoardDate = new Sci.Win.UI.DateBox();
             this.dateETA = new Sci.Win.UI.DateBox();
             this.label31 = new Sci.Win.UI.Label();
             this.btnAirPPList = new Sci.Win.UI.Button();
@@ -216,14 +216,14 @@
             this.masterpanel.Controls.Add(this.labelInvoiceNo);
             this.masterpanel.Controls.Add(this.dateFCRDate);
             this.masterpanel.Controls.Add(this.dateSOCfmDate);
-            this.masterpanel.Controls.Add(this.dateETD);
+            this.masterpanel.Controls.Add(this.dateOnBoardDate);
             this.masterpanel.Controls.Add(this.dateETA);
             this.masterpanel.Controls.Add(this.dateInvDate);
             this.masterpanel.Size = new System.Drawing.Size(1077, 389);
             this.masterpanel.TabIndex = 43;
             this.masterpanel.Controls.SetChildIndex(this.dateInvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateETA, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateETD, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateOnBoardDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateSOCfmDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateFCRDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelInvoiceNo, 0);
@@ -829,7 +829,7 @@
             this.labelETDETA.Name = "labelETDETA";
             this.labelETDETA.Size = new System.Drawing.Size(126, 23);
             this.labelETDETA.TabIndex = 48;
-            this.labelETDETA.Text = "ETD/ETA";
+            this.labelETDETA.Text = "On Board Date/ETA";
             // 
             // txtSONo
             // 
@@ -840,7 +840,7 @@
             this.txtSONo.Name = "txtSONo";
             this.txtSONo.Size = new System.Drawing.Size(164, 23);
             this.txtSONo.TabIndex = 27;
-            this.txtSONo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSONo_Validating);
+            this.txtSONo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSONo_Validating);
             // 
             // dateSOCfmDate
             // 
@@ -854,31 +854,35 @@
             // 
             // txtVslvoyFltNo
             // 
-            this.txtVslvoyFltNo.BackColor = System.Drawing.Color.White;
+            this.txtVslvoyFltNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtVslvoyFltNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Vessel", true));
-            this.txtVslvoyFltNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtVslvoyFltNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtVslvoyFltNo.IsSupportEditMode = false;
             this.txtVslvoyFltNo.Location = new System.Drawing.Point(679, 220);
             this.txtVslvoyFltNo.Name = "txtVslvoyFltNo";
+            this.txtVslvoyFltNo.ReadOnly = true;
             this.txtVslvoyFltNo.Size = new System.Drawing.Size(188, 23);
             this.txtVslvoyFltNo.TabIndex = 34;
             // 
-            // dateETD
+            // dateOnBoardDate
             // 
-            this.dateETD.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ETD", true));
-            this.dateETD.Location = new System.Drawing.Point(679, 247);
-            this.dateETD.Name = "dateETD";
-            this.dateETD.Size = new System.Drawing.Size(130, 23);
-            this.dateETD.TabIndex = 35;
-            this.dateETD.Validating += new System.ComponentModel.CancelEventHandler(this.DateETD_Validating);
+            this.dateOnBoardDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ETD", true));
+            this.dateOnBoardDate.IsSupportEditMode = false;
+            this.dateOnBoardDate.Location = new System.Drawing.Point(679, 247);
+            this.dateOnBoardDate.Name = "dateOnBoardDate";
+            this.dateOnBoardDate.ReadOnly = true;
+            this.dateOnBoardDate.Size = new System.Drawing.Size(130, 23);
+            this.dateOnBoardDate.TabIndex = 35;
             // 
             // dateETA
             // 
             this.dateETA.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ETA", true));
+            this.dateETA.IsSupportEditMode = false;
             this.dateETA.Location = new System.Drawing.Point(827, 247);
             this.dateETA.Name = "dateETA";
+            this.dateETA.ReadOnly = true;
             this.dateETA.Size = new System.Drawing.Size(130, 23);
             this.dateETA.TabIndex = 36;
-            this.dateETA.Validating += new System.ComponentModel.CancelEventHandler(this.DateETA_Validating);
             // 
             // label31
             // 
@@ -1204,7 +1208,7 @@
             this.btnBatchImportSO.TabIndex = 43;
             this.btnBatchImportSO.Text = "Batch Import S/O";
             this.btnBatchImportSO.UseVisualStyleBackColor = true;
-            this.btnBatchImportSO.Click += new System.EventHandler(this.btnBatchImportSO_Click_1);
+            this.btnBatchImportSO.Click += new System.EventHandler(this.BtnBatchImportSO_Click_1);
             // 
             // btnUnCfmHis
             // 
@@ -1215,7 +1219,7 @@
             this.btnUnCfmHis.TabIndex = 48;
             this.btnUnCfmHis.Text = "Unconfirm History";
             this.btnUnCfmHis.UseVisualStyleBackColor = true;
-            this.btnUnCfmHis.Click += new System.EventHandler(this.btnUnCfmHis_Click);
+            this.btnUnCfmHis.Click += new System.EventHandler(this.BtnUnCfmHis_Click);
             // 
             // numTotalAPPBookingVW
             // 
@@ -1458,7 +1462,7 @@
         private Win.UI.Button btnAirPPList;
         private Win.UI.Label label31;
         private Win.UI.DateBox dateETA;
-        private Win.UI.DateBox dateETD;
+        private Win.UI.DateBox dateOnBoardDate;
         private Win.UI.TextBox txtVslvoyFltNo;
         private Win.UI.DateBox dateSOCfmDate;
         private Win.UI.TextBox txtSONo;
