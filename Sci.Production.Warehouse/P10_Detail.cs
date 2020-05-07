@@ -95,6 +95,7 @@ order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp"))
             }
 
             this.displayID.Text = CurrentDetailData["id"].ToString();
+            this.displaySCIRefno.Text = CurrentDetailData["SCIRefno"].ToString();
             this.displayRefno.Text = CurrentDetailData["refno"].ToString();
             this.displaySPNo.Text = CurrentDetailData["poid"].ToString();
             this.displayColorID.Text = CurrentDetailData["colorid"].ToString();

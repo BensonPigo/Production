@@ -53,6 +53,8 @@
             this.labelAccuIssue = new Sci.Win.UI.Label();
             this.labelBalanceQty = new Sci.Win.UI.Label();
             this.btnAutoPick = new Sci.Win.UI.Button();
+            this.displaySCIRefno = new Sci.Win.UI.DisplayBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -101,7 +103,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(14, 29);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(75, 23);
@@ -110,8 +111,7 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
-            this.labelSPNo.Location = new System.Drawing.Point(243, 29);
+            this.labelSPNo.Location = new System.Drawing.Point(14, 64);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(75, 23);
             this.labelSPNo.TabIndex = 100;
@@ -130,7 +130,7 @@
             // 
             this.displaySPNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displaySPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySPNo.Location = new System.Drawing.Point(321, 29);
+            this.displaySPNo.Location = new System.Drawing.Point(92, 64);
             this.displaySPNo.Name = "displaySPNo";
             this.displaySPNo.Size = new System.Drawing.Size(124, 23);
             this.displaySPNo.TabIndex = 102;
@@ -139,15 +139,14 @@
             // 
             this.displayRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayRefno.Location = new System.Drawing.Point(548, 29);
+            this.displayRefno.Location = new System.Drawing.Point(618, 29);
             this.displayRefno.Name = "displayRefno";
             this.displayRefno.Size = new System.Drawing.Size(124, 23);
             this.displayRefno.TabIndex = 104;
             // 
             // labelRefno
             // 
-            this.labelRefno.Lines = 0;
-            this.labelRefno.Location = new System.Drawing.Point(470, 29);
+            this.labelRefno.Location = new System.Drawing.Point(540, 29);
             this.labelRefno.Name = "labelRefno";
             this.labelRefno.Size = new System.Drawing.Size(75, 23);
             this.labelRefno.TabIndex = 103;
@@ -157,15 +156,14 @@
             // 
             this.displayColorID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayColorID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayColorID.Location = new System.Drawing.Point(774, 29);
+            this.displayColorID.Location = new System.Drawing.Point(836, 29);
             this.displayColorID.Name = "displayColorID";
             this.displayColorID.Size = new System.Drawing.Size(124, 23);
             this.displayColorID.TabIndex = 106;
             // 
             // labelColorID
             // 
-            this.labelColorID.Lines = 0;
-            this.labelColorID.Location = new System.Drawing.Point(696, 29);
+            this.labelColorID.Location = new System.Drawing.Point(758, 29);
             this.labelColorID.Name = "labelColorID";
             this.labelColorID.Size = new System.Drawing.Size(75, 23);
             this.labelColorID.TabIndex = 105;
@@ -175,15 +173,14 @@
             // 
             this.displayDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayDesc.Location = new System.Drawing.Point(321, 62);
+            this.displayDesc.Location = new System.Drawing.Point(308, 64);
             this.displayDesc.Name = "displayDesc";
-            this.displayDesc.Size = new System.Drawing.Size(453, 23);
+            this.displayDesc.Size = new System.Drawing.Size(652, 23);
             this.displayDesc.TabIndex = 108;
             // 
             // labelDesc
             // 
-            this.labelDesc.Lines = 0;
-            this.labelDesc.Location = new System.Drawing.Point(243, 62);
+            this.labelDesc.Location = new System.Drawing.Point(230, 64);
             this.labelDesc.Name = "labelDesc";
             this.labelDesc.Size = new System.Drawing.Size(75, 23);
             this.labelDesc.TabIndex = 107;
@@ -191,8 +188,8 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.displaySizeSpec);
-            this.groupBox1.Controls.Add(this.labelSizeSpec);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.displaySCIRefno);
             this.groupBox1.Controls.Add(this.labelID);
             this.groupBox1.Controls.Add(this.displayColorID);
             this.groupBox1.Controls.Add(this.displayDesc);
@@ -214,7 +211,7 @@
             // 
             this.displaySizeSpec.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displaySizeSpec.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySizeSpec.Location = new System.Drawing.Point(92, 62);
+            this.displaySizeSpec.Location = new System.Drawing.Point(798, 29);
             this.displaySizeSpec.Name = "displaySizeSpec";
             this.displaySizeSpec.Size = new System.Drawing.Size(124, 23);
             this.displaySizeSpec.TabIndex = 110;
@@ -222,8 +219,7 @@
             // 
             // labelSizeSpec
             // 
-            this.labelSizeSpec.Lines = 0;
-            this.labelSizeSpec.Location = new System.Drawing.Point(14, 62);
+            this.labelSizeSpec.Location = new System.Drawing.Point(720, 29);
             this.labelSizeSpec.Name = "labelSizeSpec";
             this.labelSizeSpec.Size = new System.Drawing.Size(75, 23);
             this.labelSizeSpec.TabIndex = 109;
@@ -234,6 +230,8 @@
             // 
             this.groupBox2.Controls.Add(this.numVariance);
             this.groupBox2.Controls.Add(this.numIssueQty);
+            this.groupBox2.Controls.Add(this.displaySizeSpec);
+            this.groupBox2.Controls.Add(this.labelSizeSpec);
             this.groupBox2.Controls.Add(this.numBalanceQty);
             this.groupBox2.Controls.Add(this.numAccuIssue);
             this.groupBox2.Controls.Add(this.numRequestQty);
@@ -361,7 +359,6 @@
             // 
             // labelVariance
             // 
-            this.labelVariance.Lines = 0;
             this.labelVariance.Location = new System.Drawing.Point(470, 62);
             this.labelVariance.Name = "labelVariance";
             this.labelVariance.Size = new System.Drawing.Size(90, 23);
@@ -370,7 +367,6 @@
             // 
             // labelRequestQty
             // 
-            this.labelRequestQty.Lines = 0;
             this.labelRequestQty.Location = new System.Drawing.Point(14, 29);
             this.labelRequestQty.Name = "labelRequestQty";
             this.labelRequestQty.Size = new System.Drawing.Size(90, 23);
@@ -379,7 +375,6 @@
             // 
             // labelIssueQty
             // 
-            this.labelIssueQty.Lines = 0;
             this.labelIssueQty.Location = new System.Drawing.Point(243, 62);
             this.labelIssueQty.Name = "labelIssueQty";
             this.labelIssueQty.Size = new System.Drawing.Size(90, 23);
@@ -388,7 +383,6 @@
             // 
             // labelAccuIssue
             // 
-            this.labelAccuIssue.Lines = 0;
             this.labelAccuIssue.Location = new System.Drawing.Point(243, 29);
             this.labelAccuIssue.Name = "labelAccuIssue";
             this.labelAccuIssue.Size = new System.Drawing.Size(90, 23);
@@ -397,7 +391,6 @@
             // 
             // labelBalanceQty
             // 
-            this.labelBalanceQty.Lines = 0;
             this.labelBalanceQty.Location = new System.Drawing.Point(470, 29);
             this.labelBalanceQty.Name = "labelBalanceQty";
             this.labelBalanceQty.Size = new System.Drawing.Size(90, 23);
@@ -416,12 +409,30 @@
             this.btnAutoPick.UseVisualStyleBackColor = true;
             this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);
             // 
+            // displaySCIRefno
+            // 
+            this.displaySCIRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySCIRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySCIRefno.Location = new System.Drawing.Point(308, 29);
+            this.displaySCIRefno.Name = "displaySCIRefno";
+            this.displaySCIRefno.Size = new System.Drawing.Size(220, 23);
+            this.displaySCIRefno.TabIndex = 115;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(230, 29);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 114;
+            this.label1.Text = "SCIRefno";
+            // 
             // P10_Detail
             // 
             this.ClientSize = new System.Drawing.Size(1008, 557);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Name = "P10_Detail";
+            this.OnLineHelpID = "Sci.Win.Subs.Input8A";
             this.Text = "P10. Issue Fabric Detail";
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
@@ -465,5 +476,7 @@
         private Win.UI.NumericBox numAccuIssue;
         private Win.UI.NumericBox numRequestQty;
         private Win.UI.Button btnAutoPick;
+        private Win.UI.Label label1;
+        private Win.UI.DisplayBox displaySCIRefno;
     }
 }

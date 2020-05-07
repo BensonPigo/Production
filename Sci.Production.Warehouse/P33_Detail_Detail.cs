@@ -44,6 +44,7 @@ namespace Sci.Production.Warehouse
             base.OnFormLoaded();
             Ict.DualResult result;
 
+            this.displaySCIRefno.Text = dr_master["SCIRefno"].ToString();
             this.displayRefno.Text = dr_master["refno"].ToString();
             this.displaySPNo.Text = dr_master["poid"].ToString();
             this.displayColorID.Text = dr_master["SuppColor"].ToString();
