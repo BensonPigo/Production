@@ -1000,6 +1000,19 @@ order by t1.ID"),
                         this.SewOutPutData,
                         "OrderId,ComboType,QAQty,LastShift,SubconInType,Program",
                         string.Format(@"
+Select ID
+		, rs = iif(ProductionUnit = 'TMS', 'CPU'
+		   								, iif(ProductionUnit = 'QTY', 'AMT'
+		   															, '')),
+        [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
+							    when ProductionUnit = 'TMS' then 3
+							    else 0 end
+into #tmpArtwork
+from ArtworkType WITH (NOLOCK)
+where Classify in ('I','A','P') 
+		and IsTtlTMS = 0
+        and IsPrintToCMP=1
+
 --準備台北資料(須排除這些)
 select ps.ID
 into #TPEtmp
@@ -1011,42 +1024,39 @@ where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
 and ml.isThread=1 
 and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
 
-;with tmpArtwork as(
-	Select ID
-		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
-		   									, iif(ProductionUnit = 'QTY', 'AMT'
-		   																, '')),
-           [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
-							        when ProductionUnit = 'TMS' then 3
-							        else 0 end
-	from ArtworkType WITH (NOLOCK)
-	where Classify in ('I','A','P') 
-		  and IsTtlTMS = 0
-          and IsPrintToCMP=1
-),
-tmpAllSubprocess as(
-	select ot.ArtworkTypeID
-		   , a.OrderId
-		   , a.ComboType
-           , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
-           , a.Program 
-	from #tmp a
-	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
-	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
---	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
---												 and sl.Location = a.ComboType
-	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
-			and ot.Price > 0 		    
-		  and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
-			  or ot.ArtworkTypeID <> 'SP_THREAD')
-	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,a.Program
-)
+select ot.ArtworkTypeID
+		, a.OrderId
+		, a.ComboType
+        , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
+        , a.Program 
+into  #tmpAllSubprocess
+from #tmp a
+inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
+inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
+where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
+		and ot.Price > 0 		    
+		and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
+			or ot.ArtworkTypeID <> 'SP_THREAD')
+group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,a.Program
+
+--FMS傳票部分顯示AT不分Hand/Machine，是因為政策問題，但比對Sewing R02時，會有落差，請根據SP#落在Hand CPU:10 /Machine:5，則只撈出Hand CPU:10這筆，抓其大值，以便加總總和等同於FMS傳票AT
+-- 當AT(Machine) = AT(Hand)時, 也要將Price歸0 (ISP20190520)
+update s set s.Price = 0
+    from #tmpAllSubprocess s
+    inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (HAND)') a on s.OrderId = a.OrderId and s.ComboType = a.ComboType
+    where s.ArtworkTypeID = 'AT (MACHINE)'  and s.Price <= a.Price
+
+update s set s.Price = 0
+    from #tmpAllSubprocess s
+    inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (MACHINE)') a on s.OrderId = a.OrderId and s.ComboType = a.ComboType
+    where s.ArtworkTypeID = 'AT (HAND)'  and s.Price <= a.Price
+
 select ArtworkTypeID = t1.ID
 	   , Price = isnull(sum(Round(Price,t1.DecimalNumber)), 0)
 	   , rs
        , [Company] = t2.Program
-from tmpArtwork t1
-left join tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
+from #tmpArtwork t1
+left join #tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
 group by t1.ID, rs,t2.Program having isnull(sum(Price), 0) > 0
 order by t1.ID"),
                         out this.subprocessSubconInData);
@@ -1073,6 +1083,19 @@ order by t1.ID"),
                         this.SewOutPutData,
                         "OrderId,ComboType,QAQty,LastShift,SubconInType,SubconOutFty",
                         string.Format(@"
+Select ID
+		, rs = iif(ProductionUnit = 'TMS', 'CPU'
+		   								, iif(ProductionUnit = 'QTY', 'AMT'
+		   															, '')),
+        [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
+							    when ProductionUnit = 'TMS' then 3
+							    else 0 end
+into #tmpArtwork
+from ArtworkType WITH (NOLOCK)
+where Classify in ('I','A','P') 
+		and IsTtlTMS = 0
+        and IsPrintToCMP=1
+
 --準備台北資料(須排除這些)
 select ps.ID
 into #TPEtmp
@@ -1084,42 +1107,39 @@ where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
 and ml.isThread=1 
 and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
 
-;with tmpArtwork as(
-	Select ID
-		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
-		   									, iif(ProductionUnit = 'QTY', 'AMT'
-		   																, '')),
-           [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
-							        when ProductionUnit = 'TMS' then 3
-							        else 0 end
-	from ArtworkType WITH (NOLOCK)
-	where Classify in ('I','A','P') 
-		  and IsTtlTMS = 0
-          and IsPrintToCMP=1
-),
-tmpAllSubprocess as(
-	select ot.ArtworkTypeID
-		   , a.OrderId
-		   , a.ComboType
-           , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
-           , a.SubconOutFty 
-	from #tmp a
-	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
-	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
---	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
---												 and sl.Location = a.ComboType
-	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
-			and ot.Price > 0 		    
-	and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
-		or ot.ArtworkTypeID <> 'SP_THREAD')
-	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,a.SubconOutFty
-)
+select ot.ArtworkTypeID
+		, a.OrderId
+		, a.ComboType
+        , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
+        , a.SubconOutFty 
+into  #tmpAllSubprocess
+from #tmp a
+inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
+inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
+where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
+		and ot.Price > 0 		    
+and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
+	or ot.ArtworkTypeID <> 'SP_THREAD')
+group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,a.SubconOutFty
+
+--FMS傳票部分顯示AT不分Hand/Machine，是因為政策問題，但比對Sewing R02時，會有落差，請根據SP#落在Hand CPU:10 /Machine:5，則只撈出Hand CPU:10這筆，抓其大值，以便加總總和等同於FMS傳票AT
+-- 當AT(Machine) = AT(Hand)時, 也要將Price歸0 (ISP20190520)
+update s set s.Price = 0
+    from #tmpAllSubprocess s
+    inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (HAND)') a on s.OrderId = a.OrderId and s.ComboType = a.ComboType
+    where s.ArtworkTypeID = 'AT (MACHINE)'  and s.Price <= a.Price
+
+update s set s.Price = 0
+    from #tmpAllSubprocess s
+    inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (MACHINE)') a on s.OrderId = a.OrderId and s.ComboType = a.ComboType
+    where s.ArtworkTypeID = 'AT (HAND)'  and s.Price <= a.Price
+
 select ArtworkTypeID = t1.ID
 	   , Price = isnull(sum(Round(Price,t1.DecimalNumber)), 0)
 	   , rs
        , [Company] = t2.SubconOutFty
-from tmpArtwork t1
-left join tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
+from #tmpArtwork t1
+left join #tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
 group by t1.ID, rs,t2.SubconOutFty having isnull(sum(Price), 0) > 0
 order by t1.ID"),
                         out this.subprocessSubconOutData);
@@ -1265,7 +1285,7 @@ where f.Junk = 0",
                 return false;
             }
 
-            // excel.Visible = true;
+            //excel.Visible = true;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[2, 1] = string.Format("{0}", this.factoryName);
@@ -1551,11 +1571,10 @@ where f.Junk = 0",
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(this.reportType == 0 ? "Sewing_R02_MonthlyReportByDate" : "Sewing_R02_MonthlyReportBySewingLine");
             excel.ActiveWorkbook.SaveAs(strExcelName);
-            excel.Quit();
+            excel.Visible = true;
             Marshal.ReleaseComObject(excel);
             Marshal.ReleaseComObject(worksheet);
 
-            strExcelName.OpenFile();
             #endregion
             return true;
         }
