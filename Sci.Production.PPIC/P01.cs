@@ -1341,7 +1341,7 @@ where POID = @poid group by POID,b.spno";
                         from PO_Supp_Detail A WITH (NOLOCK) 
                         left join MDivisionPoDetail B WITH (NOLOCK) on B.POID=A.ID and B.Seq1=A.SEQ1 and B.Seq2=A.SEQ2
                         inner join dbo.Factory F WITH (NOLOCK) on F.id=A.factoryid and F.MDivisionID='{this.CurrentMaintain["MDivisionID"]}'
-                        where A.ID = '{this.CurrentMaintain["POID"]}' and (A.Complete = 0  {category_where})";
+                        where A.ID = '{this.CurrentMaintain["POID"]}' and ((a.junk = 0 and A.Complete = 0)  {category_where})";
 
                     if (MyUtility.Check.Seek(sqlCmd))
                     {
