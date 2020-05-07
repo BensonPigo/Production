@@ -12,10 +12,9 @@ namespace Sci.Production.Quality
 {
     public partial class P31 : Sci.Win.Tems.Input6
     {
-        public P31(ToolStripMenuItem menuitem)
-            : base(menuitem)
+        public P31(ToolStripMenuItem menuitem) : base(menuitem)
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
     }
 }
