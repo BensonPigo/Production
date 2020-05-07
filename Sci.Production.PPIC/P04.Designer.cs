@@ -1201,6 +1201,7 @@
             this.comboPressing1.Size = new System.Drawing.Size(122, 24);
             this.comboPressing1.TabIndex = 80;
             this.comboPressing1.SelectedIndexChanged += new System.EventHandler(this.ComboPressing1_SelectedIndexChanged);
+            // 
             // labelFabricType
             // 
             this.labelFabricType.Location = new System.Drawing.Point(492, 196);

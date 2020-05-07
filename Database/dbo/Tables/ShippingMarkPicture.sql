@@ -1,33 +1,40 @@
-﻿CREATE TABLE [dbo].[ShippingMarkPicture]
-(
-	[BrandID] VARCHAR(8) NOT NULL , 
-    [CTNRefno] VARCHAR(21) NOT NULL, 
-    [Side] VARCHAR(5) NOT NULL, 
-    [Seq] INT  NOT NULL, 
-    [FromLeft] INT CONSTRAINT [DF_ShippingMarkPicture_FromLeft] DEFAULT (0) NOT NULL, 
-    [FromTop] INT CONSTRAINT [DF_ShippingMarkPicture_FromTop] DEFAULT (0) NOT NULL, 
-    [AddDate] DATETIME NULL, 
-    [AddName] VARCHAR(10) CONSTRAINT [DF_ShippingMarkPicture_AddName] DEFAULT ('') NULL, 
-    [EditDate] DATETIME NULL, 
-    [EditName] VARCHAR(10) CONSTRAINT [DF_ShippingMarkPicture_EditName] DEFAULT ('') NULL,
-	[IsHorizontal] bit NOT NULL DEFAULT ((0)),
-    [IsSSCC] BIT NULL DEFAULT ((0)), 
-    [StickerSizeID] BIGINT NOT NULL DEFAULT (0), 
-    CONSTRAINT [PK_ShippingMarkPicture] PRIMARY KEY CLUSTERED ([BrandID],[CTNRefno],[Side],[Seq] ASC)
-)
+CREATE TABLE [dbo].[ShippingMarkPicture] (
+    [BrandID]       VARCHAR (8)  NOT NULL,
+    [CTNRefno]      VARCHAR (21) NOT NULL,
+    [Side]          VARCHAR (5)  NOT NULL,
+    [Seq]           INT          NOT NULL,
+    [AddDate]       DATETIME     NULL,
+    [AddName]       VARCHAR (10) CONSTRAINT [DF_ShippingMarkPicture_AddName] DEFAULT ('') NULL,
+    [EditDate]      DATETIME     NULL,
+    [EditName]      VARCHAR (10) CONSTRAINT [DF_ShippingMarkPicture_EditName] DEFAULT ('') NULL,
+    [Is2Side]       BIT          DEFAULT ((0)) NULL,
+    [IsHorizontal]  BIT          DEFAULT ((0)) NOT NULL,
+    [IsSSCC]        BIT          DEFAULT ((0)) NOT NULL,
+    [FromRight]     INT          DEFAULT ((0)) NOT NULL,
+    [FromBottom]    INT          DEFAULT ((0)) NOT NULL,
+    [StickerSizeID] BIGINT       DEFAULT ((0)) NOT NULL,
+    [Junk]          BIT          DEFAULT ((0)) NOT NULL,
+    CONSTRAINT [PK_ShippingMarkPicture] PRIMARY KEY CLUSTERED ([BrandID] ASC, [CTNRefno] ASC, [Side] ASC, [Seq] ASC)
+);
+
+
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'上下左右前後', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingMarkPicture', @level2type = N'COLUMN', @level2name = N'Side';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�W�U���k�e��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingMarkPicture', @level2type = N'COLUMN', @level2name = N'Side';
+
+
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'序號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingMarkPicture', @level2type = N'COLUMN', @level2name = N'Seq';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�Ǹ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingMarkPicture', @level2type = N'COLUMN', @level2name = N'Seq';
 
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'離左邊的位置', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingMarkPicture', @level2type = N'COLUMN', @level2name = N'FromLeft';
 
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'離上面的位置', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingMarkPicture', @level2type = N'COLUMN', @level2name = N'FromTop';
 
 GO
 
+
+GO
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�O�_�ਤ�K', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingMarkPicture', @level2type = N'COLUMN', @level2name = N'Is2Side';
 

@@ -21,6 +21,9 @@ namespace Sci.Production.Packing
     public partial class B03 : Sci.Win.Tems.Input1
     {
         private Hashtable ht = new Hashtable();
+        private DataTable sizes;
+        private DataTable sizesAll;
+
 
         /// <summary>
         /// B03
@@ -40,23 +43,57 @@ namespace Sci.Production.Packing
 
             #region ComboBox
             DualResult result;
-            DataTable sizes;
             string cmd = $@"
 SELECT [ID]='' ,[SIze]='' 
 UNION
 SELECT ID, SIze 
-FROM StickerSize WITH (NOLOCK) ";
-
-            if (result = DBProxy.Current.Select(null, cmd, out sizes))
+FROM StickerSize WITH (NOLOCK) 
+where junk <> 1";
+            result = DBProxy.Current.Select(null, cmd, out this.sizes);
+            if (!result)
             {
-                MyUtility.Tool.SetupCombox(this.comboStickerSize, 1, sizes);
-                this.comboStickerSize.DisplayMember = "Size";
+                this.ShowErr(result);
             }
-            else
+
+            cmd = $@"
+SELECT [ID]='' ,[SIze]='' 
+UNION
+SELECT ID, SIze 
+FROM StickerSize WITH (NOLOCK) 
+";
+            result = DBProxy.Current.Select(null, cmd, out this.sizesAll);
+            if (!result)
             {
                 this.ShowErr(result);
             }
             #endregion
+        }
+
+        /// <inheritdoc/>
+        protected override void OnEditModeChanged()
+        {
+            base.OnEditModeChanged();
+            this.ComboPressing2DataSource();
+        }
+
+        private void ComboPressing2DataSource()
+        {
+            if (this.comboStickerSize != null && this.CurrentMaintain != null)
+            {
+                if (this.EditMode && this.sizes != null)
+                {
+                    MyUtility.Tool.SetupCombox(this.comboStickerSize, 1, this.sizes);
+                    this.comboStickerSize.DisplayMember = "Size";
+                }
+
+                if (!this.EditMode && this.sizesAll != null)
+                {
+                    MyUtility.Tool.SetupCombox(this.comboStickerSize, 1, this.sizesAll);
+                    this.comboStickerSize.DisplayMember = "Size";
+                }
+
+                this.comboStickerSize.SelectedValue = this.CurrentMaintain["StickerSizeID"];
+            }
         }
 
         private void TxtCTNRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -125,8 +162,55 @@ FROM StickerSize WITH (NOLOCK) ";
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            this.ComboPressing2DataSource();
+        }
 
-            this.comboStickerSize.SelectedValue = this.CurrentMaintain["StickerSizeID"];
+        protected override void EnsureToolbarExt()
+        {
+            base.EnsureToolbarExt();
+            if (!this.EditMode && this.CurrentMaintain != null && this.tabs.SelectedIndex == 1)
+            {
+                bool junk = MyUtility.Convert.GetBool(this.CurrentMaintain["junk"]);
+                this.toolbar.cmdJunk.Enabled = !junk && this.Perm.Junk;
+                this.toolbar.cmdUnJunk.Enabled = junk && this.Perm.Junk;
+            }
+            else
+            {
+                this.toolbar.cmdJunk.Enabled = false;
+                this.toolbar.cmdUnJunk.Enabled = false;
+            }
+        }
+
+        protected override void ClickJunk()
+        {
+            base.ClickJunk();
+            string sqlcmd = $@"update ShippingMarkPicture set junk = 1 
+where BrandID = '{this.CurrentMaintain["BrandID"]}'
+and CTNRefno = '{this.CurrentMaintain["CTNRefno"]}'
+and Side = '{this.CurrentMaintain["Side"]}'
+and Seq = '{this.CurrentMaintain["Seq"]}'
+";
+            DualResult result = DBProxy.Current.Execute(null, sqlcmd);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+        }
+
+        protected override void ClickUnJunk()
+        {
+            base.ClickUnJunk();
+            string sqlcmd = $@"update ShippingMarkPicture set junk = 0
+where BrandID = '{this.CurrentMaintain["BrandID"]}'
+and CTNRefno = '{this.CurrentMaintain["CTNRefno"]}'
+and Side = '{this.CurrentMaintain["Side"]}'
+and Seq = '{this.CurrentMaintain["Seq"]}'
+";
+            DualResult result = DBProxy.Current.Execute(null, sqlcmd);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
         }
 
         private void ComboStickerSize_SelectedValueChanged(object sender, EventArgs e)
@@ -160,7 +244,7 @@ FROM StickerSize WITH (NOLOCK) ";
                 this.ShowErr(result);
             }
 
-            if (this.CurrentMaintain != null)
+            if (this.CurrentMaintain != null && this.EditMode)
             {
                 this.CurrentMaintain["StickerSizeID"] = id;
             }
