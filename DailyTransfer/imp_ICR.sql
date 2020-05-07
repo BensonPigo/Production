@@ -85,10 +85,10 @@ SET
 	a.EstFreight= b.EstFreight,
 	a.ActFreight= b.EstFreight,
 	a.OtherAmt= b.OtherAmt,
-	a.RMtlAmtUSD= ROUND(b.RMtlAmt * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2),
-	a.EstFreightUSD= ROUND(b.EstFreight * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2),
-	a.ActFreightUSD= ROUND(b.EstFreight * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2),
-	a.OtherAmtUSD= ROUND(b.OtherAmt * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2),
+	a.RMtlAmtUSD= ROUND(b.RMtlAmt * dbo.getRate('FX','TWD','USD',GetDate()),2),
+	a.EstFreightUSD= ROUND(b.EstFreight * dbo.getRate('FX','TWD','USD',GetDate()),2),
+	a.ActFreightUSD= ROUND(b.EstFreight * dbo.getRate('FX','TWD','USD',GetDate()),2),
+	a.OtherAmtUSD= ROUND(b.OtherAmt * dbo.getRate('FX','TWD','USD',GetDate()),2),
 	a.Exchange= b.Exchange,
 	a.IrregularPOCostID= b.IrregularPOCostID,
 	a.Description= b.Description,
@@ -166,10 +166,10 @@ SELECT
       ,[EstFreight]
       ,[EstFreight]
       ,[OtherAmt]
-      ,ROUND(RMtlAmt * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2)
-	  ,ROUND(EstFreight * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2)
-	  ,ROUND(EstFreight * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2)
-	  ,ROUND(OtherAmt * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2)
+      ,ROUND(RMtlAmt * dbo.getRate('FX','TWD','USD',GetDate()),2)
+	  ,ROUND(EstFreight * dbo.getRate('FX','TWD','USD',GetDate()),2)
+	  ,ROUND(EstFreight * dbo.getRate('FX','TWD','USD',GetDate()),2)
+	  ,ROUND(OtherAmt * dbo.getRate('FX','TWD','USD',GetDate()),2)
       ,[Exchange]
       ,[IrregularPOCostID]
       ,[Description]
@@ -206,7 +206,7 @@ SET
 	a.ICRQty= b.ICRQty,
 	a.ICRFoc= b.ICRFoc,
 	a.Price= b.Price,
-	a.PriceUSD= ROUND(b.Price * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2),
+	a.PriceUSD= ROUND(b.Price * dbo.getRate('FX','TWD','USD',GetDate()),2),
 	a.AddName= b.AddName,
 	a.AddDate= b.AddDate,
 	a.EditName= b.EditName,
@@ -239,7 +239,7 @@ SELECT
 	,ICRQty
 	,ICRFoc
 	,Price
-	,ROUND(Price * (select Rate from dbo.GetCurrencyRate('FX','TWD','USD',GetDate())),2)
+	,ROUND(Price * dbo.getRate('FX','TWD','USD',GetDate()),2)
 	,AddName
 	,AddDate
 	,EditName
