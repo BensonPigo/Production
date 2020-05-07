@@ -305,7 +305,7 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                 .Text("FactoryID", header: "Factory#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("ID", header: "Packing #", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("OrderShipmodeSeq", header: "Seq", width:Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("PONo", header: "PO No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("AirPPID", header: "APP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Delivery", iseditingreadonly: true)
@@ -428,7 +428,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
                 this.txtSONo.ReadOnly = true;
 
                 // textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndNonReadOnly;
-               // textBox6.ReadOnly = true;
+                // textBox6.ReadOnly = true;
                 this.col_lock.IsEditingReadOnly = true;
                 this.col_crd.IsEditingReadOnly = true;
                 this.detailgrid.Columns[0].DefaultCellStyle.ForeColor = Color.Black;
@@ -458,11 +458,8 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
                     break;
                 case "CONFIRMED":
                     // Confirm後, 仍可以按[Edit] 編輯[No Export Charge]欄位
-                    this.dateETA.ReadOnly = true;
-                    this.dateETD.ReadOnly = true;
                     this.txtRemark.ReadOnly = true;
                     this.txtpaytermarPaymentTerm.TextBox1.ReadOnly = true;
-                    this.txtVslvoyFltNo.ReadOnly = true;
                     this.txtShiptermShipmentTerm.ReadOnly = true;
 
                     this.dateInvDate.ReadOnly = true;
@@ -556,11 +553,11 @@ where   pl.INVNo = '{0}'
         protected override bool ClickSaveBefore()
         {
             DualResult result;
-            #region 檢查必輸欄位 
+            #region 檢查必輸欄位
+
             // [S/O#], [Terminal/Whse#], [Cut-Off Date]都輸入, 或是都不輸入
             if ((!MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) || !MyUtility.Check.Empty(this.txtTerminalWhse.Text) || !MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"])) &&
-                (MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) || MyUtility.Check.Empty(this.txtTerminalWhse.Text) || MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]))
-                )
+                (MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) || MyUtility.Check.Empty(this.txtTerminalWhse.Text) || MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"])))
             {
                 MyUtility.Msg.WarningBox("GB can't be saved due to S/O Info. (S/O#, Terminal/Whse#, Cut-Off Date/Time) are not complete");
                 return false;
@@ -711,13 +708,13 @@ order by fwd.WhseNo",
             }
 
             #region 檢查Act FCR Date 不可晚於今日or早於一個月前
-            if (!MyUtility.Check.Empty(CurrentMaintain["FBDate"]))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["FBDate"]))
             {
-                DateTime FBDate = DateTime.Parse(this.CurrentMaintain["FBDate"].ToString());
-                if (this.FBDate_Ori != FBDate)
+                DateTime fBDate = DateTime.Parse(this.CurrentMaintain["FBDate"].ToString());
+                if (this.FBDate_Ori != fBDate)
                 {
-                    if (DateTime.Compare(FBDate, DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd")).AddMonths(-1)) < 0 ||
-                        DateTime.Compare(FBDate, DateTime.Now) > 0)
+                    if (DateTime.Compare(fBDate, DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd")).AddMonths(-1)) < 0 ||
+                        DateTime.Compare(fBDate, DateTime.Now) > 0)
                     {
                         MyUtility.Msg.WarningBox("<Forward Booking Date> cannot be later than today or one month earlier !");
                         return false;
@@ -766,10 +763,10 @@ left join orders o WITH (NOLOCK) on o.id = pd.OrderID  where pd.id = '{this.Deta
             }
             #endregion
 
-            #region 組出表身所有的PackingListID與加總ShipQty,CTNQty,NW,GW,NNW,CBM 
+            #region 組出表身所有的PackingListID與加總ShipQty,CTNQty,NW,GW,NNW,CBM
             StringBuilder allPackID = new StringBuilder();
             int ttlshipqty = 0, ttlctnqty = 0;
-            double ttlnw = 0.0, ttlgw = 0.0, ttlnnw = 0.0, ttlcbm = 0.0, ttlAPPBookingVW =0.0, ttlAPPEstAmtVW = 0.0;
+            double ttlnw = 0.0, ttlgw = 0.0, ttlnnw = 0.0, ttlcbm = 0.0, ttlAPPBookingVW = 0.0, ttlAPPEstAmtVW = 0.0;
             foreach (DataRow dr in this.DetailDatas)
             {
                 allPackID.Append(string.Format("'{0}',", MyUtility.Convert.GetString(dr["ID"])));
@@ -787,8 +784,8 @@ left join orders o WITH (NOLOCK) on o.id = pd.OrderID  where pd.id = '{this.Deta
             #region 檢查訂單的Currency是否一致與Payterm與表頭是否一致
             if (allPackID.Length > 0)
             {
-                 sqlCmd = string.Format(
-                     @"with OrderData
+                sqlCmd = string.Format(
+                    @"with OrderData
 as
 (select distinct pd.ID,pd.OrderID,o.CurrencyID,o.PayTermARID
  from PackingList_Detail pd WITH (NOLOCK) , Orders o WITH (NOLOCK) 
@@ -877,8 +874,8 @@ where   o.BrandID is null
             string season = string.Empty, category = string.Empty;
             if (allPackID.Length > 0)
             {
-                 sqlCmd = string.Format(
-                     @"with OrderData
+                sqlCmd = string.Format(
+                    @"with OrderData
 as
 (select distinct o.Category,o.SeasonID
  from PackingList_Detail pd WITH (NOLOCK) , Orders o WITH (NOLOCK) 
@@ -1040,7 +1037,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         {
             this.txtInvSerial.Text = this.txtInvSerial.Text.ToString().Replace(" ", string.Empty);
             this.CurrentMaintain["InvSerial"] = MyUtility.Convert.GetString(this.CurrentMaintain["InvSerial"]).Replace(" ", string.Empty);
-            }
+        }
 
         // 檢查輸入的Inv. Date是否正確
         private void DateInvDate_Validating(object sender, CancelEventArgs e)
@@ -1204,7 +1201,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             string oldvalue = this.txtCutoffDate.OldValue;
             if (this.txtCutoffDate.Text != this.txtCutoffDate.OldValue && !MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
             {
-                if (!this.upSOCFMDate())
+                if (!this.UpSOCFMDate())
                 {
                     this.txtCutoffDate.Text = oldvalue;
                     return;
@@ -1213,7 +1210,6 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
 
             if (this.txtCutoffDate.Text == "/  /     :  :")
             {
-                this.txtVslvoyFltNo.Focus();
                 this.txtCutoffDate.Text = string.Empty;
                 this.CurrentMaintain["CutoffDate"] = DBNull.Value;
                 this.CurrentMaintain.EndEdit();
@@ -1237,37 +1233,6 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                 {
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
-                    return;
-                }
-            }
-
-        }
-
-        // 檢查輸入的ETD是否正確
-        private void DateETD_Validating(object sender, CancelEventArgs e)
-        {
-            if (this.EditMode && !MyUtility.Check.Empty(this.dateETD.Value))
-            {
-                if (!this.CheckDate((DateTime)MyUtility.Convert.GetDate(this.dateETD.Value), -12, 12))
-                {
-                    this.dateETD.Value = null;
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox("< ETD > is invalid!!");
-                    return;
-                }
-            }
-        }
-
-        // 檢查輸入的ETA是否正確
-        private void DateETA_Validating(object sender, CancelEventArgs e)
-        {
-            if (this.EditMode && !MyUtility.Check.Empty(this.dateETA.Value))
-            {
-                if (!this.CheckDate((DateTime)MyUtility.Convert.GetDate(this.dateETA.Value), -12, 12))
-                {
-                    this.dateETA.Value = null;
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox("< ETA > is invalid!!");
                     return;
                 }
             }
@@ -1355,13 +1320,13 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             }
             else
             {
-                if (!this.upSOCFMDate())
+                if (!this.UpSOCFMDate())
                 {
                     return;
                 }
             }
 
-            this.reloadSOCFMDate();
+            this.ReloadSOCFMDate();
             this.RenewData();
             this.OnDetailEntered();
         }
@@ -1512,8 +1477,7 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
 
             if (MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]) == "A/P" ||
                 MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]) == "S-A/P" ||
-                MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]) == "E/P"
-                )
+                MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]) == "E/P")
             {
                 DataTable tmp = (DataTable)this.detailgridbs.DataSource;
                 string sqlcmdchk = $@"
@@ -1569,6 +1533,7 @@ Packing List : {pid}";
             }
 
             DualResult result;
+
             // 當ShipMode為A/P,A/P-C,E/P,S-A/P時，要檢查是否都有AirPP單號
             if (MyUtility.Check.Seek(string.Format("select ID from ShipMode WITH (NOLOCK) where UseFunction like '%AirPP%' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]))))
             {
@@ -1707,17 +1672,17 @@ where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.Current
                 return;
             }
 
-
             Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("GMTBooking_UnCFM", true);
             DialogResult dResult = callReason.ShowDialog(this);
             if (dResult == System.Windows.Forms.DialogResult.OK)
             {
                 if (callReason.ReturnReason == string.Empty)
                 {
-                    MyUtility.Msg.WarningBox("Reason can not be empty."); return;
+                    MyUtility.Msg.WarningBox("Reason can not be empty.");
+                    return;
                 }
                 else
-                { 
+                {
 
                     string insertCmd = string.Format(
                         @"insert into SewingOutput_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
@@ -1777,13 +1742,6 @@ where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.Current
             {
                 return;
             }
-
-
-            //DualResult result = DBProxy.Current.Execute(null, updateCmd);
-            //if (!result)
-            //{
-            //    MyUtility.Msg.WarningBox("UnConfirm fail !\r\n" + result.ToString());
-            //}
         }
 
         // Terminal/Whse#
@@ -1821,7 +1779,7 @@ order by fwd.WhseNo",
             string oldvalue = this.txtTerminalWhse.OldValue;
             if (this.txtTerminalWhse.Text != this.txtTerminalWhse.OldValue && !MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
             {
-                if (!this.upSOCFMDate())
+                if (!this.UpSOCFMDate())
                 {
                     this.txtTerminalWhse.Text = oldvalue;
                     return;
@@ -1864,12 +1822,12 @@ order by fwd.WhseNo", this.txtTerminalWhse.Text.ToString().Trim());
             MyUtility.Msg.InfoBox("validated");
         }
 
-        private void txtSONo_Validating(object sender, CancelEventArgs e)
+        private void TxtSONo_Validating(object sender, CancelEventArgs e)
         {
             string oldvalue = this.txtSONo.OldValue;
             if (this.txtSONo.Text != this.txtSONo.OldValue && !MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
             {
-                if (!this.upSOCFMDate())
+                if (!this.UpSOCFMDate())
                 {
                     this.txtSONo.Text = oldvalue;
                     return;
@@ -1877,7 +1835,7 @@ order by fwd.WhseNo", this.txtTerminalWhse.Text.ToString().Trim());
             }
         }
 
-        private bool upSOCFMDate()
+        private bool UpSOCFMDate()
         {
             #region UnConfirm
             if (MyUtility.GetValue.Lookup("Status", MyUtility.Convert.GetString(this.CurrentMaintain["ShipPlanID"]), "ShipPlan", "ID") == "Confirmed")
@@ -1929,7 +1887,7 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
                     }
                 }
 
-                this.reloadSOCFMDate();
+                this.ReloadSOCFMDate();
                 this.OnDetailEntered();
                 return true;
             }
@@ -1941,7 +1899,7 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
             #endregion
         }
 
-        private void reloadSOCFMDate()
+        private void ReloadSOCFMDate()
         {
             string sqlSOcfmDate = $@"select SOCFMDate  from GMTBooking where id = '{this.CurrentMaintain["ID"]}'";
             string upSOCFMDate = MyUtility.GetValue.Lookup(sqlSOcfmDate);
@@ -1955,13 +1913,13 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
             }
         }
 
-        private void btnBatchImportSO_Click_1(object sender, EventArgs e)
+        private void BtnBatchImportSO_Click_1(object sender, EventArgs e)
         {
             P05_BatchImportSO form = new P05_BatchImportSO();
             form.ShowDialog();
         }
 
-        private void btnUnCfmHis_Click(object sender, EventArgs e)
+        private void BtnUnCfmHis_Click(object sender, EventArgs e)
         {
             Production.Shipping.P05_UnconfirmHistory dialog = new P05_UnconfirmHistory(this.CurrentMaintain["ID"].ToString());
             dialog.ShowDialog(this);
@@ -1971,13 +1929,13 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
         {
             DataTable dtShipper;
             DualResult result;
-            string SP = string.Empty;
+            string sP = string.Empty;
 
             if (this.DetailDatas.Count > 0)
             {
                 foreach (DataRow dr in this.DetailDatas)
                 {
-                    SP += "'" + dr["Orderid"].ToString().Replace(",", "','") + "',";
+                    sP += "'" + dr["Orderid"].ToString().Replace(",", "','") + "',";
                 }
 
                 string sqlcmd = $@"
@@ -1999,7 +1957,7 @@ outer apply(
           and f.BrandID = '{this.txtbrand.Text}' 
           and cast(GETDATE()as date) between f.BeginDate and f.EndDate
 )f2
-where o.ID in ({SP.Substring(0, SP.Length - 1)})
+where o.ID in ({sP.Substring(0, sP.Length - 1)})
 ";
                 result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtShipper);
                 if (!result)
