@@ -311,7 +311,7 @@ where 1=1
         protected override bool OnToExcel(Win.ReportDefinition report)
         {            
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R42_Bundle Transaction detail (RFID).xltx"); //預先開啟excel app
-            decimal excelMaxrow = 1010000;
+            decimal excelMaxrow = 1000000;
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet1 = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1]);
             Microsoft.Office.Interop.Excel.Worksheet worksheetn = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[2]);
@@ -325,10 +325,11 @@ where 1=1
             SqlConnection conn = null;
             DBProxy.Current.OpenConnection(this.ConnectionName, out conn);
             var cmd = new SqlCommand(sqlCmd.ToString(), conn);
-            cmd.CommandTimeout = 300;
+            cmd.CommandTimeout = 3000;
             var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             int loadCounts = 0;
             int loadCounts2 = 0;
+            int eachCopy = 100000;
             using (conn)
             using (reader)
             {
@@ -344,36 +345,29 @@ where 1=1
                     tmpDatas.LoadDataRow(items, true);
                     loadCounts++;
                     loadCounts2++;
-                    if (loadCounts % 10000 == 0)
+                    if (loadCounts % eachCopy == 0)
                     {
-                        if (sheet != 1 + loadCounts / (int)excelMaxrow)
-                        {
-                            Microsoft.Office.Interop.Excel.Worksheet worksheetA = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[sheet + 1]);
-                            Microsoft.Office.Interop.Excel.Worksheet worksheetB = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[sheet + 2]);
-                            worksheetA.Copy(worksheetB); ;
-                        }
-                        sheet = 1 + loadCounts / (int)excelMaxrow;
-                        if (loadCounts - ((sheet - 1) * (int)excelMaxrow) <= 0)
-                        {
-                            loadCounts2 = loadCounts - ((sheet - 1) * (int)excelMaxrow) + 10000;
-                        }
-                        else
-                        {
-                            loadCounts2 = loadCounts - ((sheet - 1) * (int)excelMaxrow);
-                        }
                         this.ShowLoadingText($"Data Loading – {loadCounts} , please wait …");
-                        MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", loadCounts2 - 9999, false, null, objApp, wSheet: objApp.Sheets[sheet]);// 將datatable copy to excel
+                        MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", loadCounts2 - (eachCopy-1), false, null, objApp, wSheet: objApp.Sheets[sheet]);// 將datatable copy to excel
 
                         this.DataTableClearAll(tmpDatas);
                         for (int i = 0; i < reader.FieldCount; i++)
                         {
                             tmpDatas.Columns.Add(reader.GetName(i), reader.GetFieldType(i));
                         }
+                        if (loadCounts % excelMaxrow == 0)
+                        {
+                            Microsoft.Office.Interop.Excel.Worksheet worksheetA = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[sheet + 1]);
+                            Microsoft.Office.Interop.Excel.Worksheet worksheetB = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[sheet + 2]);
+                            worksheetA.Copy(worksheetB);
+                            sheet++;
+                            loadCounts2 = 0;
+                        }
                     }
                 }
                 if (loadCounts > 0)
                 {
-                    MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", loadCounts2 - (loadCounts2 % 10000) + 1, false, null, objApp, wSheet: objApp.Sheets[sheet]);// 將datatable copy to excel
+                    MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", loadCounts2 - (loadCounts2 % eachCopy) + 1, false, null, objApp, wSheet: objApp.Sheets[sheet]);// 將datatable copy to excel
                     this.DataTableClearAll(tmpDatas);
                 }
                 else

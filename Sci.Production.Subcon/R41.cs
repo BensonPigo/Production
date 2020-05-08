@@ -422,12 +422,11 @@ drop table #tmp_Workorder
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R41_Bundle tracking list (RFID).xltx"); //預先開啟excel app
 
             //勿動!! 超過這個數字，DY的電腦會跑不動
-            decimal excelMaxrow = 1010000;
+            int excelMaxrow = 1000000;
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet1 = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1]);
             Microsoft.Office.Interop.Excel.Worksheet worksheetn = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[2]);
             worksheet1.Copy(worksheetn);
-
 
             int sheet = 1;
             //因為一次載入太多筆資料到DataTable 會造成程式佔用大量記憶體，改為每1萬筆載入一次並貼在excel上
@@ -441,6 +440,7 @@ drop table #tmp_Workorder
             var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             int loadCounts = 0;
             int loadCounts2 = 0;
+            int eachCopy = 100000;
             using (conn)
             {
                 using (reader)
@@ -457,42 +457,31 @@ drop table #tmp_Workorder
                         tmpDatas.LoadDataRow(items, true);
                         loadCounts++;
                         loadCounts2++;
-                        if (loadCounts % 10000 == 0)
+                        if (loadCounts % eachCopy == 0)
                         {
-                            if (sheet != 1 + loadCounts / (int)excelMaxrow)
-                            {
-                                Microsoft.Office.Interop.Excel.Worksheet worksheetA = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[sheet + 1]);
-                                Microsoft.Office.Interop.Excel.Worksheet worksheetB = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[sheet + 2]);
-                                worksheetA.Copy(worksheetB); ;
-                            }
-                            sheet = 1 + loadCounts / (int)excelMaxrow;
-                            if (loadCounts - ((sheet - 1) * (int)excelMaxrow) <= 0)
-                            {
-                                loadCounts2 = loadCounts - ((sheet - 1) * (int)excelMaxrow) + 10000;
-                            }
-                            else
-                            {
-                                loadCounts2 = loadCounts - ((sheet - 1) * (int)excelMaxrow);
-
-                                // 每100萬的下一個一萬筆，會跟下下一個一萬筆重複，因此大於100萬筆，之後的2萬~100萬就要加進來
-                                if (sheet > 1 )
-                                {
-                                    loadCounts2 += 10000;
-                                }
-                            }
                             this.ShowLoadingText($"Data Loading – {loadCounts} , please wait …");
-                            MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R41_Bundle tracking list (RFID).xltx", loadCounts2 - 9999, false, null, objApp, wSheet: objApp.Sheets[sheet]);// 將datatable copy to excel
+                            MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R41_Bundle tracking list (RFID).xltx", loadCounts2 - (eachCopy-1), false, null, objApp, wSheet: objApp.Sheets[sheet]);// 將datatable copy to excel
 
                             this.DataTableClearAll(tmpDatas);
                             for (int i = 0; i < reader.FieldCount; i++)
                             {
                                 tmpDatas.Columns.Add(reader.GetName(i), reader.GetFieldType(i));
                             }
+                            if (loadCounts % excelMaxrow == 0)
+                            {
+                                Microsoft.Office.Interop.Excel.Worksheet worksheetA = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[sheet + 1]);
+                                Microsoft.Office.Interop.Excel.Worksheet worksheetB = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[sheet + 2]);
+                                worksheetA.Copy(worksheetB);
+                                sheet++;
+                                loadCounts2 = 0;
+                            }
+
+                            //loadCounts2 += eachPast;
                         }
                     }
                     if (loadCounts > 0)
                     {
-                        MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R41_Bundle tracking list (RFID).xltx", loadCounts2 - (loadCounts2 % 10000) + 1, false, null, objApp, wSheet: objApp.Sheets[sheet]);// 將datatable copy to excel
+                        MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R41_Bundle tracking list (RFID).xltx", loadCounts2 - (loadCounts2 % eachCopy) + 1, false, null, objApp, wSheet: objApp.Sheets[sheet]);// 將datatable copy to excel
                         this.DataTableClearAll(tmpDatas);
                     }
                     else
