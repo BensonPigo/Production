@@ -81,7 +81,9 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
                 //dtFtyinventory.DefaultView.Sort = "dyelot,balanceqty desc";
             }
 
+            this.displaySCIRefno.Text = CurrentDetailData["SCIRefno"].ToString();
             this.displayRefno.Text = CurrentDetailData["Refno"].ToString();
+            this.displaySCIRefno.Text = CurrentDetailData["SCIRefno"].ToString();
             this.displaySPNo.Text = CurrentDetailData["POID"].ToString();
             this.displayColorID.Text = CurrentDetailData["SuppColor"].ToString();
             this.editDesc.Text = CurrentDetailData["DescDetail"].ToString();

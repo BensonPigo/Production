@@ -50,6 +50,8 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridRollNo = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label1 = new Sci.Win.UI.Label();
+            this.displaySCIRefno = new Sci.Win.UI.DisplayBox();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -61,7 +63,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCancel.Location = new System.Drawing.Point(912, 15);
+            this.btnCancel.Location = new System.Drawing.Point(897, 15);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 30);
             this.btnCancel.TabIndex = 3;
@@ -73,7 +75,7 @@
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(816, 16);
+            this.btnImport.Location = new System.Drawing.Point(801, 16);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(90, 30);
             this.btnImport.TabIndex = 2;
@@ -92,7 +94,7 @@
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(0, 477);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1008, 53);
+            this.groupBox2.Size = new System.Drawing.Size(993, 53);
             this.groupBox2.TabIndex = 18;
             this.groupBox2.TabStop = false;
             // 
@@ -145,6 +147,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.displaySCIRefno);
             this.groupBox1.Controls.Add(this.displaySizeSpec);
             this.groupBox1.Controls.Add(this.labelSizeSpec);
             this.groupBox1.Controls.Add(this.displayColorID);
@@ -158,7 +162,7 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1008, 91);
+            this.groupBox1.Size = new System.Drawing.Size(993, 91);
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             // 
@@ -166,17 +170,17 @@
             // 
             this.displaySizeSpec.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displaySizeSpec.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySizeSpec.Location = new System.Drawing.Point(762, 19);
+            this.displaySizeSpec.Location = new System.Drawing.Point(971, 19);
             this.displaySizeSpec.Name = "displaySizeSpec";
-            this.displaySizeSpec.Size = new System.Drawing.Size(124, 23);
+            this.displaySizeSpec.Size = new System.Drawing.Size(10, 23);
             this.displaySizeSpec.TabIndex = 120;
             this.displaySizeSpec.Visible = false;
             // 
             // labelSizeSpec
             // 
-            this.labelSizeSpec.Location = new System.Drawing.Point(684, 19);
+            this.labelSizeSpec.Location = new System.Drawing.Point(958, 19);
             this.labelSizeSpec.Name = "labelSizeSpec";
-            this.labelSizeSpec.Size = new System.Drawing.Size(75, 23);
+            this.labelSizeSpec.Size = new System.Drawing.Size(10, 23);
             this.labelSizeSpec.TabIndex = 119;
             this.labelSizeSpec.Text = "SizeSpec";
             this.labelSizeSpec.Visible = false;
@@ -185,7 +189,7 @@
             // 
             this.displayColorID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayColorID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayColorID.Location = new System.Drawing.Point(537, 19);
+            this.displayColorID.Location = new System.Drawing.Point(816, 19);
             this.displayColorID.Name = "displayColorID";
             this.displayColorID.Size = new System.Drawing.Size(124, 23);
             this.displayColorID.TabIndex = 116;
@@ -196,12 +200,12 @@
             this.displayDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayDesc.Location = new System.Drawing.Point(84, 51);
             this.displayDesc.Name = "displayDesc";
-            this.displayDesc.Size = new System.Drawing.Size(802, 23);
+            this.displayDesc.Size = new System.Drawing.Size(856, 23);
             this.displayDesc.TabIndex = 118;
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(459, 19);
+            this.label4.Location = new System.Drawing.Point(738, 19);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(75, 23);
             this.label4.TabIndex = 115;
@@ -234,7 +238,7 @@
             // 
             // labelRefno
             // 
-            this.labelRefno.Location = new System.Drawing.Point(233, 19);
+            this.labelRefno.Location = new System.Drawing.Point(532, 19);
             this.labelRefno.Name = "labelRefno";
             this.labelRefno.Size = new System.Drawing.Size(75, 23);
             this.labelRefno.TabIndex = 113;
@@ -244,7 +248,7 @@
             // 
             this.displayRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayRefno.Location = new System.Drawing.Point(311, 19);
+            this.displayRefno.Location = new System.Drawing.Point(610, 19);
             this.displayRefno.Name = "displayRefno";
             this.displayRefno.Size = new System.Drawing.Size(124, 23);
             this.displayRefno.TabIndex = 114;
@@ -255,7 +259,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 91);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 386);
+            this.panel1.Size = new System.Drawing.Size(993, 386);
             this.panel1.TabIndex = 20;
             // 
             // gridRollNo
@@ -279,13 +283,30 @@
             this.gridRollNo.RowTemplate.Height = 24;
             this.gridRollNo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridRollNo.ShowCellToolTips = false;
-            this.gridRollNo.Size = new System.Drawing.Size(1008, 386);
+            this.gridRollNo.Size = new System.Drawing.Size(993, 386);
             this.gridRollNo.TabIndex = 0;
             this.gridRollNo.TabStop = false;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(211, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 121;
+            this.label1.Text = "SCIRefno";
+            // 
+            // displaySCIRefno
+            // 
+            this.displaySCIRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySCIRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySCIRefno.Location = new System.Drawing.Point(289, 19);
+            this.displaySCIRefno.Name = "displaySCIRefno";
+            this.displaySCIRefno.Size = new System.Drawing.Size(220, 23);
+            this.displaySCIRefno.TabIndex = 122;
+            // 
             // P10_Detail_Detail
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 530);
+            this.ClientSize = new System.Drawing.Size(993, 530);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
@@ -326,5 +347,7 @@
         private Win.UI.DisplayBox displayRefno;
         private Win.UI.NumericBox numRequestVariance;
         private Win.UI.Label labelRequestVariance;
+        private Win.UI.Label label1;
+        private Win.UI.DisplayBox displaySCIRefno;
     }
 }

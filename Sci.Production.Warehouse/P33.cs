@@ -150,7 +150,7 @@ WITH BreakdownByArticle as (
             , [Refno]=Refno.Refno
 		    , iis.SuppColor
 		    , f.DescDetail
-		    , [@Qty]= ThreadUsedQtyByBOT.Val
+		    , [@Qty]= ISNULL(ThreadUsedQtyByBOT.Val,0)
 		    , [AccuIssued] = (
 					    select isnull(sum([IS].qty),0)
 					    from dbo.issue I2 WITH (NOLOCK) 
@@ -159,11 +159,11 @@ WITH BreakdownByArticle as (
 					    and [IS].Poid=iis.POID AND [IS].SCIRefno=iis.SCIRefno AND [IS].SuppColor=iis.SuppColor and i2.[EditDate]<I.AddDate AND i2.ID <> i.ID
 				    )
 		    , [IssueQty]=iis.Qty
-		    , [Use Qty By Stock Unit] = CEILING( ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1))
+		    , [Use Qty By Stock Unit] = CEILING( ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ISNULL(ThreadUsedQtyByBOT.Val,0)/ 100 * ISNULL(UnitRate.RateValue,1))
 		    , [Stock Unit]=StockUnit.StockUnit
 
 		    , [Use Unit]='CM'
-		    , [Use Qty By Use Unit]=(ThreadUsedQtyByBOT.Qty *  ThreadUsedQtyByBOT.Val  )
+		    , [Use Qty By Use Unit]=(ThreadUsedQtyByBOT.Qty * ISNULL(ThreadUsedQtyByBOT.Val,0) )
 
 		    , [Stock Unit Desc.]=StockUnit.Description
 		    , [OutputQty] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
@@ -340,9 +340,17 @@ OUTER APPLY(
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
+
+                    if (this.Is_IssueBreakDownEmpty())
+                    {
+                        MyUtility.Msg.InfoBox("Issue Breakdown can't be empty !!");
+                        return;
+                    }
+
                     DataTable bulkItems;
                     string SuppColor =MyUtility.Check.Empty(CurrentDetailData["SuppColor"]) ? string.Empty : CurrentDetailData["SuppColor"].ToString();
                     string Refno = MyUtility.Check.Empty(CurrentDetailData["Refno"]) ? string.Empty : CurrentDetailData["Refno"].ToString();
+                    string SCIRefno = MyUtility.Check.Empty(CurrentDetailData["SCIRefno"]) ? string.Empty : CurrentDetailData["SCIRefno"].ToString();
 
                     #region 選單SQL
                     string sqlcmd = $@"
@@ -381,6 +389,15 @@ WHERE psd.ID='{this.poid}'
 AND m.IsThread=1 
 AND psd.FabricType ='A'
 ";
+                    if (!MyUtility.Check.Empty(SCIRefno))
+                    {
+                        sqlcmd += $"AND psd.SCIRefno='{SCIRefno}' ";
+                    }
+                    else
+                    {
+                        sqlcmd += $"AND psd.SCIRefno <> '' ";
+                    }
+
                     if (!MyUtility.Check.Empty(Refno))
                     {
                         sqlcmd += $"AND psd.Refno='{Refno}' ";
@@ -433,9 +450,9 @@ DROP TABLE #tmp
 
 
                     Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(bulkItems
-                            , "Refno,SuppColor,MtlType,Desc,Stock Unit,UnitDesc,BulkQty,InventoryQty"
-                            , "15,5,10,45,5,15,10,10", CurrentDetailData["Refno"].ToString()
-                            , "Refno,SuppColor,MtlType,Desc,Stock Unit,UnitDesc,BulkQty,InventoryQty");
+                            , "SCIRefno,Refno,SuppColor,MtlType,Desc,Stock Unit,UnitDesc,BulkQty,InventoryQty"
+                            , "25,15,5,10,45,5,15,10,10", CurrentDetailData["Refno"].ToString()
+                            , "SCIRefno,Refno,SuppColor,MtlType,Desc,Stock Unit,UnitDesc,BulkQty,InventoryQty");
                     selepoitem.Width = 1250;
                     DialogResult result = selepoitem.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -445,6 +462,7 @@ DROP TABLE #tmp
                     CurrentDetailData["Refno"] = selectedDatas[0]["Refno"];
                     CurrentDetailData["SuppColor"] = selectedDatas[0]["SuppColor"];
 
+                    SCIRefno = CurrentDetailData["SCIRefno"].ToString();
                     Refno = CurrentDetailData["Refno"].ToString();
                     SuppColor = CurrentDetailData["suppColor"].ToString();
                     CurrentDetailData["POID"] = this.poid;
@@ -455,60 +473,9 @@ DROP TABLE #tmp
                     {
                         return;
                     }
-                    List<IssueQtyBreakdown> modelList = new List<IssueQtyBreakdown>();
 
-                    //檢查是否有勾選Combo，處理傳入AutoPick資料篩選
-                    if (!checkByCombo.Checked && dtIssueBreakDown != null)
-                    {
-                        foreach (DataRow tempRow in dtIssueBreakDown.Rows)
-                        {
-                            if (tempRow["OrderID"].ToString() != txtOrderID.Text.ToString())
-                            {
-                                foreach (DataColumn tempColumn in dtIssueBreakDown.Columns)
-                                {
-                                    if ("Decimal" == tempRow[tempColumn].GetType().Name)
-                                        tempRow[tempColumn] = 0;
-                                }
-                            }
-                        }
-                    }
-                    foreach (DataRow tempRow in dtIssueBreakDown.Rows)
-                    {
-                        IssueQtyBreakdown m = new IssueQtyBreakdown()
-                        {
-                            OrderID = tempRow["OrderID"].ToString(),
-                            Article = tempRow["Article"].ToString()
-                        };
+                    DataTable IssueBreakDown_Dt = this.Convert_IssueBreakDown_ToDataTable();
 
-                        int totalQty = 0;
-                        foreach (DataColumn col in dtIssueBreakDown.Columns)
-                        {
-                            if ("Decimal" == tempRow[col].GetType().Name)
-                            {
-                                totalQty += Convert.ToInt32(tempRow[col]);
-                            }
-                        }
-                        m.Qty = totalQty;
-                        modelList.Add(m);
-                    }
-
-                    DataTable IssueBreakDown_Dt = new DataTable();
-                    IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "OrderID", DataType = typeof(string) });
-                    IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Article", DataType = typeof(string) });
-                    IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Qty", DataType = typeof(int) });
-
-                    foreach (var model in modelList)
-                    {
-                        if (model.Qty > 0)
-                        {
-                            DataRow newDr = IssueBreakDown_Dt.NewRow();
-                            newDr["OrderID"] = model.OrderID;
-                            newDr["Article"] = model.Article;
-                            newDr["Qty"] = model.Qty;
-
-                            IssueBreakDown_Dt.Rows.Add(newDr);
-                        }
-                    }
 
                     #endregion
 
@@ -534,7 +501,7 @@ SELECT  DISTINCT
 , psd.Refno
 , psd.SuppColor
 , f.DescDetail
-, [@Qty] = ThreadUsedQtyByBOT.Val
+, [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0)
 , [AccuIssued] = (
 					select isnull(sum([IS].qty),0)
 					from dbo.issue I WITH (NOLOCK) 
@@ -543,9 +510,9 @@ SELECT  DISTINCT
 					and [IS].Poid=psd.id AND [IS].SCIRefno=PSD.SCIRefno AND [IS].SuppColor=PSD.SuppColor and i.[EditDate]<GETDATE()
 				)
 , [IssueQty]=0.00
-, [Use Qty By Stock Unit] = CEILING (ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) )
+, [Use Qty By Stock Unit] = CEILING (ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ISNULL(ThreadUsedQtyByBOT.Val,0)/ 100 * ISNULL(UnitRate.RateValue,1) )
 , [Stock Unit]=StockUnit.StockUnit
-, [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty *  ThreadUsedQtyByBOT.Val )
+, [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty * ISNULL(ThreadUsedQtyByBOT.Val,0) )
 , [Use Unit]='CM'
 , [Stock Unit Desc.]=StockUnit.Description
 , [OutputQty] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
@@ -596,6 +563,7 @@ AND psd.FabricType ='A'
 and psd.SuppColor <> ''
 AND psd.Refno='{Refno}'
 AND psd.SuppColor='{SuppColor}'
+AND psd.SCIRefno='{SCIRefno}'
 
 SELECT    SCIRefno 
         , Refno
@@ -700,6 +668,13 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                 if (!this.EditMode) return;
                 if (String.Compare(e.FormattedValue.ToString(), CurrentDetailData["Refno"].ToString()) != 0)
                 {
+
+                    if (this.Is_IssueBreakDownEmpty())
+                    {
+                        MyUtility.Msg.InfoBox("Issue Breakdown can't be empty !!");
+                        return;
+                    }
+
                     if (MyUtility.Check.Empty(e.FormattedValue))
                     {
                         CurrentDetailData["Refno"] = "";
@@ -730,60 +705,8 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                         {
                             return;
                         }
-                        List<IssueQtyBreakdown> modelList = new List<IssueQtyBreakdown>();
 
-                        //檢查是否有勾選Combo，處理傳入AutoPick資料篩選
-                        if (!checkByCombo.Checked && dtIssueBreakDown != null)
-                        {
-                            foreach (DataRow tempRow in dtIssueBreakDown.Rows)
-                            {
-                                if (tempRow["OrderID"].ToString() != txtOrderID.Text.ToString())
-                                {
-                                    foreach (DataColumn tempColumn in dtIssueBreakDown.Columns)
-                                    {
-                                        if ("Decimal" == tempRow[tempColumn].GetType().Name)
-                                            tempRow[tempColumn] = 0;
-                                    }
-                                }
-                            }
-                        }
-                        foreach (DataRow tempRow in dtIssueBreakDown.Rows)
-                        {
-                            IssueQtyBreakdown m = new IssueQtyBreakdown()
-                            {
-                                OrderID = tempRow["OrderID"].ToString(),
-                                Article = tempRow["Article"].ToString()
-                            };
-
-                            int totalQty = 0;
-                            foreach (DataColumn col in dtIssueBreakDown.Columns)
-                            {
-                                if ("Decimal" == tempRow[col].GetType().Name)
-                                {
-                                    totalQty += Convert.ToInt32(tempRow[col]);
-                                }
-                            }
-                            m.Qty = totalQty;
-                            modelList.Add(m);
-                        }
-
-                        DataTable IssueBreakDown_Dt = new DataTable();
-                        IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "OrderID", DataType = typeof(string) });
-                        IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Article", DataType = typeof(string) });
-                        IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Qty", DataType = typeof(int) });
-
-                        foreach (var model in modelList)
-                        {
-                            if (model.Qty > 0)
-                            {
-                                DataRow newDr = IssueBreakDown_Dt.NewRow();
-                                newDr["OrderID"] = model.OrderID;
-                                newDr["Article"] = model.Article;
-                                newDr["Qty"] = model.Qty;
-
-                                IssueBreakDown_Dt.Rows.Add(newDr);
-                            }
-                        }
+                        DataTable IssueBreakDown_Dt = this.Convert_IssueBreakDown_ToDataTable();
 
                         #endregion
 
@@ -810,7 +733,7 @@ SELECT  DISTINCT
 , psd.Refno
 , psd.SuppColor
 , f.DescDetail
-, [@Qty] = ThreadUsedQtyByBOT.Val
+, [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0)
 , [AccuIssued] = (
 					select isnull(sum([IS].qty),0)
 					from dbo.issue I WITH (NOLOCK) 
@@ -819,9 +742,9 @@ SELECT  DISTINCT
 					and [IS].Poid=psd.id AND [IS].SCIRefno=PSD.SCIRefno AND [IS].SuppColor=PSD.SuppColor and i.[EditDate]<GETDATE()
 				)
 , [IssueQty]=0.00
-, [Use Qty By Stock Unit] = CEILING( ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) )
+, [Use Qty By Stock Unit] = CEILING( ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ISNULL(ThreadUsedQtyByBOT.Val,0)/ 100 * ISNULL(UnitRate.RateValue,1) )
 , [Stock Unit]=StockUnit.StockUnit
-, [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty *  ThreadUsedQtyByBOT.Val )
+, [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty * ISNULL(ThreadUsedQtyByBOT.Val,0) )
 , [Use Unit]='CM'
 , [Stock Unit Desc.]=StockUnit.Description
 , [OutputQty] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
@@ -963,7 +886,7 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
 
                             if (MyUtility.Check.Empty(suppColor))
                             {
-                                CurrentDetailData["SCIRefno"] = row["SCIRefno"];
+                                //CurrentDetailData["SCIRefno"] = row["SCIRefno"];
                                 CurrentDetailData["Refno"] = e.FormattedValue;
                                 //CurrentDetailData["DescDetail"] = row["DescDetail"];
                                 CurrentDetailData["POID"] = this.poid;
@@ -1004,7 +927,15 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
+
+                    if (this.Is_IssueBreakDownEmpty())
+                    {
+                        MyUtility.Msg.InfoBox("Issue Breakdown can't be empty !!");
+                        return;
+                    }
+
                     DataTable bulkItems;
+                    string SCIRefno = MyUtility.Check.Empty(CurrentDetailData["SCIRefno"]) ? string.Empty : CurrentDetailData["SCIRefno"].ToString();
                     string Refno = MyUtility.Check.Empty(CurrentDetailData["Refno"]) ? string.Empty : CurrentDetailData["Refno"].ToString();
                     string SuppColor = MyUtility.Check.Empty(CurrentDetailData["SuppColor"]) ? string.Empty : CurrentDetailData["SuppColor"].ToString();
 
@@ -1046,6 +977,15 @@ LEFT JOIN MtlType m on m.id= fc.MtlTypeID
 AND psd.FabricType ='A'
 AND psd.SuppColor <> ''
 ";
+                    if (!MyUtility.Check.Empty(SCIRefno))
+                    {
+                        sqlcmd += $"AND psd.SCIRefno='{SCIRefno}' ";
+                    }
+                    else
+                    {
+                        sqlcmd += $"AND psd.SCIRefno <> '' ";
+                    }
+
                     if (!MyUtility.Check.Empty(Refno))
                     {
                         sqlcmd += $"AND psd.Refno='{Refno}' ";
@@ -1100,9 +1040,9 @@ DROP TABLE #tmp
 
                     Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(bulkItems
                             //, "Type,SCIRefno,MtlTypeID,IssueType,Poid,Seq1,Seq2,inqty,outqty,adjustqty,ukey"
-                            , "Refno,SuppColor,MtlType,Desc,Stock Unit,UnitDesc,BulkQty,InventoryQty"
-                            , "15,5,10,45,5,15,10,10", CurrentDetailData["Refno"].ToString()
-                            , "Refno,SuppColor,MtlType,Desc,Stock Unit,UnitDesc,BulkQty,InventoryQty");
+                            , "SCIRefno,Refno,SuppColor,MtlType,Desc,Stock Unit,UnitDesc,BulkQty,InventoryQty"
+                            , "25,15,5,10,45,5,15,10,10", CurrentDetailData["Refno"].ToString()
+                            , "SCIRefno,Refno,SuppColor,MtlType,Desc,Stock Unit,UnitDesc,BulkQty,InventoryQty");
                     selepoitem.Width = 1250;
                     DialogResult result = selepoitem.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -1112,6 +1052,7 @@ DROP TABLE #tmp
                     CurrentDetailData["Refno"] = selectedDatas[0]["Refno"];
                     CurrentDetailData["SuppColor"] = selectedDatas[0]["SuppColor"];
 
+                    SCIRefno = CurrentDetailData["SCIRefno"].ToString();
                     Refno = CurrentDetailData["Refno"].ToString();
                     SuppColor = CurrentDetailData["SuppColor"].ToString();
                     CurrentDetailData["POID"] = this.poid;
@@ -1122,60 +1063,8 @@ DROP TABLE #tmp
                     {
                         return;
                     }
-                    List<IssueQtyBreakdown> modelList = new List<IssueQtyBreakdown>();
 
-                    //檢查是否有勾選Combo，處理傳入AutoPick資料篩選
-                    if (!checkByCombo.Checked && dtIssueBreakDown != null)
-                    {
-                        foreach (DataRow tempRow in dtIssueBreakDown.Rows)
-                        {
-                            if (tempRow["OrderID"].ToString() != txtOrderID.Text.ToString())
-                            {
-                                foreach (DataColumn tempColumn in dtIssueBreakDown.Columns)
-                                {
-                                    if ("Decimal" == tempRow[tempColumn].GetType().Name)
-                                        tempRow[tempColumn] = 0;
-                                }
-                            }
-                        }
-                    }
-                    foreach (DataRow tempRow in dtIssueBreakDown.Rows)
-                    {
-                        IssueQtyBreakdown m = new IssueQtyBreakdown()
-                        {
-                            OrderID = tempRow["OrderID"].ToString(),
-                            Article = tempRow["Article"].ToString()
-                        };
-
-                        int totalQty = 0;
-                        foreach (DataColumn col in dtIssueBreakDown.Columns)
-                        {
-                            if ("Decimal" == tempRow[col].GetType().Name)
-                            {
-                                totalQty += Convert.ToInt32(tempRow[col]);
-                            }
-                        }
-                        m.Qty = totalQty;
-                        modelList.Add(m);
-                    }
-
-                    DataTable IssueBreakDown_Dt = new DataTable();
-                    IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "OrderID", DataType = typeof(string) });
-                    IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Article", DataType = typeof(string) });
-                    IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Qty", DataType = typeof(int) });
-
-                    foreach (var model in modelList)
-                    {
-                        if (model.Qty > 0)
-                        {
-                            DataRow newDr = IssueBreakDown_Dt.NewRow();
-                            newDr["OrderID"] = model.OrderID;
-                            newDr["Article"] = model.Article;
-                            newDr["Qty"] = model.Qty;
-
-                            IssueBreakDown_Dt.Rows.Add(newDr);
-                        }
-                    }
+                    DataTable IssueBreakDown_Dt = this.Convert_IssueBreakDown_ToDataTable();
 
                     #endregion
 
@@ -1200,7 +1089,7 @@ SELECT  DISTINCT
 , psd.Refno
 , psd.SuppColor
 , f.DescDetail
-, [@Qty] = ThreadUsedQtyByBOT.Val
+, [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0)
 , [AccuIssued] = (
 					select isnull(sum([IS].qty),0)
 					from dbo.issue I WITH (NOLOCK) 
@@ -1209,9 +1098,9 @@ SELECT  DISTINCT
 					and [IS].Poid=psd.id AND [IS].SCIRefno=PSD.SCIRefno AND [IS].SuppColor=PSD.SuppColor and i.[EditDate]<GETDATE()
 				)
 , [IssueQty]=0.00
-, [Use Qty By Stock Unit] = CEILING (ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) )
+, [Use Qty By Stock Unit] = CEILING (ISNULL(ThreadUsedQtyByBOT.Qty,0) * ISNULL(ThreadUsedQtyByBOT.Val,0)/ 100 * ISNULL(UnitRate.RateValue,1) )
 , [Stock Unit]=StockUnit.StockUnit
-, [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty *  ThreadUsedQtyByBOT.Val )
+, [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty *  ISNULL(ThreadUsedQtyByBOT.Val,0) )
 , [Use Unit]='CM'
 , [Stock Unit Desc.]=StockUnit.Description
 , [OutputQty] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
@@ -1365,6 +1254,12 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                 if (!this.EditMode) return;
                 if (String.Compare(e.FormattedValue.ToString(), CurrentDetailData["SuppColor"].ToString()) != 0)
                 {
+                    if (this.Is_IssueBreakDownEmpty())
+                    {
+                        MyUtility.Msg.InfoBox("Issue Breakdown can't be empty !!");
+                        return;
+                    }
+
                     if (MyUtility.Check.Empty(e.FormattedValue))
                     {
                         //CurrentDetailData["Refno"] = "";
@@ -1396,60 +1291,8 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                         {
                             return;
                         }
-                        List<IssueQtyBreakdown> modelList = new List<IssueQtyBreakdown>();
 
-                        //檢查是否有勾選Combo，處理傳入AutoPick資料篩選
-                        if (!checkByCombo.Checked && dtIssueBreakDown != null)
-                        {
-                            foreach (DataRow tempRow in dtIssueBreakDown.Rows)
-                            {
-                                if (tempRow["OrderID"].ToString() != txtOrderID.Text.ToString())
-                                {
-                                    foreach (DataColumn tempColumn in dtIssueBreakDown.Columns)
-                                    {
-                                        if ("Decimal" == tempRow[tempColumn].GetType().Name)
-                                            tempRow[tempColumn] = 0;
-                                    }
-                                }
-                            }
-                        }
-                        foreach (DataRow tempRow in dtIssueBreakDown.Rows)
-                        {
-                            IssueQtyBreakdown m = new IssueQtyBreakdown()
-                            {
-                                OrderID = tempRow["OrderID"].ToString(),
-                                Article = tempRow["Article"].ToString()
-                            };
-
-                            int totalQty = 0;
-                            foreach (DataColumn col in dtIssueBreakDown.Columns)
-                            {
-                                if ("Decimal" == tempRow[col].GetType().Name)
-                                {
-                                    totalQty += Convert.ToInt32(tempRow[col]);
-                                }
-                            }
-                            m.Qty = totalQty;
-                            modelList.Add(m);
-                        }
-
-                        DataTable IssueBreakDown_Dt = new DataTable();
-                        IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "OrderID", DataType = typeof(string) });
-                        IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Article", DataType = typeof(string) });
-                        IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Qty", DataType = typeof(int) });
-
-                        foreach (var model in modelList)
-                        {
-                            if (model.Qty > 0)
-                            {
-                                DataRow newDr = IssueBreakDown_Dt.NewRow();
-                                newDr["OrderID"] = model.OrderID;
-                                newDr["Article"] = model.Article;
-                                newDr["Qty"] = model.Qty;
-
-                                IssueBreakDown_Dt.Rows.Add(newDr);
-                            }
-                        }
+                        DataTable IssueBreakDown_Dt = this.Convert_IssueBreakDown_ToDataTable();
 
                         #endregion
 
@@ -1475,7 +1318,7 @@ SELECT  DISTINCT
 , psd.Refno
 , psd.SuppColor
 , f.DescDetail
-, [@Qty] = ThreadUsedQtyByBOT.Val
+, [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0)
 , [AccuIssued] = (
 					select isnull(sum([IS].qty),0)
 					from dbo.issue I WITH (NOLOCK) 
@@ -1484,9 +1327,9 @@ SELECT  DISTINCT
 					and [IS].Poid=psd.id AND [IS].SCIRefno=PSD.SCIRefno AND [IS].SuppColor=PSD.SuppColor and i.[EditDate]<GETDATE()
 				)
 , [IssueQty]=0.00
-, [Use Qty By Stock Unit] = CEILING( ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) )
+, [Use Qty By Stock Unit] = CEILING( ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ISNULL(ThreadUsedQtyByBOT.Val,0)/ 100 * ISNULL(UnitRate.RateValue,1) )
 , [Stock Unit]=StockUnit.StockUnit
-, [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty *  ThreadUsedQtyByBOT.Val )
+, [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty *  ISNULL(ThreadUsedQtyByBOT.Val,0) )
 , [Use Unit]='CM'
 , [Stock Unit Desc.]=StockUnit.Description
 , [OutputQty] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
@@ -1630,7 +1473,7 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
 
                             if (MyUtility.Check.Empty(Refno))
                             {
-                                CurrentDetailData["SCIRefno"] = row["SCIRefno"];
+                                //CurrentDetailData["SCIRefno"] = row["SCIRefno"];
                                 CurrentDetailData["SuppColor"] = e.FormattedValue;
                                 //CurrentDetailData["DescDetail"] = row["DescDetail"];
                                 CurrentDetailData["POID"] = this.poid;
@@ -1777,6 +1620,7 @@ GROUP BY Article
 
             #region -- 欄位設定 --
             Helper.Controls.Grid.Generator(this.detailgrid)
+            .Text("SCIRefno", header: "SCIRefno", width: Widths.AnsiChars(25), iseditingreadonly: true)
             .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), settings: RefnoSet) 
             .Text("SuppColor", header: "Color", width: Widths.AnsiChars(7),  settings: ColorSet) 
             .EditText("DescDetail", header: "Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true) 
@@ -1901,6 +1745,11 @@ GROUP BY Article
 
             }
 
+            if (this.Is_IssueBreakDownEmpty())
+            {
+                MyUtility.Msg.InfoBox("Issue Breakdown can't be empty !!");
+                return false;
+            }
 
 
             if (dtSizeCode != null && dtSizeCode.Rows.Count != 0)
@@ -2075,6 +1924,7 @@ INNER JOIN FtyInventory f ON f.POID=s.Poid AND f.Seq1=d.Seq1 AND f.Seq2=d.Seq2
 INNER JOIN PO_Supp_Detail psd ON psd.ID = s.Poid AND psd.SCIRefno = s.SCIRefno AND psd.SCIRefno = s.SCIRefno AND psd.SEQ1=d.Seq1 AND psd.Seq2=d.Seq2
 WHERE i.Id = '{0}'
 AND(isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - ISNULL(d.Qty, 0)) < 0
+AND f.StockType = 'B'
 ", CurrentMaintain["id"]);
 
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -2491,12 +2341,6 @@ DROP TABLE #tmp
                 this.txtOrderID.Text = string.Empty;
                 return;
             }
-            if (MyUtility.Check.Seek($"SELECT 1 FROM Orders WHERE ID ='{CurrentOrderID}' AND Junk=1"))
-            {
-                MyUtility.Msg.InfoBox($"<{CurrentOrderID}> Already Junked !!");
-                this.txtOrderID.Focus();
-                return;
-            }
             string CurrentMDivisionID = MyUtility.GetValue.Lookup($"SELECT MDivisionID FROM Orders WHERE  ID ='{CurrentOrderID}' ");
 
             if (CurrentMDivisionID != Sci.Env.User.Keyword)
@@ -2657,10 +2501,10 @@ WHERE o.id = '{CurrentOrderID}'  AND o.sewline != '') t FOR xml path('')
                     string SuppColor = key["SuppColor"].ToString();
                     string Refno = key["Refno"].ToString();
                     string DescDetail = key["DescDetail"].ToString();
-                    string @Qty = key["@Qty"].ToString();
-                    string UseQtyByStockUnit = key["Use Qty By Stock Unit"].ToString();
+                    string @Qty = MyUtility.Check.Empty(key["@Qty"].ToString()) ? "0" : key["@Qty"].ToString();
+                    string UseQtyByStockUnit = MyUtility.Check.Empty(key["Use Qty By Stock Unit"].ToString()) ? "0" : key["Use Qty By Stock Unit"].ToString();
                     string StockUnit = key["Stock Unit"].ToString();
-                    string UseQtyByUseUnit = key["Use Qty By Use Unit"].ToString();
+                    string UseQtyByUseUnit = MyUtility.Check.Empty(key["Use Qty By Use Unit"].ToString()) ? "0" : key["Use Qty By Use Unit"].ToString();
                     string UseUnit = key["Use Unit"].ToString();
                     string StockUnitDesc = key["Stock Unit Desc."].ToString();
                     string OutputQty = key["Output Qty(Garment)"].ToString();
@@ -2749,7 +2593,60 @@ and [IS].Poid='{POID}' AND [IS].SCIRefno='{SCIRefno}' AND [IS].SuppColor='{SuppC
             DualResult result;
 
             string POID = this.poid;
+            string ArticleWhere = string.Empty;
 
+            // 判斷訂單會用到那些物料
+            // 勾選By Combo與否，會造成Article不一樣，因此在這個時候就必須找出：這些OrderID，用到哪些Article，這些Article用到哪些SCIRefno + SuppColor的物料
+            if (this.checkByCombo.Checked)
+            {
+                ArticleWhere = $@"
+
+	SELECT Article FROM(
+		Select  distinct tcd.SCIRefNo, tcd.SuppColor ,tcd.Article 
+		From dbo.Orders as b
+		INNER JOIN dbo.order_qty a WITH (NOLOCK)  on b.id = a.id
+		Inner Join dbo.Style as s On s.Ukey = b.StyleUkey
+		Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
+		Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
+		WHERE b.ID='20060321PP'
+		AND tcd.Article IN (
+			select DISTINCT a.Article
+			from dbo.order_qty a WITH (NOLOCK) 
+			inner join dbo.orders b WITH (NOLOCK) on b.id = a.id
+			where b.POID=( select poid from dbo.orders WITH (NOLOCK) where id = '{POID}' )
+			--AND a.id = b.poid
+		)
+	)Q
+	WHERE q.SCIRefNo=psd.SCIRefno AND q.SuppColor = psd.SuppColor
+
+";
+            }
+            else
+            {
+                ArticleWhere = $@"
+
+	SELECT Article FROM(
+		Select  distinct tcd.SCIRefNo, tcd.SuppColor ,tcd.Article 
+		From dbo.Orders as b
+		INNER JOIN dbo.order_qty a WITH (NOLOCK)  on b.id = a.id
+		Inner Join dbo.Style as s On s.Ukey = b.StyleUkey
+		Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
+		Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
+		WHERE b.ID='20060321PP'
+		AND tcd.Article IN (
+			select DISTINCT a.Article
+			from dbo.order_qty a WITH (NOLOCK) 
+			inner join dbo.orders b WITH (NOLOCK) on b.id = a.id
+			where b.POID=( select poid from dbo.orders WITH (NOLOCK) where id = '{POID}' )
+			AND a.id = b.poid
+		)
+	)Q
+	WHERE q.SCIRefNo=psd.SCIRefno AND q.SuppColor = psd.SuppColor
+
+";
+
+            }
+            
             // 回採購單找資料
             string sql = $@"
 
@@ -2758,7 +2655,7 @@ SELECT  DISTINCT
 , psd.Refno
 , psd.SuppColor
 , f.DescDetail
-, [@Qty] = ThreadUsedQtyByBOT.Val
+, [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0)
 , [AccuIssued] = (
 					select isnull(sum([IS].qty),0)
 					from dbo.issue I WITH (NOLOCK) 
@@ -2792,12 +2689,16 @@ OUTER APPLY(
 OUTER APPLY(
 	SELECT Val=SUM((SeamLength * Frequency * UseRatio) +  (Allowance * Segment) )
 	FROM dbo.GetThreadUsedQtyByBOT(psd.ID)
-	WHERE SCIRefNo = psd.SCIRefno AND SuppColor = psd.SuppColor
+	WHERE SCIRefNo = psd.SCIRefno AND SuppColor = psd.SuppColor AND Article IN (
+        {ArticleWhere}
+	)
 )ThreadUsedQtyByBOT
 WHERE psd.id ='{POID}' 
 AND m.IsThread=1 
 AND psd.FabricType ='A'
 and psd.SuppColor <> ''
+
+
 ORDER BY psd.SCIRefno,psd.SuppColor
 
 ";
@@ -3131,6 +3032,89 @@ order by [OrderID],[Article]
 
             target["Qty"] = (source.Rows.Count == 0) ? 0m : source.AsEnumerable().Where(r => r.RowState != DataRowState.Deleted)
                 .Sum(r => r.Field<decimal>("Qty"));
+
+        }
+
+        //  將IssueBreakDown整理成Datatable
+        private DataTable Convert_IssueBreakDown_ToDataTable()
+        {
+
+            DataTable IssueBreakDown_Dt = new DataTable();
+            IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "OrderID", DataType = typeof(string) });
+            IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Article", DataType = typeof(string) });
+            IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Qty", DataType = typeof(int) });
+
+            List<IssueQtyBreakdown> modelList = new List<IssueQtyBreakdown>();
+
+            //檢查是否有勾選Combo，處理傳入AutoPick資料篩選
+            if (!checkByCombo.Checked && dtIssueBreakDown != null)
+            {
+                foreach (DataRow tempRow in dtIssueBreakDown.Rows)
+                {
+                    if (tempRow["OrderID"].ToString() != txtOrderID.Text.ToString())
+                    {
+                        foreach (DataColumn tempColumn in dtIssueBreakDown.Columns)
+                        {
+                            if ("Decimal" == tempRow[tempColumn].GetType().Name)
+                                tempRow[tempColumn] = 0;
+                        }
+                    }
+                }
+            }
+            foreach (DataRow tempRow in dtIssueBreakDown.Rows)
+            {
+                IssueQtyBreakdown m = new IssueQtyBreakdown()
+                {
+                    OrderID = tempRow["OrderID"].ToString(),
+                    Article = tempRow["Article"].ToString()
+                };
+
+                int totalQty = 0;
+                foreach (DataColumn col in dtIssueBreakDown.Columns)
+                {
+                    if ("Decimal" == tempRow[col].GetType().Name)
+                    {
+                        totalQty += Convert.ToInt32(tempRow[col]);
+                    }
+                }
+                m.Qty = totalQty;
+                modelList.Add(m);
+            }
+
+
+            foreach (var model in modelList)
+            {
+                if (model.Qty > 0)
+                {
+                    DataRow newDr = IssueBreakDown_Dt.NewRow();
+                    newDr["OrderID"] = model.OrderID;
+                    newDr["Article"] = model.Article;
+                    newDr["Qty"] = model.Qty;
+
+                    IssueBreakDown_Dt.Rows.Add(newDr);
+                }
+            }
+
+            return IssueBreakDown_Dt;
+        }
+
+        private bool Is_IssueBreakDownEmpty()
+        {
+            if (dtIssueBreakDown == null)
+            {
+                return true;
+            }
+
+            DataTable IssueBreakDown_Dt = this.Convert_IssueBreakDown_ToDataTable();
+
+            if (IssueBreakDown_Dt.Rows.Count > 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
 
         }
         #endregion
