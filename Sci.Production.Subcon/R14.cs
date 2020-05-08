@@ -252,8 +252,8 @@ namespace Sci.Production.Subcon
                 select t.FactoryID
                 ,t.artworktypeid
                 ,aa.POID
-                ,aa.Category
-                ,[Cancel] = IIF(aa.Junk=1,'Y','N')
+                ,[Category] = (SELECT Category FROM Orders WHERE ID = t.POID)
+                ,[Cancel] = IIF((SELECT Junk FROM Orders WHERE ID = t.POID)=1,'Y','N')
                 ,aa.StyleID
                 ,cc.BuyerID
                 ,aa.BrandID
@@ -367,8 +367,8 @@ namespace Sci.Production.Subcon
                 select t.FactoryID
                 ,t.artworktypeid
                 ,aa.POID
-                ,aa.Category
-                ,[Cancel] = IIF(aa.Junk=1,'Y','N')
+                ,[Category] = (SELECT Category FROM Orders WHERE ID = t.POID)
+                ,[Cancel] = IIF((SELECT Junk FROM Orders WHERE ID = t.POID)=1,'Y','N')
                 ,aa.StyleID
                 ,cc.BuyerID
                 ,aa.BrandID
