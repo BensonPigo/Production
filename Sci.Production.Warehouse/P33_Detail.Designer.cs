@@ -45,6 +45,8 @@
             this.labelIssueQty = new Sci.Win.UI.Label();
             this.labelAccuIssue = new Sci.Win.UI.Label();
             this.btnAutoPick = new Sci.Win.UI.Button();
+            this.label1 = new Sci.Win.UI.Label();
+            this.displaySCIRefno = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -128,14 +130,14 @@
             // 
             this.displayRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayRefno.Location = new System.Drawing.Point(317, 19);
+            this.displayRefno.Location = new System.Drawing.Point(592, 19);
             this.displayRefno.Name = "displayRefno";
             this.displayRefno.Size = new System.Drawing.Size(124, 23);
             this.displayRefno.TabIndex = 104;
             // 
             // labelRefno
             // 
-            this.labelRefno.Location = new System.Drawing.Point(239, 19);
+            this.labelRefno.Location = new System.Drawing.Point(514, 19);
             this.labelRefno.Name = "labelRefno";
             this.labelRefno.Size = new System.Drawing.Size(75, 23);
             this.labelRefno.TabIndex = 103;
@@ -145,14 +147,14 @@
             // 
             this.displayColorID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayColorID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayColorID.Location = new System.Drawing.Point(552, 19);
+            this.displayColorID.Location = new System.Drawing.Point(815, 19);
             this.displayColorID.Name = "displayColorID";
             this.displayColorID.Size = new System.Drawing.Size(124, 23);
             this.displayColorID.TabIndex = 106;
             // 
             // labelColorID
             // 
-            this.labelColorID.Location = new System.Drawing.Point(474, 19);
+            this.labelColorID.Location = new System.Drawing.Point(737, 19);
             this.labelColorID.Name = "labelColorID";
             this.labelColorID.Size = new System.Drawing.Size(75, 23);
             this.labelColorID.TabIndex = 105;
@@ -168,6 +170,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.displaySCIRefno);
             this.groupBox1.Controls.Add(this.editDesc);
             this.groupBox1.Controls.Add(this.displayColorID);
             this.groupBox1.Controls.Add(this.labelColorID);
@@ -191,7 +195,7 @@
             this.editDesc.Multiline = true;
             this.editDesc.Name = "editDesc";
             this.editDesc.ReadOnly = true;
-            this.editDesc.Size = new System.Drawing.Size(588, 94);
+            this.editDesc.Size = new System.Drawing.Size(849, 94);
             this.editDesc.TabIndex = 109;
             // 
             // groupBox2
@@ -310,6 +314,23 @@
             this.btnAutoPick.UseVisualStyleBackColor = true;
             this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(237, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 110;
+            this.label1.Text = "SCIRefno";
+            // 
+            // displaySCIRefno
+            // 
+            this.displaySCIRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySCIRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySCIRefno.Location = new System.Drawing.Point(315, 19);
+            this.displaySCIRefno.Name = "displaySCIRefno";
+            this.displaySCIRefno.Size = new System.Drawing.Size(183, 23);
+            this.displaySCIRefno.TabIndex = 111;
+            // 
             // P33_Detail
             // 
             this.ClientSize = new System.Drawing.Size(1008, 557);
@@ -351,5 +372,7 @@
         private Win.UI.NumericBox numRequestQty;
         private Win.UI.Button btnAutoPick;
         private Win.UI.EditBox editDesc;
+        private Win.UI.Label label1;
+        private Win.UI.DisplayBox displaySCIRefno;
     }
 }
