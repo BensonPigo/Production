@@ -2341,12 +2341,6 @@ DROP TABLE #tmp
                 this.txtOrderID.Text = string.Empty;
                 return;
             }
-            if (MyUtility.Check.Seek($"SELECT 1 FROM Orders WHERE ID ='{CurrentOrderID}' AND Junk=1"))
-            {
-                MyUtility.Msg.InfoBox($"<{CurrentOrderID}> Already Junked !!");
-                this.txtOrderID.Focus();
-                return;
-            }
             string CurrentMDivisionID = MyUtility.GetValue.Lookup($"SELECT MDivisionID FROM Orders WHERE  ID ='{CurrentOrderID}' ");
 
             if (CurrentMDivisionID != Sci.Env.User.Keyword)
