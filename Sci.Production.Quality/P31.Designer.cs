@@ -28,17 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.CoverPanel = new Sci.Win.UI.Panel();
             this.tabControl = new Sci.Win.UI.TabControl();
             this.tab_QtyBreakdown = new System.Windows.Forms.TabPage();
-            this.tab_CartonSummary = new System.Windows.Forms.TabPage();
             this.gridQtyBreakdown = new Sci.Win.UI.Grid();
+            this.tab_CartonSummary = new System.Windows.Forms.TabPage();
             this.gridCartonSummary = new Sci.Win.UI.Grid();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -56,8 +52,8 @@
             this.CoverPanel.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.tab_QtyBreakdown.SuspendLayout();
-            this.tab_CartonSummary.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridQtyBreakdown)).BeginInit();
+            this.tab_CartonSummary.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridCartonSummary)).BeginInit();
             this.SuspendLayout();
             // 
@@ -138,16 +134,6 @@
             this.tab_QtyBreakdown.TabIndex = 0;
             this.tab_QtyBreakdown.Text = "Qty breakdown";
             // 
-            // tab_CartonSummary
-            // 
-            this.tab_CartonSummary.Controls.Add(this.gridCartonSummary);
-            this.tab_CartonSummary.Location = new System.Drawing.Point(4, 25);
-            this.tab_CartonSummary.Name = "tab_CartonSummary";
-            this.tab_CartonSummary.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_CartonSummary.Size = new System.Drawing.Size(784, 221);
-            this.tab_CartonSummary.TabIndex = 1;
-            this.tab_CartonSummary.Text = "By Carton Summary";
-            // 
             // gridQtyBreakdown
             // 
             this.gridQtyBreakdown.AllowUserToAddRows = false;
@@ -155,23 +141,7 @@
             this.gridQtyBreakdown.AllowUserToResizeRows = false;
             this.gridQtyBreakdown.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridQtyBreakdown.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBreakdown.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
             this.gridQtyBreakdown.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.gridQtyBreakdown.DefaultCellStyle = dataGridViewCellStyle8;
             this.gridQtyBreakdown.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridQtyBreakdown.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridQtyBreakdown.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
@@ -179,14 +149,14 @@
             this.gridQtyBreakdown.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQtyBreakdown.Location = new System.Drawing.Point(3, 3);
             this.gridQtyBreakdown.Name = "gridQtyBreakdown";
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBreakdown.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBreakdown.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.gridQtyBreakdown.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQtyBreakdown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBreakdown.RowTemplate.Height = 24;
@@ -195,6 +165,16 @@
             this.gridQtyBreakdown.Size = new System.Drawing.Size(778, 215);
             this.gridQtyBreakdown.TabIndex = 0;
             // 
+            // tab_CartonSummary
+            // 
+            this.tab_CartonSummary.Controls.Add(this.gridCartonSummary);
+            this.tab_CartonSummary.Location = new System.Drawing.Point(4, 25);
+            this.tab_CartonSummary.Name = "tab_CartonSummary";
+            this.tab_CartonSummary.Padding = new System.Windows.Forms.Padding(3);
+            this.tab_CartonSummary.Size = new System.Drawing.Size(884, 220);
+            this.tab_CartonSummary.TabIndex = 1;
+            this.tab_CartonSummary.Text = "By Carton Summary";
+            // 
             // gridCartonSummary
             // 
             this.gridCartonSummary.AllowUserToAddRows = false;
@@ -202,23 +182,7 @@
             this.gridCartonSummary.AllowUserToResizeRows = false;
             this.gridCartonSummary.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridCartonSummary.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridCartonSummary.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
             this.gridCartonSummary.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.gridCartonSummary.DefaultCellStyle = dataGridViewCellStyle11;
             this.gridCartonSummary.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridCartonSummary.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridCartonSummary.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
@@ -226,20 +190,20 @@
             this.gridCartonSummary.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridCartonSummary.Location = new System.Drawing.Point(3, 3);
             this.gridCartonSummary.Name = "gridCartonSummary";
-            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridCartonSummary.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridCartonSummary.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.gridCartonSummary.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridCartonSummary.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCartonSummary.RowTemplate.Height = 24;
             this.gridCartonSummary.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCartonSummary.ShowCellToolTips = false;
-            this.gridCartonSummary.Size = new System.Drawing.Size(778, 215);
+            this.gridCartonSummary.Size = new System.Drawing.Size(778, 218);
             this.gridCartonSummary.TabIndex = 0;
             // 
             // P31
@@ -247,9 +211,12 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.GridAlias = "Order_QtyShip_Detail";
+            this.GridUniqueKey = "Ukey";
             this.Name = "P31";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P31. CFA Master List ";
+            this.UniqueExpress = "ID,Seq";
             this.WorkAlias = "Order_QtyShip";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
@@ -269,8 +236,8 @@
             this.CoverPanel.ResumeLayout(false);
             this.tabControl.ResumeLayout(false);
             this.tab_QtyBreakdown.ResumeLayout(false);
-            this.tab_CartonSummary.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridQtyBreakdown)).EndInit();
+            this.tab_CartonSummary.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridCartonSummary)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
