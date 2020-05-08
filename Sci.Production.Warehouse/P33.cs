@@ -1924,6 +1924,7 @@ INNER JOIN FtyInventory f ON f.POID=s.Poid AND f.Seq1=d.Seq1 AND f.Seq2=d.Seq2
 INNER JOIN PO_Supp_Detail psd ON psd.ID = s.Poid AND psd.SCIRefno = s.SCIRefno AND psd.SCIRefno = s.SCIRefno AND psd.SEQ1=d.Seq1 AND psd.Seq2=d.Seq2
 WHERE i.Id = '{0}'
 AND(isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - ISNULL(d.Qty, 0)) < 0
+AND f.StockType = 'B'
 ", CurrentMaintain["id"]);
 
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
