@@ -376,7 +376,7 @@ SELECT * FROM FTY
  ", e.FormattedValue.ToString());
                         DataTable dtExp;
                         DBProxy.Current.Select(null, chkExp, out dtExp);
-                        if (dtExp == null && dtExp.Rows.Count == 0)
+                        if (dtExp == null || dtExp.Rows.Count == 0)
                         {
                             drGrid.Delete();
                             e.Cancel = true;
