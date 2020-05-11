@@ -70,10 +70,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(715, 513);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.numDM300);
@@ -110,12 +106,6 @@
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.label15);
             this.detailcont.Controls.Add(this.labelID);
-            this.detailcont.Size = new System.Drawing.Size(715, 475);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 475);
-            this.detailbtm.Size = new System.Drawing.Size(715, 38);
             // 
             // browse
             // 
@@ -689,8 +679,12 @@
             this.ClientSize = new System.Drawing.Size(723, 575);
             this.DefaultControl = "numDM200";
             this.DefaultControlForEdit = "numDM200";
+            this.EnableGridJunkColor = true;
             this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
+            this.IsSupportJunk = true;
             this.IsSupportPrint = false;
+            this.IsSupportUnJunk = true;
             this.Name = "B09";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B09. Finishing Process setting (For SNP)";

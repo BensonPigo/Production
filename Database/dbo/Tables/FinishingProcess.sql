@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[FinishingProcess] (
-    [DM300]    INT NOT NULL,
+    [DM300]    TINYINT      NOT NULL,
     [DM200]    INT          CONSTRAINT [DF_FinishingProcess_DM200] DEFAULT ((0)) NULL,
     [DM201]    INT          CONSTRAINT [DF_FinishingProcess_DM201] DEFAULT ((0)) NULL,
     [DM202]    INT          CONSTRAINT [DF_FinishingProcess_DM202] DEFAULT ((0)) NULL,
@@ -20,8 +20,11 @@
     [AddDate]  DATETIME     NULL,
     [EditName] VARCHAR (10) NULL,
     [EditDate] DATETIME     NULL,
+    [Junk]     BIT          DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_FinishingProcess] PRIMARY KEY CLUSTERED ([DM300] ASC)
 );
+
+
 
 
 GO

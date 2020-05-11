@@ -33,7 +33,6 @@
             this.label4 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
             this.txtCTNRefno = new Sci.Win.UI.TextBox();
             this.numFromRight = new Sci.Win.UI.NumericBox();
             this.numFromBottom = new Sci.Win.UI.NumericBox();
@@ -47,6 +46,7 @@
             this.checkIsSSCC = new Sci.Win.UI.CheckBox();
             this.label11 = new Sci.Win.UI.Label();
             this.comboStickerSize = new Sci.Win.UI.ComboBox();
+            this.txtbrand1 = new Sci.Production.Class.txtbrand();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -135,16 +135,6 @@
             this.label7.Size = new System.Drawing.Size(123, 23);
             this.label7.TabIndex = 16;
             this.label7.Text = "From Bottom (mm)";
-            // 
-            // txtbrand1
-            // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(138, 33);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(125, 23);
-            this.txtbrand1.TabIndex = 1;
             // 
             // txtCTNRefno
             // 
@@ -342,14 +332,28 @@
             this.comboStickerSize.TabIndex = 10;
             this.comboStickerSize.SelectedValueChanged += new System.EventHandler(this.ComboStickerSize_SelectedValueChanged);
             // 
+            // txtbrand1
+            // 
+            this.txtbrand1.BackColor = System.Drawing.Color.White;
+            this.txtbrand1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
+            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand1.Location = new System.Drawing.Point(138, 33);
+            this.txtbrand1.Name = "txtbrand1";
+            this.txtbrand1.Size = new System.Drawing.Size(125, 23);
+            this.txtbrand1.TabIndex = 1;
+            // 
             // B03
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(778, 436);
+            this.EnableGridJunkColor = true;
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
+            this.IsSupportJunk = true;
             this.IsSupportPrint = false;
+            this.IsSupportUnJunk = true;
             this.Name = "B03";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B03. Shipping Mark Pic Setting (for GenSong)";
