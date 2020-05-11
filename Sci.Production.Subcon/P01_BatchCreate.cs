@@ -594,7 +594,7 @@ outer apply (
 )cost
 WHERE 	 orders.IsForecast = 0      
         --and Orders.PulloutComplete = 0
-		AND orders.Junk = 0 
+		AND (Orders.Junk=0 or Orders.Junk=1 and Orders.NeedProduction=1)
 		AND factory.mdivisionid = '{0}'
 		AND factory.IsProduceFty = 1
         AND orders.Category in ('S','B')
@@ -699,7 +699,7 @@ WHERE 	ard.ArtworkPOID = '' and
         factory.mdivisionid = '{1}' 
 		and factory.IsProduceFty = 1
 		and orders.IsForecast = 0
-		and orders.Junk = 0
+		and (Orders.Junk=0 or Orders.Junk=1 and Orders.NeedProduction=1)
 		and Order_TmsCost.localsuppid !=''		
         --and Orders.PulloutComplete = 0
 		", poType, Sci.Env.User.Keyword, artworktype);

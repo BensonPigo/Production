@@ -453,7 +453,6 @@ namespace Sci.Production.Subcon
                 sqlWhere += string.Format(" and o.ID <= '{0}'", sp_e);
             }
 
-
             SqlCmd = $@"
 select Selected = 0
         , LocalSuppID = isnull(rtrim(sao.LocalSuppId),'')
@@ -509,7 +508,7 @@ where f.IsProduceFty=1
 and oa.ArtworkTypeID = '{this.txtartworktype_ftyArtworkType.Text}'
 and o.category in ('B','S')
 and o.MDivisionID='{Sci.Env.User.Keyword}' 
-and o.Junk=0
+and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
 and sao.LocalSuppId is not null
 {sqlWhere}
 group by o.ID,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery

@@ -308,7 +308,7 @@ outer apply (
 where f.IsProduceFty=1
 --and o.PulloutComplete = 0
 and o.category  in ('B','S')
-and o.MDivisionID='{0}' and oa.ArtworkTypeID = '{1}' and o.Junk=0
+and o.MDivisionID='{0}' and oa.ArtworkTypeID = '{1}' and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
 ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"], dr_artworkpo["localsuppid"]);
 
             if (!(dateSCIDelivery.Value1 == null)) { strSQLCmd += string.Format(" and o.SciDelivery >= '{0}' ", sciDelivery_b); }
@@ -413,7 +413,7 @@ and ar.Status = 'Approved'
 and ar.LocalSuppID = '{dr_artworkpo["localsuppid"]}'
 ";
 
-            strSQLCmd += string.Format(" and o.MDivisionID='{0}' and ar.ArtworkTypeID = '{1}' and o.Junk=0 ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"]);
+            strSQLCmd += string.Format(" and o.MDivisionID='{0}' and ar.ArtworkTypeID = '{1}' and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1) ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"]);
             if (poType == "O")
             {
                 strSQLCmd += @"  and ((o.Category = 'B' and ot.InhouseOSP='O' and ot.price > 0) or o.category !='B')";
@@ -482,7 +482,7 @@ outer apply (
 ) IssueQty
 where f.IsProduceFty=1
 and o.category  in ('B','S')
-and o.MDivisionID='{0}' and ar.ArtworkTypeID = '{1}' and ar.LocalSuppId = '{2}' and o.Junk=0
+and o.MDivisionID='{0}' and ar.ArtworkTypeID = '{1}' and ar.LocalSuppId = '{2}' and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
 and ((o.Category = 'B' and  ot.InhouseOSP='O' and ot.price > 0) or (o.category !='B'))
 ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"], dr_artworkpo["localsuppid"]);
 
