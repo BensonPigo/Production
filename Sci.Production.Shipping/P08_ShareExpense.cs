@@ -928,12 +928,10 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                         if (bolNoImportCharges && prepaidFtyImportFee == 0)
                         {
                             MyUtility.Msg.WarningBox("P03. Import Schedule - [No Import Charge] has been checked, please reconfirm.");
-                            return;
                         }
                         else if (bolNoImportCharges && prepaidFtyImportFee != 0)
                         {
                             MyUtility.Msg.WarningBox("Shipping-TW already paid the import charge, please check with forwarder if they bill us repeatedly and inform Shipping-TW at the same time.");
-                            return;
                         }
 
                         // ISP20191331 檢查ShareExpense項目正確性
