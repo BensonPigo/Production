@@ -1,0 +1,756 @@
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.PublicPrg;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using static Sci.Production.PublicPrg.Prgs;
+
+namespace Sci.Production.Cutting
+{
+    public partial class P02_StandardQtyPlannedCuttingWIP : Sci.Win.Tems.QueryForm
+    {
+        string ID;
+        DataTable DistqtyTb;
+        DataTable detailData;
+        DataTable summaryData;
+        DateTime MinInLine, MaxOffLine;
+        List<string> FtyFroup = new List<string>();
+        List<InOffLineList> AllDataTmp = new List<InOffLineList>();
+        List<InOffLineList> AllData = new List<InOffLineList>();
+        List<InOffLineList_byFabricPanelCode> AllDataTmp2 = new List<InOffLineList_byFabricPanelCode>();
+        List<InOffLineList_byFabricPanelCode> AllData2 = new List<InOffLineList_byFabricPanelCode>();
+        List<PublicPrg.Prgs.Day> Days = new List<PublicPrg.Prgs.Day>();
+        List<LeadTime> LeadTimeList = new List<LeadTime>();
+        public P02_StandardQtyPlannedCuttingWIP(string id, DataTable distqtyTb)
+        {
+            InitializeComponent();
+            ID = id;
+            DistqtyTb = distqtyTb;
+        }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            if (!Query1())
+            {
+                this.Close();
+                return;
+            }
+            if (!Query2())
+            {
+                this.Close();
+                return;
+            }
+        }
+
+        private void BtnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private bool Query1()
+        {
+            List<string> orderIDs = DistqtyTb.AsEnumerable()
+                .Select(s => new { ID = MyUtility.Convert.GetString(s["OrderID"]) })
+                .Where(w => w.ID != "EXCESS")
+                .Distinct()
+                .Select(s => s.ID)
+                .ToList();
+
+            if (!Check_Subprocess_LeadTime(orderIDs))
+            {
+                return false;
+            }
+
+            #region 起手資料
+            DataTable dt;
+            string cmd = $@"SELECT s.* FROM SewingSchedule s INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID WHERE s.OrderID in ('{string.Join("','", orderIDs)}')";
+            DualResult result = DBProxy.Current.Select(null, cmd, out dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            if (dt.Rows.Count == 0)
+            {
+                return false;
+            }
+            #endregion
+
+            //取出整份報表最早InLine / 最晚OffLine，先存下來待會用
+            this.MinInLine = dt.AsEnumerable().Min(o => Convert.ToDateTime(o["Inline"]));
+            this.MaxOffLine = dt.AsEnumerable().Max(o => Convert.ToDateTime(o["offline"]));
+
+            #region 處理報表上橫向日期的時間軸 (扣除Lead Time)
+
+            // 取得時間軸 ： (最早Inline - 最大Lead Time) ~ (最晚Offline - 最小Lead Time)
+            int maxLeadTime = this.LeadTimeList.Max(o => o.LeadTimeDay);
+            int minLeadTime = this.LeadTimeList.Min(o => o.LeadTimeDay);
+
+            // 起點 = (最早Inline - 最大Lead Time)、終點 = (最晚Offline - 最小Lead Time)
+            DateTime start = Convert.ToDateTime(this.MinInLine.AddDays((-1 * maxLeadTime)).ToString("yyyy/MM/dd"));
+            DateTime end = this.MaxOffLine.Date;
+
+            // 算出總天數
+            TimeSpan ts = end - start;
+            int DayCount = Math.Abs(ts.Days) + 1;
+
+            // 找出時間軸內，所有的假日
+            DataTable dt2;
+            string cmd2 = $@"
+SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
+FROM
+(
+	SElECt * 
+	FROM Holiday WITH(NOLOCK)
+	WHERE HolidayDate >= '{start.ToString("yyyy/MM/dd")}'
+)a
+WHERE HolidayDate <= '{end.ToString("yyyy/MM/dd")}'
+AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
+";
+
+            result = DBProxy.Current.Select(null, cmd2, out dt2);
+
+            // 開始組合時間軸
+            this.Days.Clear();
+
+            for (int Day = 0; Day <= DayCount - 1; Day++)
+            {
+                PublicPrg.Prgs.Day day = new PublicPrg.Prgs.Day();
+                day.Date = end.AddDays(-1 * Day);
+                bool IsHoliday = false;
+
+                // 假日或國定假日要註記
+                if (dt2.Rows.Count > 0)
+                {
+                    IsHoliday = dt2.AsEnumerable().Where(o => Convert.ToDateTime(o["HolidayDate"]) == day.Date).Any();
+                }
+                if (day.Date.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    IsHoliday = true;
+
+                    // 為避免假日推移的影響，讓時間軸不夠長，因此每遇到一次假日，就要加長一次時間軸
+                    DayCount += 1;
+
+                    start = start.AddDays(-1);
+                    cmd2 = $@"
+SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
+FROM
+(
+	SElECt * 
+	FROM Holiday WITH(NOLOCK)
+	WHERE HolidayDate >= '{start.ToString("yyyy/MM/dd")}'
+)a
+WHERE HolidayDate <= '{end.ToString("yyyy/MM/dd")}'
+AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
+";
+                    DBProxy.Current.Select(null, cmd2, out dt2);
+                }
+
+                day.IsHoliday = IsHoliday;
+                this.Days.Add(day);
+            }
+
+            #endregion
+
+            this.Days = this.Days.OrderBy(o => o.Date).ToList();
+
+            int hoidayDatas = this.Days.Where(o => o.IsHoliday).Count();
+
+            for (int i = 1; i <= hoidayDatas; i++)
+            {
+                for (int x = 1; x <= 365; x++)
+                {
+                    var firstDay = this.Days.FirstOrDefault();
+                    //firstDay.Date = firstDay.Date.AddDays(-1);
+
+                    PublicPrg.Prgs.Day nDay = new PublicPrg.Prgs.Day() { Date = firstDay.Date.AddDays(-1 * x), IsHoliday = false };
+
+                    if (nDay.Date.DayOfWeek == DayOfWeek.Sunday)
+                    {
+                        nDay.IsHoliday = true;
+                        this.Days.Add(nDay);
+                        continue;
+                    }
+                    else
+                    {
+                        string cmd3 = $@"
+
+	SElECt * 
+	FROM Holiday WITH(NOLOCK)
+	WHERE FactoryID IN ('{this.FtyFroup.JoinToString("','")}') AND HolidayDate = '{nDay.Date.ToString("yyyy/MM/dd")}'
+";
+                        DBProxy.Current.Select(null, cmd3, out dt2);
+                        if (dt2.Rows.Count > 0)
+                        {
+                            nDay.IsHoliday = true;
+                            this.Days.Add(nDay);
+                            continue;
+                        }
+
+                        nDay.IsHoliday = false;
+                        this.Days.Add(nDay);
+
+
+                        break;
+                    }
+                }
+                this.Days = this.Days.OrderBy(o => o.Date).ToList();
+            }
+
+            List<string> allOrder = dt.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct().ToList();
+
+            this.AllData = GetInOffLineList(dt, this.Days);
+
+            List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days, this.AllData);
+
+            this.summaryData = LeadTimeList[0];
+            this.detailData = LeadTimeList[1];
+
+            DataTable dtG = this.summaryData.Clone();
+            foreach (DataRow item in this.summaryData.Rows)
+            {
+                DataRow drdAccStdQty = this.detailData.Select($"SP='{item["SP"]}' and [Desc./Sewing Date] = 'Accu. Std. Qty'")[0];
+                dtG.ImportRow(drdAccStdQty);
+
+                DataRow drdAccCutPlan = this.detailData.Select($"SP='{item["SP"]}' and [Desc./Sewing Date] = 'Accu. Cut Plan Qty'")[0];
+                for (int i = 2; i < this.detailData.Columns.Count; i++) // 2 是日期欄位開始
+                {
+                    string bal = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(drdAccCutPlan[i]) - MyUtility.Convert.GetDecimal(drdAccStdQty[i]), 0));
+                    if (MyUtility.Convert.GetString(drdAccCutPlan[i]) == "" && MyUtility.Convert.GetString(drdAccStdQty[i]) == "")
+                    {
+                        bal = string.Empty;
+                    }
+
+                    string wip = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(item[i - 1]), 2));
+                    if (MyUtility.Convert.GetString(item[i - 1]) == "")
+                    {
+                        wip = string.Empty;
+                    }
+                    string srow2 = string.Empty;
+                    if (!(MyUtility.Convert.GetString(bal) == "" && MyUtility.Convert.GetString(wip) == ""))
+                    {
+                        srow2 = wip + " / " + bal;
+                    }
+                    drdAccCutPlan[i] = srow2;
+                }
+                drdAccCutPlan["SP"] = string.Empty;
+                dtG.ImportRow(drdAccCutPlan);
+            }
+            this.listControlBindingSource1.DataSource = dtG;
+            foreach (DataColumn item in dtG.Columns)
+            {
+                this.Helper.Controls.Grid.Generator(this.gridGarment)
+                .Text(item.ColumnName, header: item.ColumnName, width: Widths.Auto(), iseditingreadonly: true)
+                ;
+            }
+
+            this.gridGarment.AutoResizeColumns();
+
+            int ColumnIndex = 1;
+            foreach (var day in this.Days)
+            {
+                //string dateStr = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
+
+                //gridGarment.Columns[ColumnIndex].Name = dateStr;
+                // 假日的話粉紅色
+                if (day.IsHoliday)
+                {
+                    gridGarment.Columns[ColumnIndex].HeaderCell.Style.BackColor = Color.FromArgb(255, 199, 206);
+                }
+                ColumnIndex++;
+            }
+
+            //扣除無產出的日期
+            List<PublicPrg.Prgs.Day> removeDays = new List<PublicPrg.Prgs.Day>();
+
+            foreach (var day in this.Days)
+            {
+                //如果該日期，不是「有資料」，則刪掉
+                if (!this.AllData.Where(x => x.InOffLines.Where(
+                                                                    y => y.DateWithLeadTime == day.Date
+                                                                ).Any()
+                                       ).Any()
+                    //&& day.IsHoliday
+                    )
+                {
+                    removeDays.Add(day);
+                }
+                else if (!this.AllData.Where(x => x.InOffLines.Where(
+                                                                    y => y.DateWithLeadTime == day.Date
+                                                                    && MyUtility.Convert.GetDecimal(y.WIP) > 0
+                                                                ).Any()
+                                       ).Any()
+                    && day.IsHoliday
+                    )
+                {
+                    removeDays.Add(day);
+                }
+            }
+
+            ColumnIndex = 1;
+            foreach (var day in this.Days)
+            {
+                if (removeDays.Where(o => o.Date == day.Date).Any())
+                {
+                    gridGarment.Columns[ColumnIndex].Visible = false; // 隱藏,但還在 ColumnIndex不會變
+                }
+                ColumnIndex++;
+            }
+
+            #region 關閉排序功能
+            for (int i = 0; i < this.gridGarment.ColumnCount; i++)
+            {
+                this.gridGarment.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
+            #endregion
+            return true;
+        }
+
+        private bool Query2()
+        {
+            List<string> orderIDs = DistqtyTb.AsEnumerable()
+                .Select(s => new { ID = MyUtility.Convert.GetString(s["OrderID"]) })
+                .Where(w => w.ID != "EXCESS")
+                .Distinct()
+                .Select(s => s.ID)
+                .ToList();
+
+            if (!Check_Subprocess_LeadTime(orderIDs))
+            {
+                return false;
+            }
+
+            #region 起手資料
+            DataTable dt;
+            string cmd = $@"SELECT s.* FROM SewingSchedule s INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID WHERE s.OrderID in ('{string.Join("','", orderIDs)}')";
+            DualResult result = DBProxy.Current.Select(null, cmd, out dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            if (dt.Rows.Count == 0)
+            {
+                return false;
+            }
+            #endregion
+
+            //取出整份報表最早InLine / 最晚OffLine，先存下來待會用
+            this.MinInLine = dt.AsEnumerable().Min(o => Convert.ToDateTime(o["Inline"]));
+            this.MaxOffLine = dt.AsEnumerable().Max(o => Convert.ToDateTime(o["offline"]));
+
+            #region 處理報表上橫向日期的時間軸 (扣除Lead Time)
+
+            // 取得時間軸 ： (最早Inline - 最大Lead Time) ~ (最晚Offline - 最小Lead Time)
+            int maxLeadTime = this.LeadTimeList.Max(o => o.LeadTimeDay);
+            int minLeadTime = this.LeadTimeList.Min(o => o.LeadTimeDay);
+
+            // 起點 = (最早Inline - 最大Lead Time)、終點 = (最晚Offline - 最小Lead Time)
+            DateTime start = Convert.ToDateTime(this.MinInLine.AddDays((-1 * maxLeadTime)).ToString("yyyy/MM/dd"));
+            DateTime end = this.MaxOffLine.Date;
+
+            // 算出總天數
+            TimeSpan ts = end - start;
+            int DayCount = Math.Abs(ts.Days) + 1;
+
+            // 找出時間軸內，所有的假日
+            DataTable dt2;
+            string cmd2 = $@"
+SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
+FROM
+(
+	SElECt * 
+	FROM Holiday WITH(NOLOCK)
+	WHERE HolidayDate >= '{start.ToString("yyyy/MM/dd")}'
+)a
+WHERE HolidayDate <= '{end.ToString("yyyy/MM/dd")}'
+AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
+";
+
+            result = DBProxy.Current.Select(null, cmd2, out dt2);
+
+            // 開始組合時間軸
+            this.Days.Clear();
+
+            for (int Day = 0; Day <= DayCount - 1; Day++)
+            {
+                PublicPrg.Prgs.Day day = new PublicPrg.Prgs.Day();
+                day.Date = end.AddDays(-1 * Day);
+                bool IsHoliday = false;
+
+                // 假日或國定假日要註記
+                if (dt2.Rows.Count > 0)
+                {
+                    IsHoliday = dt2.AsEnumerable().Where(o => Convert.ToDateTime(o["HolidayDate"]) == day.Date).Any();
+                }
+                if (day.Date.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    IsHoliday = true;
+
+                    // 為避免假日推移的影響，讓時間軸不夠長，因此每遇到一次假日，就要加長一次時間軸
+                    DayCount += 1;
+
+
+                    start = start.AddDays(-1);
+                    cmd2 = $@"
+SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
+FROM
+(
+	SElECt * 
+	FROM Holiday WITH(NOLOCK)
+	WHERE HolidayDate >= '{start.ToString("yyyy/MM/dd")}'
+)a
+WHERE HolidayDate <= '{end.ToString("yyyy/MM/dd")}'
+AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
+";
+                    DBProxy.Current.Select(null, cmd2, out dt2);
+                }
+
+                day.IsHoliday = IsHoliday;
+                this.Days.Add(day);
+            }
+
+            #endregion
+
+            this.Days = this.Days.OrderBy(o => o.Date).ToList();
+
+            int hoidayDatas = this.Days.Where(o => o.IsHoliday).Count();
+
+            for (int i = 1; i <= hoidayDatas; i++)
+            {
+                for (int x = 1; x <= 365; x++)
+                {
+                    var firstDay = this.Days.FirstOrDefault();
+                    //firstDay.Date = firstDay.Date.AddDays(-1);
+
+                    PublicPrg.Prgs.Day nDay = new PublicPrg.Prgs.Day() { Date = firstDay.Date.AddDays(-1 * x), IsHoliday = false };
+
+                    if (nDay.Date.DayOfWeek == DayOfWeek.Sunday)
+                    {
+                        nDay.IsHoliday = true;
+                        this.Days.Add(nDay);
+                        continue;
+                    }
+                    else
+                    {
+                        string cmd3 = $@"
+
+	SElECt * 
+	FROM Holiday WITH(NOLOCK)
+	WHERE FactoryID IN ('{this.FtyFroup.JoinToString("','")}') AND HolidayDate = '{nDay.Date.ToString("yyyy/MM/dd")}'
+";
+                        DBProxy.Current.Select(null, cmd3, out dt2);
+                        if (dt2.Rows.Count > 0)
+                        {
+                            nDay.IsHoliday = true;
+                            this.Days.Add(nDay);
+                            continue;
+                        }
+
+                        nDay.IsHoliday = false;
+                        this.Days.Add(nDay);
+
+
+                        break;
+                    }
+                }
+                this.Days = this.Days.OrderBy(o => o.Date).ToList();
+            }
+
+            List<string> allOrder = dt.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct().ToList();
+
+            this.AllData2 = GetInOffLineList_byFabricPanelCode(dt, this.Days);
+
+            List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days, this.AllData2);
+            this.summaryData = LeadTimeList[0];
+            this.detailData = LeadTimeList[1];
+
+            DataTable dtF = this.summaryData.Clone();
+            foreach (DataRow item in this.summaryData.Rows)
+            {
+                DataRow drdAccStdQty = this.detailData.Select($"SP='{item["SP"]}' and [Fab. Panel Code] = '{item["Fab. Panel Code"]}' and [Desc./Sewing Date] = 'Accu. Std. Qty'")[0];
+                dtF.ImportRow(drdAccStdQty);
+
+                DataRow drdAccCutPlan = this.detailData.Select($"SP='{item["SP"]}' and [Fab. Panel Code] = '{item["Fab. Panel Code"]}' and [Desc./Sewing Date] = 'Accu. Cut Plan Qty'")[0];
+                for (int i = 3; i < this.detailData.Columns.Count; i++) // 2 是日期欄位開始
+                {
+                    string bal = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(drdAccCutPlan[i]) - MyUtility.Convert.GetDecimal(drdAccStdQty[i]), 0));
+                    if (MyUtility.Convert.GetString(drdAccCutPlan[i]) == "" && MyUtility.Convert.GetString(drdAccStdQty[i]) == "")
+                    {
+                        bal = string.Empty;
+                    }
+
+                    string wip = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(item[i - 1]), 2));
+                    if (MyUtility.Convert.GetString(item[i - 1]) == "")
+                    {
+                        wip = string.Empty;
+                    }
+                    string srow2 = string.Empty;
+                    if (!(MyUtility.Convert.GetString(bal) == "" && MyUtility.Convert.GetString(wip) == ""))
+                    {
+                        srow2 = wip + " / " + bal;
+                    }
+                    drdAccCutPlan[i] = srow2;
+                }
+                drdAccCutPlan["SP"] = string.Empty;
+                dtF.ImportRow(drdAccCutPlan);
+            }
+
+            this.listControlBindingSource2.DataSource = dtF;
+            foreach (DataColumn item in dtF.Columns)
+            {
+                this.Helper.Controls.Grid.Generator(this.gridFabric_Panel_Code)
+                .Text(item.ColumnName, header: item.ColumnName, width: Widths.Auto(), iseditingreadonly: true)
+                ;
+            }
+
+            int ColumnIndex = 2;
+            foreach (var day in this.Days)
+            {
+                //string dateStr = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
+
+                //gridFabric_Panel_Code.Columns[ColumnIndex].Name = dateStr;
+                // 假日的話粉紅色
+                if (day.IsHoliday)
+                {
+                    gridFabric_Panel_Code.Columns[ColumnIndex].HeaderCell.Style.BackColor = Color.FromArgb(255, 199, 206);
+                }
+                ColumnIndex++;
+            }
+
+            //扣除無產出的日期
+            List<PublicPrg.Prgs.Day> removeDays = new List<PublicPrg.Prgs.Day>();
+
+            foreach (var day in this.Days)
+            {
+                //如果該日期，不是「有資料」，則刪掉
+                if (!this.AllData2.Where(x => x.InOffLines.Where(
+                                                                    y => y.DateWithLeadTime == day.Date
+                                                                ).Any()
+                                       ).Any()
+                    //&& day.IsHoliday
+                    )
+                {
+                    removeDays.Add(day);
+                }
+                else if (!this.AllData.Where(x => x.InOffLines.Where(
+                                                                    y => y.DateWithLeadTime == day.Date
+                                                                    && MyUtility.Convert.GetDecimal(y.WIP) > 0
+                                                                ).Any()
+                                       ).Any()
+                    && day.IsHoliday
+                    )
+                {
+                    removeDays.Add(day);
+                }
+            }
+
+            ColumnIndex = 2;
+            foreach (var day in this.Days)
+            {
+                if (removeDays.Where(o => o.Date == day.Date).Any())
+                {
+                    gridFabric_Panel_Code.Columns[ColumnIndex].Visible = false; // 隱藏,但還在 ColumnIndex不會變
+                }
+                ColumnIndex++;
+            }
+
+            this.gridFabric_Panel_Code.Columns[0].Width = 115;
+
+            #region 關閉排序功能
+            for (int i = 0; i < this.gridFabric_Panel_Code.ColumnCount; i++)
+            {
+                this.gridFabric_Panel_Code.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
+            #endregion
+            return true;
+        }
+
+        public bool Check_Subprocess_LeadTime(List<string> orderIDs)
+        {
+            DataTable PoID_dt;
+            DataTable GarmentTb;
+            DataTable LeadTime_dt;
+            DualResult result;
+
+            string cmd = $@"
+SELECT  DISTINCT OrderID, s.MDivisionID
+INTO #OrderList
+FROM SewingSchedule s WITH(NOLOCK)
+INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID
+WHERE o.LocalOrder = 0
+AND OrderID in ('{string.Join("','", orderIDs)}')
+";
+
+            cmd += $@"
+SELECT DIStINCT  b.POID ,a.OrderID ,b.FtyGroup, a.MDivisionID
+FROM #OrderList a
+INNER JOIN Orders b ON a.OrderID= b.ID 
+
+drop table #OrderList
+";
+            result = DBProxy.Current.Select(null, cmd, out PoID_dt);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            List<string> PoID_List = PoID_dt.AsEnumerable().Select(o => o["POID"].ToString()).Distinct().ToList();
+            this.FtyFroup = PoID_dt.AsEnumerable().Select(o => o["FtyGroup"].ToString()).Distinct().ToList();
+            List<string> Msg = new List<string>();
+
+
+            foreach (DataRow dr in PoID_dt.Rows)
+            {
+                string POID = dr["POID"].ToString();
+                string OrderID = dr["OrderID"].ToString();
+                string MDivisionID = dr["MDivisionID"].ToString();
+
+                PublicPrg.Prgs.GetGarmentListTable(string.Empty, POID, "", out GarmentTb);
+
+                List<string> AnnotationList = GarmentTb.AsEnumerable().Where(o => !MyUtility.Check.Empty(o["Annotation"].ToString())).Select(o => o["Annotation"].ToString()).Distinct().ToList();
+
+
+                List<string> AnnotationList_Final = new List<string>();
+
+                foreach (var Annotation in AnnotationList)
+                {
+                    foreach (var item in Annotation.Split('+'))
+                    {
+                        string input = "";
+                        for (int i = 0; i <= item.Length - 1; i++)
+                        {
+                            // 排除掉數字
+                            int x = 0;
+                            if (!int.TryParse(item[i].ToString(), out x))
+                            {
+                                input += item[i].ToString();
+                            }
+                        }
+                        if (!AnnotationList_Final.Contains(input) && MyUtility.Check.Seek($"SELECT 1 FROM Subprocess WHERE ID='{input}' "))
+                        {
+                            AnnotationList_Final.Add(input);
+                        }
+                    }
+                }
+
+                string AnnotationStr = AnnotationList_Final.OrderBy(o => o.ToString()).JoinToString("+");
+
+                string chk_LeadTime = $@"
+SELECT DISTINCT SD.ID
+                ,Subprocess.IDs
+                ,LeadTime= s.LeadTime
+FROM SubprocessLeadTime s WITH(NOLOCK)
+INNER JOIN SubprocessLeadTime_Detail SD WITH(NOLOCK) on s.ID = sd.ID
+OUTER APPLY(
+	SELECT IDs=STUFF(
+	 (
+		SELECT '+'+SubprocessID
+		FROM SubprocessLeadTime_Detail WITH(NOLOCK)
+		WHERE ID = SD.ID
+		FOR XML PATH('')
+	)
+	,1,1,'')
+)Subprocess
+WHERE Subprocess.IDs = '{AnnotationStr}'
+and s.MDivisionID = '{MDivisionID}'
+";
+                result = DBProxy.Current.Select(null, chk_LeadTime, out LeadTime_dt);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
+
+                // 收集需要顯示訊息的Subprocess ID
+                if (LeadTime_dt.Rows.Count == 0 && AnnotationStr != string.Empty)
+                {
+                    Msg.Add(MDivisionID + ";" + AnnotationStr);
+                }
+                else
+                {
+                    // 記錄下加工段的Lead Time
+                    LeadTime o = new LeadTime()
+                    {
+                        OrderID = OrderID,
+                        LeadTimeDay = MyUtility.Check.Empty(AnnotationStr) ? 0 : Convert.ToInt32(LeadTime_dt.Rows[0]["LeadTime"]) //加工段為空，LeadTimeDay = 0
+                    };
+                    this.LeadTimeList.Add(o);
+                }
+            }
+
+            if (Msg.Count > 0)
+            {
+                string message = "<" + Msg.Distinct().OrderBy(o => o).JoinToString(">" + Environment.NewLine + "<") + ">";
+                message = message.Replace(";", "><");
+                message += Environment.NewLine + @"Please set cutting lead time in [Cutting_B09. Subprocess Lead Time].
+When the settings are complete, can be export use this function!!
+";
+
+                MyUtility.Msg.InfoBox(message);
+                return false;
+            }
+            return true;
+        }
+        private void Grid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex > 0)
+                //(e.ColumnIndex > 0 && this.tabControl1.SelectedIndex == 0) ||
+                //(e.ColumnIndex > 0 && this.tabControl1.SelectedIndex == 1))
+            {
+                return;
+            }
+
+            if (e.RowIndex > 0)
+            {
+                e.AdvancedBorderStyle.Top = DataGridViewAdvancedCellBorderStyle.None;
+            }
+
+            if (!this.IsEmptyCellValue(e.RowIndex, (Win.UI.Grid)sender))
+            {
+                e.AdvancedBorderStyle.Bottom = DataGridViewAdvancedCellBorderStyle.None;
+            }
+            else
+            {
+                e.AdvancedBorderStyle.Bottom = ((Win.UI.Grid)sender).AdvancedCellBorderStyle.Bottom;
+            }
+        }
+
+        private bool IsEmptyCellValue(int row, Win.UI.Grid grid)
+        {
+            if (row == grid.Rows.Count - 1)
+            {
+                return true;
+            }
+
+            DataGridViewCell cell1 = grid["SP", row];
+
+            return MyUtility.Check.Empty(cell1.Value);
+        }
+
+        private void Grid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.ColumnIndex > 0 && e.RowIndex > -1)
+            {
+                if (e.RowIndex% 4 > 1)
+                {
+                    e.CellStyle.BackColor = Color.FromArgb(128, 255, 255);
+                }
+            }
+        }
+    }
+}

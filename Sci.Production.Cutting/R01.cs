@@ -124,7 +124,7 @@ AND (
 
             // 起點 = (最早Inline - 最大Lead Time)、終點 = (最晚Offline - 最小Lead Time)
             DateTime start = Convert.ToDateTime(this.SewingDate_s.Value.AddDays((-1 * maxLeadTime)).ToString("yyyy/MM/dd"));
-            DateTime end = Convert.ToDateTime(this.SewingDate_e.Value.AddDays((-1 * minLeadTime)).ToString("yyyy/MM/dd"));
+            DateTime end = this.MaxOffLine.Date;
 
             // 算出總天數
             TimeSpan ts = end - start;
@@ -191,6 +191,49 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
 
             this.Days = this.Days.OrderBy(o => o.Date).ToList();
 
+            int hoidayDatas = this.Days.Where(o => o.IsHoliday).Count();
+
+            for (int i = 1; i <= hoidayDatas; i++)
+            {
+                for (int x = 1; x <= 365; x++)
+                {
+                    var firstDay = this.Days.FirstOrDefault();
+                    //firstDay.Date = firstDay.Date.AddDays(-1);
+
+                    PublicPrg.Prgs.Day nDay = new PublicPrg.Prgs.Day() {Date = firstDay.Date.AddDays(-1*x) ,IsHoliday=false};
+
+                    if (nDay.Date.DayOfWeek == DayOfWeek.Sunday)
+                    {
+                        nDay.IsHoliday = true;
+                        this.Days.Add(nDay);
+                        continue;
+                    }
+                    else
+                    {
+                        string cmd3 = $@"
+
+	SElECt * 
+	FROM Holiday WITH(NOLOCK)
+	WHERE FactoryID IN ('{this.FtyFroup.JoinToString("','")}') AND HolidayDate = '{nDay.Date.ToString("yyyy/MM/dd")}'
+";
+                        DBProxy.Current.Select(null, cmd3, out dt2);
+                        if (dt2.Rows.Count > 0)
+                        {
+                            nDay.IsHoliday = true;
+                            this.Days.Add(nDay);
+                            continue;
+                        }
+
+                        nDay.IsHoliday = false;
+                        this.Days.Add(nDay);
+
+                        
+                        break;
+                    }
+                }
+                this.Days = this.Days.OrderBy(o => o.Date).ToList();
+            }
+
             List<string> allOrder = dt.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct().ToList();
 
             this.AllData = GetInOffLineList(dt, this.Days);
@@ -228,7 +271,7 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                                                                     y => y.DateWithLeadTime == day.Date
                                                                 ).Any()
                                        ).Any() 
-                                       && day.IsHoliday
+                                       //&& day.IsHoliday
                     )
                 {
                     removeDays.Add(day);

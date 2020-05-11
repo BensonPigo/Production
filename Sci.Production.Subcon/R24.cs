@@ -298,6 +298,8 @@ select distinct t.FactoryID
 	,t.MDivisionID
     ,t.artworktypeid
     ,t.POID
+    ,[Category] = (SELECT Category FROM Orders WHERE ID = t.POID)
+    ,[Cancel] = IIF((SELECT Junk FROM Orders WHERE ID = t.POID)=1,'Y','N')
     ,aa.StyleID
     ,cc.BuyerID
     ,aa.BrandID 

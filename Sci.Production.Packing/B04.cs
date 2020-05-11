@@ -25,6 +25,22 @@ namespace Sci.Production.Packing
             this.InitializeComponent();
         }
 
+        protected override void EnsureToolbarExt()
+        {
+            base.EnsureToolbarExt();
+            if (!this.EditMode && this.CurrentMaintain != null && this.tabs.SelectedIndex == 1)
+            {
+                bool junk = MyUtility.Convert.GetBool(this.CurrentMaintain["junk"]);
+                this.toolbar.cmdJunk.Enabled = !junk && this.Perm.Junk;
+                this.toolbar.cmdUnJunk.Enabled = junk && this.Perm.Junk;
+            }
+            else
+            {
+                this.toolbar.cmdJunk.Enabled = false;
+                this.toolbar.cmdUnJunk.Enabled = false;
+            }
+        }
+
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
@@ -40,6 +56,28 @@ namespace Sci.Production.Packing
             }
 
             return base.ClickSaveBefore();
+        }
+
+        protected override void ClickJunk()
+        {
+            base.ClickJunk();
+            string sqlcmd = $@"update StickerSize set junk = 1 where ID = '{this.CurrentMaintain["ID"]}'";
+            DualResult result = DBProxy.Current.Execute(null, sqlcmd);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+        }
+
+        protected override void ClickUnJunk()
+        {
+            base.ClickUnJunk();
+            string sqlcmd = $@"update StickerSize set junk = 0 where ID = '{this.CurrentMaintain["ID"]}'";
+            DualResult result = DBProxy.Current.Execute(null, sqlcmd);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
         }
     }
 }

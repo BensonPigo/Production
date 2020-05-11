@@ -2046,14 +2046,22 @@ END";
             this.OnDetailEntered();
         }
 
-        private void btnBatchAssignCellEstCutDate_Click(object sender, EventArgs e)
+        private void btnBatchAssign_Click(object sender, EventArgs e)
         {
             gridValid();
             detailgrid.ValidateControl();
-            var frm = new Sci.Production.Cutting.P02_BatchAssignCellCutDate((DataTable)(detailgridbs.DataSource));
+            var frm = new Sci.Production.Cutting.P02_BatchAssign((DataTable)(detailgridbs.DataSource), this.CurrentMaintain["ID"].ToString(), distqtyTb);
             frm.ShowDialog(this);
         }
 
+        private void BtnStdQtyWIP_Click(object sender, EventArgs e)
+        {
+            gridValid();
+            detailgrid.ValidateControl();
+            var frm = new P02_StandardQtyPlannedCuttingWIP(this.CurrentMaintain["ID"].ToString(), distqtyTb);
+            frm.ShowDialog(this);
+
+        }
 
         /// <summary>
         /// 產生SubDetail(PatternPanel)資料

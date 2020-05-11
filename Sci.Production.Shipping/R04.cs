@@ -124,7 +124,7 @@ namespace Sci.Production.Shipping
         ,gb2.CutOffDate
 		,[ShipPlanID] = gb2.ShipPlanID
 		,o.MDivisionID
-		,o.FactoryID
+		,o.ftygroup
 		,Alias = isnull(c.Alias,'')		
 		,Payment = isnull((select Term 
 						   from PayTermAR WITH (NOLOCK) 

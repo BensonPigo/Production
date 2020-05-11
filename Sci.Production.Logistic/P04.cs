@@ -125,11 +125,13 @@ namespace Sci.Production.Logistic
             {
                 rowIndex = e.RowIndex;
                 columIndex = e.ColumnIndex;
+
             };
 
             this.gridPackID.Sorted += (s, e) =>
             {
-                if ((rowIndex == -1) & (columIndex == 4))
+                #region 如果準備排序的欄位 = "CTNStartNo" 則用以下方法排序
+                if ((rowIndex == -1) && this.gridPackID.Columns[columIndex].Name.EqualString("CTNStartNo"))
                 {
                     this.listControlBindingSource1.DataSource = null;
 
@@ -147,6 +149,7 @@ namespace Sci.Production.Logistic
                     this.listControlBindingSource1.DataSource = this.gridData;
                     return;
                 }
+                #endregion
             };
         }
 
