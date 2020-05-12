@@ -349,7 +349,7 @@ where f.IsProduceFty=1
 and o.category in ('B','S')
 and ot.ArtworkTypeID = '{dr_artworkReq["artworktypeid"]}'
 and o.MDivisionID='{Sci.Env.User.Keyword}' 
-and o.Junk=0
+and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1) 
 and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
 {sqlWhere}
 
@@ -433,7 +433,7 @@ where f.IsProduceFty=1
 and oa.ArtworkTypeID = '{dr_artworkReq["artworktypeid"]}'
 and o.category in ('B','S')
 and o.MDivisionID='{Sci.Env.User.Keyword}' 
-and o.Junk=0
+and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
 {sqlWhere}
 group by o.ID,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
             ,oa.PatternDesc, o.StyleID, o.StyleID, o.POID,PoQty.value,ReqQty.value,vsa.ActStitch  {tmpGroupby}
@@ -512,10 +512,9 @@ and ot.ArtworkTypeID = '{dr_artworkReq["artworktypeid"]}'
 and ot.Price > 0
 and o.category in ('B','S')
 and o.MDivisionID='{Sci.Env.User.Keyword}' 
-and o.Junk=0
+and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
 and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
 {sqlWhere}
-
 ";
 
             return strSQLCmd;

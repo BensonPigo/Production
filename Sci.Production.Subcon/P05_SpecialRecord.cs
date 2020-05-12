@@ -118,7 +118,7 @@ outer apply (
         and ad.ArtworkID = '{dr["artworktypeid"]}'
 		and ad.ArtworkReqID=''
 ) PoQty
-where   o.Junk = 0 and o.Qty > 0 and
+where (o.Junk=0 or o.Junk=1 and o.NeedProduction=1) and o.Qty > 0 and
 	(
 	(o.Category = 'B' and at.IsSubprocess = 1 and at.isArtwork = 0 and at.Classify = 'O' and at.ID = '{dr["artworktypeid"]}') 
 	or 
