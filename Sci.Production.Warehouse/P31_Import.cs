@@ -128,7 +128,7 @@ outer apply(
 ) as toSP
 Where a.id = '{fromSP}' and b.id = '{sp}' and b.seq1 = '{txtSeq.seq1}' 
 and b.seq2='{txtSeq.seq2}' and Factory.MDivisionID = '{Sci.Env.User.Keyword}'
-and c.inqty-c.outqty + c.adjustqty > 0
+and c.inqty-c.outqty + c.adjustqty > 0 and  c.StockType='B'
 AND Orders.Category <> 'A' ");
 
                 this.ShowWaitMessage("Data Loading....");
