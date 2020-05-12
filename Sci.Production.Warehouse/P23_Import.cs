@@ -387,7 +387,7 @@ WHERE   StockType='{dr["toStocktype"]}'
                 .Text("Fromstocktype", header: "Stock" + Environment.NewLine + "Type", iseditingreadonly: true, width: Widths.AnsiChars(8), settings: ns2) //4
                 .Numeric("accu_qty", header: "Accu." + Environment.NewLine + "Transfered", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(10)) //5  
                 .Numeric("balanceqty", header: "Stock" + Environment.NewLine + "Balance", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))      //9
-                .Numeric("qty", header: "Transfer" + Environment.NewLine + "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2).Get(out col_Qty)      //10
+                .Numeric("qty", header: "Transfer" + Environment.NewLine + "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, maximum: 99999999, minimum: -99999999).Get(out col_Qty)      //10
                 .Text("location", header: "From Location", iseditingreadonly: true)      //11
                 .Text("tolocation", header: "To Location", iseditingreadonly: false, settings: ts2).Get(out col_tolocation)      //12
                ;
