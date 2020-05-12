@@ -252,7 +252,7 @@ BEGIN
 			Set @Seq2 =''
 			Select @Seq2 = isnull(seq2,'') --����ۦPSEQ1,SCIRefno
 			From PO_Supp_Detail b  WITH (NOLOCK) 
-			Where id = @POID AND SEQ1 = @SEQ1 AND Scirefno = @SCIRefno and OutputSeq1='' and OutputSeq2 = '' AND Colorid = @colorid
+			Where id = @POID AND SEQ1 = @SEQ1 AND Refno = @Refno and OutputSeq1='' and OutputSeq2 = '' AND Colorid = @colorid
 			and Junk = 0
 
 			--ALGER TEST
@@ -266,7 +266,7 @@ BEGIN
 				--�YSEQ2 ���ŴN��70�j��
 				Select top 1 @seq1 = seq1 ,@Seq2 = SEQ2
 				From PO_Supp_Detail b  WITH (NOLOCK) 
-				Where id = @POID AND Scirefno = @SCIRefno and OutputSeq2 != '' AND Colorid = @colorid and SEQ1 like '7%' and Junk = 0
+				Where id = @POID AND Refno = @Refno and OutputSeq2 != '' AND Colorid = @colorid and SEQ1 like '7%' and Junk = 0
 			End
 			--���ը�Article�MMaxlayer�����t��#dis_tmpAL
 			Begin

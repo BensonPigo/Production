@@ -48,7 +48,7 @@ outer apply
 (
 	select top 1 seq1,seq2 
 	from PO_Supp_Detail psd with(nolock) 
-	where id = @POID and psd.Scirefno = ob.SCIRefno and Junk = 0 AND Colorid = oec.ColorID and psd.seq1 = ob.Seq1
+	where id = @POID and psd.Refno = ob.Refno and Junk = 0 AND Colorid = oec.ColorID and psd.seq1 = ob.Seq1
 	and psd.OutputSeq1='' and psd.OutputSeq2 = ''
 	order by seq2 desc--�̾ڭ쥻��235��-SEQ1SEQ2�W�h
 )s
@@ -56,7 +56,7 @@ outer apply
 (
 	select top 1 seq1,seq2 --�w�]�������atop1
 	from PO_Supp_Detail psd with(nolock) 
-	where id = @POID and psd.Scirefno = ob.SCIRefno and Junk = 0 AND Colorid = oec.ColorID and psd.seq1 like '7%' and psd.OutputSeq2 != ''
+	where id = @POID and psd.Refno = ob.Refno and Junk = 0 AND Colorid = oec.ColorID and psd.seq1 like '7%' and psd.OutputSeq2 != ''
 )s2
 outer apply(select top 1 A=0 from Order_EachCons_Article  WITH (NOLOCK) where Order_EachConsUkey=oe.Ukey)hasforArticle--�Ƨǥ�,��ForArticle�ƫe
 Where oe.id = @Cuttingid and oe.CuttingPiece = 0--���ե�--and colorid = 'BLK'and FabricCombo = 'FA'and MarkerName = 'MAB9'
