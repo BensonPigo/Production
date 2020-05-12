@@ -407,6 +407,12 @@
     <Compile Include="TxtsubconNoConfirm.Designer.cs">
       <DependentUpon>TxtsubconNoConfirm.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtSpSeq.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtSpSeq.designer.cs">
+      <DependentUpon>txtSpSeq.cs</DependentUpon>
+    </Compile>
     <Compile Include="TxtSubconReason.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -693,7 +699,10 @@
     <EmbeddedResource Include="TxtsubconNoConfirm.resx">
       <DependentUpon>TxtsubconNoConfirm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TxtSubconReason.resx">
+    <EmbeddedResource Include="txtSpSeq.resx">
+      <DependentUpon>txtSpSeq.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtSubconReason.resx">
       <DependentUpon>TxtSubconReason.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Txtsubprocess.resx">
