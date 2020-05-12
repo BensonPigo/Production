@@ -383,7 +383,7 @@ namespace Sci.Production.Cutting
             if (!MyUtility.Check.Empty(fabriccombo)) filter = filter + string.Format(" and fabriccombo ='{0}'", fabriccombo);
             if (!MyUtility.Check.Empty(numCutNo.Value)) filter = filter + string.Format(" and cutno ={0}", numCutNo.Value);
             if (!MyUtility.Check.Empty(txtEstCutDate.Value)) filter = filter + string.Format(" and estcutdate ='{0}'", estcutdate);
-            if (checkOnlyShowEmptyEstCutDate.Value == "True") filter = filter + " and estcutdate is null ";
+            if (checkOnlyShowEmptyEstCutDate.Checked) filter = filter + " and estcutdate is null ";
             string orderby = "SORT_NUM ASC,FabricCombo ASC,multisize DESC,Colorid ASC,Order_SizeCode_Seq DESC,MarkerName ASC,Ukey";
             curTb.DefaultView.RowFilter = filter;
             curTb.DefaultView.Sort = orderby;
@@ -439,7 +439,7 @@ namespace Sci.Production.Cutting
                     }
                     else
                     {
-                        dr["Shift"] = DBNull.Value;
+                        dr["Shift"] = string.Empty;
                     }
                     dr.EndEdit();
                 }
