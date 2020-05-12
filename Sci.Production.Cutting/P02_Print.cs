@@ -106,7 +106,7 @@ and a.id='{0}'
             DualResult dResult = DBProxy.Current.Select(null, workorder_cmd, paras,out WorkorderTb);
             if (!dResult) return dResult;
 
-            workorder_cmd = string.Format("Select {1},a.Cutno,a.Colorid,a.Layer,a.Cons,b.* from Workorder a WITH (NOLOCK) ,Workorder_Distribute b WITH (NOLOCK) Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}' and a.ukey = b.workorderukey", detDr["ID"], byType);
+            workorder_cmd = string.Format("Select {1},a.Cutno,a.Colorid,a.Layer,a.Cons,b.* from Workorder a WITH (NOLOCK) ,Workorder_Distribute b WITH (NOLOCK) Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}' and a.ukey = b.workorderukey order by b.OrderID,b.Article,b.SizeCode", detDr["ID"], byType);
             dResult = DBProxy.Current.Select(null, workorder_cmd, paras, out WorkorderDisTb);
             if (!dResult) return dResult;
 
