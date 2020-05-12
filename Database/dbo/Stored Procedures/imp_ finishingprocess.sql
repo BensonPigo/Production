@@ -482,6 +482,7 @@ Begin
 			,pd.OrderID 
 			,[PackingListID] = pd.ID 
 			,pd.CTNStartNo 
+			,c.SCICtnNo
 			,[AddName] = 'SCIMIS' 
 			,[AddDate] = GETDATE()
 			,[PackingList_Detail_Ukey] = pd.Ukey
@@ -494,10 +495,10 @@ Begin
 		----1. 將 CFA 收箱的紀錄寫入資料表 CFAReceive
 		INSERT INTO Production.dbo.CFAReceive 
 			(ReceiveDate 
-			 ,MDivisionID ,OrderID ,PackingListID ,CTNStartNo ,AddName ,AddDate)
+			 ,MDivisionID ,OrderID ,PackingListID ,CTNStartNo ,SCICtnNo ,AddName ,AddDate)
 		SELECT DISTINCT 
 		     [ReceiveDate] = Cast(ReceiveDate As Date)  
-			 ,MDivisionID ,OrderID ,PackingListID ,CTNStartNo ,AddName ,AddDate
+			 ,MDivisionID ,OrderID ,PackingListID ,CTNStartNo ,SCICtnNo ,AddName ,AddDate
 		FROM #tmpCompleteCFAReceive_WithUkey
 		;
 		----2. 更新 PackingList_Detail 的資訊
