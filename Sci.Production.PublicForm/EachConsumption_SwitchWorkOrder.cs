@@ -52,8 +52,10 @@ namespace Sci.Production.PublicForm
             string checkArticleSize = $@"
 select distinct a.SizeCode,a.Article
 from Order_Qty a with(nolock)
+inner join  Orders o  with(nolock) on o.id = a.id
 left join Order_EachCons_Color_Article b with(nolock)on a.SizeCode = b.SizeCode and a.Article = b.Article and a.id = b.id
 where a.id = '{cuttingid}' and b.Article is null and a.Qty > 0
+and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
 ";
             DataTable DTcheckAS;
             DualResult result = DBProxy.Current.Select(null, checkArticleSize, out DTcheckAS);
