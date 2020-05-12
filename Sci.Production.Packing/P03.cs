@@ -12,6 +12,8 @@ using System.Transactions;
 using System.Linq;
 using System.Data.SqlClient;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Packing
 {
@@ -1147,6 +1149,10 @@ WHERE ID =  '{this.CurrentMaintain["ID"]}'";
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
+            #region ISP20200757 資料交換 - Sunrise
+            Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), string.Empty))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            #endregion
         }
 
         /// <summary>
@@ -1201,6 +1207,11 @@ WHERE ID =  '{this.CurrentMaintain["ID"]}'";
                 DualResult failResult = new DualResult(false, "Update Orders CTN fail!\r\n" + result.ToString());
                 return failResult;
             }
+
+            #region ISP20200757 資料交換 - Sunrise
+            Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), "delete"))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            #endregion
 
             return Result.True;
         }

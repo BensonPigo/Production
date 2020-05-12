@@ -24,6 +24,8 @@ using System.Runtime.InteropServices;
 using Sci.Production.PublicForm;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.PPIC
 {
@@ -740,6 +742,16 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             }
 
             return Result.True;
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+            #region ISP20200757 資料交換 - Sunrise
+            Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{this.CurrentMaintain["ID"]}','Orders,Order_QtyShip,Order_SizeCode'"))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            #endregion
         }
 
         // Style

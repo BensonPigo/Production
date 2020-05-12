@@ -631,7 +631,8 @@ order by bundlegroup"
                     }
                     ).ToList();
 
-                Task.Run(() => new Guozi_AGV().SentBundleToAGV(() => listBundleToAGV_PostBody));
+                Task.Run(() => new Guozi_AGV().SentBundleToAGV(() => listBundleToAGV_PostBody))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
             #endregion
 

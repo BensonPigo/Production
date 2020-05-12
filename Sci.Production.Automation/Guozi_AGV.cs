@@ -36,17 +36,12 @@ namespace Sci.Production.Automation
                 {
                     lock (baseUrl)
                     {
-                        baseUrl = this.GetBaseUrl();
+                        baseUrl = GetBaseUrl(this.guoziSuppID, this.moduleName);
                     }
                 }
 
                 return baseUrl;
             }
-        }
-
-        private string GetBaseUrl()
-        {
-            return MyUtility.GetValue.Lookup($"select URL from WebApiURL with (nolock) where SuppID = '{this.guoziSuppID}' and ModuleName = 'AGV' ");
         }
 
         /// <summary>

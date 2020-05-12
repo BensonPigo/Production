@@ -2827,7 +2827,8 @@ and ID ='{dr["ID", DataRowVersion.Original]}'; ";
             if (listChangedDetail.Any())
             {
                 DataTable dtWorkOrder = listChangedDetail.CopyToDataTable();
-                Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkOrder));
+                Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkOrder))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
             #endregion
 

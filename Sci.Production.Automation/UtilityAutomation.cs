@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
+using System.Threading.Tasks;
 using static PmsWebApiUtility20.WebApiTool;
 using DualResult = Ict.DualResult;
 
@@ -56,6 +57,12 @@ namespace Sci.Production.Automation
             }
         }
 
+        public static void AutomationExceptionHandler(Task task)
+        {
+            var exception = task.Exception;
+            MyUtility.Msg.ErrorBox(exception.ToString());
+        }
+
         public static void SendWebAPI(string baseUrl, string requestUri, string jsonBody, AutomationErrMsg automationErrMsg)
         {
             WebApiBaseResult webApiBaseResult;
@@ -76,6 +83,11 @@ namespace Sci.Production.Automation
                 this.errorMsg = result.GetException().ToString();
                 this.json = string.Empty;
             }
+        }
+
+        public static string GetBaseUrl(string suppID, string moduleName)
+        {
+            return MyUtility.GetValue.Lookup($"select URL from WebApiURL with (nolock) where SuppID = '{suppID}' and ModuleName = '{moduleName}' ");
         }
     }
 }
