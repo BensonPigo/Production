@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle22 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle23 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle24 = new System.Windows.Forms.DataGridViewCellStyle();
             this.gridBatchAssignCellEstCutDate = new Sci.Win.UI.Grid();
             this.btnClose = new Sci.Win.UI.Button();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
@@ -77,11 +77,11 @@
             this.labelFabricCombo = new Sci.Win.UI.Label();
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabByGarment = new System.Windows.Forms.TabPage();
+            this.gridGarment = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabByFabric_Panel_Code = new System.Windows.Forms.TabPage();
-            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.gridGarment = new Sci.Win.UI.Grid();
             this.gridFabric_Panel_Code = new Sci.Win.UI.Grid();
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchAssignCellEstCutDate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -95,11 +95,11 @@
             this.panel7.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabByGarment.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridGarment)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.tabByFabric_Panel_Code.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridGarment)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridFabric_Panel_Code)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.SuspendLayout();
             // 
             // gridBatchAssignCellEstCutDate
@@ -117,14 +117,14 @@
             this.gridBatchAssignCellEstCutDate.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridBatchAssignCellEstCutDate.Location = new System.Drawing.Point(0, 0);
             this.gridBatchAssignCellEstCutDate.Name = "gridBatchAssignCellEstCutDate";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridBatchAssignCellEstCutDate.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle22.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle22.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle22.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle22.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle22.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle22.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle22.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridBatchAssignCellEstCutDate.RowHeadersDefaultCellStyle = dataGridViewCellStyle22;
             this.gridBatchAssignCellEstCutDate.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridBatchAssignCellEstCutDate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBatchAssignCellEstCutDate.RowTemplate.Height = 24;
@@ -310,6 +310,7 @@
             this.txtBatchUpdateEstCutDate.Name = "txtBatchUpdateEstCutDate";
             this.txtBatchUpdateEstCutDate.Size = new System.Drawing.Size(130, 23);
             this.txtBatchUpdateEstCutDate.TabIndex = 11;
+            this.txtBatchUpdateEstCutDate.Validating += new System.ComponentModel.CancelEventHandler(this.txtBatchUpdateEstCutDate_Validating);
             // 
             // labShift
             // 
@@ -327,6 +328,7 @@
             this.btnBatchUpdateEstCutDate.TabIndex = 12;
             this.btnBatchUpdateEstCutDate.Text = "Batch Assign";
             this.btnBatchUpdateEstCutDate.UseVisualStyleBackColor = true;
+            this.btnBatchUpdateEstCutDate.Click += new System.EventHandler(this.btnBatchUpdateEstCutDate_Click);
             // 
             // txtSpreadingNo
             // 
@@ -373,6 +375,8 @@
             this.txtSeq2.Name = "txtSeq2";
             this.txtSeq2.Size = new System.Drawing.Size(41, 23);
             this.txtSeq2.TabIndex = 14;
+            this.txtSeq2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSeq2_PopUp);
+            this.txtSeq2.Validating += new System.ComponentModel.CancelEventHandler(this.txtSeq2_Validating);
             // 
             // txtSeq1
             // 
@@ -382,6 +386,8 @@
             this.txtSeq1.Name = "txtSeq1";
             this.txtSeq1.Size = new System.Drawing.Size(54, 23);
             this.txtSeq1.TabIndex = 13;
+            this.txtSeq1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSeq1_PopUp);
+            this.txtSeq1.Validating += new System.ComponentModel.CancelEventHandler(this.txtSeq1_Validating);
             // 
             // panel7
             // 
@@ -495,6 +501,7 @@
             this.btnFilter.TabIndex = 24;
             this.btnFilter.Text = "Filter";
             this.btnFilter.UseVisualStyleBackColor = true;
+            this.btnFilter.Click += new System.EventHandler(this.btnFilter_Click);
             // 
             // labelEstCutDate
             // 
@@ -547,6 +554,7 @@
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(108, 23);
             this.txtSPNo.TabIndex = 0;
+            this.txtSPNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSPNo_PopUp);
             // 
             // txtCutCell
             // 
@@ -595,16 +603,6 @@
             this.tabByGarment.TabIndex = 0;
             this.tabByGarment.Text = "By Garment";
             // 
-            // tabByFabric_Panel_Code
-            // 
-            this.tabByFabric_Panel_Code.Controls.Add(this.gridFabric_Panel_Code);
-            this.tabByFabric_Panel_Code.Location = new System.Drawing.Point(4, 25);
-            this.tabByFabric_Panel_Code.Name = "tabByFabric_Panel_Code";
-            this.tabByFabric_Panel_Code.Padding = new System.Windows.Forms.Padding(3);
-            this.tabByFabric_Panel_Code.Size = new System.Drawing.Size(466, 228);
-            this.tabByFabric_Panel_Code.TabIndex = 1;
-            this.tabByFabric_Panel_Code.Text = "By Fabric_Panel_Code";
-            // 
             // gridGarment
             // 
             this.gridGarment.AllowUserToAddRows = false;
@@ -621,14 +619,14 @@
             this.gridGarment.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridGarment.Location = new System.Drawing.Point(3, 3);
             this.gridGarment.Name = "gridGarment";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridGarment.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle23.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle23.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle23.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle23.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle23.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle23.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle23.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridGarment.RowHeadersDefaultCellStyle = dataGridViewCellStyle23;
             this.gridGarment.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridGarment.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridGarment.RowTemplate.Height = 24;
@@ -638,6 +636,16 @@
             this.gridGarment.TabIndex = 2;
             this.gridGarment.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.Grid_CellFormatting);
             this.gridGarment.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.Grid_CellPainting);
+            // 
+            // tabByFabric_Panel_Code
+            // 
+            this.tabByFabric_Panel_Code.Controls.Add(this.gridFabric_Panel_Code);
+            this.tabByFabric_Panel_Code.Location = new System.Drawing.Point(4, 22);
+            this.tabByFabric_Panel_Code.Name = "tabByFabric_Panel_Code";
+            this.tabByFabric_Panel_Code.Padding = new System.Windows.Forms.Padding(3);
+            this.tabByFabric_Panel_Code.Size = new System.Drawing.Size(466, 231);
+            this.tabByFabric_Panel_Code.TabIndex = 1;
+            this.tabByFabric_Panel_Code.Text = "By Fabric_Panel_Code";
             // 
             // gridFabric_Panel_Code
             // 
@@ -655,20 +663,20 @@
             this.gridFabric_Panel_Code.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridFabric_Panel_Code.Location = new System.Drawing.Point(3, 3);
             this.gridFabric_Panel_Code.Name = "gridFabric_Panel_Code";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridFabric_Panel_Code.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle24.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle24.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle24.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle24.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle24.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle24.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle24.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridFabric_Panel_Code.RowHeadersDefaultCellStyle = dataGridViewCellStyle24;
             this.gridFabric_Panel_Code.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridFabric_Panel_Code.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridFabric_Panel_Code.RowTemplate.Height = 24;
             this.gridFabric_Panel_Code.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridFabric_Panel_Code.ShowCellToolTips = false;
-            this.gridFabric_Panel_Code.Size = new System.Drawing.Size(460, 222);
+            this.gridFabric_Panel_Code.Size = new System.Drawing.Size(460, 225);
             this.gridFabric_Panel_Code.TabIndex = 5;
             this.gridFabric_Panel_Code.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.Grid_CellFormatting);
             this.gridFabric_Panel_Code.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.Grid_CellPainting);
@@ -699,11 +707,11 @@
             this.panel7.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tabByGarment.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridGarment)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.tabByFabric_Panel_Code.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridGarment)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridFabric_Panel_Code)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
