@@ -80,8 +80,8 @@
             this.txtSRNo = new Sci.Win.UI.TextBox();
             this.labelVoucher = new Sci.Win.UI.Label();
             this.displayVoucher = new Sci.Win.UI.DisplayBox();
-            this.labelPayDate = new Sci.Win.UI.Label();
-            this.datePayDate = new Sci.Win.UI.DateBox();
+            this.labelVoucherDate = new Sci.Win.UI.Label();
+            this.dateVoucherDate = new Sci.Win.UI.DateBox();
             this.label30 = new Sci.Win.UI.Label();
             this.btnQtyBDownByShipmode = new Sci.Win.UI.Button();
             this.btnAirPPList = new Sci.Win.UI.Button();
@@ -269,8 +269,8 @@
             this.detailcont.Controls.Add(this.btnAirPPList);
             this.detailcont.Controls.Add(this.btnQtyBDownByShipmode);
             this.detailcont.Controls.Add(this.label30);
-            this.detailcont.Controls.Add(this.datePayDate);
-            this.detailcont.Controls.Add(this.labelPayDate);
+            this.detailcont.Controls.Add(this.dateVoucherDate);
+            this.detailcont.Controls.Add(this.labelVoucherDate);
             this.detailcont.Controls.Add(this.displayVoucher);
             this.detailcont.Controls.Add(this.labelVoucher);
             this.detailcont.Controls.Add(this.txtSRNo);
@@ -361,7 +361,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(996, 693);
+            this.browse.Size = new System.Drawing.Size(1058, 693);
             // 
             // tabs
             // 
@@ -443,11 +443,13 @@
             // 
             // txtSpNo
             // 
-            this.txtSpNo.BackColor = System.Drawing.Color.White;
+            this.txtSpNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtSpNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OrderID", true));
-            this.txtSpNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSpNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSpNo.IsSupportEditMode = false;
             this.txtSpNo.Location = new System.Drawing.Point(69, 25);
             this.txtSpNo.Name = "txtSpNo";
+            this.txtSpNo.ReadOnly = true;
             this.txtSpNo.Size = new System.Drawing.Size(110, 21);
             this.txtSpNo.TabIndex = 0;
             this.txtSpNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSpNo_Validating);
@@ -765,10 +767,10 @@
             // 
             // numExchangeRate
             // 
-            this.numExchangeRate.BackColor = System.Drawing.Color.White;
-            this.numExchangeRate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Rate", true));
+            this.numExchangeRate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numExchangeRate.DecimalPlaces = 3;
-            this.numExchangeRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numExchangeRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numExchangeRate.IsSupportEditMode = false;
             this.numExchangeRate.Location = new System.Drawing.Point(712, 227);
             this.numExchangeRate.Maximum = new decimal(new int[] {
             99999999,
@@ -786,6 +788,7 @@
             0,
             0,
             0});
+            this.numExchangeRate.ReadOnly = true;
             this.numExchangeRate.Size = new System.Drawing.Size(104, 21);
             this.numExchangeRate.TabIndex = 16;
             this.numExchangeRate.Value = new decimal(new int[] {
@@ -986,10 +989,10 @@
             // 
             // numActAmt
             // 
-            this.numActAmt.BackColor = System.Drawing.Color.White;
-            this.numActAmt.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ActualAmount", true));
+            this.numActAmt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numActAmt.DecimalPlaces = 2;
-            this.numActAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numActAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numActAmt.IsSupportEditMode = false;
             this.numActAmt.Location = new System.Drawing.Point(712, 184);
             this.numActAmt.Maximum = new decimal(new int[] {
             1316134911,
@@ -1007,6 +1010,7 @@
             0,
             0,
             0});
+            this.numActAmt.ReadOnly = true;
             this.numActAmt.Size = new System.Drawing.Size(104, 21);
             this.numActAmt.TabIndex = 14;
             this.numActAmt.Value = new decimal(new int[] {
@@ -1044,29 +1048,27 @@
             // displayVoucher
             // 
             this.displayVoucher.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayVoucher.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Voucher", true));
             this.displayVoucher.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayVoucher.Location = new System.Drawing.Point(210, 228);
             this.displayVoucher.Name = "displayVoucher";
             this.displayVoucher.Size = new System.Drawing.Size(128, 21);
             this.displayVoucher.TabIndex = 55;
             // 
-            // labelPayDate
+            // labelVoucherDate
             // 
-            this.labelPayDate.Location = new System.Drawing.Point(339, 229);
-            this.labelPayDate.Name = "labelPayDate";
-            this.labelPayDate.Size = new System.Drawing.Size(90, 18);
-            this.labelPayDate.TabIndex = 56;
-            this.labelPayDate.Text = "Pay Date";
+            this.labelVoucherDate.Location = new System.Drawing.Point(339, 229);
+            this.labelVoucherDate.Name = "labelVoucherDate";
+            this.labelVoucherDate.Size = new System.Drawing.Size(90, 18);
+            this.labelVoucherDate.TabIndex = 56;
+            this.labelVoucherDate.Text = "Voucher Date";
             // 
-            // datePayDate
+            // dateVoucherDate
             // 
-            this.datePayDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PayDate", true));
-            this.datePayDate.Location = new System.Drawing.Point(431, 228);
-            this.datePayDate.Name = "datePayDate";
-            this.datePayDate.ReadOnly = true;
-            this.datePayDate.Size = new System.Drawing.Size(109, 21);
-            this.datePayDate.TabIndex = 11;
+            this.dateVoucherDate.Location = new System.Drawing.Point(431, 228);
+            this.dateVoucherDate.Name = "dateVoucherDate";
+            this.dateVoucherDate.ReadOnly = true;
+            this.dateVoucherDate.Size = new System.Drawing.Size(109, 21);
+            this.dateVoucherDate.TabIndex = 11;
             // 
             // label30
             // 
@@ -2278,8 +2280,8 @@
         private Win.UI.Button btnAirPPList;
         private Win.UI.Button btnQtyBDownByShipmode;
         private Win.UI.Label label30;
-        private Win.UI.DateBox datePayDate;
-        private Win.UI.Label labelPayDate;
+        private Win.UI.DateBox dateVoucherDate;
+        private Win.UI.Label labelVoucherDate;
         private Win.UI.DisplayBox displayVoucher;
         private Win.UI.Label labelVoucher;
         private Win.UI.TextBox txtSRNo;
