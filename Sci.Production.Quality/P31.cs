@@ -19,6 +19,7 @@ namespace Sci.Production.Quality
     {
         public string _Type = string.Empty;
         private List<string> _Articles = new List<string>();
+        private List<string> _Articles_c = new List<string>();
 
         // 每一Article底下的Size數量
         private Dictionary<string, int> Size_per_Article = new Dictionary<string, int>();
@@ -31,6 +32,11 @@ namespace Sci.Production.Quality
             this._Type = type;
 
             this.DefaultWhere = this._Type == "1" ? $"(SELECT MDivisionID FROM Orders WHERE ID = Order_QtyShip.ID) = '{Sci.Env.User.Keyword}' AND (SELECT Finished FROM Orders WHERE ID = Order_QtyShip.ID) = 0 " : $"(SELECT MDivisionID FROM Orders WHERE ID = Order_QtyShip.ID) = '{Sci.Env.User.Keyword}' AND (SELECT Finished FROM Orders WHERE ID = Order_QtyShip.ID) = 1";
+
+            if (type != "1")
+            {
+                this.IsSupportEdit = false;
+            }
         }
 
 
@@ -43,7 +49,9 @@ namespace Sci.Production.Quality
         {
             this.Size_per_Article.Clear();
             this._Articles.Clear();
+            this._Articles_c.Clear();
             this.gridQtyBreakdown.Columns.Clear();
+            this.gridCartonSummary.Columns.Clear();
 
             #region 表頭欄位帶入
             this.txtSpSeq.TextBoxSP.IsSupportEditMode = false;
@@ -52,8 +60,8 @@ namespace Sci.Production.Quality
             this.txtSpSeq.TextBoxSP.ReadOnly = true;
             this.txtSpSeq.TextBoxSeq.ReadOnly = true;
 
-            this.txtSpSeq.TextBoxSP.Text = this.CurrentMaintain["ID"].ToString();
-            this.txtSpSeq.TextBoxSeq.Text = this.CurrentMaintain["Seq"].ToString();
+            //this.txtSpSeq.TextBoxSP.Text = this.CurrentMaintain["ID"].ToString();
+            //this.txtSpSeq.TextBoxSeq.Text = this.CurrentMaintain["Seq"].ToString();
 
             this.disPO.Value = MyUtility.GetValue.Lookup($@"
 SELECT  CustPoNo
@@ -80,7 +88,7 @@ Inner join CFAInspectionRecord CFA on P.StaggeredCFAInspectionRecordID=P.ID
 Where CFA.Status='Confirmed' 
 and CFA.Stage='Staggered' 
 and P.OrderID='{this.CurrentMaintain["ID"].ToString()}' 
-and P.SEQ='{this.CurrentMaintain["Seq"].ToString()}'
+and P.OrderShipmodeSeq='{this.CurrentMaintain["Seq"].ToString()}'
 ");
 
             this.disClogQty.Value = MyUtility.GetValue.Lookup($@"
@@ -91,7 +99,7 @@ SELECT ISNULL( SUM(IIF
         ),0)
 FROM PackingList_Detail
 WHERE OrderID='{this.CurrentMaintain["ID"].ToString()}' 
-and SEQ='{this.CurrentMaintain["Seq"].ToString()}'
+and OrderShipmodeSeq='{this.CurrentMaintain["Seq"].ToString()}'
 ");
 
             this.dateLastCarton.Value = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup($@"
@@ -115,7 +123,7 @@ SElECT Top 1 PulloutDate
 FROM  PackingList p
 INNER JOIN PackingList_Detail PD on P.ID=PD.ID
 where pd.OrderID ='{this.CurrentMaintain["ID"].ToString()}' 
-and pd.SEQ='{this.CurrentMaintain["Seq"].ToString()}'
+and pd.OrderShipmodeSeq='{this.CurrentMaintain["Seq"].ToString()}'
 "));
 
 
@@ -147,7 +155,9 @@ AND (Result = 'F' OR  Result <> 'P')
             string OrderID = this.CurrentMaintain["ID"].ToString();
             string Seq = this.CurrentMaintain["Seq"].ToString();
 
-            #region Qtybreakdown分頁SQL
+            #region Qtybreakdown分頁
+
+            #region SQL
 
             string cmd = $@"
 ----By Qty Breakdown分頁
@@ -186,12 +196,12 @@ OUTER APPLY(
 	SELECT [Qty]=Sum(p.ShipQty)
 	From PackingList_Detail P 
 	Inner join CFAInspectionRecord CFA on P.StaggeredCFAInspectionRecordID=CFA.ID
-	Where CFA.Status='Confirmed' and CFA.Stage='Staggered' and p.Article=oqd.Article and P.SizeCode=oqd.SizeCode and P.OrderID=oqd.ID and P.SEQ=oqd.Seq
+	Where CFA.Status='Confirmed' and CFA.Stage='Staggered' and p.Article=oqd.Article and P.SizeCode=oqd.SizeCode and P.OrderID=oqd.ID and P.OrderShipmodeSeq=oqd.Seq
 )Staggered
 OUTER APPLY(
 	SELECT [Qty]=SUM(IIF( pd.CFAReceiveDate IS NOT NULL OR pd.ReceiveDate IS NOT NULL,pd.ShipQty,0))
 	FROM PackingList_Detail pd
-	where pd.OrderID=oqd.ID and pd.SEQ = oqd.SEQ and pd.Article= oqd.Article and pd.SizeCode= oqd.SizeCode
+	where pd.OrderID=oqd.ID and pd.OrderShipmodeSeq = oqd.SEQ and pd.Article= oqd.Article and pd.SizeCode= oqd.SizeCode
 )Clog
 WHERE oqd.ID='{OrderID}'
 AND oqd.Seq='{Seq}'
@@ -227,14 +237,14 @@ ORDER BY [OrderKey]
 DROP TABLE #tmp
 ";
             #endregion
-
+            // 取得基礎資料
             DBProxy.Current.Select(null, cmd, out dtQtybreakdown);
 
             var Qtybreakdown = dtQtybreakdown.AsEnumerable().ToList();
 
             List<string> Articles = new List<string>();
 
-            #region 塞第一欄
+            #region Gird 客製 : 第一行Column Header的第一欄是固定的，可以先塞
             // 第一欄是固定的
             Articles.Add("Article");
             Articles.AddRange(Qtybreakdown.Select(o => o["Article"].ToString()).Distinct().ToList());
@@ -244,15 +254,18 @@ DROP TABLE #tmp
 
             System.Windows.Forms.DataGridViewTextBoxColumn Firstcol = new System.Windows.Forms.DataGridViewTextBoxColumn()
             {
-                //DataPropertyName= "Category/Size",
+                DataPropertyName= "Category/Size",
                 Name = "Category/Size",
-                HeaderText = "Category/Size"
+                HeaderText = "Category/Size",
+                Width = 150
             };
-
+            
             this.gridQtyBreakdown.Columns.Add(Firstcol);
-            #endregion 
+            #endregion
 
-            // 先產生第二行Header (Size) 
+
+            #region  Gird 客製 : 先產生第二行Column Header (Size) 
+
             foreach (var Article in Articles)
             {
                 List<string> SizeCodes = Qtybreakdown.Where(o => o["Article"].ToString() == Article).Select(o => o["SizeCode"].ToString()).ToList();
@@ -266,7 +279,7 @@ DROP TABLE #tmp
                     {
                         System.Windows.Forms.DataGridViewTextBoxColumn col = new System.Windows.Forms.DataGridViewTextBoxColumn()
                         {
-                            //DataPropertyName = SizeCode,
+                            DataPropertyName = Article + "_" + SizeCode,
                             Name = Article+"_"+SizeCode,
                             HeaderText = SizeCode/*,
                             Width = 20*/
@@ -276,28 +289,20 @@ DROP TABLE #tmp
                 }
 
             }
+            #endregion
 
-            this.gridQtyBreakdown.AllowUserToAddRows = false;
-            this.gridQtyBreakdown.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            this.gridQtyBreakdown.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
-            this.gridQtyBreakdown.ColumnHeadersHeight = 46;// this.gridQtyBreakdown.ColumnHeadersHeight * 2;
-            this.gridQtyBreakdown.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter;
 
-            // 動態畫出第一行Header
-            this.gridQtyBreakdown.Paint += gridQtyBreakdown_Paint;
+            #region 製作Grid的DataSource
 
-            this.gridQtyBreakdown.Scroll += gridQtyBreakdown_Scroll;
-            this.gridQtyBreakdown.ColumnWidthChanged += gridQtyBreakdown_ColumnWidthChanged;
-            this.gridQtyBreakdown.Resize += gridQtyBreakdown_Resize;
+            DataTable source_QtyBreakdown = new DataTable();
 
-            //this.gridQtyBreakdown.EndEdit();
-
-            DataTable sourcr_QtyBreakdown = new DataTable();
+            // 設定欄位名稱
             foreach (System.Windows.Forms.DataGridViewTextBoxColumn Columm in gridQtyBreakdown.Columns)
             {
-                //string colName = Columm.Name.Split('_')[0];
-                sourcr_QtyBreakdown.ColumnsStringAdd(Columm.Name);
+                source_QtyBreakdown.ColumnsStringAdd(Columm.Name);
             }
+
+            // 注意！ 這邊要對應到SQL語法的欄位名稱
             List<string> vHeaders = new List<string>();
             vHeaders.Add("Order Qty");
             vHeaders.Add("CMP output");
@@ -307,11 +312,9 @@ DROP TABLE #tmp
             vHeaders.Add("CLOG output");
             vHeaders.Add("CLOG %");
 
-            this.gridQtyBreakdown.DataSource = sourcr_QtyBreakdown;
-
             foreach (var vHeader in vHeaders)
             {
-                DataRow newRow = sourcr_QtyBreakdown.NewRow();
+                DataRow newRow = source_QtyBreakdown.NewRow();
                 string dtColumnName = vHeader;
 
                 foreach (System.Windows.Forms.DataGridViewTextBoxColumn Columm in gridQtyBreakdown.Columns)
@@ -331,16 +334,19 @@ DROP TABLE #tmp
                     }
                 }
 
-                sourcr_QtyBreakdown.Rows.Add(newRow);
+                source_QtyBreakdown.Rows.Add(newRow);
             }
+            source_QtyBreakdown.AcceptChanges();
+            #endregion
 
+            this.gridQtyBreakdown.DataSource = source_QtyBreakdown;
+            #endregion
 
-            sourcr_QtyBreakdown.AcceptChanges();
+            this.Size_per_Article.Clear();
 
-            this.gridQtyBreakdown.DataSource = sourcr_QtyBreakdown;
+            #region Carton Summary
 
-
-            #region Carton Summary分頁SQL
+            #region SQL
             cmd = $@"
 ----Carton Summary分頁
 ----記錄哪些箱號有混尺碼
@@ -367,7 +373,7 @@ WHERE OrderID LIKE '{OrderID}'
 AND  OrderShipmodeSeq ='{Seq}'
 AND CTNStartNo NOT IN (SELECT CTNStartNo FROM #MixCTNStartNo)
 
-----記錄哪些箱號 是 混尺碼
+----記錄 混尺碼箱號 包含的Article SizeCode
 SELECT ID, OrderID, OrderShipmodeSeq, CTNStartNo
         , Article
         , SizeCode
@@ -382,7 +388,7 @@ AND CTNStartNo IN(SELECT CTNStartNo FROM #MixCTNStartNo)
 
 ----先計算 不是 混尺碼
 SELECT  oqd.ID, oqd.Seq, oqd.Article, oqd.SizeCode
-        ,[OrderCTN] = OrderCTN.Val
+        ,[OrderCTN] = ISNULL(OrderCTN.Val,0) 
         ,[CFA_StaggeredCTN] = ISNULL(CFA_StaggeredCTN.Val, 0)
         ,[Staggered %] = IIF(ISNULL(OrderCTN.Val, 0) = 0
                                 , 'N/A'
@@ -392,7 +398,7 @@ SELECT  oqd.ID, oqd.Seq, oqd.Article, oqd.SizeCode
                             , 0
                             , (ISNULL(CFA_StaggeredCTN.Val, 0) / ISNULL(OrderCTN.Val, 0)) * 100
                          )
-        ,[ClogCTN] = ClogCTN.Val
+        ,[ClogCTN] = ISNULL(ClogCTN.Val,0)
         ,[Clog %] = IIF(ISNULL(OrderCTN.Val, 0) = 0
                                 , 'N/A'
                                 , CAST(CAST(ROUND((ISNULL(ClogCTN.Val, 0) * 1.0 / ISNULL(OrderCTN.Val, 0)) * 100, 0) AS Int) as varchar) + '%'
@@ -405,16 +411,11 @@ INTO #Not_Mix_Final
 FROM Order_QtyShip_Detail oqd
 OUTER APPLY(
     SELECT t.Article, t.SizeCode,[Val] = COUNT(DISTINCT t.CTNStartNo)
-
     FROM #Not_MixCTNStartNo t
 	WHERE  t.OrderID = oqd.Id
-
         AND t.OrderShipmodeSeq = oqd.Seq
-
         AND t.Article = oqd.Article
-
         AND t.SizeCode = oqd.SizeCode
-
     GROUP BY t.Article, t.SizeCode
 )OrderCTN
 OUTER APPLY(
@@ -424,29 +425,19 @@ OUTER APPLY(
 	INNER JOIN CFAInspectionRecord CFA on t.StaggeredCFAInspectionRecordID = CFA.ID
 
     WHERE  t.OrderID = oqd.Id
-
         AND t.OrderShipmodeSeq = oqd.Seq
-
         AND t.Article = oqd.Article
-
         AND t.SizeCode = oqd.SizeCode
-
         AND CFA.Status = 'Confirmed'
-
         AND CFA.Stage = 'Staggered'
-
     GROUP BY t.Article, t.SizeCode
 )CFA_StaggeredCTN
 OUTER APPLY(
     SELECT[Val] = SUM(IIF(t.CFAReceiveDate IS NOT NULL OR t.ReceiveDate IS NOT NULL, 1, 0))
-
     FROM #Not_MixCTNStartNo t
 	WHERE t.OrderID = oqd.Id
-
         AND t.OrderShipmodeSeq = oqd.Seq
-
         AND t.Article = oqd.Article
-
         AND t.SizeCode = oqd.SizeCode
 )ClogCTN
 WHERE oqd.ID = '{OrderID}' AND oqd.Seq = '{Seq}'
@@ -480,60 +471,50 @@ INTO #Is_Mix_Final
 FROM #Is_MixCTNStartNo t
 OUTER APPLY(
     SELECT[Val] = COUNT(DISTINCT CTNStartNo)
-
     FROM #Is_MixCTNStartNo
 )OrderCTN
 OUTER APPLY(
     SELECT[Val] = COUNT(DISTINCT CTNStartNo)
-
     FROM #Is_MixCTNStartNo t2
 	INNER JOIN CFAInspectionRecord CFA on t2.StaggeredCFAInspectionRecordID = CFA.ID
-
     WHERE  t2.OrderID = t.OrderID
-
         AND t2.OrderShipmodeSeq = t.OrderShipmodeSeq
-
         AND CFA.Status = 'Confirmed'
-
         AND CFA.Stage = 'Staggered'
 )CFA_StaggeredCTN
 OUTER APPLY(
     SELECT[Val] = SUM(Ctn)
-
     FROM(
         SELECT[Ctn] = (IIF(MAX(CFAReceiveDate) IS NOT NULL OR MAX(ReceiveDate) IS NOT NULL, 1, 0))
-
         FROM #Is_MixCTNStartNo t2
 		WHERE t2.OrderID = t.OrderID AND t2.OrderShipmodeSeq = t.OrderShipmodeSeq
     )x
 )ClogCTN
 
 ----彙整
-SELECT[ID]
-    ,[Seq]
-    ,[Article]
-    ,[SizeCode]
-    ,[OrderCTN]
-    ,[CFA_StaggeredCTN]
-    ,[Staggered %]
-    ,[OriStaggered %]
-    ,[ClogCTN]
-    ,[Clog %]
-    ,[OriClog %]
+SELECT   [Article]
+		,[SizeCode]
+		,[OrderCTN]
+		,[CFA_StaggeredCTN]
+		,[Staggered %]
+		,[OriStaggered %]
+		,[ClogCTN]
+		,[Clog %]
+		,[OriClog %]
+        ,[OrderKey] = ROW_NUMBER() OVER(ORDER BY Article ASC) 
 INTO #Without_Ttl
 FROM #Not_Mix_Final
 UNION
-SELECT[ID]
-    ,[Seq]
-    ,[Article]
-    ,[SizeCode]
-    ,[OrderCTN]
-    ,[CFA_StaggeredCTN]
-    ,[Staggered %]
-    ,[OriStaggered %]
-    ,[ClogCTN]
-    ,[Clog %]
-    ,[OriClog %]
+SELECT   [Article]
+		,[SizeCode]
+		,[OrderCTN]
+		,[CFA_StaggeredCTN]
+		,[Staggered %]
+		,[OriStaggered %]
+		,[ClogCTN]
+		,[Clog %]
+		,[OriClog %]
+        ,[OrderKey] = (SELECT COUNT(Article)+1 FROM #Not_Mix_Final)
 FROM #Is_Mix_Final
 
 SELECT  --[ID]
@@ -542,31 +523,136 @@ SELECT  --[ID]
 	,[SizeCode]
 	,[Order CTN]=[OrderCTN]
 	,[CFA staggered CTN]=[CFA_StaggeredCTN]
-	,[Staggered %]=[Staggered%] 
+	,[Staggered %]
 	,[CLOG output]=[ClogCTN] 
-	,[CLOG %]=[Clog%]
+	,[CLOG %]
+	,[OrderKey]
 FROM #Without_Ttl
 UNION 
-SELECT --[ID]='{OrderID}'  ----外部帶入寫死
-	--,[Seq]='{Seq}' ----外部帶入寫死
-	[Article]='Total' ----外部帶入寫死
-	,[SizeCode]='Total' ----外部帶入寫死
+SELECT --[ID]='18080207IR018'  ----外部帶入寫死
+	--,[Seq]='01' ----外部帶入寫死
+	[Article]='TTL' ----外部帶入寫死
+	,[SizeCode]='TTL' ----外部帶入寫死
 	,[Order CTN]=(SELECT SUM(OrderCTN) FROM #Without_Ttl)	
 	,[CFA staggered CTN] = (SELECT SUM(CFA_StaggeredCTN) FROM #Without_Ttl)
-	,[Staggered %] = Cast( CAST( ROUND( (SELECT SUM([OriStaggered%]) / COUNT([OriStaggered%]) FROM #Without_Ttl),3) as INT ) as Varchar ) + '%'
+	,[Staggered %] = Cast( CAST( ROUND( (SELECT SUM([OriStaggered %]) / COUNT([OriStaggered %]) FROM #Without_Ttl),3) as INT ) as Varchar ) + '%'
 	,[CLOG output]=(SELECT SUM(ClogCTN) FROM #Without_Ttl)
-	,[CLOG %] = Cast( CAST( ROUND( (SELECT SUM([OriClog%]) / COUNT([OriClog%]) FROM #Without_Ttl),3) as INT ) as Varchar ) + '%'
+	,[CLOG %] = Cast( CAST( ROUND( (SELECT SUM([OriClog %]) / COUNT([OriClog %]) FROM #Without_Ttl),3) as INT ) as Varchar ) + '%'
+	,[OrderKey] = (SELECT MAX(OrderKey)+1 FROM #Without_Ttl)
+ORDER BY OrderKey
 
 DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final ,#Is_Mix_Final,#Without_Ttl
 
 ";
             #endregion
-
+            // 取得基礎資料
             DBProxy.Current.Select(null, cmd, out dtCtnSummary);
 
+            var CartonSummary = dtCtnSummary.AsEnumerable().ToList();
+
+            List<string> Articles_c = new List<string>();
 
 
-            //this.dataSourceCtnSummary.DataSource = GridCtnSummary;
+            #region Gird 客製 : 第一行Column Header的第一欄是固定的，可以先塞
+            // 第一欄是固定的
+            Articles_c.Add("Article");
+            Articles_c.AddRange(CartonSummary.Select(o => o["Article"].ToString()).Distinct().ToList());
+
+            this._Articles_c = Articles_c;
+            this.Size_per_Article.Add("Article", 1);
+
+            System.Windows.Forms.DataGridViewTextBoxColumn Firstcol_c = new System.Windows.Forms.DataGridViewTextBoxColumn()
+            {
+                DataPropertyName = "Category/Size",
+                Name = "Category/Size",
+                HeaderText = "Category/Size",
+                Width = 150
+            };
+
+            this.gridCartonSummary.Columns.Add(Firstcol_c);
+            #endregion
+
+
+            #region  Gird 客製 : 先產生第二行Column Header (Size) 
+
+            foreach (var Article in Articles_c)
+            {
+                List<string> SizeCodes = CartonSummary.Where(o => o["Article"].ToString() == Article).Select(o => o["SizeCode"].ToString()).ToList();
+
+                if (!this.Size_per_Article.Keys.Contains(Article))
+                {
+                    // 紀錄每個Article有多少個Size，用於後面產生第一行Header
+                    this.Size_per_Article.Add(Article, SizeCodes.Count());
+
+                    foreach (var SizeCode in SizeCodes)
+                    {
+                        System.Windows.Forms.DataGridViewTextBoxColumn col = new System.Windows.Forms.DataGridViewTextBoxColumn()
+                        {
+                            DataPropertyName = Article + "_" + SizeCode,
+                            Name = Article + "_" + SizeCode,
+                            HeaderText = SizeCode/*,
+                            Width = 20*/
+                        };
+                        this.gridCartonSummary.Columns.Add(col);
+                    }
+                }
+
+            }
+            #endregion
+
+
+            #region 製作Grid的DataSource
+
+            DataTable source_CartonSummary = new DataTable();
+
+            // 設定欄位名稱
+            foreach (System.Windows.Forms.DataGridViewTextBoxColumn Columm in gridCartonSummary.Columns)
+            {
+                source_CartonSummary.ColumnsStringAdd(Columm.Name);
+            }
+
+            // 注意！ 這邊要對應到SQL語法的欄位名稱
+            List<string> cHeaders = new List<string>();
+            cHeaders.Add("Order CTN");
+            cHeaders.Add("CFA staggered CTN");
+            cHeaders.Add("Staggered %");
+            cHeaders.Add("CLOG output");
+            cHeaders.Add("CLOG %");
+
+            foreach (var cHeader in cHeaders)
+            {
+                DataRow newRow = source_CartonSummary.NewRow();
+                string dtColumnName = cHeader;
+
+                foreach (System.Windows.Forms.DataGridViewTextBoxColumn Columm in gridCartonSummary.Columns)
+                {
+                    string Article_SizeCode = Columm.Name;
+                    if (Article_SizeCode == "Category/Size")
+                    {
+                        newRow[Article_SizeCode] = dtColumnName;
+                    }
+                    else
+                    {
+                        string Article = Article_SizeCode.Split('_')[0];
+                        string SizeCode = Article_SizeCode.Split('_')[1];
+
+                        newRow[Article_SizeCode] = CartonSummary.Where(o => o["Article"].ToString() == Article && o["SizeCode"].ToString() == SizeCode).FirstOrDefault()[dtColumnName];
+
+                    }
+                }
+
+                source_CartonSummary.Rows.Add(newRow);
+            }
+            source_CartonSummary.AcceptChanges();
+            #endregion
+
+            this.gridCartonSummary.DataSource = source_CartonSummary;
+            #endregion
+
+            // 動態產生第一行Column Header在這裡面的Paint事件
+            this.GridSetting();
+
+
             base.OnDetailEntered();
         }
 
@@ -649,6 +735,122 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
             Rectangle rtHeader = this.gridQtyBreakdown.DisplayRectangle;
             rtHeader.Height = this.gridQtyBreakdown.ColumnHeadersHeight / 2;
             this.gridQtyBreakdown.Invalidate(rtHeader);
+
+
+            Rectangle rtHeader_c = this.gridCartonSummary.DisplayRectangle;
+            rtHeader_c.Height = this.gridCartonSummary.ColumnHeadersHeight / 2;
+            this.gridCartonSummary.Invalidate(rtHeader_c);
+        }
+
+
+        private void gridCartonSummary_Paint(object sender, PaintEventArgs e)
+        {
+            int col = 0;
+
+            // 一個Article畫一次
+            foreach (string Article in this._Articles_c)
+            {
+                // 宣告要放在第一行的矩形物件
+                Rectangle r1 = this.gridCartonSummary.GetCellDisplayRectangle(col, -1, true);
+
+                // 取得第二行有幾格
+                int SizeCount = this.Size_per_Article[Article];
+
+                for (int ctn = 0; ctn < SizeCount; ctn++)
+                {
+                    Rectangle r2 = this.gridCartonSummary.GetCellDisplayRectangle(col + ctn, -1, true);
+
+                    if (r1.Width == 0)
+                    {
+                        r1 = r2;
+                    }
+                    else
+                    {
+                        // 如果超過兩個，則寬度累計上去
+                        if (SizeCount > 1)
+                        {
+                            r1.Width += r2.Width;
+                        }
+                    }
+                }
+
+                // 微調新的矩形位置
+                r1.X += -1;
+                //r1.Y += 1;
+                r1.Height = r1.Height / 2 - 2;
+                //r1.Width -= 1;
+
+                // 重點 !!!  開始畫第一行Header
+                using (Brush back = new SolidBrush(this.gridCartonSummary.ColumnHeadersDefaultCellStyle.BackColor))
+                using (Brush fore = new SolidBrush(this.gridCartonSummary.ColumnHeadersDefaultCellStyle.ForeColor))
+                using (Pen p = new Pen(this.gridCartonSummary.GridColor))
+                using (StringFormat format = new StringFormat())
+                {
+                    // 對齊設定
+                    format.Alignment = StringAlignment.Center;
+                    format.LineAlignment = StringAlignment.Far;
+
+                    // 沿用Grid的字型和樣式
+                    e.Graphics.FillRectangle(back, r1);
+                    e.Graphics.DrawRectangle(p, r1);
+                    // 畫上第一行Header
+                    e.Graphics.DrawString(Article, this.gridCartonSummary.ColumnHeadersDefaultCellStyle.Font, fore, r1, format);
+                }
+
+                col += SizeCount; // 這個Article畫完，移動到下一個Article
+            }
+        }
+
+
+        private void gridCartonSummary_Scroll(object sender, ScrollEventArgs e)
+        {
+            this.InvalidateHeader();
+        }
+
+        private void gridCartonSummary_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
+        {
+            this.InvalidateHeader();
+        }
+
+        private void gridCartonSummary_Resize(object sender, EventArgs e)
+        {
+            this.InvalidateHeader();
+        }
+
+        private void GridSetting()
+        {
+            this.gridQtyBreakdown.AllowUserToAddRows = false;
+            this.gridQtyBreakdown.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+            this.gridQtyBreakdown.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
+            this.gridQtyBreakdown.ColumnHeadersHeight = 46;// this.gridQtyBreakdown.ColumnHeadersHeight * 2;
+            this.gridQtyBreakdown.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter;
+            this.gridQtyBreakdown.RowHeadersVisible = false;
+
+            this.gridQtyBreakdown.IsEditingReadOnly = true;
+
+            // 動態畫出第一行Header
+            this.gridQtyBreakdown.Paint += gridQtyBreakdown_Paint;
+            this.gridQtyBreakdown.Scroll += gridQtyBreakdown_Scroll;
+            this.gridQtyBreakdown.ColumnWidthChanged += gridQtyBreakdown_ColumnWidthChanged;
+            this.gridQtyBreakdown.Resize += gridQtyBreakdown_Resize;
+
+            /*--------------------我是分隔線--------------------*/
+
+            this.gridCartonSummary.AllowUserToAddRows = false;
+            this.gridCartonSummary.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+            this.gridCartonSummary.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
+            this.gridCartonSummary.ColumnHeadersHeight = 46;// this.gridCartonSummary.ColumnHeadersHeight * 2;
+            this.gridCartonSummary.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter;
+            this.gridCartonSummary.RowHeadersVisible = false;
+
+            this.gridCartonSummary.IsEditingReadOnly = true;
+
+            // 動態畫出第一行Header
+            this.gridCartonSummary.Paint += gridCartonSummary_Paint;
+            this.gridCartonSummary.Scroll += gridCartonSummary_Scroll;
+            this.gridCartonSummary.ColumnWidthChanged += gridCartonSummary_ColumnWidthChanged;
+            this.gridCartonSummary.Resize += gridCartonSummary_Resize;
+
         }
 
 
@@ -674,6 +876,30 @@ AND Stage='3rd party'
                 }
 
             }
+        }
+
+        private void btnH_Click(object sender, EventArgs e)
+        {
+            string content = MyUtility.GetValue.Lookup($@"
+SELECT Packing2
+FROM Orders 
+WHERE ID='{this.CurrentMaintain["ID"]}'
+");
+            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(content, "VAS/SHAS Instruction", false, null);
+            callNextForm.ShowDialog(this);
+        }
+
+        private void ByCarton_Click(object sender, EventArgs e)
+        {
+            P31_ByCarton form = new P31_ByCarton(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["Seq"].ToString());
+            form.ShowDialog();
+        }
+
+        private void btnByRecord_Click(object sender, EventArgs e)
+        {
+
+            P31_ByRecord form = new P31_ByRecord(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["Seq"].ToString());
+            form.ShowDialog();
         }
     }
 }

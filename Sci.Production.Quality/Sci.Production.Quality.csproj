@@ -483,11 +483,29 @@
     <Compile Include="P30.Designer.cs">
       <DependentUpon>P30.cs</DependentUpon>
     </Compile>
+    <Compile Include="P32.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P32.Designer.cs">
+      <DependentUpon>P32.cs</DependentUpon>
+    </Compile>
     <Compile Include="P31.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="P31.Designer.cs">
       <DependentUpon>P31.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P31_ByRecord.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P31_ByRecord.Designer.cs">
+      <DependentUpon>P31_ByRecord.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P31_ByCarton.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P31_ByCarton.Designer.cs">
+      <DependentUpon>P31_ByCarton.cs</DependentUpon>
     </Compile>
     <Compile Include="P40.cs">
       <SubType>Form</SubType>
@@ -824,8 +842,17 @@
     <EmbeddedResource Include="P30.resx">
       <DependentUpon>P30.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P32.resx">
+      <DependentUpon>P32.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P31.resx">
       <DependentUpon>P31.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P31_ByRecord.resx">
+      <DependentUpon>P31_ByRecord.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P31_ByCarton.resx">
+      <DependentUpon>P31_ByCarton.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P40.resx">
       <DependentUpon>P40.cs</DependentUpon>
