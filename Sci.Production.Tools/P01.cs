@@ -126,6 +126,12 @@ SELECT [Result]= @dd
 
                 if (!result)
                 {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                if (result)
+                {
                     DataRow nRow = selecteData;
                     otherFailDt.ImportRow(nRow);
                 }
