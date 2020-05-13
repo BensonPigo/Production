@@ -1109,10 +1109,14 @@ select   [POID]=psd.ID
     , a.stocktype
     , [BulkQty] =ISNULL( a.inqty - a.outqty + a.adjustqty,0.00)
 	, [Qty]=0.00
-	, [BulkLocation]=ISNULL(FTYD.MtlLocationID,'')
+	, [BulkLocation]= STUFF ((
+									SELECT ',' + MtlLocationID 
+									FROM dbo.FtyInventory_Detail WITH (NOLOCK) 
+									WHERE ukey = a.Ukey AND MtlLocationID <> ''
+									FOR XML PATH('')
+								 ), 1, 1, '')
     , [FtyInventoryUkey]=a.Ukey
 from dbo.FtyInventory a WITH (NOLOCK) 
-LEFT JOIN FtyInventory_Detail FTYD WITH (NOLOCK)  ON FTYD.Ukey= a.Ukey
 inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on  psd.id = a.POID 
 												and psd.seq1 = a.Seq1 
 												and psd.seq2 = a.Seq2
