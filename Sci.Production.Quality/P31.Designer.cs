@@ -279,7 +279,6 @@
             this.gridQtyBreakdown.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridQtyBreakdown.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridQtyBreakdown.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridQtyBreakdown.DataSource = this.dataSourceQtyBreakdown;
             this.gridQtyBreakdown.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridQtyBreakdown.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridQtyBreakdown.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
@@ -309,7 +308,7 @@
             this.tab_CartonSummary.Location = new System.Drawing.Point(4, 25);
             this.tab_CartonSummary.Name = "tab_CartonSummary";
             this.tab_CartonSummary.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_CartonSummary.Size = new System.Drawing.Size(1278, 195);
+            this.tab_CartonSummary.Size = new System.Drawing.Size(884, 44);
             this.tab_CartonSummary.TabIndex = 1;
             this.tab_CartonSummary.Text = "By Carton Summary";
             // 
@@ -342,7 +341,7 @@
             this.gridCartonSummary.RowTemplate.Height = 24;
             this.gridCartonSummary.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCartonSummary.ShowCellToolTips = false;
-            this.gridCartonSummary.Size = new System.Drawing.Size(1272, 189);
+            this.gridCartonSummary.Size = new System.Drawing.Size(1272, 192);
             this.gridCartonSummary.TabIndex = 0;
             // 
             // label2

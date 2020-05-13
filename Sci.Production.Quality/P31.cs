@@ -41,7 +41,6 @@ namespace Sci.Production.Quality
 
         protected override void OnDetailEntered()
         {
-            base.OnDetailEntered();
             this.Size_per_Article.Clear();
             this._Articles.Clear();
             this.gridQtyBreakdown.Columns.Clear();
@@ -237,14 +236,15 @@ DROP TABLE #tmp
 
             #region 塞第一欄
             // 第一欄是固定的
-            Articles.Add("Category/Size");
+            Articles.Add("Article");
             Articles.AddRange(Qtybreakdown.Select(o => o["Article"].ToString()).Distinct().ToList());
             
             this._Articles = Articles;
-            this.Size_per_Article.Add("Category/Size", 1);
+            this.Size_per_Article.Add("Article", 1);
 
-            DataGridViewColumn Firstcol = new DataGridViewColumn()
+            System.Windows.Forms.DataGridViewTextBoxColumn Firstcol = new System.Windows.Forms.DataGridViewTextBoxColumn()
             {
+                //DataPropertyName= "Category/Size",
                 Name = "Category/Size",
                 HeaderText = "Category/Size"
             };
@@ -264,9 +264,10 @@ DROP TABLE #tmp
 
                     foreach (var SizeCode in SizeCodes)
                     {
-                        DataGridViewColumn col = new DataGridViewColumn()
+                        System.Windows.Forms.DataGridViewTextBoxColumn col = new System.Windows.Forms.DataGridViewTextBoxColumn()
                         {
-                            Name = SizeCode,
+                            //DataPropertyName = SizeCode,
+                            Name = Article+"_"+SizeCode,
                             HeaderText = SizeCode/*,
                             Width = 20*/
                         };
@@ -288,6 +289,56 @@ DROP TABLE #tmp
             this.gridQtyBreakdown.Scroll += gridQtyBreakdown_Scroll;
             this.gridQtyBreakdown.ColumnWidthChanged += gridQtyBreakdown_ColumnWidthChanged;
             this.gridQtyBreakdown.Resize += gridQtyBreakdown_Resize;
+
+            //this.gridQtyBreakdown.EndEdit();
+
+            DataTable sourcr_QtyBreakdown = new DataTable();
+            foreach (System.Windows.Forms.DataGridViewTextBoxColumn Columm in gridQtyBreakdown.Columns)
+            {
+                //string colName = Columm.Name.Split('_')[0];
+                sourcr_QtyBreakdown.ColumnsStringAdd(Columm.Name);
+            }
+            List<string> vHeaders = new List<string>();
+            vHeaders.Add("Order Qty");
+            vHeaders.Add("CMP output");
+            vHeaders.Add("CMP %");
+            vHeaders.Add("CFA staggered output");
+            vHeaders.Add("Staggered %");
+            vHeaders.Add("CLOG output");
+            vHeaders.Add("CLOG %");
+
+            this.gridQtyBreakdown.DataSource = sourcr_QtyBreakdown;
+
+            foreach (var vHeader in vHeaders)
+            {
+                DataRow newRow = sourcr_QtyBreakdown.NewRow();
+                string dtColumnName = vHeader;
+
+                foreach (System.Windows.Forms.DataGridViewTextBoxColumn Columm in gridQtyBreakdown.Columns)
+                {
+                    string Article_SizeCode = Columm.Name;
+                    if (Article_SizeCode == "Category/Size")
+                    {
+                        newRow[Article_SizeCode] = dtColumnName;
+                    }
+                    else
+                    {
+                        string Article = Article_SizeCode.Split('_')[0];
+                        string SizeCode = Article_SizeCode.Split('_')[1];
+
+                        newRow[Article_SizeCode] = Qtybreakdown.Where(o => o["Article"].ToString() == Article && o["SizeCode"].ToString() == SizeCode).FirstOrDefault()[dtColumnName];
+                        
+                    }
+                }
+
+                sourcr_QtyBreakdown.Rows.Add(newRow);
+            }
+
+
+            sourcr_QtyBreakdown.AcceptChanges();
+
+            this.gridQtyBreakdown.DataSource = sourcr_QtyBreakdown;
+
 
             #region Carton Summary分頁SQL
             cmd = $@"
@@ -516,6 +567,7 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
 
 
             //this.dataSourceCtnSummary.DataSource = GridCtnSummary;
+            base.OnDetailEntered();
         }
 
 
