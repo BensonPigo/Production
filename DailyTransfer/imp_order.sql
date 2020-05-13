@@ -538,7 +538,8 @@ BEGIN
 				t.ForecastCategory     = s.ForecastCategory,
 				t.OnSiteSample		   = s.OnSiteSample,
 				t.PulloutCmplDate	   = s.PulloutCmplDate,
-				t.NeedProduction	   = s.NeedProduction
+				t.NeedProduction	   = s.NeedProduction,
+				t.KeepPanels           = s.KeepPanels
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -568,7 +569,7 @@ BEGIN
 			, KPICmpq				, KPIMNotice			, GFR					, SDPDate				, PulloutComplete		
 			, SewINLINE				, FtyGroup				, ForecastSampleGroup	, DyeingLoss			, SubconInType
 			, LastProductionDate	, EstPODD				, AirFreightByBrand		, AllowanceComboID      , ChangeMemoDate
-			, ForecastCategory		, OnSiteSample			, PulloutCmplDate		, NeedProduction
+			, ForecastCategory		, OnSiteSample			, PulloutCmplDate		, NeedProduction		, KeepPanels
 
 		) values (
 			s.ID					, s.BrandID				, s.ProgramID			, s.StyleID				, s.SeasonID 
@@ -598,7 +599,7 @@ BEGIN
 			, s.KPICmpq 			, s.KPIMNotice			, s.GFR					, s.SDPDate				, s.PulloutComplete		
 			, s.SewINLINE           , s.FTY_Group			, s.ForecastSampleGroup , s.DyeingLoss          , '0'
 			, s.LastProductionDate	, s.EstPODD				, s.AirFreightByBrand	, s.AllowanceComboID    , s.ChangeMemoDate
-			, s.ForecastCategory	, s.OnSiteSample		, s.PulloutCmplDate		, s.NeedProduction
+			, s.ForecastCategory	, s.OnSiteSample		, s.PulloutCmplDate		, s.NeedProduction		, s.KeepPanels
 		)
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
@@ -1722,6 +1723,7 @@ update t set
 	,[Remark] = s.Remark
 	,[BuyerRemark] = s.BuyerRemark
 	,[FactoryID] = isnull(s.FactoryID, '')
+	,[KeepPanels] = s.KeepPanels 
 from Production.dbo.OrderChangeApplication t
 inner join Trade_To_Pms.dbo.OrderChangeApplication s on s.ID = t.ID
 inner join Factory f on s.FactoryID = f.ID and f.IsProduceFty = 1
@@ -1731,7 +1733,7 @@ insert into Production.dbo.OrderChangeApplication ([ID], [ReasonID], [OrderID], 
 , [AddName], [AddDate], [ToOrderID], [NeedProduction], [OldQty], [RatioFty], [RatioSubcon], [RatioSCI], [RatioSupp], [RatioBuyer]
 , [ResponsibleFty], [ResponsibleSubcon], [ResponsibleSCI], [ResponsibleSupp], [ResponsibleBuyer], [FactoryICRDepartment], [FactoryICRNo], [FactoryICRRemark]
 , [SubconDBCNo], [SubconDBCRemark], [SubConName], [SCIICRDepartment], [SCIICRNo], [SCIICRRemark], [SuppDBCNo], [SuppDBCRemark], [BuyerDBCDepartment], [BuyerDBCNo]
-, [BuyerDBCRemark], [BuyerICRNo], [BuyerICRRemark], [MRComment], [Remark], [BuyerRemark], [FactoryID], [TPEEditName], [TPEEditDate])
+, [BuyerDBCRemark], [BuyerICRNo], [BuyerICRRemark], [MRComment], [Remark], [BuyerRemark], [FactoryID], [TPEEditName], [TPEEditDate],[KeepPanels])
 select s.ID
 	,s.ReasonID
 	,s.OrderID
@@ -1783,6 +1785,7 @@ select s.ID
 	,isnull(s.FactoryID, '')
 	,s.EditName
 	,s.EditDate
+	,s.KeepPanels
 from Trade_To_Pms.dbo.OrderChangeApplication  s
 inner join Production.dbo.Factory f on s.FactoryID =f.ID and f.IsProduceFty = 1
 where not exists(select 1 from Production.dbo.OrderChangeApplication t where s.ID = t.ID)

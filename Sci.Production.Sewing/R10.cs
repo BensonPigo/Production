@@ -143,7 +143,13 @@ select distinct
     ,o.FactoryID
     ,o.ID
     ,Cancelorder = iif(o.junk=1,'Y','')
-    ,NeedProduction = iif(o.NeedProduction=1, 'Y', '')
+    ,NeedProduction = case when o.junk = 1 then 
+                           case when o.NeedProduction = 1 then 'Y' 
+                                when o.KeepPanels = 1 then 'K'
+                                else 'N' end
+                      else ''
+                      end
+
     ,Category= case 
             when o.Category = 'S' then 'Sample' 
             when o.Category = 'B' then 'Bulk' 
