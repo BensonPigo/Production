@@ -514,6 +514,11 @@ Begin
 		SET t.SCIUpdate  = 1
 		FROM CompleteCFAReceive t
 		INNER JOIN #tmpCompleteCFAReceive s ON t.SCICtnNo = s.SCICtnNo
+		;		
+		-- 加入@tmpOrder，注意！ 要將異動過的OrderID紀錄進這個Table，才能整理整張訂單的各位置箱數
+		insert into @tmpOrder
+		select distinct OrderID
+		from #tmpCompleteCFAReceive_WithUkey
 		;
 	End
 	
@@ -560,11 +565,16 @@ Begin
 		FROM Production.dbo.PackingList_Detail pd
 		INNER JOIN #tmpCompleteCFAReturn_WithUkey s ON pd.Ukey = s.PackingList_Detail_Ukey
 		;
-		----3. 將 CompleteCFAReceive.SCIUpdate 改為 1
+		----3. 將 CompleteCFAReturn.SCIUpdate 改為 1
 		UPDATE t
 		SET t.SCIUpdate  = 1
 		FROM CompleteCFAReturn t
 		INNER JOIN #tmpCompleteCFAReturn s ON t.SCICtnNo = s.SCICtnNo
+		;		
+		-- 加入@tmpOrder，注意！ 要將異動過的OrderID紀錄進這個Table，才能整理整張訂單的各位置箱數
+		insert into @tmpOrder
+		select distinct OrderID
+		from #tmpCompleteCFAReturn_WithUkey
 		;
 	End
 
