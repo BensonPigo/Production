@@ -95,7 +95,7 @@ namespace Sci.Production.Warehouse
     where exists (select 1 
 	              from orders o2 WITH (NOLOCK)
 	              inner join Factory f WITH (NOLOCK) on o2.FactoryID = f.ID
-	              where pd.StockPOID = o2.ID
+	              where pd.id = o2.ID
 	              and f.IsProduceFty = 1
           )
           and f.MDivisionID='{0}' 
