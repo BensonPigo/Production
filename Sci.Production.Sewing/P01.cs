@@ -2535,8 +2535,8 @@ WHERE sewqty < (packqty + adjQty) ";
         /// <returns>bool</returns>
         private bool CheckSPEditable()
         {
-            string Automation = MyUtility.GetValue.Lookup("select Automation from System");
-            if (Automation.ToUpper() != "TRUE" && !MyUtility.Check.Empty(this.CurrentMaintain["Status"]))
+            string CanReviseDailyLockData = MyUtility.GetValue.Lookup("select CanReviseDailyLockData from System");
+            if (CanReviseDailyLockData.ToUpper() != "TRUE" && !MyUtility.Check.Empty(this.CurrentMaintain["Status"]))
             {
                 return false;
             }
