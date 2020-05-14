@@ -92,8 +92,14 @@ namespace Sci.Production.Warehouse
                 and (i.type='2' or i.type='6')
         group by i.InventoryPOID, i.InventorySeq1, i.InventorySeq2
     )x
-    where   f.MDivisionID='{0}' 
-            and pd.ID = @poid
+    where exists (select 1 
+	              from orders o2 WITH (NOLOCK)
+	              inner join Factory f WITH (NOLOCK) on o2.FactoryID = f.ID
+	              where pd.StockPOID = o2.ID
+	              and f.IsProduceFty = 1
+          )
+          and f.MDivisionID='{0}' 
+          and pd.ID = @poid
 )
 select  m.*
         ,isnull(xx.accu_qty,0)accu_qty 

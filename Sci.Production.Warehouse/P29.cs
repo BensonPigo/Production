@@ -444,9 +444,17 @@ WHERE 1=1
                 and s2.ToSeq1 = pd.seq1 
                 and s2.ToSeq2 = pd.seq2 
     ) xx --已轉的數量
-    where   pd.seq1 like '7%' 
-            and f.MDivisionID = '{Env.User.Keyword}'
-            and checkProduceFty.IsProduceFty = '1'            
+    where exists 
+          (
+            select 1 
+	        from orders o2 WITH (NOLOCK)
+	        inner join Factory f WITH (NOLOCK) on o2.FactoryID = f.ID
+	        where pd.StockPOID = o2.ID
+	        and f.IsProduceFty = 1
+          )
+          and pd.seq1 like '7%' 
+          and f.MDivisionID = '{Env.User.Keyword}'
+          and checkProduceFty.IsProduceFty = '1'            
 			{(!string.IsNullOrEmpty(InvCfmDate_s) && !string.IsNullOrEmpty(InvCfmDate_e) ? sqlcmdInMainSQL : string.Empty)}
             ");
 
