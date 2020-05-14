@@ -339,7 +339,8 @@ where r.MDivisionID  = '{Env.User.Keyword}' {sqlWhere}
 
             // 排除Location沒有修改的資料
             DataRow[] drArryExistRemark = dtReceiving.Select("select = 1 and Remark <> '' AND Location <> OldLocation ");
-            DataRow[] drArryNotExistRemark = dtReceiving.Select("select = 1 and Remark = ''");
+            DataRow[] drArryNotExistRemark = dtReceiving.Select("select = 1 and Remark = '' AND Location <> OldLocation");
+            DataRow[] drArryActualWeight = dtReceiving.Select("select = 1 AND ActualWeight <> OldActualWeight");
 
             // Remark沒資料則統一合併後寫入P26 同ID，排除Location沒有修改的資料
             var selectedReceivingSummary = drArryNotExistRemark
@@ -375,23 +376,24 @@ where r.MDivisionID  = '{Env.User.Keyword}' {sqlWhere}
             List<string> id_list = MyUtility.GetValue.GetBatchID(Sci.Env.User.Keyword + "LH", "LocationTrans", batchNumber: cntID, sequenceMode: 2); // 批次產生ID
             int idcnt = 0;
 
-
-            if (id_list.Count == 0)
+            if (id_list.Count == 0 && drArryActualWeight.Length == 0)
             {
                 MyUtility.Msg.WarningBox("There is no Location changed.");
                 return;
             }
 
-            // Remark有資料要分開寫入到P26 不同ID
-            foreach (var item in drArryExistRemark)
+            if (id_list.Count > 0 )
             {
-                if (item["Remark"].ToString().Length >= (60 - 19))  // 預設要填入---Create from P21.，因此要扣掉這個文字長度
+                // Remark有資料要分開寫入到P26 不同ID
+                foreach (var item in drArryExistRemark)
                 {
-                    MyUtility.Msg.WarningBox("Remark is too long!");
-                    return;
-                }
+                    if (item["Remark"].ToString().Length >= (60 - 19))  // 預設要填入---Create from P21.，因此要扣掉這個文字長度
+                    {
+                        MyUtility.Msg.WarningBox("Remark is too long!");
+                        return;
+                    }
 
-                sqlInsertLocationTrans += $@"
+                    sqlInsertLocationTrans += $@"
 Insert into LocationTrans(ID,MDivisionID,FactoryID,IssueDate,Status,Remark,AddName,AddDate,EditName,EditDate)
             values( '{id_list[idcnt]}',
                     '{Env.User.Keyword}',
@@ -406,7 +408,7 @@ Insert into LocationTrans(ID,MDivisionID,FactoryID,IssueDate,Status,Remark,AddNa
                 )
 ";
 
-                sqlInsertLocationTrans += $@"
+                    sqlInsertLocationTrans += $@"
 Insert into LocationTrans_Detail(   ID,
                                     FtyInventoryUkey,
                                     POID,
@@ -430,13 +432,13 @@ Insert into LocationTrans_Detail(   ID,
                        {item["FtyInventoryQty"]},
                        '{item["StockType"]}')
 ";
-                idcnt++;
-            }
+                    idcnt++;
+                }
 
 
-            if (selectedReceivingSummary.Any())
-            {
-                sqlInsertLocationTrans += $@"
+                if (selectedReceivingSummary.Any())
+                {
+                    sqlInsertLocationTrans += $@"
 Insert into LocationTrans(ID,MDivisionID,FactoryID,IssueDate,Status,Remark,AddName,AddDate,EditName,EditDate)
             values( '{id_list[idcnt]}',
                     '{Env.User.Keyword}',
@@ -451,9 +453,9 @@ Insert into LocationTrans(ID,MDivisionID,FactoryID,IssueDate,Status,Remark,AddNa
                 )
 ";
 
-                foreach (var receivingItem in selectedReceivingSummary)
-                {
-                    sqlInsertLocationTrans += $@"
+                    foreach (var receivingItem in selectedReceivingSummary)
+                    {
+                        sqlInsertLocationTrans += $@"
 Insert into LocationTrans_Detail(   ID,
                                     FtyInventoryUkey,
                                     POID,
@@ -477,15 +479,16 @@ Insert into LocationTrans_Detail(   ID,
                        {receivingItem.FtyInventoryQty},
                        '{receivingItem.StockType}')
 ";
+                    }
                 }
+
+                // 重新撈取新增ID資料
+                string idList = id_list.Count <= 1 ? id_list[0].ToString() : id_list.JoinToString("','");
+                sqlInsertLocationTrans += $@"select * from LocationTrans_Detail where ID in ('{idList}')";
             }
 
-            // 重新撈取新增ID資料
-            string idList = id_list.Count <= 1 ? id_list[0].ToString() : id_list.JoinToString("','");
-            sqlInsertLocationTrans += $@"select * from LocationTrans_Detail where ID in ('{idList}')";
-
             string sqlUpdateReceiving_Detail = string.Empty;
-            foreach (var receivingDetailItem in selectedReceiving)
+            foreach (var receivingDetailItem in drArryActualWeight)
             {
                 sqlUpdateReceiving_Detail += $@"update Receiving_Detail set ActualWeight  = {receivingDetailItem["ActualWeight"]}
                                                     where   ID = '{receivingDetailItem["ID"]}' and
@@ -497,6 +500,7 @@ Insert into LocationTrans_Detail(   ID,
 ";
             }
 
+            Exception errMsg = null;
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
@@ -509,26 +513,20 @@ Insert into LocationTrans_Detail(   ID,
                         result = DBProxy.Current.Select(null, sqlInsertLocationTrans, out dtLocationTransDetail);
                         if (!result)
                         {
-                            _transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return;
+                            throw result.GetException();
                         }
 
                         result = Prgs.UpdateFtyInventoryMDivisionPoDetail(dtLocationTransDetail.AsEnumerable().ToList());
                         if (!result)
                         {
-                            _transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return;
+                            throw result.GetException();
                         }
                     }
 
                     result = DBProxy.Current.Execute(null, sqlUpdateReceiving_Detail);
                     if (!result)
                     {
-                        _transactionscope.Dispose();
-                        this.ShowErr(result);
-                        return;
+                        throw result.GetException();
                     }
 
                     _transactionscope.Complete();
@@ -536,10 +534,14 @@ Insert into LocationTrans_Detail(   ID,
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
-                    this.ShowErr(ex);
-                    return;
+                    errMsg = ex;
                 }
+            }
+
+            if (!MyUtility.Check.Empty(errMsg))
+            {
+                this.ShowErr(errMsg);
+                return;
             }
 
             // 將當前所選位置記錄起來後, 待資料重整後定位回去!
