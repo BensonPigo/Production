@@ -338,10 +338,14 @@ where r.MDivisionID  = '{Env.User.Keyword}' {sqlWhere}
             }
 
             // 排除Location沒有修改的資料
-            DataRow[] drArryExistRemark = dtReceiving.Select("select = 1 and Remark <> '' AND Location <> OldLocation ");
-            DataRow[] drArryNotExistRemark = dtReceiving.Select("select = 1 and Remark = '' AND Location <> OldLocation");
-            DataRow[] drArryActualWeight = dtReceiving.Select("select = 1 AND ActualWeight <> OldActualWeight");
-
+            DataRow[] drArryExistRemark = dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
+                                                                             && !MyUtility.Check.Empty(x.Field<string>("Remark"))
+                                                                             && !x.Field<string>("Location").EqualString(x.Field<string>("OldLocation"))).ToArray();
+            DataRow[] drArryNotExistRemark = dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
+                                                                             && MyUtility.Check.Empty(x.Field<string>("Remark"))
+                                                                             && !x.Field<string>("Location").EqualString(x.Field<string>("OldLocation"))).ToArray();
+            DataRow[] drArryActualWeight = dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
+                                                                             && x.Field<decimal>("ActualWeight") != x.Field<decimal>("OldActualWeight")).ToArray();                
             // Remark沒資料則統一合併後寫入P26 同ID，排除Location沒有修改的資料
             var selectedReceivingSummary = drArryNotExistRemark
                                         .Where(s => s["Location"].ToString() != s["OldLocation"].ToString())
@@ -378,7 +382,7 @@ where r.MDivisionID  = '{Env.User.Keyword}' {sqlWhere}
 
             if (id_list.Count == 0 && drArryActualWeight.Length == 0)
             {
-                MyUtility.Msg.WarningBox("There is no Location changed.");
+                MyUtility.Msg.WarningBox("There is no Location, Act.(kg) changed.");
                 return;
             }
 
@@ -507,7 +511,7 @@ Insert into LocationTrans_Detail(   ID,
                 try
                 {
                     DualResult result;
-                    if (sqlInsertLocationTrans.Any())
+                    if (!MyUtility.Check.Empty(sqlInsertLocationTrans))
                     {
                         DataTable dtLocationTransDetail;
                         result = DBProxy.Current.Select(null, sqlInsertLocationTrans, out dtLocationTransDetail);
@@ -523,14 +527,16 @@ Insert into LocationTrans_Detail(   ID,
                         }
                     }
 
-                    result = DBProxy.Current.Execute(null, sqlUpdateReceiving_Detail);
-                    if (!result)
+                    if (!MyUtility.Check.Empty(sqlUpdateReceiving_Detail))
                     {
-                        throw result.GetException();
+                        result = DBProxy.Current.Execute(null, sqlUpdateReceiving_Detail);
+                        if (!result)
+                        {
+                            throw result.GetException();
+                        }
                     }
 
                     _transactionscope.Complete();
-
                 }
                 catch (Exception ex)
                 {
