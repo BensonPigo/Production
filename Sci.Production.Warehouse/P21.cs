@@ -331,7 +331,7 @@ where r.MDivisionID  = '{Env.User.Keyword}' {sqlWhere}
                 return;
             }
 
-            if (selectedReceiving.Any(s => MyUtility.Check.Empty(s["Location"])))
+            if (selectedReceiving.Any(s => MyUtility.Check.Empty(s["Location"]) && s["ActualWeight"] == s["OldActualWeight"]))
             {
                 MyUtility.Msg.WarningBox("Location can not be empty");
                 return;
