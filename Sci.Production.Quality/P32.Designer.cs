@@ -52,10 +52,8 @@
             this.disBrand = new Sci.Win.UI.DisplayBox();
             this.disDest = new Sci.Win.UI.DisplayBox();
             this.disOrderQty = new Sci.Win.UI.DisplayBox();
-            this.txtSpSeq = new Sci.Production.Class.txtSpSeq();
             this.editBoxRemark = new Sci.Win.UI.EditBox();
             this.dateAuditDate = new Sci.Win.UI.DateBox();
-            this.txtCFA = new Sci.Production.Class.txtuser();
             this.label1 = new Sci.Win.UI.Label();
             this.label22 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
@@ -66,7 +64,6 @@
             this.label27 = new Sci.Win.UI.Label();
             this.disSeason = new Sci.Win.UI.DisplayBox();
             this.disM = new Sci.Win.UI.DisplayBox();
-            this.txtshift = new Sci.Production.Class.txtDropDownList();
             this.txtSewingLine = new Sci.Win.UI.TextBox();
             this.comboTeam = new Sci.Win.UI.ComboBox();
             this.numClogReceivedPercentage = new Sci.Win.UI.NumericBox();
@@ -76,6 +73,10 @@
             this.numInspectQty = new Sci.Win.UI.NumericBox();
             this.numDefectQty = new Sci.Win.UI.NumericBox();
             this.numSQR = new Sci.Win.UI.NumericBox();
+            this.txtshift = new Sci.Production.Class.txtDropDownList();
+            this.txtCFA = new Sci.Production.Class.txtuser();
+            this.txtSpSeq = new Sci.Production.Class.txtSpSeq();
+            this.labelStatus = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -94,6 +95,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.labelStatus);
             this.masterpanel.Controls.Add(this.numSQR);
             this.masterpanel.Controls.Add(this.numDefectQty);
             this.masterpanel.Controls.Add(this.numInspectQty);
@@ -186,6 +188,7 @@
             this.masterpanel.Controls.SetChildIndex(this.numInspectQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.numDefectQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.numSQR, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelStatus, 0);
             // 
             // detailpanel
             // 
@@ -227,7 +230,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1301, 641);
+            this.browse.Size = new System.Drawing.Size(1285, 650);
             // 
             // tabs
             // 
@@ -358,7 +361,6 @@
             // disStyle
             // 
             this.disStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.disStyle.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StyleID", true));
             this.disStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.disStyle.Location = new System.Drawing.Point(110, 99);
             this.disStyle.Name = "disStyle";
@@ -387,7 +389,6 @@
             // disBrand
             // 
             this.disBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.disBrand.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BrandID", true));
             this.disBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.disBrand.Location = new System.Drawing.Point(110, 126);
             this.disBrand.Name = "disBrand";
@@ -406,29 +407,16 @@
             // disOrderQty
             // 
             this.disOrderQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.disOrderQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Qty", true));
             this.disOrderQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.disOrderQty.Location = new System.Drawing.Point(370, 126);
             this.disOrderQty.Name = "disOrderQty";
             this.disOrderQty.Size = new System.Drawing.Size(100, 23);
             this.disOrderQty.TabIndex = 31;
             // 
-            // txtSpSeq
-            // 
-            this.txtSpSeq.DataBindings.Add(new System.Windows.Forms.Binding("TextBoxSeqBinding", this.mtbs, "Seq", true));
-            this.txtSpSeq.DataBindings.Add(new System.Windows.Forms.Binding("TextBoxSPBinding", this.mtbs, "OrderID", true));
-            this.txtSpSeq.Location = new System.Drawing.Point(21, 38);
-            this.txtSpSeq.Name = "txtSpSeq";
-            this.txtSpSeq.Size = new System.Drawing.Size(244, 27);
-            this.txtSpSeq.TabIndex = 1;
-            this.txtSpSeq.TabStop = false;
-            this.txtSpSeq.TextBoxSeqBinding = "";
-            this.txtSpSeq.TextBoxSPBinding = "";
-            // 
             // editBoxRemark
             // 
             this.editBoxRemark.BackColor = System.Drawing.Color.White;
-            this.editBoxRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CFARemark", true));
+            this.editBoxRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editBoxRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.editBoxRemark.Location = new System.Drawing.Point(110, 185);
             this.editBoxRemark.Multiline = true;
@@ -444,16 +432,6 @@
             this.dateAuditDate.Size = new System.Drawing.Size(130, 23);
             this.dateAuditDate.TabIndex = 4;
             this.dateAuditDate.TabStop = false;
-            // 
-            // txtCFA
-            // 
-            this.txtCFA.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CFA", true));
-            this.txtCFA.DisplayBox1Binding = "";
-            this.txtCFA.Location = new System.Drawing.Point(110, 9);
-            this.txtCFA.Name = "txtCFA";
-            this.txtCFA.Size = new System.Drawing.Size(300, 23);
-            this.txtCFA.TabIndex = 47;
-            this.txtCFA.TextBox1Binding = "";
             // 
             // label1
             // 
@@ -522,7 +500,6 @@
             // disSeason
             // 
             this.disSeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.disSeason.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SeasonID", true));
             this.disSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.disSeason.Location = new System.Drawing.Point(110, 155);
             this.disSeason.Name = "disSeason";
@@ -539,17 +516,6 @@
             this.disM.Size = new System.Drawing.Size(100, 23);
             this.disM.TabIndex = 58;
             // 
-            // txtshift
-            // 
-            this.txtshift.BackColor = System.Drawing.Color.White;
-            this.txtshift.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Shift", true));
-            this.txtshift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtshift.Location = new System.Drawing.Point(681, 40);
-            this.txtshift.Name = "txtshift";
-            this.txtshift.Size = new System.Drawing.Size(100, 23);
-            this.txtshift.TabIndex = 59;
-            this.txtshift.Type = "SewingOutput_Shift";
-            // 
             // txtSewingLine
             // 
             this.txtSewingLine.BackColor = System.Drawing.Color.White;
@@ -559,10 +525,13 @@
             this.txtSewingLine.Name = "txtSewingLine";
             this.txtSewingLine.Size = new System.Drawing.Size(100, 23);
             this.txtSewingLine.TabIndex = 60;
+            this.txtSewingLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSewingLine_PopUp);
+            this.txtSewingLine.Validating += new System.ComponentModel.CancelEventHandler(this.txtSewingLine_Validating);
             // 
             // comboTeam
             // 
             this.comboTeam.BackColor = System.Drawing.Color.White;
+            this.comboTeam.DataBindings.Add(new System.Windows.Forms.Binding("SelectedItem", this.mtbs, "Team", true));
             this.comboTeam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboTeam.FormattingEnabled = true;
             this.comboTeam.IsSupportUnselect = true;
@@ -575,12 +544,14 @@
             this.comboTeam.OldText = "";
             this.comboTeam.Size = new System.Drawing.Size(63, 24);
             this.comboTeam.TabIndex = 61;
+            this.comboTeam.SelectedIndexChanged += new System.EventHandler(this.comboTeam_SelectedIndexChanged);
             // 
             // numClogReceivedPercentage
             // 
-            this.numClogReceivedPercentage.BackColor = System.Drawing.Color.White;
+            this.numClogReceivedPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numClogReceivedPercentage.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ClogReceivedPercentage", true));
-            this.numClogReceivedPercentage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numClogReceivedPercentage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numClogReceivedPercentage.IsSupportEditMode = false;
             this.numClogReceivedPercentage.Location = new System.Drawing.Point(681, 128);
             this.numClogReceivedPercentage.MaxLength = 3;
             this.numClogReceivedPercentage.Name = "numClogReceivedPercentage";
@@ -589,6 +560,7 @@
             0,
             0,
             0});
+            this.numClogReceivedPercentage.ReadOnly = true;
             this.numClogReceivedPercentage.Size = new System.Drawing.Size(63, 23);
             this.numClogReceivedPercentage.TabIndex = 62;
             this.numClogReceivedPercentage.Value = new decimal(new int[] {
@@ -600,7 +572,7 @@
             // comboStage
             // 
             this.comboStage.BackColor = System.Drawing.Color.White;
-            this.comboStage.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Stage", true));
+            this.comboStage.DataBindings.Add(new System.Windows.Forms.Binding("SelectedItem", this.mtbs, "Stage", true));
             this.comboStage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboStage.FormattingEnabled = true;
             this.comboStage.IsSupportUnselect = true;
@@ -615,11 +587,12 @@
             this.comboStage.OldText = "";
             this.comboStage.Size = new System.Drawing.Size(100, 24);
             this.comboStage.TabIndex = 63;
+            this.comboStage.SelectedIndexChanged += new System.EventHandler(this.comboStage_SelectedIndexChanged);
             // 
             // comboResult
             // 
             this.comboResult.BackColor = System.Drawing.Color.White;
-            this.comboResult.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Result", true));
+            this.comboResult.DataBindings.Add(new System.Windows.Forms.Binding("SelectedItem", this.mtbs, "Result", true));
             this.comboResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboResult.FormattingEnabled = true;
             this.comboResult.IsSupportUnselect = true;
@@ -633,6 +606,7 @@
             this.comboResult.OldText = "";
             this.comboResult.Size = new System.Drawing.Size(63, 24);
             this.comboResult.TabIndex = 64;
+            this.comboResult.SelectedIndexChanged += new System.EventHandler(this.comboResult_SelectedIndexChanged);
             // 
             // txtInspectedCarton
             // 
@@ -643,6 +617,8 @@
             this.txtInspectedCarton.Name = "txtInspectedCarton";
             this.txtInspectedCarton.Size = new System.Drawing.Size(100, 23);
             this.txtInspectedCarton.TabIndex = 65;
+            this.txtInspectedCarton.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtInspectedCarton_PopUp);
+            this.txtInspectedCarton.Validating += new System.ComponentModel.CancelEventHandler(this.txtInspectedCarton_Validating);
             // 
             // numInspectQty
             // 
@@ -664,6 +640,7 @@
             0,
             0,
             0});
+            this.numInspectQty.Validating += new System.ComponentModel.CancelEventHandler(this.numInspectQty_Validating);
             // 
             // numDefectQty
             // 
@@ -691,10 +668,11 @@
             // numSQR
             // 
             this.numSQR.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numSQR.DecimalPlaces = 2;
             this.numSQR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numSQR.IsSupportEditMode = false;
             this.numSQR.Location = new System.Drawing.Point(965, 126);
-            this.numSQR.MaxLength = 7;
+            this.numSQR.MaxLength = 9;
             this.numSQR.Name = "numSQR";
             this.numSQR.NullValue = new decimal(new int[] {
             0,
@@ -710,21 +688,72 @@
             0,
             0});
             // 
+            // txtshift
+            // 
+            this.txtshift.BackColor = System.Drawing.Color.White;
+            this.txtshift.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Shift", true));
+            this.txtshift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtshift.Location = new System.Drawing.Point(681, 40);
+            this.txtshift.Name = "txtshift";
+            this.txtshift.Size = new System.Drawing.Size(100, 23);
+            this.txtshift.TabIndex = 59;
+            this.txtshift.Type = "SewingOutput_Shift";
+            // 
+            // txtCFA
+            // 
+            this.txtCFA.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CFA", true));
+            this.txtCFA.DisplayBox1Binding = "";
+            this.txtCFA.Location = new System.Drawing.Point(110, 9);
+            this.txtCFA.Name = "txtCFA";
+            this.txtCFA.Size = new System.Drawing.Size(300, 23);
+            this.txtCFA.TabIndex = 47;
+            this.txtCFA.TextBox1Binding = "";
+            // 
+            // txtSpSeq
+            // 
+            this.txtSpSeq.DataBindings.Add(new System.Windows.Forms.Binding("TextBoxSPBinding", this.mtbs, "OrderID", true));
+            this.txtSpSeq.DataBindings.Add(new System.Windows.Forms.Binding("TextBoxSeqBinding", this.mtbs, "Seq", true));
+            this.txtSpSeq.Location = new System.Drawing.Point(21, 38);
+            this.txtSpSeq.Name = "txtSpSeq";
+            this.txtSpSeq.Size = new System.Drawing.Size(244, 27);
+            this.txtSpSeq.TabIndex = 1;
+            this.txtSpSeq.TabStop = false;
+            this.txtSpSeq.TextBoxSeqBinding = "";
+            this.txtSpSeq.TextBoxSPBinding = "";
+            this.txtSpSeq.Leave += new System.EventHandler(this.txtSpSeq_Leave);
+            // 
+            // labelStatus
+            // 
+            this.labelStatus.BackColor = System.Drawing.Color.Transparent;
+            this.labelStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
+            this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
+            this.labelStatus.Location = new System.Drawing.Point(1089, 9);
+            this.labelStatus.Name = "labelStatus";
+            this.labelStatus.Size = new System.Drawing.Size(148, 25);
+            this.labelStatus.TabIndex = 69;
+            this.labelStatus.Text = "status";
+            this.labelStatus.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.labelStatus.TextStyle.BorderColor = System.Drawing.Color.Red;
+            this.labelStatus.TextStyle.Color = System.Drawing.Color.Red;
+            // 
             // P32
             // 
+            this.ApvChkValue = "New";
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1293, 712);
             this.GridAlias = "CFAInspectionRecord_Detail";
+            this.GridUniqueKey = "ID,GarmentDefectCodeID";
             this.IsGridIcon2Visible = false;
             this.IsSupportConfirm = true;
             this.IsSupportPrint = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
-            this.KeyField2 = "Seq";
             this.Name = "P32";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P32. CFA Inspection Record";
+            this.UnApvChkValue = "Confirmed";
+            this.UniqueExpress = "ID";
             this.WorkAlias = "CFAInspectionRecord";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
@@ -796,5 +825,6 @@
         private Win.UI.NumericBox numInspectQty;
         private Win.UI.NumericBox numDefectQty;
         private Win.UI.NumericBox numSQR;
+        private Win.UI.Label labelStatus;
     }
 }

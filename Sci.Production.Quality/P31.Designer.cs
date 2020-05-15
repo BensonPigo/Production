@@ -82,7 +82,7 @@
             this.dateBox2 = new Sci.Win.UI.DateBox();
             this.btnH = new Sci.Win.UI.Button();
             this.ByCarton = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
+            this.btnCreateInsRecord = new Sci.Win.UI.Button();
             this.btnByRecord = new Sci.Win.UI.Button();
             this.txtSpSeq = new Sci.Production.Class.txtSpSeq();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
@@ -111,7 +111,7 @@
             // masterpanel
             // 
             this.masterpanel.Controls.Add(this.btnByRecord);
-            this.masterpanel.Controls.Add(this.button2);
+            this.masterpanel.Controls.Add(this.btnCreateInsRecord);
             this.masterpanel.Controls.Add(this.ByCarton);
             this.masterpanel.Controls.Add(this.btnH);
             this.masterpanel.Controls.Add(this.editBoxRemark);
@@ -202,7 +202,7 @@
             this.masterpanel.Controls.SetChildIndex(this.editBoxRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnH, 0);
             this.masterpanel.Controls.SetChildIndex(this.ByCarton, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCreateInsRecord, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnByRecord, 0);
             // 
             // detailpanel
@@ -222,15 +222,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(1301, 641);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(1295, 595);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(1295, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -320,7 +320,7 @@
             this.tab_CartonSummary.Location = new System.Drawing.Point(4, 25);
             this.tab_CartonSummary.Name = "tab_CartonSummary";
             this.tab_CartonSummary.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_CartonSummary.Size = new System.Drawing.Size(1293, 265);
+            this.tab_CartonSummary.Size = new System.Drawing.Size(884, 11);
             this.tab_CartonSummary.TabIndex = 1;
             this.tab_CartonSummary.Text = "By Carton Summary";
             // 
@@ -353,7 +353,7 @@
             this.gridCartonSummary.RowTemplate.Height = 24;
             this.gridCartonSummary.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCartonSummary.ShowCellToolTips = false;
-            this.gridCartonSummary.Size = new System.Drawing.Size(1287, 259);
+            this.gridCartonSummary.Size = new System.Drawing.Size(1287, 262);
             this.gridCartonSummary.TabIndex = 0;
             // 
             // label2
@@ -745,14 +745,15 @@
             this.ByCarton.UseVisualStyleBackColor = true;
             this.ByCarton.Click += new System.EventHandler(this.ByCarton_Click);
             // 
-            // button2
+            // btnCreateInsRecord
             // 
-            this.button2.Location = new System.Drawing.Point(1097, 2);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(190, 30);
-            this.button2.TabIndex = 45;
-            this.button2.Text = "Create Inspection record";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnCreateInsRecord.Location = new System.Drawing.Point(1097, 2);
+            this.btnCreateInsRecord.Name = "btnCreateInsRecord";
+            this.btnCreateInsRecord.Size = new System.Drawing.Size(190, 30);
+            this.btnCreateInsRecord.TabIndex = 45;
+            this.btnCreateInsRecord.Text = "Create Inspection record";
+            this.btnCreateInsRecord.UseVisualStyleBackColor = true;
+            this.btnCreateInsRecord.Click += new System.EventHandler(this.btnCreateInsRecord_Click);
             // 
             // btnByRecord
             // 
@@ -879,7 +880,7 @@
         private Win.UI.ListControlBindingSource dataSourceCtnSummary;
         private Win.UI.Button btnH;
         private Win.UI.Button btnByRecord;
-        private Win.UI.Button button2;
+        private Win.UI.Button btnCreateInsRecord;
         private Win.UI.Button ByCarton;
     }
 }

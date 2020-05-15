@@ -31,7 +31,9 @@ namespace Sci.Production.Quality
             this.Text = type == "1" ? "P31. CFA Master List" : "P311. CFA Master List(History)";
             this._Type = type;
 
-            this.DefaultWhere = this._Type == "1" ? $"(SELECT MDivisionID FROM Orders WHERE ID = Order_QtyShip.ID) = '{Sci.Env.User.Keyword}' AND (SELECT Finished FROM Orders WHERE ID = Order_QtyShip.ID) = 0 " : $"(SELECT MDivisionID FROM Orders WHERE ID = Order_QtyShip.ID) = '{Sci.Env.User.Keyword}' AND (SELECT Finished FROM Orders WHERE ID = Order_QtyShip.ID) = 1";
+            string Isfinished = type == "1" ? "0" : "1";
+            string defaultwhere = $"EXISTS (SELECT 1 FROM Orders WITH (NOLOCK) WHERE MDivisionID='{Sci.Env.User.Keyword}' AND Finished = {Isfinished} AND ID = Order_QtyShip.ID)";
+            this.DefaultWhere = defaultwhere;
 
             if (type != "1")
             {
@@ -141,6 +143,16 @@ AND (Result = 'F' OR  Result <> 'P')
 ");
             #endregion
 
+            if (this.EditMode)
+            {
+                this.btnCreateInsRecord.Enabled = false;
+            }
+            else
+            {
+                this.btnCreateInsRecord.Enabled = true;
+            }
+
+
             // 雙行Column Header的做法
             // 搭配I:\MIS\Personal\Benson\QA P31\CFA.xlxs 第一個Sheet的畫面看比較好懂
 
@@ -159,36 +171,27 @@ AND (Result = 'F' OR  Result <> 'P')
 
             #region SQL
 
-            string cmd = $@"
+             string cmd = $@"
 ----By Qty Breakdown分頁
-SELECT oqd.ID,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty,oqd.OriQty
-        ,[CMPOutput]= ISNULL((SELECT dbo.getMinCompleteSewQty( oqd.ID, oqd.Article , oqd.SizeCode ) ) ,0)
+SELECT oqd.ID,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty
+        ,[CMPOutput]= IIF(oqd.Qty = 0 OR (SELECT COUNT(Seq) FROM Order_QtyShip oq WHERE oq.ID = oqd.ID) > 1
+							,'N/A'
+							,Cast( ISNULL((SELECT dbo.getMinCompleteSewQty( oqd.ID, oqd.Article , oqd.SizeCode ) ) ,0) as varchar)
+						)
         ,[CMP%] = IIF(oqd.Qty = 0 OR (SELECT COUNT(Seq) FROM Order_QtyShip oq WHERE oq.ID = oqd.ID) > 1
 				        ,'N/A'
 				        , CAST( CAST( ROUND(((ISNULL((SELECT dbo.getMinCompleteSewQty( oqd.ID, oqd.Article , oqd.SizeCode ) ),0) * 1.0  / oqd.Qty ) * 100) ,0) as int )as varchar) + '%'
-			         )
-        ,[OriCMP%]=IIF(oqd.Qty = 0 OR (SELECT COUNT(Seq) FROM Order_QtyShip oq WHERE oq.ID = oqd.ID) > 1
-				        ,0
-				        , (ISNULL((SELECT dbo.getMinCompleteSewQty( oqd.ID, oqd.Article , oqd.SizeCode ) ),0) * 1.0 / oqd.Qty ) * 100 
 			         )
         ,[CFA staggered Qty] = ISNULL(Staggered.Qty,0)
         ,[Staggered%]=IIF(oqd.Qty = 0
 					        , 'N/A'
 					        , CAST( CAST(ROUND((ISNULL(Staggered.Qty,0) * 1.0 /oqd.Qty)* 100,0) as int ) as varchar) + '%'
 				        )
-        ,[OriStaggered%]=IIF(oqd.Qty = 0 
-					        ,0
-					        , (ISNULL(Staggered.Qty,0) * 1.0 /oqd.Qty)* 100
-				         )
         ,[CLOG Qty]=ISNULL(Clog.Qty ,0)
-        ,[CLOG%]=IIF(oqd.Qty = 0
+        ,[CLOG%]=IIF(        oqd.Qty = 0
 					        , 'N/A'
-					        , CAST( CAST(ROUND((ISNULL(Clog.Qty,0)/oqd.Qty) * 1.0 * 100 ,0) as int ) as varchar) + '%'
+					        , CAST( CAST(ROUND((ISNULL(Clog.Qty,0) * 1.0 /oqd.Qty) * 100 ,0) as int ) as varchar) + '%'
 				        )
-        ,[OriCLOG%]=IIF(oqd.Qty = 0 
-					        ,0
-					        , (ISNULL(CLOG.Qty,0)/oqd.Qty) * 1.0 * 100
-				         )
         ,[OrderKey] = ROW_NUMBER() OVER(ORDER BY oqd.Article ASC) 
 INTO #tmp
 FROM Order_QtyShip_Detail oqd
@@ -220,18 +223,24 @@ SELECT --[ID]
 	,[OrderKey]
 FROM #tmp
 UNION 
-SELECT --[ID]='{OrderID}'  ----外部帶入寫死
-	--,[Seq]='{Seq}'
-	[Article]='TTL'
+SELECT 
+	 [Article]='TTL'  -- 注意，這邊TTL要跟Grid對上，修改的話要同步改
 	,[SizeCode]='TTL'
 	,[Order Qty]= (SELECT SUM(Qty) FROM #tmp)
-	,[CMP output]=(SELECT SUM(CMPOutput) FROM #tmp)
-	,[CMP %] = Cast( CAST( ROUND( (SELECT SUM([OriCMP%]) / COUNT([OriCMP%]) FROM #tmp),3) as INT ) as Varchar ) + '%'
+	,[CMP output]=IIF((SELECT TOP 1 CMPOutput FROM #tmp) <> 'N/A', Cast( (SELECT SUM(Cast(CMPOutput as int)) FROM #tmp) as Varchar) , 'N/A' )
+	,[CMP %] = IIF((SELECT TOP 1 CMPOutput FROM #tmp) <> 'N/A' AND (SELECT SUM(Qty) FROM #tmp) <> 0
+					,Cast( CAST( ROUND( (SELECT SUM(Cast(CMPOutput as int)) / SUM(Qty)  FROM #tmp),3) as INT ) as Varchar ) + '%'
+					,'N/A' 
+					)
 	,[CFA staggered output] = (SELECT SUM([CFA staggered Qty]) FROM #tmp)
-	,[Staggered %]= Cast(CAST( ROUND( (SELECT SUM([CFA staggered Qty]) / COUNT([CFA staggered Qty]) FROM #tmp),3) as INT)   as Varchar ) + '%'
+	,[Staggered %]= IIF((SELECT SUM(Qty) FROM #tmp)=0
+						,'N/A'
+						,Cast(CAST( ROUND( (SELECT SUM([CFA staggered Qty]) *1.0 / SUM(Qty) FROM #tmp),3) * 100 as INT)   as Varchar ) + '%'
+						)
 	,[CLOG output]=(SELECT SUM([CLOG Qty]) FROM #tmp)
-	,[CLOG %]=Cast(CAST( ROUND( (SELECT SUM([CLOG Qty]) / COUNT([CLOG Qty]) FROM #tmp),3) as INT)   as Varchar  ) + '%'
-	,[OrderKey] = (SELECT MAX(OrderKey) + 1 FROM #tmp)
+	,[CLOG %]=IIF((SELECT SUM(Qty) FROM #tmp)=0,'N/A',Cast(CAST( ROUND( (SELECT SUM([CLOG Qty]) *1.0 / SUM(Qty)FROM #tmp) * 100,3) as INT)   as Varchar  ) + '%')
+	,[OrderKey] = (SELECT MAX(OrderKey) + 1 FROM #tmp) 
+
 ORDER BY [OrderKey]
 
 DROP TABLE #tmp
@@ -394,23 +403,15 @@ SELECT  oqd.ID, oqd.Seq, oqd.Article, oqd.SizeCode
                                 , 'N/A'
                                 , CAST(CAST(ROUND((ISNULL(CFA_StaggeredCTN.Val, 0) * 1.0 / ISNULL(OrderCTN.Val, 0)) * 100, 0) AS Int) as varchar) + '%'
                             )
-        ,[OriStaggered %] = IIF(ISNULL(OrderCTN.Val, 0) = 0
-                            , 0
-                            , (ISNULL(CFA_StaggeredCTN.Val, 0) / ISNULL(OrderCTN.Val, 0)) * 100
-                         )
         ,[ClogCTN] = ISNULL(ClogCTN.Val,0)
         ,[Clog %] = IIF(ISNULL(OrderCTN.Val, 0) = 0
                                 , 'N/A'
                                 , CAST(CAST(ROUND((ISNULL(ClogCTN.Val, 0) * 1.0 / ISNULL(OrderCTN.Val, 0)) * 100, 0) AS Int) as varchar) + '%'
                             )
-        ,[OriClog %] = IIF(ISNULL(OrderCTN.Val, 0) = 0
-                            , 0
-                            , (ISNULL(ClogCTN.Val, 0) / ISNULL(OrderCTN.Val, 0)) * 100
-                         )
 INTO #Not_Mix_Final
 FROM Order_QtyShip_Detail oqd
 OUTER APPLY(
-    SELECT t.Article, t.SizeCode,[Val] = COUNT(DISTINCT t.CTNStartNo)
+    SELECT t.Article, t.SizeCode,[Val] = COUNT(DISTINCT t.CTNStartNo)  --不同PackingListID，但相同CTNStartNo，現階段視作相同
     FROM #Not_MixCTNStartNo t
 	WHERE  t.OrderID = oqd.Id
         AND t.OrderShipmodeSeq = oqd.Seq
@@ -419,11 +420,9 @@ OUTER APPLY(
     GROUP BY t.Article, t.SizeCode
 )OrderCTN
 OUTER APPLY(
-    SELECT t.Article, t.SizeCode,[Val] = COUNT(DISTINCT t.CTNStartNo)
-
+    SELECT t.Article, t.SizeCode,[Val] = COUNT(DISTINCT t.CTNStartNo) --不同PackingListID，但相同CTNStartNo，現階段視作相同
     FROM #Not_MixCTNStartNo t
 	INNER JOIN CFAInspectionRecord CFA on t.StaggeredCFAInspectionRecordID = CFA.ID
-
     WHERE  t.OrderID = oqd.Id
         AND t.OrderShipmodeSeq = oqd.Seq
         AND t.Article = oqd.Article
@@ -433,12 +432,13 @@ OUTER APPLY(
     GROUP BY t.Article, t.SizeCode
 )CFA_StaggeredCTN
 OUTER APPLY(
-    SELECT[Val] = SUM(IIF(t.CFAReceiveDate IS NOT NULL OR t.ReceiveDate IS NOT NULL, 1, 0))
+    SELECT [Val] = COUNT(DISTINCT t.CTNStartNo)--,[Val] = SUM(IIF(t.CFAReceiveDate IS NOT NULL OR t.ReceiveDate IS NOT NULL, 1, 0)) --不同PackingListID，但相同CTNStartNo，現階段視作相同
     FROM #Not_MixCTNStartNo t
 	WHERE t.OrderID = oqd.Id
         AND t.OrderShipmodeSeq = oqd.Seq
         AND t.Article = oqd.Article
         AND t.SizeCode = oqd.SizeCode
+		AND (t.CFAReceiveDate IS NOT NULL OR t.ReceiveDate IS NOT NULL)
 )ClogCTN
 WHERE oqd.ID = '{OrderID}' AND oqd.Seq = '{Seq}'
 
@@ -454,27 +454,19 @@ SELECT DISTINCT
                         , 'N/A'
                         , CAST(CAST(ROUND((ISNULL(CFA_StaggeredCTN.Val, 0) * 1.0 / ISNULL(OrderCTN.Val, 0)) * 100, 0) AS Int) as varchar) + '%'
                     )
-        ,[OriStaggered %] = IIF(ISNULL(OrderCTN.Val, 0) = 0
-                            , 0
-                            , (ISNULL(CFA_StaggeredCTN.Val, 0) / ISNULL(OrderCTN.Val, 0)) * 100
-                         )
         ,[ClogCTN] = ClogCTN.Val
         ,[Clog %] = IIF(ISNULL(OrderCTN.Val, 0) = 0
                                 , 'N/A'
                                 , CAST(CAST(ROUND((ISNULL(ClogCTN.Val, 0) * 1.0 / ISNULL(OrderCTN.Val, 0)) * 100, 0) AS Int) as varchar) + '%'
                             )
-        ,[OriClog %] = IIF(ISNULL(OrderCTN.Val, 0) = 0
-                            , 0
-                            , (ISNULL(ClogCTN.Val, 0) / ISNULL(OrderCTN.Val, 0)) * 100
-                         )
 INTO #Is_Mix_Final
 FROM #Is_MixCTNStartNo t
 OUTER APPLY(
-    SELECT[Val] = COUNT(DISTINCT CTNStartNo)
+    SELECT[Val] = COUNT(DISTINCT CTNStartNo) --不同PackingListID，但相同CTNStartNo，現階段視作相同
     FROM #Is_MixCTNStartNo
 )OrderCTN
 OUTER APPLY(
-    SELECT[Val] = COUNT(DISTINCT CTNStartNo)
+    SELECT[Val] = COUNT(DISTINCT CTNStartNo) --不同PackingListID，但相同CTNStartNo，現階段視作相同
     FROM #Is_MixCTNStartNo t2
 	INNER JOIN CFAInspectionRecord CFA on t2.StaggeredCFAInspectionRecordID = CFA.ID
     WHERE  t2.OrderID = t.OrderID
@@ -485,9 +477,10 @@ OUTER APPLY(
 OUTER APPLY(
     SELECT[Val] = SUM(Ctn)
     FROM(
-        SELECT[Ctn] = (IIF(MAX(CFAReceiveDate) IS NOT NULL OR MAX(ReceiveDate) IS NOT NULL, 1, 0))
+        SELECT [Ctn]= COUNT(DISTINCT t2.CTNStartNo) --- [Ctn] = (IIF(MAX(CFAReceiveDate) IS NOT NULL OR MAX(ReceiveDate) IS NOT NULL, 1, 0)) --不同PackingListID，但相同CTNStartNo，現階段視作相同
         FROM #Is_MixCTNStartNo t2
 		WHERE t2.OrderID = t.OrderID AND t2.OrderShipmodeSeq = t.OrderShipmodeSeq
+		HAVING MAX(CFAReceiveDate) IS NOT NULL OR MAX(ReceiveDate) IS NOT NULL
     )x
 )ClogCTN
 
@@ -497,10 +490,8 @@ SELECT   [Article]
 		,[OrderCTN]
 		,[CFA_StaggeredCTN]
 		,[Staggered %]
-		,[OriStaggered %]
 		,[ClogCTN]
 		,[Clog %]
-		,[OriClog %]
         ,[OrderKey] = ROW_NUMBER() OVER(ORDER BY Article ASC) 
 INTO #Without_Ttl
 FROM #Not_Mix_Final
@@ -510,16 +501,12 @@ SELECT   [Article]
 		,[OrderCTN]
 		,[CFA_StaggeredCTN]
 		,[Staggered %]
-		,[OriStaggered %]
 		,[ClogCTN]
 		,[Clog %]
-		,[OriClog %]
         ,[OrderKey] = (SELECT COUNT(Article)+1 FROM #Not_Mix_Final)
 FROM #Is_Mix_Final
 
-SELECT  --[ID]
-	--,[Seq]
-	[Article]
+SELECT  [Article]
 	,[SizeCode]
 	,[Order CTN]=[OrderCTN]
 	,[CFA staggered CTN]=[CFA_StaggeredCTN]
@@ -529,15 +516,13 @@ SELECT  --[ID]
 	,[OrderKey]
 FROM #Without_Ttl
 UNION 
-SELECT --[ID]='18080207IR018'  ----外部帶入寫死
-	--,[Seq]='01' ----外部帶入寫死
-	[Article]='TTL' ----外部帶入寫死
-	,[SizeCode]='TTL' ----外部帶入寫死
+SELECT [Article]='TTL' ----寫死
+	,[SizeCode]='TTL' ----寫死
 	,[Order CTN]=(SELECT SUM(OrderCTN) FROM #Without_Ttl)	
 	,[CFA staggered CTN] = (SELECT SUM(CFA_StaggeredCTN) FROM #Without_Ttl)
-	,[Staggered %] = Cast( CAST( ROUND( (SELECT SUM([OriStaggered %]) / COUNT([OriStaggered %]) FROM #Without_Ttl),3) as INT ) as Varchar ) + '%'
+	,[Staggered %] = IIF((SELECT SUM(OrderCTN) FROM #Without_Ttl)	 = 0 ,'N/A' , Cast( CAST( ROUND( (SELECT  SUM(CFA_StaggeredCTN) * 1.0 / SUM(OrderCTN) FROM #Without_Ttl),3) * 100 as INT ) as Varchar ) + '%')
 	,[CLOG output]=(SELECT SUM(ClogCTN) FROM #Without_Ttl)
-	,[CLOG %] = Cast( CAST( ROUND( (SELECT SUM([OriClog %]) / COUNT([OriClog %]) FROM #Without_Ttl),3) as INT ) as Varchar ) + '%'
+	,[CLOG %] = IIF((SELECT SUM(OrderCTN) FROM #Without_Ttl) = 0 ,'N/A' ,Cast( CAST( ROUND( (SELECT SUM(ClogCTN) * 1.0 / SUM(OrderCTN) FROM #Without_Ttl),3) * 100 as INT ) as Varchar ) + '%')
 	,[OrderKey] = (SELECT MAX(OrderKey)+1 FROM #Without_Ttl)
 ORDER BY OrderKey
 
@@ -742,7 +727,6 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
             this.gridCartonSummary.Invalidate(rtHeader_c);
         }
 
-
         private void gridCartonSummary_Paint(object sender, PaintEventArgs e)
         {
             int col = 0;
@@ -800,7 +784,6 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
                 col += SizeCount; // 這個Article畫完，移動到下一個Article
             }
         }
-
 
         private void gridCartonSummary_Scroll(object sender, ScrollEventArgs e)
         {
@@ -900,6 +883,40 @@ WHERE ID='{this.CurrentMaintain["ID"]}'
 
             P31_ByRecord form = new P31_ByRecord(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["Seq"].ToString());
             form.ShowDialog();
+        }
+
+        private void btnCreateInsRecord_Click(object sender, EventArgs e)
+        {
+            P32Header obj = new P32Header()
+            {
+                OrderID = this.CurrentMaintain["ID"].ToString(),
+                Seq = this.CurrentMaintain["Seq"].ToString(),
+                PO = this.disPO.Value.ToString(),
+                Style = this.CurrentMaintain["StyleID"].ToString(),
+                Brand = this.disBrand.Value.ToString(),
+                Season = MyUtility.GetValue.Lookup($@"
+SELECT  SeasonID
+FROM Orders 
+WHERE ID = '{this.CurrentMaintain["ID"].ToString()}'
+"),
+
+                M = MyUtility.GetValue.Lookup($@"
+SELECT  MDivisionid
+FROM Orders 
+WHERE ID = '{this.CurrentMaintain["ID"].ToString()}'
+"),
+                Factory = this.CurrentMaintain["FactoryID"].ToString(),
+                BuyerDev = this.CurrentMaintain["BuyerDelivery"].ToString(),
+                OrderQty = this.CurrentMaintain["Qty"].ToString(),
+                Dest = MyUtility.GetValue.Lookup($@"
+SELECT  Dest
+FROM Orders 
+WHERE ID = '{this.CurrentMaintain["ID"].ToString()}'
+")
+        };
+
+            Sci.Production.Quality.P32 p32 = new P32(new ToolStripMenuItem(), "1",sourceHeader: obj);
+            p32.ShowDialog(this);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Sci.Production.Class
@@ -25,7 +26,7 @@ namespace Sci.Production.Class
         {
             set
             {
-                this.TextBoxSP.Text = value;
+                this.txtSp.Text = value;
                 if (!Env.DesignTime)
                 {
                     //if (this.textBox1.Text == "" || MyUtility.Check.Empty(this.textBox1.Text))
@@ -38,27 +39,16 @@ namespace Sci.Production.Class
 
                 }
             }
-            get { return TextBoxSP.Text; }
+            get { return txtSp.Text; }
         }
         [Bindable(true)]
         public string TextBoxSeqBinding
         {
             set
             {
-                this.TextBoxSeq.Text = value;
-                if (!Env.DesignTime)
-                {
-                    //if (this.textBox1.Text == "" || MyUtility.Check.Empty(this.textBox1.Text))
-                    //{
-                    //    return;
-                    //}
-
-                    //Sci.Production.Class.Commons.UserPrg.GetName(this.TextBox1.Text, out myUsername, Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
-                    //this.DisplayBox1.Text = myUsername;
-
-                }
+                this.txtSeq.Text = value;
             }
-            get { return TextBoxSeq.Text; }
+            get { return txtSeq.Text; }
         }
 
         public Sci.Win.UI.TextBox TextBoxSP
@@ -88,68 +78,65 @@ namespace Sci.Production.Class
 
             string cmd = string.Empty;
 
-            // Seq 為空，觸發自動帶入/跳出視窗
-            if (MyUtility.Check.Empty(Seq))
-            {
 
-                cmd = $@"
+            cmd = $@"
 SELECT ID , Seq
 FROM Order_QtyShip
 WHERE ID = @ID
 ";
 
-                result = DBProxy.Current.Select(null, cmd, paras, out dt);
-                if (result)
-                {
-                    // = 1
-                    if (dt.Rows.Count == 1 & dt.Rows.Count > 0)
-                    {
-                        Seq = dt.Rows[0]["Seq"].ToString();
-                        this.txtSeq.Text = Seq;
-                        return;
-                    }
-                    // > 1
-                    else if (dt.Rows.Count > 1)
-                    {
+            result = DBProxy.Current.Select(null, cmd, paras, out dt);
 
-                        Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "ID,Seq", "15,10", OrderID, "ID,Seq");
-                        item.Width = 600;
-                        DialogResult Dresult = item.ShowDialog();
-                        if (Dresult == DialogResult.Cancel) { return; }
-
-
-                        IList<DataRow> selectedDatas = item.GetSelecteds();
-
-
-                        Seq = selectedDatas[0]["Seq"].ToString();
-                        this.txtSeq.Text = Seq;
-                        return;
-                    }
-                    // 因為 Seq 為空，因此不驗證
-                    else
-                    {
-                        //MyUtility.Msg.InfoBox("SP# not found !!");
-                        //e.Cancel = true;
-                        //return;
-                    }
-                }
-            }
-            // Seq 為空，觸發自動帶入/跳出視窗
-            else
+            if (result)
             {
-                cmd = $@"
-SELECT ID , Seq
-FROM Order_QtyShip
-WHERE ID = @ID AND Seq = @Seq
-";
-                result = DBProxy.Current.Select(null, cmd, paras, out dt);
+                // = 0
                 if (dt.Rows.Count == 0)
                 {
-                    MyUtility.Msg.InfoBox("SP# & Seq not found !!");
-                    e.Cancel = true;
-                    return;
+                    if (!MyUtility.Check.Empty(Seq))
+                    {
+                        MyUtility.Msg.InfoBox("SP# & Seq not found !!");
+                        e.Cancel = true;
+                    }
+                }
+                // > 1
+                else if (dt.Rows.Count > 1)
+                {
+
+                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "ID,Seq", "15,10", OrderID, "ID,Seq");
+                    item.Width = 600;
+                    DialogResult Dresult = item.ShowDialog();
+                    if (Dresult == DialogResult.OK)
+                    {
+                        IList<DataRow> selectedDatas = item.GetSelecteds();
+                        Seq = selectedDatas[0]["Seq"].ToString();
+                        this.txtSeq.Text = Seq;
+                    }
+                }
+                else if (dt.Rows.Count == 1)
+                {
+                    Seq = dt.Rows[0]["Seq"].ToString();
+                    this.txtSeq.Text = Seq;
                 }
             }
+            else
+            {
+                string msg = "";
+
+                foreach (var Message in result.Messages)
+                {
+                    msg += Message + "\r\n";
+                }
+
+                MyUtility.Msg.WarningBox("DB Query Error : " + msg);
+            }
+
+            // 強制把binding的Text寫到DataRow
+            //this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
+            //this.TextBoxSPBinding = this.txtSp.Text;
+            //foreach (var binding in this.DataBindings.Cast<Binding>().ToList())
+            //{
+
+            //}
         }
 
         private void txtSeq_Validating(object sender, CancelEventArgs e)
@@ -172,49 +159,7 @@ WHERE ID = @ID AND Seq = @Seq
             // OrderID 為空，不觸發自動帶入/跳出視窗
             if (MyUtility.Check.Empty(OrderID))
             {
-                /*
-                cmd = $@"
-SELECT ID , Seq
-FROM Order_QtyShip
-WHERE ID = @ID
-";
 
-                result = DBProxy.Current.Select(null, cmd, paras, out dt);
-                if (result)
-                {
-                    // = 1
-                    if (dt.Rows.Count == 1 & dt.Rows.Count > 0)
-                    {
-                        Seq = dt.Rows[0]["Seq"].ToString();
-                        this.txtSeq.Text = Seq;
-                        return;
-                    }
-                    // > 1
-                    else if (dt.Rows.Count > 1)
-                    {
-
-                        Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "ID,Seq", "15,10", OrderID, "ID,Seq");
-                        item.Width = 600;
-                        DialogResult Dresult = item.ShowDialog();
-                        if (Dresult == DialogResult.Cancel) { return; }
-
-
-                        IList<DataRow> selectedDatas = item.GetSelecteds();
-
-
-                        Seq = selectedDatas[0]["Seq"].ToString();
-                        this.txtSeq.Text = Seq;
-                        return;
-                    }
-                    // 因為 Seq 為空，因此不驗證
-                    else
-                    {
-                        //MyUtility.Msg.InfoBox("SP# not found !!");
-                        //e.Cancel = true;
-                        //return;
-                    }
-                }
-                */
             }
             // OrderID 為空，觸發自動帶入/跳出視窗
             else
@@ -229,8 +174,17 @@ WHERE ID = @ID AND Seq = @Seq
                 {
                     MyUtility.Msg.InfoBox("SP# & Seq not found !!");
                     e.Cancel = true;
-                    return;
                 }
+            }
+
+
+
+            // 強制把binding的Text寫到DataRow
+            //this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
+
+            foreach (var binding in this.DataBindings.Cast<Binding>().ToList())
+            {
+
             }
         }
 

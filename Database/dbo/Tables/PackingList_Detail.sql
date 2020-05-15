@@ -62,6 +62,7 @@
     [MDScanDate] DATE NULL, 
     [MDFailQty] INT NOT NULL DEFAULT (0), 
     [CFASelectInspDate] DATE NULL, 
+    [StaggeredCFAInspectionRecordID] VARCHAR(13) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
