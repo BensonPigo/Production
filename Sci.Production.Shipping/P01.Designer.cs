@@ -443,13 +443,11 @@
             // 
             // txtSpNo
             // 
-            this.txtSpNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSpNo.BackColor = System.Drawing.Color.White;
             this.txtSpNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OrderID", true));
-            this.txtSpNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtSpNo.IsSupportEditMode = false;
+            this.txtSpNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSpNo.Location = new System.Drawing.Point(69, 25);
             this.txtSpNo.Name = "txtSpNo";
-            this.txtSpNo.ReadOnly = true;
             this.txtSpNo.Size = new System.Drawing.Size(110, 21);
             this.txtSpNo.TabIndex = 0;
             this.txtSpNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSpNo_Validating);
@@ -1032,6 +1030,7 @@
             this.txtSRNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtSRNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SRNo", true));
             this.txtSRNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSRNo.IsSupportEditMode = false;
             this.txtSRNo.Location = new System.Drawing.Point(53, 228);
             this.txtSRNo.Name = "txtSRNo";
             this.txtSRNo.ReadOnly = true;
@@ -1065,6 +1064,7 @@
             // 
             // dateVoucherDate
             // 
+            this.dateVoucherDate.IsSupportEditMode = false;
             this.dateVoucherDate.Location = new System.Drawing.Point(431, 228);
             this.dateVoucherDate.Name = "dateVoucherDate";
             this.dateVoucherDate.ReadOnly = true;
@@ -2206,6 +2206,7 @@
             this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ActualAmountWVAT", true));
             this.numericBox1.DecimalPlaces = 2;
             this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericBox1.IsSupportEditMode = false;
             this.numericBox1.Location = new System.Drawing.Point(712, 206);
             this.numericBox1.Maximum = new decimal(new int[] {
             1316134911,

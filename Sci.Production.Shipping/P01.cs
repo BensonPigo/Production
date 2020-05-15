@@ -1114,12 +1114,6 @@ values ('{0}','Status','New','Junked','{1}','{2}','{3}',GetDate())",
                 return;
             }
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["Rate"]))
-            {
-                MyUtility.Msg.WarningBox("Exchange Rate can't empty!!");
-                return;
-            }
-
             if (MyUtility.Check.Empty(this.CurrentMaintain["Forwarder"]))
             {
                 MyUtility.Msg.WarningBox("Forwarder(N) can't empty!!");
