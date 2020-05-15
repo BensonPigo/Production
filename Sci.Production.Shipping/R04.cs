@@ -153,6 +153,7 @@ namespace Sci.Production.Shipping
 														   where ReasonTypeID = 'Delivery_OutStand' and Id = oq.OutstandingReason), '') 
 		,oq.OutstandingRemark
 from Orders o WITH (NOLOCK) 
+inner join Factory f with (nolock) on o.FactoryID = f.ID and f.IsProduceFty=1
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
 left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
