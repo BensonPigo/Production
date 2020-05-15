@@ -18,7 +18,7 @@ namespace Sci.Production.Quality
     {
         DataTable[] printData;
         private string Excelfile;
-        string sp1, sp2, uid, brand;
+        string sp1, sp2, uid, brand, refno1, refno2;
         DateTime? InspectionDate1, InspectionDate2;
         private Color green = Color.FromArgb(153, 204, 0);
         private Color blue = Color.FromArgb(101, 215, 255);
@@ -40,7 +40,8 @@ namespace Sci.Production.Quality
             sp1 = txtSPStart.Text;
             sp2 = txtSPEnd.Text;
             brand = txtbrand.Text;
-
+            refno1 = txtRefno1.Text;
+            refno2 = txtRefno2.Text;
             if (MyUtility.Check.Empty(InspectionDate1) || MyUtility.Check.Empty(InspectionDate2))
             {
                 MyUtility.Msg.WarningBox("< Inspected Date > cannot be empty!");
@@ -71,6 +72,10 @@ namespace Sci.Production.Quality
                 sqlCmdW.Append(string.Format(" and F.POID >= '{0}'", sp1));
             if (!MyUtility.Check.Empty(sp2))
                 sqlCmdW.Append(string.Format(" and F.POID <= '{0}'", sp2));
+            if (!MyUtility.Check.Empty(refno1))
+                sqlCmdW.Append(string.Format(" and p.RefNo >= '{0}'", refno1));
+            if (!MyUtility.Check.Empty(refno2))
+                sqlCmdW.Append(string.Format(" and p.RefNo <= '{0}'", refno2));
             if (!MyUtility.Check.Empty(brand))
             {
                 string str_multi = "";
