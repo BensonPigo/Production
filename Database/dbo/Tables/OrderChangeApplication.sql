@@ -55,6 +55,7 @@
  [FactoryID] VARCHAR(8) NOT NULL DEFAULT (''), 
     [TPEEditName] VARCHAR(10) NULL DEFAULT (''), 
     [TPEEditDate] DATETIME NULL, 
+    [KeepPanels] BIT NULL DEFAULT (0), 
     CONSTRAINT [PK_OrderChangeApplication] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC

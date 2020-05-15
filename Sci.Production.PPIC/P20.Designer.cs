@@ -1982,7 +1982,7 @@
             this.ChkNeedToProduction.ReadOnly = true;
             this.ChkNeedToProduction.Size = new System.Drawing.Size(230, 21);
             this.ChkNeedToProduction.TabIndex = 856;
-            this.ChkNeedToProduction.Text = "Still need to continue production";
+            this.ChkNeedToProduction.Text = "Cancel still need to continue production";
             this.ChkNeedToProduction.UseVisualStyleBackColor = true;
             // 
             // DisOrderNewQty

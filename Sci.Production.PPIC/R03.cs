@@ -273,7 +273,13 @@ with tmpOrders as (
 			, isForecast = iif(isnull(o.Category,'')='','1','')
             , [AirFreightByBrand] = IIF(o.AirFreightByBrand='1','Y','')
             , [BuyBack] = iif(exists (select 1 from Order_BuyBack where ID = o.ID), 'Y', '')
-            , o.NeedProduction
+            , [Cancelled] = case when o.junk = 1 then 
+                                 case when o.NeedProduction = 1 then 'Y' 
+                                      when o.KeepPanels = 1 then 'K'
+                                      else 'N' end
+                            else ''
+                            end
+                                
 "
             + seperCmd +
     @" from Orders o WITH (NOLOCK) 
@@ -594,7 +600,12 @@ tmpFilterZone as (
 			, isForecast = iif(isnull(o.Category,'')='','1','') 
             , [AirFreightByBrand] = IIF(o.AirFreightByBrand='1','Y','')
             , [BuyBack] = iif(exists (select 1 from Order_BuyBack where ID = o.ID), 'Y', '')
-            , o.NeedProduction
+            , [Cancelled] = case when o.junk = 1 then 
+                                 case when o.NeedProduction = 1 then 'Y' 
+                                      when o.KeepPanels = 1 then 'K'
+                                      else 'N' end
+                            else ''
+                            end
 "
             + seperCmd +
     @"from Orders o  WITH (NOLOCK) 
@@ -728,7 +739,7 @@ group by pd.OrderID, pd.OrderShipmodeSeq
 			, t.isForecast
 			, t.AirFreightByBrand
             , [BuyBack] = iif(exists (select 1 from Order_BuyBack where ID = t.ID), 'Y', '')
-            , t.NeedProduction
+            , t.Cancelled
     into #tmpFilterSeperate
     from #tmpListPoCombo t
     inner join Order_QtyShip oq WITH(NOLOCK) on t.ID = oq.Id and t.Seq = oq.Seq
@@ -892,7 +903,7 @@ select  t.*
         , [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail where id=p.ID  and FabricType='F')
         , [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail where id=p.ID  and FabricType='A')
         , CDCode.ProductionFamilyID
-		, t.NeedProduction
+		, t.Cancelled
 from #tmpFilterSeperate t
 left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
@@ -1609,7 +1620,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                 objArray[intRowsStart, 14] = MyUtility.Check.Empty(dr["isForecast"]) ? string.Empty : dr["BuyMonth"];
                 objArray[intRowsStart, 15] = dr["BuyBack"];
                 objArray[intRowsStart, 16] = MyUtility.Convert.GetString(dr["Junk"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-                objArray[intRowsStart, 17] = MyUtility.Convert.GetString(dr["NeedProduction"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+                objArray[intRowsStart, 17] = dr["Cancelled"];
                 objArray[intRowsStart, 18] = dr["DestAlias"];
                 objArray[intRowsStart, 19] = dr["StyleID"];
                 objArray[intRowsStart, 20] = dr["StyleName"];

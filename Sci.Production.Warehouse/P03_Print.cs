@@ -67,18 +67,19 @@ namespace Sci.Production.Warehouse
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-           
+
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             //string xlt;
             DualResult result;
+            string sqlcmd = string.Empty;
             if (this.radioPanel1.Value == this.radioMaterialStatus.Value)
             {
                 //xlt = @"Warehouse_P03_Print-1.xltx";
                 //PO_Supp_tmp為了Chinese Abb Fabric_Supp 的suppID如果找不到，請找 PO_Supp_Detail.SCIRefno seq1最小的且suppID在 Fabric_Supp是有資料的那筆
-                result= DBProxy.Current.Select("", @"with PO_Supp_tmp as (
+                sqlcmd = @"with PO_Supp_tmp as (
                                                      select aa.*,bb.AbbCH from 
                                                      (select a.ID,a.SCIRefno,FIRST_VALUE(b.SuppID) OVER (partition by a.SCIRefno ORDER BY b.SEQ1 ) SuppID ,a.SEQ1 ,a.SEQ2
                                                      from dbo.PO_Supp_Detail a WITH (NOLOCK) 
@@ -100,21 +101,7 @@ namespace Sci.Production.Warehouse
                                                    ,dbo.getMtlDesc(a.id,a.SEQ1,a.SEQ2,2,0) [Description]
 			                                       ,iif(e.AbbCH is null, j.AbbCH, e.AbbCH) [Chinese Abb]
 			                                       --,f.HsCode [HS Code]
-                                                    ,[HS Code]= IIF(  --Export.ECFA 和 Fabric_Supp.IsECFA 都true 才是ECFA訂單
-                                                        (
-	                                                        SELECT TOP 1 et.ECFA FROM Export et
-	                                                        INNER JOIN Export_Detail g WITH (NOLOCK)  ON et.ID= g.id
-	                                                        WHERE g.PoID = a.id
-	                                                        AND g.SEQ1 = a.seq1
-	                                                        AND g.SEQ2 =a.seq2
-                                                        ) =1
-                                                        AND e.IsECFA=1
-                                                        ,f.HScode   --是ECFA，抓Fabric_HsCode.HScode
-                                                        ,(          
-                                                            --不是ECFA，還要判斷該Fabric_Supp有沒有HSType2，有的話抓 HSCodeT2，沒有則抓HScode
-	                                                        IIF ( NOT EXISTS(SELECT 1 FROM Fabric_HsCode WHERE SCIRefno=f.SCIRefno AND SuppID=f.SuppID  AND Year=f.Year AND HsType=2),f.HScode,f.HSCodeT2 )
-													    )
-                                                    )
+                                                    ,[HS Code]= FabricHsCode.value
 			                                       ,case a.FabricType 
 			                                             when 'F' then 'Fabric'
 			                                             when 'A'then 'Accessory'
@@ -161,10 +148,25 @@ namespace Sci.Production.Warehouse
 			                                left join dbo.PO_Supp c WITH (NOLOCK) on c.id=a.id and c.SEQ1=a.SEQ1
 			                                left join dbo.supp d WITH (NOLOCK) on d.id=c.SuppID
 			                                left join dbo.Fabric_Supp e WITH (NOLOCK) on e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID
-			                                left join dbo.Fabric_HsCode f WITH (NOLOCK) on f.SCIRefno=a.SCIRefno and f.SuppID=c.SuppID and f.Year=Year(a.eta)
 		                                    left join dbo.supp h WITH (NOLOCK) on h.id=c.SuppID
 			                                left join dbo.MDivisionPoDetail i WITH (NOLOCK) on i.POID=a.ID and a.SEQ1=i.Seq1 and a.SEQ2=i.Seq2
                                             left join PO_Supp_tmp j on a.ID = j.ID and a.SEQ1 = j.SEQ1 and a.SEQ2 = j.SEQ2
+	                                        outer apply(
+												  select top 1 [value] =IIF(
+														(
+															SELECT et.ECFA FROM Export et
+															INNER JOIN Export_Detail g WITH (NOLOCK)  ON et.ID= g.id
+															WHERE g.PoID = a.id
+															AND g.SEQ1 = a.seq1
+															AND g.SEQ2 =a.seq2
+														) =1
+														 AND e.IsECFA=1
+														,f.HScode--是ECFA
+														, ---不是ECFA
+															IIF ( NOT EXISTS(SELECT 1 FROM Fabric_HsCode WHERE SCIRefno=f.SCIRefno AND SuppID=f.SuppID  AND Year=f.Year AND HsType=2),f.HScode,f.HSCodeT2 ))
+												  from Fabric_HsCode f
+												  where f.SCIRefno=a.SCIRefno and f.SuppID=c.SuppID and f.year=year(a.ETA) 
+											)FabricHsCode
 			                                where a.id=@ID  
                                             union all
                                             select 
@@ -269,14 +271,11 @@ namespace Sci.Production.Warehouse
                                                 )CanINT2
 
 
-                                                DROP TABLE #tmp"
-
-                                                 , pars, out dt);			       
-          }
-          else  
-          {
-                //xlt = @"Warehouse_P03_Print-2.xltx";
-                result = DBProxy.Current.Select("", @"select * from (
+                                                DROP TABLE #tmp";
+            }
+            else
+            {
+                sqlcmd = @"select * from (
                                             select a.id [sp]
                                               ,b.StyleID [style]
                                               ,a.SEQ1+a.SEQ2 [SEQ]
@@ -288,20 +287,7 @@ namespace Sci.Production.Warehouse
                                                   Else a.FabricType
                                                   end Material_Type
                                               --,Hs_code=e.HsCode
-                                                ,[HS Code]= IIF(
-                                                    (
-	                                                    SELECT TOP 1 et.ECFA FROM Export et
-	                                                    INNER JOIN Export_Detail g WITH (NOLOCK)  ON et.ID= g.id
-	                                                    WHERE g.PoID = a.id
-	                                                    AND g.SEQ1 = a.seq1
-	                                                    AND g.SEQ2 =a.seq2
-                                                    ) =1
-                                                    AND d.IsECFA=1
-                                                    ,e.HScode--是ECFA
-                                                    ,(      ---不是ECFA
-	                                                    IIF ( NOT EXISTS(SELECT 1 FROM Fabric_HsCode WHERE SCIRefno=e.SCIRefno AND SuppID=e.SuppID  AND Year=e.Year AND HsType=2),e.HScode,e.HSCodeT2 )
-													)
-                                                )
+                                              ,[HS Code]= FabricHsCode.value
                                               ,supp=c.SuppID
                                               ,Supp_Name=f.AbbEN
                                               ,Currency=f.Currencyid
@@ -326,8 +312,23 @@ namespace Sci.Production.Warehouse
                                        left join dbo.orders b WITH (NOLOCK) on a.id=b.id
                                        left join dbo.PO_Supp c WITH (NOLOCK) on a.id=c.id and a.SEQ1=c.SEQ1
                                        left join dbo.Fabric_Supp d WITH (NOLOCK) on d.SCIRefno=a.SCIRefno and d.SuppID=c.SuppID
-                                       left join dbo.Fabric_HsCode e WITH (NOLOCK) on e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID and e.year=year(a.ETA)
                                        left join dbo.Supp f WITH (NOLOCK) on f.id=c.SuppID
+                                        outer apply(
+		                                          select top 1 [value] = IIF(
+                                                        (
+	                                                        SELECT et.ECFA FROM Export et
+	                                                        INNER JOIN Export_Detail g WITH (NOLOCK)  ON et.ID= g.id
+	                                                        WHERE g.PoID = a.id
+	                                                        AND g.SEQ1 = a.seq1
+	                                                        AND g.SEQ2 =a.seq2
+                                                        ) =1
+                                                        AND d.IsECFA=1
+                                                        ,e.HScode--是ECFA
+				                                        , ---不是ECFA
+	                                                        IIF ( NOT EXISTS(SELECT 1 FROM Fabric_HsCode WHERE SCIRefno=e.SCIRefno AND SuppID=e.SuppID  AND Year=e.Year AND HsType=2),e.HScode,e.HSCodeT2 ))
+		                                          from Fabric_HsCode e
+		                                          where e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID and e.year=year(a.ETA) 
+	                                        )FabricHsCode
                                        where a.id=@ID 
                                         union all
                                     select 
@@ -356,18 +357,18 @@ namespace Sci.Production.Warehouse
                                     	  from LocalInventory l
                                         left join LocalItem b on l.Refno=b.RefNo
                                         left join LocalSupp c on b.LocalSuppid=c.ID
-                                         where l.OrderID  = @ID    ) as a   " + junk_where + " order by a.sp,a.[SEQ]", pars, out dt);                          
-          }
-          //SaveXltReportCls xl = new SaveXltReportCls(xlt);
-          //xl.dicDatas.Add("##sp", dt);
-          //xl.Save(outpa, false);
-          return result;
+                                         where l.OrderID  = @ID    ) as a   " + junk_where + " order by a.sp,a.[SEQ]";
+            }
+            //SaveXltReportCls xl = new SaveXltReportCls(xlt);
+            //xl.dicDatas.Add("##sp", dt);
+            //xl.Save(outpa, false);
+
+            result = DBProxy.Current.Select("", sqlcmd, pars, out dt);
+            return result;
         }
 
         protected override bool OnToExcel(ReportDefinition report)
         {
-          
-
             if (dt.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");

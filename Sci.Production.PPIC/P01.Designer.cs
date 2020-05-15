@@ -300,6 +300,7 @@
             this.chkOnSiteSample = new Sci.Win.UI.CheckBox();
             this.chkBuyBack = new Sci.Win.UI.CheckBox();
             this.chkNeedProduction = new Sci.Win.UI.CheckBox();
+            this.chkKeepPanels = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -316,6 +317,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkKeepPanels);
             this.detailcont.Controls.Add(this.chkNeedProduction);
             this.detailcont.Controls.Add(this.chkOnSiteSample);
             this.detailcont.Controls.Add(this.labBBSP);
@@ -2060,7 +2062,7 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Location = new System.Drawing.Point(275, 166);
+            this.labelDescription.Location = new System.Drawing.Point(179, 166);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(67, 21);
             this.labelDescription.TabIndex = 22;
@@ -2090,7 +2092,7 @@
             // 
             this.displayDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayDescription.Location = new System.Drawing.Point(346, 166);
+            this.displayDescription.Location = new System.Drawing.Point(250, 166);
             this.displayDescription.Name = "displayDescription";
             this.displayDescription.Size = new System.Drawing.Size(294, 21);
             this.displayDescription.TabIndex = 24;
@@ -3336,13 +3338,27 @@
             this.chkNeedProduction.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NeedProduction", true));
             this.chkNeedProduction.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkNeedProduction.IsSupportEditMode = false;
-            this.chkNeedProduction.Location = new System.Drawing.Point(647, 166);
+            this.chkNeedProduction.Location = new System.Drawing.Point(551, 166);
             this.chkNeedProduction.Name = "chkNeedProduction";
             this.chkNeedProduction.ReadOnly = true;
-            this.chkNeedProduction.Size = new System.Drawing.Size(201, 19);
+            this.chkNeedProduction.Size = new System.Drawing.Size(240, 19);
             this.chkNeedProduction.TabIndex = 16;
-            this.chkNeedProduction.Text = "Still need to continue production";
+            this.chkNeedProduction.Text = "Cancel still need to continue production";
             this.chkNeedProduction.UseVisualStyleBackColor = true;
+            // 
+            // chkKeepPanels
+            // 
+            this.chkKeepPanels.AutoSize = true;
+            this.chkKeepPanels.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "KeepPanels", true));
+            this.chkKeepPanels.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkKeepPanels.IsSupportEditMode = false;
+            this.chkKeepPanels.Location = new System.Drawing.Point(793, 166);
+            this.chkKeepPanels.Name = "chkKeepPanels";
+            this.chkKeepPanels.ReadOnly = true;
+            this.chkKeepPanels.Size = new System.Drawing.Size(193, 19);
+            this.chkKeepPanels.TabIndex = 236;
+            this.chkKeepPanels.Text = "Keep Panel without production";
+            this.chkKeepPanels.UseVisualStyleBackColor = true;
             // 
             // P01
             // 
@@ -3647,5 +3663,6 @@
         private Win.UI.CheckBox chkOnSiteSample;
         private Win.UI.CheckBox chkBuyBack;
         private Win.UI.CheckBox chkNeedProduction;
+        private Win.UI.CheckBox chkKeepPanels;
     }
 }
