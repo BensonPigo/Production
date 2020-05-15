@@ -85,7 +85,7 @@ namespace Sci.Production.Shipping
                 this.btnAirPPList.ForeColor = System.Drawing.Color.Black;
             }
 
-            DataTable orderData;
+            DataTable dt;
             DualResult result = DBProxy.Current.Select(
                 null,
                 string.Format(
@@ -96,9 +96,9 @@ left join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
 where o.Id = '{0}'",
                     MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]),
                     MyUtility.Convert.GetString(this.CurrentMaintain["OrderShipmodeSeq"])),
-                out orderData);
+                out dt);
 
-            if (!result || orderData.Rows.Count == 0)
+            if (!result || dt.Rows.Count == 0)
             {
                 if (!result)
                 {
@@ -116,14 +116,41 @@ where o.Id = '{0}'",
             }
             else
             {
-                this.displayStyleNo.Value = MyUtility.Convert.GetString(orderData.Rows[0]["StyleID"]);
-                this.displayBrand.Value = MyUtility.Convert.GetString(orderData.Rows[0]["BrandID"]);
-                this.displayDescription.Value = MyUtility.Convert.GetString(orderData.Rows[0]["Description"]);
-                this.displayFactory.Value = MyUtility.Convert.GetString(orderData.Rows[0]["FactoryID"]);
-                this.displayShipMode.Value = MyUtility.Convert.GetString(orderData.Rows[0]["ShipmodeID"]);
-                this.numOrderQty.Value = MyUtility.Convert.GetInt(orderData.Rows[0]["Qty"]);
-                this.dateBuyerDelivery.Value = MyUtility.Convert.GetDate(orderData.Rows[0]["BuyerDelivery"]);
-                this.txtCountryDestination.TextBox1.Text = MyUtility.Convert.GetString(orderData.Rows[0]["Dest"]);
+                this.displayStyleNo.Value = MyUtility.Convert.GetString(dt.Rows[0]["StyleID"]);
+                this.displayBrand.Value = MyUtility.Convert.GetString(dt.Rows[0]["BrandID"]);
+                this.displayDescription.Value = MyUtility.Convert.GetString(dt.Rows[0]["Description"]);
+                this.displayFactory.Value = MyUtility.Convert.GetString(dt.Rows[0]["FactoryID"]);
+                this.displayShipMode.Value = MyUtility.Convert.GetString(dt.Rows[0]["ShipmodeID"]);
+                this.numOrderQty.Value = MyUtility.Convert.GetInt(dt.Rows[0]["Qty"]);
+                this.dateBuyerDelivery.Value = MyUtility.Convert.GetDate(dt.Rows[0]["BuyerDelivery"]);
+                this.txtCountryDestination.TextBox1.Text = MyUtility.Convert.GetString(dt.Rows[0]["Dest"]);
+            }
+
+            dt.Clear();
+            result = DBProxy.Current.Select(
+                null,
+                string.Format(
+                    @"select * from View_AirPP app where app.Id = '{0}'",
+                    MyUtility.Convert.GetString(this.CurrentMaintain["ID"])),
+                out dt);
+            if (!result || dt.Rows.Count == 0)
+            {
+                if (!result)
+                {
+                    MyUtility.Msg.ErrorBox("Query order fail.\r\n" + result.ToString());
+                }
+
+                this.displayVoucher.Value = string.Empty;
+                this.dateVoucherDate.Text = string.Empty;
+                this.numActAmt.Text = "0";
+                this.numExchangeRate.Text = "0";
+            }
+            else
+            {
+                this.displayVoucher.Value = MyUtility.Convert.GetString(dt.Rows[0]["VoucherID"]);
+                this.dateVoucherDate.Text = MyUtility.Convert.GetDate(dt.Rows[0]["VoucherDate"]).HasValue ? MyUtility.Convert.GetDate(dt.Rows[0]["VoucherDate"]).Value.ToString("yyyy/MM/dd") : string.Empty;
+                this.numActAmt.Text = MyUtility.Convert.GetString(dt.Rows[0]["ActAmtUSD"]);
+                this.numExchangeRate.Text = MyUtility.Convert.GetString(dt.Rows[0]["APPExchageRate"]);
             }
 
             this.displayResponsibilityJustifcation.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Air_Prepaid_Reason' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ReasonID"])));
@@ -257,7 +284,7 @@ where o.Id = '{0}'",
             this.txtfactory.ReadOnly = true;
             this.txtUserPPICmgr.TextBox1.ReadOnly = true;
             this.txtUserFactorymgr.TextBox1.ReadOnly = true;
-            this.datePayDate.ReadOnly = true;
+            this.dateVoucherDate.ReadOnly = true;
 
             this.numSCIRatio.ReadOnly = true;
             this.numSupplierRatio.ReadOnly = true;
@@ -487,7 +514,7 @@ values ('{0}','Status','','New','{1}',GETDATE())",
             worksheet.Cells[12, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["VW"]);
             worksheet.Cells[12, 4] = MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder2"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder2"])));
             worksheet.Cells[12, 6] = MyUtility.Convert.GetString(this.CurrentMaintain["Quotation2"]) + "/KG";
-            worksheet.Cells[13, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["Rate"]);
+            worksheet.Cells[13, 2] = this.numExchangeRate.Value;
             worksheet.Cells[13, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["EstAmount"]);
             worksheet.Cells[13, 8] = MyUtility.Convert.GetString(this.CurrentMaintain["ActualAmountWVAT"]);
             worksheet.Cells[14, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["ReasonID"]) + "." + this.displayResponsibilityJustifcation.Value;
@@ -1084,12 +1111,6 @@ values ('{0}','Status','New','Junked','{1}','{2}','{3}',GetDate())",
             if (MyUtility.Check.Empty(this.CurrentMaintain["VW"]))
             {
                 MyUtility.Msg.WarningBox("V.Weight(Kgs) can't empty!!");
-                return;
-            }
-
-            if (MyUtility.Check.Empty(this.CurrentMaintain["Rate"]))
-            {
-                MyUtility.Msg.WarningBox("Exchange Rate can't empty!!");
                 return;
             }
 
