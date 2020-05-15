@@ -54,6 +54,7 @@ namespace Sci.Production.PPIC
                 this.ReloadDatas();
             };
 
+            this.btnBatchReCalculateResponsibilityDeptAmt.Enabled = this.Perm.Edit;
             this.btnBatch.Enabled = this.Perm.Confirm;
             // GridReplacement 欄位設定
             this.Helper.Controls.Grid.Generator(this.gridReplacement)
@@ -66,8 +67,10 @@ namespace Sci.Production.PPIC
           .Numeric("FinalNeededQty", header: "Final Needed Qty", width: Widths.AnsiChars(10), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
           .Numeric("PoQty", header: "P/O Q’ty", width: Widths.AnsiChars(10), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
           .Numeric("PoFoc", header: "P/O FOC", width: Widths.AnsiChars(10), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
+          .Numeric("POAmt", header: "P/O Amount(USD)", width: Widths.AnsiChars(10), integer_places: 12, decimal_places: 4, iseditingreadonly: true)
           .Numeric("ShipQty", header: "Ship Q’ty", width: Widths.AnsiChars(10), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
           .Numeric("ShipFoc", header: "Ship FOC", width: Widths.AnsiChars(10), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
+          .Numeric("ShipAmt", header: "Ship Amt(USD)", width: Widths.AnsiChars(10), integer_places: 12, decimal_places: 4, iseditingreadonly: true)
           .CheckBox("Complete", header: "Complete", width: Widths.AnsiChars(10), iseditable: false)
           .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true)
           ;
@@ -78,11 +81,18 @@ namespace Sci.Production.PPIC
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
-                @"select rd.*,(rd.Seq1 + ' ' +rd.Seq2) as Seq, f.Description, [dbo].[getMtlDesc](r.POID,rd.Seq1,rd.Seq2,2,0) as DescriptionDetail,
-isnull((select top(1) ExportId from Receiving WITH (NOLOCK) where InvNo = rd.INVNo),'') as ExportID
+                @"
+select rd.*,(rd.Seq1 + ' ' +rd.Seq2) as Seq, f.Description, [dbo].[getMtlDesc](r.POID,rd.Seq1,rd.Seq2,2,0) as DescriptionDetail,
+    isnull((select top(1) ExportId from Receiving WITH (NOLOCK) where InvNo = rd.INVNo),'') as ExportID,
+    EstReplacementAMT = case when rd.Junk =1 then 0
+						else rd.EstInQty * isnull((select RateValue from Unit_Rate where UnitFrom = rd.ReplacementUnit and UnitTo = psd.POUnit),1) *
+						psd.Price * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',r.CDate),1)
+						end
 from ReplacementReport r WITH (NOLOCK) 
 inner join ReplacementReport_Detail rd WITH (NOLOCK) on rd.ID = r.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = r.POID and psd.SEQ1 = rd.Seq1 and psd.SEQ2 = rd.Seq2
+left join PO_Supp ps WITH (NOLOCK) on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
+left join Supp WITH (NOLOCK) on Supp.ID = ps.SuppID
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 where r.ID = '{0}'
 order by rd.Seq1,rd.Seq2", masterID);
@@ -113,6 +123,7 @@ order by rd.Seq1,rd.Seq2", masterID);
             this.displayConfirmby.Value = MyUtility.Check.Empty(this.CurrentMaintain["TPECFMDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["TPECFMDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
             this.displayTPELastEditDate.Value = MyUtility.Check.Empty(this.CurrentMaintain["TPEEditDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["TPEEditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             this.label8.Visible = !MyUtility.Check.Empty(this.CurrentMaintain["RespDeptConfirmDate"]);
+            this.numTtlEstAmt.Value = MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("sum(EstReplacementAMT)", string.Empty));
             this.numTotalUS.Value =
                 MyUtility.Convert.GetDecimal(this.CurrentMaintain["RMtlAmt"]) +
                 MyUtility.Convert.GetDecimal(this.CurrentMaintain["ActFreight"]) +
@@ -166,8 +177,10 @@ select
 ,[FinalNeededQty] = psd.Qty
 ,[PoQty] = psd.Qty
 ,[PoFoc] = psd.FOC
+,[POAmt] = psd.POAmt
 ,[ShipQty] = psd.ShipQty
 ,[ShipFoc] = psd.ShipFOC
+,[ShipAmt] = psd.ShipAmt
 ,[Complete] = psd.Complete
 ,[Remark] = psd.Remark
 from ReplacementReport_Detail rd
@@ -200,6 +213,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
         protected override void OnDetailGridSetup()
         {
             DataGridViewGeneratorNumericColumnSettings estinqty = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings estReplacementAMT = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings actinqty = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings agraderequest = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings bgraderequest = new DataGridViewGeneratorNumericColumnSettings();
@@ -210,6 +224,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
 
             desc.CharacterCasing = CharacterCasing.Normal;
             estinqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
+            estReplacementAMT.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             actinqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             agraderequest.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             bgraderequest.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
@@ -228,6 +243,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
             .Text("ColorID", header: "Color Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("EstInQty", header: "Est. Rced\r\nQ'ty", decimal_places: 2, width: Widths.AnsiChars(7), settings: estinqty, iseditingreadonly: true)
             .Numeric("ActInQty", header: "Actual Rced\r\nQ'ty", decimal_places: 2, width: Widths.AnsiChars(7), settings: actinqty, iseditingreadonly: true)
+            .Numeric("EstReplacementAMT", header: "Est. Replacement\r\nAMT", decimal_places: 2, width: Widths.AnsiChars(7), settings: estReplacementAMT, iseditingreadonly: true)
             .Numeric("AGradeRequest", header: "Inspected Qty", decimal_places: 2, width: Widths.AnsiChars(7), settings: agraderequest, iseditingreadonly: true)
             .Numeric("BGradeRequest", header: "Defect Qty", decimal_places: 2, width: Widths.AnsiChars(7), settings: bgraderequest, iseditingreadonly: true)
             .Numeric("NarrowRequest", header: "1st Estimate Qty", decimal_places: 2, width: Widths.AnsiChars(7), settings: narrowrequest, iseditingreadonly: true)
@@ -950,6 +966,14 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
         private void BtnBatch_Click(object sender, EventArgs e)
         {
             var frm = new P08_BatchConfirmRespDept("A");
+            frm.ShowDialog(this);
+            frm.Dispose();
+            this.ReloadDatas();
+        }
+
+        private void BtnBatchReCalculateResponsibilityDeptAmt_Click(object sender, EventArgs e)
+        {
+            var frm = new P08_BatchConfirmRespDept("A", true);
             frm.ShowDialog(this);
             frm.Dispose();
             this.ReloadDatas();

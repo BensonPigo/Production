@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelID = new Sci.Win.UI.Label();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelPOSMR = new Sci.Win.UI.Label();
@@ -89,6 +89,9 @@
             this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
             this.label10 = new Sci.Win.UI.Label();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
+            this.label11 = new Sci.Win.UI.Label();
+            this.numTtlEstAmt = new Sci.Win.UI.NumericBox();
+            this.btnBatchReCalculateResponsibilityDeptAmt = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -106,6 +109,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.numTtlEstAmt);
+            this.masterpanel.Controls.Add(this.label11);
             this.masterpanel.Controls.Add(this.displayBox1);
             this.masterpanel.Controls.Add(this.label10);
             this.masterpanel.Controls.Add(this.txtdropdownlist1);
@@ -225,6 +230,8 @@
             this.masterpanel.Controls.SetChildIndex(this.txtdropdownlist1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label10, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label11, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTtlEstAmt, 0);
             // 
             // detailpanel
             // 
@@ -594,7 +601,7 @@
             this.numRMTlUS.DecimalPlaces = 2;
             this.numRMTlUS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numRMTlUS.IsSupportEditMode = false;
-            this.numRMTlUS.Location = new System.Drawing.Point(123, 245);
+            this.numRMTlUS.Location = new System.Drawing.Point(124, 273);
             this.numRMTlUS.Name = "numRMTlUS";
             this.numRMTlUS.NullValue = new decimal(new int[] {
             0,
@@ -612,7 +619,7 @@
             // 
             // labEstFreight
             // 
-            this.labEstFreight.Location = new System.Drawing.Point(5, 245);
+            this.labEstFreight.Location = new System.Drawing.Point(5, 273);
             this.labEstFreight.Name = "labEstFreight";
             this.labEstFreight.Size = new System.Drawing.Size(115, 23);
             this.labEstFreight.TabIndex = 150;
@@ -625,7 +632,7 @@
             this.numSurchargeAmt.DecimalPlaces = 2;
             this.numSurchargeAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numSurchargeAmt.IsSupportEditMode = false;
-            this.numSurchargeAmt.Location = new System.Drawing.Point(123, 271);
+            this.numSurchargeAmt.Location = new System.Drawing.Point(357, 273);
             this.numSurchargeAmt.Name = "numSurchargeAmt";
             this.numSurchargeAmt.NullValue = new decimal(new int[] {
             0,
@@ -643,9 +650,9 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(5, 271);
+            this.label2.Location = new System.Drawing.Point(252, 273);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(115, 23);
+            this.label2.Size = new System.Drawing.Size(102, 23);
             this.label2.TabIndex = 152;
             this.label2.Text = "Surcharge US$";
             // 
@@ -656,7 +663,7 @@
             this.numTotalUS.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
             this.numTotalUS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotalUS.IsSupportEditMode = false;
-            this.numTotalUS.Location = new System.Drawing.Point(316, 271);
+            this.numTotalUS.Location = new System.Drawing.Point(536, 274);
             this.numTotalUS.Name = "numTotalUS";
             this.numTotalUS.NullValue = new decimal(new int[] {
             0,
@@ -675,9 +682,9 @@
             // label3
             // 
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label3.Location = new System.Drawing.Point(198, 271);
+            this.label3.Location = new System.Drawing.Point(432, 274);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(115, 23);
+            this.label3.Size = new System.Drawing.Size(101, 23);
             this.label3.TabIndex = 156;
             this.label3.Text = "Total US$";
             // 
@@ -688,7 +695,7 @@
             this.numActFreight.DecimalPlaces = 2;
             this.numActFreight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numActFreight.IsSupportEditMode = false;
-            this.numActFreight.Location = new System.Drawing.Point(316, 245);
+            this.numActFreight.Location = new System.Drawing.Point(357, 245);
             this.numActFreight.Name = "numActFreight";
             this.numActFreight.NullValue = new decimal(new int[] {
             0,
@@ -706,9 +713,9 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(198, 245);
+            this.label4.Location = new System.Drawing.Point(252, 245);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(115, 23);
+            this.label4.Size = new System.Drawing.Size(102, 23);
             this.label4.TabIndex = 154;
             this.label4.Text = "Act Freight US$";
             // 
@@ -719,7 +726,7 @@
             this.numEstFreight.DecimalPlaces = 2;
             this.numEstFreight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numEstFreight.IsSupportEditMode = false;
-            this.numEstFreight.Location = new System.Drawing.Point(509, 246);
+            this.numEstFreight.Location = new System.Drawing.Point(536, 246);
             this.numEstFreight.Name = "numEstFreight";
             this.numEstFreight.NullValue = new decimal(new int[] {
             0,
@@ -737,9 +744,9 @@
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(391, 246);
+            this.label5.Location = new System.Drawing.Point(432, 246);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(115, 23);
+            this.label5.Size = new System.Drawing.Size(101, 23);
             this.label5.TabIndex = 158;
             this.label5.Text = "Est Freight US$";
             // 
@@ -748,7 +755,7 @@
             this.txtVoucher.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtVoucher.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "VoucherID", true));
             this.txtVoucher.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtVoucher.Location = new System.Drawing.Point(686, 248);
+            this.txtVoucher.Location = new System.Drawing.Point(704, 247);
             this.txtVoucher.Name = "txtVoucher";
             this.txtVoucher.ReadOnly = true;
             this.txtVoucher.Size = new System.Drawing.Size(141, 23);
@@ -756,17 +763,17 @@
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(584, 274);
+            this.label6.Location = new System.Drawing.Point(611, 274);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(99, 23);
+            this.label6.Size = new System.Drawing.Size(90, 23);
             this.label6.TabIndex = 161;
             this.label6.Text = "Voucher Date";
             // 
             // label16
             // 
-            this.label16.Location = new System.Drawing.Point(584, 246);
+            this.label16.Location = new System.Drawing.Point(611, 246);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(99, 23);
+            this.label16.Size = new System.Drawing.Size(90, 23);
             this.label16.TabIndex = 160;
             this.label16.Text = "Voucher No.";
             // 
@@ -775,7 +782,7 @@
             this.dateVoucherDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "VoucherDate", true));
             this.dateVoucherDate.IsSupportCalendar = false;
             this.dateVoucherDate.IsSupportEditMode = false;
-            this.dateVoucherDate.Location = new System.Drawing.Point(686, 274);
+            this.dateVoucherDate.Location = new System.Drawing.Point(704, 273);
             this.dateVoucherDate.Name = "dateVoucherDate";
             this.dateVoucherDate.ReadOnly = true;
             this.dateVoucherDate.Size = new System.Drawing.Size(110, 23);
@@ -797,14 +804,14 @@
             this.gridReplacement.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridReplacement.Location = new System.Drawing.Point(3, 6);
             this.gridReplacement.Name = "gridReplacement";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReplacement.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridReplacement.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridReplacement.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridReplacement.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReplacement.RowTemplate.Height = 24;
@@ -962,11 +969,53 @@
             this.displayBox1.Size = new System.Drawing.Size(190, 23);
             this.displayBox1.TabIndex = 170;
             // 
+            // label11
+            // 
+            this.label11.Location = new System.Drawing.Point(5, 246);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(168, 23);
+            this.label11.TabIndex = 171;
+            this.label11.Text = "Ttl Est. Replacement AMT";
+            // 
+            // numTtlEstAmt
+            // 
+            this.numTtlEstAmt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTtlEstAmt.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RMtlAmt", true));
+            this.numTtlEstAmt.DecimalPlaces = 2;
+            this.numTtlEstAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTtlEstAmt.IsSupportEditMode = false;
+            this.numTtlEstAmt.Location = new System.Drawing.Point(176, 247);
+            this.numTtlEstAmt.Name = "numTtlEstAmt";
+            this.numTtlEstAmt.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTtlEstAmt.ReadOnly = true;
+            this.numTtlEstAmt.Size = new System.Drawing.Size(72, 23);
+            this.numTtlEstAmt.TabIndex = 172;
+            this.numTtlEstAmt.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // btnBatchReCalculateResponsibilityDeptAmt
+            // 
+            this.btnBatchReCalculateResponsibilityDeptAmt.Location = new System.Drawing.Point(361, 26);
+            this.btnBatchReCalculateResponsibilityDeptAmt.Name = "btnBatchReCalculateResponsibilityDeptAmt";
+            this.btnBatchReCalculateResponsibilityDeptAmt.Size = new System.Drawing.Size(268, 30);
+            this.btnBatchReCalculateResponsibilityDeptAmt.TabIndex = 5;
+            this.btnBatchReCalculateResponsibilityDeptAmt.Text = "Batch Re-Calculate Responsibility Dept. Amt";
+            this.btnBatchReCalculateResponsibilityDeptAmt.UseVisualStyleBackColor = true;
+            this.btnBatchReCalculateResponsibilityDeptAmt.Click += new System.EventHandler(this.BtnBatchReCalculateResponsibilityDeptAmt_Click);
+            // 
             // P08
             // 
             this.ApvChkValue = "Checked";
             this.CheckChkValue = "New";
             this.ClientSize = new System.Drawing.Size(984, 649);
+            this.Controls.Add(this.btnBatchReCalculateResponsibilityDeptAmt);
             this.Controls.Add(this.btnBatch);
             this.DefaultControl = "txtSPNo";
             this.DefaultControlForEdit = "txtSPNo";
@@ -992,6 +1041,7 @@
             this.FormLoaded += new System.EventHandler(this.P08_FormLoaded);
             this.Controls.SetChildIndex(this.tabs, 0);
             this.Controls.SetChildIndex(this.btnBatch, 0);
+            this.Controls.SetChildIndex(this.btnBatchReCalculateResponsibilityDeptAmt, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
@@ -1074,5 +1124,8 @@
         private Class.txtdropdownlist txtdropdownlist1;
         private Win.UI.Label label9;
         private Win.UI.DisplayBox displayBox1;
+        private Win.UI.NumericBox numTtlEstAmt;
+        private Win.UI.Label label11;
+        private Win.UI.Button btnBatchReCalculateResponsibilityDeptAmt;
     }
 }
