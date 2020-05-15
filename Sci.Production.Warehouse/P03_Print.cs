@@ -152,9 +152,9 @@ namespace Sci.Production.Warehouse
 			                                left join dbo.MDivisionPoDetail i WITH (NOLOCK) on i.POID=a.ID and a.SEQ1=i.Seq1 and a.SEQ2=i.Seq2
                                             left join PO_Supp_tmp j on a.ID = j.ID and a.SEQ1 = j.SEQ1 and a.SEQ2 = j.SEQ2
 	                                        outer apply(
-												  select distinct [value] =IIF(
+												  select top 1 [value] =IIF(
 														(
-															SELECT TOP 1 et.ECFA FROM Export et
+															SELECT et.ECFA FROM Export et
 															INNER JOIN Export_Detail g WITH (NOLOCK)  ON et.ID= g.id
 															WHERE g.PoID = a.id
 															AND g.SEQ1 = a.seq1
@@ -314,9 +314,9 @@ namespace Sci.Production.Warehouse
                                        left join dbo.Fabric_Supp d WITH (NOLOCK) on d.SCIRefno=a.SCIRefno and d.SuppID=c.SuppID
                                        left join dbo.Supp f WITH (NOLOCK) on f.id=c.SuppID
                                         outer apply(
-		                                          select distinct [value] = IIF(
+		                                          select top 1 [value] = IIF(
                                                         (
-	                                                        SELECT TOP 1 et.ECFA FROM Export et
+	                                                        SELECT et.ECFA FROM Export et
 	                                                        INNER JOIN Export_Detail g WITH (NOLOCK)  ON et.ID= g.id
 	                                                        WHERE g.PoID = a.id
 	                                                        AND g.SEQ1 = a.seq1
