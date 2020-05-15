@@ -1029,11 +1029,12 @@
             // 
             // txtSRNo
             // 
-            this.txtSRNo.BackColor = System.Drawing.Color.White;
+            this.txtSRNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtSRNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SRNo", true));
-            this.txtSRNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSRNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtSRNo.Location = new System.Drawing.Point(53, 228);
             this.txtSRNo.Name = "txtSRNo";
+            this.txtSRNo.ReadOnly = true;
             this.txtSRNo.Size = new System.Drawing.Size(103, 21);
             this.txtSRNo.TabIndex = 6;
             // 
@@ -2201,10 +2202,10 @@
             // 
             // numericBox1
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.White;
+            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ActualAmountWVAT", true));
             this.numericBox1.DecimalPlaces = 2;
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox1.Location = new System.Drawing.Point(712, 206);
             this.numericBox1.Maximum = new decimal(new int[] {
             1316134911,
@@ -2222,6 +2223,7 @@
             0,
             0,
             0});
+            this.numericBox1.ReadOnly = true;
             this.numericBox1.Size = new System.Drawing.Size(104, 21);
             this.numericBox1.TabIndex = 15;
             this.numericBox1.Value = new decimal(new int[] {
