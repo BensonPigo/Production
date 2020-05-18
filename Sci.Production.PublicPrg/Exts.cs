@@ -98,5 +98,21 @@ namespace Sci.Production.Prg
 
             return false;
         }
+        
+        /// <summary>
+        /// 如果資料列大於0，則會呼叫原本的CopyToDataTable，不然會用SrcTable做Clone
+        /// </summary>
+        /// <inheritdoc/>
+        public static DataTable TryCopyToDataTable(this IEnumerable<DataRow> rows, DataTable srcTableForSchema)
+        {
+            if (rows.Any())
+            {
+                return rows.CopyToDataTable();
+            }
+            else
+            {
+                return srcTableForSchema.Clone();
+            }
+        }
     }
 }
