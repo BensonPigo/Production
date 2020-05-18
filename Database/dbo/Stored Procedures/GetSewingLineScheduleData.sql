@@ -1,6 +1,4 @@
-﻿
-
-CREATE PROCEDURE [dbo].[GetSewingLineScheduleData]
+﻿CREATE PROCEDURE [dbo].[GetSewingLineScheduleData]
 	@Inline DATE = null,
 	@Offline DATE = null,
 	@Line1 varchar(10) = '',
@@ -130,7 +128,7 @@ select
 	Offline,
 	LearnCurveID,
 	Sewer,
-    OriEff,
+    max(OriEff) as OriEff,
     SewLineEff,
 	[TotalSewingTime]=iif(count(1) = 0, 0, SUM(TotalSewingTime) / count(1)),
 	AlloQty = sum(AlloQty)
@@ -143,7 +141,6 @@ group by APSNo,
 		 Offline,
 		 LearnCurveID,
 		 Sewer,
-         OriEff,
          SewLineEff
 
 --取得OrderQty by APSNo
