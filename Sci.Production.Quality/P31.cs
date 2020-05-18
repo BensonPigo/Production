@@ -105,7 +105,7 @@ and OrderShipmodeSeq='{this.CurrentMaintain["Seq"].ToString()}'
 ");
 
             this.dateLastCarton.Value = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup($@"
-            select ReceiveDate = max(pd.ReceiveDate) 
+            select ReceiveDate = MAX(pd.ReceiveDate) 
             	from Production.dbo.PackingList_Detail pd
             	where	pd.OrderID = '{this.CurrentMaintain["ID"].ToString()}'
             			and pd.OrderShipmodeSeq = '{this.CurrentMaintain["Seq"].ToString()}'
