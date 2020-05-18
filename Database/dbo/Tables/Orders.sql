@@ -163,6 +163,7 @@
     [PulloutCmplDate] DATE NULL, 
     [NeedProduction] BIT NULL DEFAULT ((0)), 
     [KeepPanels] BIT NULL DEFAULT (0), 
+    [IsBuyBack] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
