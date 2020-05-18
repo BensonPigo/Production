@@ -36,6 +36,8 @@ namespace Sci.Production.Warehouse
             string location = this.txtLocation.Text.TrimEnd();
             string fabrictype = txtdropdownlistFabricType.SelectedValue.ToString();
             string strCategory = this.comboCategory.SelectedValue.ToString();
+            string brand = this.txtbrand.Text;
+            string season = this.txtseason.Text;
 
             if (string.IsNullOrWhiteSpace(sp1)
                 && string.IsNullOrWhiteSpace(sp2)
@@ -76,6 +78,7 @@ select  0 as selected
 										when 'T' then 'SMTL' end
 		,o.OrderTypeID
 		,o.BrandID
+        ,[MCHandle] = dbo.getPass1_ExtNo(o.MCHandle)
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'O'
 inner join dbo.factory f WITH (NOLOCK) on a.FactoryID=f.id
@@ -106,6 +109,18 @@ Where   c.lock = 0
                 if (!MyUtility.Check.Empty(factory))
                 {
                     strSQLCmd.Append($"AND o.FtyGroup='{factory}'");
+                }
+
+                if (!MyUtility.Check.Empty(brand))
+                {
+                    strSQLCmd.Append(string.Format(@" 
+        and o.BrandID = '{0}' ", brand));
+                }
+
+                if (!MyUtility.Check.Empty(season))
+                {
+                    strSQLCmd.Append(string.Format(@" 
+        and o.SeasonID = '{0}' ", season));
                 }
 
                 if (!MyUtility.Check.Empty(location))
@@ -271,6 +286,7 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
                 .Text("location", header: "Location", iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Text("reasonid", header: "Reason ID", settings: ts, width: Widths.AnsiChars(6))
                 .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(20))
+                .Text("MCHandle", header: "MC Handle", iseditingreadonly: true, width: Widths.AnsiChars(20))
                 .Text("CreateStatus", header: "Create Status", iseditingreadonly: true, width: Widths.AnsiChars(50))
                ;
 
