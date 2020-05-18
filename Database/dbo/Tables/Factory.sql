@@ -45,6 +45,7 @@
     [IsOriginalFty]        BIT            DEFAULT ((0)) NULL,
     [LastDownloadAPSDate] DATETIME NULL, 
     [FtyZone] VARCHAR(8) NULL, 
+    [Foundry] BIT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Factory] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

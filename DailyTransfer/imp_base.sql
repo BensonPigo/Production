@@ -905,6 +905,7 @@ SET
 	  ,a.IsSCI        =b.IsSCI
 	  ,a.TestDocFactoryGroup = b.TestDocFactoryGroup
 	  ,a.FtyZone      =b.FtyZone
+	  ,a.Foundry	  =b.Foundry
 from Production.dbo.Factory as a inner join Trade_To_Pms.dbo.Factory as b ON a.id=b.id
 --Factory1
 --Factory_TMS
