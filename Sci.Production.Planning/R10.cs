@@ -2251,6 +2251,10 @@ namespace Sci.Production.Planning
             this.chkOrder.Visible = !this.radioProductionStatus.Checked;
             this.chkForecast.Visible = !this.radioProductionStatus.Checked;
             this.chkFty.Visible = !this.radioProductionStatus.Checked;
+            this.LbAdditional.Visible = !this.radioProductionStatus.Checked;
+            this.chkHideFoundry.Visible = !this.radioProductionStatus.Checked;
+            this.chkByCPU.Visible = !this.radioProductionStatus.Checked;
+            this.chkByBrand.Visible = !this.radioProductionStatus.Checked;
         }
 
         private enum EnuDrawColor
