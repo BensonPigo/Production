@@ -69,7 +69,7 @@ SELECT isnull(sum(b.CTNQty),0)
      AND b.OrderID = '{this.CurrentMaintain["ID"].ToString()}'
      AND (b.TransferCFADate is not null and b.CFAReceiveDate is null or b.CFAReturnClogDate is not null and b.ClogReceiveCFADate is null)
 ", null));
-            this.numCtnQtyInFactory.Value = MyUtility.Convert.GetInt(this.CurrentMaintain["TotalCTN"]) - MyUtility.Convert.GetInt(this.CurrentMaintain["FtyCTN"]) - MyUtility.Convert.GetInt(this.CurrentMaintain["DryCTN"]);
+            this.numCtnQtyInFactory.Value = MyUtility.Convert.GetInt(this.CurrentMaintain["TotalCTN"]) - MyUtility.Convert.GetInt(this.CurrentMaintain["FtyCTN"]);
             this.numttlCtnTransferred.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalCTN"]) == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["ClogCTN"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalCTN"]) * 100, 2);
 
             this.numCtnCFA.Value = MyUtility.Check.Empty(this.CurrentMaintain["CfaCTN"]) ? 0 : MyUtility.Convert.GetInt(this.CurrentMaintain["CfaCTN"]);
