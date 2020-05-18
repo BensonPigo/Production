@@ -63,7 +63,7 @@ FROM Bundle_Detail bd WITH (NOLOCK)
 INNER JOIN Bundle bdl WITH (NOLOCK)  ON bdl.id=bd.id
 INNER JOIN BundleInOut bio WITH (NOLOCK)  ON bio.BundleNo = bd.BundleNo
 INNER JOIN SubProcess s WITH (NOLOCK)  ON s.id= bio.SubProcessId
-WHERE s.ArtworkTypeId='{dr_artworkAp["artworktypeid"]}' 
+WHERE s.ArtworkTypeId='{dr_artworkAp["artworktypeid"]}' AND bio.RFIDProcessLocationID=''
 ";
                 if (!MyUtility.Check.Empty(sp_b))
                 {
