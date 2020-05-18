@@ -1,4 +1,4 @@
-﻿CREATE  PROCEDURE [dbo].[Planning_Report_R10]
+﻿CREATE PROCEDURE [dbo].[Planning_Report_R10]
 	@ReportType int = 1 --1:整個月 2:半個月	--3:Production status 不做
 	,@BrandID varchar(20) --= ''
 	,@ArtWorkType varchar(20) --= 'SEWING'
@@ -89,7 +89,8 @@ BEGIN
 	And (@MDivisionID = '' or Factory.MDivisionID = @MDivisionID)
 	And (@Fty = '' or Factory.ID = @Fty )
 	And (@Zone = '' or Factory.Zone = @Zone)
-	
+	and Factory.IsProduceFty = 1
+
 	---------------------------------------------------------------------------------------------------------------------------------
 	--Order
 	
@@ -105,6 +106,7 @@ BEGIN
 	And Orders.Junk = 0 and Orders.Qty > 0  And Orders.Category in ('B','S') 
 	AND @HasOrders = 1
 	AND (localorder = 0 or SubconInType=2) -- PMS此處才加, 在trade的Orders是不含當地訂單 (Table:FactoryOrder)
+	and Factory.IsProduceFty = 1
 	
 	Select Orders.ID
 	, rtrim(iif(Factory.FactorySort = '999', Factory.KpiCode, Factory.ID)) as FactoryID
@@ -161,7 +163,8 @@ BEGIN
 	AND @HasFtyLocalOrder = 1
 	AND Orders.LocalOrder = 1 -- PMS此處才加, 當地訂單在trade是記錄在Table:FactoryOrder
 	AND Orders.IsForecast = 0
-	
+	and Factory.IsProduceFty = 1
+
 	Select FactoryOrder.ID, rtrim(FactoryOrder.FactoryID) as FactoryID
 	, iif(Factory.Type = 'S', 'Sample', Factory.MDivisionID) as MDivisionID
 	, iif(f2.Type = 'S', 'Sample', f2.MDivisionID) as MDivisionID2
@@ -243,7 +246,8 @@ BEGIN
 	AND @HasForecast = 1
 	And (localorder = 0 or SubconInType=2) -- PMS此處才加
 	AND Orders.IsForecast = 1 -- PMS此處才加, 預估單 在trade是記錄在Table:FactoryOrder
-	
+	and Factory.IsProduceFty = 1
+
 	---------------------------------------------------------------------------------------------------------------------------------
 	
 	declare @tmpFinal table (
@@ -333,7 +337,8 @@ BEGIN
 		where Type in ('B','S') and isnull(FactorySort,'') <> ''		
 		And (@MDivisionID = '' or Factory.MDivisionID = @MDivisionID)
 		And (@Fty = '' or Factory.ID = @Fty) -- PMS這才有
-		And (@Zone = '' or Factory.Zone = @Zone)		
+		And (@Zone = '' or Factory.Zone = @Zone)
+		AND Factory.IsProduceFty = 1
 		order by FactorySort
 
 		insert into #tmpFtyList1
@@ -352,6 +357,7 @@ BEGIN
 		And (@Fty = '' or Factory.ID = @Fty) -- PMS這才有
 		And (@Zone = '' or Factory.Zone = @Zone)
 		and (@HideFoundry = 0 or (@HideFoundry = 1 and Foundry = 0))
+		AND Factory.IsProduceFty = 1
 
 		if(@CalculateByBrand = 0)
 		BEGIN
@@ -394,6 +400,7 @@ BEGIN
 				inner join Factory on c.FactoryID = Factory.ID
 				inner join Country on Factory.CountryID = Country.ID
 				where c.FactoryID in (select FactoryID from #tmpFtyList1)
+				AND Factory.IsProduceFty = 1
 				GROUP BY Factory.CountryID, c.MDivisionID, tmpBrandFty, FactoryID, OrderYYMM, Country.Alias
 			) tmpC
 			left join 
@@ -475,6 +482,7 @@ BEGIN
 		And (@MDivisionID = '' or Factory.MDivisionID = @MDivisionID)
 		And (@Fty = '' or Factory.ID = @Fty) -- PMS這才有
 		And (@Zone = '' or Factory.Zone = @Zone)		
+		AND Factory.IsProduceFty = 1
 		order by FactorySort
 
 		insert into #tmpFtyList3
@@ -493,6 +501,7 @@ BEGIN
 		And (@Fty = '' or Factory.ID = @Fty) -- PMS這才有
 		And (@Zone = '' or Factory.Zone = @Zone)	
 		and (@HideFoundry = 0 or (@HideFoundry = 1 and Foundry = 0))
+		AND Factory.IsProduceFty = 1
 
 		if(@CalculateByBrand = 0)
 		BEGIN
