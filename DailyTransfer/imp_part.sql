@@ -324,7 +324,8 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 		ETA = b.ETA ,
 		Cancel = b.Cancel ,
 		Complete = b.Complete ,
-		TPEPOID = b.TradePOID
+		TPEPOID = b.TradePOID ,
+		ResponsibleFTY  = b.ResponsibleFTY 
 	from dbo.RepairPO_Detail a
 	inner join SciTrade_To_Pms_RepairReq_Detail b on a.id=b.ID and a.Seq2=b.Seq2
 
