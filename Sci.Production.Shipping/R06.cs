@@ -111,7 +111,7 @@ namespace Sci.Production.Shipping
 		sd.[Rate],
 		[Amount] = sd.[Amount] * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID, 'USD', s.CDate)),
 		sd.[Remark],
-		se.AccountID,
+		sd.AccountID,
 		an.Name
 from ShippingAP s WITH (NOLOCK)
 inner join ShippingAP_Detail sd WITH (NOLOCK) ON s.ID = sd.ID
@@ -154,14 +154,14 @@ left join SciFMS_AccountNo an on an.ID = sh.AccountID
 left join LocalSupp ls WITH (NOLOCK) on s.LocalSuppID = ls.ID
 
 OUTER APPLY(
-	SELECT se.AccountID,[AccountName]=a.Name,sd.CurrencyID,[Amount]=SUM(Amount)
+	SELECT sd.AccountID,[AccountName]=a.Name,sd.CurrencyID,[Amount]=SUM(Amount)
 	FROM ShippingAP_Detail sd
 	left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
 	left join SciFMS_AccountNO a on a.ID = se.AccountID
 	WHERE sd.ID=s.ID
 	----若ShareExpense有資料，就不必取表身加總的值
 	AND NOT EXISTS (SELECT 1 FROM ShareExpense WHERE ShippingAPID=sd.ID and Junk != 1)
-	GROUP BY se.AccountID,a.Name,sd.CurrencyID
+	GROUP BY sd.AccountID,a.Name,sd.CurrencyID
 )ShippingAP_Deatai
 
 where s.Status = 'Approved'");
@@ -203,14 +203,14 @@ left join SciFMS_AccountNo an on an.ID = sp.AccountID
 left join AirPP air WITH (NOLOCK) on sp.AirPPID = air.ID
 left join PackingList p WITH (NOLOCK) on sp.PackingListID = p.ID
 OUTER APPLY (
-	SELECT se.AccountID,[AccountName]=a.Name,sd.CurrencyID,[Amount]=SUM(Amount)
+	SELECT sd.AccountID,[AccountName]=a.Name,sd.CurrencyID,[Amount]=SUM(Amount)
 	FROM ShippingAP_Detail sd
 	left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
 	left join SciFMS_AccountNO a on a.ID = se.AccountID
 	WHERE sd.ID=s.ID
 	----若ShareExpense有資料，就不必取表身加總的值
 	AND NOT EXISTS (SELECT 1 FROM ShareExpense WHERE ShippingAPID=sd.ID and Junk != 1)
-	GROUP BY se.AccountID,a.Name,sd.CurrencyID
+	GROUP BY sd.AccountID,a.Name,sd.CurrencyID
 )ShippingAP_Deatai
 OUTER APPLY (
 	select [ShipQty] = sum(pd.ShipQty)

@@ -752,6 +752,7 @@ select   b.Orderid
         ,bd.BundleGroup
         ,bd.SizeCode
 		,b.CutRef
+		,[FabricKind] = FabricKind.val
 into #tmpBundleNo
 from Bundle b with(nolock)
 inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
@@ -761,6 +762,27 @@ cross join(
 	from SubProcess s
 	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1
 )s
+outer apply(
+	SELECT [val] = DD.id + '-' + DD.NAME 
+	FROM dropdownlist DD 
+	OUTER apply(
+			SELECT OB.kind, 
+				OCC.id, 
+				OCC.article, 
+				OCC.colorid, 
+				OCC.fabricpanelcode, 
+				OCC.patternpanel 
+			FROM order_colorcombo OCC WITH (NOLOCK)
+			INNER JOIN order_bof OB WITH (NOLOCK) ON OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
+		) LIST 
+		WHERE LIST.id = b.poid 
+		AND LIST.article = b.article 
+		AND LIST.colorid = b.colorid 
+		AND LIST.patternpanel = b.patternpanel 
+		AND LIST.fabricpanelcode = b.fabricpanelcode 
+		AND DD.[type] = 'FabricKind' 
+		AND DD.id = LIST.kind 
+)FabricKind
 
 select   Orderid
         ,BundleNo
@@ -776,6 +798,7 @@ select   Orderid
 		,CutRef
 	    ,NoBundleCardAfterSubprocess= case when SubProcessID = 'Loading' Or SubProcessID = 'SEWINGLINE' then isnull(x.NoBundleCardAfterSubprocess,0) else 0 end
 	    ,PostSewingSubProcess=0
+		,b.FabricKind
 into #tmpBundleNo_SubProcess
 from #tmpBundleNo b
 outer apply(
@@ -797,7 +820,10 @@ select   Orderid
         ,Article
         ,BundleGroup
         ,SizeCode
-		,CutRef,bda.NoBundleCardAfterSubprocess,bda.PostSewingSubProcess
+		,CutRef
+        ,bda.NoBundleCardAfterSubprocess
+        ,bda.PostSewingSubProcess
+        ,b.FabricKind
 from #tmpBundleNo b
 inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
 inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
@@ -824,6 +850,7 @@ select
 	,bio.InComing
 	,bio.OutGoing
 	,b.CutRef
+    ,b.FabricKind
 into #tmpBundleNo_Complete
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
@@ -837,6 +864,7 @@ select
     ,[Bundle#]=t.BundleNo
 	,b.Qty
 	,EXCESS=iif(IsEXCESS=1,'Y','')
+	,t.FabricKind
     ,PatternDesc
     ,Article
     ,BundleGroup
@@ -934,6 +962,7 @@ select   b.Orderid
         ,bd.BundleGroup
         ,[BD_SizeCode]=bd.SizeCode
 		,b.CutRef
+		,[FabricKind] = FabricKind.val
 into #tmpBundleNo
 from Bundle b with(nolock)
 inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID and b.Article = o.Article and b.Sizecode = o.SizeCode
@@ -943,7 +972,27 @@ cross join(
 	from SubProcess s
 	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1
 )s
-
+outer apply(
+	SELECT [val] = DD.id + '-' + DD.NAME 
+	FROM dropdownlist DD 
+	OUTER apply(
+			SELECT OB.kind, 
+				OCC.id, 
+				OCC.article, 
+				OCC.colorid, 
+				OCC.fabricpanelcode, 
+				OCC.patternpanel 
+			FROM order_colorcombo OCC WITH (NOLOCK)
+			INNER JOIN order_bof OB WITH (NOLOCK) ON OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
+		) LIST 
+		WHERE LIST.id = b.poid 
+		AND LIST.article = b.article 
+		AND LIST.colorid = b.colorid 
+		AND LIST.patternpanel = b.patternpanel 
+		AND LIST.fabricpanelcode = b.fabricpanelcode 
+		AND DD.[type] = 'FabricKind' 
+		AND DD.id = LIST.kind 
+)FabricKind
 
 select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,IsEXCESS
 	,NoBundleCardAfterSubprocess= case when SubProcessID = 'Loading' Or SubProcessID = 'SEWINGLINE' then isnull(x.NoBundleCardAfterSubprocess,0) else 0 end
@@ -952,6 +1001,7 @@ select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDe
     ,BundleGroup
     ,[BD_SizeCode]
     ,CutRef
+	,b.FabricKind
 into #tmpBundleNo_SubProcess
 from #tmpBundleNo b
 outer apply(
@@ -967,6 +1017,7 @@ select Orderid,Article,Sizecode,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutR
     ,BundleGroup
     ,[BD_SizeCode]
     ,CutRef
+	,b.FabricKind
 from #tmpBundleNo b
 inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
 inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
@@ -993,6 +1044,7 @@ select
 	,bio.InComing
 	,bio.OutGoing
 	,b.CutRef
+	,b.FabricKind
 into #tmpBundleNo_Complete
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
@@ -1006,6 +1058,7 @@ select
     ,[Bundle#]=t.BundleNo
 	,b.Qty
 	,EXCESS=iif(IsEXCESS=1,'Y','')
+	,t.FabricKind
     ,PatternDesc
     ,Article
     ,BundleGroup
@@ -1069,6 +1122,7 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("EXCESS", header: "EXCESS", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("FabricKind", header: "Fabric Kind", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("OutGoing", header: "Farm Out", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("InComing", header: "Farm In", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true)

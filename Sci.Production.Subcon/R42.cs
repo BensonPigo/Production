@@ -91,6 +91,7 @@ namespace Sci.Production.Subcon
 Select
             [Bundle#] = bt.BundleNo,
             [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
+			[FabricKind] = FabricKind.val,
             [Cut Ref#] = b.CutRef,
             [SP#] = b.Orderid,
             [Master SP#] = b.POID,
@@ -151,6 +152,27 @@ Select
 		             for xml path('')
 	             )
             ) as sub*/
+			outer apply(
+				SELECT [val] = DD.id + '-' + DD.NAME 
+				FROM dropdownlist DD 
+				OUTER apply(
+						SELECT OB.kind, 
+							OCC.id, 
+							OCC.article, 
+							OCC.colorid, 
+							OCC.fabricpanelcode, 
+							OCC.patternpanel 
+						FROM order_colorcombo OCC WITH (NOLOCK)
+						INNER JOIN order_bof OB WITH (NOLOCK) ON OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
+					) LIST 
+					WHERE LIST.id = b.poid 
+					AND LIST.article = b.article 
+					AND LIST.colorid = b.colorid 
+					AND LIST.patternpanel = b.patternpanel 
+					AND LIST.fabricpanelcode = b.fabricpanelcode 
+					AND DD.[type] = 'FabricKind' 
+					AND DD.id = LIST.kind 
+			)FabricKind
             where 1=1
             ");
                 #endregion
@@ -207,6 +229,7 @@ Select
 Select 
             [Bundle#] = bt.BundleNo,
             [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
+			[FabricKind] = FabricKind.val,
             [Cut Ref#] = b.CutRef,
             [SP#] = b.Orderid,
             [Master SP#] = b.POID,
@@ -257,6 +280,27 @@ outer apply(
     where bda.Bundleno = bt.Bundleno and bda.NoBundleCardAfterSubprocess = 1
     and bda.SubprocessId = bt.SubprocessId
 ) as nbs 
+outer apply(
+	SELECT [val] = DD.id + '-' + DD.NAME 
+	FROM dropdownlist DD 
+	OUTER apply(
+			SELECT OB.kind, 
+				OCC.id, 
+				OCC.article, 
+				OCC.colorid, 
+				OCC.fabricpanelcode, 
+				OCC.patternpanel 
+			FROM order_colorcombo OCC WITH (NOLOCK)
+			INNER JOIN order_bof OB WITH (NOLOCK) ON OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
+		) LIST 
+		WHERE LIST.id = b.poid 
+		AND LIST.article = b.article 
+		AND LIST.colorid = b.colorid 
+		AND LIST.patternpanel = b.patternpanel 
+		AND LIST.fabricpanelcode = b.fabricpanelcode 
+		AND DD.[type] = 'FabricKind' 
+		AND DD.id = LIST.kind 
+)FabricKind
 where 1=1
 ");
                 if (!MyUtility.Check.Empty(SubProcess))

@@ -261,6 +261,7 @@ Select
 	,bio.PanelNo
 	,bio.CutCellID
 	,[SpreadingNo] = wk.SpreadingNo
+	,[FabricKind] = FabricKind.val
 into #result
 from #tmp_Workorder w 
 inner join Bundle_Detail bd WITH (NOLOCK, Index(PK_Bundle_Detail)) on bd.BundleNo = w.BundleNo 
@@ -329,6 +330,27 @@ outer apply(
 		    for xml path('')
 	    ),1,1,'')
 )wk
+outer apply(
+	SELECT [val] = DD.id + '-' + DD.NAME 
+	FROM dropdownlist DD 
+	OUTER apply(
+			SELECT OB.kind, 
+				OCC.id, 
+				OCC.article, 
+				OCC.colorid, 
+				OCC.fabricpanelcode, 
+				OCC.patternpanel 
+			FROM order_colorcombo OCC WITH (NOLOCK)
+			INNER JOIN order_bof OB WITH (NOLOCK) ON OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
+		) LIST 
+		WHERE LIST.id = b.poid 
+		AND LIST.article = b.article 
+		AND LIST.colorid = b.colorid 
+		AND LIST.patternpanel = b.patternpanel 
+		AND LIST.fabricpanelcode = b.fabricpanelcode 
+		AND DD.[type] = 'FabricKind' 
+		AND DD.id = LIST.kind 
+)FabricKind
 ";
 
             sqlCmd += $@" where 1=1 {sqlWhere} ";
@@ -353,6 +375,7 @@ select
     r.[Bundleno] ,
     r.[RFIDProcessLocationID],
 	r.[EXCESS],
+	r.[FabricKind],
     r.[Cut Ref#] ,
     r.[SP#],
     r.[Master SP#],

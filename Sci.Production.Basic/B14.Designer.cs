@@ -59,6 +59,7 @@
             this.numStdLTDayb41stCutDateBaseOnSubProcess = new Sci.Win.UI.NumericBox();
             this.labelPostSewingDays = new Sci.Win.UI.Label();
             this.numericPostSewingDays = new Sci.Win.UI.NumericBox();
+            this.checkIsPrintToCMP = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -73,6 +74,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkIsPrintToCMP);
             this.detailcont.Controls.Add(this.numericPostSewingDays);
             this.detailcont.Controls.Add(this.labelPostSewingDays);
             this.detailcont.Controls.Add(this.numStdLTDayb41stCutDateBaseOnSubProcess);
@@ -114,7 +116,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(832, 455);
+            this.browse.Size = new System.Drawing.Size(832, 490);
             // 
             // tabs
             // 
@@ -294,6 +296,7 @@
             this.txtDropdownlistClassify.IsSupportUnselect = true;
             this.txtDropdownlistClassify.Location = new System.Drawing.Point(144, 70);
             this.txtDropdownlistClassify.Name = "txtDropdownlistClassify";
+            this.txtDropdownlistClassify.OldText = "";
             this.txtDropdownlistClassify.ReadOnly = true;
             this.txtDropdownlistClassify.Size = new System.Drawing.Size(121, 24);
             this.txtDropdownlistClassify.TabIndex = 3;
@@ -308,6 +311,7 @@
             this.comboInHouseOSP.IsSupportUnselect = true;
             this.comboInHouseOSP.Location = new System.Drawing.Point(144, 160);
             this.comboInHouseOSP.Name = "comboInHouseOSP";
+            this.comboInHouseOSP.OldText = "";
             this.comboInHouseOSP.Size = new System.Drawing.Size(100, 24);
             this.comboInHouseOSP.TabIndex = 6;
             // 
@@ -480,6 +484,18 @@
             0,
             0});
             // 
+            // checkIsPrintToCMP
+            // 
+            this.checkIsPrintToCMP.AutoSize = true;
+            this.checkIsPrintToCMP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsPrintToCMP", true));
+            this.checkIsPrintToCMP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkIsPrintToCMP.Location = new System.Drawing.Point(364, 190);
+            this.checkIsPrintToCMP.Name = "checkIsPrintToCMP";
+            this.checkIsPrintToCMP.Size = new System.Drawing.Size(272, 21);
+            this.checkIsPrintToCMP.TabIndex = 20;
+            this.checkIsPrintToCMP.Text = "是否在CMP Report列印 (IsPrintToCMP)";
+            this.checkIsPrintToCMP.UseVisualStyleBackColor = true;
+            // 
             // B14
             // 
             this.ClientSize = new System.Drawing.Size(840, 552);
@@ -491,6 +507,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B14";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B14. TMS & Cost Type";
             this.UniqueExpress = "ID";
             this.WorkAlias = "ArtworkType";
@@ -540,5 +557,6 @@
         private Win.UI.NumericBox numSubprocessBCSLeadTime;
         private Win.UI.NumericBox numericPostSewingDays;
         private Win.UI.Label labelPostSewingDays;
+        private Win.UI.CheckBox checkIsPrintToCMP;
     }
 }

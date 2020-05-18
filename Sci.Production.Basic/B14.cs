@@ -134,6 +134,7 @@ END
             this.checkIsPrice.ReadOnly = true;
             this.checkIsArtWork.ReadOnly = true;
             this.checkIsttlTMS.ReadOnly = true;
+            this.checkIsPrintToCMP.ReadOnly = true;
         }
 
         /// <inheritdoc/>

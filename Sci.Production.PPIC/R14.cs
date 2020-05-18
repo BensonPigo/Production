@@ -107,6 +107,7 @@ select a1.id
 ,oq.BuyerDelivery
 ,[TotalCrtns] = Packing.qty
 ,a3.RefNo
+,[Junk] = iif(o.Junk = 1, 'Y','')
 ,a1.Handle
 from AVO a1
 left join AVO_Detail a2 on a1.ID=a2.ID
@@ -159,7 +160,7 @@ where 1=1
             Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\PPIC_R14.xltx", objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
             com.WriteTable(this.dtPrint, 3);
-            worksheet.get_Range($"A3:Q{MyUtility.Convert.GetString(2 + this.dtPrint.Rows.Count)}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous; // 畫線
+            worksheet.get_Range($"A3:R{MyUtility.Convert.GetString(2 + this.dtPrint.Rows.Count)}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous; // 畫線
             com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
             objApp.Visible = true;
             objApp.Rows.AutoFit();

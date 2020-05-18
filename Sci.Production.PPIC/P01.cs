@@ -169,6 +169,8 @@ namespace Sci.Production.PPIC
             this.CurrentMaintain["ShipModeList"] = dataRow["ShipModeList"];
             this.CurrentMaintain["MCHandle"] = dataRow["MCHandle"];
             this.CurrentMaintain["LocalMR"] = dataRow["LocalMR"];
+            //this.CurrentMaintain["NeedProduction"] = dataRow["NeedProduction"];
+            //this.CurrentMaintain["KeepPanels"] = dataRow["KeepPanels"];
             this.SetStyleColumn(MyUtility.Convert.GetString(this.CurrentMaintain["StyleID"]));
         }
 
@@ -435,18 +437,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 }
             }
 
-            if (this.CurrentMaintain["LocalOrder"].ToString().ToUpper() == "TRUE" && this.CurrentMaintain["Junk"].ToString().ToUpper() == "TRUE" && this.dataType == "1" && this.EditMode)
-            {
-                this.chkNeedProduction.ReadOnly = false;
-                this.chkNeedProduction.IsSupportEditMode = true;
-            }
-            else
-            {
-                this.chkNeedProduction.ReadOnly = true;
-                this.chkNeedProduction.IsSupportEditMode = false;
-            }
-
-            GetIsDevSample();
+            this.GetIsDevSample();
         }
 
         /// <inheritdoc/>
@@ -736,9 +727,16 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
                 #region 當地訂單的Orders.SizeUnit欄位不會寫入，因此要回頭去Style.SizeUnit欄位找，然後寫入
                 updateCmd = $@"
 UPDATE o
-SET o.SizeUnit = s.SizeUnit
+SET o.SizeUnit = s.SizeUnit   
+    ,o.NeedProduction = isnull(o2.NeedProduction,0)
+    ,o.KeepPanels = isnull(o2.KeepPanels,0)
 FROM Orders o
 INNER JOIN Style s ON o.StyleID=s.ID AND o.BrandID=s.BrandID AND o.SeasonID=s.SeasonID
+outer apply(
+    select o2.NeedProduction, o2.KeepPanels
+    from Orders o2
+    where o2.ID = o.CustPONo
+)o2
 WHERE o.ID='{this.CurrentMaintain["ID"]}'
 ";
                 result = DBProxy.Current.Execute(null, updateCmd);

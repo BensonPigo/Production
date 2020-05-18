@@ -43,6 +43,10 @@
             this.labelInspectionDate = new Sci.Win.UI.Label();
             this.labelSP = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
+            this.lbRefno = new Sci.Win.UI.Label();
+            this.txtRefno1 = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtRefno2 = new Sci.Win.UI.TextBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,6 +65,10 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.txtRefno2);
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.txtRefno1);
+            this.panel1.Controls.Add(this.lbRefno);
             this.panel1.Controls.Add(this.txtmulituser);
             this.panel1.Controls.Add(this.radioSummery);
             this.panel1.Controls.Add(this.radioDetail);
@@ -76,7 +84,7 @@
             this.panel1.Controls.Add(this.labelSP);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(426, 191);
+            this.panel1.Size = new System.Drawing.Size(426, 225);
             this.panel1.TabIndex = 94;
             // 
             // txtmulituser
@@ -92,10 +100,10 @@
             // 
             this.radioSummery.AutoSize = true;
             this.radioSummery.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioSummery.Location = new System.Drawing.Point(200, 149);
+            this.radioSummery.Location = new System.Drawing.Point(200, 186);
             this.radioSummery.Name = "radioSummery";
             this.radioSummery.Size = new System.Drawing.Size(85, 21);
-            this.radioSummery.TabIndex = 6;
+            this.radioSummery.TabIndex = 8;
             this.radioSummery.Text = "Summery";
             this.radioSummery.UseVisualStyleBackColor = true;
             // 
@@ -104,17 +112,17 @@
             this.radioDetail.AutoSize = true;
             this.radioDetail.Checked = true;
             this.radioDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioDetail.Location = new System.Drawing.Point(132, 149);
+            this.radioDetail.Location = new System.Drawing.Point(132, 186);
             this.radioDetail.Name = "radioDetail";
             this.radioDetail.Size = new System.Drawing.Size(62, 21);
-            this.radioDetail.TabIndex = 5;
+            this.radioDetail.TabIndex = 7;
             this.radioDetail.TabStop = true;
             this.radioDetail.Text = "Detail";
             this.radioDetail.UseVisualStyleBackColor = true;
             // 
             // labReportType
             // 
-            this.labReportType.Location = new System.Drawing.Point(12, 149);
+            this.labReportType.Location = new System.Drawing.Point(12, 181);
             this.labReportType.Name = "labReportType";
             this.labReportType.Size = new System.Drawing.Size(105, 23);
             this.labReportType.TabIndex = 115;
@@ -224,13 +232,58 @@
             this.label10.TabIndex = 97;
             this.label10.Text = "Paper Size A4";
             // 
+            // lbRefno
+            // 
+            this.lbRefno.Location = new System.Drawing.Point(12, 147);
+            this.lbRefno.Name = "lbRefno";
+            this.lbRefno.Size = new System.Drawing.Size(105, 23);
+            this.lbRefno.TabIndex = 116;
+            this.lbRefno.Text = "Refno";
+            // 
+            // txtRefno1
+            // 
+            this.txtRefno1.BackColor = System.Drawing.Color.White;
+            this.txtRefno1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefno1.Location = new System.Drawing.Point(120, 147);
+            this.txtRefno1.MaxLength = 13;
+            this.txtRefno1.Name = "txtRefno1";
+            this.txtRefno1.Size = new System.Drawing.Size(116, 23);
+            this.txtRefno1.TabIndex = 5;
+            // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Location = new System.Drawing.Point(239, 147);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(20, 23);
+            this.label1.TabIndex = 118;
+            this.label1.Text = "～";
+            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            this.label1.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.label1.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // txtRefno2
+            // 
+            this.txtRefno2.BackColor = System.Drawing.Color.White;
+            this.txtRefno2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefno2.Location = new System.Drawing.Point(262, 147);
+            this.txtRefno2.MaxLength = 13;
+            this.txtRefno2.Name = "txtRefno2";
+            this.txtRefno2.Size = new System.Drawing.Size(116, 23);
+            this.txtRefno2.TabIndex = 6;
+            // 
             // R08
             // 
-            this.ClientSize = new System.Drawing.Size(557, 237);
+            this.ClientSize = new System.Drawing.Size(557, 279);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.panel1);
             this.Name = "R08";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R08.Fabric Inspection Daily Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
@@ -260,5 +313,9 @@
         private Win.UI.RadioButton radioDetail;
         private Win.UI.Label labReportType;
         private Class.txtmulituser txtmulituser;
+        private Win.UI.Label lbRefno;
+        private Win.UI.TextBox txtRefno2;
+        private Win.UI.Label label1;
+        private Win.UI.TextBox txtRefno1;
     }
 }

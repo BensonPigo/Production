@@ -33,8 +33,8 @@ SET
       ,a.Forwarder2	      =b.Forwarder2
       ,a.Quotation2	      =b.Quotation2
       ,a.EstAmount	      =b.EstAmount
-      ,a.ActualAmount	      =b.ActualAmount
-      ,a.Rate	      =b.Rate
+      --,a.ActualAmount	      =b.ActualAmount
+      --,a.Rate	      =b.Rate
       ,a.SRNo	      =b.SRNo
       ,a.Voucher	      =b.Voucher
       ,a.PayDate	      =b.PayDate
