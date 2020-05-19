@@ -54,6 +54,10 @@
             this.btnCancel = new Sci.Win.UI.Button();
             this.btnImport = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.lbBrand = new Sci.Win.UI.Label();
+            this.lbSeason = new Sci.Win.UI.Label();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtseason = new Sci.Production.Class.txtseason();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -67,7 +71,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 89);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(953, 331);
+            this.panel1.Size = new System.Drawing.Size(1096, 331);
             this.panel1.TabIndex = 23;
             // 
             // gridImport
@@ -91,12 +95,16 @@
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridImport.ShowCellToolTips = false;
-            this.gridImport.Size = new System.Drawing.Size(953, 331);
+            this.gridImport.Size = new System.Drawing.Size(1096, 331);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtseason);
+            this.groupBox1.Controls.Add(this.txtbrand);
+            this.groupBox1.Controls.Add(this.lbSeason);
+            this.groupBox1.Controls.Add(this.lbBrand);
             this.groupBox1.Controls.Add(this.txtfactory);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.txtdropdownlistFabricType);
@@ -115,7 +123,7 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(953, 89);
+            this.groupBox1.Size = new System.Drawing.Size(1096, 89);
             this.groupBox1.TabIndex = 21;
             this.groupBox1.TabStop = false;
             // 
@@ -128,8 +136,9 @@
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = false;
             this.txtfactory.Location = new System.Drawing.Point(431, 51);
+            this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
-            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.Size = new System.Drawing.Size(92, 23);
             this.txtfactory.TabIndex = 4;
             // 
             // label2
@@ -146,7 +155,7 @@
             this.txtdropdownlistFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtdropdownlistFabricType.FormattingEnabled = true;
             this.txtdropdownlistFabricType.IsSupportUnselect = true;
-            this.txtdropdownlistFabricType.Location = new System.Drawing.Point(675, 20);
+            this.txtdropdownlistFabricType.Location = new System.Drawing.Point(827, 20);
             this.txtdropdownlistFabricType.Name = "txtdropdownlistFabricType";
             this.txtdropdownlistFabricType.OldText = "";
             this.txtdropdownlistFabricType.Size = new System.Drawing.Size(143, 24);
@@ -159,7 +168,7 @@
             this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCategory.FormattingEnabled = true;
             this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(675, 50);
+            this.comboCategory.Location = new System.Drawing.Point(827, 50);
             this.comboCategory.Name = "comboCategory";
             this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(143, 24);
@@ -168,7 +177,7 @@
             // 
             // labCategory
             // 
-            this.labCategory.Location = new System.Drawing.Point(587, 50);
+            this.labCategory.Location = new System.Drawing.Point(739, 50);
             this.labCategory.Name = "labCategory";
             this.labCategory.Size = new System.Drawing.Size(85, 23);
             this.labCategory.TabIndex = 111;
@@ -197,7 +206,7 @@
             // 
             this.txtLocation.BackColor = System.Drawing.Color.White;
             this.txtLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocation.Location = new System.Drawing.Point(431, 19);
+            this.txtLocation.Location = new System.Drawing.Point(601, 50);
             this.txtLocation.Name = "txtLocation";
             this.txtLocation.Size = new System.Drawing.Size(132, 23);
             this.txtLocation.TabIndex = 3;
@@ -206,7 +215,7 @@
             // 
             // labelLocation
             // 
-            this.labelLocation.Location = new System.Drawing.Point(359, 19);
+            this.labelLocation.Location = new System.Drawing.Point(529, 50);
             this.labelLocation.Name = "labelLocation";
             this.labelLocation.Size = new System.Drawing.Size(69, 23);
             this.labelLocation.TabIndex = 7;
@@ -214,7 +223,7 @@
             // 
             // labelFabricType
             // 
-            this.labelFabricType.Location = new System.Drawing.Point(587, 19);
+            this.labelFabricType.Location = new System.Drawing.Point(739, 19);
             this.labelFabricType.Name = "labelFabricType";
             this.labelFabricType.Size = new System.Drawing.Size(85, 23);
             this.labelFabricType.TabIndex = 6;
@@ -241,7 +250,7 @@
             // 
             this.btnFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnFindNow.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnFindNow.Location = new System.Drawing.Point(835, 15);
+            this.btnFindNow.Location = new System.Drawing.Point(978, 15);
             this.btnFindNow.Name = "btnFindNow";
             this.btnFindNow.Size = new System.Drawing.Size(101, 30);
             this.btnFindNow.TabIndex = 7;
@@ -276,7 +285,7 @@
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(0, 420);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(953, 53);
+            this.groupBox2.Size = new System.Drawing.Size(1096, 53);
             this.groupBox2.TabIndex = 22;
             this.groupBox2.TabStop = false;
             // 
@@ -284,7 +293,7 @@
             // 
             this.btnUpdateAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUpdateAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnUpdateAll.Location = new System.Drawing.Point(620, 16);
+            this.btnUpdateAll.Location = new System.Drawing.Point(763, 16);
             this.btnUpdateAll.Name = "btnUpdateAll";
             this.btnUpdateAll.Size = new System.Drawing.Size(90, 30);
             this.btnUpdateAll.TabIndex = 9;
@@ -296,7 +305,7 @@
             // 
             this.labelReason.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelReason.Location = new System.Drawing.Point(105, 19);
+            this.labelReason.Location = new System.Drawing.Point(248, 19);
             this.labelReason.Name = "labelReason";
             this.labelReason.Size = new System.Drawing.Size(69, 23);
             this.labelReason.TabIndex = 8;
@@ -314,7 +323,7 @@
             "ALL",
             "Bulk",
             "Inventory"});
-            this.comboReason.Location = new System.Drawing.Point(177, 19);
+            this.comboReason.Location = new System.Drawing.Point(320, 19);
             this.comboReason.Name = "comboReason";
             this.comboReason.OldText = "";
             this.comboReason.Size = new System.Drawing.Size(437, 24);
@@ -324,7 +333,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCancel.Location = new System.Drawing.Point(857, 15);
+            this.btnCancel.Location = new System.Drawing.Point(1000, 15);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 30);
             this.btnCancel.TabIndex = 11;
@@ -336,7 +345,7 @@
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(761, 16);
+            this.btnImport.Location = new System.Drawing.Point(904, 16);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(90, 30);
             this.btnImport.TabIndex = 10;
@@ -344,9 +353,44 @@
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
+            // lbBrand
+            // 
+            this.lbBrand.Location = new System.Drawing.Point(359, 19);
+            this.lbBrand.Name = "lbBrand";
+            this.lbBrand.Size = new System.Drawing.Size(69, 23);
+            this.lbBrand.TabIndex = 113;
+            this.lbBrand.Text = "Brand";
+            // 
+            // lbSeason
+            // 
+            this.lbSeason.Location = new System.Drawing.Point(529, 20);
+            this.lbSeason.Name = "lbSeason";
+            this.lbSeason.Size = new System.Drawing.Size(69, 23);
+            this.lbSeason.TabIndex = 114;
+            this.lbSeason.Text = "Season";
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(431, 20);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(92, 23);
+            this.txtbrand.TabIndex = 115;
+            // 
+            // txtseason
+            // 
+            this.txtseason.BackColor = System.Drawing.Color.White;
+            this.txtseason.BrandObjectName = null;
+            this.txtseason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtseason.Location = new System.Drawing.Point(601, 20);
+            this.txtseason.Name = "txtseason";
+            this.txtseason.Size = new System.Drawing.Size(132, 23);
+            this.txtseason.TabIndex = 116;
+            // 
             // P48
             // 
-            this.ClientSize = new System.Drawing.Size(953, 473);
+            this.ClientSize = new System.Drawing.Size(1096, 473);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
@@ -394,5 +438,9 @@
         private Class.comboDropDownList txtdropdownlistFabricType;
         private Class.txtfactory txtfactory;
         private Win.UI.Label label2;
+        private Class.txtseason txtseason;
+        private Class.txtbrand txtbrand;
+        private Win.UI.Label lbSeason;
+        private Win.UI.Label lbBrand;
     }
 }
