@@ -98,6 +98,7 @@ and (select stuff((select concat('+', SubprocessID) from SubprocessLeadTime_Deta
         protected override void ClickNewAfter()
         {
             this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
         }
 
         protected override bool ClickCopyBefore()
@@ -204,7 +205,8 @@ order by s.id asc
         {
             if (EditMode)
             {
-                this.txtfactory.Text = string.Empty;
+                this.CurrentMaintain["MDivisionID"] = txtMdivision.Text.ToString();
+                this.CurrentMaintain["FactoryID"] = string.Empty;
             }
         }
     }
