@@ -42,9 +42,10 @@ namespace Sci.Production.Warehouse
             if (string.IsNullOrWhiteSpace(sp1)
                 && string.IsNullOrWhiteSpace(sp2)
                 && string.IsNullOrWhiteSpace(refno)
-                && string.IsNullOrWhiteSpace(location))
+                && string.IsNullOrWhiteSpace(location)
+                && string.IsNullOrWhiteSpace(season))
             {
-                MyUtility.Msg.WarningBox("< SP# > < Ref# > < Location > can't be empty!!");
+                MyUtility.Msg.WarningBox("< Season > < SP# > < Ref# > < Location > can't be empty!!");
                 txtSPNo1.Focus();
                 return;
             }
