@@ -1755,7 +1755,7 @@ inner join Pullout p with(nolock) on p.id = t.PulloutID
 where p.Status in ('Confirmed','Locked')
 ";
                 DataTable dtchk;
-                DualResult result1 = MyUtility.Tool.ProcessWithDatatable(dtF, "PulloutID", sqlchk, out dtchk);
+                DualResult result1 = MyUtility.Tool.ProcessWithDatatable(dtF, "PulloutID,PackingListID", sqlchk, out dtchk);
                 if (!result1)
                 {
                     this.ShowErr(result1);
