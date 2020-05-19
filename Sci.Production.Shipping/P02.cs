@@ -600,6 +600,7 @@ FROM(
 		    ,[DropDownListSeq]=dp.Seq
 			,[CategoryNameFromDD]=dp.Description
             ,pl.PulloutID
+            ,pl.Type
 	    from Express_Detail ed WITH (NOLOCK) 
 	    left join PO_Supp_Detail p WITH (NOLOCK) on ed.OrderID = p.ID and ed.Seq1 = p.SEQ1 and ed.Seq2 = p.SEQ2
 	    left join Supp s WITH (NOLOCK) on ed.SuppID = s.ID
@@ -1743,6 +1744,32 @@ update Express set Status = 'Approved', StatusUpdateDate = GETDATE(), EditName =
                 return;
             }
 
+            DataRow[] drs = ((DataTable)this.detailgridbs.DataSource).Select("Type = 'F'");
+            if (drs.Length > 0)
+            {
+                DataTable dtF = drs.CopyToDataTable();
+                string sqlchk = $@"
+select PackingListID = concat('FOC PL : ',t.PackingListID)
+from #tmp t
+inner join Pullout p with(nolock) on p.id = t.PulloutID
+where p.Status in ('Confirmed','Locked')
+";
+                DataTable dtchk;
+                DualResult result1 = MyUtility.Tool.ProcessWithDatatable(dtF, "PulloutID", sqlchk, out dtchk);
+                if (!result1)
+                {
+                    this.ShowErr(result1);
+                    return;
+                }
+
+                if (dtchk.Rows.Count > 0)
+                {
+                    var x = dtchk.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["PackingListID"])).ToList();
+                    MyUtility.Msg.WarningBox($"Below record's pullout report already confirmed, HC cannot unconfirm.\r\n" + string.Join("\r\n", x));
+                    return;
+                }
+            }
+
             if (!MyUtility.Check.Empty(this.CurrentMaintain["PayDate"]))
             {
                 MyUtility.Msg.WarningBox("Already have payment, can't unapprove!");
@@ -1754,6 +1781,7 @@ update Express set Status = 'Approved', StatusUpdateDate = GETDATE(), EditName =
             {
                 return;
             }
+
             IList<string> updateCmds = new List<string>();
 
             updateCmds.Add(string.Format(
