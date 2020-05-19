@@ -41,6 +41,8 @@
             this.disArtworkType = new Sci.Win.UI.DisplayBox();
             this.txtMdivision = new Sci.Production.Class.txtMdivision();
             this.lbM = new Sci.Win.UI.Label();
+            this.lbFactory = new Sci.Win.UI.Label();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -55,6 +57,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtfactory);
+            this.detailcont.Controls.Add(this.lbFactory);
             this.detailcont.Controls.Add(this.lbM);
             this.detailcont.Controls.Add(this.txtMdivision);
             this.detailcont.Controls.Add(this.disArtworkType);
@@ -220,18 +224,42 @@
             this.txtMdivision.BackColor = System.Drawing.Color.White;
             this.txtMdivision.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MDivisionID", true));
             this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision.Location = new System.Drawing.Point(342, 24);
+            this.txtMdivision.Location = new System.Drawing.Point(304, 24);
             this.txtMdivision.Name = "txtMdivision";
             this.txtMdivision.Size = new System.Drawing.Size(92, 23);
             this.txtMdivision.TabIndex = 6;
+            this.txtMdivision.TextChanged += new System.EventHandler(this.txtMdivision_TextChanged);
             // 
             // lbM
             // 
-            this.lbM.Location = new System.Drawing.Point(295, 24);
+            this.lbM.Location = new System.Drawing.Point(257, 24);
             this.lbM.Name = "lbM";
             this.lbM.Size = new System.Drawing.Size(44, 23);
             this.lbM.TabIndex = 7;
             this.lbM.Text = "M";
+            // 
+            // lbFactory
+            // 
+            this.lbFactory.Location = new System.Drawing.Point(423, 24);
+            this.lbFactory.Name = "lbFactory";
+            this.lbFactory.Size = new System.Drawing.Size(98, 23);
+            this.lbFactory.TabIndex = 8;
+            this.lbFactory.Text = "Factory";
+            // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsProduceFty = false;
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(524, 24);
+            this.txtfactory.MDivision = null;
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(129, 23);
+            this.txtfactory.TabIndex = 9;
             // 
             // B09
             // 
@@ -274,5 +302,7 @@
         private Win.UI.DisplayBox disArtworkType;
         private Win.UI.Label lbM;
         private Class.txtMdivision txtMdivision;
+        private Class.txtfactory txtfactory;
+        private Win.UI.Label lbFactory;
     }
 }

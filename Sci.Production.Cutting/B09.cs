@@ -28,6 +28,7 @@ namespace Sci.Production.Cutting
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.txtfactory.MDivision = txtMdivision;
         }
 
         protected override bool ClickSaveBefore()
@@ -38,11 +39,26 @@ namespace Sci.Production.Cutting
                 return false;
             }
 
-            string sqlchk = $@"
+            if (MyUtility.Check.Empty(this.txtfactory.Text))
+            {
+                MyUtility.Msg.WarningBox("Factory can't empty, can't save !!");
+                return false;
+            }
+
+            string sqlchk = $"select 1 from Factory WITH (NOLOCK) where MDivisionID = '{this.txtMdivision.Text}' and ID = '{this.txtfactory.Text}' and Junk = 0";
+            if (!MyUtility.Check.Seek(sqlchk))
+            {
+                MyUtility.Msg.WarningBox($"{this.txtfactory.Text} does not exist {this.txtMdivision.Text} !!");
+                this.txtfactory.Text = string.Empty;
+                return false;
+            }
+
+            sqlchk = $@"
 select 1
 from SubprocessLeadTime s
 where id <> '{this.CurrentMaintain["ID"]}'
 and MDivisionID = '{this.txtMdivision.Text}'
+and FactoryID = '{this.txtfactory.Text}'
 and (select stuff((select concat('+', SubprocessID) from SubprocessLeadTime_Detail sd where s.ID = sd.ID order by sd.SubprocessID for xml path('')),1,1,''))='{this.txtSubprocess.Text}' 
 ";
             if (MyUtility.Check.Seek(sqlchk))
@@ -81,8 +97,9 @@ and (select stuff((select concat('+', SubprocessID) from SubprocessLeadTime_Deta
 
         protected override void ClickNewAfter()
         {
-            this.txtMdivision.Text = Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
         }
+
         protected override bool ClickCopyBefore()
         {
             this.LeadTime = this.numLeadTime.Value;
@@ -181,6 +198,14 @@ order by s.id asc
             }
             
             this.disArtworkType.Text = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["ArtworkTypeId"])).JoinToString("+");
+        }
+
+        private void txtMdivision_TextChanged(object sender, EventArgs e)
+        {
+            if (EditMode)
+            {
+                this.txtfactory.Text = string.Empty;
+            }
         }
     }
 }

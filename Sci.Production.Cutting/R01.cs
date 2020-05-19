@@ -433,7 +433,7 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
 
             string cmd = $@"
 
-SELECT  DISTINCT OrderID, s.MDivisionID
+SELECT  DISTINCT OrderID, s.MDivisionID, s.FactoryID
 INTO #OrderList
 FROM SewingSchedule s WITH(NOLOCK)
 INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID
@@ -455,7 +455,7 @@ AND (
 
             cmd += $@"
 
-SELECT DIStINCT  b.POID ,a.OrderID ,b.FtyGroup, a.MDivisionID
+SELECT DIStINCT  b.POID ,a.OrderID ,b.FtyGroup, a.MDivisionID, a.FactoryID
 FROM #OrderList a
 INNER JOIN Orders b ON a.OrderID= b.ID 
 
@@ -479,6 +479,7 @@ drop table #OrderList
                 string POID = dr["POID"].ToString();
                 string OrderID = dr["OrderID"].ToString();
                 string MDivisionID = dr["MDivisionID"].ToString();
+                string FactoryID = dr["FactoryID"].ToString();
 
                 PublicPrg.Prgs.GetGarmentListTable(string.Empty, POID, "", out GarmentTb);
 
@@ -528,6 +529,7 @@ OUTER APPLY(
 )Subprocess
 WHERE Subprocess.IDs = '{AnnotationStr}'
 and s.MDivisionID = '{MDivisionID}'
+and s.FactoryID = '{FactoryID}'
 ";
                 result = DBProxy.Current.Select(null, chk_LeadTime, out LeadTime_dt);
                 if (!result)
@@ -539,7 +541,7 @@ and s.MDivisionID = '{MDivisionID}'
                 // 收集需要顯示訊息的Subprocess ID
                 if (LeadTime_dt.Rows.Count == 0 && AnnotationStr != string.Empty)
                 {
-                    Msg.Add(MDivisionID+";"+AnnotationStr);
+                    Msg.Add(MDivisionID + ";" + FactoryID + ";" + AnnotationStr);
                 }
                 else
                 {
