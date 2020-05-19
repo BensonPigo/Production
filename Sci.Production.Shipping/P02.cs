@@ -1744,30 +1744,26 @@ update Express set Status = 'Approved', StatusUpdateDate = GETDATE(), EditName =
                 return;
             }
 
-            DataRow[] drs = ((DataTable)this.detailgridbs.DataSource).Select("Type = 'F'");
-            if (drs.Length > 0)
-            {
-                DataTable dtF = drs.CopyToDataTable();
                 string sqlchk = $@"
-select PackingListID = concat('FOC PL : ',t.PackingListID)
-from #tmp t
-inner join Pullout p with(nolock) on p.id = t.PulloutID
-where p.Status in ('Confirmed','Locked')
+select PackingListID = concat('FOC PL : ',ed.PackingListID)
+from Express_Detail ed
+inner join PackingList pl on pl.ID = ed.PackingListID and pl.Type = 'F'
+inner join Pullout p on p.ID = pl.PulloutID
+where ed.ID = '{this.CurrentMaintain["ID"]}' and p.Status in ('Confirmed','Locked')
 ";
-                DataTable dtchk;
-                DualResult result1 = MyUtility.Tool.ProcessWithDatatable(dtF, "PulloutID,PackingListID", sqlchk, out dtchk);
-                if (!result1)
-                {
-                    this.ShowErr(result1);
-                    return;
-                }
+            DataTable dtchk;
+            DualResult result1 = DBProxy.Current.Select(null, sqlchk, out dtchk);
+            if (!result1)
+            {
+                this.ShowErr(result1);
+                return;
+            }
 
-                if (dtchk.Rows.Count > 0)
-                {
-                    var x = dtchk.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["PackingListID"])).ToList();
-                    MyUtility.Msg.WarningBox($"Below record's pullout report already confirmed, HC cannot unconfirm.\r\n" + string.Join("\r\n", x));
-                    return;
-                }
+            if (dtchk.Rows.Count > 0)
+            {
+                var x = dtchk.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["PackingListID"])).ToList();
+                MyUtility.Msg.WarningBox($"Below record's pullout report already confirmed, HC cannot unconfirm.\r\n" + string.Join("\r\n", x));
+                return;
             }
 
             if (!MyUtility.Check.Empty(this.CurrentMaintain["PayDate"]))
