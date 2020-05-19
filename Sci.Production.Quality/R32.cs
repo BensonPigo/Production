@@ -69,52 +69,36 @@ namespace Sci.Production.Quality
 
             #region SQL
             sqlCmd.Append($@"
-SELECT c.OrderID
-,o.CustPoNo
-,o.StyleID
-,o.BrandID
-,o.Dest
-,oq.Seq
-,o.VasShas
-,c.ClogReceivedPercentage
-,c.MDivisionid
-,c.FactoryID
-,c.Shift
-,c.Team
-,oq.Qty
-,c.Status
-,[TTL CTN] = TtlCtn.Val
-,[Inspected Ctn] = InspectedCtn.Val
-,[Inspected PoQty]=InspectedPoQty.Val
-,c.Carton
-,[CFA] = dbo.getPass1(c.CFA)
-,c.stage
-,c.Result
-,c.InspectQty
-,c.DefectQty
-,[SQR] = IIF( c.InspectQty = 0,0 , (c.DefectQty * 1.0 / c.InspectQty))
-,c.Remark
-
-
+SELECT 
+	 c.AuditDate
+	,o.BuyerDelivery
+	,c.OrderID
+	,o.CustPoNo
+	,o.StyleID
+	,o.BrandID
+	,o.Dest
+	,oq.Seq
+	,[VasShas]=IIF(o.VasShas=1,'Y','N')
+	,c.ClogReceivedPercentage
+	,c.MDivisionid
+	,c.FactoryID
+	,c.Shift
+	,c.Team
+	,oq.Qty
+	,c.Status
+	,c.Carton
+	,[CFA] = dbo.getPass1(c.CFA)
+	,c.stage
+	,c.Result
+	,c.InspectQty
+	,c.DefectQty
+	,[SQR] = IIF( c.InspectQty = 0,0 , (c.DefectQty * 1.0 / c.InspectQty) * 100)
+	,c.Remark
+	,c.ID
+INTO #tmp
 FROm CFAInspectionRecord  c
 INNER JOIN Order_QtyShip oq ON c.OrderID = oq.ID AND c.Seq = oq.Seq
 INNER JOIN Orders o  On o.ID = oq.ID
-OUTER APPLY(
-	SELECT [Val] = COUNT(DISTINCT pd.CTNStartNo)
-	FROM PackingList_Detail pd
-	WHERE pd.OrderID = c.OrderID AND pd.OrderShipmodeSeq = c.SEQ AND pd.CTNQty=1
-)TtlCtn
-OUTER APPLY(
-	SELECT [Val] = COUNT(DISTINCT pd.CTNStartNo)
-	FROM PackingList_Detail pd
-	WHERE pd.StaggeredCFAInspectionRecordID= c.ID AND pd.CTNQty=1
-)InspectedCtn
-
-OUTER APPLY(
-	SELECT [Val] = SUM(DISTINCT pd.ShipQty)
-	FROM PackingList_Detail pd
-	WHERE pd.StaggeredCFAInspectionRecordID= c.ID 
-)InspectedPoQty
 WHERE 1=1
 ");
             #endregion
@@ -171,6 +155,62 @@ WHERE 1=1
             }
             #endregion
 
+            sqlCmd.Append($@"
+
+
+SELECT *
+INTO #PackingList_Detail
+FROM PackingList_Detail
+WHERE StaggeredCFAInspectionRecordID IN (SELECT ID FROM #tmp )
+
+
+SELECT  AuditDate
+		,BuyerDelivery
+		,OrderID
+		,CustPoNo
+		,StyleID
+		,BrandID
+		,Dest
+		,Seq
+		,VasShas
+		,ClogReceivedPercentage
+		,MDivisionid
+		,FactoryID
+		,Shift
+		,Team
+		,Qty
+		,Status
+		,[TTL CTN] = TtlCtn.Val
+		,[Inspected Ctn] = InspectedCtn.Val
+		,[Inspected PoQty]=InspectedPoQty.Val
+		,Carton
+		,CFA
+		,stage
+		,Result
+		,InspectQty
+		,DefectQty
+		,SQR
+		,Remark
+FROM  #tmp t
+OUTER APPLY(
+	SELECT [Val] = COUNT(DISTINCT pd.CTNStartNo)
+	FROM PackingList_Detail pd
+	WHERE pd.OrderID = t.OrderID AND pd.OrderShipmodeSeq = t.Seq AND pd.CTNQty=1
+)TtlCtn
+OUTER APPLY(
+	SELECT [Val] = COUNT(DISTINCT pd.CTNStartNo)
+	FROM #PackingList_Detail pd
+	WHERE pd.StaggeredCFAInspectionRecordID= t.ID AND pd.CTNQty=1
+)InspectedCtn
+OUTER APPLY(
+	SELECT [Val] = SUM(DISTINCT pd.ShipQty)
+	FROM #PackingList_Detail pd
+	WHERE pd.StaggeredCFAInspectionRecordID= t.ID
+)InspectedPoQty
+
+DROP TABLE #tmp ,#PackingList_Detail
+");
+
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), paramList, out printData);
             if (!result)
             {
@@ -181,5 +221,30 @@ WHERE 1=1
             return Result.True;
         }
 
+
+        protected override bool OnToExcel(Win.ReportDefinition report)
+        {
+            SetCount(printData.Rows.Count);
+            StringBuilder c = new StringBuilder();
+            if (printData.Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                return false;
+            }
+
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R32.xltx"); //預先開啟excel app
+            MyUtility.Excel.CopyToXls(printData, "", "Quality_R32.xltx", 1, false, null, objApp);// 將datatable copy to excel
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R32");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+
+            strExcelName.OpenFile();
+            #endregion 
+            return true;
+        }
     }
 }

@@ -422,7 +422,7 @@
             this.editBoxRemark.Multiline = true;
             this.editBoxRemark.Name = "editBoxRemark";
             this.editBoxRemark.Size = new System.Drawing.Size(1127, 74);
-            this.editBoxRemark.TabIndex = 2;
+            this.editBoxRemark.TabIndex = 12;
             // 
             // dateAuditDate
             // 
@@ -431,7 +431,6 @@
             this.dateAuditDate.Name = "dateAuditDate";
             this.dateAuditDate.Size = new System.Drawing.Size(130, 23);
             this.dateAuditDate.TabIndex = 4;
-            this.dateAuditDate.TabStop = false;
             // 
             // label1
             // 
@@ -524,7 +523,7 @@
             this.txtSewingLine.Location = new System.Drawing.Point(681, 70);
             this.txtSewingLine.Name = "txtSewingLine";
             this.txtSewingLine.Size = new System.Drawing.Size(100, 23);
-            this.txtSewingLine.TabIndex = 60;
+            this.txtSewingLine.TabIndex = 6;
             this.txtSewingLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSewingLine_PopUp);
             this.txtSewingLine.Validating += new System.ComponentModel.CancelEventHandler(this.txtSewingLine_Validating);
             // 
@@ -543,7 +542,7 @@
             this.comboTeam.Name = "comboTeam";
             this.comboTeam.OldText = "";
             this.comboTeam.Size = new System.Drawing.Size(63, 24);
-            this.comboTeam.TabIndex = 61;
+            this.comboTeam.TabIndex = 7;
             this.comboTeam.SelectedIndexChanged += new System.EventHandler(this.comboTeam_SelectedIndexChanged);
             // 
             // numClogReceivedPercentage
@@ -563,6 +562,7 @@
             this.numClogReceivedPercentage.ReadOnly = true;
             this.numClogReceivedPercentage.Size = new System.Drawing.Size(63, 23);
             this.numClogReceivedPercentage.TabIndex = 62;
+            this.numClogReceivedPercentage.TabStop = false;
             this.numClogReceivedPercentage.Value = new decimal(new int[] {
             0,
             0,
@@ -586,7 +586,7 @@
             this.comboStage.Name = "comboStage";
             this.comboStage.OldText = "";
             this.comboStage.Size = new System.Drawing.Size(100, 24);
-            this.comboStage.TabIndex = 63;
+            this.comboStage.TabIndex = 8;
             this.comboStage.SelectedIndexChanged += new System.EventHandler(this.comboStage_SelectedIndexChanged);
             // 
             // comboResult
@@ -605,7 +605,7 @@
             this.comboResult.Name = "comboResult";
             this.comboResult.OldText = "";
             this.comboResult.Size = new System.Drawing.Size(63, 24);
-            this.comboResult.TabIndex = 64;
+            this.comboResult.TabIndex = 9;
             this.comboResult.SelectedIndexChanged += new System.EventHandler(this.comboResult_SelectedIndexChanged);
             // 
             // txtInspectedCarton
@@ -616,7 +616,7 @@
             this.txtInspectedCarton.Location = new System.Drawing.Point(965, 38);
             this.txtInspectedCarton.Name = "txtInspectedCarton";
             this.txtInspectedCarton.Size = new System.Drawing.Size(100, 23);
-            this.txtInspectedCarton.TabIndex = 65;
+            this.txtInspectedCarton.TabIndex = 10;
             this.txtInspectedCarton.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtInspectedCarton_PopUp);
             this.txtInspectedCarton.Validating += new System.ComponentModel.CancelEventHandler(this.txtInspectedCarton_Validating);
             // 
@@ -634,7 +634,7 @@
             0,
             0});
             this.numInspectQty.Size = new System.Drawing.Size(100, 23);
-            this.numInspectQty.TabIndex = 66;
+            this.numInspectQty.TabIndex = 11;
             this.numInspectQty.Value = new decimal(new int[] {
             0,
             0,
@@ -659,6 +659,7 @@
             this.numDefectQty.ReadOnly = true;
             this.numDefectQty.Size = new System.Drawing.Size(100, 23);
             this.numDefectQty.TabIndex = 67;
+            this.numDefectQty.TabStop = false;
             this.numDefectQty.Value = new decimal(new int[] {
             0,
             0,
@@ -682,6 +683,7 @@
             this.numSQR.ReadOnly = true;
             this.numSQR.Size = new System.Drawing.Size(100, 23);
             this.numSQR.TabIndex = 68;
+            this.numSQR.TabStop = false;
             this.numSQR.Value = new decimal(new int[] {
             0,
             0,
@@ -696,7 +698,7 @@
             this.txtshift.Location = new System.Drawing.Point(681, 40);
             this.txtshift.Name = "txtshift";
             this.txtshift.Size = new System.Drawing.Size(100, 23);
-            this.txtshift.TabIndex = 59;
+            this.txtshift.TabIndex = 5;
             this.txtshift.Type = "SewingOutput_Shift";
             // 
             // txtCFA
@@ -706,7 +708,7 @@
             this.txtCFA.Location = new System.Drawing.Point(110, 9);
             this.txtCFA.Name = "txtCFA";
             this.txtCFA.Size = new System.Drawing.Size(300, 23);
-            this.txtCFA.TabIndex = 47;
+            this.txtCFA.TabIndex = 1;
             this.txtCFA.TextBox1Binding = "";
             // 
             // txtSpSeq
@@ -716,8 +718,7 @@
             this.txtSpSeq.Location = new System.Drawing.Point(21, 38);
             this.txtSpSeq.Name = "txtSpSeq";
             this.txtSpSeq.Size = new System.Drawing.Size(244, 27);
-            this.txtSpSeq.TabIndex = 1;
-            this.txtSpSeq.TabStop = false;
+            this.txtSpSeq.TabIndex = 3;
             this.txtSpSeq.TextBoxSeqBinding = "";
             this.txtSpSeq.TextBoxSPBinding = "";
             this.txtSpSeq.Leave += new System.EventHandler(this.txtSpSeq_Leave);

@@ -30,6 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.comboStage = new Sci.Win.UI.ComboBox();
+            this.label8 = new Sci.Win.UI.Label();
+            this.label7 = new Sci.Win.UI.Label();
+            this.AuditDate = new Sci.Win.UI.DateRange();
             this.label1 = new Sci.Win.UI.Label();
             this.dateBuyerDev = new Sci.Win.UI.DateRange();
             this.label2 = new Sci.Win.UI.Label();
@@ -42,10 +46,6 @@
             this.txtBrand = new Sci.Production.Class.txtbrand();
             this.txtSP_s = new Sci.Win.UI.TextBox();
             this.txtSP_e = new Sci.Win.UI.TextBox();
-            this.label7 = new Sci.Win.UI.Label();
-            this.AuditDate = new Sci.Win.UI.DateRange();
-            this.label8 = new Sci.Win.UI.Label();
-            this.comboStage = new Sci.Win.UI.ComboBox();
             this.label10 = new Sci.Win.UI.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -58,10 +58,12 @@
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(485, 48);
+            this.toexcel.TabIndex = 9;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(485, 84);
+            this.close.TabIndex = 10;
             // 
             // buttonCustomized
             // 
@@ -99,6 +101,65 @@
             this.groupBox1.TabIndex = 109;
             this.groupBox1.TabStop = false;
             // 
+            // comboStage
+            // 
+            this.comboStage.BackColor = System.Drawing.Color.White;
+            this.comboStage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboStage.FormattingEnabled = true;
+            this.comboStage.IsSupportUnselect = true;
+            this.comboStage.Items.AddRange(new object[] {
+            "",
+            "Inline",
+            "Staggered",
+            "Final",
+            "3rd party"});
+            this.comboStage.Location = new System.Drawing.Point(128, 250);
+            this.comboStage.Name = "comboStage";
+            this.comboStage.OldText = "";
+            this.comboStage.Size = new System.Drawing.Size(100, 24);
+            this.comboStage.TabIndex = 8;
+            // 
+            // label8
+            // 
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label8.Location = new System.Drawing.Point(17, 250);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(99, 23);
+            this.label8.TabIndex = 111;
+            this.label8.Text = "Insp. Stage";
+            // 
+            // label7
+            // 
+            this.label7.BackColor = System.Drawing.Color.SkyBlue;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label7.Location = new System.Drawing.Point(17, 25);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(99, 23);
+            this.label7.TabIndex = 109;
+            this.label7.Text = "Audit Date";
+            this.label7.TextStyle.Color = System.Drawing.Color.White;
+            // 
+            // AuditDate
+            // 
+            // 
+            // 
+            // 
+            this.AuditDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.AuditDate.DateBox1.Name = "";
+            this.AuditDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.AuditDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.AuditDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.AuditDate.DateBox2.Name = "";
+            this.AuditDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.AuditDate.DateBox2.TabIndex = 1;
+            this.AuditDate.Location = new System.Drawing.Point(128, 25);
+            this.AuditDate.Name = "AuditDate";
+            this.AuditDate.Size = new System.Drawing.Size(280, 23);
+            this.AuditDate.TabIndex = 1;
+            // 
             // label1
             // 
             this.label1.BackColor = System.Drawing.Color.SkyBlue;
@@ -129,7 +190,7 @@
             this.dateBuyerDev.Location = new System.Drawing.Point(128, 63);
             this.dateBuyerDev.Name = "dateBuyerDev";
             this.dateBuyerDev.Size = new System.Drawing.Size(280, 23);
-            this.dateBuyerDev.TabIndex = 1;
+            this.dateBuyerDev.TabIndex = 2;
             // 
             // label2
             // 
@@ -190,7 +251,7 @@
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(80, 24);
-            this.comboFactory.TabIndex = 5;
+            this.comboFactory.TabIndex = 6;
             // 
             // comboM
             // 
@@ -202,7 +263,7 @@
             this.comboM.Name = "comboM";
             this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(80, 24);
-            this.comboM.TabIndex = 4;
+            this.comboM.TabIndex = 5;
             // 
             // txtBrand
             // 
@@ -211,7 +272,7 @@
             this.txtBrand.Location = new System.Drawing.Point(128, 211);
             this.txtBrand.Name = "txtBrand";
             this.txtBrand.Size = new System.Drawing.Size(66, 23);
-            this.txtBrand.TabIndex = 6;
+            this.txtBrand.TabIndex = 7;
             // 
             // txtSP_s
             // 
@@ -220,7 +281,7 @@
             this.txtSP_s.Location = new System.Drawing.Point(128, 99);
             this.txtSP_s.Name = "txtSP_s";
             this.txtSP_s.Size = new System.Drawing.Size(100, 23);
-            this.txtSP_s.TabIndex = 2;
+            this.txtSP_s.TabIndex = 3;
             // 
             // txtSP_e
             // 
@@ -229,66 +290,7 @@
             this.txtSP_e.Location = new System.Drawing.Point(256, 99);
             this.txtSP_e.Name = "txtSP_e";
             this.txtSP_e.Size = new System.Drawing.Size(100, 23);
-            this.txtSP_e.TabIndex = 3;
-            // 
-            // label7
-            // 
-            this.label7.BackColor = System.Drawing.Color.SkyBlue;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label7.Location = new System.Drawing.Point(17, 25);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(99, 23);
-            this.label7.TabIndex = 109;
-            this.label7.Text = "Audit Date";
-            this.label7.TextStyle.Color = System.Drawing.Color.White;
-            // 
-            // AuditDate
-            // 
-            // 
-            // 
-            // 
-            this.AuditDate.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.AuditDate.DateBox1.Name = "";
-            this.AuditDate.DateBox1.Size = new System.Drawing.Size(129, 23);
-            this.AuditDate.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.AuditDate.DateBox2.Location = new System.Drawing.Point(151, 0);
-            this.AuditDate.DateBox2.Name = "";
-            this.AuditDate.DateBox2.Size = new System.Drawing.Size(129, 23);
-            this.AuditDate.DateBox2.TabIndex = 1;
-            this.AuditDate.Location = new System.Drawing.Point(128, 25);
-            this.AuditDate.Name = "AuditDate";
-            this.AuditDate.Size = new System.Drawing.Size(280, 23);
-            this.AuditDate.TabIndex = 108;
-            // 
-            // label8
-            // 
-            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label8.Location = new System.Drawing.Point(17, 250);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(99, 23);
-            this.label8.TabIndex = 111;
-            this.label8.Text = "Insp. Stage";
-            // 
-            // comboStage
-            // 
-            this.comboStage.BackColor = System.Drawing.Color.White;
-            this.comboStage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboStage.FormattingEnabled = true;
-            this.comboStage.IsSupportUnselect = true;
-            this.comboStage.Items.AddRange(new object[] {
-            "",
-            "Inline",
-            "Staggered",
-            "Final",
-            "3rd party"});
-            this.comboStage.Location = new System.Drawing.Point(128, 250);
-            this.comboStage.Name = "comboStage";
-            this.comboStage.OldText = "";
-            this.comboStage.Size = new System.Drawing.Size(100, 24);
-            this.comboStage.TabIndex = 112;
+            this.txtSP_e.TabIndex = 4;
             // 
             // label10
             // 

@@ -56,7 +56,7 @@
             this.txtSeq.Location = new System.Drawing.Point(210, 2);
             this.txtSeq.Name = "txtSeq";
             this.txtSeq.Size = new System.Drawing.Size(30, 22);
-            this.txtSeq.TabIndex = 5;
+            this.txtSeq.TabIndex = 3;
             this.txtSeq.Leave += new System.EventHandler(this.txtSeq_Leave);
             this.txtSeq.Validating += new System.ComponentModel.CancelEventHandler(this.txtSeq_Validating);
             // 
