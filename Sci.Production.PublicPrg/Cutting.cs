@@ -130,6 +130,158 @@ namespace Sci.Production.PublicPrg
             }
         }
         #endregion;
+
+        #region
+        public static DataTable GetCuttingTapeDate(string cuttingID)
+        {
+            DataTable[] dt;
+            string sqlcmd = $@"
+declare @CuttingSP varchar(13) = '{cuttingID}'
+
+select 
+	e.MarkerName,
+    e.FabricCombo,
+	e.Width,
+	[TypeofCuttingNode_Group] = SUBSTRING(e.Remark ,1 ,CHARINDEX('#', e.Remark ) - 1),
+	[TypeofCuttingNode] = SUBSTRING(e.Remark ,CHARINDEX('#', e.Remark ), LEN(e.Remark)),
+	e.MarkerLength,
+	e.ConsPC,
+	a.Article,
+    a.ColorID,
+	SP='',
+    a.CutQty,
+    a.SizeCode,
+    e.FabricPanelCode
+from dbo.Order_EachCons e
+left join dbo.Order_EachCons_Color c on c.Order_EachConsUkey = e.Ukey
+left join dbo.Order_EachCons_Color_Article a on a.Order_EachCons_ColorUkey= c.Ukey
+left join dbo.Order_EachCons_SizeQty s on s.Order_EachConsUkey = e.Ukey and s.SizeCode = a.SizeCode
+where e.Id = @CuttingSP
+and e. CuttingPiece = 1
+ORDER BY e.MarkerName
+
+select
+	[SP] = o.ID  
+	, [FabricCombo] = fab.PatternPanel, fab.FabricPanelCode, q.Article, fab.ColorID, q.SizeCode	
+	, q.Qty, o.SewInLine
+from dbo.orders o 
+left join dbo.Order_Qty q on q.ID = o.ID  
+outer apply(
+	select
+		s.ID, c.PatternPanel, c.FabricPanelCode, c.ColorID, c.Article 
+	from dbo.orders s 
+	left join dbo.Order_ColorCombo c on c.Id = s.ID and c.FabricType = 'F'
+	where s.id  = @CuttingSP and c.Article = q.Article
+) fab
+where o.CuttingSP = @CuttingSP and o.Junk = 0
+order by o.SewInLine
+";
+
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+                return null;
+            }
+
+            if (dt[0].Rows.Count == 0)
+            {
+                return null;
+            }
+
+            // 準備欄位字串
+            var colList = dt[0].Columns.Cast<DataColumn>()
+                                 .Select(x => x.ColumnName)
+                                 .ToList();
+            string columnsName = string.Join(",", colList);
+
+            DataTable dtf = dt[0].Clone();
+            foreach (DataRow row1 in dt[0].Rows)
+            {
+                int cutQty = MyUtility.Convert.GetInt(row1["CutQty"]); // 可分配總數
+                DataRow[] drs2 = dt[1].Select($"FabricCombo='{row1["FabricCombo"]}'and FabricPanelCode='{row1["FabricPanelCode"]}'and Article='{row1["Article"]}'and ColorID='{row1["ColorID"]}'and SizeCode='{row1["SizeCode"]}'");
+                bool flag = false;
+                foreach (DataRow row2 in drs2)
+                {
+                    DataRow newrow = dtf.NewRow();
+                    row1.CopyTo(newrow, columnsName);
+                    int qty2 = MyUtility.Convert.GetInt(row2["Qty"]);
+                    if (cutQty < qty2 || cutQty == qty2)
+                    {
+                        if (flag && cutQty == 0)
+                        {
+                            break;
+                        }
+                        newrow["CutQty"] = cutQty;
+                        newrow["SP"] = row2["SP"];
+                        dtf.Rows.Add(newrow);
+                        break;
+                    }
+                    if (cutQty > qty2)
+                    {
+                        newrow["CutQty"] = qty2;
+                        newrow["SP"] = row2["SP"];
+                        dtf.Rows.Add(newrow);
+                        flag = true;
+                        cutQty -= qty2;
+                    }
+                }
+                if (cutQty > 0)
+                {
+                    DataRow newrow = dtf.NewRow();
+                    row1.CopyTo(newrow, columnsName);
+                    newrow["CutQty"] = cutQty;
+                    newrow["SP"] = "EXCESS";
+                    dtf.Rows.Add(newrow);
+                }
+            }
+
+            // CutQty分配完後計算Cons
+            dtf.Columns.Add("Cons", typeof(decimal), "ConsPC*CutQty");
+            // 排序
+            DataTable dtf2 = dtf.AsEnumerable().
+                OrderBy(o => MyUtility.Convert.GetString(o["MarkerName"])).
+                ThenBy(o => MyUtility.Convert.GetString(o["ColorID"])).
+                ThenBy(o => MyUtility.Convert.GetString(o["Article"])).
+                ThenBy(o => MyUtility.Convert.GetString(o["SizeCode"])).
+                ThenBy(o => MyUtility.Convert.GetString(o["SP"])).
+                CopyToDataTable();
+            #region 排序完後處理Type of Cutting Node **用Marker Name前5碼做群組分類, 取最後一筆字串
+            DataTable dtf3 = dtf2.Clone();
+            int i = 0;
+            string Marker5_Group = string.Empty;
+            foreach (DataRow row1 in dtf2.Rows)
+            {
+                string curr_Marker5_Group = MyUtility.Convert.GetString(row1["MarkerName"]).Substring(0, 5);
+                if (curr_Marker5_Group != Marker5_Group && i > 0)
+                {
+                    DataRow newrow = dtf3.NewRow();
+                    newrow["TypeofCuttingNode"] = MyUtility.Convert.GetString(row1["TypeofCuttingNode_Group"]);
+                    dtf3.Rows.Add(newrow);
+                }
+
+                Marker5_Group = MyUtility.Convert.GetString(row1["MarkerName"]).Substring(0,5);
+
+                dtf3.ImportRow(row1);
+                i++;
+            }
+
+            DataRow newrowLast = dtf3.NewRow();
+            newrowLast["TypeofCuttingNode"] = Marker5_Group;
+            dtf3.Rows.Add(newrowLast);
+            dtf3.Columns.Remove("TypeofCuttingNode_Group");
+            #endregion
+            // Total
+            DataRow newrowTotal = dtf3.NewRow();
+            newrowTotal["MarkerName"] = "Total";
+            newrowTotal["CutQty"] = dtf3.Compute("sum(CutQty)",string.Empty);
+            newrowTotal["Cons"] = dtf3.Compute("sum(Cons)", string.Empty);
+            dtf3.Rows.Add(newrowTotal);
+            return dtf3;
+        }
+        #endregion
+
+        #region Cal WIP        
         /// <summary>
         /// 取得Cutting成套的數量
         /// </summary>
@@ -2146,6 +2298,6 @@ DROP TABLE #beforeTmp
             public int OriCount { get; set; }
         }
         #endregion
+        #endregion
     }
-
 }

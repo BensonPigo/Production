@@ -338,6 +338,9 @@
     <None Include="XLT\Cutting_P01_ColorCombo_SizeBreakdown_Combo.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Cutting_P01_CuttingTape.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
