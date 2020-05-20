@@ -70,12 +70,12 @@ OdorEncode,
 OdorDate,
 a.PhysicalInspector,a.WeightInspector,a.ShadeboneInspector,a.ContinuityInspector,a.OdorInspector  
 From FIR a WITH (NOLOCK) Left join dbo.View_AllReceiving c WITH (NOLOCK) on c.id = a.receivingid
-Where a.poid = @poid and a.seq1 = @seq1 and a.seq2 = @seq2 and c.InvNo = @InvNo and a.receivingid = @receivingid  order by seq1,seq2 ";
+Where a.poid = @poid and a.seq1 = @seq1 and a.seq2 = @seq2  and a.receivingid = @receivingid  order by seq1,seq2 ";
             List<SqlParameter> sqlPar = new List<SqlParameter>();
             sqlPar.Add(new SqlParameter("@poid", dr["id"].ToString()));
             sqlPar.Add(new SqlParameter("@seq1", dr["seq1"].ToString()));
             sqlPar.Add(new SqlParameter("@seq2", dr["seq2"].ToString()));            
-            sqlPar.Add(new SqlParameter("@InvNo", this_inv.ToString()));
+            //sqlPar.Add(new SqlParameter("@InvNo", this_inv.ToString()));
             sqlPar.Add(new SqlParameter("@receivingid", receivingid));
 
             DataTable dt;
