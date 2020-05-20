@@ -301,6 +301,7 @@
             this.chkBuyBack = new Sci.Win.UI.CheckBox();
             this.chkNeedProduction = new Sci.Win.UI.CheckBox();
             this.chkKeepPanels = new Sci.Win.UI.CheckBox();
+            this.btnQtyChangeList = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -317,6 +318,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.btnQtyChangeList);
             this.detailcont.Controls.Add(this.chkKeepPanels);
             this.detailcont.Controls.Add(this.chkNeedProduction);
             this.detailcont.Controls.Add(this.chkOnSiteSample);
@@ -3360,6 +3362,17 @@
             this.chkKeepPanels.Text = "Keep Panel without production";
             this.chkKeepPanels.UseVisualStyleBackColor = true;
             // 
+            // btnQtyChangeList
+            // 
+            this.btnQtyChangeList.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnQtyChangeList.Location = new System.Drawing.Point(602, 598);
+            this.btnQtyChangeList.Name = "btnQtyChangeList";
+            this.btnQtyChangeList.Size = new System.Drawing.Size(194, 27);
+            this.btnQtyChangeList.TabIndex = 45;
+            this.btnQtyChangeList.Text = "Q\'ty Change List";
+            this.btnQtyChangeList.UseVisualStyleBackColor = true;
+            this.btnQtyChangeList.Click += new System.EventHandler(this.BtnQtyChangeList_Click);
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 722);
@@ -3664,5 +3677,6 @@
         private Win.UI.CheckBox chkBuyBack;
         private Win.UI.CheckBox chkNeedProduction;
         private Win.UI.CheckBox chkKeepPanels;
+        private Win.UI.Button btnQtyChangeList;
     }
 }
