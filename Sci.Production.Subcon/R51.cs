@@ -105,6 +105,7 @@ select	AP.ID
 		, Detail_Amount = APD.PoQty * OA.Cost		
 		, O.AddDate as OrderAdddate
 		, O.EditDate as OrderEditDate
+        , o.BuyerDelivery
 From ArtworkPO AP
 Inner join ArtworkPO_Detail APD on AP.ID=APD.ID
 Inner join Orders O on APD.OrderID=O.ID
@@ -121,7 +122,7 @@ Where	AP.POType='O'
 
 group by AP.ID, O.poid,AP.FactoryId, AP.Remark, AP.Handle, AP.CurrencyId, AP.VatRate, AP.Vat, AP.AddName, AP.AddDate, AP.EditName, AP.EditDate 
 		 , APD.OrderID, O.StyleID, O.BrandID, O.SeasonID, APD.PatternCode, APD.PatternDesc, APD.Farmout, APD.Farmin, APD.PoQty, APD.ArtworkTypeID
-		 , isnull(C.FirstCutDate,O.CutInLine), AP.Delivery, OA.Article,OA.Cost,O.AddDate,O.EditDate");
+		 , isnull(C.FirstCutDate,O.CutInLine), AP.Delivery, OA.Article,OA.Cost,O.AddDate,O.EditDate, o.BuyerDelivery");
                 //, (filte.Count > 0) ? "and " + filte.JoinToString("\n\r and ") : "");
             #endregion
             #region Get Data
