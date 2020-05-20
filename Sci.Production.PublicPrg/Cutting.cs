@@ -215,6 +215,7 @@ order by o.SewInLine
                         newrow["CutQty"] = cutQty;
                         newrow["SP"] = row2["SP"];
                         dtf.Rows.Add(newrow);
+                        cutQty -= qty2;
                         break;
                     }
                     if (cutQty > qty2)
