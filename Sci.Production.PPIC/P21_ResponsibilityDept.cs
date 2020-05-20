@@ -442,17 +442,8 @@ where ICR.id = '{this.ID}'
 
         private void BtnConfirm_Click(object sender, EventArgs e)
         {
-            DataTable dt = (DataTable)this.gridbs.DataSource;
-            decimal curAmount = 0;
-            foreach (DataRow dr in dt.Rows)
-            {
-                if (dr.RowState != DataRowState.Deleted)
-                {
-                    curAmount += MyUtility.Convert.GetDecimal(dr["Amount"]);
-                }
-            }
-
-            if (curAmount != 0 && !curAmount.Equals(this.numTotalAmt.Value))
+            decimal sumAmount = MyUtility.Convert.GetDecimal(((DataTable)this.gridbs.DataSource).Compute("sum(Amount)", string.Empty));
+            if (sumAmount != MyUtility.Convert.GetDecimal(this.numTotalAmt.Value))
             {
                 MyUtility.Msg.WarningBox("Total department shared amount must equal to Total US$.");
                 return;
