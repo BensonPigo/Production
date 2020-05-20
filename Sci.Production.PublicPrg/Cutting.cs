@@ -132,7 +132,7 @@ namespace Sci.Production.PublicPrg
         #endregion;
 
         #region
-        public static DataTable GetCuttingTapeDate(string cuttingID)
+        public static DataTable GetCuttingTapeData(string cuttingID)
         {
             DataTable[] dt;
             string sqlcmd = $@"
