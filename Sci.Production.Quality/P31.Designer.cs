@@ -320,7 +320,7 @@
             this.tab_CartonSummary.Location = new System.Drawing.Point(4, 25);
             this.tab_CartonSummary.Name = "tab_CartonSummary";
             this.tab_CartonSummary.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_CartonSummary.Size = new System.Drawing.Size(884, 11);
+            this.tab_CartonSummary.Size = new System.Drawing.Size(1293, 265);
             this.tab_CartonSummary.TabIndex = 1;
             this.tab_CartonSummary.Text = "By Carton Summary";
             // 
@@ -353,7 +353,7 @@
             this.gridCartonSummary.RowTemplate.Height = 24;
             this.gridCartonSummary.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCartonSummary.ShowCellToolTips = false;
-            this.gridCartonSummary.Size = new System.Drawing.Size(1287, 262);
+            this.gridCartonSummary.Size = new System.Drawing.Size(1287, 259);
             this.gridCartonSummary.TabIndex = 0;
             // 
             // label2

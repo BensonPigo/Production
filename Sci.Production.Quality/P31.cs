@@ -18,6 +18,7 @@ namespace Sci.Production.Quality
     public partial class P31 : Sci.Win.Tems.Input6
     {
         public string _Type = string.Empty;
+        public bool IsSample = false;
         private List<string> _Articles = new List<string>();
         private List<string> _Articles_c = new List<string>();
 
@@ -54,6 +55,14 @@ namespace Sci.Production.Quality
             this._Articles_c.Clear();
             this.gridQtyBreakdown.Columns.Clear();
             this.gridCartonSummary.Columns.Clear();
+
+            this.IsSample =MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.CurrentMaintain["ID"].ToString()}' "));
+
+            if (IsSample)
+            {
+                this.ByCarton.Visible = false;
+                this.tab_CartonSummary.IsVisible = false;
+            }
 
             #region 表頭欄位帶入
             this.txtSpSeq.TextBoxSP.IsSupportEditMode = false;
@@ -174,6 +183,7 @@ AND (Result = 'F' OR  Result <> 'P')
              string cmd = $@"
 ----By Qty Breakdown分頁
 SELECT oqd.ID,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty
+		,[IsCategory]=(SELECT IIF(Category='S',1,0) FROM Orders o WHERE ID = oqd.Id)
         ,[CMPOutput]= IIF(oqd.Qty = 0 OR (SELECT COUNT(Seq) FROM Order_QtyShip oq WHERE oq.ID = oqd.ID) > 1
 							,'N/A'
 							,Cast( ISNULL((SELECT dbo.getMinCompleteSewQty( oqd.ID, oqd.Article , oqd.SizeCode ) ) ,0) as varchar)
@@ -215,11 +225,11 @@ SELECT --[ID]
 	,[SizeCode]
 	,[Order Qty]=[Qty]
 	,[CMP output]=[CMPOutput]
-	,[CMP %]=[CMP%]
-	,[CFA staggered output]=[CFA staggered Qty]
-	,[Staggered %]=[Staggered%]
-	,[CLOG output]=[CLOG Qty]
-	,[CLOG %]=[CLOG%]  
+	,[CMP %]=IIF(IsCategory=1,'N/A',[CMP%])
+	,[CFA staggered output]=IIF(IsCategory=1,'N/A',Cast([CFA staggered Qty]as varchar))
+	,[Staggered %]=IIF(IsCategory=1,'N/A',[Staggered%])
+	,[CLOG output]=IIF(IsCategory=1,'N/A',Cast([CLOG Qty] as varchar))
+	,[CLOG %]=IIF(IsCategory=1,'N/A',[CLOG%]  )
 	,[OrderKey]
 FROM #tmp
 UNION 
@@ -228,17 +238,20 @@ SELECT
 	,[SizeCode]='TTL'
 	,[Order Qty]= (SELECT SUM(Qty) FROM #tmp)
 	,[CMP output]=IIF((SELECT TOP 1 CMPOutput FROM #tmp) <> 'N/A', Cast( (SELECT SUM(Cast(CMPOutput as int)) FROM #tmp) as Varchar) , 'N/A' )
-	,[CMP %] = IIF((SELECT TOP 1 CMPOutput FROM #tmp) <> 'N/A' AND (SELECT SUM(Qty) FROM #tmp) <> 0
+	,[CMP %] = IIF((SELECT TOP 1 CMPOutput FROM #tmp) <> 'N/A' AND (SELECT SUM(Qty) FROM #tmp) <> 0 AND (SELECT TOP 1 IsCategory FROM #tmp)=0
 					,Cast( CAST( ROUND( (SELECT SUM(Cast(CMPOutput as int)) / SUM(Qty)  FROM #tmp),3) as INT ) as Varchar ) + '%'
 					,'N/A' 
 					)
-	,[CFA staggered output] = (SELECT SUM([CFA staggered Qty]) FROM #tmp)
-	,[Staggered %]= IIF((SELECT SUM(Qty) FROM #tmp)=0
+	,[CFA staggered output] = IIF((SELECT TOP 1 IsCategory FROM #tmp)=1,'N/A',Cast( (SELECT SUM([CFA staggered Qty]) FROM #tmp) as varchar))
+	,[Staggered %]= IIF((SELECT SUM(Qty) FROM #tmp)=0 OR (SELECT TOP 1 IsCategory FROM #tmp)=1
 						,'N/A'
 						,Cast(CAST( ROUND( (SELECT SUM([CFA staggered Qty]) *1.0 / SUM(Qty) FROM #tmp),3) * 100 as INT)   as Varchar ) + '%'
 						)
-	,[CLOG output]=(SELECT SUM([CLOG Qty]) FROM #tmp)
-	,[CLOG %]=IIF((SELECT SUM(Qty) FROM #tmp)=0,'N/A',Cast(CAST( ROUND( (SELECT SUM([CLOG Qty]) *1.0 / SUM(Qty)FROM #tmp) * 100,3) as INT)   as Varchar  ) + '%')
+	,[CLOG output]= IIF((SELECT TOP 1 IsCategory FROM #tmp)=1,'N/A',Cast( (SELECT SUM([CLOG Qty]) FROM #tmp) as varchar))
+	,[CLOG %]=IIF((SELECT SUM(Qty) FROM #tmp)=0 OR (SELECT TOP 1 IsCategory FROM #tmp)=1
+					,'N/A'
+					,Cast(CAST( ROUND( (SELECT SUM([CLOG Qty]) *1.0 / SUM(Qty)FROM #tmp) * 100,3) as INT)   as Varchar  ) + '%'
+				)
 	,[OrderKey] = (SELECT MAX(OrderKey) + 1 FROM #tmp) 
 
 ORDER BY [OrderKey]
