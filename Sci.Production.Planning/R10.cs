@@ -961,7 +961,7 @@ namespace Sci.Production.Planning
 
                     // Shortage
                     int shortageStart = sheetStart;
-                    DataTable dtByShortage = SafeGetDt(dt1, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'");
+                    DataTable dtByShortage = SafeGetDt(dt1, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + zoneFilter);
                     SetTableToRow(wks, intYear, sheetStart, "Shortage", dtByShortage, "OrderShortage");
                     DrawBottomLine(wks, sheetStart, 1);
                     shortageLis.Add(sheetStart.ToString());
