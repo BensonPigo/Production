@@ -979,10 +979,14 @@ inner join SewingOutput_Detail_Detail sodd on sodd.ID = t.ID
 where t.WillTransferQty > 0
 
 --寫入第2層sd有,但第3層sdd未有
-insert into SewingOutput_Detail_Detail
+insert into SewingOutput_Detail_Detail(ID, SewingOutput_DetailUKey, OrderId, ComboType, Article, SizeCode, QAQty, OldDetailKey)
 select t.ID,
 	SewingOutput_DetailUKey=sod.UKey,
-	t.ToOrderID,t.ToComboType,t.ToArticle,t.ToSizeCode,WillTransferQty=sum(t.WillTransferQty),
+	t.ToOrderID,
+    t.ToComboType,
+    t.ToArticle,
+    t.ToSizeCode,
+    WillTransferQty=sum(t.WillTransferQty),
 	OldDetailKey=''
 from #tmp t
 inner join SewingOutput_Detail sod with(nolock) on sod.id = t.ID and sod.OrderId = t.ToOrderID and sod.ComboType = t.ToComboType and sod.Article = t.ToArticle
@@ -1038,7 +1042,7 @@ left join SewingOutput_Detail_Detail sodd on sodd.ID = t.ID
 	and sodd.OrderId = t.ToOrderID and sodd.ComboType = t.ToComboType and sodd.Article = t.ToArticle and sodd.SizeCode = t.ToSizeCode
 outer apply(select Rate = isnull([dbo].GetOrderLocation_Rate(t.ToOrderID ,t.ComboType), ([dbo].GetStyleLocation_Rate(o.StyleUkey, t.ComboType))))r--※Sewing_P01
 outer apply(
-    select StandardOutput
+    select top 1 StandardOutput
     from SewingSchedule s WITH (NOLOCK)
     where s.OrderID = t.ToOrderID and s.ComboType = t.ToComboType and s.SewingLineID = so.SewingLineID
 )h--※Sewing_P01
