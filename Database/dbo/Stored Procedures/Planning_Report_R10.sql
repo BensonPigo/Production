@@ -380,7 +380,7 @@ BEGIN
 
 		--(A)+(B)By MDivisionID (C)By Factory
 		select 
-			a.CountryID, a.MDivisionID, a.tmpBrandFty as FactoryID, a.OrderYYMM as Month, a.CountryName
+			a.CountryID, a.MDivisionID, a.tmpBrandFty as FactoryID, a.OrderYYMM as Month, a.CountryName, Zone
 			, sum(a.Capacity) as Capacity
 			, sum(a.Tms) as Tms
 			, sum(a.FtyTmsCapa) as FtyTmsCapa
@@ -392,7 +392,7 @@ BEGIN
 				select 
 					Factory.CountryID, c.MDivisionID, tmpBrandFty, FactoryID, OrderYYMM
 					, CountryName = Factory.CountryID + '-' + Country.Alias
-					, SUM(OrderCapacity) as Capacity, SUM(FtyTmsCapa) as FtyTmsCapa, SUM(OrderShortage) as OrderShortage
+					, SUM(OrderCapacity) as Capacity, SUM(FtyTmsCapa) as FtyTmsCapa, SUM(OrderShortage) as OrderShortage, Factory.Zone
 				from (
 					select CountryID, MDivisionID, FactoryID, iif(@CalculateByBrand = 1, BrandID, FactoryID) as tmpBrandFty, OrderYYMM, OrderCapacity, 0 as FtyTmsCapa, OrderShortage from #tmpOrder1 union all
 					select CountryID, MDivisionID, FactoryID, iif(@CalculateByBrand = 1, BrandID, FactoryID) as tmpBrandFty, OrderYYMM, ForecastCapacity,	0, 0 from #tmpForecast1 union all
@@ -402,7 +402,7 @@ BEGIN
 				inner join Country on Factory.CountryID = Country.ID
 				where c.FactoryID in (select FactoryID from #tmpFtyList1)
 				AND Factory.IsProduceFty = 1
-				GROUP BY Factory.CountryID, c.MDivisionID, tmpBrandFty, FactoryID, OrderYYMM, Country.Alias
+				GROUP BY Factory.CountryID, c.MDivisionID, tmpBrandFty, FactoryID, OrderYYMM, Country.Alias, Factory.Zone
 			) tmpC
 			left join 
 			(
@@ -417,7 +417,7 @@ BEGIN
 				GROUP BY Factory_Tms.ID
 			) d on tmpC.FactoryID = d.ID
 		) a
-		group by a.CountryID, a.MDivisionID, a.tmpBrandFty, a.OrderYYMM, a.CountryName
+		group by a.CountryID, a.MDivisionID, a.tmpBrandFty, a.OrderYYMM, a.CountryName, Zone
 		ORDER BY a.CountryID, a.MDivisionID, a.tmpBrandFty
 
 		--For Forecast shared
