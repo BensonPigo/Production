@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE [dbo].[Planning_Report_R10]
+﻿
+CREATE PROCEDURE [dbo].[Planning_Report_R10]
 	@ReportType int = 1 --1:整個月 2:半個月	--3:Production status 不做
 	,@BrandID varchar(20) --= ''
 	,@ArtWorkType varchar(20) --= 'SEWING'
@@ -105,7 +106,7 @@ BEGIN
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
 	And Orders.Junk = 0 and Orders.Qty > 0  And Orders.Category in ('B','S') 
 	AND @HasOrders = 1
-	AND (localorder = 0 or SubconInType=2) -- PMS此處才加, 在trade的Orders是不含當地訂單 (Table:FactoryOrder)
+	And localorder = 0
 	and Factory.IsProduceFty = 1
 	
 	Select Orders.ID
@@ -244,7 +245,7 @@ BEGIN
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
 	And Orders.Qty > 0
 	AND @HasForecast = 1
-	And (localorder = 0 or SubconInType=2) -- PMS此處才加
+	And localorder = 0
 	AND Orders.IsForecast = 1 -- PMS此處才加, 預估單 在trade是記錄在Table:FactoryOrder
 	and Factory.IsProduceFty = 1
 
