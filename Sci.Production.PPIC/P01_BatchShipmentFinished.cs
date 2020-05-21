@@ -216,6 +216,7 @@ select SP = (select ID + ','
 			 where POID = '{0}' 
 			 	   and Qty > 0 
 			 	   and PulloutComplete = 0 
+                   and Junk = 0
 	 	     for xml path(''))",
                         MyUtility.Convert.GetString(item["POID"]));
 
