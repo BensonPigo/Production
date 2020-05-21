@@ -1333,7 +1333,7 @@
             this.label52.Name = "label52";
             this.label52.Size = new System.Drawing.Size(56, 21);
             this.label52.TabIndex = 949;
-            this.label52.Text = " Radio%";
+            this.label52.Text = " Ratio%";
             // 
             // label51
             // 
@@ -1342,7 +1342,7 @@
             this.label51.Name = "label51";
             this.label51.Size = new System.Drawing.Size(56, 21);
             this.label51.TabIndex = 948;
-            this.label51.Text = " Radio%";
+            this.label51.Text = " Ratio%";
             // 
             // label50
             // 
@@ -1351,7 +1351,7 @@
             this.label50.Name = "label50";
             this.label50.Size = new System.Drawing.Size(56, 21);
             this.label50.TabIndex = 947;
-            this.label50.Text = " Radio%";
+            this.label50.Text = " Ratio%";
             // 
             // label49
             // 
@@ -1360,7 +1360,7 @@
             this.label49.Name = "label49";
             this.label49.Size = new System.Drawing.Size(56, 21);
             this.label49.TabIndex = 946;
-            this.label49.Text = " Radio%";
+            this.label49.Text = " Ratio%";
             // 
             // label54
             // 
@@ -1369,7 +1369,7 @@
             this.label54.Name = "label54";
             this.label54.Size = new System.Drawing.Size(56, 21);
             this.label54.TabIndex = 945;
-            this.label54.Text = " Radio%";
+            this.label54.Text = " Ratio%";
             // 
             // label48
             // 
@@ -1980,7 +1980,7 @@
             this.ChkNeedToProduction.Location = new System.Drawing.Point(229, 4);
             this.ChkNeedToProduction.Name = "ChkNeedToProduction";
             this.ChkNeedToProduction.ReadOnly = true;
-            this.ChkNeedToProduction.Size = new System.Drawing.Size(230, 21);
+            this.ChkNeedToProduction.Size = new System.Drawing.Size(275, 21);
             this.ChkNeedToProduction.TabIndex = 856;
             this.ChkNeedToProduction.Text = "Cancel still need to continue production";
             this.ChkNeedToProduction.UseVisualStyleBackColor = true;
