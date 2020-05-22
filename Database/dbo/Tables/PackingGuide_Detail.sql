@@ -9,6 +9,7 @@
     [NW]        NUMERIC (7, 3) CONSTRAINT [DF_PackingGuide_Detail_NW] DEFAULT ((0)) NULL,
     [NNW]       NUMERIC (7, 3) CONSTRAINT [DF_PackingGuide_Detail_NNW] DEFAULT ((0)) NULL,
     [GW]        NUMERIC (7, 3) CONSTRAINT [DF_PackingGuide_Detail_GW] DEFAULT ((0)) NULL,
+    [RefNoForBalance] VARCHAR(21) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_PackingGuide_Detail] PRIMARY KEY CLUSTERED ([Id] ASC, [Article] ASC, [SizeCode] ASC)
 );
 
@@ -58,3 +59,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'NNW', @leve
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'GW', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingGuide_Detail', @level2type = N'COLUMN', @level2name = N'GW';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'尾箱使用紙箱料號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingGuide_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'RefNoForBalance'
