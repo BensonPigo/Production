@@ -248,6 +248,8 @@ BEGIN
 			--add update BundleInOut			
 			-- RFIDReader.Type=1
 		set @Cmd2 =	N' 
+			Declare @BundleNoTB Table(Change VARCHAR(20),BundleNo varchar(10)) -- 紀錄寫入/更新的BundleNo
+
 			Merge Production.dbo.BundleInOut as t
 			Using (
 				select *
@@ -263,7 +265,8 @@ BEGIN
 				t.PanelNo = s.PanelNo,t.CutCellID=s.CutCellID
 			when not matched by target and s.type=1 then
 				insert(BundleNo, SubProcessId, InComing, AddDate, SewingLineID, LocationID, RFIDProcessLocationID,PanelNo,CutCellID)
-				values(s.BundleNo, s.SubProcessId, s.TransDate,s.AddDate, s.SewingLineID, s.LocationID, s.RFIDProcessLocationID, s.PanelNo,s.CutCellID);
+				values(s.BundleNo, s.SubProcessId, s.TransDate,s.AddDate, s.SewingLineID, s.LocationID, s.RFIDProcessLocationID, s.PanelNo,s.CutCellID)
+			OUTPUT $action,Inserted.BundleNo INTO @BundleNoTB;  
 
 			-- RFIDReader.Type=2
 			Merge Production.dbo.BundleInOut as t
@@ -281,7 +284,8 @@ BEGIN
 				t.PanelNo = s.PanelNo,t.CutCellID=s.CutCellID
 			when not matched by target and s.type=2 then
 				insert(BundleNo, SubProcessId, OutGoing, AddDate, SewingLineID, LocationID, RFIDProcessLocationID,PanelNo,CutCellID)
-				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID, s.LocationID, s.RFIDProcessLocationID, s.PanelNo, s.CutCellID);
+				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID, s.LocationID, s.RFIDProcessLocationID, s.PanelNo, s.CutCellID)
+			OUTPUT $action,Inserted.BundleNo INTO @BundleNoTB;  
 
 			-- RFIDReader.Type=3
 			Merge Production.dbo.BundleInOut as t
@@ -299,8 +303,50 @@ BEGIN
 				t.PanelNo = s.PanelNo,t.CutCellID = s.CutCellID
 			when not matched by target and s.type=3 then
 				insert(BundleNo, SubProcessId, InComing, AddDate, SewingLineID, LocationID, RFIDProcessLocationID,PanelNo,CutCellID)
-				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID, s.LocationID, s.RFIDProcessLocationID, s.PanelNo, s.CutCellID);
+				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID, s.LocationID, s.RFIDProcessLocationID, s.PanelNo, s.CutCellID)
+			OUTPUT $action,Inserted.BundleNo INTO @BundleNoTB;  
+			
+			--更新ArtworkPO_Detail FarmIn準備資料
+			SELECT FarmIn = SUM(LBD.Qty),LB.Orderid,LS.ArtworkTypeId,LBD.Patterncode,LBD.PatternDesc
+			into #FarmIn_tmp
+			from Bundle_Detail LBD
+			INNER JOIN Bundle LB ON LB.ID = LBD.ID
+			INNER JOIN BundleInOut LBIO ON LBIO.BundleNo= LBD.BundleNo
+			INNER JOIN SubProcess LS ON LS.ID = LBIO.SubProcessId
+			where LB.Orderid in(
+				select distinct b.Orderid
+				from Bundle_Detail bd with(nolock)
+				inner join Bundle b with(nolock) on b.ID = bd.id
+				where bd.BundleNo in (select distinct BundleNo from @BundleNoTB)
+			)
+			AND LBIO.InComing IS NOT NULL
+			AND LBIO.RFIDProcessLocationID=''
+			group by LB.Orderid,LS.ArtworkTypeId,LBD.Patterncode,LBD.PatternDesc
+			 
+			--更新ArtworkPO_Detail FarmOut準備資料
+			SELECT FarmOut = SUM(LBD.Qty),LB.Orderid,LS.ArtworkTypeId,LBD.Patterncode,LBD.PatternDesc
+			into #FarmOut_tmp
+			from Bundle_Detail LBD
+			INNER JOIN Bundle LB ON LB.ID = LBD.ID
+			INNER JOIN BundleInOut LBIO ON LBIO.BundleNo= LBD.BundleNo
+			INNER JOIN SubProcess LS ON LS.ID = LBIO.SubProcessId
+			where LB.Orderid in(
+				select distinct b.Orderid
+				from Bundle_Detail bd with(nolock)
+				inner join Bundle b with(nolock) on b.ID = bd.id
+				where bd.BundleNo in (select distinct BundleNo from @BundleNoTB)
+			)
+			AND LBIO.OutGoing IS NOT NULL
+			AND LBIO.RFIDProcessLocationID=''
+			group by LB.Orderid,LS.ArtworkTypeId,LBD.Patterncode,LBD.PatternDesc
 
+			update apd set FarmIn = t.FarmIn
+			from ArtworkPO_Detail apd
+			inner join #FarmIn_tmp t on apd.OrderID = t.Orderid and apd.ArtworkTypeID = t.ArtworkTypeId and apd.PatternCode = t.Patterncode and apd.PatternDesc = t.PatternDesc
+			
+			update apd set Farmout = t.FarmOut
+			from ArtworkPO_Detail apd
+			inner join #FarmOut_tmp t on apd.OrderID = t.Orderid and apd.ArtworkTypeID = t.ArtworkTypeId and apd.PatternCode = t.Patterncode and apd.PatternDesc = t.PatternDesc
 
 			Commit tran
 
