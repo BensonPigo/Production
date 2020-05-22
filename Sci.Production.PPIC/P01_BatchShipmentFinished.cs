@@ -408,6 +408,7 @@ from (
 	inner join #wantToClose WTC on Orders.POID = WTC.POID
 	where Orders.Qty > 0 
 		  and Orders.PulloutComplete = 0 
+          and Orders.Junk = 0
 		  and Orders.Category != 'M'
     --orders.CFMDate15天(包含)內的資料不能被關單
     union
