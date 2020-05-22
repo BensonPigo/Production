@@ -973,8 +973,8 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                 DataRow drdCutPlan = this.detailData.Select($"SP='{item["SP"]}' and [Desc./Sewing Date] = 'Accu. Cut Plan Qty'")[0];
                 for (int i = 2; i < this.detailData.Columns.Count; i++) // 2 是日期欄位開始
                 {
-                    string bal = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(drdCutPlan[i]) - MyUtility.Convert.GetDecimal(drdStdQty[i]), 0));
-                    if (MyUtility.Convert.GetString(drdCutPlan[i]) == "" && MyUtility.Convert.GetString(drdStdQty[i]) == "")
+                    string bal = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(drdCutPlan[i]) - MyUtility.Convert.GetDecimal(drdAccStdQty[i]), 0));
+                    if (MyUtility.Convert.GetString(drdCutPlan[i]) == "" && MyUtility.Convert.GetString(drdAccStdQty[i]) == "")
                     {
                         bal = string.Empty;
                     }
@@ -1186,8 +1186,8 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                 DataRow drdCutPlan = this.detailData.Select($"SP='{item["SP"]}' and [Fab. Panel Code] = '{item["Fab. Panel Code"]}' and [Desc./Sewing Date] = 'Accu. Cut Plan Qty'")[0];
                 for (int i = 3; i < this.detailData.Columns.Count; i++) // 2 是日期欄位開始
                 {
-                    string bal = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(drdCutPlan[i]) - MyUtility.Convert.GetDecimal(drdStdQty[i]), 0));
-                    if (MyUtility.Convert.GetString(drdCutPlan[i]) == "" && MyUtility.Convert.GetString(drdStdQty[i]) == "")
+                    string bal = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(drdCutPlan[i]) - MyUtility.Convert.GetDecimal(drdAccStdQty[i]), 0));
+                    if (MyUtility.Convert.GetString(drdCutPlan[i]) == "" && MyUtility.Convert.GetString(drdAccStdQty[i]) == "")
                     {
                         bal = string.Empty;
                     }
