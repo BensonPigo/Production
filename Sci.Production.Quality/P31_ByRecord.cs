@@ -40,7 +40,7 @@ namespace Sci.Production.Quality
             string cmd = $@"
 SELECt AuditDate
 		,Stage
-		,[GarmentOutput]=Cast(ClogReceivedPercentage as varchar)+'%'
+		,ClogReceivedPercentage
 		,InspectQty		
 		,DefectQty		
 		,Result
@@ -64,7 +64,7 @@ WHERE OrderID= '{this._OrderID}'  and SEQ='{this._OrderShipmodeSeq}'
             this.Helper.Controls.Grid.Generator(this.grid)
                  .Date("AuditDate", header: "Audit Date", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("Stage", header: "Stage", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                 .Numeric("GarmentOutput", header: "Garment Output(%)", width: Widths.AnsiChars(10),decimal_places:0, iseditingreadonly: true)
+                 .Numeric("ClogReceivedPercentage", header: "Closed carton Output(%)", width: Widths.AnsiChars(10),decimal_places:0, iseditingreadonly: true)
                  .Numeric("InspectQty", header: "Inspect Qty", width: Widths.AnsiChars(8), decimal_places: 0, iseditingreadonly: true)
                  .Numeric("DefectQty", header: "Defect Qty", width: Widths.AnsiChars(8), decimal_places: 0, iseditingreadonly: true)
                  .Text("Result", header: "Result", width: Widths.AnsiChars(10), iseditingreadonly: true)

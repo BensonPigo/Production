@@ -289,7 +289,7 @@ namespace Sci.Production.Quality
             .Text("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .Text("CFAAreaID", header: "Area Code", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: AreaCodeSet)
             .Text("CfaAreaDesc", header: "Area Desc", width: Widths.AnsiChars(25), iseditingreadonly: true)
-            .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false)
             .Numeric("Qty", header: "No.of" + Environment.NewLine + "Defects", width: Widths.AnsiChars(15), decimal_places: 0, integer_places: 10, iseditingreadonly: false, settings: DefectSet)
             .Text("Action", header: "Action", width: Widths.AnsiChars(15), iseditingreadonly: false)
             ;
@@ -300,6 +300,7 @@ namespace Sci.Production.Quality
             this.detailgrid.Columns["GarmentDefectCodeid"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["CFAAreaID"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["Action"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion 可編輯欄位變色
         }
@@ -311,6 +312,7 @@ namespace Sci.Production.Quality
             this.DetailSelectCommand = $@"
 SELECT 
 		 [GarmentDefectTypeID]=g.GarmentDefectTypeID
+        ,b.ID
 		,b.GarmentDefectCodeid
 		,g.Description
 		,b.CFAAreaID
@@ -318,8 +320,8 @@ SELECT
 		,b.Remark
 		,b.Qty
 		,b.Action
-FROM CFAInspectionRecord a
-INNER JOIN CFAInspectionRecord_Detail b On a.ID = b.ID
+FROM CFAInspectionRecord_Detail b
+INNER JOIN CFAInspectionRecord a On a.ID = b.ID
 LEFT JOIN GarmentDefectCode g ON g.ID = b.GarmentDefectCodeID
 LEFT JOIN CfaArea ca ON ca.ID = b.CFAAreaID
 WHERE a.ID ='{masterID}'
@@ -548,6 +550,15 @@ FROM PackingList_Detail WITH(NOLOCK)
 where OrderID = '{this.CurrentMaintain["OrderID"]}' AND OrderShipmodeSeq = '{this.CurrentMaintain["Seq"]}'
 "));
 
+
+            bool IsSameM = MyUtility.Check.Seek($"SELECT 1 FROM Orders WHERE ID='{this.CurrentMaintain["OrderID"]}' AND MDivisionID = '{Sci.Env.User.Keyword}'");
+            if (!IsSameM)
+            {
+                MyUtility.Msg.InfoBox("MDivisionID is different!!");
+                return false;
+            }
+
+
             return base.ClickSaveBefore();
         }
 
@@ -576,7 +587,7 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
                 this.ShowErr(result);
                 return result;
             }
-
+                    
             return base.ClickSavePost();
         }
 
@@ -930,7 +941,7 @@ FROM CFAInspectionRecord WITH(NOLOCK)
 WHERE ID <> '{this.CurrentMaintain["ID"]}'
 AND OrderID = '{this.CurrentMaintain["OrderID"]}'
 AND Seq = '{this.CurrentMaintain["Seq"]}'
-AND Status = '{this.CurrentMaintain["Status"]}'
+AND Stage = '{this.CurrentMaintain["Stage"]}'
 ");
                 if (hasSameSpSeq)
                 {

@@ -35,7 +35,7 @@
             // 
             // txtSp
             // 
-            this.txtSp.Location = new System.Drawing.Point(89, 2);
+            this.txtSp.Location = new System.Drawing.Point(106, 2);
             this.txtSp.Name = "txtSp";
             this.txtSp.Size = new System.Drawing.Size(117, 22);
             this.txtSp.TabIndex = 2;
@@ -47,13 +47,13 @@
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.label1.Location = new System.Drawing.Point(3, 2);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(81, 23);
+            this.label1.Size = new System.Drawing.Size(100, 23);
             this.label1.TabIndex = 4;
             this.label1.Text = "SP# & SEQ";
             // 
             // txtSeq
             // 
-            this.txtSeq.Location = new System.Drawing.Point(210, 2);
+            this.txtSeq.Location = new System.Drawing.Point(229, 2);
             this.txtSeq.Name = "txtSeq";
             this.txtSeq.Size = new System.Drawing.Size(30, 22);
             this.txtSeq.TabIndex = 3;
@@ -67,7 +67,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtSp);
             this.Name = "txtSpSeq";
-            this.Size = new System.Drawing.Size(244, 27);
+            this.Size = new System.Drawing.Size(263, 27);
             this.ResumeLayout(false);
             this.PerformLayout();
 

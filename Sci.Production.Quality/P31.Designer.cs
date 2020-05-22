@@ -156,7 +156,7 @@
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Size = new System.Drawing.Size(1301, 309);
+            this.masterpanel.Size = new System.Drawing.Size(1318, 309);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
@@ -208,7 +208,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 309);
-            this.detailpanel.Size = new System.Drawing.Size(1301, 294);
+            this.detailpanel.Size = new System.Drawing.Size(1318, 294);
             // 
             // gridicon
             // 
@@ -217,7 +217,7 @@
             // detailgridcont
             // 
             this.detailgridcont.Controls.Add(this.CoverPanel);
-            this.detailgridcont.Size = new System.Drawing.Size(1301, 294);
+            this.detailgridcont.Size = new System.Drawing.Size(1318, 294);
             this.detailgridcont.Controls.SetChildIndex(this.CoverPanel, 0);
             // 
             // detail2
@@ -234,16 +234,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1301, 641);
+            this.detail.Size = new System.Drawing.Size(1318, 641);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1301, 603);
+            this.detailcont.Size = new System.Drawing.Size(1318, 603);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 603);
-            this.detailbtm.Size = new System.Drawing.Size(1301, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1318, 38);
             // 
             // browse
             // 
@@ -251,7 +251,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1309, 670);
+            this.tabs.Size = new System.Drawing.Size(1326, 670);
             // 
             // CoverPanel
             // 
@@ -259,7 +259,7 @@
             this.CoverPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.CoverPanel.Location = new System.Drawing.Point(0, 0);
             this.CoverPanel.Name = "CoverPanel";
-            this.CoverPanel.Size = new System.Drawing.Size(1301, 294);
+            this.CoverPanel.Size = new System.Drawing.Size(1318, 294);
             this.CoverPanel.TabIndex = 2;
             // 
             // tabControl
@@ -270,7 +270,7 @@
             this.tabControl.Location = new System.Drawing.Point(0, 0);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(1301, 294);
+            this.tabControl.Size = new System.Drawing.Size(1318, 294);
             this.tabControl.TabIndex = 0;
             // 
             // tab_QtyBreakdown
@@ -279,7 +279,7 @@
             this.tab_QtyBreakdown.Location = new System.Drawing.Point(4, 25);
             this.tab_QtyBreakdown.Name = "tab_QtyBreakdown";
             this.tab_QtyBreakdown.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_QtyBreakdown.Size = new System.Drawing.Size(1293, 265);
+            this.tab_QtyBreakdown.Size = new System.Drawing.Size(1310, 265);
             this.tab_QtyBreakdown.TabIndex = 0;
             this.tab_QtyBreakdown.Text = "Qty breakdown";
             // 
@@ -311,7 +311,7 @@
             this.gridQtyBreakdown.RowTemplate.Height = 24;
             this.gridQtyBreakdown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakdown.ShowCellToolTips = false;
-            this.gridQtyBreakdown.Size = new System.Drawing.Size(1287, 259);
+            this.gridQtyBreakdown.Size = new System.Drawing.Size(1304, 259);
             this.gridQtyBreakdown.TabIndex = 0;
             // 
             // tab_CartonSummary
@@ -360,7 +360,7 @@
             // 
             this.label2.Location = new System.Drawing.Point(23, 68);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(99, 23);
+            this.label2.Size = new System.Drawing.Size(100, 23);
             this.label2.TabIndex = 2;
             this.label2.Text = "Factory";
             // 
@@ -368,7 +368,7 @@
             // 
             this.label3.Location = new System.Drawing.Point(23, 96);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(99, 23);
+            this.label3.Size = new System.Drawing.Size(100, 23);
             this.label3.TabIndex = 3;
             this.label3.Text = "Style";
             // 
@@ -376,13 +376,13 @@
             // 
             this.label4.Location = new System.Drawing.Point(23, 124);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(99, 23);
+            this.label4.Size = new System.Drawing.Size(100, 23);
             this.label4.TabIndex = 4;
             this.label4.Text = "Buyer Delivery";
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(270, 124);
+            this.label5.Location = new System.Drawing.Point(293, 124);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(75, 23);
             this.label5.TabIndex = 8;
@@ -390,7 +390,7 @@
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(270, 96);
+            this.label6.Location = new System.Drawing.Point(293, 96);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(75, 23);
             this.label6.TabIndex = 7;
@@ -398,7 +398,7 @@
             // 
             // label7
             // 
-            this.label7.Location = new System.Drawing.Point(270, 68);
+            this.label7.Location = new System.Drawing.Point(293, 68);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(75, 23);
             this.label7.TabIndex = 6;
@@ -406,7 +406,7 @@
             // 
             // label8
             // 
-            this.label8.Location = new System.Drawing.Point(270, 38);
+            this.label8.Location = new System.Drawing.Point(293, 40);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(75, 23);
             this.label8.TabIndex = 5;
@@ -414,7 +414,7 @@
             // 
             // label9
             // 
-            this.label9.Location = new System.Drawing.Point(451, 124);
+            this.label9.Location = new System.Drawing.Point(474, 124);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(128, 23);
             this.label9.TabIndex = 12;
@@ -422,7 +422,7 @@
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(451, 96);
+            this.label10.Location = new System.Drawing.Point(474, 96);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(128, 23);
             this.label10.TabIndex = 11;
@@ -430,7 +430,7 @@
             // 
             // label11
             // 
-            this.label11.Location = new System.Drawing.Point(451, 68);
+            this.label11.Location = new System.Drawing.Point(474, 68);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(128, 23);
             this.label11.TabIndex = 10;
@@ -438,7 +438,7 @@
             // 
             // label12
             // 
-            this.label12.Location = new System.Drawing.Point(451, 38);
+            this.label12.Location = new System.Drawing.Point(474, 40);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(128, 23);
             this.label12.TabIndex = 9;
@@ -446,7 +446,7 @@
             // 
             // label13
             // 
-            this.label13.Location = new System.Drawing.Point(684, 124);
+            this.label13.Location = new System.Drawing.Point(707, 124);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(165, 23);
             this.label13.TabIndex = 16;
@@ -454,7 +454,7 @@
             // 
             // label14
             // 
-            this.label14.Location = new System.Drawing.Point(685, 96);
+            this.label14.Location = new System.Drawing.Point(707, 96);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(165, 23);
             this.label14.TabIndex = 15;
@@ -462,7 +462,7 @@
             // 
             // label15
             // 
-            this.label15.Location = new System.Drawing.Point(685, 68);
+            this.label15.Location = new System.Drawing.Point(707, 68);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(164, 23);
             this.label15.TabIndex = 14;
@@ -470,7 +470,7 @@
             // 
             // label16
             // 
-            this.label16.Location = new System.Drawing.Point(685, 38);
+            this.label16.Location = new System.Drawing.Point(707, 40);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(165, 23);
             this.label16.TabIndex = 13;
@@ -478,7 +478,7 @@
             // 
             // label17
             // 
-            this.label17.Location = new System.Drawing.Point(990, 123);
+            this.label17.Location = new System.Drawing.Point(1008, 125);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(165, 23);
             this.label17.TabIndex = 20;
@@ -486,7 +486,7 @@
             // 
             // label18
             // 
-            this.label18.Location = new System.Drawing.Point(990, 95);
+            this.label18.Location = new System.Drawing.Point(1008, 96);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(165, 23);
             this.label18.TabIndex = 19;
@@ -494,7 +494,7 @@
             // 
             // label19
             // 
-            this.label19.Location = new System.Drawing.Point(990, 66);
+            this.label19.Location = new System.Drawing.Point(1008, 68);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(165, 23);
             this.label19.TabIndex = 18;
@@ -502,7 +502,7 @@
             // 
             // label20
             // 
-            this.label20.Location = new System.Drawing.Point(990, 38);
+            this.label20.Location = new System.Drawing.Point(1008, 40);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(165, 23);
             this.label20.TabIndex = 17;
@@ -512,7 +512,7 @@
             // 
             this.label21.Location = new System.Drawing.Point(23, 154);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(71, 23);
+            this.label21.Size = new System.Drawing.Size(100, 23);
             this.label21.TabIndex = 21;
             this.label21.Text = "Remark";
             // 
@@ -521,7 +521,7 @@
             this.disFactoryID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disFactoryID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
             this.disFactoryID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disFactoryID.Location = new System.Drawing.Point(125, 68);
+            this.disFactoryID.Location = new System.Drawing.Point(127, 68);
             this.disFactoryID.Name = "disFactoryID";
             this.disFactoryID.Size = new System.Drawing.Size(100, 23);
             this.disFactoryID.TabIndex = 23;
@@ -531,7 +531,7 @@
             this.disStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disStyle.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StyleID", true));
             this.disStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disStyle.Location = new System.Drawing.Point(125, 96);
+            this.disStyle.Location = new System.Drawing.Point(127, 96);
             this.disStyle.Name = "disStyle";
             this.disStyle.Size = new System.Drawing.Size(100, 23);
             this.disStyle.TabIndex = 24;
@@ -540,7 +540,7 @@
             // 
             this.dateByuerDev.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyerDelivery", true));
             this.dateByuerDev.IsSupportEditMode = false;
-            this.dateByuerDev.Location = new System.Drawing.Point(125, 125);
+            this.dateByuerDev.Location = new System.Drawing.Point(127, 125);
             this.dateByuerDev.Name = "dateByuerDev";
             this.dateByuerDev.ReadOnly = true;
             this.dateByuerDev.Size = new System.Drawing.Size(130, 23);
@@ -564,7 +564,7 @@
             // 
             this.disPO.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disPO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disPO.Location = new System.Drawing.Point(348, 40);
+            this.disPO.Location = new System.Drawing.Point(371, 40);
             this.disPO.Name = "disPO";
             this.disPO.Size = new System.Drawing.Size(100, 23);
             this.disPO.TabIndex = 27;
@@ -573,7 +573,7 @@
             // 
             this.disBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disBrand.Location = new System.Drawing.Point(348, 68);
+            this.disBrand.Location = new System.Drawing.Point(371, 68);
             this.disBrand.Name = "disBrand";
             this.disBrand.Size = new System.Drawing.Size(100, 23);
             this.disBrand.TabIndex = 28;
@@ -583,7 +583,7 @@
             this.disShipmode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disShipmode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ShipModeID", true));
             this.disShipmode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disShipmode.Location = new System.Drawing.Point(348, 97);
+            this.disShipmode.Location = new System.Drawing.Point(371, 96);
             this.disShipmode.Name = "disShipmode";
             this.disShipmode.Size = new System.Drawing.Size(100, 23);
             this.disShipmode.TabIndex = 29;
@@ -592,7 +592,7 @@
             // 
             this.disDest.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disDest.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disDest.Location = new System.Drawing.Point(348, 125);
+            this.disDest.Location = new System.Drawing.Point(371, 124);
             this.disDest.Name = "disDest";
             this.disDest.Size = new System.Drawing.Size(100, 23);
             this.disDest.TabIndex = 30;
@@ -602,7 +602,7 @@
             this.disOrderQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disOrderQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Qty", true));
             this.disOrderQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disOrderQty.Location = new System.Drawing.Point(582, 40);
+            this.disOrderQty.Location = new System.Drawing.Point(605, 40);
             this.disOrderQty.Name = "disOrderQty";
             this.disOrderQty.Size = new System.Drawing.Size(100, 23);
             this.disOrderQty.TabIndex = 31;
@@ -611,7 +611,7 @@
             // 
             this.disSewingOutput.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disSewingOutput.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disSewingOutput.Location = new System.Drawing.Point(582, 68);
+            this.disSewingOutput.Location = new System.Drawing.Point(605, 68);
             this.disSewingOutput.Name = "disSewingOutput";
             this.disSewingOutput.Size = new System.Drawing.Size(100, 23);
             this.disSewingOutput.TabIndex = 32;
@@ -620,7 +620,7 @@
             // 
             this.disCFAStaggeredQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disCFAStaggeredQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disCFAStaggeredQty.Location = new System.Drawing.Point(582, 97);
+            this.disCFAStaggeredQty.Location = new System.Drawing.Point(605, 96);
             this.disCFAStaggeredQty.Name = "disCFAStaggeredQty";
             this.disCFAStaggeredQty.Size = new System.Drawing.Size(100, 23);
             this.disCFAStaggeredQty.TabIndex = 33;
@@ -629,7 +629,7 @@
             // 
             this.disClogQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disClogQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disClogQty.Location = new System.Drawing.Point(582, 124);
+            this.disClogQty.Location = new System.Drawing.Point(605, 124);
             this.disClogQty.Name = "disClogQty";
             this.disClogQty.Size = new System.Drawing.Size(100, 23);
             this.disClogQty.TabIndex = 34;
@@ -638,7 +638,7 @@
             // 
             this.disGarmentTest.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disGarmentTest.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disGarmentTest.Location = new System.Drawing.Point(1157, 123);
+            this.disGarmentTest.Location = new System.Drawing.Point(1176, 125);
             this.disGarmentTest.Name = "disGarmentTest";
             this.disGarmentTest.Size = new System.Drawing.Size(101, 23);
             this.disGarmentTest.TabIndex = 42;
@@ -647,7 +647,7 @@
             // 
             this.disVasShas.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disVasShas.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disVasShas.Location = new System.Drawing.Point(1158, 94);
+            this.disVasShas.Location = new System.Drawing.Point(1176, 96);
             this.disVasShas.Name = "disVasShas";
             this.disVasShas.Size = new System.Drawing.Size(100, 23);
             this.disVasShas.TabIndex = 41;
@@ -657,7 +657,7 @@
             this.displayBox17.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox17.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CFA3rdInspectResult", true));
             this.displayBox17.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox17.Location = new System.Drawing.Point(1158, 66);
+            this.displayBox17.Location = new System.Drawing.Point(1176, 68);
             this.displayBox17.Name = "displayBox17";
             this.displayBox17.Size = new System.Drawing.Size(100, 23);
             this.displayBox17.TabIndex = 40;
@@ -667,7 +667,7 @@
             this.displayBox18.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox18.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CFAFinalInspectResult", true));
             this.displayBox18.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox18.Location = new System.Drawing.Point(1158, 38);
+            this.displayBox18.Location = new System.Drawing.Point(1176, 40);
             this.displayBox18.Name = "displayBox18";
             this.displayBox18.Size = new System.Drawing.Size(100, 23);
             this.displayBox18.TabIndex = 39;
@@ -677,16 +677,16 @@
             this.editBoxRemark.BackColor = System.Drawing.Color.White;
             this.editBoxRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CFARemark", true));
             this.editBoxRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBoxRemark.Location = new System.Drawing.Point(97, 153);
+            this.editBoxRemark.Location = new System.Drawing.Point(127, 155);
             this.editBoxRemark.Multiline = true;
             this.editBoxRemark.Name = "editBoxRemark";
-            this.editBoxRemark.Size = new System.Drawing.Size(1127, 74);
+            this.editBoxRemark.Size = new System.Drawing.Size(1149, 74);
             this.editBoxRemark.TabIndex = 2;
             // 
             // dateLastCarton
             // 
             this.dateLastCarton.IsSupportEditMode = false;
-            this.dateLastCarton.Location = new System.Drawing.Point(852, 96);
+            this.dateLastCarton.Location = new System.Drawing.Point(875, 96);
             this.dateLastCarton.Name = "dateLastCarton";
             this.dateLastCarton.ReadOnly = true;
             this.dateLastCarton.Size = new System.Drawing.Size(130, 23);
@@ -696,7 +696,7 @@
             // datePullOut
             // 
             this.datePullOut.IsSupportEditMode = false;
-            this.datePullOut.Location = new System.Drawing.Point(852, 125);
+            this.datePullOut.Location = new System.Drawing.Point(875, 125);
             this.datePullOut.Name = "datePullOut";
             this.datePullOut.ReadOnly = true;
             this.datePullOut.Size = new System.Drawing.Size(130, 23);
@@ -707,7 +707,7 @@
             // 
             this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CFA3rdInspectDate", true));
             this.dateBox1.IsSupportEditMode = false;
-            this.dateBox1.Location = new System.Drawing.Point(852, 68);
+            this.dateBox1.Location = new System.Drawing.Point(875, 68);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.ReadOnly = true;
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
@@ -718,7 +718,7 @@
             // 
             this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CFAFinalInspectDate", true));
             this.dateBox2.IsSupportEditMode = false;
-            this.dateBox2.Location = new System.Drawing.Point(853, 38);
+            this.dateBox2.Location = new System.Drawing.Point(875, 40);
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.ReadOnly = true;
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
@@ -727,7 +727,7 @@
             // 
             // btnH
             // 
-            this.btnH.Location = new System.Drawing.Point(1263, 94);
+            this.btnH.Location = new System.Drawing.Point(1282, 96);
             this.btnH.Name = "btnH";
             this.btnH.Size = new System.Drawing.Size(24, 23);
             this.btnH.TabIndex = 43;
@@ -737,7 +737,7 @@
             // 
             // ByCarton
             // 
-            this.ByCarton.Location = new System.Drawing.Point(1184, 235);
+            this.ByCarton.Location = new System.Drawing.Point(1173, 235);
             this.ByCarton.Name = "ByCarton";
             this.ByCarton.Size = new System.Drawing.Size(103, 30);
             this.ByCarton.TabIndex = 44;
@@ -747,7 +747,7 @@
             // 
             // btnCreateInsRecord
             // 
-            this.btnCreateInsRecord.Location = new System.Drawing.Point(1097, 2);
+            this.btnCreateInsRecord.Location = new System.Drawing.Point(1087, 4);
             this.btnCreateInsRecord.Name = "btnCreateInsRecord";
             this.btnCreateInsRecord.Size = new System.Drawing.Size(190, 30);
             this.btnCreateInsRecord.TabIndex = 45;
@@ -757,7 +757,7 @@
             // 
             // btnByRecord
             // 
-            this.btnByRecord.Location = new System.Drawing.Point(1184, 270);
+            this.btnByRecord.Location = new System.Drawing.Point(1173, 270);
             this.btnByRecord.Name = "btnByRecord";
             this.btnByRecord.Size = new System.Drawing.Size(103, 30);
             this.btnByRecord.TabIndex = 46;
@@ -771,7 +771,7 @@
             this.txtSpSeq.DataBindings.Add(new System.Windows.Forms.Binding("TextBoxSPBinding", this.mtbs, "ID", true));
             this.txtSpSeq.Location = new System.Drawing.Point(21, 38);
             this.txtSpSeq.Name = "txtSpSeq";
-            this.txtSpSeq.Size = new System.Drawing.Size(244, 27);
+            this.txtSpSeq.Size = new System.Drawing.Size(269, 27);
             this.txtSpSeq.TabIndex = 1;
             this.txtSpSeq.TabStop = false;
             this.txtSpSeq.TextBoxSeqBinding = "";
@@ -781,7 +781,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1309, 703);
+            this.ClientSize = new System.Drawing.Size(1326, 703);
             this.GridAlias = "Order_QtyShip_Detail";
             this.IsDeleteOnBrowse = false;
             this.IsGridIcon2Visible = false;

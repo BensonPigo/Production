@@ -150,10 +150,18 @@ WHERE ID='{this.CurrentMaintain["ID"].ToString()}'
 ");
 
             this.disGarmentTest.Value = MyUtility.GetValue.Lookup($@"
-SELECT  IIF(COUNT(ID) > 0 ,'Fail','Pass')
-FROM GarmentTest
-WHERE OrderID = '{this.CurrentMaintain["ID"].ToString()}'
-AND (Result = 'F' OR  Result <> 'P')
+SELECT IIF(
+(
+	(SELECT  COUNT(ID) FROM GarmentTest WHERE OrderID = '{this.CurrentMaintain["ID"].ToString()}'AND Result='P')
+	-
+	(SELECT  COUNT(ID) FROM GarmentTest WHERE OrderID = '{this.CurrentMaintain["ID"].ToString()}' AND Result='F')
+	=
+	(SELECT  COUNT(ID) FROM GarmentTest WHERE OrderID = '{this.CurrentMaintain["ID"].ToString()}')
+)
+AND (SELECT  COUNT(ID) FROM GarmentTest WHERE OrderID = '{this.CurrentMaintain["ID"].ToString()}') > 0
+,'Pass'
+,IIF((SELECT  COUNT(ID) FROM GarmentTest WHERE OrderID = '{this.CurrentMaintain["ID"].ToString()}') > 0 , 'Fail','')
+)
 ");
             #endregion
 
@@ -230,7 +238,7 @@ SELECT --[ID]
 	,[SizeCode]
 	,[Order Qty]=[Qty]
 	,[CMP output]=[CMPOutput]
-	,[CMP %]=IIF(IsCategory=1,'N/A',[CMP%])
+	,[CMP %]=[CMP%]
 	,[CFA staggered output]=IIF(IsCategory=1,'N/A',Cast([CFA staggered Qty]as varchar))
 	,[Staggered %]=IIF(IsCategory=1,'N/A',[Staggered%])
 	,[CLOG output]=IIF(IsCategory=1,'N/A',Cast([CLOG Qty] as varchar))
@@ -243,8 +251,8 @@ SELECT
 	,[SizeCode]='TTL'
 	,[Order Qty]= (SELECT SUM(Qty) FROM #tmp)
 	,[CMP output]=IIF((SELECT TOP 1 CMPOutput FROM #tmp) <> 'N/A', Cast( (SELECT SUM(Cast(CMPOutput as int)) FROM #tmp) as Varchar) , 'N/A' )
-	,[CMP %] = IIF((SELECT TOP 1 CMPOutput FROM #tmp) <> 'N/A' AND (SELECT SUM(Qty) FROM #tmp) <> 0 AND (SELECT TOP 1 IsCategory FROM #tmp)=0
-					,Cast( CAST( ROUND( (SELECT SUM(Cast(CMPOutput as int)) / SUM(Qty)  FROM #tmp),3) as INT ) as Varchar ) + '%'
+	,[CMP %] = IIF((SELECT TOP 1 CMPOutput FROM #tmp) <> 'N/A' AND (SELECT SUM(Qty) FROM #tmp) <> 0
+					,Cast( CAST( ROUND( (SELECT SUM(Cast(CMPOutput as int)) * 1.0 / SUM(Qty)  FROM #tmp),3)  * 100 as INT ) as Varchar ) + '%'
 					,'N/A' 
 					)
 	,[CFA staggered output] = IIF((SELECT TOP 1 IsCategory FROM #tmp)=1,'N/A',Cast( (SELECT SUM([CFA staggered Qty]) FROM #tmp) as varchar))

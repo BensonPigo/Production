@@ -70,6 +70,15 @@ namespace Sci.Production.Class
                 return;
             }
 
+            bool IsSameM = MyUtility.Check.Seek($"SELECT 1 FROM Orders WHERE ID='{OrderID}' AND MDivisionID = '{Sci.Env.User.Keyword}'");
+
+            if (!IsSameM)
+            {
+                MyUtility.Msg.InfoBox("MDivisionID is different!!");
+                e.Cancel = true;
+                return;
+            }
+
             DataTable dt;
             DualResult result;
             List<SqlParameter> paras = new List<SqlParameter>();
