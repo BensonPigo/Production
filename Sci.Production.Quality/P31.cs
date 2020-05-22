@@ -18,7 +18,6 @@ namespace Sci.Production.Quality
     public partial class P31 : Sci.Win.Tems.Input6
     {
         public string _Type = string.Empty;
-        public bool IsSample = false;
         private List<string> _Articles = new List<string>();
         private List<string> _Articles_c = new List<string>();
 
@@ -56,12 +55,18 @@ namespace Sci.Production.Quality
             this.gridQtyBreakdown.Columns.Clear();
             this.gridCartonSummary.Columns.Clear();
 
-            this.IsSample =MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.CurrentMaintain["ID"].ToString()}' "));
+            bool IsSample =MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.CurrentMaintain["ID"].ToString()}' "));
 
             if (IsSample)
             {
                 this.ByCarton.Visible = false;
-                this.tab_CartonSummary.IsVisible = false;
+                //this.tabControl.TabPages.Remove(this.tab_CartonSummary);
+                this.tab_CartonSummary.Parent = null;
+            }
+            else
+            {
+                this.ByCarton.Visible = true;
+                this.tab_CartonSummary.Parent = this.tabControl;
             }
 
             #region 表頭欄位帶入

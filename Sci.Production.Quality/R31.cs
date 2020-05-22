@@ -92,15 +92,15 @@ oq.CFAFinalInspectResult
 						, 'N/A' 
 						, Cast(  CAST(  ROUND( CAST( ISNULL(CMPoutput.Val,0) as int) * 1.0  / oq.Qty * 100 ,0) as int)  as varchar)  
 					)
-,[ClogReceivedQty] = ISNULL(ClogReceivedQty.Val,0)
-,[ClogReceivedQty%]=IIF( oq.Qty = 0 
+,[ClogReceivedQty] =IIF(o.Category ='S' ,'N/A'  ,Cast( ISNULL(ClogReceivedQty.Val,0) as varchar)  )
+,[ClogReceivedQty%]=IIF( oq.Qty = 0 OR o.Category ='S' 
 						,'N/A' 
 						,Cast(CAST(  ROUND( (CAST( ISNULL(ClogReceivedQty.Val,0) as int) * 1.0 / oq.Qty * 100 ),0) as int)  as varchar)  
 					)
-,[TtlCtn] =  TtlCtn.Val
-,[StaggeredCtn] = StaggeredCtn.Val
-,[ClogCtn] = ClogCtn.Val
-,[ClogCtn%]= IIF( ClogCtn.Val = 0
+,[TtlCtn] =  IIF(o.Category ='S' ,'N/A'  ,Cast( ISNULL(TtlCtn.Val,0) as varchar)  )
+,[StaggeredCtn] = IIF(o.Category ='S' ,'N/A'  ,Cast( ISNULL(StaggeredCtn.Val,0) as varchar)  )
+,[ClogCtn] = IIF(o.Category ='S' ,'N/A'  ,Cast( ISNULL(ClogCtn.Val,0) as varchar)  )
+,[ClogCtn%]= IIF( ClogCtn.Val = 0 OR o.Category ='S'
 					, 'N/A' 
 					, CAST( CAST(ROUND((TtlCtn.Val *1.0 / TtlCtn.Val * 100),0) as int)  as varchar)  
 				)

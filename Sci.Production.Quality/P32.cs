@@ -83,10 +83,15 @@ namespace Sci.Production.Quality
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+
             this.AutoInsertBySP(this.CurrentMaintain["OrderID"].ToString(), this.CurrentMaintain["Seq"].ToString());
 
-            this.comboStage_Change(CurrentMaintain["Stage"].ToString());
             this.cauculateSQR();
+
+            this.Reset_comboStage(this.CurrentMaintain["OrderID"].ToString());
+
+            this.comboStage_Change(CurrentMaintain["Stage"].ToString());
+
         }
 
         protected override void OnDetailGridSetup()
@@ -357,6 +362,8 @@ WHERE a.ID ='{masterID}'
                 this.dateBuyerDev.Value = MyUtility.Convert.GetDate(_sourceHeader.BuyerDev);
 
             }
+
+            this.Reset_comboStage(this.CurrentMaintain["OrderID"].ToString());
         }
 
         protected override bool ClickEditBefore()
@@ -610,11 +617,23 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
                     this.AutoInsertBySP(newOrderID, newSeq);
                 }
             }
+            bool IsSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.CurrentMaintain["OrderID"].ToString()}' "));
 
-            if (true)
+            if (IsSample)
             {
-
+                this.comboStage.Items.RemoveAt(2);
             }
+            else
+            {
+                this.comboStage.Items.Clear();
+                this.comboStage.Items.AddRange(new object[] {
+            "",
+            "Inline",
+            "Staggered",
+            "Final",
+            "3rd party"});
+            }
+
         }
 
         private void numInspectQty_Validating(object sender, System.ComponentModel.CancelEventArgs e)
@@ -1010,6 +1029,25 @@ FROM Orders
 WHERE ID = '{OrderID}'
 ");
 
+        }
+
+        private void Reset_comboStage(string OrderID)
+        {
+            bool IsSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{OrderID}' "));
+
+            this.comboStage.Items.Clear();
+            this.comboStage.Items.AddRange(new object[] {
+            "",
+            "Inline",
+            "Staggered",
+            "Final",
+            "3rd party"});
+            if (IsSample)
+            {
+                this.comboStage.Items.RemoveAt(2);
+            }
+
+            comboStage.SelectedItem = CurrentMaintain["Stage"].ToString();
         }
     }
 
