@@ -56,7 +56,7 @@ namespace Sci.Production.Cutting
                 sxr.DicDatas.Add(sxr.VPrefix + "StyleID", dr["StyleID"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "CutLine", dr["CutLine"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "OrderQty", MyUtility.Convert.GetString(dr2["OrderQty"]));
-                #region 處理排序(動態), 因合併裁只以小的seq Sizecode為排序
+                #region 處理排序(動態), 因合併裁只以小大的 seq 之 Sizecode 為排序
                 DataColumnCollection columns = dts[2].Columns;
                 int size1 = 4;
                 int size2 = 4;
@@ -70,7 +70,7 @@ namespace Sci.Production.Cutting
                 }
 
                 DataTable dt2 = dts[2].Clone();
-                for (int i = size1; i <= size2; i++)
+                for (int i = size2; i >= size1; i--)
                 {
                     string sizeName = dts[2].Columns[i].ColumnName;
                     string filter = $"[{sizeName}] is not null";
