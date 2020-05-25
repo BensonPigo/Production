@@ -1919,6 +1919,31 @@ select id,GarmentDefectCodeID,GarmentDefectTypeID,qty from #tmp";
                 this.rftDT = null;
             }
             #endregion
+
+            #region 檢查OrderId在Order_Location是否有資料，沒資料就補
+            string chk_sql = string.Format(
+                @"DECLARE CUR_SewingOutput_Detail CURSOR FOR 
+                      Select distinct orderid from SewingOutput_Detail where id =  '{0}' 
+
+                 declare @orderid varchar(13) 
+                 OPEN CUR_SewingOutput_Detail   
+                 FETCH NEXT FROM CUR_SewingOutput_Detail INTO @orderid 
+                 WHILE @@FETCH_STATUS = 0 
+                 BEGIN
+                   exec dbo.Ins_OrderLocation @orderid
+                 FETCH NEXT FROM CUR_SewingOutput_Detail INTO @orderid
+                 END
+                 CLOSE CUR_SewingOutput_Detail
+                 DEALLOCATE CUR_SewingOutput_Detail", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+            DualResult chkResult = DBProxy.Current.Execute(null, chk_sql);
+
+            if (chkResult == false)
+            {
+                return chkResult;
+            }
+            #endregion
+
             return base.ClickSavePost();
         }
 
@@ -1945,31 +1970,6 @@ where not exists (select 1
             {
                 MyUtility.Msg.WarningBox(result.Description);
             }
-
-            #region 檢查OrderId在Order_Location是否有資料，沒資料就補
-            string chk_sql = string.Format(
-                @"DECLARE CUR_SewingOutput_Detail CURSOR FOR 
-                      Select distinct orderid from SewingOutput_Detail where id =  '{0}' 
-
-                 declare @orderid varchar(13) 
-                 OPEN CUR_SewingOutput_Detail   
-                 FETCH NEXT FROM CUR_SewingOutput_Detail INTO @orderid 
-                 WHILE @@FETCH_STATUS = 0 
-                 BEGIN
-                   exec dbo.Ins_OrderLocation @orderid
-                 FETCH NEXT FROM CUR_SewingOutput_Detail INTO @orderid
-                 END
-                 CLOSE CUR_SewingOutput_Detail
-                 DEALLOCATE CUR_SewingOutput_Detail", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-
-            DualResult chkResult = DBProxy.Current.Execute(null, chk_sql);
-
-            if (chkResult == false)
-            {
-                MyUtility.Msg.WarningBox(chkResult.ToString());
-                return;
-            }
-            #endregion
 
             #region 檢查SewingOutput_Detail與SewingOutput_Detail_Detail QAQty是否相符，不相符就更新
             string chkQAQty_sql = $@"select SD.OrderId,SD.ComboType,SD.QAQty as OriginalQty,SDD_Qty as ActualQty ,ExceesQty =SD.QAQty-SDD_Qty 
