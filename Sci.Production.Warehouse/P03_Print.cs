@@ -154,7 +154,7 @@ namespace Sci.Production.Warehouse
 	                                        outer apply(
 												  select top 1 [value] =IIF(
 														(
-															SELECT et.ECFA FROM Export et
+															SELECT TOP 1 et.ECFA FROM Export et
 															INNER JOIN Export_Detail g WITH (NOLOCK)  ON et.ID= g.id
 															WHERE g.PoID = a.id
 															AND g.SEQ1 = a.seq1
@@ -316,7 +316,7 @@ namespace Sci.Production.Warehouse
                                         outer apply(
 		                                          select top 1 [value] = IIF(
                                                         (
-	                                                        SELECT et.ECFA FROM Export et
+	                                                        SELECT TOP 1 et.ECFA FROM Export et
 	                                                        INNER JOIN Export_Detail g WITH (NOLOCK)  ON et.ID= g.id
 	                                                        WHERE g.PoID = a.id
 	                                                        AND g.SEQ1 = a.seq1
