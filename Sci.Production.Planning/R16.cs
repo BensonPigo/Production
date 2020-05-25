@@ -82,10 +82,11 @@ namespace Sci.Production.Planning
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-
-            sqlCmd.Append(string.Format(@"
+            string whereIncludeCancelOrder = this.chkIncludeCancelOrder.Checked ? string.Empty : " and (o.Junk=0 or (o.Junk=1 and o.NeedProduction=1)) ";
+            sqlCmd.Append(string.Format($@"
 select o.FactoryID [Factory]
 	,o.id [SP#]
+    ,[Cancel] = IIF(o.Junk=1,'Y','N')
 	,o.BrandID [Brand]
 	,o.StyleID [Style]
 	,o.SeasonID [Season]
@@ -280,7 +281,7 @@ outer apply (select * from CriticalActivity where OrderID = o.id and DropDownLis
 outer apply (select * from CriticalActivity where OrderID = o.id and DropDownListID = 'Factory PP Meeting') FactoryPPMeeting 
 outer apply (select * from CriticalActivity where OrderID = o.id and DropDownListID = 'Wash Test Result Receiving') WashTestResultReceiving 
 outer apply (select * from CriticalActivity where OrderID = o.id and DropDownListID = 'Carton Finished') CartonFinished 
-where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
+where o.LocalOrder = 0 {whereIncludeCancelOrder}
 "));
 
             #region --- 條件組合  ---

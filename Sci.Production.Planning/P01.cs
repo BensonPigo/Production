@@ -40,7 +40,7 @@ namespace Sci.Production.Planning
                 }
             }
 
-            this.DefaultFilter = $@"qty > 0 and (category ='B' or category='S') and Finished = 0 and IsForecast = 0 and FactoryID in ({ftyFilter.Substring(0, ftyFilter.Length - 1)})";
+            this.DefaultFilter = $@"(Junk=0 or (Junk=1 and NeedProduction=1)) and (category ='B' or category='S') and Finished = 0 and IsForecast = 0 and FactoryID in ({ftyFilter.Substring(0, ftyFilter.Length - 1)})";
             this.firstTime = false;
         }
 

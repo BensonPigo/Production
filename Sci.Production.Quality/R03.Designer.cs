@@ -45,6 +45,7 @@
             this.labelEstCuttingDate = new Sci.Win.UI.Label();
             this.labelSewingInLineDate = new Sci.Win.UI.Label();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -62,6 +63,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.chkIncludeCancelOrder);
             this.panel1.Controls.Add(this.comboCategory);
             this.panel1.Controls.Add(this.txtSeason);
             this.panel1.Controls.Add(this.txtBrand);
@@ -79,7 +81,7 @@
             this.panel1.Controls.Add(this.labelSCIDelivery);
             this.panel1.Location = new System.Drawing.Point(33, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(447, 294);
+            this.panel1.Size = new System.Drawing.Size(447, 308);
             this.panel1.TabIndex = 94;
             // 
             // comboCategory
@@ -90,6 +92,7 @@
             this.comboCategory.IsSupportUnselect = true;
             this.comboCategory.Location = new System.Drawing.Point(142, 202);
             this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(185, 24);
             this.comboCategory.TabIndex = 53;
             this.comboCategory.Type = "Pms_MtlCategory";
@@ -121,6 +124,7 @@
             this.comboFactory.IsSupportUnselect = true;
             this.comboFactory.Location = new System.Drawing.Point(142, 243);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(125, 24);
             this.comboFactory.TabIndex = 47;
             // 
@@ -267,12 +271,27 @@
             this.labelSCIDelivery.TabIndex = 33;
             this.labelSCIDelivery.Text = "SCI Delivery";
             // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(12, 273);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 166;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(591, 346);
+            this.ClientSize = new System.Drawing.Size(591, 349);
             this.Controls.Add(this.panel1);
             this.Name = "R03";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R03.Material Inspection & Laboratory Status";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -302,5 +321,6 @@
         private Class.txtbrand txtBrand;
         private Class.txtseason txtSeason;
         private Class.comboDropDownList comboCategory;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

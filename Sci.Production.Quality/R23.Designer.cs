@@ -43,20 +43,21 @@
             this.label6 = new Sci.Win.UI.Label();
             this.numInsGap = new Sci.Win.UI.NumericBox();
             this.label1 = new Sci.Win.UI.Label();
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(405, 87);
+            this.print.Location = new System.Drawing.Point(444, 87);
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(405, 15);
+            this.toexcel.Location = new System.Drawing.Point(444, 15);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(405, 51);
+            this.close.Location = new System.Drawing.Point(444, 51);
             // 
             // numDateGap
             // 
@@ -177,10 +178,13 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.boolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = false;
             this.txtfactory.Location = new System.Drawing.Point(194, 55);
+            this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 108;
@@ -238,9 +242,21 @@
             this.label1.TabIndex = 115;
             this.label1.Text = "Ready Date and Inspection Date gap(Days)";
             // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(20, 191);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 169;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
             // R23
             // 
-            this.ClientSize = new System.Drawing.Size(497, 214);
+            this.ClientSize = new System.Drawing.Size(536, 264);
+            this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.numInsGap);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtTime);
@@ -257,7 +273,11 @@
             this.Controls.Add(this.labReadyDate);
             this.Controls.Add(this.dateRangeReadyDate);
             this.Name = "R23";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R23 Inspection Ready Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -276,6 +296,7 @@
             this.Controls.SetChildIndex(this.txtTime, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.numInsGap, 0);
+            this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -298,5 +319,6 @@
         private Win.UI.Label label6;
         private Win.UI.NumericBox numInsGap;
         private Win.UI.Label label1;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

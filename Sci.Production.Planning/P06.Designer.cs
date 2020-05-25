@@ -46,6 +46,7 @@
             this.btnSave = new Sci.Win.UI.Button();
             this.grid = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -53,6 +54,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.chkIncludeCancelOrder);
             this.panel3.Controls.Add(this.gridIcon1);
             this.panel3.Controls.Add(this.comboColumnType);
             this.panel3.Controls.Add(this.checkTargetDate);
@@ -255,6 +257,17 @@
             this.grid.TabIndex = 21;
             this.grid.TabStop = false;
             // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(235, 80);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 128;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
             // P06
             // 
             this.ClientSize = new System.Drawing.Size(857, 456);
@@ -292,5 +305,6 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.ComboBox comboColumnType;
         private Win.UI.GridIcon gridIcon1;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

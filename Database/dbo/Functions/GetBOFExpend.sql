@@ -88,7 +88,7 @@ begin
 	--取得此單的所有SP
 	-- 2017.09.30 modify by Ben, 排除Junk以及Qty = 0
 	--declare @OrderList_Full varchar(max) = (select ID+',' from Orders where POID = @ID order by ID for xml path(''))
-	declare @OrderList_Full varchar(max) = (select ID+',' from Orders where POID = @ID And Junk = 0 And Qty > 0 order by ID for xml path(''))
+	declare @OrderList_Full varchar(max) = (select ID+',' from Orders where POID = @ID And (Orders.Junk=0 or (Orders.Junk=1 and Orders.NeedProduction=1)) order by ID for xml path(''))
 
 	Set @BofRowID = 1;
 	--Select @BofRowCount = Count(*) From @BofCursor;
@@ -188,13 +188,8 @@ begin
 												On Order_EachCons_Color_Article.Order_EachCons_ColorUkey = Order_EachCons_Color.Ukey
 											Left Join (Select Orders.PoID, Order_Qty.Article, Order_Qty.ID
 												From dbo.Orders
-												Left Join dbo.Order_Qty
-													On Order_Qty.ID = Orders.ID
-														----------------------------------
-														-- 2017.09.30 modify by Ben, 排除Junk以及Qty = 0
-														And Orders.Junk = 0
-														And Order_Qty.Qty > 0
-														----------------------------------
+												Left Join dbo.Order_Qty On Order_Qty.ID = Orders.ID
+												where Orders.Junk=0 or (Orders.Junk=1 and Orders.NeedProduction=1)
 												Group by Orders.PoID, Order_Qty.Article, Order_Qty.ID
 												) as tmpOrder
 											On tmpOrder.PoID = Order_EachCons.ID

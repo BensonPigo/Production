@@ -35,22 +35,23 @@
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.numericUpDown1 = new Sci.Win.UI.NumericUpDown();
             this.txtCountry1 = new Sci.Production.Class.txtcountry();
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(398, 1);
+            this.print.Location = new System.Drawing.Point(450, 1);
             this.print.Size = new System.Drawing.Size(93, 30);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(398, 30);
+            this.toexcel.Location = new System.Drawing.Point(450, 30);
             this.toexcel.Size = new System.Drawing.Size(93, 30);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(398, 59);
+            this.close.Location = new System.Drawing.Point(450, 59);
             this.close.Size = new System.Drawing.Size(93, 30);
             // 
             // label1
@@ -133,10 +134,22 @@
             this.txtCountry1.TabIndex = 103;
             this.txtCountry1.TextBox1Binding = "";
             // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(2, 102);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 172;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
             // R02
             // 
-            this.ClientSize = new System.Drawing.Size(493, 121);
+            this.ClientSize = new System.Drawing.Size(545, 149);
             this.ControlBox = false;
+            this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.txtCountry1);
             this.Controls.Add(this.numericUpDown1);
             this.Controls.Add(this.checkBox1);
@@ -146,7 +159,11 @@
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "R02";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R02. CPU Loading Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -157,6 +174,7 @@
             this.Controls.SetChildIndex(this.checkBox1, 0);
             this.Controls.SetChildIndex(this.numericUpDown1, 0);
             this.Controls.SetChildIndex(this.txtCountry1, 0);
+            this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -172,5 +190,6 @@
         private Win.UI.CheckBox checkBox1;
         private Win.UI.NumericUpDown numericUpDown1;
         private Class.txtcountry txtCountry1;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

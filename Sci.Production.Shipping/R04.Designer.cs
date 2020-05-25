@@ -52,6 +52,7 @@
             this.txtbuyer = new Sci.Production.Class.txtbuyer();
             this.txtcountryDestination = new Sci.Production.Class.txtcountry();
             this.txtcustcd = new Sci.Production.Class.txtcustcd();
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -315,9 +316,21 @@
             this.txtcustcd.TabIndex = 149;
             this.txtcustcd.Validating += new System.ComponentModel.CancelEventHandler(this.Txtcustcd_Validating);
             // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(13, 408);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 171;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
             // R04
             // 
-            this.ClientSize = new System.Drawing.Size(540, 433);
+            this.ClientSize = new System.Drawing.Size(540, 459);
+            this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.txtbuyer);
             this.Controls.Add(this.txtcountryDestination);
             this.Controls.Add(this.txtcustcd);
@@ -343,7 +356,11 @@
             this.Controls.Add(this.labelBuyerDelivery);
             this.IsSupportToPrint = false;
             this.Name = "R04";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R04. Estimate/Outstanding Shipment Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -370,6 +387,7 @@
             this.Controls.SetChildIndex(this.txtcustcd, 0);
             this.Controls.SetChildIndex(this.txtcountryDestination, 0);
             this.Controls.SetChildIndex(this.txtbuyer, 0);
+            this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -400,5 +418,6 @@
         private Class.txtcustcd txtcustcd;
         private Class.txtcountry txtcountryDestination;
         private Class.txtbuyer txtbuyer;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }
