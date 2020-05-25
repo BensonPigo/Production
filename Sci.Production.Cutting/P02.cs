@@ -3002,6 +3002,11 @@ where b.poid = '{0}'
         private void btnPatternPanel_Click(object sender, EventArgs e)
         {
             OpenSubDetailPage();
+
+            DataTable sudt;
+            GetSubDetailDatas(this.CurrentDetailData, out sudt);
+            var x = sudt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["PatternPanel"])).ToList();
+            this.CurrentDetailData["PatternPanel"] = string.Join("+", x);
         }
 
         private void distribute_grid_DataError(object sender, DataGridViewDataErrorEventArgs e)
