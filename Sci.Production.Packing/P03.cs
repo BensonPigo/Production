@@ -1077,6 +1077,24 @@ order by os.Seq",
                 return false;
             }
 
+            // 檢查Packing數量是否超過總訂單數量
+            var listOrder = this.DetailDatas.GroupBy(s => new { OrderID = s["OrderID"].ToString()})
+                .Select(s => new
+                {
+                    ID = s.Key.OrderID,
+                    ShipQty = s.Sum(dr => MyUtility.Convert.GetInt(dr["ShipQty"]))
+                });
+            foreach (var order in listOrder)
+            {
+                string ID = MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? "New Packing List" : this.CurrentMaintain["ID"].ToString();
+                DualResult resultCompare = Prgs.CompareOrderQtyPackingQty(order.ID, ID, order.ShipQty);
+                if (!resultCompare)
+                {
+                    this.ShowErr(resultCompare);
+                    return false;
+                }
+            }
+
             // GetID
             if (this.IsDetailInserting)
             {
@@ -1477,6 +1495,18 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
+
+            // 檢查Packing數量是否超過總訂單數量
+            var listOrder = this.DetailDatas.Select(s => s["OrderID"].ToString()).Distinct();
+            foreach (string orderID in listOrder)
+            {
+                DualResult resultCompare = Prgs.CompareOrderQtyPackingQty(orderID, string.Empty, 0);
+                if (!resultCompare)
+                {
+                    this.ShowErr(resultCompare);
+                    return;
+                }
+            }
 
             if (!Prgs.CheckExistsOrder_QtyShip_Detail(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
             {
