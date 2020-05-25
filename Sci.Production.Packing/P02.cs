@@ -2469,7 +2469,7 @@ from Order_QtyShip_Detail with (nolock) where ID = '{this.CurrentMaintain["Order
             DualResult resultCompare = Prgs.CompareOrderQtyPackingQty(this.CurrentMaintain["OrderID"].ToString(), this.CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetInt(this.numTotalShipQty.Value));
             if (!resultCompare)
             {
-                this.ShowErr(resultCompare);
+                MyUtility.Msg.WarningBox(resultCompare.Description);
                 return;
             }
 

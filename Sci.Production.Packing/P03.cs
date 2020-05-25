@@ -1090,7 +1090,7 @@ order by os.Seq",
                 DualResult resultCompare = Prgs.CompareOrderQtyPackingQty(order.ID, ID, order.ShipQty);
                 if (!resultCompare)
                 {
-                    this.ShowErr(resultCompare);
+                    MyUtility.Msg.WarningBox(resultCompare.Description);
                     return false;
                 }
             }
@@ -1503,7 +1503,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                 DualResult resultCompare = Prgs.CompareOrderQtyPackingQty(orderID, string.Empty, 0);
                 if (!resultCompare)
                 {
-                    this.ShowErr(resultCompare);
+                    MyUtility.Msg.WarningBox(resultCompare.Description);
                     return;
                 }
             }

@@ -713,6 +713,7 @@ where isnull(p.ShipQty,0) + ISNULL(t.DiffQty,0) < isnull(oqd.Qty,0)
         public static DualResult CompareOrderQtyPackingQty(string orderID, string plID, int curAddPlQty)
         {
             string sqlGetData = $@"
+----1. 除了目前正在編輯的 PL 以外其他的 PL
 select  p.ID, [ShipQty] = isnull(sum(isnull(pd.ShipQty,0)),0)
 into #tmpPL
 from PackingList p with (nolock)
@@ -720,8 +721,19 @@ inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
 where pd.OrderID = '{orderID}' and p.ID <> '{plID}'
 group by p.ID
 
-select Qty ,[PLQty] = (select isnull(sum(isnull(ShipQty,0)),0) from #tmpPL)
-from Orders with (nolock) where ID = '{orderID}'
+----2. 台北調整的數量
+SELECT  i.OrderID  ,[DiffQty]=SUM(ISNULL(iq.DiffQty,0) )
+INTO #TPEAdjust
+FROM InvAdjust i WITH (NOLOCK)
+INNER JOIN InvAdjust_Qty iq WITH (NOLOCK)  ON  iq.ID = i.id 
+WHERE i.OrderID = '{orderID}'
+GROUP BY i.OrderID
+
+----3. 訂單總數量 / Packing 總數量 - 台北調整數量
+select Qty ,[PLQty] = (select isnull(sum(isnull(ShipQty,0)),0) from #tmpPL) + isnull (tpe.DiffQty, 0)
+from Orders o with (nolock)
+left join #TPEAdjust tpe on o.ID = tpe.OrderID
+where ID = '{orderID}'
 
 select * from #tmpPL
 ";
@@ -750,7 +762,102 @@ Ttl Packing Qty ({plQty}) cannot exceed Order Qty ({orderQty}).
 Please check below packing list.
 {plQtyListString}
 ";
-            return new DualResult(false, errorMsg);
+            return new DualResult(false, errorMsg);            
+        }
+
+        /// <summary>
+        /// 確認Order的訂單數量是否超過PackingList_Detail 的總和(不分Type、PackingListID)
+        /// </summary>
+        /// <param name="packingListID">被Confirm的PackingList ID</param>
+        /// <returns></returns>
+        public static DualResult CheckOrderQty_ShipQty(string packingListID = "")
+        {
+            string sqlchk = $@"
+---- 1. 加總表身各OrderID的訂單、出貨數量
+
+SELECT DISTINCT pd.OrderID
+INTO #OrderList
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.id=pd.ID
+WHERE p.ID='{packingListID}'
+
+SELECT 
+[PackingListID] = pd.ID
+,[OrderID]= o.ID
+,[OrderQty]=o.Qty 
+,[ShipQty]=SUM(pd.ShipQty)
+INTO #tmp
+FROM PackingList_Detail pd
+INNER JOIN Orders o on pd.OrderID = o.ID
+WHERE pd.OrderID IN (SELECT OrderID FROM #OrderList)
+GROUP BY pd.ID, o.ID,o.Qty 
+
+----2. 找出台北調整的數量
+SELECT  i.OrderID  ,[DiffQty]=SUM(ISNULL(iq.DiffQty,0) )
+INTO #TPEAdjust
+FROM InvAdjust i WITH (NOLOCK)
+INNER JOIN InvAdjust_Qty iq WITH (NOLOCK)  ON  iq.ID = i.id 
+WHERE i.OrderID IN (  SELECT OrderID FROM #tmp	)
+GROUP BY i.OrderID
+
+----3. 整合判斷，找出出貨數量 > 訂單數量的PackingList
+----Summary
+SELECT t.OrderID,[TtlOrderQty]=t.OrderQty, [TtlShipQty] = SUM((t.ShipQty + ISNULL(a.DiffQty,0)))
+INTO #Summary
+FROM #tmp t
+LEFT JOIN #TPEAdjust a ON t.OrderID = a.OrderID
+GROUP BY t.OrderID,t.OrderQty
+HAVING t.OrderQty < SUM((t.ShipQty + ISNULL(a.DiffQty,0)))
+
+SELECT * FROM #Summary
+
+----By Order
+SELECT t.PackingListID,t.OrderID, [TtlShipQty] = (t.ShipQty + ISNULL(a.DiffQty,0))
+FROM #tmp t
+LEFT JOIN #TPEAdjust a ON t.OrderID = a.OrderID
+WHERE t.OrderID IN (SELECT OrderiD FROM #Summary)
+
+DROP TABLE #OrderList,#tmp,#TPEAdjust,#Summary
+";
+
+            DataTable[] dtchk;
+            DualResult dualResult = DBProxy.Current.Select(null, sqlchk, out dtchk);
+            if (!dualResult)
+            {
+                return dualResult;
+            }
+            string msgSum = "";
+            if (dtchk[0].Rows.Count > 0 )
+            {
+                foreach (DataRow item in dtchk[0].AsEnumerable().ToList())
+                {
+                    string OrderID = item["OrderID"].ToString();
+                    string AllOrderQty = item["TtlOrderQty"].ToString();
+                    string AllShipQty = item["TtlShipQty"].ToString();
+
+                    string msg = "";
+                    msg += $@"
+SP# {OrderID}
+Ttl Packing Qty ({AllShipQty}) cannot exceed Order Qty ({AllOrderQty}).
+Please check below packing list.
+";
+
+                    foreach (DataRow dr in dtchk[1].AsEnumerable().Where(o=>o["OrderID"].ToString()== OrderID).ToList())
+                    {
+                        string PackingListID = dr["PackingListID"].ToString();
+                        string TtlShipQty = dr["TtlShipQty"].ToString();
+
+                        string msg2 = $"PackingList {PackingListID} - {TtlShipQty}" + Environment.NewLine;
+
+                        msg += msg2;
+                    }
+                    msgSum += msg;
+                }
+                MyUtility.Msg.WarningBox(msgSum);
+                return Result.F(msgSum);
+            }
+
+            return Result.True;
         }
 
         #region Query Packing List Print out Pacging List Report Data
