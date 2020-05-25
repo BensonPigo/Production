@@ -779,7 +779,7 @@ WHERE l.ID='{this.CurrentMaintain["ID"]}'
                 string apvEmail = MyUtility.GetValue.Lookup($@"
 SELECT p.EMail
 FROM Pass1 p
-WHERE p.ID='{Sci.Env.User.Keyword}'
+WHERE p.ID='{Sci.Env.User.UserID}'
 ");
                 string toAddress = dt.Rows[0]["ToAddress"].ToString();
                 string ccAddress = dt.Rows[0]["CCAddress"].ToString() + $";{applyName}" + $";{apvEmail}";
