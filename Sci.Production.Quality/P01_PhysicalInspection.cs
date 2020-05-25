@@ -149,6 +149,7 @@ namespace Sci.Production.Quality
             datas.Columns.Add("SEQ1", typeof(string));
             datas.Columns.Add("SEQ2", typeof(string));
             datas.Columns.Add("NewKey", typeof(int));
+            datas.Columns.Add("LthOfDiff", typeof(decimal));
             int i = 0;
             foreach (DataRow dr in datas.Rows)
             {
@@ -157,6 +158,7 @@ namespace Sci.Production.Quality
                 dr["poid"] = maindr["poid"];
                 dr["SEQ1"] = maindr["SEQ1"];
                 dr["SEQ2"] = maindr["SEQ2"];
+                dr["LthOfDiff"] = MyUtility.Convert.GetDecimal(dr["ActualYds"]) - MyUtility.Convert.GetDecimal(dr["TicketYds"]);
 
                 i++;
             }
@@ -510,6 +512,8 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Ticketyds", header: "Ticket Yds", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
             .Numeric("Actualyds", header: "Act.Yds\nInspected", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2, settings: Ydscell)
+            .Numeric("LthOfDiff", header: "Lth. Of Diff", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+            .Text("TransactionID", header: "TransactionID", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Numeric("CutWidth", header: "Cut. Width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2,iseditingreadonly:true)
             .Numeric("fullwidth", header: "Full width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2)
             .Numeric("actualwidth", header: "Actual Width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2)

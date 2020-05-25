@@ -74,6 +74,8 @@
             this.modifyOdorTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.displayOdor = new Sci.Win.UI.DisplayBox();
             this.labelOdor = new Sci.Win.UI.Label();
+            this.dispLengthofdifference = new Sci.Win.UI.DisplayBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -162,7 +164,6 @@
             // 
             // refresh
             // 
-            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.refresh.Location = new System.Drawing.Point(747, 3);
             // 
             // detailgridcont
@@ -191,6 +192,8 @@
             // 
             // detailbtm
             // 
+            this.detailbtm.Controls.Add(this.dispLengthofdifference);
+            this.detailbtm.Controls.Add(this.label1);
             this.detailbtm.Controls.Add(this.displayOdor);
             this.detailbtm.Controls.Add(this.labelOdor);
             this.detailbtm.Controls.Add(this.displayContinuity);
@@ -222,6 +225,8 @@
             this.detailbtm.Controls.SetChildIndex(this.displayContinuity, 0);
             this.detailbtm.Controls.SetChildIndex(this.labelOdor, 0);
             this.detailbtm.Controls.SetChildIndex(this.displayOdor, 0);
+            this.detailbtm.Controls.SetChildIndex(this.label1, 0);
+            this.detailbtm.Controls.SetChildIndex(this.dispLengthofdifference, 0);
             // 
             // browse
             // 
@@ -693,6 +698,27 @@
             this.labelOdor.Text = "Odor";
             this.labelOdor.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             // 
+            // dispLengthofdifference
+            // 
+            this.dispLengthofdifference.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.dispLengthofdifference.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.dispLengthofdifference.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.dispLengthofdifference.Location = new System.Drawing.Point(192, 9);
+            this.dispLengthofdifference.Name = "dispLengthofdifference";
+            this.dispLengthofdifference.Size = new System.Drawing.Size(20, 21);
+            this.dispLengthofdifference.TabIndex = 51;
+            // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.label1.Location = new System.Drawing.Point(90, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(99, 23);
+            this.label1.TabIndex = 50;
+            this.label1.Text = "Length of difference";
+            this.label1.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(894, 730);
@@ -713,6 +739,7 @@
             this.KeyField1 = "id";
             this.KeyField2 = "poid";
             this.Name = "P01";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P01.Fabric  Inspection";
             this.WorkAlias = "PO";
             this.Controls.SetChildIndex(this.tabs, 0);
@@ -783,5 +810,7 @@
         private System.Windows.Forms.ToolStripMenuItem modifyOdorTestToolStripMenuItem;
         private Win.UI.DisplayBox displayOdor;
         private Win.UI.Label labelOdor;
+        private Win.UI.DisplayBox dispLengthofdifference;
+        private Win.UI.Label label1;
     }
 }
