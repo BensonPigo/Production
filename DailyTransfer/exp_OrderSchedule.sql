@@ -30,7 +30,7 @@ INTO OrderSchedule
 from [Production].dbo.Orders o
 where	o.SCIDelivery <= EOMONTH(GETDATE(),3)
 		and o.Finished = 0
-		and o.Qty > 0
+		and (o.Junk=0 or (o.Junk=1 and o.NeedProduction=1))
 		and o.IsForecast = 0
 		and o.LocalOrder = 0
 		and o.SewInLine is not null

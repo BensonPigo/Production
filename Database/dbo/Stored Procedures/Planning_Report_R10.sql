@@ -104,7 +104,7 @@ BEGIN
 	Where ((@isSCIDelivery = 0 and Orders.BuyerDelivery between @date_s_by and @date_e_by)
 	or (@isSCIDelivery = 1 and Orders.SciDelivery between @date_s and @date_e))
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
-	And Orders.Junk = 0 and Orders.Qty > 0  And Orders.Category in ('B','S') 
+	And (Orders.Junk=0 or (Orders.Junk=1 and Orders.NeedProduction=1))  And Orders.Category in ('B','S') 
 	AND @HasOrders = 1
 	And localorder = 0
 	and Factory.IsProduceFty = 1
@@ -160,7 +160,7 @@ BEGIN
 	Where ((@isSCIDelivery = 0 and Orders.BuyerDelivery between @date_s_by and @date_e_by)
 	or (@isSCIDelivery = 1 and Orders.SciDelivery between @date_s and @date_e))
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
-	And Orders.Junk = 0 and Orders.Qty > 0	
+	And (Orders.Junk=0 or (Orders.Junk=1 and Orders.NeedProduction=1))	
 	AND @HasFtyLocalOrder = 1
 	AND Orders.LocalOrder = 1 -- PMS此處才加, 當地訂單在trade是記錄在Table:FactoryOrder
 	AND Orders.IsForecast = 0
@@ -243,7 +243,7 @@ BEGIN
 	where ((@isSCIDelivery = 0 and Orders.BuyerDelivery between @date_s_by and @date_e_by)
 	or (@isSCIDelivery = 1 and Orders.BuyerDelivery between @date_s and @date_e))
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
-	And Orders.Qty > 0
+	And (Orders.Junk=0 or (Orders.Junk=1 and Orders.NeedProduction=1))
 	AND @HasForecast = 1
 	And localorder = 0
 	AND Orders.IsForecast = 1 -- PMS此處才加, 預估單 在trade是記錄在Table:FactoryOrder

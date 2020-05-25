@@ -39,11 +39,13 @@
             this.labelCategory = new Sci.Win.UI.Label();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.radioPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // radioPanel
             // 
+            this.radioPanel.Controls.Add(this.chkIncludeCancelOrder);
             this.radioPanel.Controls.Add(this.comboCategory);
             this.radioPanel.Controls.Add(this.radioDetail);
             this.radioPanel.Controls.Add(this.radioSummary);
@@ -55,7 +57,7 @@
             this.radioPanel.Controls.Add(this.labelSCIDelivery);
             this.radioPanel.Location = new System.Drawing.Point(30, 24);
             this.radioPanel.Name = "radioPanel";
-            this.radioPanel.Size = new System.Drawing.Size(440, 217);
+            this.radioPanel.Size = new System.Drawing.Size(440, 230);
             this.radioPanel.TabIndex = 94;
             // 
             // comboCategory
@@ -162,12 +164,27 @@
             this.labelSCIDelivery.TabIndex = 98;
             this.labelSCIDelivery.Text = "SCI Delivery";
             // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(29, 200);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 168;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
             // R05
             // 
             this.ClientSize = new System.Drawing.Size(627, 290);
             this.Controls.Add(this.radioPanel);
             this.Name = "R05";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R05.Monthly Material Suppliers Evaluation Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -191,5 +208,6 @@
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.Label labelSCIDelivery;
         private Class.comboDropDownList comboCategory;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

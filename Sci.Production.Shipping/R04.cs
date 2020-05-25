@@ -102,6 +102,7 @@ namespace Sci.Production.Shipping
 		,o.BrandID
 		,b.BuyerID
 		,o.ID
+        ,[Cancel] = IIF(o.Junk=1,'Y','N')
 		,Category = IIF(o.Category = 'B', 'Bulk'
 										, 'Sample')
         ,oq.seq
@@ -306,6 +307,11 @@ and o.PulloutComplete=0 and o.Qty > 0", whereFCRDate));
             if (!MyUtility.Check.Empty(this.custCD))
             {
                 sqlCmd.Append(string.Format(" and o.CustCDID = '{0}'", this.custCD));
+            }
+
+            if (!this.chkIncludeCancelOrder.Checked)
+            {
+                sqlCmd.Append($" and o.Junk = 0");
             }
 
             if (!MyUtility.Check.Empty(this.destination))

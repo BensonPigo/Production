@@ -328,9 +328,9 @@ namespace Sci.Production.Planning
         {
             StringBuilder sqlCmd = new StringBuilder();
             cmds = new List<System.Data.SqlClient.SqlParameter>();
-
+            string whereIncludeCancelOrder = this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
             #region select orders 需要欄位
-            sqlCmd.Append(string.Format(@"
+            sqlCmd.Append(string.Format($@"
                     select o.MDivisionID       , o.FactoryID  , o.SciDelivery     , O.CRDDate           , O.CFMDate       , OrderID = O.ID    
 	                       , O.Dest            , O.StyleID    , O.SeasonID        , O.ProjectID         , O.Customize1    , O.BuyMonth
 	                       , O.CustPONo        , O.BrandID    , O.CustCDID        , O.ProgramID         , O.CdCodeID      , O.CPU
@@ -349,7 +349,7 @@ namespace Sci.Production.Planning
                     into #cte 
                     from dbo.Orders o WITH (NOLOCK) 
                     left join Pass1 WITH (NOLOCK) on Pass1.ID = O.InspHandle
-                    WHERE 1=1"));
+                    WHERE 1=1 {whereIncludeCancelOrder} "));
             #endregion
 
             #region --- 條件組合  ---
@@ -918,9 +918,9 @@ outer apply(
         {
             StringBuilder sqlCmd = new StringBuilder();
             cmds = new List<System.Data.SqlClient.SqlParameter>();
-
+            string whereIncludeCancelOrder = this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
             #region select orders 需要欄位
-            sqlCmd.Append(string.Format(@"
+            sqlCmd.Append(string.Format($@"
 
 select o.MDivisionID       , o.FactoryID  , o.SciDelivery     , O.CRDDate           , O.CFMDate       , OrderID = O.ID    
 	   , O.Dest            , O.StyleID    , O.SeasonID        , O.ProjectID         , O.Customize1    , O.BuyMonth
@@ -942,7 +942,7 @@ into #cte
 from dbo.Orders o WITH (NOLOCK) 
 left join Pass1 WITH (NOLOCK) on Pass1.ID = O.InspHandle
 left join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
-WHERE 1=1 "));
+WHERE 1=1 {whereIncludeCancelOrder} "));
             #endregion
 
             #region --- 條件組合  ---

@@ -62,6 +62,8 @@ namespace Sci.Production.PPIC
                 whereBuyer += $@" and O.BuyerDelivery between '{((DateTime)this.dateRangeBuyerDelivery.DateBox1.Value).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateRangeBuyerDelivery.DateBox2.Value).ToString("yyyy/MM/dd")}'";
             }
 
+            whereBuyer += this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
+
             if (!MyUtility.Check.Empty(this.txtMdivision.Text))
             {
                 where1 += $" and MDivisionID = '{this.txtMdivision.Text}'";
@@ -134,6 +136,7 @@ delete #WorkDate where datepart(WEEKDAY,ReadyDate) = 1 ";
             #endregion
 
             #region main sql
+            
             this.tsql = $@"
 declare @time time = '{(this.txtTime.Text.Equals(":") ? "00:00:00" : this.txtTime.Text)}'
 declare @GAP int = @inputGAP
@@ -221,7 +224,7 @@ from
 	    ),1,1,'')
 	) Shipmode  
 ) as a 
-where Category = 'B' and Junk = 0 
+where Category = 'B' 
 {where1}
 
 select distinct 
@@ -318,6 +321,7 @@ select	o.MDivisionID,
 		o.BuyerDelivery,
 	    o.SciDelivery,
 		o.ID,
+        [CancelOrder] = IIF(o.Junk=1,'Y','N'),
 		c.Alias,
 		o.StyleID,
 		o.CustPONo,
@@ -394,6 +398,7 @@ select  FtyGroup,
 		BuyerDelivery,
 	    SciDelivery,
 		ID,
+        [CancelOrder],
 		Alias,
 		StyleID,
 		CustPONo,

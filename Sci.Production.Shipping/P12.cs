@@ -35,6 +35,7 @@ namespace Sci.Production.Shipping
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
+                .CheckBox("Junk", header: "Cancel Order", iseditable: false)
                 .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("OrderTypeID", header: "Order Type", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(16), iseditingreadonly: true)
@@ -85,7 +86,7 @@ namespace Sci.Production.Shipping
             {
                 where += $@" and o.FtyGroup ='{this.txtfactory.Text}'";
             }
-
+            where += this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
             #endregion
             string sqlcmd = $@"
 select
@@ -94,6 +95,7 @@ select
 	o.BrandID,
 	o.BuyerDelivery,
 	OrderID=o.ID,
+    o.Junk,
 	o.CustPONo,
 	o.StyleID,
 	o.SeasonID,
@@ -183,8 +185,7 @@ OUTER APPLY(
 	SELECT Value=dbo.GetFocStockByOrder(o.ID)
 )FocStockQty
 
-where o.Junk = 0
-        and o.MDivisionID = '{Sci.Env.User.Keyword}'
+where   o.MDivisionID = '{Sci.Env.User.Keyword}'
         AND o.FOCQty > 0  --訂單有 FOC 數量
         AND FocStockQty.Value > 0  -- FOC 還有未出貨的數量
 	    AND ISNULL(ChargeablePullout.Qty,0) = (o.Qty - o.FOCQty)  --Chargeable 必須『全數』出貨

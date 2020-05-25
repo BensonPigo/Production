@@ -41,6 +41,7 @@
             this.txtMdivision = new Sci.Production.Class.txtMdivision();
             this.label1 = new Sci.Win.UI.Label();
             this.dateBoxSewingOutput = new Sci.Win.UI.DateBox();
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -97,6 +98,20 @@
             // 
             // dateRangeBuyerDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateRangeBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateRangeBuyerDelivery.DateBox1.Name = "";
+            this.dateRangeBuyerDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateRangeBuyerDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateRangeBuyerDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateRangeBuyerDelivery.DateBox2.Name = "";
+            this.dateRangeBuyerDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateRangeBuyerDelivery.DateBox2.TabIndex = 1;
             this.dateRangeBuyerDelivery.IsRequired = false;
             this.dateRangeBuyerDelivery.Location = new System.Drawing.Point(144, 9);
             this.dateRangeBuyerDelivery.Name = "dateRangeBuyerDelivery";
@@ -138,10 +153,13 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.boolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = false;
             this.txtfactory.Location = new System.Drawing.Point(144, 99);
+            this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 100;
@@ -160,7 +178,7 @@
             this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(9, 162);
+            this.label1.Location = new System.Drawing.Point(9, 175);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(323, 23);
             this.label1.TabIndex = 102;
@@ -176,11 +194,23 @@
             this.dateBoxSewingOutput.Size = new System.Drawing.Size(130, 23);
             this.dateBoxSewingOutput.TabIndex = 103;
             // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(9, 156);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 160;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
             // R10
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(529, 212);
+            this.ClientSize = new System.Drawing.Size(529, 223);
+            this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.dateBoxSewingOutput);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtMdivision);
@@ -195,7 +225,11 @@
             this.Controls.Add(this.labelSewingOutputDate);
             this.Controls.Add(this.labelFactory);
             this.Name = "R10";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R10. Potential Delay Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.labelSewingOutputDate, 0);
             this.Controls.SetChildIndex(this.labelBuyerDeliveryDate, 0);
@@ -212,6 +246,7 @@
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.dateBoxSewingOutput, 0);
+            this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -232,5 +267,6 @@
         private Class.txtMdivision txtMdivision;
         private Win.UI.Label label1;
         private Win.UI.DateBox dateBoxSewingOutput;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

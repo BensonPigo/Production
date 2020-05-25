@@ -72,6 +72,9 @@ namespace Sci.Production.Cutting
             {
                 sqlwhere += $" and o.BrandID = '{this.Brand}' ";
             }
+
+            sqlwhere += this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
+
             sqlcmd = $@"
 declare @ReadyOffline1 date = '{this.dateRangeReady1}'
 declare @ReadyOffline2 date = '{this.dateRangeReady2}'
@@ -188,7 +191,7 @@ DEALLOCATE c1
 select Readydate,Factory=ID,SewOffLine,BuyerDelivery,CutGapDay into #tmp2 from #tmp1 where holiday =0 and Readydate between @ReadyOffline1 and @ReadyOffline2
 ------------------------------------------------------------------------------------------------------------------------------------
 --從orders撈資料
-select o.FtyGroup,o.BuyerDelivery,o.SciDelivery,o.id,o.Category,c.Alias,o.StyleID,o.CustPONo,o.BrandID,o.ProgramID,o.Qty
+select o.FtyGroup,o.BuyerDelivery,o.SciDelivery,o.id,o.Junk,o.Category,c.Alias,o.StyleID,o.CustPONo,o.BrandID,o.ProgramID,o.Qty
 	,o.SewInLine,o.SewOffLine,o.SewLine,o.ShipModeList,a.Article,t.Readydate,o.MDivisionid,t.CutGapDay
     , [CutGapDatetime] = (cast(t.CutGapDay as datetime)+cast(@CutGapTime as datetime))
 into #orderOffline
@@ -196,12 +199,12 @@ from Orders o with(nolock)
 inner join #tmp2 t on t.SewOffLine = o.SewOffLine and t.Factory = o.FtyGroup--推算的SewOffLine找orders, 以符合SewOffLine
 left join Country c with(nolock) on c.id = o.Dest
 outer apply(select Article = stuff((select concat(',',Article) from Order_Article oa where oa.id = o.id for xml path('')),1,1,''))a
-where o.Junk = 0 and o.Category = 'B'
+where o.Category = 'B'
 and o.BuyerDelivery >= t.BuyerDelivery--BuyerDelivery要大於等於推算出來的BuyerDelivery
 {sqlwhere}
 --and o.MDivisionID = '' and o.FtyGroup = '' and o. BrandID = ''
 
-select o.FtyGroup,o.BuyerDelivery,o.SciDelivery,o.id,o.Category,c.Alias,o.StyleID,o.CustPONo,o.BrandID,o.ProgramID,o.Qty
+select o.FtyGroup,o.BuyerDelivery,o.SciDelivery,o.id,o.Junk,o.Category,c.Alias,o.StyleID,o.CustPONo,o.BrandID,o.ProgramID,o.Qty
 	,o.SewInLine,o.SewOffLine,o.SewLine,o.ShipModeList,a.Article,t.Readydate,o.MDivisionid,t.CutGapDay
     , [CutGapDatetime] = (cast(t.CutGapDay as datetime)+cast(@CutGapTime as datetime))
 into #orderBuyer
@@ -209,7 +212,7 @@ from Orders o with(nolock)
 inner join #tmp2 t on t.BuyerDelivery = o.BuyerDelivery and t.Factory = o.FtyGroup--推算的BuyerDelivery
 left join Country c with(nolock) on c.id = o.Dest
 outer apply(select Article = stuff((select concat(',',Article) from Order_Article oa where oa.id = o.id for xml path('')),1,1,''))a
-where o.Junk = 0 and o.Category = 'B' 
+where o.Category = 'B' 
 and o.id not in(select distinct id from #orderOffline)--要排除上面的訂單號碼, 才不會重複
 {sqlwhere}
 --and o.MDivisionID = '' and o.FtyGroup = '' and o. BrandID = ''
@@ -311,7 +314,7 @@ select cutqty = min(qty),sp,Article,SizeCode,MDivisionid into #tmpcB2 from #tmpP
 select cutqty = sum(cutqty),sp,MDivisionid into #tmpcB3 from #tmpcB2 group by sp,MDivisionid--總和為此orderid完成數
 ------------------------------------------------------------------------------------------------------------------------------------
 
-select a.FtyGroup,a.BuyerDelivery,a.SciDelivery,a.ID,a.Category,a.Alias,a.StyleID,a.CustPONo,a.BrandID,a.ProgramID,a.Qty
+select a.FtyGroup,a.BuyerDelivery,a.SciDelivery,a.ID,[Cancel] = IIF(a.Junk=1,'Y','N'),a.Category,a.Alias,a.StyleID,a.CustPONo,a.BrandID,a.ProgramID,a.Qty
 	,b.cutqty
 	,CuttingStatus=iif(a.Qty<=b.cutqty,'Y','')
 	,a.SewInLine,a.SewOffLine,a.SewLine,a.ShipModeList,a.Article
@@ -322,7 +325,7 @@ from #orderOffline a
 left join #tmpc3 b on a.ID = b.sp and b.MDivisionid = a.MDivisionid
 
 union all
-select a.FtyGroup,a.BuyerDelivery,a.SciDelivery,a.ID,a.Category,a.Alias,a.StyleID,a.CustPONo,a.BrandID,a.ProgramID,a.Qty
+select a.FtyGroup,a.BuyerDelivery,a.SciDelivery,a.ID,[Cancel] = IIF(a.Junk=1,'Y','N'),a.Category,a.Alias,a.StyleID,a.CustPONo,a.BrandID,a.ProgramID,a.Qty
 	,b.cutqty
 	,CuttingStatus=iif(a.Qty<=b.cutqty,'Y','')
 	,a.SewInLine,a.SewOffLine,a.SewLine,a.ShipModeList,a.Article

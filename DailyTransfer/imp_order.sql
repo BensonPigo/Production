@@ -63,7 +63,7 @@ BEGIN
 		inner join Production.dbo.Orders c on b.ID = c.ID 
 											  and a.FactoryID != b.FTY_Group
 		left join Production.dbo.Factory f on b.FTY_Group = f.ID
-		where 	b.qty > 0 
+		where 	(b.Junk=0 or (b.Junk=1 and b.NeedProduction=1))
 				and b.IsForecast = '0'
 
 		--delete cutting
@@ -71,7 +71,7 @@ BEGIN
 		from #TOrder a 		
 		inner join Production.dbo.Cutting b on a.id = b.ID 
 											   and b.FactoryID <> a.FTY_Group
-		where	a.qty > 0 
+		where	(a.Junk=0 or (a.Junk=1 and a.NeedProduction=1))
 				and a.IsForecast = '0'
 				and not exists(select 1 from Production.dbo.MDivision m where m.ID = a.MDivisionID )
 
