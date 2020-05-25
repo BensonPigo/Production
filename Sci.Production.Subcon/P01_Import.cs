@@ -181,6 +181,8 @@ namespace Sci.Production.Subcon
                 .Numeric("UnitPrice", header: "Unit Price", settings: ns, iseditable: true, decimal_places: 4, integer_places: 4)  //12
                 .Numeric("Price", header: "Price/GMT", iseditingreadonly: true, decimal_places: 4, integer_places: 5)  //13
                 .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 4, integer_places: 14)
+                .Numeric("FarmOut", header: "Farm Out", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Numeric("FarmIn", header: "Farm In", iseditingreadonly: true)
                 .Text("IrregularQtyReason", header: "Irregular Qty Reason", iseditingreadonly: true);  //14
 
 
@@ -234,6 +236,8 @@ ArtworkReqID = '{tmp["ArtworkReqID"]}'
                         findrow[0]["amount"] = tmp["amount"];
                         findrow[0]["poqty"] = tmp["PoQty"];
                         findrow[0]["qtygarment"] = 1;
+                        findrow[0]["FarmOut"] = tmp["FarmOut"];
+                        findrow[0]["FarmIn"] = tmp["FarmIn"];
                     }
                     else
                     {
@@ -255,7 +259,35 @@ ArtworkReqID = '{tmp["ArtworkReqID"]}'
         private string QuoteFromPlanningB03()
         {
             string strSQLCmd = string.Empty;
-            strSQLCmd = string.Format(@"
+
+            strSQLCmd += $@"
+Declare @sp1 varchar(16)= '{sp_b}'
+Declare @sp2 varchar(16)= '{sp_e}'
+
+SELECT  bd.QTY 
+	,bdl.Orderid 
+	,s.ArtworkTypeId
+	,bio.OutGoing 
+	,bio.InComing
+	,bd.Patterncode
+	,bd.PatternDesc
+INTO #Bundle
+FROM Bundle_Detail bd WITH (NOLOCK) 
+INNER JOIN Bundle bdl WITH (NOLOCK)  ON bdl.id=bd.id
+INNER JOIN BundleInOut bio WITH (NOLOCK)  ON bio.BundleNo = bd.BundleNo
+INNER JOIN SubProcess s WITH (NOLOCK)  ON s.id= bio.SubProcessId
+WHERE bio.RFIDProcessLocationID=''
+";
+            if (!MyUtility.Check.Empty(sp_b))
+            {
+                strSQLCmd += $@" AND bdl.Orderid >= @sp1 ";
+            }
+            if (!MyUtility.Check.Empty(sp_e))
+            {
+                strSQLCmd += $@" AND bdl.Orderid <= @sp2";
+            }
+
+            strSQLCmd += string.Format(@"
 select distinct Selected = 0
         , sao.LocalSuppId
         , id = ''
@@ -282,6 +314,8 @@ select distinct Selected = 0
         , oa.Article
         , o.Category
         , [IrregularQtyReason] = sr.ID +'-'+sr.Reason
+		,[Farmout] = ISNULL(FarmOut.Value,0)
+		,[FarmIn] = ISNULL(FarmIn.Value,0)
 into #quoteFromPlanningB03
 from  orders o WITH (NOLOCK) 
 inner join order_qty q WITH (NOLOCK) on q.id = o.ID
@@ -305,6 +339,24 @@ outer apply (
         from ArtworkPO_Detail AD, ArtworkPO A
         where AD.ID = A.ID and A.Status = 'Approved' and OrderID = o.ID and ad.PatternCode= oa.PatternCode
 ) IssueQty
+OUTER APPLY(
+	SELECT  [Value]= SUM( bd.QTY)
+	FROM #Bundle bd
+	WHERE bd.Orderid=o.ID 
+	AND bd.ArtworkTypeId = ar.ArtworkTypeID
+	AND bd.Patterncode = oa.PatternCode 
+	AND bd.PatternDesc = oa.PatternDesc
+	AND bd.OutGoing IS NOT NULL 
+)FarmOut
+OUTER APPLY(	
+	SELECT  [Value]= SUM( bd.QTY)
+	FROM #Bundle bd
+	WHERE bd.Orderid=o.ID 
+	AND bd.ArtworkTypeId = ar.ArtworkTypeID
+	AND bd.Patterncode = oa.PatternCode 
+	AND bd.PatternDesc = oa.PatternDesc
+	AND bd.InComing IS NOT NULL
+)FarmIn
 where f.IsProduceFty=1
 --and o.PulloutComplete = 0
 and o.category  in ('B','S')
@@ -357,6 +409,8 @@ select distinct
                                     unitprice = main.unitprice FOR XML PATH('')),1,1,'') )
         , Category
         , IrregularQtyReason
+		,[Farmout]
+		,[FarmIn]
 from #quoteFromPlanningB03 main
 
 ";
@@ -368,7 +422,34 @@ from #quoteFromPlanningB03 main
         {
             string strSQLCmd = string.Empty;
 
-            strSQLCmd = $@"
+            strSQLCmd += $@"
+Declare @sp1 varchar(16)= '{sp_b}'
+Declare @sp2 varchar(16)= '{sp_e}'
+
+SELECT  bd.QTY 
+	,bdl.Orderid 
+	,s.ArtworkTypeId
+	,bio.OutGoing 
+	,bio.InComing
+	,bd.Patterncode
+	,bd.PatternDesc
+INTO #Bundle
+FROM Bundle_Detail bd WITH (NOLOCK) 
+INNER JOIN Bundle bdl WITH (NOLOCK)  ON bdl.id=bd.id
+INNER JOIN BundleInOut bio WITH (NOLOCK)  ON bio.BundleNo = bd.BundleNo
+INNER JOIN SubProcess s WITH (NOLOCK)  ON s.id= bio.SubProcessId
+WHERE bio.RFIDProcessLocationID=''
+";
+            if (!MyUtility.Check.Empty(sp_b))
+            {
+                strSQLCmd += $@" AND bdl.Orderid >= @sp1 ";
+            }
+            if (!MyUtility.Check.Empty(sp_e))
+            {
+                strSQLCmd += $@" AND bdl.Orderid <= @sp2";
+            }
+
+            strSQLCmd += $@"
 select  Selected = 0
         , ot.LocalSuppID
         , id = ''
@@ -406,6 +487,24 @@ outer apply (
         from ArtworkPO_Detail AD, ArtworkPO A
         where AD.ID = A.ID and A.Status = 'Approved' and OrderID = o.ID and ad.PatternCode= ard.PatternCode
 ) IssueQty
+OUTER APPLY(
+	SELECT  [Value]= SUM( bd.QTY)
+	FROM #Bundle bd
+	WHERE bd.Orderid=ard.OrderID
+	AND bd.ArtworkTypeId = ar.ArtworkTypeID
+	AND bd.Patterncode = ard.PatternCode 
+	AND bd.PatternDesc = ard.PatternDesc
+	AND bd.OutGoing IS NOT NULL 
+)FarmOut
+OUTER APPLY(	
+	SELECT  [Value]= SUM( bd.QTY)
+	FROM #Bundle bd
+	WHERE bd.Orderid=ard.OrderID
+	AND bd.ArtworkTypeId = ar.ArtworkTypeID
+	AND bd.Patterncode = ard.PatternCode 
+	AND bd.PatternDesc = ard.PatternDesc
+	AND bd.InComing IS NOT NULL
+)FarmIn
 where   
 f.IsProduceFty=1
 and o.category  in ('B','S')
@@ -439,7 +538,35 @@ and ar.LocalSuppID = '{dr_artworkpo["localsuppid"]}'
         private string QuoteIsSintexSubcon()
         {
             string strSQLCmd = string.Empty;
-            strSQLCmd = string.Format(@"
+
+            strSQLCmd += $@"
+Declare @sp1 varchar(16)= '{sp_b}'
+Declare @sp2 varchar(16)= '{sp_e}'
+
+SELECT  bd.QTY 
+	,bdl.Orderid 
+	,s.ArtworkTypeId
+	,bio.OutGoing 
+	,bio.InComing
+	,bd.Patterncode
+	,bd.PatternDesc
+INTO #Bundle
+FROM Bundle_Detail bd WITH (NOLOCK) 
+INNER JOIN Bundle bdl WITH (NOLOCK)  ON bdl.id=bd.id
+INNER JOIN BundleInOut bio WITH (NOLOCK)  ON bio.BundleNo = bd.BundleNo
+INNER JOIN SubProcess s WITH (NOLOCK)  ON s.id= bio.SubProcessId
+WHERE bio.RFIDProcessLocationID=''
+";
+            if (!MyUtility.Check.Empty(sp_b))
+            {
+                strSQLCmd += $@" AND bdl.Orderid >= @sp1 ";
+            }
+            if (!MyUtility.Check.Empty(sp_e))
+            {
+                strSQLCmd += $@" AND bdl.Orderid <= @sp2";
+            }
+
+            strSQLCmd += string.Format(@"
 select distinct  Selected = 0
         , ot.LocalSuppId
         , id = ''
@@ -465,6 +592,8 @@ select distinct  Selected = 0
         , [Article] = oat.Article
         , o.Category
         , [IrregularQtyReason] = sr.ID +'-'+sr.Reason
+		,[Farmout] = ISNULL(FarmOut.Value,0)
+		,[FarmIn] = ISNULL(FarmIn.Value,0)
 from  orders o WITH (NOLOCK)
 inner join Order_Article oat with (nolock) on o.ID = oat.ID
 inner join ArtworkReq ar WITH (NOLOCK) on ar.Status = 'Approved'
@@ -480,6 +609,24 @@ outer apply (
         from ArtworkPO_Detail AD, ArtworkPO A
         where AD.ID = A.ID and A.Status = 'Approved' and OrderID = o.ID and ad.PatternCode= ard.PatternCode
 ) IssueQty
+OUTER APPLY(
+	SELECT  [Value]= SUM( bd.QTY)
+	FROM #Bundle bd
+	WHERE bd.Orderid=o.ID 
+	AND bd.ArtworkTypeId = ar.ArtworkTypeID
+	AND bd.Patterncode = ard.PatternCode 
+	AND bd.PatternDesc = ard.PatternDesc
+	AND bd.OutGoing IS NOT NULL 
+)FarmOut
+OUTER APPLY(	
+	SELECT  [Value]= SUM( bd.QTY)
+	FROM #Bundle bd
+	WHERE bd.Orderid=o.ID 
+	AND bd.ArtworkTypeId = ar.ArtworkTypeID
+	AND bd.Patterncode = ard.PatternCode 
+	AND bd.PatternDesc = ard.PatternDesc
+	AND bd.InComing IS NOT NULL
+)FarmIn
 where f.IsProduceFty=1
 and o.category  in ('B','S')
 and o.MDivisionID='{0}' and ar.ArtworkTypeID = '{1}' and ar.LocalSuppId = '{2}' and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
