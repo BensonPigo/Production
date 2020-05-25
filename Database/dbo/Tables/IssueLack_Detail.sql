@@ -10,6 +10,7 @@
     [Dyelot]           VARCHAR (8)     CONSTRAINT [DF_IssueLack_Detail_Dyelot] DEFAULT ('') NULL,
     [StockType]        CHAR (1)        CONSTRAINT [DF_IssueLack_Detail_StockType] DEFAULT ('') NULL,
     [Ukey]             BIGINT          IDENTITY (1, 1) NOT NULL,
+    [Remark] NVARCHAR(60) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_IssueLack_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

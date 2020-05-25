@@ -10,6 +10,7 @@ using Sci.Data;
 using Sci.Production.PublicPrg;
 using System.Runtime.InteropServices;
 using System.Transactions;
+using Sci.Win.Tools;
 
 namespace Sci.Production.PPIC
 {
@@ -377,7 +378,8 @@ OUTER APPLY(
                 .ComboBox("Process", header: "Process", width: Widths.AnsiChars(15), settings: process)
                 .Text("PPICReasonID", header: "Reason Id", width: Widths.AnsiChars(5), settings: reason)
                 .EditText("PPICReasonDesc", header: "Reason", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("Status", header: "Status", width: Widths.AnsiChars(8), iseditingreadonly: true);
+                .Text("Status", header: "Status", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: false);
         }
 
         private void ClearGridData(DataRow dr)
@@ -390,6 +392,7 @@ OUTER APPLY(
             dr["WhseInQty"] = 0;
             dr["FTYInQty"] = 0;
             dr["FTYLastRecvDate"] = DBNull.Value;
+            dr["Remark"] = string.Empty;
             dr.EndEdit();
         }
 
@@ -747,6 +750,7 @@ where a.RequestQty > a.StockQty",
         {
             base.ClickConfirm();
             DualResult result;
+
             string updateCmd = string.Format("update Lack set Status = 'Confirmed',ApvName = '{0}',ApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
@@ -754,6 +758,45 @@ where a.RequestQty > a.StockQty",
                 MyUtility.Msg.ErrorBox("Confirm fail!\r\n" + result.ToString());
                 return;
             }
+
+            DataTable dt;
+            result = DBProxy.Current.Select(null, "SELECT * FROM MailTo WHERE ID = '021'  ", out dt);
+
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Query Mail Setting fail!\r\n" + result.ToString());
+                return;
+            }
+
+            if (dt.Rows.Count != 0 && dt.Rows[0]["ToAddress"].ToString() != string.Empty)
+            {
+                string applyName = MyUtility.GetValue.Lookup($@"
+SELECT p.EMail
+FROM Lack l
+INNER JOIN Pass1 p ON p.ID = l.ApplyName
+WHERE l.ID='{this.CurrentMaintain["ID"]}'
+");
+                string apvEmail = MyUtility.GetValue.Lookup($@"
+SELECT p.EMail
+FROM Pass1 p
+WHERE p.ID='{Sci.Env.User.UserID}'
+");
+                string toAddress = dt.Rows[0]["ToAddress"].ToString();
+                string ccAddress = dt.Rows[0]["CCAddress"].ToString() + $";{applyName}" + $";{apvEmail}";
+                string subject = dt.Rows[0]["Subject"].ToString();
+
+                // 取得表頭 P10 的單號
+                string content = this.CurrentMaintain["ID"].ToString();
+
+                var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, content, true, true);
+               email.ShowDialog();
+
+                if (email.SendMailResult)
+                {
+                    MyUtility.Msg.InfoBox("Send mail successful.");
+                }
+            }
+
         }
 
         /// <inheritdoc/>
@@ -1079,7 +1122,7 @@ Where c.lock = 0  and a.id = '{this.CurrentMaintain["ID"]}' and c.poid = '{dt1ro
 INSERT INTO [dbo].[IssueLack]([Id],[Type],[MDivisionID],[FactoryID],[IssueDate],[Status],[RequestID],[Remark],[ApvName],[ApvDate],[FabricType],[AddName],[AddDate])
 VALUES('{tmpId}','{type}','{Sci.Env.User.Keyword}','{Sci.Env.User.Factory}',GETDATE(),'NEW','{requestid}','{this.CurrentMaintain["Remark"]}','',null,'F','{Sci.Env.User.UserID}',GETDATE())
 ";
-            sqlinsert += $@"insert IssueLack_Detail select * from #tmp";
+            sqlinsert += $@"insert IssueLack_Detail(ID,FtyInventoryukey,Qty,MDivisionID,POID,Seq1,Seq2, Roll, Dyelot, StockType) select * from #tmp";
             DataTable a;
             using (TransactionScope scope = new TransactionScope())
             {

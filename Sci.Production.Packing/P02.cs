@@ -2465,6 +2465,14 @@ from Order_QtyShip_Detail with (nolock) where ID = '{this.CurrentMaintain["Order
                 return;
             }
 
+            // 檢查Packing數量是否超過總訂單數量
+            DualResult resultCompare = Prgs.CompareOrderQtyPackingQty(this.CurrentMaintain["OrderID"].ToString(), this.CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetInt(this.numTotalShipQty.Value));
+            if (!resultCompare)
+            {
+                this.ShowErr(resultCompare);
+                return;
+            }
+
             #region 檢查Packinglist_Detail與此次轉換數量加總是否超過Order_QtyShip數量
             string sqlCheckShipQty = $@"
 declare @PKQty int

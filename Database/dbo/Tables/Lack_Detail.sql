@@ -10,6 +10,7 @@
     [RejectQty]       INT             CONSTRAINT [DF_Lack_Detail_RejectQty] DEFAULT ((0)) NULL,
     [Process]         VARCHAR (30)    CONSTRAINT [DF_Lack_Detail_Process] DEFAULT ('') NOT NULL,
     [IssueQty]        NUMERIC (10, 2) CONSTRAINT [DF_Lack_Detail_IssueQty] DEFAULT ((0)) NULL,
+    [Remark] NVARCHAR(60) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Lack_Detail] PRIMARY KEY CLUSTERED ([ID], [Seq1], [Seq2], [PPICReasonID], [Process])
 );
 

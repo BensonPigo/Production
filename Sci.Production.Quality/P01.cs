@@ -158,6 +158,24 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
                 this.RenewData();
             };
 
+            phyYds.CellFormatting += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                string sqlcmd = $@"
+select 1 from FIR_Physical with(nolock)
+where  id = {dr["id"]}
+and TicketYds <> ActualYds
+and ActualYds > 0
+";
+                if (MyUtility.Check.Seek(sqlcmd))
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.LemonChiffon;
+                }
+            };
             phyYds.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData; if (null == dr) return;
@@ -445,6 +463,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             else dateCompletionDate.Text = "";
 
             #region Box 顏色
+            dispLengthofdifference.BackColor = Color.Pink;
             displayavailablemodified.BackColor = Color.MistyRose;
             displayPhysicalInsp.BackColor = Color.LemonChiffon;
             displayWeightTest.BackColor = Color.LightCyan;
