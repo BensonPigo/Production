@@ -160,6 +160,8 @@ namespace Sci.Production.Subcon
                 .Numeric("Cost", header: "Cost(USD)", iseditingreadonly: true, decimal_places: 4, integer_places: 4)
                 .Numeric("UnitPrice", header: "Unit Price", iseditable: true, decimal_places: 4, integer_places: 4)
                 .Numeric("poqty", header: "Po QTY", iseditingreadonly: true)
+                .Numeric("FarmOut", header: "Farm Out", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Numeric("FarmIn", header: "Farm In", iseditingreadonly: true)
                 .Text("IrregularQtyReason", header: "Irregular Qty Reason", iseditingreadonly: true)
                 .Text("message", header: "Message", iseditingreadonly: true, width: Widths.AnsiChars(30))
                 ;
@@ -329,7 +331,9 @@ namespace Sci.Production.Subcon
                                              t8 = row.Field<decimal>("cost"),
                                              t9 = row.Field<decimal>("unitprice"),
                                              t10 = (row.Field<decimal>("QtyGarment") == 0 ? 1 : row.Field<decimal>("QtyGarment")),
-                                             t11 = row.Field<string>("ArtworkReqID")
+                                             t11 = row.Field<string>("ArtworkReqID"),
+                                             t12 = MyUtility.Convert.GetDecimal(row["FarmOut"]),
+                                             t13 = MyUtility.Convert.GetDecimal(row["FarmIn"])
                                          } into m
                                          select new
                                          {
@@ -344,7 +348,9 @@ namespace Sci.Production.Subcon
                                              unitprice = m.Key.t9,
                                              QtyGarment = m.Key.t10,
                                              poqty = m.Sum(n => n.Field<decimal>("poqty")),
-                                             ArtworkReqID = m.Key.t11
+                                             ArtworkReqID = m.Key.t11,
+                                             FarmOut = m.Key.t12,
+                                             FarmIn = m.Key.t13
                                          };
 
                             #endregion
@@ -416,7 +422,7 @@ namespace Sci.Production.Subcon
                                     ,[Amount]     
                                     ,[PoQty]      
                                     ,[ArtworkTypeID]
-                                    ,[ArtworkReqID])
+                                    ,[ArtworkReqID],[Farmout],[FarmIn])
                                     VALUES    
                                     ('{0}'  
                                     ,'{1}'  
@@ -432,13 +438,16 @@ namespace Sci.Production.Subcon
                                     ,{11}   
                                     ,{12}   
                                     ,'{13}'
-                                    ,'{14}')", id, q2.orderid, q2.artworkid, q2.PatternCode, q2.PatternDesc
+                                    ,'{14}'
+                                    ,'{15}'
+                                    ,'{16}'
+)", id, q2.orderid, q2.artworkid, q2.PatternCode, q2.PatternDesc
                                     , q2.coststitch, q2.stitch, q2.unitprice, q2.cost
                                     , 1
                                     , q2.unitprice * q2.QtyGarment
                                     , q2.poqty * q2.unitprice * q2.QtyGarment
                                     , q2.poqty
-                                    , q2.ArtworkTypeID, q2.ArtworkReqID));
+                                    , q2.ArtworkTypeID, q2.ArtworkReqID,q2.FarmOut,q2.FarmIn));
                                     #endregion
                                 }
                             }
@@ -462,7 +471,7 @@ namespace Sci.Production.Subcon
                                     ,[Amount]     
                                     ,[PoQty]      
                                     ,[ArtworkTypeID]
-                                    ,[ArtworkReqID])
+                                    ,[ArtworkReqID],[Farmout],[FarmIn])
                                     VALUES    
                                     ('{0}'  
                                     ,'{1}'  
@@ -478,11 +487,13 @@ namespace Sci.Production.Subcon
                                     ,{11}   
                                     ,{12}   
                                     ,'{13}'
-                                    ,'{14}')", id, q2.orderid, q2.artworkid, q2.PatternCode, q2.PatternDesc
+                                    ,'{14}'
+                                    ,'{15}'
+                                    ,'{16}')", id, q2.orderid, q2.artworkid, q2.PatternCode, q2.PatternDesc
                                     , q2.coststitch, q2.stitch, q2.unitprice, q2.cost, q2.QtyGarment
                                     , q2.unitprice * q2.QtyGarment
                                     , q2.poqty * q2.unitprice * q2.QtyGarment
-                                    , q2.poqty, q2.ArtworkTypeID, q2.ArtworkReqID));
+                                    , q2.poqty, q2.ArtworkTypeID, q2.ArtworkReqID, q2.FarmOut, q2.FarmIn));
                                     #endregion
                                 }
                             }
@@ -537,8 +548,40 @@ namespace Sci.Production.Subcon
 
         private string QuoteFromPlanningB03()
         {
-            string SqlCmd;
-            SqlCmd = string.Format(@"
+            string SqlCmd = string.Empty;
+            SqlCmd += $@"
+Declare @sp1 varchar(16)= '{sp_b}'
+Declare @sp2 varchar(16)= '{sp_e}'
+
+SELECT  bd.QTY 
+	,bdl.Orderid 
+	,s.ArtworkTypeId
+	,bio.OutGoing 
+	,bio.InComing
+	,bd.Patterncode
+	,bd.PatternDesc
+INTO #Bundle
+FROM Bundle_Detail bd WITH (NOLOCK) 
+INNER JOIN Bundle bdl WITH (NOLOCK)  ON bdl.id=bd.id
+INNER JOIN BundleInOut bio WITH (NOLOCK)  ON bio.BundleNo = bd.BundleNo
+INNER JOIN SubProcess s WITH (NOLOCK)  ON s.id= bio.SubProcessId
+WHERE bio.RFIDProcessLocationID=''
+";
+            if (!MyUtility.Check.Empty(this.artworktype))
+            {
+                SqlCmd += $@" AND s.ArtworkTypeId='{this.artworktype}'";
+            }
+            if (!MyUtility.Check.Empty(sp_b))
+            {
+                SqlCmd += $@" AND bdl.Orderid >= @sp1 ";
+            }
+            if (!MyUtility.Check.Empty(sp_e))
+            {
+                SqlCmd += $@" AND bdl.Orderid <= @sp2";
+            }
+
+
+            SqlCmd += string.Format(@"
 SELECT distinct	Selected = 0 
 		, orders.FTYGroup
 		, orderid = Orders.ID
@@ -565,6 +608,8 @@ SELECT distinct	Selected = 0
 		, [ArtworkReqID] = ar.ID
         , Orders.Category
         , [IrregularQtyReason] = sr.ID +'-'+sr.Reason
+		,[Farmout] = ISNULL(FarmOut.Value,0)
+		,[FarmIn] = ISNULL(FarmIn.Value,0)
 into    #quoteDetail
 FROM Orders WITH (NOLOCK) 
 inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
@@ -592,6 +637,24 @@ outer apply (
              else sao.Price
              end
 )cost
+OUTER APPLY(
+	SELECT  [Value]= SUM( bd.QTY)
+	FROM #Bundle bd
+	WHERE bd.Orderid=Orders.ID 
+	AND bd.ArtworkTypeId = awt.ID
+	AND bd.Patterncode = v.PatternCode 
+	AND bd.PatternDesc = v.PatternDesc
+	AND bd.OutGoing IS NOT NULL 
+)FarmOut
+OUTER APPLY(	
+	SELECT  [Value]= SUM( bd.QTY)
+	FROM #Bundle bd
+	WHERE bd.Orderid=Orders.ID 
+	AND bd.ArtworkTypeId = awt.ID
+	AND bd.Patterncode = v.PatternCode 
+	AND bd.PatternDesc = v.PatternDesc
+	AND bd.InComing IS NOT NULL
+)FarmIn
 WHERE 	 orders.IsForecast = 0      
         --and Orders.PulloutComplete = 0
 		AND (Orders.Junk=0 or Orders.Junk=1 and Orders.NeedProduction=1)
@@ -646,6 +709,8 @@ select distinct
                                     unitprice = main.unitprice FOR XML PATH('')),1,1,'') )
         , Category
         , [IrregularQtyReason]
+		,[Farmout]
+		,[FarmIn]
 from #quoteDetail main
 
 ";
@@ -656,11 +721,41 @@ from #quoteDetail main
 
         private string QuoteFromTmsCost()
         {
-            string SqlCmd;
+            string SqlCmd = string.Empty;
+            SqlCmd += $@"
+Declare @sp1 varchar(16)= '{sp_b}'
+Declare @sp2 varchar(16)= '{sp_e}'
+
+SELECT  bd.QTY 
+	,bdl.Orderid 
+	,s.ArtworkTypeId
+	,bio.OutGoing 
+	,bio.InComing
+	,bd.Patterncode
+	,bd.PatternDesc
+INTO #Bundle
+FROM Bundle_Detail bd WITH (NOLOCK) 
+INNER JOIN Bundle bdl WITH (NOLOCK)  ON bdl.id=bd.id
+INNER JOIN BundleInOut bio WITH (NOLOCK)  ON bio.BundleNo = bd.BundleNo
+INNER JOIN SubProcess s WITH (NOLOCK)  ON s.id= bio.SubProcessId
+WHERE bio.RFIDProcessLocationID=''
+";
+            if (!MyUtility.Check.Empty(this.artworktype))
+            {
+                SqlCmd += $@" AND s.ArtworkTypeId='{this.artworktype}'";
+            }
+            if (!MyUtility.Check.Empty(sp_b))
+            {
+                SqlCmd += $@" AND bdl.Orderid >= @sp1 ";
+            }
+            if (!MyUtility.Check.Empty(sp_e))
+            {
+                SqlCmd += $@" AND bdl.Orderid <= @sp2";
+            }
             // 建立可以符合回傳的Cursor
 
             #region -- 非ArtworK類 的sql command --
-            SqlCmd = string.Format(@"
+            SqlCmd += string.Format(@"
 SELECT 	Selected = 0 
 		, Orders.FTYGroup
 		, orderid = Order_TmsCost.ID 
@@ -688,6 +783,8 @@ SELECT 	Selected = 0
 		, [ArtworkReqID] = ar.ID
         , Orders.Category
         , [IrregularQtyReason] = sr.ID +'-'+sr.Reason
+		,[Farmout] = ISNULL(FarmOut.Value,0)
+		,[FarmIn] = ISNULL(FarmIn.Value,0)
 FROM ArtworkReq_Detail ard WITH (NOLOCK) 
 inner join ArtworkReq ar WITH (NOLOCK) on ar.ID = ard.ID and ar.ArtworkTypeID = '{2}'  and ar.Status = 'Approved'
 left join ArtworkReq_IrregularQty ai with (nolock) on ai.OrderID = ard.OrderID and ai.ArtworkTypeID = ar.ArtworkTypeID and ard.ExceedQty > 0
@@ -695,6 +792,24 @@ left join SubconReason sr with (nolock) on sr.Type = 'SQ' and sr.ID = ai.SubconR
 inner join Order_TmsCost WITH (NOLOCK) on ard.OrderID = Order_TmsCost.ID and Order_TmsCost.ArtworkTypeID = ar.ArtworkTypeID
 inner join Orders WITH (NOLOCK) on orders.id = order_tmscost.id
 inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
+OUTER APPLY(
+	SELECT  [Value]= SUM( bd.QTY)
+	FROM #Bundle bd
+	WHERE bd.Orderid = ard.OrderID 
+	AND bd.ArtworkTypeId = ar.ArtworkTypeID 
+	AND bd.Patterncode = ard.PatternCode 
+	AND bd.PatternDesc =ard.PatternDesc
+	AND bd.OutGoing IS NOT NULL 
+)FarmOut
+OUTER APPLY(	
+	SELECT  [Value]= SUM( bd.QTY)
+	FROM #Bundle bd
+	WHERE bd.Orderid = ard.OrderID 
+	AND bd.ArtworkTypeId = ar.ArtworkTypeID 
+	AND bd.Patterncode = ard.PatternCode 
+	AND bd.PatternDesc =ard.PatternDesc
+	AND bd.InComing IS NOT NULL
+)FarmIn
 WHERE 	ard.ArtworkPOID = '' and
         factory.mdivisionid = '{1}' 
 		and factory.IsProduceFty = 1
@@ -750,6 +865,37 @@ WHERE 	ard.ArtworkPOID = '' and
             }
 
             string sqlGetSpecialRecordData = $@"
+Declare @sp1 varchar(16)= '{sp_b}'
+Declare @sp2 varchar(16)= '{sp_e}'
+
+SELECT  bd.QTY 
+	,bdl.Orderid 
+	,s.ArtworkTypeId
+	,bio.OutGoing 
+	,bio.InComing
+	,bd.Patterncode
+	,bd.PatternDesc
+INTO #Bundle
+FROM Bundle_Detail bd WITH (NOLOCK) 
+INNER JOIN Bundle bdl WITH (NOLOCK)  ON bdl.id=bd.id
+INNER JOIN BundleInOut bio WITH (NOLOCK)  ON bio.BundleNo = bd.BundleNo
+INNER JOIN SubProcess s WITH (NOLOCK)  ON s.id= bio.SubProcessId
+WHERE bio.RFIDProcessLocationID=''
+";
+            if (!MyUtility.Check.Empty(this.artworktype))
+            {
+                sqlGetSpecialRecordData += $@" AND s.ArtworkTypeId='{this.artworktype}'";
+            }
+            if (!MyUtility.Check.Empty(sp_b))
+            {
+                sqlGetSpecialRecordData += $@" AND bdl.Orderid >= @sp1 ";
+            }
+            if (!MyUtility.Check.Empty(sp_e))
+            {
+                sqlGetSpecialRecordData += $@" AND bdl.Orderid <= @sp2";
+            }
+
+            sqlGetSpecialRecordData += $@"
 select	Selected = 0 
 		, o.FTYGroup
 		, orderid = o.ID 
@@ -777,6 +923,8 @@ select	Selected = 0
 		, [ArtworkReqID] = ar.ID
         , o.Category
         , [IrregularQtyReason] = sr.ID +'-'+sr.Reason
+		,[Farmout] = ISNULL(FarmOut.Value,0)
+		,[FarmIn] = ISNULL(FarmIn.Value,0)
 from ArtworkReq ar  with (nolock)
 inner join ArtworkReq_Detail ard with (nolock) on ar.ID = ard.ID 
 left join ArtworkReq_IrregularQty ai with (nolock) on ai.OrderID = ard.OrderID and ai.ArtworkTypeID = ar.ArtworkTypeID and ard.ExceedQty > 0
@@ -788,6 +936,24 @@ outer apply (
         from ArtworkPO_Detail AD, ArtworkPO A
         where AD.ID = A.ID and A.Status = 'Approved' and OrderID = o.ID and ad.PatternCode= ard.PatternCode
 ) IssueQty
+OUTER APPLY(
+	SELECT  [Value]= SUM( bd.QTY)
+	FROM #Bundle bd
+	WHERE bd.Orderid = ard.OrderID 
+	AND bd.ArtworkTypeId=ar.ArtworkTypeID 
+	AND bd.Patterncode = ard.PatternCode 
+	AND bd.PatternDesc =ard.PatternDesc
+	AND bd.OutGoing IS NOT NULL 
+)FarmOut
+OUTER APPLY(	
+	SELECT  [Value]= SUM( bd.QTY)
+	FROM #Bundle bd
+	WHERE bd.Orderid = ard.OrderID 
+	AND bd.ArtworkTypeId = ar.ArtworkTypeID 
+	AND bd.Patterncode = ard.PatternCode 
+	AND bd.PatternDesc =ard.PatternDesc
+	AND bd.InComing IS NOT NULL
+)FarmIn
 where  ar.ArtworkTypeID = '{artworktype}' and ar.Status = 'Approved' and  ard.ArtworkPOID = '' and
     (
 	(o.Category = 'B' and at.IsSubprocess = 1 and at.isArtwork = 0 and at.Classify = 'O') 
