@@ -82,8 +82,8 @@ namespace Sci.Production.PPIC
            this.btnLocalMRCFM.Enabled = this.CurrentMaintain != null;
            this.btnProductionOutput.Enabled = this.CurrentMaintain != null;
            this.btnOrderRemark.Enabled = this.CurrentMaintain != null;
-              this.btnPoRemark.Enabled = this.CurrentMaintain != null;
-              this.btnFactoryCMT.Enabled = this.CurrentMaintain != null;
+           this.btnPoRemark.Enabled = this.CurrentMaintain != null;
+           this.btnFactoryCMT.Enabled = this.CurrentMaintain != null;
            this.btnLabelHangtag.Enabled = this.CurrentMaintain != null;
            this.btnQtyBdownByShipmode.Enabled = this.CurrentMaintain != null;
            this.btnQuantityBreakdown.Enabled = this.CurrentMaintain != null;
@@ -108,6 +108,7 @@ namespace Sci.Production.PPIC
            this.btnShipmentFinished.Enabled = this.CurrentMaintain != null;
            this.btnVASSHASInstruction.Enabled = this.CurrentMaintain != null;
            this.btnBacktoPPICMasterList.Enabled = this.CurrentMaintain != null;
+           this.btnQtyChangeList.Enabled = this.CurrentMaintain != null;
            var dateBuyerDlv = this.dateBuyerDlv.Value;
            var dateSCIDlv = this.dateSCIDlv.Value;
            if (dateBuyerDlv > dateSCIDlv)
@@ -365,14 +366,8 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             this.btnPackingMethod.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["Packing"]) ? Color.Blue : Color.Black;
             this.btnPullForwardRemark.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_PFHis WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             this.btnVASSHASInstruction.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["Packing2"]) ? Color.Blue : Color.Black;
-            if (MyUtility.Check.Seek(this.CurrentMaintain["ID"].ToString(), "Order_EachCons", "ID"))
-            {
-                this.btnEachCons.ForeColor = Color.Blue;
-            }
-            else
-            {
-                this.btnEachCons.ForeColor = Color.Black;
-            }
+            this.btnEachCons.ForeColor = MyUtility.Check.Seek(this.CurrentMaintain["ID"].ToString(), "Order_EachCons", "ID") ? Color.Blue : Color.Black;
+            this.btnQtyChangeList.ForeColor = MyUtility.Check.Seek($@"select id from OrderChangeApplication with(nolock) where OrderID = '{this.CurrentMaintain["ID"]}' or ToOrderID = '{this.CurrentMaintain["ID"]}'") ? Color.Blue : Color.Black;
 
             string sqkchkEMNF = $@"select 1 From Order_ECMNFailed f Left Join Orders o on f.id	= o.ID Where (o.ID = '{this.CurrentMaintain["ID"]}' And f.Type = 'EC')or (o.POID = '{this.CurrentMaintain["POID"]}'  And f.Type = 'MN')";
 
@@ -1658,6 +1653,12 @@ and p.Type in ('L', 'B')
 
             errmsg += strmsg;
             return errmsg;
+        }
+
+        private void BtnQtyChangeList_Click(object sender, EventArgs e)
+        {
+            P01_QtyChangeList frm = new P01_QtyChangeList(this.CurrentMaintain["ID"].ToString());
+            frm.ShowDialog();
         }
     }
 }

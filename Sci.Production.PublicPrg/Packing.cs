@@ -710,6 +710,49 @@ where isnull(p.ShipQty,0) + ISNULL(t.DiffQty,0) < isnull(oqd.Qty,0)
             return Result.True;
         }
 
+        public static DualResult CompareOrderQtyPackingQty(string orderID, string plID, int curAddPlQty)
+        {
+            string sqlGetData = $@"
+select  p.ID, [ShipQty] = isnull(sum(isnull(pd.ShipQty,0)),0)
+into #tmpPL
+from PackingList p with (nolock)
+inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
+where pd.OrderID = '{orderID}' and p.ID <> '{plID}'
+group by p.ID
+
+select Qty ,[PLQty] = (select isnull(sum(isnull(ShipQty,0)),0) from #tmpPL)
+from Orders with (nolock) where ID = '{orderID}'
+
+select * from #tmpPL
+";
+            DataTable[] dtResults;
+            DualResult result = DBProxy.Current.Select(null, sqlGetData, out dtResults);
+
+            if (!result)
+            {
+                return result;
+            }
+
+            int orderQty =  MyUtility.Convert.GetInt(dtResults[0].Rows[0]["Qty"]);
+            int plQty = MyUtility.Convert.GetInt(dtResults[0].Rows[0]["PLQty"]) + curAddPlQty;
+
+            if (orderQty >= plQty)
+            {
+                return new DualResult(true);
+            }
+            string plQtyListString = dtResults[1].AsEnumerable().Select(s => $"{s["ID"]} - {s["ShipQty"]}").JoinToString(Environment.NewLine);
+            if (curAddPlQty > 0)
+            {
+                plQtyListString += Environment.NewLine + $"{plID} - {curAddPlQty}";
+            }
+            string errorMsg = $@"
+Ttl Packing Qty ({plQty}) cannot exceed Order Qty ({orderQty}).
+Please check below packing list.
+{plQtyListString}
+";
+            return new DualResult(false, errorMsg);
+        }
+
         #region Query Packing List Print out Pacging List Report Data
         /// <summary>
         /// QueryPackingListReportData(string,DataTable,DataTable,DataTable,DataTable,DataTable,DataTable,string)

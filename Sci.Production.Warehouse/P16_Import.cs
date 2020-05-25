@@ -58,6 +58,7 @@ select poid = rtrim(a.POID)
 	   , seq = concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2)
 	   , [description] = dbo.getMtlDesc(a.poid,b.seq1,b.seq2,2,0)
 	   , b.RequestQty
+       , b.Remark
 from dbo.lack a WITH (NOLOCK) 
 inner join dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
 LEFT JOIN Orders o ON o.ID = a.POID
@@ -87,6 +88,7 @@ select selected = 0
 	   				  		and seq1 = c.seq1 
 	   				  		and seq2 = c.seq2)
 	   , [description] = dbo.getMtlDesc(c.poid,c.seq1,c.seq2,2,0) 
+       , a.Remark
 from dbo.Lack_Detail a WITH (NOLOCK) 
 inner join dbo.Lack b WITH (NOLOCK) on b.ID = a.ID
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = b.POID 
@@ -163,6 +165,7 @@ Where a.id = '{0}'
                 .Numeric("RequestQty", header: "Request Qty", iseditable: true, decimal_places: 2, integer_places: 10) //4
                 .Numeric("Issueqty", header: "Accu. Issue Qty", decimal_places: 2, integer_places: 10)  //5
                 .Numeric("balance", header: "Balance Qty", iseditable: true, decimal_places: 2, integer_places: 10) //6
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 ;
             #endregion
             #region --  Grid2 Setting --

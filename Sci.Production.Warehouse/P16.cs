@@ -301,6 +301,7 @@ namespace Sci.Production.Warehouse
             .Text("stockunit", header: "Unit", iseditingreadonly: true)    //5
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //6
             .Text("Location", header: "Bulk Location", iseditingreadonly: true)    //7
+            .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true)    
             ;     //
             #endregion 欄位設定
         }
@@ -700,6 +701,7 @@ select a.id
 	   , location = dbo.Getlocation(f.Ukey) 
 	   , a.ukey
 	   , a.FtyInventoryUkey
+       , a.Remark
 from dbo.IssueLack_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId 
 											 and p1.seq1 = a.SEQ1 
