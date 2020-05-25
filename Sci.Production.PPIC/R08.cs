@@ -203,13 +203,30 @@ outer apply(
 	select ttlestamt = SUM(EstReplacementAMT)
 	from (
 		select EstReplacementAMT = case when rrd.Junk =1 then 0
-						else (select top 1 amount from dbo.GetAmountByUnit(psd.Price, FinalNeedQty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',rr.CDate),1)
+						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',rr.CDate),1)
 						end
 		from ReplacementReport_Detail rrd with(nolock)
 		left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = rr.POID and psd.SEQ1 = rrd.Seq1 and psd.SEQ2 = rrd.Seq2
 		left join PO_Supp ps WITH (NOLOCK) on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
 		left join Supp WITH (NOLOCK) on Supp.ID = ps.SuppID
-        outer apply(select Qty = rrd.EstInQty * isnull((select RateValue from Unit_Rate where UnitFrom = rrd.ReplacementUnit and UnitTo = psd.POUnit),1))x
+        outer apply (
+            select v = case 
+						    when psd.seq1 like '7%' then isnull((select v = stock.Price
+	                                                             from PO_Supp_Detail stock
+	                                                             where	psd.SEQ1 like '7%'
+			                                                            and psd.StockPOID = stock.ID
+			                                                            and psd.StockSeq1 = stock.SEQ1
+			                                                            and psd.StockSeq2 = stock.SEQ2), 0)
+						    else psd.Price
+					    end
+        ) po_price
+        outer apply (
+            select Qty = iif (rr.Type = 'A', rrd.TotalRequest, rrd.FinalNeedQty)
+                         * isnull ((select RateValue 
+                                    from Unit_Rate 
+                                    where UnitFrom = rrd.ReplacementUnit 
+                                          and UnitTo = psd.POUnit),1)
+        )x
 		where  rrd.ID = rr.ID
 	)x
 )x
@@ -251,7 +268,7 @@ select
 	rrd.TotalRequest,
 	rrd.AfterCuttingRequest,
     EstReplacementAMT = case when rrd.Junk =1 then 0
-						else (select top 1 amount from dbo.GetAmountByUnit(psd.Price, FinalNeedQty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',rr.CDate),1)
+						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',rr.CDate),1)
                         end,
     psd.POAmt,
     psd.ShipAmt,
@@ -263,11 +280,28 @@ from ReplacementReport rr with(nolock)
 inner join Orders o with(nolock) on o.ID = rr.POID
 left join ReplacementReport_Detail rrd with(nolock) on rrd.ID = rr.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = rr.POID and psd.SEQ1 = rrd.Seq1 and psd.SEQ2 = rrd.Seq2
+outer apply (
+    select v = case 
+					when psd.seq1 like '7%' then isnull((select v = stock.Price
+	                                                    from PO_Supp_Detail stock
+	                                                    where	psd.SEQ1 like '7%'
+			                                                and psd.StockPOID = stock.ID
+			                                                and psd.StockSeq1 = stock.SEQ1
+			                                                and psd.StockSeq2 = stock.SEQ2), 0)
+					else psd.Price
+				end
+) po_price
 left join PO_Supp ps WITH (NOLOCK) on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
 left join Supp WITH (NOLOCK) on Supp.ID = ps.SuppID
 left join PO with(nolock) on PO.ID = rr.POID
 left join Fabric f with(nolock) on f.SCIRefno = rrd.SCIRefno
-outer apply(select Qty = rrd.EstInQty * isnull((select RateValue from Unit_Rate where UnitFrom = rrd.ReplacementUnit and UnitTo = psd.POUnit),1))x
+outer apply (
+    select Qty = iif (rr.Type = 'A', rrd.TotalRequest, rrd.FinalNeedQty)
+                    * isnull ((select RateValue 
+                            from Unit_Rate 
+                            where UnitFrom = rrd.ReplacementUnit 
+                                    and UnitTo = psd.POUnit),1)
+)x
 where 1=1
 {where}
 ";
@@ -316,13 +350,30 @@ outer apply(
 	select ttlestamt = SUM(EstReplacementAMT)
 	from (
 		select EstReplacementAMT = case when rrd.Junk =1 then 0
-						else (select top 1 amount from dbo.GetAmountByUnit(psd.Price, FinalNeedQty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',rr.CDate),1)
+						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',rr.CDate),1)
 						end
 		from ReplacementReport_Detail rrd with(nolock)
 		left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = rr.POID and psd.SEQ1 = rrd.Seq1 and psd.SEQ2 = rrd.Seq2
+        outer apply (
+            select v = case 
+						    when psd.seq1 like '7%' then isnull((select v = stock.Price
+	                                                             from PO_Supp_Detail stock
+	                                                             where	psd.SEQ1 like '7%'
+			                                                            and psd.StockPOID = stock.ID
+			                                                            and psd.StockSeq1 = stock.SEQ1
+			                                                            and psd.StockSeq2 = stock.SEQ2), 0)
+						    else psd.Price
+					    end
+        ) po_price
 		left join PO_Supp ps WITH (NOLOCK) on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
 		left join Supp WITH (NOLOCK) on Supp.ID = ps.SuppID
-        outer apply(select Qty = rrd.EstInQty * isnull((select RateValue from Unit_Rate where UnitFrom = rrd.ReplacementUnit and UnitTo = psd.POUnit),1))x
+        outer apply (
+            select Qty = iif (rr.Type = 'A', rrd.TotalRequest, rrd.FinalNeedQty)
+                         * isnull ((select RateValue 
+                                    from Unit_Rate 
+                                    where UnitFrom = rrd.ReplacementUnit 
+                                          and UnitTo = psd.POUnit),1)
+        )x
 		where  rrd.ID = rr.ID
 	)x
 )x

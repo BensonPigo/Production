@@ -85,15 +85,32 @@ namespace Sci.Production.PPIC
 select rd.*,(rd.Seq1 + ' ' +rd.Seq2) as Seq, f.Description, [dbo].[getMtlDesc](r.POID,rd.Seq1,rd.Seq2,2,0) as DescriptionDetail,
     isnull((select top(1) ExportId from Receiving WITH (NOLOCK) where InvNo = rd.INVNo),'') as ExportID,
     EstReplacementAMT = case when rd.Junk =1 then 0
-						else (select top 1 amount from dbo.GetAmountByUnit(psd.Price, FinalNeedQty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',r.CDate),1)
+						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',r.CDate),1)
 						end
 from ReplacementReport r WITH (NOLOCK) 
 inner join ReplacementReport_Detail rd WITH (NOLOCK) on rd.ID = r.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = r.POID and psd.SEQ1 = rd.Seq1 and psd.SEQ2 = rd.Seq2
+outer apply (
+    select v = case 
+					when psd.seq1 like '7%' then isnull((select v = stock.Price
+	                                                    from PO_Supp_Detail stock
+	                                                    where	psd.SEQ1 like '7%'
+			                                                and psd.StockPOID = stock.ID
+			                                                and psd.StockSeq1 = stock.SEQ1
+			                                                and psd.StockSeq2 = stock.SEQ2), 0)
+					else psd.Price
+				end
+) po_price
 left join PO_Supp ps WITH (NOLOCK) on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
 left join Supp WITH (NOLOCK) on Supp.ID = ps.SuppID
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
-outer apply(select Qty = rd.EstInQty * isnull((select RateValue from Unit_Rate where UnitFrom = rd.ReplacementUnit and UnitTo = psd.POUnit),1))x
+outer apply(
+    select Qty = rd.TotalRequest 
+                 * isnull((select RateValue 
+                           from Unit_Rate 
+                           where UnitFrom = rd.ReplacementUnit 
+                                 and UnitTo = psd.POUnit),1)
+)x
 where r.ID = '{0}'
 order by rd.Seq1,rd.Seq2", masterID);
 
