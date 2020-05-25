@@ -43,6 +43,7 @@
             this.numericBoxDateGap = new Sci.Win.UI.NumericBox();
             this.labBuyerDelivery = new Sci.Win.UI.Label();
             this.dateRangeBuyerDelivery = new Sci.Win.UI.DateRange();
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -250,11 +251,23 @@
             this.dateRangeBuyerDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateRangeBuyerDelivery.TabIndex = 1;
             // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(19, 223);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 163;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
             // R13
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(638, 264);
+            this.ClientSize = new System.Drawing.Size(638, 273);
+            this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.labBuyerDelivery);
             this.Controls.Add(this.dateRangeBuyerDelivery);
             this.Controls.Add(this.numericBoxDateGap);
@@ -294,6 +307,7 @@
             this.Controls.SetChildIndex(this.numericBoxDateGap, 0);
             this.Controls.SetChildIndex(this.dateRangeBuyerDelivery, 0);
             this.Controls.SetChildIndex(this.labBuyerDelivery, 0);
+            this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -316,5 +330,6 @@
         private Win.UI.NumericBox numericBoxDateGap;
         private Win.UI.Label labBuyerDelivery;
         private Win.UI.DateRange dateRangeBuyerDelivery;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

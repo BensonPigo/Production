@@ -83,7 +83,7 @@ with temporder AS (
 	where	((o.ProjectID != 'ZMII' and o.ProjectID != 'CR' and o.OrderTypeID != 'PPC') or o.BrandID != 'ADIDAS') 
 			and o.Category='B' 
 			and o.LocalOrder=0 
-			and o.Qty!=0 
+			and (o.Junk=0 or (o.Junk=1 and o.NeedProduction=1))
 			and o.BuyerDelivery between @StartBuyerDelivery and @EndBuyerDelivery
             -- CountryID
             {0}
@@ -291,7 +291,7 @@ order by O.FactoryID, O.ID
                     DualResult result = DBProxy.Current.SelectByConn(conn, sqlCmd.ToString(), listParameter, out outDt);
                     if (!result)
                     {
-                        MyUtility.Msg.WarningBox(result.Description);
+                        this.ShowErr(result);
                         this.HideWaitMessage();
                         return;
                     }

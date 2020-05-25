@@ -40,22 +40,23 @@
             this.txtMdivision = new Sci.Production.Class.txtMdivision();
             this.txtfactory = new Sci.Production.Class.txtfactory();
             this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numNewStyleBaseOn)).BeginInit();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(430, 12);
+            this.print.Location = new System.Drawing.Point(480, 12);
             this.print.TabIndex = 5;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(430, 48);
+            this.toexcel.Location = new System.Drawing.Point(480, 48);
             this.toexcel.TabIndex = 6;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(430, 84);
+            this.close.Location = new System.Drawing.Point(480, 84);
             this.close.TabIndex = 7;
             // 
             // labelSCIDelivery
@@ -160,10 +161,13 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.boolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = true;
             this.txtfactory.Location = new System.Drawing.Point(115, 83);
+            this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 2;
@@ -181,9 +185,21 @@
             this.comboCategory.TabIndex = 142;
             this.comboCategory.Type = "Pms_ReportForProdEff";
             // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(188, 51);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 143;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
             // R11
             // 
-            this.ClientSize = new System.Drawing.Size(522, 230);
+            this.ClientSize = new System.Drawing.Size(568, 219);
+            this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.comboCategory);
             this.Controls.Add(this.numNewStyleBaseOn);
             this.Controls.Add(this.labelmonth);
@@ -199,7 +215,11 @@
             this.DefaultControlForEdit = "dateSCIDelivery";
             this.IsSupportToPrint = false;
             this.Name = "R11";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R11. Prod. Efficiency record by  Style";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelSCIDelivery, 0);
             this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
@@ -214,6 +234,7 @@
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.comboCategory, 0);
+            this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             ((System.ComponentModel.ISupportInitialize)(this.numNewStyleBaseOn)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -233,5 +254,6 @@
         private Win.UI.Label labelmonth;
         private Win.UI.NumericUpDown numNewStyleBaseOn;
         private Class.comboDropDownList comboCategory;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

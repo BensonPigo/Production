@@ -133,13 +133,15 @@ namespace Sci.Production.Subcon
 
             System.Data.SqlClient.SqlParameter sp_style = new System.Data.SqlClient.SqlParameter();
             sp_style.ParameterName = "@style";
+
             #endregion
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
 
             #region -- Sql Command --
+            string whereIncludeCancelOrder = this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"
+            sqlCmd.Append($@"
 select distinct o.poid 
         , a.FactoryID
 		, a.MDivisionID
@@ -149,7 +151,7 @@ from dbo.localap a WITH (NOLOCK)
 inner join dbo.LocalAP_Detail b WITH (NOLOCK) on b.id = a.id  
 join ArtworkType c on a.Category = c.ID 
 inner join orders o WITH (NOLOCK) on o.id = b.OrderId 
-where c.Classify='P' 
+where c.Classify='P' {whereIncludeCancelOrder}
 ");
 
             #region -- 條件組合 --
@@ -308,12 +310,10 @@ select distinct t.FactoryID
     ,x.ap_qty	
 	,[CartonQty] = x.CartonQty
     ,x.ap_amt
-    ,[ap_price]=IIF(totalSamePoidQty.value IS NULL OR totalSamePoidQty.value=0   ,NULL                       ,round(x.ap_amt / totalSamePoidQty.value,3))
-    ,[std_price]=IIF(y.order_qty  IS NULL OR y.order_qty=0  ,NULL											 ,round(y.order_amt/y.order_qty,3) )    
-    ,[percentage]=IIF(y.order_qty  IS NULL OR y.order_qty=0 OR y.order_amt IS NULL OR y.order_amt =0 ,NULL	 ,round( (x.ap_amt / y.order_qty)   /   (y.order_amt/y.order_qty),2)  )
-
+    ,[ap_price]=IIF(totalSamePoidQty.value IS NULL OR totalSamePoidQty.value=0, NULL, round(x.ap_amt / totalSamePoidQty.value,3))
+    ,[std_price]=IIF(y.order_qty  IS NULL OR y.order_qty=0  , NULL, round(y.order_amt/y.order_qty,3) )    
+    ,[percentage]=IIF(y.order_qty  IS NULL OR y.order_qty=0 OR y.order_amt IS NULL OR y.order_amt =0 ,NULL, round( (x.ap_amt / y.order_qty)   /   (y.order_amt/y.order_qty),2)  )
     ,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,''))
-
 into #tmp_final
 from #tmp t
 left join orders aa WITH (NOLOCK) on t.poid =aa.poid  

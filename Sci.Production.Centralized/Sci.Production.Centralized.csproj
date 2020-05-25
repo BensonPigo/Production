@@ -367,6 +367,9 @@
     <EmbeddedResource Include="R01.resx">
       <DependentUpon>R01.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="R02.resx">
+      <DependentUpon>R02.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="R03.resx">
       <DependentUpon>R03.cs</DependentUpon>
     </EmbeddedResource>

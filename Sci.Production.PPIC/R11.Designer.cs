@@ -39,6 +39,7 @@
             this.labBrand = new Sci.Win.UI.Label();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.chkHoliday = new Sci.Win.UI.CheckBox();
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -134,10 +135,13 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.boolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = false;
             this.txtfactory.Location = new System.Drawing.Point(202, 59);
+            this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 100;
@@ -181,9 +185,21 @@
             this.chkHoliday.Text = "Exclude Holiday";
             this.chkHoliday.UseVisualStyleBackColor = true;
             // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(24, 150);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 161;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
             // R11
             // 
-            this.ClientSize = new System.Drawing.Size(542, 177);
+            this.ClientSize = new System.Drawing.Size(542, 196);
+            this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.chkHoliday);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.labBrand);
@@ -196,7 +212,11 @@
             this.Controls.Add(this.labReadyDate);
             this.Controls.Add(this.dateRangeReadyDate);
             this.Name = "R11";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R11. Sewing Ready Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.dateRangeReadyDate, 0);
             this.Controls.SetChildIndex(this.labReadyDate, 0);
             this.Controls.SetChildIndex(this.labM, 0);
@@ -211,6 +231,7 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -229,5 +250,6 @@
         private Win.UI.Label labBrand;
         private Class.txtbrand txtbrand;
         private Win.UI.CheckBox chkHoliday;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

@@ -47,6 +47,7 @@
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.checkGarment = new Sci.Win.UI.CheckBox();
             this.checkSMTL = new Sci.Win.UI.CheckBox();
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -285,9 +286,21 @@
             this.checkSMTL.Text = "SMTL";
             this.checkSMTL.UseVisualStyleBackColor = true;
             // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(13, 211);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 162;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
             // R12
             // 
-            this.ClientSize = new System.Drawing.Size(587, 242);
+            this.ClientSize = new System.Drawing.Size(587, 266);
+            this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.checkSMTL);
             this.Controls.Add(this.checkGarment);
             this.Controls.Add(this.txtbrand);
@@ -311,7 +324,11 @@
             this.DefaultControlForEdit = "dateBuyerDelivery";
             this.IsSupportToPrint = false;
             this.Name = "R12";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R12. PAD Print Ink forecast usage amount";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -334,6 +351,7 @@
             this.Controls.SetChildIndex(this.txtbrand, 0);
             this.Controls.SetChildIndex(this.checkGarment, 0);
             this.Controls.SetChildIndex(this.checkSMTL, 0);
+            this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -360,5 +378,6 @@
         private Class.txtbrand txtbrand;
         private Win.UI.CheckBox checkGarment;
         private Win.UI.CheckBox checkSMTL;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

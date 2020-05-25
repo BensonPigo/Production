@@ -118,6 +118,8 @@ namespace Sci.Production.Quality
             {
                 sqlWhere = " AND " + sqlWhere;
             }
+
+            sqlWhere += this.chkIncludeCancelOrder.Checked ? string.Empty : " and orders.Junk = 0 ";
             #region --撈ListExcel資料--
 
             cmd = string.Format(@" 
@@ -147,6 +149,7 @@ namespace Sci.Production.Quality
              from dbo.FIR a WITH (NOLOCK) inner join rawdata r on r.POID = a.POID
             )
             select distinct O.POID 
+            ,[Cancel] = IIF(o.Junk=1,'Y','N')
             ,o.FactoryID
             ,o.BrandID
             ,o.StyleID
@@ -160,7 +163,8 @@ namespace Sci.Production.Quality
             ,iif(s.total_article_cnt!=0, round(s.ColorFastness_cnt*1.0/s.total_article_cnt,4) * 100 ,0) [ColorFastness %]
             ,iif(s.AIR_Total_cnt!=0, round(s.AIR_Insp_Cnt*1.0/s.AIR_Total_cnt,4) * 100 ,0) [AIR Insp %]
             ,iif(s.AIR_Laboratory_Total_cnt!=0, round(s.AIR_Laboratory_cnt*1.0/s.AIR_Laboratory_Total_cnt,4) * 100 ,0) [AIR Lab %]
-            from summary s inner join orders o WITH (NOLOCK) on o.ID = s.POID
+            from summary s 
+            inner join orders o WITH (NOLOCK) on o.ID = s.POID
             cross apply dbo.GetSCI(s.poid,o.Category) getsci");
             #endregion
 
