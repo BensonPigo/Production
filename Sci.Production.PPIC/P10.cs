@@ -773,7 +773,7 @@ where a.RequestQty > a.StockQty",
                 string apvEmail = MyUtility.GetValue.Lookup($@"
 SELECT p.EMail
 FROM Lack l
-INNER JOIN Pass1 p ON p.ID = l.ApvName
+INNER JOIN Pass1 p ON p.ID = l.ApplyName
 WHERE l.ID='{this.CurrentMaintain["ID"]}'
 ");
                 string toAddress = dt.Rows[0]["ToAddress"].ToString();
@@ -1117,7 +1117,7 @@ Where c.lock = 0  and a.id = '{this.CurrentMaintain["ID"]}' and c.poid = '{dt1ro
 INSERT INTO [dbo].[IssueLack]([Id],[Type],[MDivisionID],[FactoryID],[IssueDate],[Status],[RequestID],[Remark],[ApvName],[ApvDate],[FabricType],[AddName],[AddDate])
 VALUES('{tmpId}','{type}','{Sci.Env.User.Keyword}','{Sci.Env.User.Factory}',GETDATE(),'NEW','{requestid}','{this.CurrentMaintain["Remark"]}','',null,'F','{Sci.Env.User.UserID}',GETDATE())
 ";
-            sqlinsert += $@"insert IssueLack_Detail select * from #tmp";
+            sqlinsert += $@"insert IssueLack_Detail(ID,FtyInventoryukey,Qty,MDivisionID,POID,Seq1,Seq2, Roll, Dyelot, StockType) select * from #tmp";
             DataTable a;
             using (TransactionScope scope = new TransactionScope())
             {

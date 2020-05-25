@@ -282,7 +282,7 @@ from (
 		from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
 		inner join #tmp t on b.poid = t.PoId and b.seq1 = t.Seq1 and b.seq2 = t.Seq2 and b.Roll = t.Roll and b.Dyelot = t.Dyelot
 		where Status in ('Confirmed','Closed') and a.id = b.id
-		group by a.id, b.poid, b.seq1,b.Seq2, b.Roll,b.Dyelot, remark  ,a.IssueDate,a.FabricType       
+		group by a.id, b.poid, b.seq1,b.Seq2, b.Roll,b.Dyelot, a.remark  ,a.IssueDate,a.FabricType       
 		                                                        
 		union all
 
