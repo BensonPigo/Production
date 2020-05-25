@@ -293,7 +293,7 @@ namespace Sci.Production.Warehouse
         			,inqty = 0
         			,outqty = sum(b.Qty)  
         			,adjust = 0 
-        			,remark 
+        			,a.remark 
         			,location = MtlLocation.location
         			,AddDate
             from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
