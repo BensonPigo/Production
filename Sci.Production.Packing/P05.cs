@@ -1103,6 +1103,13 @@ AND s.ShipGroup <> (
                 return;
             }
 
+            #region 確認Order的訂單數量是否超過PackingList_Detail 的總和(不分Type、PackingListID)
+            if (!Prgs.CheckOrderQty_ShipQty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
+            {
+                return;
+            }
+            #endregion
+
             if (!Prgs.CheckExistsOrder_QtyShip_Detail(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
             {
                 return;
