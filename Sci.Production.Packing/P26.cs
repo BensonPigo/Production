@@ -2473,18 +2473,44 @@ DROP TABLE #tmpOrders ,#tmp ,#ExistsB03
 
             for (int i = 0; i < content.Count; i++)
             {
-                if (i == 1 && IsMixed)
+                try
                 {
-                    stringSeparators = new string[] { "^XA^MMT^XZ^XA^PRE^FS^FT0314,0058^A0N,0036,0036^FR^FDCarton Contents^FS" };
-                    string[] aa = content[i].Split(stringSeparators, StringSplitOptions.None);
-                    content[i] = aa[0];
-                    content.Add("^XA^SZ2^JMA^MCY^PMN^PW786~JSN^JZY^LH10,0^LRN" + aa[1]);
-                }
-                else
-                {
-                    content[i] = "^XA^SZ2^JMA^MCY^PMN^PW786~JSN^JZY^LH10,0^LRN" + content[i];
-                }
 
+                    if (i == 1 && IsMixed)
+                    {
+                        // stringSeparators = new string[] { "^XA^MMT^XZ^XA^PRE^FS^FT0314,0058^A0N,0036,0036^FR^FDCarton Contents^FS" };
+
+                        // 說明：上面註解的是原本的拆解字串，不過^PR 這個標籤後面接的參數有可能不一樣(^PRE或^PRC)，且不像一些定義文字距離那些參數比較容易看得出差別，因此修改
+                        // ^PR 標籤為列印速度參數，把寫死^PRE改掉，如下
+                        string Separators_s = "^XA^MMT^XZ^XA";
+                        string Separators_e = "^FS^FT0314,0058^A0N,0036,0036^FR^FDCarton Contents^FS";
+
+                        for (int q = 1; q <= 26; q++)
+                        {
+                            string Separators_mid = "^PR" + MyUtility.Excel.ConvertNumericToExcelColumn(q);
+
+                            if (content[i].Contains(Separators_s + Separators_mid + Separators_e))
+                            {
+                                stringSeparators = new string[] { Separators_s + Separators_mid + Separators_e };
+                            }
+                        }
+
+                        stringSeparators = new string[] { "FS^FT0314,0058^A0N,0036,0036^FR^FDCarton Contents^FS" };
+                        string[] aa = content[i].Split(stringSeparators, StringSplitOptions.None);
+                        content[i] = aa[0];
+                        content.Add("^XA^SZ2^JMA^MCY^PMN^PW786~JSN^JZY^LH10,0^LRN" + aa[1]);
+                    }
+                    else
+                    {
+                        content[i] = "^XA^SZ2^JMA^MCY^PMN^PW786~JSN^JZY^LH10,0^LRN" + content[i];
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    //this.ShowErr(ex);
+                    throw ex;
+                }
                 byte[] zpl = Encoding.UTF8.GetBytes(content[i]);
 
                 // 使用API，相關說明：http://labelary.com/service.html
