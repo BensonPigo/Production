@@ -88,8 +88,8 @@ namespace Sci.Production.Subcon
                                         ,b.Farmin
                                         ,b.Farmout - b.Farmin as variance
                                         ,b.ApQty
-                                        ,b.Farmin - b.ApQty as ap_balance
-                                        ,(b.Farmin - b.ApQty) * b.UnitPrice as ap_amt
+                                        ,ap_balance = isnull(b.PoQty,0) - isnull(b.ApQty,0)
+                                        ,ap_amt = (isnull(b.PoQty,0) - isnull(b.ApQty,0)) * b.UnitPrice
                                         from artworkpo a WITH (NOLOCK) 
                                         inner join  artworkpo_detail b WITH (NOLOCK) on a.id = b.ID
                                         inner join  orders c WITH (NOLOCK) on b.OrderID = c.ID
