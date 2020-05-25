@@ -165,7 +165,7 @@ cross apply(
 )Calendar	
 where 1=1
 {whereIncludeCancelOrder}
-and o.Category ='B' and o.junk !=1
+and o.Category ='B'
 and CONVERT(date, o.SewOffLine) between @ReadyDate1 and @ReadyDate2 -- 將offline跟ReadyDate綁再一起,方便取得RedayDate
 and Calendar.rows = {MyUtility.Convert.GetInt(this.Gap)} -- GAP 
 and Dates < CONVERT(date, o.SewOffLine)	
