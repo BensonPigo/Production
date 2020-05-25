@@ -770,14 +770,19 @@ where a.RequestQty > a.StockQty",
 
             if (dt.Rows.Count != 0 && dt.Rows[0]["ToAddress"].ToString() != string.Empty)
             {
-                string apvEmail = MyUtility.GetValue.Lookup($@"
+                string applyName = MyUtility.GetValue.Lookup($@"
 SELECT p.EMail
 FROM Lack l
 INNER JOIN Pass1 p ON p.ID = l.ApplyName
 WHERE l.ID='{this.CurrentMaintain["ID"]}'
 ");
+                string apvEmail = MyUtility.GetValue.Lookup($@"
+SELECT p.EMail
+FROM Pass1 p
+WHERE p.ID='{Sci.Env.User.Keyword}'
+");
                 string toAddress = dt.Rows[0]["ToAddress"].ToString();
-                string ccAddress = dt.Rows[0]["CCAddress"].ToString() + $";{apvEmail}";
+                string ccAddress = dt.Rows[0]["CCAddress"].ToString() + $";{applyName}" + $";{apvEmail}";
                 string subject = dt.Rows[0]["Subject"].ToString();
 
                 // 取得表頭 P10 的單號
