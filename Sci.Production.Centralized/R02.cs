@@ -148,15 +148,16 @@ WHERE   1=1
         and Orders.LocalOrder = 0
         and Factory.IsProduceFty = '1'");
                 string strSQL_Loading_b = strSQL_Loading;
-                strSQL_Loading += string.Format(@" 
-        and Orders.Junk = 0 
+                strSQL_Loading += $@" 
         and Orders.Category IN ('B', 'S')
-        and Factory.KPICode <> ''  ");
-                strSQL_Loading += string.Format(
-                    @" 
-        and Orders.SCIDELIVERY BETWEEN '{0}/01/08' AND '{1}/01/07' ",
-        this.gdclYear,
-        this.gdclYear + 1);
+        and Factory.KPICode <> ''  
+        and Orders.SCIDELIVERY BETWEEN '{this.gdclYear}/01/08' AND '{(this.gdclYear + 1)}/01/07' ";
+
+                if (!this.chkIncludeCancelOrder.Checked)
+                {
+                    strSQL_Loading += " and Orders.Junk = 0 ";
+                }
+
                 if (this.txtFactory1.Text != string.Empty)
                 {
                     strSQL_Loading += string.Format(@"  and Factory.KPICode = '{0}'  ", this.txtFactory1.Text);

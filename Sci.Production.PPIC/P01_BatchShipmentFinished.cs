@@ -214,7 +214,7 @@ where A.ID = '{1}'
 select SP = (select ID + ',' 
 			 from Orders WITH (NOLOCK) 
 			 where POID = '{0}' 
-			 	   and Qty > 0 
+			 	   and (Junk=0 or (Junk=1 and NeedProduction=1))
 			 	   and PulloutComplete = 0 
 	 	     for xml path(''))",
                         MyUtility.Convert.GetString(item["POID"]));
@@ -405,7 +405,7 @@ from (
 	select distinct WTC.POID
 	from Orders WITH (NOLOCK) 	
 	inner join #wantToClose WTC on Orders.POID = WTC.POID
-	where Orders.Qty > 0 
+	where (Orders.Junk=0 or (Orders.Junk=1 and Orders.NeedProduction=1))
 		  and Orders.PulloutComplete = 0 
 		  and Orders.Category != 'M'
     --orders.CFMDate15天(包含)內的資料不能被關單

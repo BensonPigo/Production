@@ -71,6 +71,7 @@ order by Seq
             this.grid.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.grid)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .CheckBox("Junk", header: "Cancel Order", iseditable: false)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Date("SciDelivery", header: "SCI Dlv.", iseditingreadonly: true)
@@ -221,6 +222,11 @@ where o.id='{dr["OrderID"]}'
             {
                 listSQLFilter.Add("and c.TargetDate is not null");
             }
+
+            if (!this.chkIncludeCancelOrder.Checked)
+            {
+                listSQLFilter.Add("and (o.Junk=0 or (o.Junk=1 and o.NeedProduction=1))");
+            }
             #endregion
 
             this.ShowWaitMessage("Data Loading....");
@@ -231,20 +237,18 @@ where o.id='{dr["OrderID"]}'
 
 select  o.id as OrderID,o.Poid,o.BrandID,o.StyleID,o.SciDelivery ,[ColumnType] = c.DropDownListID
 ,[NewTargetDate] = c.TargetDate
-,o. KPILETA ,o.FactoryID,o.MTLETA,o.Sewinline,s.NoNeedPPMeeting,o.SewOffLine
+,o. KPILETA ,o.FactoryID,o.MTLETA,o.Sewinline,s.NoNeedPPMeeting,o.SewOffLine, o.Junk
 into #tmp
 from Orders o
 left join Style s on o.StyleUkey=s.Ukey
 left join CriticalActivity c on o.ID=c.orderid
 where 1=1
 and o.MDivisionID = '{Sci.Env.User.Keyword}'
-and o.Junk = 0
-and o.Qty > 0
 and o.LocalOrder = 0
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 
 
-select t.OrderID,Poid,BrandID,StyleID,SciDelivery ,isnull(ColumnType,'') as ColumnType
+select t.OrderID,Poid,BrandID,StyleID,SciDelivery , t.Junk,isnull(ColumnType,'') as ColumnType
 ,[OriginalDate] =
 	case ColumnType
 	when 'Fabric Receiving' then FabricReceiving.KPILETA

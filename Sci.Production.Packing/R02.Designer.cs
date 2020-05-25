@@ -56,20 +56,21 @@
             this.label5 = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
             this.dateScanDate = new Sci.Win.UI.DateRange();
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(414, 81);
+            this.print.Location = new System.Drawing.Point(439, 81);
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(414, 9);
+            this.toexcel.Location = new System.Drawing.Point(439, 9);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(414, 45);
+            this.close.Location = new System.Drawing.Point(439, 45);
             // 
             // label7
             // 
@@ -391,9 +392,21 @@
             this.dateScanDate.Size = new System.Drawing.Size(280, 23);
             this.dateScanDate.TabIndex = 141;
             // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(9, 325);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 165;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
             // R02
             // 
-            this.ClientSize = new System.Drawing.Size(506, 351);
+            this.ClientSize = new System.Drawing.Size(531, 377);
+            this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.dateScanDate);
             this.Controls.Add(this.label5);
@@ -423,7 +436,11 @@
             this.Controls.Add(this.txtSPNoStart);
             this.Controls.Add(this.labelSPNo);
             this.Name = "R02";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "Scan & Pack Report by PO";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelSPNo, 0);
             this.Controls.SetChildIndex(this.txtSPNoStart, 0);
             this.Controls.SetChildIndex(this.txtSPNoEnd, 0);
@@ -455,6 +472,7 @@
             this.Controls.SetChildIndex(this.label5, 0);
             this.Controls.SetChildIndex(this.dateScanDate, 0);
             this.Controls.SetChildIndex(this.label8, 0);
+            this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -490,5 +508,6 @@
         private Win.UI.Label label5;
         private Win.UI.Label label8;
         private Win.UI.DateRange dateScanDate;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

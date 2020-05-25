@@ -114,8 +114,8 @@ namespace Sci.Production.Planning
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-
-            sqlCmd.Append(string.Format(@"
+            string whereIncludeCancelOrder = this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
+            sqlCmd.Append(string.Format($@"
 SELECT o.FtyGroup,o.Styleid,o.SeasonID,o.CdCodeID,o.Qty,o.CPU,o.category,o.StyleUkey,o.id
     ,SciDelivery = min(o.SciDelivery)over(partition by o.Styleid)
     ,oa.Article,o.brandid
@@ -127,7 +127,7 @@ outer apply(
 					where oa.id=o.ID
 					for xml path('')),1,1,'')
 ) oa
-Where 1=1 and ( o.junk = 0 or o.junk is null) "));
+Where 1=1 {whereIncludeCancelOrder} "));
             #region --- 條件組合  ---
             this.condition.Clear();
             if (!MyUtility.Check.Empty(this.sciDelivery1))

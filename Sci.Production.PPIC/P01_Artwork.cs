@@ -109,7 +109,7 @@ ORDER BY ArtworkTypeID,Article";
 select DISTINCT
     oa.ID
     ,ax.article
-    ,CASE WHEN o.Junk = 1 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty  
+    ,CASE WHEN o.Junk = 1  and o.NeedProduction=0 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty  
 from Orders o
 inner join Order_Artwork oa on o.ID = oa.ID
 left join Order_Article oaa on oaa.id = o.id
@@ -118,7 +118,7 @@ outer apply(select article=iif(oa.article='----', oaa.article,oa.article))ax
 where o.ID in (select  id from Orders o1 where 
 o1.POID = o.POID 
 AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{this.Order_ArtworkId}') )
-group by oa.PatternCode,ax.Article,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,o.Junk
+group by oa.PatternCode,ax.Article,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,o.Junk,o.NeedProduction
 order by oa.ID";
             DataTable Left;
             result = DBProxy.Current.Select(null, sqlCmd, out Left);
@@ -130,7 +130,7 @@ select DISTINCT
     ,oa.ArtworkTypeID
     ,oa.ArtworkID
     ,ax.Article
-    ,CASE WHEN o.Junk = 1 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty  
+    ,CASE WHEN o.Junk = 1 and o.NeedProduction = 0 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty  
     ,oa.PatternCode
 from Orders o
 inner join Order_Artwork oa on o.ID = oa.ID
@@ -140,7 +140,7 @@ outer apply(select article=iif(oa.article='----', oaa.article,oa.article))ax
 where o.ID in (select  id from Orders o1 where 
 o1.POID = o.POID 
 AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{this.Order_ArtworkId}') )
-group by oa.PatternCode,ax.Article,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,o.Junk
+group by oa.PatternCode,ax.Article,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,o.Junk,o.NeedProduction
 order by oa.ArtworkTypeID";
             DataTable value;
             result = DBProxy.Current.Select(null, sqlCmd, out value);
@@ -244,7 +244,7 @@ order by oa.ArtworkTypeID";
 )
 SELECT 
 DISTINCT 
-lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode ,article=iif(oa.article='----', art.article,oa.article),CASE WHEN o.Junk = 1 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty  
+lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode ,article=iif(oa.article='----', art.article,oa.article),CASE WHEN o.Junk = 1 and o.NeedProduction=0 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty  
 FROM Orders o
 INNER JOIN Order_Artwork oa ON o.ID = oa.ID
 LEFT JOIN Order_Qty oq ON o.ID = oq.ID AND oq.Article = oa.Article
@@ -260,7 +260,7 @@ outer apply(
 WHERE Exists (select 1 FROM Orders o1 WHERE 
 o1.POID = o.POID 
 AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{this.Order_ArtworkId}') )
-GROUP BY lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode,art.Article,oa.article,o.Junk
+GROUP BY lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode,art.Article,oa.article,o.Junk,o.NeedProduction
 ORDER BY  lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode,Article
 ";
             DataTable Content;

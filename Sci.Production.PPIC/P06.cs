@@ -141,8 +141,7 @@ where 1=1
 and o.MDivisionID = '{0}'
 and o.PulloutComplete = 0
 and o.Finished = 0
-and o.Qty > 0
-AND o.Junk=0
+and (o.Junk=0 or (o.Junk=1 and o.NeedProduction=1))
 and (oq.EstPulloutDate <= '{1}' or oq.EstPulloutDate is null or iif(o.PulloutDate is null, dateadd(day,4,o.SewOffLine) , o.PulloutDate) <= '{1}')
 and o.Category in ({2})",
             Sci.Env.User.Keyword,

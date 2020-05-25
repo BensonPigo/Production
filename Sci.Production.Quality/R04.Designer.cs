@@ -41,11 +41,13 @@
             this.labelArriveWHDate = new Sci.Win.UI.Label();
             this.dateReceivedSampleDate = new Sci.Win.UI.DateRange();
             this.labelReceivedSampleDate = new Sci.Win.UI.Label();
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.chkIncludeCancelOrder);
             this.panel1.Controls.Add(this.comboCategory);
             this.panel1.Controls.Add(this.comboM);
             this.panel1.Controls.Add(this.labelM);
@@ -59,7 +61,7 @@
             this.panel1.Controls.Add(this.labelReceivedSampleDate);
             this.panel1.Location = new System.Drawing.Point(25, 16);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(483, 262);
+            this.panel1.Size = new System.Drawing.Size(483, 277);
             this.panel1.TabIndex = 94;
             // 
             // comboCategory
@@ -70,6 +72,7 @@
             this.comboCategory.IsSupportUnselect = true;
             this.comboCategory.Location = new System.Drawing.Point(192, 98);
             this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(185, 24);
             this.comboCategory.TabIndex = 55;
             this.comboCategory.Type = "Pms_MtlCategory";
@@ -82,6 +85,7 @@
             this.comboM.IsSupportUnselect = true;
             this.comboM.Location = new System.Drawing.Point(192, 138);
             this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(121, 24);
             this.comboM.TabIndex = 54;
             // 
@@ -112,6 +116,7 @@
             this.comboFactory.IsSupportUnselect = true;
             this.comboFactory.Location = new System.Drawing.Point(192, 176);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(121, 24);
             this.comboFactory.TabIndex = 51;
             // 
@@ -191,12 +196,27 @@
             this.labelReceivedSampleDate.TabIndex = 0;
             this.labelReceivedSampleDate.Text = "Received Sample Date";
             // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(192, 247);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 167;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
             // R04
             // 
-            this.ClientSize = new System.Drawing.Size(627, 319);
+            this.ClientSize = new System.Drawing.Size(627, 331);
             this.Controls.Add(this.panel1);
             this.Name = "R04";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R04.Laboratory-Fabric Test Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
@@ -222,5 +242,6 @@
         private Win.UI.ComboBox comboM;
         private Win.UI.Label labelM;
         private Class.comboDropDownList comboCategory;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

@@ -127,9 +127,11 @@ namespace Sci.Production.PPIC
             sqlFilte.Add("_Factory", this.strFactory.Empty() ? string.Empty : "and O.FactoryID = @Factory");
             #endregion
             #region SQL Command
+            string whereIncludeCancelOrder = this.chkIncludeCancelOrder.Checked ? string.Empty : " and (o.Junk=0 or (o.Junk=1 and o.NeedProduction=1)) ";
             string sqlCmd = string.Format(
                 @"
 select	O.ID
+        ,[Cancel] = IIF(o.Junk=1,'Y','N')
 		, Category = case O.Category 
 						when 'B' then 'Bulk'
 						when 'S' then 'Sample' 
@@ -284,7 +286,6 @@ outer apply (
 			and _SOD.ComboType = EType.value
 ) nTtlOutPut 
 where	O.Category in ('B','S')
-		and O.Qty != 0
 		--Buyer Delivery Date
 		{2}--and O.BuyerDelivery between @BDDateStart and @BDDateEnd  
 		--SP#
@@ -293,12 +294,15 @@ where	O.Category in ('B','S')
 		{4}--and O.MDivisionID = @MDivision  
 		--Factory
 		{5}--and O.FactoryID = @Factory  
+        --Include Cancel Order
+        {6}
 ORDER BY O.ID", sqlFilte["DaysSinceInline_Factory"],
                 sqlFilte["DaysToDelivery_Factory"],
                 sqlFilte["_BuyerDelivery"],
                 sqlFilte["_SPnum"],
                 sqlFilte["_M"],
-                sqlFilte["_Factory"]);
+                sqlFilte["_Factory"],
+                whereIncludeCancelOrder);
             #endregion
             #region SQL get DataTable
             DualResult result;

@@ -62,6 +62,7 @@
             this.dateSewingInline = new Sci.Win.UI.DateRange();
             this.label2 = new Sci.Win.UI.Label();
             this.txtStyle = new Sci.Production.Class.txtstyle();
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -521,9 +522,21 @@
             this.txtStyle.tarBrand = null;
             this.txtStyle.tarSeason = null;
             // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(13, 571);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 158;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
             // R15
             // 
             this.ClientSize = new System.Drawing.Size(552, 617);
+            this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.txtStyle);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.dateSewingInline);
@@ -603,6 +616,7 @@
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.txtStyle, 0);
+            this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -643,5 +657,6 @@
         private Win.UI.DateRange dateSewingInline;
         private Win.UI.Label label2;
         private Class.txtstyle txtStyle;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

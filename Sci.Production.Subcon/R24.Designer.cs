@@ -53,21 +53,22 @@
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.labelGLDate = new Sci.Win.UI.Label();
             this.chk_IrregularPriceReason = new Sci.Win.UI.CheckBox();
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(430, 12);
+            this.print.Location = new System.Drawing.Point(444, 12);
             this.print.TabIndex = 12;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(430, 48);
+            this.toexcel.Location = new System.Drawing.Point(444, 48);
             this.toexcel.TabIndex = 13;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(430, 84);
+            this.close.Location = new System.Drawing.Point(444, 84);
             this.close.TabIndex = 14;
             // 
             // labelFactory
@@ -334,16 +335,28 @@
             // 
             this.chk_IrregularPriceReason.AutoSize = true;
             this.chk_IrregularPriceReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chk_IrregularPriceReason.Location = new System.Drawing.Point(12, 395);
+            this.chk_IrregularPriceReason.Location = new System.Drawing.Point(12, 414);
             this.chk_IrregularPriceReason.Name = "chk_IrregularPriceReason";
             this.chk_IrregularPriceReason.Size = new System.Drawing.Size(444, 21);
             this.chk_IrregularPriceReason.TabIndex = 126;
             this.chk_IrregularPriceReason.Text = "Only show as item which have irregular price but not enter reason.";
             this.chk_IrregularPriceReason.UseVisualStyleBackColor = true;
             // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(12, 392);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 127;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
             // R24
             // 
-            this.ClientSize = new System.Drawing.Size(522, 447);
+            this.ClientSize = new System.Drawing.Size(536, 471);
+            this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.chk_IrregularPriceReason);
             this.Controls.Add(this.labelGLDate);
             this.Controls.Add(this.txtbrand);
@@ -373,7 +386,11 @@
             this.DefaultControlForEdit = "dateAPDate";
             this.IsSupportToPrint = false;
             this.Name = "R24";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R24. Local Payment summary by SP#";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.labelCategory, 0);
             this.Controls.SetChildIndex(this.labelBrand, 0);
@@ -402,6 +419,7 @@
             this.Controls.SetChildIndex(this.txtbrand, 0);
             this.Controls.SetChildIndex(this.labelGLDate, 0);
             this.Controls.SetChildIndex(this.chk_IrregularPriceReason, 0);
+            this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -434,5 +452,6 @@
         private Class.txtbrand txtbrand;
         private Win.UI.Label labelGLDate;
         private Win.UI.CheckBox chk_IrregularPriceReason;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

@@ -129,13 +129,14 @@ namespace Sci.Production.Quality
             {
                 sqlOrdersWhere = " AND " + sqlOrdersWhere;
             }
+            sqlOrdersWhere += this.chkIncludeCancelOrder.Checked ? string.Empty : " and orders.Junk = 0 ";
             #region --撈Fabric Detail 資料--
 
             cmdFabricDetail = string.Format(@" 
                 with order_rawdata as
                 (
 	                select distinct poid from dbo.orders WITH (NOLOCK) 
-	                where Junk =0 " + sqlOrdersWhere + @"
+	                where 1 = 1 " + sqlOrdersWhere + @"
                 )
                 select 
                 (select p.SuppID+'-'+s.AbbEN from dbo.PO_Supp p WITH (NOLOCK) inner join dbo.Supp s WITH (NOLOCK) on s.ID = p.SuppID
@@ -150,18 +151,19 @@ namespace Sci.Production.Quality
                               where m.id = f.ReceivingID and m.PoId = psd.ID and m.seq1 = psd.seq1 and m.seq2 = psd.SEQ2) 
                 ,f.Physical
                 ,va.WhseArrival
-                ,(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID)[scidelivery]
-                ,iif('B' in " + CATEGORY + @",iif(DATEDIFF(day, va.WhseArrival,(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
-		        ,iif(DATEDIFF(day, va.WhseArrival,(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID) )<15,'Y','')
+                ,o.scidelivery
+                ,iif('B' in " + CATEGORY + @",iif(DATEDIFF(day, va.WhseArrival,o.scidelivery)<25,'Y','')
+		        ,iif(DATEDIFF(day, va.WhseArrival,o.scidelivery )<15,'Y','')
 		                ) [Delay]
                 ,psd.ID
+                ,[Cancel] = IIF(o.Junk=1,'Y','N')
                 ,psd.seq1+'-'+psd.seq2[SEQ#]
                 ,va.ExportId
                 ,f.ReceivingID
                 ,[defectYDS]= defect.count*5
                 ,f.TotalInspYds
-
                 from order_rawdata a
+                inner join Orders o with (nolock) on o.ID = a.POID
                 inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.POID
                 inner join FIR f WITH (NOLOCK) on f.POID = psd.ID and f.SEQ1 = psd.Seq1 and f.seq2 = psd.Seq2
                 left join dbo.View_AllReceiving va with (nolock) on va.ID = f.ReceivingID
@@ -176,7 +178,7 @@ namespace Sci.Production.Quality
             cmdAccessoryDetail = string.Format(@" with order_rawdata as
                 (
 	                select distinct poid from dbo.orders WITH (NOLOCK) 
-	                where Junk =0  " + sqlOrdersWhere + @"
+	                where 1 = 1  " + sqlOrdersWhere + @"
                 )
                 select 
                 (select p.SuppID+'-'+s.AbbEN from dbo.PO_Supp p WITH (NOLOCK) inner join dbo.Supp s WITH (NOLOCK) on s.ID = p.SuppID
@@ -189,15 +191,17 @@ namespace Sci.Production.Quality
 				                where m.id = AR.ReceivingID and m.PoId = psd.ID and m.seq1 = psd.seq1 and m.seq2 = psd.SEQ2)
                ,AR.Result
                 ,va.WhseArrival
-                ,(select scidelivery from dbo.orders WITH (NOLOCK) where id = AR.POID)[scidelivery]
-                ,iif(  'B' in " + CATEGORY + @",iif(DATEDIFF(day, va.WhseArrival,(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
-		        ,iif(DATEDIFF(day, va.WhseArrival,(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID) )<15,'Y','')
+                ,o.scidelivery
+                ,iif(  'B' in " + CATEGORY + @",iif(DATEDIFF(day, va.WhseArrival,o.scidelivery)<25,'Y','')
+		        ,iif(DATEDIFF(day, va.WhseArrival,o.scidelivery)<15,'Y','')
 		                ) [Delay]
                 ,AR.POID
+                ,o.Junk
                 ,AR.seq1+'-'+AR.seq2[SEQ#]
                 ,va.ExportId
                 ,AR.ReceivingID
                 from order_rawdata a
+                inner join Orders o with (nolock) on o.ID = a.POID
                 inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.POID
                 inner join AIR AR WITH (NOLOCK) on AR.POID = psd.ID and AR.SEQ1 = psd.Seq1 and AR.seq2 = psd.Seq2
                 left join dbo.View_AllReceiving va with (nolock) on va.ID = AR.ReceivingID
@@ -210,7 +214,7 @@ with order_rawdata as
 ( 
 	select distinct poid 
     from dbo.orders WITH (NOLOCK) 
-	where Junk =0  
+	where 1 = 1
     " + sqlOrdersWhere + @"
 )
 select psd.ID
@@ -357,7 +361,7 @@ drop table #tmp");
             with order_rawdata as
             (
                  select distinct poid from dbo.orders WITH (NOLOCK) 
-                 where Junk =0  " + sqlOrdersWhere + @"
+                 where 1 = 1  " + sqlOrdersWhere + @"
             )
             select
                  psd.ID,psd.SEQ1,psd.SEQ2,ps.SuppID,ai.Refno,s.AbbEN,DelayItemsRef.TF

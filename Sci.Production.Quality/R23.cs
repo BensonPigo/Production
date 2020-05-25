@@ -68,6 +68,11 @@ namespace Sci.Production.Quality
                 this.listSQLFilter.Add($"and o.Brandid = '{this.Brand}'");
             }
 
+            if (!this.chkIncludeCancelOrder.Checked)
+            {
+                this.listSQLFilter.Add($"and o.Junk = 0");
+            }
+
             switch (this.chkHoliday.Checked)
             {
                 case true:
@@ -283,7 +288,7 @@ outer apply(
 		for xml path ('')
 		),1,1,'')
 )SewingLine
-where o.Category!='S' and o.Junk = 0
+where o.Category!='S'
 and iif(pdm.TotalCTN=0,0, ( isnull(convert(float,Receive.ClogCTN),0) / convert(float,pdm.TotalCTN))*100)=100
 {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 

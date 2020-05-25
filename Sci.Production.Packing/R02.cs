@@ -266,6 +266,8 @@ namespace Sci.Production.Packing
             {
                 where += $" and o.Category not in  ('B','S','G')";
             }
+
+            where += this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
             #endregion
 
             string sqlcmd = $@"
@@ -302,7 +304,9 @@ outer apply( select [TtlCtnQty] = sum(p.CTNQty),[TtlRemainCtnQty] = sum(iif(p.Sc
 
 select 
     o.SewLine,o.BuyerDelivery,
-	o.CustPONo,o.id,o.StyleID,
+	o.CustPONo,o.id
+    ,Junk
+    ,o.StyleID,
     pld.Article,pld.SizeCode,pld.ID,pld.CTNStartNo,[CTN Barcode] = pld.ID+pld.CTNStartNo
     ,[Barcode] = isnull(c7.Barcode,'')
     ,[PC/CTN] = pld.QtyPerCTN
@@ -379,12 +383,12 @@ drop table #tmp
             worksheet.Cells[2, 8] = this._bdate1 + "~" + this._bdate2;
             worksheet.Cells[3, 2] = this._scidate1 + "~" + this._scidate2;
             worksheet.Cells[3, 5] = this._offdate1 + "~" + this._offdate2;
-            worksheet.Cells[3, 8] = this._scanDate1 + "~" + this._scanDate2;
+            worksheet.Cells[3, 9] = this._scanDate1 + "~" + this._scanDate2;
             worksheet.Cells[4, 2] = this._brand;
             worksheet.Cells[4, 4] = this._mDivision;
-            worksheet.Cells[4, 6] = this._factory;
-            worksheet.Cells[4, 8] = this.cmbPOcompletion.Text;
-            worksheet.Cells[4, 10] = strcategory.Substring(0, strcategory.Length - 1);
+            worksheet.Cells[4, 7] = this._factory;
+            worksheet.Cells[4, 9] = this.cmbPOcompletion.Text;
+            worksheet.Cells[4, 11] = strcategory.Substring(0, strcategory.Length - 1);
             MyUtility.Excel.CopyToXls(this._printData[1], string.Empty, $"{excelName}.xltx", 5, false, null, excelApp, wSheet: excelApp.Sheets[2]);
             worksheet = excelApp.Sheets[1];
             worksheet.Columns.AutoFit();

@@ -11,6 +11,6 @@ BEGIN
 	And ((@Category != '' And Orders.Category != 'S') 
 		Or (@Category = '' And Not (MainPO.Category = 'B' And Orders.Category = 'S'))
 		Or (MainPO.Category = Orders.Category))
-	And Orders.Qty > 0
+	And (MainPO.Junk=0 or (MainPO.Junk=1 and MainPO.NeedProduction=1))
 	RETURN @minscidlv
 END
