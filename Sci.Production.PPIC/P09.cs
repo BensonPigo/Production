@@ -85,7 +85,7 @@ namespace Sci.Production.PPIC
 select rd.*,(rd.Seq1 + ' ' +rd.Seq2) as Seq, f.Description, [dbo].[getMtlDesc](r.POID,rd.Seq1,rd.Seq2,2,0) as DescriptionDetail,
     isnull((select top(1) ExportId from Receiving WITH (NOLOCK) where InvNo = rd.INVNo),'') as ExportID,
     EstReplacementAMT = case when rd.Junk =1 then 0
-						else (select top 1 amount from dbo.GetAmountByUnit(psd.Price, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',r.CDate),1)
+						else (select top 1 amount from dbo.GetAmountByUnit(psd.Price, FinalNeedQty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',r.CDate),1)
 						end
 from ReplacementReport r WITH (NOLOCK) 
 inner join ReplacementReport_Detail rd WITH (NOLOCK) on rd.ID = r.ID
@@ -243,12 +243,12 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
             .Text("ColorID", header: "Color Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("EstInQty", header: "Est. Rced\r\nQ'ty", decimal_places: 2, width: Widths.AnsiChars(7), settings: estinqty, iseditingreadonly: true)
             .Numeric("ActInQty", header: "Actual Rced\r\nQ'ty", decimal_places: 2, width: Widths.AnsiChars(7), settings: actinqty, iseditingreadonly: true)
-            .Numeric("EstReplacementAMT", header: "Est. Replacement\r\nAMT", decimal_places: 2, width: Widths.AnsiChars(7), settings: estReplacementAMT, iseditingreadonly: true)
             .Numeric("AGradeRequest", header: "Inspected Qty", decimal_places: 2, width: Widths.AnsiChars(7), settings: agraderequest, iseditingreadonly: true)
             .Numeric("BGradeRequest", header: "Defect Qty", decimal_places: 2, width: Widths.AnsiChars(7), settings: bgraderequest, iseditingreadonly: true)
             .Numeric("NarrowRequest", header: "1st Estimate Qty", decimal_places: 2, width: Widths.AnsiChars(7), settings: narrowrequest, iseditingreadonly: true)
             .Numeric("TotalRequest", header: "Final Needed Qty", decimal_places: 2, width: Widths.AnsiChars(7), settings: ttlrequest, iseditingreadonly: true)
             .Text("ReplacementUnit", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Numeric("EstReplacementAMT", header: "Est. Replacement\r\nAMT", decimal_places: 2, width: Widths.AnsiChars(7), settings: estReplacementAMT, iseditingreadonly: true)
             .Date("DamageSendDate", header: "Damage\r\nSample Sent\r\nDate", iseditingreadonly: true)
             .Text("AWBNo", header: "AWB# Of\r\nDamage\r\nSample", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("ReplacementETA", header: "Replacement\r\nETA", iseditingreadonly: true)

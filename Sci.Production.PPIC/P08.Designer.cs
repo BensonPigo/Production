@@ -980,7 +980,6 @@
             // numTtlEstAmt
             // 
             this.numTtlEstAmt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numTtlEstAmt.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RMtlAmt", true));
             this.numTtlEstAmt.DecimalPlaces = 2;
             this.numTtlEstAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTtlEstAmt.IsSupportEditMode = false;

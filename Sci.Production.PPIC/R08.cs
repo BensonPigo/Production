@@ -203,7 +203,7 @@ outer apply(
 	select ttlestamt = SUM(EstReplacementAMT)
 	from (
 		select EstReplacementAMT = case when rrd.Junk =1 then 0
-						else (select top 1 amount from dbo.GetAmountByUnit(psd.Price, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',rr.CDate),1)
+						else (select top 1 amount from dbo.GetAmountByUnit(psd.Price, FinalNeedQty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',rr.CDate),1)
 						end
 		from ReplacementReport_Detail rrd with(nolock)
 		left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = rr.POID and psd.SEQ1 = rrd.Seq1 and psd.SEQ2 = rrd.Seq2
@@ -251,7 +251,7 @@ select
 	rrd.TotalRequest,
 	rrd.AfterCuttingRequest,
     EstReplacementAMT = case when rrd.Junk =1 then 0
-						else (select top 1 amount from dbo.GetAmountByUnit(psd.Price, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',rr.CDate),1)
+						else (select top 1 amount from dbo.GetAmountByUnit(psd.Price, FinalNeedQty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',rr.CDate),1)
                         end,
     psd.POAmt,
     psd.ShipAmt,
@@ -316,7 +316,7 @@ outer apply(
 	select ttlestamt = SUM(EstReplacementAMT)
 	from (
 		select EstReplacementAMT = case when rrd.Junk =1 then 0
-						else (select top 1 amount from dbo.GetAmountByUnit(psd.Price, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',rr.CDate),1)
+						else (select top 1 amount from dbo.GetAmountByUnit(psd.Price, FinalNeedQty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',rr.CDate),1)
 						end
 		from ReplacementReport_Detail rrd with(nolock)
 		left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = rr.POID and psd.SEQ1 = rrd.Seq1 and psd.SEQ2 = rrd.Seq2
