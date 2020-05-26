@@ -1262,6 +1262,12 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                 ColumnIndex++;
             }
 
+            if (removeDays.Count == ColumnIndex - 1)
+            {
+                this.gridGarment.DataSource = null;
+                //gridGarment.Columns[0].Visible = false;
+            }
+
             #region 關閉排序功能
             for (int i = 0; i < this.gridGarment.ColumnCount; i++)
             {
@@ -1336,6 +1342,13 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
             }
 
             this.gridFabric_Panel_Code.Columns[0].Width = 115;
+
+            if (removeDays.Count == ColumnIndex - 2)
+            {
+                this.gridFabric_Panel_Code.DataSource = null;
+                //gridFabric_Panel_Code.Columns[0].Visible = false;
+                //gridFabric_Panel_Code.Columns[1].Visible = false;
+            }
 
             #region 關閉排序功能
             for (int i = 0; i < this.gridFabric_Panel_Code.ColumnCount; i++)
