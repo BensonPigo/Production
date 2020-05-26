@@ -173,9 +173,9 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
 
             seperCmdkpi = this.seperate ? "oq.FtyKPI" : "o.FtyKPI";
             seperCmdkpi2 = this.seperate ? @" left join Order_QtyShip oq WITH (NOLOCK) on o.id=oq.Id" : string.Empty;
-
+            string whereIncludeCancelOrder = this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
             // 注意!! 新增欄位也要一併新增在poCombo (搜尋KeyWork: union)
-            sqlCmd.Append(@"
+            sqlCmd.Append($@"
 with tmpOrders as (
     select DISTINCT o.ID
             , o.MDivisionID
@@ -254,7 +254,7 @@ with tmpOrders as (
             , o.MnorderApv2
             , o.MnorderApv
             , o.PulloutComplete
-            , " + seperCmdkpi + @"
+            , {seperCmdkpi}
             , o.KPIChangeReason
             , o.EachConsApv
             , o.Junk
@@ -279,19 +279,17 @@ with tmpOrders as (
                                       else 'N' end
                             else ''
                             end
-                                
-"
-            + seperCmd +
-    @" from Orders o WITH (NOLOCK) 
+            { seperCmd }
+     from Orders o WITH (NOLOCK) 
    left join style s WITH (NOLOCK) on o.styleukey = s.ukey
-   " + seperCmdkpi2 + @"
+   {seperCmdkpi2}
     OUTER APPLY(
         SELECT  Name 
         FROM Pass1 WITH (NOLOCK) 
         WHERE Pass1.ID = O.InspHandle
     )I
-	outer apply(select oa.Article from Order_article oa WITH (NOLOCK) where oa.id = o.id)a
-    where  1=1 ");
+	outer apply(select oa.Article from Order_article oa WITH (NOLOCK) where oa.id = o.id) a
+    where  1=1 {whereIncludeCancelOrder}");
             if (this.seperate)
             {
                 if (!MyUtility.Check.Empty(this.buyerDlv1))
