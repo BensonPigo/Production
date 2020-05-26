@@ -320,7 +320,7 @@ BEGIN
 				where bd.BundleNo in (select distinct BundleNo from @BundleNoTB)
 			)
 			AND LBIO.InComing IS NOT NULL
-			AND LBIO.RFIDProcessLocationID=''
+			AND LBIO.RFIDProcessLocationID=''''
 			group by LB.Orderid,LS.ArtworkTypeId,LBD.Patterncode,LBD.PatternDesc
 			 
 			--更新ArtworkPO_Detail FarmOut準備資料
@@ -337,7 +337,7 @@ BEGIN
 				where bd.BundleNo in (select distinct BundleNo from @BundleNoTB)
 			)
 			AND LBIO.OutGoing IS NOT NULL
-			AND LBIO.RFIDProcessLocationID=''
+			AND LBIO.RFIDProcessLocationID=''''
 			group by LB.Orderid,LS.ArtworkTypeId,LBD.Patterncode,LBD.PatternDesc
 
 			update apd set FarmIn = t.FarmIn
