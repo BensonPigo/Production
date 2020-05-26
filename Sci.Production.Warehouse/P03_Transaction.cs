@@ -322,7 +322,7 @@ namespace Sci.Production.Warehouse
             }
 
             selectCommand1.Append(string.Format(@"
-            group by a.id, poid, seq1,Seq2, a.remark  ,a.IssueDate,a.FabricType,AddDate, MtlLocation.location 
+            group by a.id, poid, seq1,Seq2, remark  ,a.IssueDate,a.FabricType,AddDate, MtlLocation.location 
 
             union all
             select 	issuedate
