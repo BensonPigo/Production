@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.radioQRcodePrint = new Sci.Win.UI.RadioButton();
             this.radioWeighingform = new Sci.Win.UI.RadioButton();
             this.radioMDform = new Sci.Win.UI.RadioButton();
             this.chkCartonNo = new Sci.Win.UI.CheckBox();
@@ -46,7 +47,7 @@
             this.labelCTN = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.checkBoxCountry = new Sci.Win.UI.CheckBox();
-            this.radioQRcodePrint = new Sci.Win.UI.RadioButton();
+            this.radioCustCTN = new Sci.Win.UI.RadioButton();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -64,6 +65,7 @@
             // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.radioCustCTN);
             this.radioPanel1.Controls.Add(this.radioQRcodePrint);
             this.radioPanel1.Controls.Add(this.radioWeighingform);
             this.radioPanel1.Controls.Add(this.radioMDform);
@@ -78,8 +80,21 @@
             this.radioPanel1.Controls.Add(this.radioPackingListReportFormA);
             this.radioPanel1.Location = new System.Drawing.Point(13, 12);
             this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(427, 290);
+            this.radioPanel1.Size = new System.Drawing.Size(427, 311);
             this.radioPanel1.TabIndex = 94;
+            // 
+            // radioQRcodePrint
+            // 
+            this.radioQRcodePrint.AutoSize = true;
+            this.radioQRcodePrint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioQRcodePrint.Location = new System.Drawing.Point(3, 232);
+            this.radioQRcodePrint.Name = "radioQRcodePrint";
+            this.radioQRcodePrint.Size = new System.Drawing.Size(117, 21);
+            this.radioQRcodePrint.TabIndex = 11;
+            this.radioQRcodePrint.TabStop = true;
+            this.radioQRcodePrint.Text = "QR Code Print";
+            this.radioQRcodePrint.UseVisualStyleBackColor = true;
+            this.radioQRcodePrint.CheckedChanged += new System.EventHandler(this.radioQRcodePrint_CheckedChanged);
             // 
             // radioWeighingform
             // 
@@ -223,7 +238,7 @@
             // 
             this.txtCTNEnd.BackColor = System.Drawing.Color.White;
             this.txtCTNEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCTNEnd.Location = new System.Drawing.Point(172, 308);
+            this.txtCTNEnd.Location = new System.Drawing.Point(171, 340);
             this.txtCTNEnd.Name = "txtCTNEnd";
             this.txtCTNEnd.Size = new System.Drawing.Size(56, 23);
             this.txtCTNEnd.TabIndex = 98;
@@ -231,7 +246,7 @@
             // label2
             // 
             this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Location = new System.Drawing.Point(149, 308);
+            this.label2.Location = new System.Drawing.Point(148, 340);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(19, 23);
             this.label2.TabIndex = 97;
@@ -245,14 +260,14 @@
             // 
             this.txtCTNStart.BackColor = System.Drawing.Color.White;
             this.txtCTNStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCTNStart.Location = new System.Drawing.Point(89, 308);
+            this.txtCTNStart.Location = new System.Drawing.Point(88, 340);
             this.txtCTNStart.Name = "txtCTNStart";
             this.txtCTNStart.Size = new System.Drawing.Size(56, 23);
             this.txtCTNStart.TabIndex = 96;
             // 
             // labelCTN
             // 
-            this.labelCTN.Location = new System.Drawing.Point(42, 308);
+            this.labelCTN.Location = new System.Drawing.Point(41, 340);
             this.labelCTN.Name = "labelCTN";
             this.labelCTN.Size = new System.Drawing.Size(43, 23);
             this.labelCTN.TabIndex = 95;
@@ -260,7 +275,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(231, 308);
+            this.label1.Location = new System.Drawing.Point(230, 340);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(105, 23);
             this.label1.TabIndex = 99;
@@ -271,28 +286,28 @@
             this.checkBoxCountry.AutoSize = true;
             this.checkBoxCountry.Enabled = false;
             this.checkBoxCountry.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBoxCountry.Location = new System.Drawing.Point(350, 313);
+            this.checkBoxCountry.Location = new System.Drawing.Point(349, 345);
             this.checkBoxCountry.Name = "checkBoxCountry";
             this.checkBoxCountry.Size = new System.Drawing.Size(15, 14);
             this.checkBoxCountry.TabIndex = 100;
             this.checkBoxCountry.UseVisualStyleBackColor = true;
             // 
-            // radioQRcodePrint
+            // radioCustCTN
             // 
-            this.radioQRcodePrint.AutoSize = true;
-            this.radioQRcodePrint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioQRcodePrint.Location = new System.Drawing.Point(3, 232);
-            this.radioQRcodePrint.Name = "radioQRcodePrint";
-            this.radioQRcodePrint.Size = new System.Drawing.Size(117, 21);
-            this.radioQRcodePrint.TabIndex = 11;
-            this.radioQRcodePrint.TabStop = true;
-            this.radioQRcodePrint.Text = "QR Code Print";
-            this.radioQRcodePrint.UseVisualStyleBackColor = true;
-            this.radioQRcodePrint.CheckedChanged += new System.EventHandler(this.radioQRcodePrint_CheckedChanged);
+            this.radioCustCTN.AutoSize = true;
+            this.radioCustCTN.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioCustCTN.Location = new System.Drawing.Point(3, 284);
+            this.radioCustCTN.Name = "radioCustCTN";
+            this.radioCustCTN.Size = new System.Drawing.Size(210, 21);
+            this.radioCustCTN.TabIndex = 12;
+            this.radioCustCTN.TabStop = true;
+            this.radioCustCTN.Text = "Cust CTN# Barcode List Print";
+            this.radioCustCTN.UseVisualStyleBackColor = true;
+            this.radioCustCTN.CheckedChanged += new System.EventHandler(this.radioCustCTN_CheckedChanged);
             // 
             // P03_Print
             // 
-            this.ClientSize = new System.Drawing.Size(571, 358);
+            this.ClientSize = new System.Drawing.Size(571, 405);
             this.Controls.Add(this.checkBoxCountry);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtCTNEnd);
@@ -344,5 +359,6 @@
         private Win.UI.RadioButton radioWeighingform;
         private Win.UI.RadioButton radioMDform;
         private Win.UI.RadioButton radioQRcodePrint;
+        private Win.UI.RadioButton radioCustCTN;
     }
 }

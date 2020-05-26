@@ -2133,6 +2133,7 @@ select  pd.ID
 		, checkMixSize.value
         , o.BuyerDelivery
         , pd.SCICtnNo
+		, pd.CustCTN
 from PackingList_Detail pd WITH (NOLOCK) 
 left join orders o with(nolock) on o.id = pd.OrderID
 outer apply (
