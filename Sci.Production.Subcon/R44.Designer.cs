@@ -30,6 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.comboDropDownList1 = new Sci.Production.Class.comboDropDownList(this.components);
+            this.label1 = new Sci.Win.UI.Label();
             this.txtSP = new Sci.Win.UI.TextBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.dateSewingDate = new Sci.Win.UI.DateRange();
@@ -39,8 +41,7 @@
             this.labelSewingDate = new Sci.Win.UI.Label();
             this.radioBySP = new Sci.Win.UI.RadioButton();
             this.radioByFactory = new Sci.Win.UI.RadioButton();
-            this.label1 = new Sci.Win.UI.Label();
-            this.comboDropDownList1 = new Sci.Production.Class.comboDropDownList(this.components);
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,6 +62,7 @@
             // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.chkIncludeCancelOrder);
             this.radioPanel1.Controls.Add(this.comboDropDownList1);
             this.radioPanel1.Controls.Add(this.label1);
             this.radioPanel1.Controls.Add(this.txtSP);
@@ -74,9 +76,30 @@
             this.radioPanel1.Controls.Add(this.radioByFactory);
             this.radioPanel1.Location = new System.Drawing.Point(12, 12);
             this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(398, 193);
+            this.radioPanel1.Size = new System.Drawing.Size(398, 214);
             this.radioPanel1.TabIndex = 0;
             this.radioPanel1.Value = "P/L Rcv Report";
+            // 
+            // comboDropDownList1
+            // 
+            this.comboDropDownList1.BackColor = System.Drawing.Color.White;
+            this.comboDropDownList1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDropDownList1.FormattingEnabled = true;
+            this.comboDropDownList1.IsSupportUnselect = true;
+            this.comboDropDownList1.Location = new System.Drawing.Point(105, 159);
+            this.comboDropDownList1.Name = "comboDropDownList1";
+            this.comboDropDownList1.OldText = "";
+            this.comboDropDownList1.Size = new System.Drawing.Size(121, 24);
+            this.comboDropDownList1.TabIndex = 13;
+            this.comboDropDownList1.Type = "Pms_ReportForProduct";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(8, 159);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(94, 23);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "Category";
             // 
             // txtSP
             // 
@@ -180,32 +203,22 @@
             this.radioByFactory.UseVisualStyleBackColor = true;
             this.radioByFactory.Value = "P/L Rcv Report";
             // 
-            // label1
+            // chkIncludeCancelOrder
             // 
-            this.label1.Location = new System.Drawing.Point(8, 159);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(94, 23);
-            this.label1.TabIndex = 12;
-            this.label1.Text = "Category";
-            // 
-            // comboDropDownList1
-            // 
-            this.comboDropDownList1.BackColor = System.Drawing.Color.White;
-            this.comboDropDownList1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboDropDownList1.FormattingEnabled = true;
-            this.comboDropDownList1.IsSupportUnselect = true;
-            this.comboDropDownList1.Location = new System.Drawing.Point(105, 159);
-            this.comboDropDownList1.Name = "comboDropDownList1";
-            this.comboDropDownList1.OldText = "";
-            this.comboDropDownList1.Size = new System.Drawing.Size(121, 24);
-            this.comboDropDownList1.TabIndex = 13;
-            this.comboDropDownList1.Type = "Pms_ReportForProduct";
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(8, 187);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 128;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
             // 
             // R44
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(532, 247);
+            this.ClientSize = new System.Drawing.Size(532, 255);
             this.Controls.Add(this.radioPanel1);
             this.Name = "R44";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
@@ -238,5 +251,6 @@
         private Win.UI.TextBox txtSP;
         private Class.comboDropDownList comboDropDownList1;
         private Win.UI.Label label1;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

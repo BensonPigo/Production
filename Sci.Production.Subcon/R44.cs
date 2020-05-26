@@ -71,6 +71,7 @@ where Junk != 1", out dtFactory);
             #endregion
 
             #region SQL cmd
+            string whereIncludeCancelOrder = this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
             DBProxy.Current.DefaultTimeout = 1800;  // timeout時間加長為30分鐘
             string strSQL = string.Format(@"
 declare @StartDate Date = @SewingStart;
@@ -99,8 +100,7 @@ select	masterID = o.POID
 into #tsp
 from orders o WITH (NOLOCK)
 inner join Factory f WITH (NOLOCK) on o.FactoryID = f.ID
-where	o.Junk != 1
-        and  o.Category in ({2})
+where	o.Category in ({2})
 		-- {0} 篩選 OrderID
 		{0}
 		and not ((o.SewOffLine < @StartDate and o.SewInLine < @EndDate) or (o.SewInLine > @StartDate and o.SewInLine > @EndDate))
@@ -108,6 +108,7 @@ where	o.Junk != 1
 		and (o.SewOffLine is not null or o.SewOffLine != '')	
 		-- {1} 篩選 FactoryID	
         {1}
+        {3}
 --order by o.POID, o.ID, o.SewLine
 
 
@@ -138,7 +139,8 @@ end
 "
                 , (SP.Empty()) ? "" : "and o.id = @SP"
                 , (Factory.Empty()) ? "" : "and f.ID = @FactoryID"
-                , Category);
+                , Category
+                , whereIncludeCancelOrder);
 
             strSQL += $@"
 select distinct t.orderID,
