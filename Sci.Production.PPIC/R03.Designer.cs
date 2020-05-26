@@ -75,6 +75,7 @@
             this.txtseason = new Sci.Production.Class.txtseason();
             this.txtstyle = new Sci.Production.Class.txtstyle();
             this.checkByCPU = new Sci.Win.UI.CheckBox();
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -636,9 +637,21 @@
             this.checkByCPU.Text = "By CPU";
             this.checkByCPU.UseVisualStyleBackColor = true;
             // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(13, 626);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 129;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
             // R03
             // 
             this.ClientSize = new System.Drawing.Size(587, 682);
+            this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.checkByCPU);
             this.Controls.Add(this.txtSp2);
             this.Controls.Add(this.label2);
@@ -746,6 +759,7 @@
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.txtSp2, 0);
             this.Controls.SetChildIndex(this.checkByCPU, 0);
+            this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -800,5 +814,6 @@
         private System.Windows.Forms.Label label2;
         private Win.UI.TextBox txtSp2;
         private Win.UI.CheckBox checkByCPU;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }
