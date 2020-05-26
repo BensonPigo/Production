@@ -381,6 +381,7 @@
             this.Name = "P14";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P14. Material C/O Maintenance";
+            this.UniqueExpress = "ID";
             this.WorkAlias = "MtlCertificate";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
