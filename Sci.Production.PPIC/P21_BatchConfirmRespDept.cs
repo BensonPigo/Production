@@ -23,13 +23,18 @@ namespace Sci.Production.PPIC
         private DataTable dtICR;
         private List<DataRow> listICR_ResponsibilityDept;
 
-        /// <summary>
-        /// P21_BatchConfirmRespDept
-        /// </summary>
-        public P21_BatchConfirmRespDept()
+        /// <inheritdoc/>
+        public P21_BatchConfirmRespDept(bool isReCal = false)
         {
             this.InitializeComponent();
             this.EditMode = true;
+            if (isReCal)
+            {
+                this.btnReCalculate.Visible = true;
+                this.btnReject.Visible = false;
+                this.btnConfirm.Visible = false;
+                this.Text = "Batch Re-Calculate Responsibility Dept. Amt";
+            }
         }
 
         /// <summary>
@@ -79,11 +84,18 @@ select  [select] = 0,
         ICR.ID,
         ICR.OrderID,
         [TotalUS] = ICR.RMtlAmtUSD + ICR.ActFreightUSD + ICR.OtherAmtUSD,
-        [Email] = isnull(p.EMail,tp.EMail)
+        [Email] = isnull(p.EMail,tp.EMail),
+        [TTlAmt] = isnull(i3.Amt,0)
 into    #tmp
 from ICR with (nolock)
 left join Pass1 p with (nolock) on ICR.EditName = p.ID
 left join TpePass1 tp with (nolock) on ICR.EditName = tp.ID
+outer apply(
+	select [Amt] = sum(ISNULL(Amount,0))
+	from ICR_ResponsibilityDept 
+	where id=ICR.id
+)i3
+
 where   RespDeptConfirmDate is null {sqlWhere}
 
 select t.* from #tmp t where exists (select 1 from ICR_ResponsibilityDept ird with (nolock) where t.ID = ird.ID)
@@ -184,6 +196,12 @@ Pls re-check and update responsibility information.
                 return;
             }
 
+            if (listSelectedICR.Where(w => MyUtility.Convert.GetDecimal(w["TotalUS"]) != MyUtility.Convert.GetDecimal(w["TTLAMT"])).Any())
+            {
+                MyUtility.Msg.WarningBox("Total department shared amount must equal to Total US$.");
+                return;
+            }
+
             string updateICR_ID = listSelectedICR.Select(s => "'" + s["ID"].ToString() + "'").JoinToString(",");
             string updSQL = $@"
 update ICR set RespDeptConfirmDate = getdate(), RespDeptConfirmName = '{Env.User.UserID}'
@@ -199,6 +217,63 @@ where ID in ({updateICR_ID})
             }
 
             MyUtility.Msg.InfoBox("Confirm Complete!!");
+            this.Query();
+        }
+
+        private void BtnReCalculate_Click(object sender, EventArgs e)
+        {
+            if (this.dtICR == null)
+            {
+                return;
+            }
+
+            var listSelectedICR = this.dtICR.AsEnumerable().Where(s => (int)s["select"] == 1);
+
+            if (!listSelectedICR.Any())
+            {
+                MyUtility.Msg.WarningBox("Please select at least one item");
+                return;
+            }
+
+            foreach (DataRow item in listSelectedICR)
+            {
+                decimal ttlus = MyUtility.Convert.GetDecimal(item["TotalUS"]);
+                DataRow[] tmp2 = ((DataTable)this.gridICR_ResponsibilityDept.DataSource).Select($"id = '{item["id"]}'");
+                if (tmp2.Length > 0)
+                {
+                    decimal ttlamt = 0;
+                    foreach (var item2 in tmp2)
+                    {
+                        decimal amt = Math.Round(
+                            ttlus
+                            * (MyUtility.Convert.GetDecimal(item2["Percentage"])
+                            / 100), 2);
+                        item2["Amount"] = amt;
+                        ttlamt += amt;
+                    }
+
+                    if (ttlus != ttlamt)
+                    {
+                        tmp2[tmp2.Length - 1]["Amount"] = MyUtility.Convert.GetDecimal(tmp2[tmp2.Length - 1]["Amount"]) + (ttlus - ttlamt);
+                    }
+                }
+            }
+
+            var ids = listSelectedICR.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["id"])).ToList();
+            DataTable tmpdt2 = ((DataTable)this.gridICR_ResponsibilityDept.DataSource).Select($"ID in('{string.Join("','", ids)}')").CopyToDataTable();
+            string sqlcmd = $@"
+update IRD set Amount = t.Amount
+from ICR_ResponsibilityDept IRD
+inner join #tmp t on t.id = IRD.id and t.FactoryID = IRD.FactoryID and t.DepartmentID = IRD.DepartmentID
+";
+            DataTable odt;
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(tmpdt2, string.Empty, sqlcmd, out odt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
             this.Query();
         }
     }

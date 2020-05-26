@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labICRNo = new Sci.Win.UI.Label();
             this.txtID = new Sci.Win.UI.TextBox();
             this.labFactory = new Sci.Win.UI.Label();
@@ -90,6 +90,7 @@
             this.lblConfirmDept = new Sci.Win.UI.Label();
             this.btnBatchConfirmResponsibilityDept = new Sci.Win.UI.Button();
             this.lbStatus = new Sci.Win.UI.Label();
+            this.btnBatchReCalculateResponsibilityDeptAmt = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -136,7 +137,7 @@
             this.masterpanel.Controls.Add(this.txtID);
             this.masterpanel.Controls.Add(this.labICRNo);
             this.masterpanel.Controls.Add(this.dateVoucherDate);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 307);
+            this.masterpanel.Size = new System.Drawing.Size(875, 307);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateVoucherDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labICRNo, 0);
@@ -170,7 +171,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 307);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 153);
+            this.detailpanel.Size = new System.Drawing.Size(875, 0);
             // 
             // gridicon
             // 
@@ -184,7 +185,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 153);
+            this.detailgridcont.Size = new System.Drawing.Size(875, 0);
             // 
             // detail2
             // 
@@ -198,13 +199,9 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1000, 621);
-            // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 460);
+            this.detailcont.Size = new System.Drawing.Size(892, 226);
             // 
             // detailbtm
             // 
@@ -216,8 +213,8 @@
             this.detailbtm.Controls.Add(this.label13);
             this.detailbtm.Controls.Add(this.label12);
             this.detailbtm.Controls.Add(this.dateConfirmedDate);
-            this.detailbtm.Location = new System.Drawing.Point(0, 460);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 161);
+            this.detailbtm.Location = new System.Drawing.Point(0, 226);
+            this.detailbtm.Size = new System.Drawing.Size(892, 161);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -813,36 +810,36 @@
             this.gridReplacement.AllowUserToOrderColumns = true;
             this.gridReplacement.AllowUserToResizeRows = false;
             this.gridReplacement.BackgroundColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReplacement.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridReplacement.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.gridReplacement.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.gridReplacement.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.gridReplacement.DefaultCellStyle = dataGridViewCellStyle5;
             this.gridReplacement.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridReplacement.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridReplacement.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridReplacement.Location = new System.Drawing.Point(599, 17);
             this.gridReplacement.Name = "gridReplacement";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReplacement.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridReplacement.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.gridReplacement.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridReplacement.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReplacement.RowTemplate.Height = 24;
@@ -944,9 +941,20 @@
             this.lbStatus.Text = "Confirmed";
             this.lbStatus.TextStyle.Color = System.Drawing.Color.Red;
             // 
+            // btnBatchReCalculateResponsibilityDeptAmt
+            // 
+            this.btnBatchReCalculateResponsibilityDeptAmt.Location = new System.Drawing.Point(353, 24);
+            this.btnBatchReCalculateResponsibilityDeptAmt.Name = "btnBatchReCalculateResponsibilityDeptAmt";
+            this.btnBatchReCalculateResponsibilityDeptAmt.Size = new System.Drawing.Size(268, 30);
+            this.btnBatchReCalculateResponsibilityDeptAmt.TabIndex = 6;
+            this.btnBatchReCalculateResponsibilityDeptAmt.Text = "Batch Re-Calculate Responsibility Dept. Amt";
+            this.btnBatchReCalculateResponsibilityDeptAmt.UseVisualStyleBackColor = true;
+            this.btnBatchReCalculateResponsibilityDeptAmt.Click += new System.EventHandler(this.BtnBatchReCalculateResponsibilityDeptAmt_Click);
+            // 
             // P21
             // 
             this.ClientSize = new System.Drawing.Size(1008, 683);
+            this.Controls.Add(this.btnBatchReCalculateResponsibilityDeptAmt);
             this.Controls.Add(this.btnBatchConfirmResponsibilityDept);
             this.Grid2Edit = false;
             this.GridAlias = "ICR_Detail";
@@ -966,6 +974,7 @@
             this.WorkAlias = "ICR";
             this.Controls.SetChildIndex(this.tabs, 0);
             this.Controls.SetChildIndex(this.btnBatchConfirmResponsibilityDept, 0);
+            this.Controls.SetChildIndex(this.btnBatchReCalculateResponsibilityDeptAmt, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
@@ -1048,5 +1057,6 @@
         private Win.UI.Label lblConfirmDept;
         private Win.UI.Button btnBatchConfirmResponsibilityDept;
         private Win.UI.Label lbStatus;
+        private Win.UI.Button btnBatchReCalculateResponsibilityDeptAmt;
     }
 }

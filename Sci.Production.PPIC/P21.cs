@@ -231,5 +231,11 @@ where ICR.ID = '{masterID}';
             new P21_BatchConfirmRespDept().ShowDialog();
             this.ReloadDatas();
         }
+
+        private void BtnBatchReCalculateResponsibilityDeptAmt_Click(object sender, EventArgs e)
+        {
+            new P21_BatchConfirmRespDept(true).ShowDialog();
+            this.ReloadDatas();
+        }
     }
 }
