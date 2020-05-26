@@ -14,32 +14,32 @@ namespace Sci.Production.PPIC
             this.dateInputDate.Text = DateTime.Now.ToShortDateString();
         }
 
-        private void BtnPMS_Click(object sender, EventArgs e)
+        private bool IsCanDoProcess()
         {
-            this.ShowWaitMessage("Loading....");
             string sqlCmd = "SELECT 1 FROM sysdatabases WHERE name='FPS'";
 
             bool isFpsEXISTS = MyUtility.Check.Seek(sqlCmd);
-            DateTime inputDate;
+
             if (!isFpsEXISTS)
             {
                 MyUtility.Msg.InfoBox("Cannot find database [FPS], please connect to IT admin.");
                 this.HideWaitMessage();
-                return;
+                return false;
             }
 
-            if (!DateTime.TryParse(this.dateInputDate.Text, out inputDate))
-            {
-                inputDate = DateTime.Now;
-            }
+            return true;
+        }
 
-            sqlCmd = $"exec [FPS].dbo.exp_finishingprocess '{inputDate.ToString("yyyy/MM/dd")}';";
+        private void ExecProcess(string execSql)
+        {
+            this.ShowWaitMessage("Loading....");
+
             DBProxy.Current.DefaultTimeout = 1200;
-            DualResult result = DBProxy.Current.Execute(null, sqlCmd);
+            DualResult result = DBProxy.Current.Execute(null, execSql);
             if (!result)
             {
                 MyUtility.Msg.WaitClear();
-                this.ShowErr(sqlCmd, result);
+                this.ShowErr(execSql, result);
                 this.HideWaitMessage();
                 return;
             }
@@ -48,34 +48,59 @@ namespace Sci.Production.PPIC
             MyUtility.Msg.InfoBox("Complete.");
         }
 
+        private void BtnPMS_Click(object sender, EventArgs e)
+        {
+            if (!this.IsCanDoProcess())
+            {
+                return;
+            }
+
+            DateTime inputDate;
+            string sqlCmd = string.Empty;
+
+            if (!DateTime.TryParse(this.dateInputDate.Text, out inputDate))
+            {
+                inputDate = DateTime.Now;
+            }
+
+            sqlCmd = $"exec [FPS].dbo.exp_finishingprocess '{inputDate.ToString("yyyy/MM/dd")}';";
+            this.ExecProcess(sqlCmd);
+        }
+
         private void BtnMWS_Click(object sender, EventArgs e)
         {
-
-            this.ShowWaitMessage("Loading....");
-            string sqlCmd = "SELECT 1 FROM sysdatabases WHERE name='FPS'";
-
-            bool isFpsEXISTS = MyUtility.Check.Seek(sqlCmd);
-
-            if (!isFpsEXISTS)
+            if (!this.IsCanDoProcess())
             {
-                MyUtility.Msg.InfoBox("Cannot find database [FPS], please connect to IT admin.");
-                this.HideWaitMessage();
                 return;
             }
 
+            string sqlCmd = string.Empty;
             sqlCmd = "exec [FPS].dbo.imp_finishingprocess ;";
-            DBProxy.Current.DefaultTimeout = 1200;
-            DualResult result = DBProxy.Current.Execute(null, sqlCmd);
-            if (!result)
+            this.ExecProcess(sqlCmd);
+        }
+
+        private void Btn_exp_AutoFabric_Click(object sender, EventArgs e)
+        {
+            if (!this.IsCanDoProcess())
             {
-                MyUtility.Msg.WaitClear();
-                this.ShowErr(sqlCmd, result);
-                this.HideWaitMessage();
                 return;
             }
 
-            this.HideWaitMessage();
-            MyUtility.Msg.InfoBox("Complete.");
+            string sqlCmd = string.Empty;
+            sqlCmd = "exec [FPS].dbo.exp_AutoFabric;";
+            this.ExecProcess(sqlCmd);
+        }
+
+        private void Btn_imp_AutoFabric_Click(object sender, EventArgs e)
+        {
+            if (!this.IsCanDoProcess())
+            {
+                return;
+            }
+
+            string sqlCmd = string.Empty;
+            sqlCmd = "exec [FPS].dbo.imp_AutoFabric;";
+            this.ExecProcess(sqlCmd);
         }
     }
 }
