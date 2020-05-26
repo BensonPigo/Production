@@ -804,22 +804,17 @@ where   id = '{0}'
 
             #region 起手資料
             DataTable dt;
-            string cmd = $@"SELECT s.* FROM SewingSchedule s INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID WHERE s.OrderID in ('{string.Join("','", orderIDs)}')
-AND ( 
-	(Cast(s.Inline as Date) >= '{DateTime.Today.ToString("yyyy/MM/dd")}' )
-	OR
-	(Cast(s.Offline as Date) >= '{DateTime.Today.ToString("yyyy/MM/dd")}'  )
-)
-";
+            string cmd = $@"SELECT s.* FROM SewingSchedule s INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID WHERE s.OrderID in ('{string.Join("','", orderIDs)}')";
             DualResult result = DBProxy.Current.Select(null, cmd, out dt);
             if (!result)
             {
-                this.ShowErr(result);
+                //this.finalmsg = result.ToString();
                 return false;
             }
 
             if (dt.Rows.Count == 0)
             {
+                //this.finalmsg = "Data not Found";
                 return false;
             }
             #endregion
@@ -836,7 +831,6 @@ AND (
 
             // 起點 = (最早Inline - 最大Lead Time)、終點 = (最晚Offline - 最小Lead Time)
             DateTime start = Convert.ToDateTime(this.MinInLine.AddDays((-1 * maxLeadTime)).ToString("yyyy/MM/dd"));
-            start = start > DateTime.Today ? start : DateTime.Today;
             DateTime end = this.MaxOffLine.Date;
 
             // 算出總天數
@@ -856,7 +850,6 @@ FROM
 WHERE HolidayDate <= '{end.ToString("yyyy/MM/dd")}'
 AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
 ";
-
 
             result = DBProxy.Current.Select(null, cmd2, out dt2);
 
@@ -880,7 +873,6 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
 
                     // 為避免假日推移的影響，讓時間軸不夠長，因此每遇到一次假日，就要加長一次時間軸
                     DayCount += 1;
-
 
                     start = start.AddDays(-1);
                     cmd2 = $@"
@@ -948,14 +940,17 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                 this.Days = this.Days.OrderBy(o => o.Date).ToList();
             }
 
-            List<string> allOrder = dt.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct().ToList();
-
             if (this.bgWorkerUpdateInfo.CancellationPending == true) return false;
             this.bgWorkerUpdateInfo.ReportProgress(5);
 
+            List<string> allOrder = dt.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct().ToList();
+
             this.AllData = GetInOffLineList(dt, this.Days, this.bgWorkerUpdateInfo);
 
-            List<DataTable> LeadTimeList = GetCutting_WIP_DataTable(this.Days, this.AllData);
+            if (this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            this.bgWorkerUpdateInfo.ReportProgress(90);
+
+            List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days, this.AllData);
 
             if (this.bgWorkerUpdateInfo.CancellationPending == true) return false;
             this.bgWorkerUpdateInfo.ReportProgress(95);
@@ -970,11 +965,11 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                 dtG.ImportRow(drdStdQty);
                 DataRow drdAccStdQty = this.detailData.Select($"SP='{item["SP"]}' and [Desc./Sewing Date] = 'Accu. Std. Qty'")[0];
 
-                DataRow drdCutPlan = this.detailData.Select($"SP='{item["SP"]}' and [Desc./Sewing Date] = 'Accu. Cut Plan Qty'")[0];
+                DataRow drdAccCutPlan = this.detailData.Select($"SP='{item["SP"]}' and [Desc./Sewing Date] = 'Accu. Cut Plan Qty'")[0];
                 for (int i = 2; i < this.detailData.Columns.Count; i++) // 2 是日期欄位開始
                 {
-                    string bal = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(drdCutPlan[i]) - MyUtility.Convert.GetDecimal(drdAccStdQty[i]), 0));
-                    if (MyUtility.Convert.GetString(drdCutPlan[i]) == "" && MyUtility.Convert.GetString(drdAccStdQty[i]) == "")
+                    string bal = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(drdAccCutPlan[i]) - MyUtility.Convert.GetDecimal(drdAccStdQty[i]), 0));
+                    if (MyUtility.Convert.GetString(drdAccCutPlan[i]) == "" && MyUtility.Convert.GetString(drdAccStdQty[i]) == "")
                     {
                         bal = string.Empty;
                     }
@@ -989,10 +984,10 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                     {
                         srow2 = wip + " / " + bal;
                     }
-                    drdCutPlan[i] = srow2;
+                    drdAccCutPlan[i] = srow2;
                 }
-                drdCutPlan["SP"] = string.Empty;
-                dtG.ImportRow(drdCutPlan);
+                drdAccCutPlan["SP"] = string.Empty;
+                dtG.ImportRow(drdAccCutPlan);
             }
 
             return true;
@@ -1014,17 +1009,11 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
 
             #region 起手資料
             DataTable dt;
-            string cmd = $@"SELECT s.* FROM SewingSchedule s INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID WHERE s.OrderID in ('{string.Join("','", orderIDs)}')
-AND ( 
-	(Cast(s.Inline as Date) >= '{DateTime.Today.ToString("yyyy/MM/dd")}' )
-	OR
-	(Cast(s.Offline as Date) >= '{DateTime.Today.ToString("yyyy/MM/dd")}'  )
-)
-";
+            string cmd = $@"SELECT s.* FROM SewingSchedule s INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID WHERE s.OrderID in ('{string.Join("','", orderIDs)}')";
             DualResult result = DBProxy.Current.Select(null, cmd, out dt);
             if (!result)
             {
-                this.ShowErr(result);
+                //this.finalmsg = result.ToString();
                 return false;
             }
 
@@ -1046,7 +1035,6 @@ AND (
 
             // 起點 = (最早Inline - 最大Lead Time)、終點 = (最晚Offline - 最小Lead Time)
             DateTime start = Convert.ToDateTime(this.MinInLine.AddDays((-1 * maxLeadTime)).ToString("yyyy/MM/dd"));
-            start = start > DateTime.Today ? start : DateTime.Today;
             DateTime end = this.MaxOffLine.Date;
 
             // 算出總天數
@@ -1157,16 +1145,12 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                 this.Days = this.Days.OrderBy(o => o.Date).ToList();
             }
 
-
             List<string> allOrder = dt.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct().ToList();
 
             if (this.bgWorkerUpdateInfo.CancellationPending == true) return false;
             this.bgWorkerUpdateInfo.ReportProgress(5);
 
             this.AllData2 = GetInOffLineList_byFabricPanelCode(dt, this.Days, this.bgWorkerUpdateInfo);
-
-            if (this.bgWorkerUpdateInfo.CancellationPending == true) return false;
-            this.bgWorkerUpdateInfo.ReportProgress(90);
 
             List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days, this.AllData2);
 
@@ -1183,11 +1167,11 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                 dtF.ImportRow(drdStdQty);
                 DataRow drdAccStdQty = this.detailData.Select($"SP='{item["SP"]}' and [Fab. Panel Code] = '{item["Fab. Panel Code"]}' and [Desc./Sewing Date] = 'Accu. Std. Qty'")[0];
 
-                DataRow drdCutPlan = this.detailData.Select($"SP='{item["SP"]}' and [Fab. Panel Code] = '{item["Fab. Panel Code"]}' and [Desc./Sewing Date] = 'Accu. Cut Plan Qty'")[0];
+                DataRow drdAccCutPlan = this.detailData.Select($"SP='{item["SP"]}' and [Fab. Panel Code] = '{item["Fab. Panel Code"]}' and [Desc./Sewing Date] = 'Accu. Cut Plan Qty'")[0];
                 for (int i = 3; i < this.detailData.Columns.Count; i++) // 2 是日期欄位開始
                 {
-                    string bal = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(drdCutPlan[i]) - MyUtility.Convert.GetDecimal(drdAccStdQty[i]), 0));
-                    if (MyUtility.Convert.GetString(drdCutPlan[i]) == "" && MyUtility.Convert.GetString(drdAccStdQty[i]) == "")
+                    string bal = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(drdAccCutPlan[i]) - MyUtility.Convert.GetDecimal(drdAccStdQty[i]), 0));
+                    if (MyUtility.Convert.GetString(drdAccCutPlan[i]) == "" && MyUtility.Convert.GetString(drdAccStdQty[i]) == "")
                     {
                         bal = string.Empty;
                     }
@@ -1202,11 +1186,12 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                     {
                         srow2 = wip + " / " + bal;
                     }
-                    drdCutPlan[i] = srow2;
+                    drdAccCutPlan[i] = srow2;
                 }
-                drdCutPlan["SP"] = string.Empty;
-                dtF.ImportRow(drdCutPlan);
+                drdAccCutPlan["SP"] = string.Empty;
+                dtF.ImportRow(drdAccCutPlan);
             }
+
             return true;
         }
 
@@ -1242,9 +1227,8 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
             foreach (var day in this.Days)
             {
                 //如果該日期，不是「有資料」，則刪掉
-                if (!this.AllData.Where(x => x.InOffLines.Where(
-                                                                    y => y.DateWithLeadTime == day.Date
-                                                                    && (MyUtility.Convert.GetInt(y.CutQty) > 0 || MyUtility.Convert.GetInt(y.StdQty) > 0) // 不同於R01,是因此只有顯示CutQty,StdQty資料
+                if (!this.AllData.Where(x => x.InOffLines.Where(y => y.DateWithLeadTime == day.Date
+                                                                && (MyUtility.Convert.GetInt(y.CutQty) > 0 || MyUtility.Convert.GetInt(y.StdQty) > 0) // 不同於R01,是因此只有顯示CutQty,StdQty資料
                                                                 ).Any()
                                        ).Any()
                     //&& day.IsHoliday
@@ -1259,6 +1243,10 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                                        ).Any()
                     && day.IsHoliday
                     )
+                {
+                    removeDays.Add(day);
+                }
+                else if (day.Date < DateTime.Today)
                 {
                     removeDays.Add(day);
                 }
@@ -1331,6 +1319,10 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                 {
                     removeDays.Add(day);
                 }
+                else if (day.Date < DateTime.Today)
+                {
+                    removeDays.Add(day);
+                }
             }
 
             ColumnIndex = 2;
@@ -1367,11 +1359,6 @@ FROM SewingSchedule s WITH(NOLOCK)
 INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID
 WHERE o.LocalOrder = 0
 AND OrderID in ('{string.Join("','", orderIDs)}')
-AND ( 
-	(Cast(s.Inline as Date) >= '{DateTime.Today.ToString("yyyy/MM/dd")}' )
-	OR
-	(Cast(s.Offline as Date) >= '{DateTime.Today.ToString("yyyy/MM/dd")}'  )
-)
 ";
 
             cmd += $@"
