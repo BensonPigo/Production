@@ -442,6 +442,13 @@ where ICR.id = '{this.ID}'
 
         private void BtnConfirm_Click(object sender, EventArgs e)
         {
+            decimal sumAmount = MyUtility.Convert.GetDecimal(((DataTable)this.gridbs.DataSource).Compute("sum(Amount)", string.Empty));
+            if (sumAmount != MyUtility.Convert.GetDecimal(this.numTotalAmt.Value))
+            {
+                MyUtility.Msg.WarningBox("Total department shared amount must equal to Total US$.");
+                return;
+            }
+
             bool isICR_ResponsibilityDeptNoData = !MyUtility.Check.Seek($"select 1 from ICR_ResponsibilityDept with (nolock) where ID = '{this.ID}'");
 
             if (isICR_ResponsibilityDeptNoData)

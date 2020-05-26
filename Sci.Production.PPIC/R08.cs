@@ -20,7 +20,7 @@ namespace Sci.Production.PPIC
     /// </summary>
     public partial class R08 : Sci.Win.Tems.PrintForm
     {
-        private DataTable _printData;
+        private DataTable[] _printData;
         private DateTime? Cdate1;
         private DateTime? Cdate2;
         private DateTime? Apvdate1;
@@ -47,7 +47,7 @@ namespace Sci.Production.PPIC
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            MyUtility.Tool.SetupCombox(this.comboType, 2, 1, "F,Fabric,A,Accessory,");
+            MyUtility.Tool.SetupCombox(this.comboType, 2, 1, ",,F,Fabric,A,Accessory,");
             MyUtility.Tool.SetupCombox(this.cmbStatus, 1, 1, "ALL,Approved,Auto.Lock,Checked,Confirmed,Junked,New");
             MyUtility.Tool.SetupCombox(this.cmbReportType, 2, 1, "0,Detail List,1,Resp. Dept. List");
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
@@ -173,6 +173,67 @@ namespace Sci.Production.PPIC
             {
                 sqlcmd = $@"
 select
+	rr.id,
+	Type=IIF(rr.Type = 'F', 'Fabric', 'Accessory'),
+	rr.MDivisionID,
+	rr.FactoryID,
+	rr.POID,
+	Style = (select ID from Style s where s.Ukey = o.StyleUkey),
+	o.BrandID,
+	o.SeasonID,
+	rr.Status,
+	rr.CDate,
+	rr.ApvDate,
+	rr.LockDate,
+	rr.Responsibility,
+	x.ttlestamt,
+	rr.RMtlAmt,
+	rr.ActFreight,
+	rr.EstFreight,
+	rr.SurchargeAmt,
+    TTLUS = isnull(rr.RMtlAmt,0) + isnull(rr.ActFreight,0) +isnull(rr.EstFreight,0) + isnull(rr.SurchargeAmt,0),
+    POHandle = [dbo].[getTPEPass1_ExtNo](PO.POHandle),
+    PCSMR = [dbo].[getTPEPass1_ExtNo](PO.PCSMR),
+	rr.TransferResponsible,
+	rr.TransferNo
+from ReplacementReport rr WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK)  on o.ID = rr.POID
+left join PO with(nolock) on PO.ID = rr.POID
+outer apply(
+	select ttlestamt = SUM(EstReplacementAMT)
+	from (
+		select EstReplacementAMT = case when rrd.Junk =1 then 0
+						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',rr.CDate),1)
+						end
+		from ReplacementReport_Detail rrd with(nolock)
+		left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = rr.POID and psd.SEQ1 = rrd.Seq1 and psd.SEQ2 = rrd.Seq2
+		left join PO_Supp ps WITH (NOLOCK) on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
+		left join Supp WITH (NOLOCK) on Supp.ID = ps.SuppID
+        outer apply (
+            select v = case 
+						    when psd.seq1 like '7%' then isnull((select v = stock.Price
+	                                                             from PO_Supp_Detail stock
+	                                                             where	psd.SEQ1 like '7%'
+			                                                            and psd.StockPOID = stock.ID
+			                                                            and psd.StockSeq1 = stock.SEQ1
+			                                                            and psd.StockSeq2 = stock.SEQ2), 0)
+						    else psd.Price
+					    end
+        ) po_price
+        outer apply (
+            select Qty = iif (rr.Type = 'A', rrd.TotalRequest, rrd.FinalNeedQty)
+                         * isnull ((select RateValue 
+                                    from Unit_Rate 
+                                    where UnitFrom = rrd.ReplacementUnit 
+                                          and UnitTo = psd.POUnit),1)
+        )x
+		where  rrd.ID = rr.ID
+	)x
+)x
+where 1=1
+{where}
+
+select
 	rr.ID,
 	Type = IIF(rr.Type = 'F', 'Fabric', 'Accessory'),
 	M = (Select MDivisionID from Factory with(nolock) where ID = rr.FactoryID),
@@ -193,11 +254,6 @@ select
 	PCHandle = [dbo].[getTPEPass1_ExtNo](PO.PCHandle),
 	Prepared = [dbo].[getPass1_ExtNo](rr.ApplyName),
 	PPICFactorymgr = [dbo].[getPass1_ExtNo](rr.ApvName),
-	rr.RMtlAmt,
-	rr.ActFreight,
-	rr.EstFreight,
-	rr.SurchargeAmt,
-	TTLUS = isnull(rr.RMtlAmt,0) + isnull(rr.ActFreight,0) +isnull(rr.EstFreight,0) + isnull(rr.SurchargeAmt,0),
 	rr.VoucherID,
 	rr.VoucherDate,
 	Junk=iif(rrd.Junk=1,'Y',''),
@@ -211,6 +267,11 @@ select
 	FinalNeedQty =IIF(rr.Type = 'F', rrd.FinalNeedQty,  rrd.TotalRequest),
 	rrd.TotalRequest,
 	rrd.AfterCuttingRequest,
+    EstReplacementAMT = case when rrd.Junk =1 then 0
+						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',rr.CDate),1)
+                        end,
+    psd.POAmt,
+    psd.ShipAmt,
 	rrd.ResponsibilityReason,
 	rrd.Suggested,
 	rrd.PurchaseID,
@@ -218,8 +279,29 @@ select
 from ReplacementReport rr with(nolock)
 inner join Orders o with(nolock) on o.ID = rr.POID
 left join ReplacementReport_Detail rrd with(nolock) on rrd.ID = rr.ID
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = rr.POID and psd.SEQ1 = rrd.Seq1 and psd.SEQ2 = rrd.Seq2
+outer apply (
+    select v = case 
+					when psd.seq1 like '7%' then isnull((select v = stock.Price
+	                                                    from PO_Supp_Detail stock
+	                                                    where	psd.SEQ1 like '7%'
+			                                                and psd.StockPOID = stock.ID
+			                                                and psd.StockSeq1 = stock.SEQ1
+			                                                and psd.StockSeq2 = stock.SEQ2), 0)
+					else psd.Price
+				end
+) po_price
+left join PO_Supp ps WITH (NOLOCK) on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
+left join Supp WITH (NOLOCK) on Supp.ID = ps.SuppID
 left join PO with(nolock) on PO.ID = rr.POID
 left join Fabric f with(nolock) on f.SCIRefno = rrd.SCIRefno
+outer apply (
+    select Qty = iif (rr.Type = 'A', rrd.TotalRequest, rrd.FinalNeedQty)
+                    * isnull ((select RateValue 
+                            from Unit_Rate 
+                            where UnitFrom = rrd.ReplacementUnit 
+                                    and UnitTo = psd.POUnit),1)
+)x
 where 1=1
 {where}
 ";
@@ -242,6 +324,7 @@ select
     rr.CompleteDate,
     rr.LockDate,
     Responsibility = (select Name from DropDownList dd with(nolock) where dd.ID = rr.Responsibility and dd.Type = 'Replacement.R'),
+	x.ttlestamt,
     rr.RMtlAmt,
     rr.ActFreight,
     rr.EstFreight,
@@ -249,6 +332,7 @@ select
     TTLUS = isnull(rr.RMtlAmt,0) + isnull(rr.ActFreight,0) +isnull(rr.EstFreight,0) + isnull(rr.SurchargeAmt,0),
     ResponsibilityFty = icr.FactoryID,
     icr.DepartmentID,
+    icr.Percentage,
     icr.Amount,
     rr.VoucherID,
     rr.VoucherDate,
@@ -262,6 +346,37 @@ from ReplacementReport rr with(nolock)
 inner join Orders o with(nolock) on o.ID = rr.POID
 left join PO with(nolock) on PO.ID = rr.POID
 left join  ICR_ResponsibilityDept icr with(nolock) on icr.ID = rr.ID
+outer apply(
+	select ttlestamt = SUM(EstReplacementAMT)
+	from (
+		select EstReplacementAMT = case when rrd.Junk =1 then 0
+						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP',Supp.Currencyid,'USD',rr.CDate),1)
+						end
+		from ReplacementReport_Detail rrd with(nolock)
+		left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = rr.POID and psd.SEQ1 = rrd.Seq1 and psd.SEQ2 = rrd.Seq2
+        outer apply (
+            select v = case 
+						    when psd.seq1 like '7%' then isnull((select v = stock.Price
+	                                                             from PO_Supp_Detail stock
+	                                                             where	psd.SEQ1 like '7%'
+			                                                            and psd.StockPOID = stock.ID
+			                                                            and psd.StockSeq1 = stock.SEQ1
+			                                                            and psd.StockSeq2 = stock.SEQ2), 0)
+						    else psd.Price
+					    end
+        ) po_price
+		left join PO_Supp ps WITH (NOLOCK) on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
+		left join Supp WITH (NOLOCK) on Supp.ID = ps.SuppID
+        outer apply (
+            select Qty = iif (rr.Type = 'A', rrd.TotalRequest, rrd.FinalNeedQty)
+                         * isnull ((select RateValue 
+                                    from Unit_Rate 
+                                    where UnitFrom = rrd.ReplacementUnit 
+                                          and UnitTo = psd.POUnit),1)
+        )x
+		where  rrd.ID = rr.ID
+	)x
+)x
 where 1=1
 {where}
 ";
@@ -281,9 +396,9 @@ where 1=1
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            this.SetCount(this._printData.Rows.Count);
+            this.SetCount(this._printData[0].Rows.Count);
 
-            if (this._printData.Rows.Count <= 0)
+            if (this._printData[0].Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -300,16 +415,27 @@ where 1=1
             }
 
             this.ShowWaitMessage("Excel Processing...");
-            Excel.Application excelapp = new Excel.Application();
-            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + $"\\{filename}.xltx", excelapp);
-            Excel.Worksheet worksheet;
-            worksheet = excelapp.Sheets[1];
-            com.WriteTable(this._printData, 2);
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{filename}.xltx");
+            MyUtility.Excel.CopyToXls(this._printData[0], string.Empty, $"{filename}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]); // 將datatable copy to excel
+            if (this._printData.Length == 2)
+            {
+                MyUtility.Excel.CopyToXls(this._printData[1], string.Empty, $"{filename}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[2]); // 將datatable copy to excel
+            }
 
-            com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
-            excelapp.Visible = true;
+            Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
+            worksheet.Columns.AutoFit();
+            if (this._printData.Length == 2)
+            {
+                worksheet = excelApp.ActiveWorkbook.Worksheets[2]; // 取得工作表
+                worksheet.Columns[27].ColumnWidth = 66;
+            }
+
+            worksheet.Rows.AutoFit();
+            excelApp.Visible = true;
+            #region 釋放上面開啟過excel物件
             Marshal.ReleaseComObject(worksheet);
-            Marshal.ReleaseComObject(excelapp);
+            Marshal.ReleaseComObject(excelApp);
+            #endregion
 
             this.HideWaitMessage();
             return true;

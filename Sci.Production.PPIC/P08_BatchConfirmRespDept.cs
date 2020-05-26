@@ -24,12 +24,19 @@ namespace Sci.Production.PPIC
         private DataTable dt2;
 
         /// <inheritdoc/>
-        public P08_BatchConfirmRespDept(string type)
+        public P08_BatchConfirmRespDept(string type, bool isReCal = false)
         {
             this.InitializeComponent();
 
             // P08 = F, P09 = A
             this.Type = type;
+            if (isReCal)
+            {
+                this.btnReCalculate.Visible = true;
+                this.btnReject.Visible = false;
+                this.btnConfirm.Visible = false;
+                this.Text = "Batch Re-Calculate Responsibility Dept. Amt";
+            }
         }
 
         /// <inheritdoc/>
@@ -97,8 +104,14 @@ select
 	POID,
 	TTLUS = isnull(rr.RMtlAmt,0) + isnull(rr.ActFreight,0) +isnull( rr.EstFreight,0) + isnull(rr.SurchargeAmt,0),
     rr.ApplyName,
-	EMail=(select EMail from Pass1 where ID = rr.ApplyName)
+	EMail=(select EMail from Pass1 where ID = rr.ApplyName),
+    [TTlAmt] = isnull(i3.Amt,0)
 from ReplacementReport rr with(nolock)
+outer apply(
+	select [Amt] = sum(ISNULL(Amount,0))
+	from ICR_ResponsibilityDept 
+	where id=rr.id
+)i3
 where 1=1
 and rr.RespDeptConfirmDate is null 
 and exists(select 1 from ICR_ResponsibilityDept icr with(nolock) where icr.id = rr.id)
@@ -168,7 +181,7 @@ where IRD.ID in('{string.Join("','", ids)}')
 
         private void BtnConfirm_Click(object sender, EventArgs e)
         {
-            if (this.dt1 == null || this.dt1.Rows.Count ==0)
+            if (this.dt1 == null || this.dt1.Rows.Count == 0)
             {
                 return;
             }
@@ -178,6 +191,12 @@ where IRD.ID in('{string.Join("','", ids)}')
             if (drs.Count() == 0)
             {
                 MyUtility.Msg.WarningBox("Please select datas!");
+                return;
+            }
+
+            if (drs.AsEnumerable().Where(w => MyUtility.Convert.GetDecimal(w["TTLUS"]) != MyUtility.Convert.GetDecimal(w["TTlAmt"])).Any())
+            {
+                MyUtility.Msg.WarningBox("Total department shared amount must equal to Total US$.");
                 return;
             }
 
@@ -216,6 +235,63 @@ where ID in('{string.Join("','", ids)}')
                 string filter = $"id = '{dr["ID"]}'";
                 this.dt2.DefaultView.RowFilter = filter;
             }
+        }
+
+        private void BtnReCalculate_Click(object sender, EventArgs e)
+        {
+            if (this.dt1 == null || this.dt1.Rows.Count == 0)
+            {
+                return;
+            }
+
+            this.grid1.ValidateControl();
+            DataRow[] drs = this.dt1.Select("Selected = 1");
+            if (drs.Count() == 0)
+            {
+                MyUtility.Msg.WarningBox("Please select datas!");
+                return;
+            }
+
+            foreach (DataRow item in drs)
+            {
+                decimal ttlus = MyUtility.Convert.GetDecimal(item["TTLUS"]);
+                DataRow[] tmp2 = this.dt2.Select($"id = '{item["id"]}'");
+                if (tmp2.Length > 0)
+                {
+                    decimal ttlamt = 0;
+                    foreach (var item2 in tmp2)
+                    {
+                        decimal amt = Math.Round(
+                            ttlus
+                            * (MyUtility.Convert.GetDecimal(item2["Percentage"])
+                            / 100), 2);
+                        item2["Amount"] = amt;
+                        ttlamt += amt;
+                    }
+
+                    if (ttlus != ttlamt)
+                    {
+                        tmp2[tmp2.Length - 1]["Amount"] = MyUtility.Convert.GetDecimal(tmp2[tmp2.Length - 1]["Amount"]) + (ttlus - ttlamt);
+                    }
+                }
+            }
+
+            var ids = drs.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["id"])).ToList();
+            DataTable tmpdt2 = this.dt2.Select($"ID in('{string.Join("','", ids)}')").CopyToDataTable();
+            string sqlcmd = $@"
+update IRD set Amount = t.Amount
+from ICR_ResponsibilityDept IRD
+inner join #tmp t on t.id = IRD.id and t.FactoryID = IRD.FactoryID and t.DepartmentID = IRD.DepartmentID
+";
+            DataTable odt;
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(tmpdt2, string.Empty, sqlcmd, out odt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.Query();
         }
     }
 }
