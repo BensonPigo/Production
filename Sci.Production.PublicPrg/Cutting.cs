@@ -522,7 +522,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             {
                 var sameOrderId = dt.AsEnumerable().Where(o => o["OrderID"].ToString() == OrderID);
 
-                if (OrderID == "20030643GG009")
+                if (OrderID == "20070045PP")
                 {
 
                 }
@@ -542,7 +542,6 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                 foreach (DataRow dr in sameOrderId)
                 {
                     string ApsNO = dr["APSNo"].ToString();
-                    int AlloQty = MyUtility.Convert.GetInt(dr["AlloQty"]);
 
                     foreach (Day day in Days)
                     {
@@ -594,16 +593,14 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 
                             // 當天成套
                             int StdQty = GetStdQtyByDate(OrderID, realDate.Date.AddDays(LeadTime + HolidayCount));
-                            if (StdQty >= AlloQty)
-                            {
-                                StdQty = AlloQty;
-                                overAlloQty = true;
-                            }
                             // 當天之前(包含當天)成套數
                             int AccuStdQty = GetAccuStdQtyByDate(OrderID, realDate.Date.AddDays(LeadTime + HolidayCount));
-                            if (AccuStdQty >= AlloQty)
+                            int AccAlloQty = GetAccuAlloQtyByDate(OrderID, realDate.Date.AddDays(LeadTime + HolidayCount));
+
+                            if (AccuStdQty > AccAlloQty)
                             {
-                                AccuStdQty = AlloQty;
+                                StdQty = StdQty - (AccuStdQty - AccAlloQty);
+                                AccuStdQty = AccAlloQty;
                                 overAlloQty = true;
                             }
 
@@ -622,7 +619,8 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                                 CutQty = Cutqty,
                                 AccuCutQty = accuCutQty,
                                 StdQty = StdQty,
-                                AccuStdQty = AccuStdQty
+                                AccuStdQty = AccuStdQty,
+                                AccAlloQty = AccAlloQty,
                             };
                             nOnj.InOffLines.Add(nLineObj);
                             if (overAlloQty)
@@ -652,13 +650,15 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                 InOffLineList n = new InOffLineList();
                 n.OrderID = BySP.OrderID;
                 n.InOffLines = new List<InOffLine>();
-                var groupData = BySP.InOffLines.GroupBy(o => new { o.DateWithLeadTime, o.StdQty, o.AccuCutQty, o.AccuStdQty }).Select(x => new InOffLine
+                var groupData = BySP.InOffLines.GroupBy(o => new { o.DateWithLeadTime, o.StdQty, o.AccuCutQty, o.AccuStdQty, o.AccAlloQty }).Select(x => new InOffLine
                 {
                     DateWithLeadTime = x.Key.DateWithLeadTime,
                     CutQty = x.Sum(o => o.CutQty),
                     StdQty = x.Key.StdQty,
                     AccuCutQty = x.Key.AccuCutQty,
                     AccuStdQty = x.Key.AccuStdQty,
+                    AccAlloQty = x.Key.AccAlloQty,
+
                 }).OrderBy(o => o.DateWithLeadTime).ToList();
 
                 // 處理標準量
@@ -819,10 +819,12 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                 string OrderID = MoveDateData.OrderID;
                 int LeadTime = LeadTimeList.Where(o => o.OrderID == OrderID).FirstOrDefault().LeadTimeDay;
 
-                if (OrderID == "20030643GG001")
+                if (OrderID == "20070045PP")
                 {
 
                 }
+
+                //bool overAlloQty = false;
                 foreach (var InOffLine in MoveDateData.InOffLines.OrderBy(o => o.DateWithLeadTime))
                 {
                     // 超過時間軸範圍則跳過
@@ -848,11 +850,19 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 
                     bool IsHoliday = Days.Where(o => o.Date == InOffLine.DateWithLeadTime).FirstOrDefault().IsHoliday;
 
-
-                    InOffLine.StdQty = IsHoliday ? 0 : GetStdQtyByDate(OrderID, InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount + FirstMoveCount));
+                    int StdQty = IsHoliday ? 0 : GetStdQtyByDate(OrderID, InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount + FirstMoveCount));
 
                     // 累計標準量
-                    InOffLine.AccuStdQty = GetAccuStdQtyByDate(OrderID, InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount + FirstMoveCount));
+                    int AccuStdQty = GetAccuStdQtyByDate(OrderID, InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount + FirstMoveCount));
+                    int AccAlloQty = GetAccuAlloQtyByDate(OrderID, InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount + FirstMoveCount));
+
+                    if (AccuStdQty > AccAlloQty)
+                    {
+                        StdQty = StdQty - (AccuStdQty - AccAlloQty);
+                        AccuStdQty = AccAlloQty;
+                    }
+                    InOffLine.StdQty = StdQty;
+                    InOffLine.AccuStdQty = AccuStdQty;
 
                     /*-------------------*/
 
@@ -867,7 +877,6 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                     int AccuCutQty = GarmentList.Where(o => o.OrderID == OrderID && o.EstCutDate < InOffLine.DateWithLeadTime).Sum(o => o.Qty);
 
                     InOffLine.AccuCutQty = AccuCutQty + Cutqty;
-
                 }
 
                 if (bw != null)
@@ -935,7 +944,6 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                 foreach (DataRow dr in sameOrderId)
                 {
                     string ApsNO = dr["APSNo"].ToString();
-                    int AlloQty = MyUtility.Convert.GetInt(dr["AlloQty"]);
 
                     foreach (Day day in Days)
                     {
@@ -989,17 +997,13 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 
                             // 當天成套
                             int StdQty = GetStdQtyByDate(OrderID, realDate.Date.AddDays(LeadTime + HolidayCount));
-                            if (StdQty >= AlloQty)
-                            {
-                                StdQty = AlloQty;
-                                overAlloQty = true;
-                            }
-
                             // 當天之前(包含當天)成套數
                             int AccuStdQty = GetAccuStdQtyByDate(OrderID, realDate.Date.AddDays(LeadTime + HolidayCount));
-                            if (AccuStdQty >= AlloQty)
+                            int AccAlloQty = GetAccuAlloQtyByDate(OrderID, realDate.Date.AddDays(LeadTime + HolidayCount));
+                            if (AccuStdQty > AccAlloQty)
                             {
-                                AccuStdQty = AlloQty;
+                                StdQty = StdQty - (AccuStdQty - AccAlloQty);
+                                AccuStdQty = AccAlloQty;
                                 overAlloQty = true;
                             }
 
@@ -1019,7 +1023,8 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                                 CutQty = Cutqty,
                                 AccuCutQty = accuCutQty,
                                 StdQty = StdQty,
-                                AccuStdQty = AccuStdQty
+                                AccuStdQty = AccuStdQty,
+                                AccAlloQty = AccAlloQty,
                             };
                             nOnj.InOffLines.Add(nLineObj);
                             if (overAlloQty)
@@ -1050,13 +1055,14 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                 n.OrderID = BySP.OrderID;
                 n.FabricPanelCode = BySP.FabricPanelCode;
                 n.InOffLines = new List<InOffLine>();
-                var groupData = BySP.InOffLines.GroupBy(o => new { o.DateWithLeadTime, o.StdQty, o.AccuCutQty, o.AccuStdQty }).Select(x => new InOffLine
+                var groupData = BySP.InOffLines.GroupBy(o => new { o.DateWithLeadTime, o.StdQty, o.AccuCutQty, o.AccuStdQty, o.AccAlloQty }).Select(x => new InOffLine
                 {
                     DateWithLeadTime = x.Key.DateWithLeadTime,
                     CutQty = x.Sum(o => o.CutQty),
                     StdQty = x.Key.StdQty,
                     AccuCutQty = x.Key.AccuCutQty,
                     AccuStdQty = x.Key.AccuStdQty,
+                    AccAlloQty = x.Key.AccAlloQty,
                 }).OrderBy(o => o.DateWithLeadTime).ToList();
 
                 int key = 0;
@@ -1189,6 +1195,8 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                 {
 
                 }
+
+                string ApsNO_Ori = string.Empty;
                 foreach (var InOffLine in MoveDateData.InOffLines.OrderBy(o => o.DateWithLeadTime))
                 {
                     // 超過時間軸範圍則跳過
@@ -1196,7 +1204,6 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                     {
                         continue;
                     }
-
                     // 沒有Ukey代表是補上的日期
                     bool IsBrandNewDay = InOffLine.UKey == null;
 
@@ -1215,10 +1222,18 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                     bool IsHoliday = Days.Where(o => o.Date == InOffLine.DateWithLeadTime).FirstOrDefault().IsHoliday;
 
 
-                    InOffLine.StdQty = IsHoliday ? 0 : GetStdQtyByDate(OrderID, InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount + FirstMoveCount));
+                    int StdQty = IsHoliday ? 0 : GetStdQtyByDate(OrderID, InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount + FirstMoveCount));
 
                     // 累計標準量
-                    InOffLine.AccuStdQty = GetAccuStdQtyByDate(OrderID, InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount + FirstMoveCount));
+                    int AccuStdQty = GetAccuStdQtyByDate(OrderID, InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount + FirstMoveCount));
+                    int AccAlloQty = GetAccuAlloQtyByDate(OrderID, InOffLine.DateWithLeadTime.AddDays(LeadTime + movecount + FirstMoveCount));
+                    if (AccuStdQty > AccAlloQty)
+                    {
+                        StdQty = StdQty - (AccuStdQty - AccAlloQty);
+                        AccuStdQty = AccAlloQty;
+                    }
+                    InOffLine.StdQty = StdQty;
+                    InOffLine.AccuStdQty = AccuStdQty;
 
                     /*-------------------*/
 
@@ -2097,6 +2112,34 @@ DROP TABLE #beforeTmp
             return rtn;
         }
 
+        public static int GetAccuAlloQtyByDate(string OrderID, DateTime beforeSewingDate)
+        {
+            string sqlcmd = $@"
+SELECT ComboType, AlloQty=SUM(AlloQty)
+INTO #beforeTmp
+FROM (
+	SELECT ComboType,AlloQty
+	FROM SewingSchedule with(nolock)
+	WHERE OrderID='{OrderID}'
+	and cast(Inline as date) <= '{beforeSewingDate.ToString("yyyy/MM/dd")}'
+)a
+where AlloQty is not null
+GROUP BY ComboType
+
+
+---- 取裁片數最少的 = 成套件數
+SELECT MIN( ISNULL(u.AlloQty,0))
+FROM Orders o with(nolock)
+INNER JOIN Style_Location s with(nolock) ON o.StyleUkey = s.StyleUkey
+LEFT JOIN #beforeTmp u ON u.ComboType = s.Location
+WHERE o.ID='{OrderID}'
+
+DROP TABLE #beforeTmp
+";
+            string value = MyUtility.GetValue.Lookup(sqlcmd);
+            int rtn = MyUtility.Check.Empty(value) ? 0 : Convert.ToInt32(value);
+            return rtn;
+        }
         #region 類別
 
         /// <summary>
@@ -2243,6 +2286,7 @@ DROP TABLE #beforeTmp
             public int StdQty { get; set; }
             public int AccuStdQty { get; set; }
             public DateTime DateWithLeadTime { get; set; }
+            public int AccAlloQty { get; set; }
             public decimal WIP { get; set; }
         }
 

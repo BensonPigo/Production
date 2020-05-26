@@ -238,93 +238,93 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
 
 
 
-//            #region 推算報表要使用的開始和結束時間
-//            maxLeadTime = this.LeadTimeList.Max(o => o.LeadTimeDay);
-//            minLeadTime = this.LeadTimeList.Min(o => o.LeadTimeDay);
-//            int maxLeadTime_u = maxLeadTime;
-//            int minLeadTime_u = minLeadTime;
-//            // 起點 = (最早Inline - 最大Lead Time)、終點 = (最晚Offline - 最小Lead Time)
-//            DateTime start_where = this.SewingDate_s.Value.Date;
-//            DateTime end_where = this.SewingDate_e.Value.Date;
-//            start = start_where.AddDays(-maxLeadTime).Date;
-//            end = end_where.AddDays(-minLeadTime).Date;
+            #region 推算報表要使用的開始和結束時間
+            maxLeadTime = this.LeadTimeList.Max(o => o.LeadTimeDay);
+            minLeadTime = this.LeadTimeList.Min(o => o.LeadTimeDay);
+            int maxLeadTime_u = maxLeadTime;
+            int minLeadTime_u = minLeadTime;
+            // 起點 = (最早Inline - 最大Lead Time)、終點 = (最晚Offline - 最小Lead Time)
+            DateTime start_where = this.SewingDate_s.Value.Date;
+            DateTime end_where = this.SewingDate_e.Value.Date;
+            start = start_where.AddDays(-maxLeadTime).Date;
+            end = end_where.AddDays(-minLeadTime).Date;
 
-//            #region 推算 (start)
-//            cmd2 = $@"
-//SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
-//FROM Holiday WITH(NOLOCK)
-//WHERE HolidayDate >= '{start.ToString("yyyy/MM/dd")}'
-//AND HolidayDate <= '{start_where.ToString("yyyy/MM/dd")}'
-//AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
-//";
-//            result = DBProxy.Current.Select(null, cmd2, out dt2);
-//            // 開始組合時間軸
-//            for (int Day = 0; Day <= maxLeadTime_u; Day++)
-//            {
-//                DateTime dtime = end_where.AddDays(-Day);
+            #region 推算 (start)
+            cmd2 = $@"
+SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
+FROM Holiday WITH(NOLOCK)
+WHERE HolidayDate >= '{start.ToString("yyyy/MM/dd")}'
+AND HolidayDate <= '{start_where.ToString("yyyy/MM/dd")}'
+AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
+";
+            result = DBProxy.Current.Select(null, cmd2, out dt2);
+            // 開始組合時間軸
+            for (int Day = 0; Day <= maxLeadTime_u; Day++)
+            {
+                DateTime dtime = start_where.AddDays(-Day);
 
-//                // 是否行事曆設定假日
-//                bool IsHoliday = dt2.AsEnumerable().Where(o => MyUtility.Convert.GetDate(o["HolidayDate"]) == dtime).Any();
-//                // 是行事曆設定假日 or 星期天
-//                if (IsHoliday || dtime.DayOfWeek == DayOfWeek.Sunday)
-//                {
-//                    IsHoliday = true;
+                // 是否行事曆設定假日
+                bool IsHoliday = dt2.AsEnumerable().Where(o => MyUtility.Convert.GetDate(o["HolidayDate"]) == dtime).Any();
+                // 是行事曆設定假日 or 星期天
+                if (IsHoliday || dtime.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    IsHoliday = true;
 
-//                    // 為避免假日推移的影響，讓時間軸不夠長，因此每遇到一次假日，就要加長一次時間軸
-//                    maxLeadTime_u++;
-//                    start = start.AddDays(-1);
+                    // 為避免假日推移的影響，讓時間軸不夠長，因此每遇到一次假日，就要加長一次時間軸
+                    maxLeadTime_u++;
+                    start = start.AddDays(-1);
 
-//                    cmd2 = $@"
-//SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
-//FROM Holiday WITH(NOLOCK)
-//WHERE HolidayDate >= '{start.ToString("yyyy/MM/dd")}'
-//AND HolidayDate <= '{start_where.ToString("yyyy/MM/dd")}'
-//AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
-//";
-//                    DBProxy.Current.Select(null, cmd2, out dt2);
-//                }
+                    cmd2 = $@"
+SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
+FROM Holiday WITH(NOLOCK)
+WHERE HolidayDate >= '{start.ToString("yyyy/MM/dd")}'
+AND HolidayDate <= '{start_where.ToString("yyyy/MM/dd")}'
+AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
+";
+                    DBProxy.Current.Select(null, cmd2, out dt2);
+                }
 
-//                lastprocessday1 = dtime;
-//            }
-//            #endregion
-//            #region 推算 (end)
-//            cmd2 = $@"
-//SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
-//FROM Holiday WITH(NOLOCK)
-//WHERE HolidayDate >= '{end.ToString("yyyy/MM/dd")}'
-//AND HolidayDate <= '{end_where.ToString("yyyy/MM/dd")}'
-//AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
-//";
-//            result = DBProxy.Current.Select(null, cmd2, out dt2);
-//            for (int Day = 0; Day <= minLeadTime_u; Day++)
-//            {
-//                DateTime dtime = end_where.AddDays(-Day);
+                lastprocessday1 = dtime;
+            }
+            #endregion
+            #region 推算 (end)
+            cmd2 = $@"
+SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
+FROM Holiday WITH(NOLOCK)
+WHERE HolidayDate >= '{end.ToString("yyyy/MM/dd")}'
+AND HolidayDate <= '{end_where.ToString("yyyy/MM/dd")}'
+AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
+";
+            result = DBProxy.Current.Select(null, cmd2, out dt2);
+            for (int Day = 0; Day <= minLeadTime_u; Day++)
+            {
+                DateTime dtime = end_where.AddDays(-Day);
 
-//                // 是否行事曆設定假日
-//                bool IsHoliday = dt2.AsEnumerable().Where(o => MyUtility.Convert.GetDate(o["HolidayDate"]) == dtime).Any();
-//                // 是行事曆設定假日 or 星期天
-//                if (IsHoliday || dtime.DayOfWeek == DayOfWeek.Sunday)
-//                {
-//                    IsHoliday = true;
+                // 是否行事曆設定假日
+                bool IsHoliday = dt2.AsEnumerable().Where(o => MyUtility.Convert.GetDate(o["HolidayDate"]) == dtime).Any();
+                // 是行事曆設定假日 or 星期天
+                if (IsHoliday || dtime.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    IsHoliday = true;
 
-//                    // 為避免假日推移的影響，讓時間軸不夠長，因此每遇到一次假日，就要加長一次時間軸
-//                    minLeadTime_u++;
-//                    end = end.AddDays(-1);
+                    // 為避免假日推移的影響，讓時間軸不夠長，因此每遇到一次假日，就要加長一次時間軸
+                    minLeadTime_u++;
+                    end = end.AddDays(-1);
 
-//                    cmd2 = $@"
-//SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
-//FROM Holiday WITH(NOLOCK)
-//WHERE HolidayDate >= '{end.ToString("yyyy/MM/dd")}'
-//AND HolidayDate <= '{end_where.ToString("yyyy/MM/dd")}'
-//AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
-//";
-//                    DBProxy.Current.Select(null, cmd2, out dt2);
-//                }
+                    cmd2 = $@"
+SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
+FROM Holiday WITH(NOLOCK)
+WHERE HolidayDate >= '{end.ToString("yyyy/MM/dd")}'
+AND HolidayDate <= '{end_where.ToString("yyyy/MM/dd")}'
+AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
+";
+                    DBProxy.Current.Select(null, cmd2, out dt2);
+                }
 
-//                lastprocessday2 = dtime;
-//            }
-//            #endregion
-//            #endregion
+                lastprocessday2 = dtime;
+            }
+            #endregion
+            #endregion
 
             List<string> allOrder = dt.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct().ToList();
 
@@ -368,10 +368,10 @@ AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
                 {
                     removeDays.Add(day);
                 }
-                //if (day.Date < lastprocessday1 || day.Date > lastprocessday2)
-                //{
-                //    removeDays.Add(day);
-                //}
+                if (day.Date < lastprocessday1 || day.Date > lastprocessday2)
+                {
+                    removeDays.Add(day);
+                }
             }
             //this.Days.RemoveAll(o => removeDays.Where(x => x.Date == o.Date).Any());
 
