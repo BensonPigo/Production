@@ -1312,14 +1312,12 @@ where POID = @poid group by POID,b.spno";
                 this.ShowErr(result);
                 return;
             }
-            else
+
+            if (chkDt.Rows.Count > 0)
             {
-                if (chkDt.Rows.Count > 0)
-                {
-                    MyUtility.Msg.WarningBox($"When Order CFMDate within 15 days ,you can't close it." + Environment.NewLine +
-                        chkDt.AsEnumerable().Select(s => s["Result"].ToString()).ToList().JoinToString(Environment.NewLine));
-                    return;
-                }
+                MyUtility.Msg.WarningBox($"When Order CFMDate within 15 days ,you can't close it." + Environment.NewLine +
+                    chkDt.AsEnumerable().Select(s => s["Result"].ToString()).ToList().JoinToString(Environment.NewLine));
+                return;
             }
 
             string sqlCmd;
@@ -1345,7 +1343,7 @@ where POID = @poid group by POID,b.spno";
             }
             else
             {
-                sqlCmd = string.Format("select (select ID+',' from Orders WITH (NOLOCK) where POID = '{0}' and Qty > 0 and PulloutComplete = 0 for xml path('')) as SP", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
+                sqlCmd = string.Format("select (select ID+',' from Orders WITH (NOLOCK) where POID = '{0}' and Qty > 0 and PulloutComplete = 0 and Junk = 0 for xml path('')) as SP", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
                 string spList = MyUtility.GetValue.Lookup(sqlCmd);
                 if (!MyUtility.Check.Empty(spList))
                 {

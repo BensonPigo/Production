@@ -216,6 +216,7 @@ select SP = (select ID + ','
 			 where POID = '{0}' 
 			 	   and (Junk=0 or (Junk=1 and NeedProduction=1))
 			 	   and PulloutComplete = 0 
+                   and Junk = 0
 	 	     for xml path(''))",
                         MyUtility.Convert.GetString(item["POID"]));
 
@@ -407,6 +408,7 @@ from (
 	inner join #wantToClose WTC on Orders.POID = WTC.POID
 	where (Orders.Junk=0 or (Orders.Junk=1 and Orders.NeedProduction=1))
 		  and Orders.PulloutComplete = 0 
+          and Orders.Junk = 0
 		  and Orders.Category != 'M'
     --orders.CFMDate15天(包含)內的資料不能被關單
     union
