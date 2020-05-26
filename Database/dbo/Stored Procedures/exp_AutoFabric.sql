@@ -7,7 +7,7 @@ CREATE PROCEDURE [dbo].[exp_AutoFabric]
 	
 AS
 DECLARE @v sql_variant 
-
+begin
 IF OBJECT_ID(N'Receiving_Detail') IS NULL
 BEGIN
 	CREATE TABLE [dbo].[Receiving_Detail](
@@ -672,18 +672,19 @@ VALUES(s.ID,s.StockType,s.Junk,s.Description,GetDate(),0)
 ;
 
 --06. 轉出區間 ManufacturingExecution.dbo.RefnoRelaxtime AddDate or EditDate = 今天
-MERGE RefnoRelaxtime AS T
-USING(
-	select distinct
+select distinct
 	 Refno
 	,FabricRelaxationID
 	,f.Relaxtime
 	,[CmdTime] = GETDATE()
 	,[GenSongUpdated] = 0
-	from ManufacturingExecution.dbo.RefnoRelaxtime r
-	inner join ManufacturingExecution.dbo.FabricRelaxation f on r.FabricRelaxationID=f.ID
+	into #RefnoRelaxtime
+	from [ExtendServer].ManufacturingExecution.dbo.RefnoRelaxtime r
+	inner join [ExtendServer].ManufacturingExecution.dbo.FabricRelaxation f on r.FabricRelaxationID=f.ID
 	where (convert(date,r.EditDate) = @Today or convert(date,r.AddDate) = @Today)
-) as S
+
+MERGE RefnoRelaxtime AS T
+USING #RefnoRelaxtime as S
 on T.Refno = S.Refno
 WHEN MATCHED THEN
 UPDATE SET
@@ -695,6 +696,8 @@ WHEN NOT MATCHED BY TARGET THEN
 INSERT(  Refno,  FabricRelaxationID,  Relaxtime,CmdTime  ,GenSongUpdated) 
 VALUES(s.Refno,s.FabricRelaxationID,s.Relaxtime,GetDate(),0)	
 ;
+
+drop table #RefnoRelaxtime
 
 --07. 轉出區間 [Production][CutPlan] AddDate or EditDate = 今天的資料
 --且 CutPlan_detail.id = 轉出的 issue_Detail.CutplanID
@@ -759,3 +762,4 @@ WHEN NOT MATCHED BY TARGET THEN
 INSERT(  CutplanID,  CutRef,  CutSeq,  POID,  Seq1,  Seq2,  Refno,  Article,  ColorID,  SizeCode,CmdTime  ,GenSongUpdated) 
 VALUES(s.CutplanID,s.CutRef,s.CutSeq,s.POID,s.Seq1,s.Seq2,s.Refno,s.Article,s.ColorID,s.SizeCode,GetDate(),0)	
 ;
+end
