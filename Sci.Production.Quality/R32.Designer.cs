@@ -32,11 +32,8 @@
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.comboStage = new Sci.Win.UI.ComboBox();
             this.label8 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
             this.AuditDate = new Sci.Win.UI.DateRange();
-            this.label1 = new Sci.Win.UI.Label();
             this.dateBuyerDev = new Sci.Win.UI.DateRange();
-            this.label2 = new Sci.Win.UI.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
@@ -47,45 +44,54 @@
             this.txtSP_s = new Sci.Win.UI.TextBox();
             this.txtSP_e = new Sci.Win.UI.TextBox();
             this.label10 = new Sci.Win.UI.Label();
+            this.labelSCIDelivery = new Sci.Win.UI.Label();
+            this.label7 = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(485, 12);
+            this.print.Location = new System.Drawing.Point(500, 12);
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(485, 48);
+            this.toexcel.Location = new System.Drawing.Point(500, 48);
             this.toexcel.TabIndex = 9;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(485, 84);
+            this.close.Location = new System.Drawing.Point(500, 84);
             this.close.TabIndex = 10;
             // 
             // buttonCustomized
             // 
-            this.buttonCustomized.Location = new System.Drawing.Point(436, 250);
+            this.buttonCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCustomized.Location = new System.Drawing.Point(454, 147);
+            this.buttonCustomized.Visible = true;
             // 
             // checkUseCustomized
             // 
-            this.checkUseCustomized.Location = new System.Drawing.Point(396, 250);
+            this.checkUseCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkUseCustomized.Location = new System.Drawing.Point(480, 182);
+            this.checkUseCustomized.Visible = true;
             // 
             // txtVersion
             // 
-            this.txtVersion.Location = new System.Drawing.Point(421, 244);
+            this.txtVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtVersion.Location = new System.Drawing.Point(480, 209);
+            this.txtVersion.Visible = true;
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.label7);
+            this.groupBox1.Controls.Add(this.labelSCIDelivery);
             this.groupBox1.Controls.Add(this.comboStage);
             this.groupBox1.Controls.Add(this.label8);
-            this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.AuditDate);
-            this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.dateBuyerDev);
-            this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label4);
@@ -128,17 +134,6 @@
             this.label8.TabIndex = 111;
             this.label8.Text = "Insp. Stage";
             // 
-            // label7
-            // 
-            this.label7.BackColor = System.Drawing.Color.SkyBlue;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label7.Location = new System.Drawing.Point(17, 25);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(99, 23);
-            this.label7.TabIndex = 109;
-            this.label7.Text = "Audit Date";
-            this.label7.TextStyle.Color = System.Drawing.Color.White;
-            // 
             // AuditDate
             // 
             // 
@@ -160,17 +155,6 @@
             this.AuditDate.Size = new System.Drawing.Size(280, 23);
             this.AuditDate.TabIndex = 1;
             // 
-            // label1
-            // 
-            this.label1.BackColor = System.Drawing.Color.SkyBlue;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label1.Location = new System.Drawing.Point(17, 63);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(99, 23);
-            this.label1.TabIndex = 97;
-            this.label1.Text = "Buyer Delivery";
-            this.label1.TextStyle.Color = System.Drawing.Color.White;
-            // 
             // dateBuyerDev
             // 
             // 
@@ -191,17 +175,6 @@
             this.dateBuyerDev.Name = "dateBuyerDev";
             this.dateBuyerDev.Size = new System.Drawing.Size(280, 23);
             this.dateBuyerDev.TabIndex = 2;
-            // 
-            // label2
-            // 
-            this.label2.BackColor = System.Drawing.Color.SkyBlue;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label2.Location = new System.Drawing.Point(17, 99);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(99, 23);
-            this.label2.TabIndex = 98;
-            this.label2.Text = "SP#";
-            this.label2.TextStyle.Color = System.Drawing.Color.White;
             // 
             // label6
             // 
@@ -294,19 +267,63 @@
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(473, 122);
+            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label10.Location = new System.Drawing.Point(488, 119);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(92, 22);
             this.label10.TabIndex = 110;
             this.label10.Text = "Paper Size A4";
             // 
+            // labelSCIDelivery
+            // 
+            this.labelSCIDelivery.Location = new System.Drawing.Point(17, 25);
+            this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelSCIDelivery.RectStyle.BorderWidth = 1F;
+            this.labelSCIDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelSCIDelivery.RectStyle.ExtBorderWidth = 1F;
+            this.labelSCIDelivery.Size = new System.Drawing.Size(99, 23);
+            this.labelSCIDelivery.TabIndex = 112;
+            this.labelSCIDelivery.Text = "Audit Date";
+            this.labelSCIDelivery.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelSCIDelivery.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(17, 63);
+            this.label7.Name = "label7";
+            this.label7.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label7.RectStyle.BorderWidth = 1F;
+            this.label7.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label7.RectStyle.ExtBorderWidth = 1F;
+            this.label7.Size = new System.Drawing.Size(99, 23);
+            this.label7.TabIndex = 113;
+            this.label7.Text = "Buyer Delivery";
+            this.label7.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label7.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(17, 99);
+            this.label1.Name = "label1";
+            this.label1.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.RectStyle.BorderWidth = 1F;
+            this.label1.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label1.RectStyle.ExtBorderWidth = 1F;
+            this.label1.Size = new System.Drawing.Size(99, 23);
+            this.label1.TabIndex = 114;
+            this.label1.Text = "SP#";
+            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // R32
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(577, 359);
+            this.ClientSize = new System.Drawing.Size(592, 359);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.groupBox1);
+            this.IsSupportCustomized = true;
             this.Name = "R32";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R32. CFA Inspection Record Report";
@@ -329,11 +346,8 @@
 
         private Win.UI.GroupBox groupBox1;
         private Win.UI.Label label8;
-        private Win.UI.Label label7;
         private Win.UI.DateRange AuditDate;
-        private Win.UI.Label label1;
         private Win.UI.DateRange dateBuyerDev;
-        private Win.UI.Label label2;
         private System.Windows.Forms.Label label6;
         private Win.UI.Label label3;
         private Win.UI.Label label4;
@@ -345,5 +359,8 @@
         private Win.UI.TextBox txtSP_e;
         private Win.UI.ComboBox comboStage;
         private Win.UI.Label label10;
+        private Win.UI.Label label1;
+        private Win.UI.Label label7;
+        private Win.UI.Label labelSCIDelivery;
     }
 }

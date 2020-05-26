@@ -247,7 +247,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1301, 641);
+            this.browse.Size = new System.Drawing.Size(1318, 641);
             // 
             // tabs
             // 
@@ -353,7 +353,7 @@
             this.gridCartonSummary.RowTemplate.Height = 24;
             this.gridCartonSummary.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCartonSummary.ShowCellToolTips = false;
-            this.gridCartonSummary.Size = new System.Drawing.Size(1287, 262);
+            this.gridCartonSummary.Size = new System.Drawing.Size(1304, 262);
             this.gridCartonSummary.TabIndex = 0;
             // 
             // label2
@@ -737,9 +737,9 @@
             // 
             // ByCarton
             // 
-            this.ByCarton.Location = new System.Drawing.Point(1173, 235);
+            this.ByCarton.Location = new System.Drawing.Point(1161, 235);
             this.ByCarton.Name = "ByCarton";
-            this.ByCarton.Size = new System.Drawing.Size(103, 30);
+            this.ByCarton.Size = new System.Drawing.Size(115, 30);
             this.ByCarton.TabIndex = 44;
             this.ByCarton.Text = "By Carton";
             this.ByCarton.UseVisualStyleBackColor = true;
@@ -757,9 +757,9 @@
             // 
             // btnByRecord
             // 
-            this.btnByRecord.Location = new System.Drawing.Point(1173, 270);
+            this.btnByRecord.Location = new System.Drawing.Point(1161, 270);
             this.btnByRecord.Name = "btnByRecord";
-            this.btnByRecord.Size = new System.Drawing.Size(103, 30);
+            this.btnByRecord.Size = new System.Drawing.Size(115, 30);
             this.btnByRecord.TabIndex = 46;
             this.btnByRecord.Text = "By Record";
             this.btnByRecord.UseVisualStyleBackColor = true;

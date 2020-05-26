@@ -155,7 +155,7 @@ DROP TABLE #MixCTNStartNo ,#Mix_MAX_ReceiveDate
                  .Text("Article", header: "Article", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("SizeCode", header: "Size", width: Widths.AnsiChars(25), iseditingreadonly: true)
                  .Numeric("ShipQty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 0, iseditingreadonly: true)
-                 .Text("Result", header: "Result", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("Result", header: "Result", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Date("ReceiveDate", header: "CLOG"+Environment.NewLine+ "received", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  ;
 

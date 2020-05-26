@@ -243,11 +243,16 @@ WHERE 1=1
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R31.xltx"); //預先開啟excel app
             MyUtility.Excel.CopyToXls(printData, "", "Quality_R31.xltx", 1, false, null, objApp);// 將datatable copy to excel
+            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+
+            // 客製化欄位，記得設定this.IsSupportCopy = true
+            this.CreateCustomizedExcel(ref objSheets);
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R31");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
+            Marshal.ReleaseComObject(objSheets);
             Marshal.ReleaseComObject(objApp);
 
             strExcelName.OpenFile();

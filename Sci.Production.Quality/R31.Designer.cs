@@ -29,8 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
@@ -43,57 +41,42 @@
             this.dateBuyerDev = new Sci.Win.UI.DateRange();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.label10 = new Sci.Win.UI.Label();
+            this.label7 = new Sci.Win.UI.Label();
+            this.label8 = new Sci.Win.UI.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(477, 12);
+            this.print.Location = new System.Drawing.Point(490, 21);
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(477, 48);
+            this.toexcel.Location = new System.Drawing.Point(490, 57);
             this.toexcel.TabIndex = 7;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(477, 84);
+            this.close.Location = new System.Drawing.Point(490, 93);
             this.close.TabIndex = 8;
             // 
             // buttonCustomized
             // 
-            this.buttonCustomized.Location = new System.Drawing.Point(381, 171);
+            this.buttonCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCustomized.Location = new System.Drawing.Point(442, 155);
+            this.buttonCustomized.Visible = true;
             // 
             // checkUseCustomized
             // 
-            this.checkUseCustomized.Location = new System.Drawing.Point(381, 198);
+            this.checkUseCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkUseCustomized.Location = new System.Drawing.Point(468, 189);
+            this.checkUseCustomized.Visible = true;
             // 
             // txtVersion
             // 
-            this.txtVersion.Location = new System.Drawing.Point(368, 169);
-            // 
-            // label2
-            // 
-            this.label2.BackColor = System.Drawing.Color.SkyBlue;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label2.Location = new System.Drawing.Point(12, 55);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(99, 23);
-            this.label2.TabIndex = 98;
-            this.label2.Text = "SP#";
-            this.label2.TextStyle.Color = System.Drawing.Color.White;
-            // 
-            // label1
-            // 
-            this.label1.BackColor = System.Drawing.Color.SkyBlue;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label1.Location = new System.Drawing.Point(12, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(99, 23);
-            this.label1.TabIndex = 97;
-            this.label1.Text = "Buyer Delivery";
-            this.label1.TextStyle.Color = System.Drawing.Color.White;
+            this.txtVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtVersion.Location = new System.Drawing.Point(468, 216);
             // 
             // label3
             // 
@@ -207,9 +190,9 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.label7);
+            this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.dateBuyerDev);
-            this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label4);
@@ -227,19 +210,49 @@
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(465, 120);
+            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label10.Location = new System.Drawing.Point(476, 128);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(92, 22);
             this.label10.TabIndex = 109;
             this.label10.Text = "Paper Size A4";
             // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(12, 55);
+            this.label7.Name = "label7";
+            this.label7.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label7.RectStyle.BorderWidth = 1F;
+            this.label7.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label7.RectStyle.ExtBorderWidth = 1F;
+            this.label7.Size = new System.Drawing.Size(99, 23);
+            this.label7.TabIndex = 116;
+            this.label7.Text = "SP#";
+            this.label7.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label7.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(12, 19);
+            this.label8.Name = "label8";
+            this.label8.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label8.RectStyle.BorderWidth = 1F;
+            this.label8.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label8.RectStyle.ExtBorderWidth = 1F;
+            this.label8.Size = new System.Drawing.Size(99, 23);
+            this.label8.TabIndex = 115;
+            this.label8.Text = "Buyer Delivery";
+            this.label8.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label8.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // R31
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(569, 275);
+            this.ClientSize = new System.Drawing.Size(582, 286);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.groupBox1);
+            this.IsSupportCustomized = true;
             this.IsSupportPrint = false;
             this.Name = "R31";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
@@ -260,9 +273,6 @@
         }
 
         #endregion
-
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
         private Win.UI.Label label3;
         private Win.UI.Label label4;
         private Win.UI.Label label5;
@@ -275,5 +285,7 @@
         private Win.UI.DateRange dateBuyerDev;
         private Win.UI.GroupBox groupBox1;
         private Win.UI.Label label10;
+        private Win.UI.Label label7;
+        private Win.UI.Label label8;
     }
 }
