@@ -67,7 +67,7 @@ WHERE OrderID= '{this._OrderID}'  and SEQ='{this._OrderShipmodeSeq}'
                  .Numeric("ClogReceivedPercentage", header: "Closed carton Output(%)", width: Widths.AnsiChars(10),decimal_places:0, iseditingreadonly: true)
                  .Numeric("InspectQty", header: "Inspect Qty", width: Widths.AnsiChars(8), decimal_places: 0, iseditingreadonly: true)
                  .Numeric("DefectQty", header: "Defect Qty", width: Widths.AnsiChars(8), decimal_places: 0, iseditingreadonly: true)
-                 .Text("Result", header: "Result", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("Result", header: "Result", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("InspectedCarton", header: "Inspected Carton", width: Widths.AnsiChars(25), iseditingreadonly: true)
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(25), iseditingreadonly: true)
                  .Text("Status", header: "Staggered result", width: Widths.AnsiChars(10), iseditingreadonly: true)
