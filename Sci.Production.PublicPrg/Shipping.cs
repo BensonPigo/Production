@@ -355,6 +355,7 @@ select  ts.*
         , sms.Qty
         , sc.FabricCode
         , sfqt.QTFabricCode
+		, sm.ConsPC
 into #tmpMarkerData
 from #tmpAllStyle ts
 inner join Style_MarkerList sm WITH (NOLOCK) on sm.StyleUkey = ts.StyleUkey
@@ -385,6 +386,7 @@ select  t.StyleID
         , IIF(t.QTFabricCode is null, sb.SuppIDBulk, sb1.SuppIDBulk) as SuppIDBulk
         , t.StyleCPU
         , t.StyleUKey
+		, t.ConsPC
 into #tmpFabricCode
 from #tmpMarkerData t
 left join Style_BOF sb WITH (NOLOCK) on sb.StyleUkey = t.StyleUkey 
@@ -420,7 +422,7 @@ select  t.StyleID
         , (select RateValue from dbo.View_Unitrate where FROM_U = StockUnit.val and TO_U = 'M') as M2RateValue
         , isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = StockUnit.val and UnitTo = f.CustomsUnit),0) as UnitRate
         , isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = StockUnit.val and UnitTo = 'M'),0) as M2UnitRate
-		, [UsageQty] = t.markerYDS/t.Qty
+		, [UsageQty] = t.conspc
         , [StockUnit] = StockUnit.val
 		, [StockQty] = StockQty.val
 into #tmpBOFRateData
@@ -604,7 +606,7 @@ group by StyleID, SeasonID, OrderBrandID, Category, SizeCode, Article
          , GMTQty, SCIRefno, Refno, BrandID, NLCode, HSCode, CustomsUnit
          , StyleCPU, StyleUKey, Description, Type, StockUnit, UsageUnit
 
---------------------------------------------------------------------------------------------------------------------------------------------------
+-----Local----------------------------------------------------------------------------------------------------------------------------------------
 select  t.*
         , ld.Refno
         , ld.Qty
@@ -840,7 +842,8 @@ from #tmpAllStyle t
 inner join #tmpThread th on t.StyleUkey = th.StyleUkey
 outer apply(select [val] = dbo.getStockUnit(th.SCIRefNo,default)) as StockUnit
 outer apply(select [val] = dbo.getUnitRate(th.UsageUnit,StockUnit.val) * th.UsageQty) as StockQty
---------------------------------------------------------------------------------------------------------------------------------------------------
+
+---Fix--------------------------------------------------------------------------------------------------------------------------------------------
 select  t.StyleID
         , t.SeasonID
         , t.OrderBrandID
@@ -859,7 +862,6 @@ left join #tmpAllStyle t on 1 = 1
 left join Style_Article sa WITH (NOLOCK) on sa.StyleUkey = t.StyleUkey 
                                             and sa.Article = t.Article
 {sqlStrContractID}
-
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 select  StyleID
@@ -893,7 +895,7 @@ from #tmpFixDeclare
 where   TissuePaper = 0 
         or (TissuePaper = 1 and ArticleTissuePaper = 1)
 
---------------------------------------------------------------------------------------------------------------------------------------------------
+-----union all---------------------------------------------------------------------------------------------------------
 select  StyleID
         , SeasonID
         , OrderBrandID
