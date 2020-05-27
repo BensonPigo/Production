@@ -246,7 +246,7 @@ WHERE 1=1
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             // 客製化欄位，記得設定this.IsSupportCopy = true
-            this.CreateCustomizedExcel(ref objSheets);
+            //this.CreateCustomizedExcel(ref objSheets);
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R31");

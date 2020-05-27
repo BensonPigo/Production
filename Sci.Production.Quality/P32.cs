@@ -626,6 +626,10 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
                     this.CurrentMaintain["OrderID"] = newOrderID;
                     this.CurrentMaintain["Seq"] = newSeq;
                     this.AutoInsertBySP(newOrderID, newSeq);
+
+                    this.CurrentMaintain["Stage"] = string.Empty;
+                    this.CurrentMaintain["Result"] = string.Empty;
+                    this.CurrentMaintain["Carton"] = string.Empty;
                 }
             }
             bool IsSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.CurrentMaintain["OrderID"].ToString()}' "));

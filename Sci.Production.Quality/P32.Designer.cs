@@ -604,7 +604,7 @@
             this.comboResult.Location = new System.Drawing.Point(986, 8);
             this.comboResult.Name = "comboResult";
             this.comboResult.OldText = "";
-            this.comboResult.Size = new System.Drawing.Size(105, 24);
+            this.comboResult.Size = new System.Drawing.Size(115, 24);
             this.comboResult.TabIndex = 9;
             this.comboResult.SelectedIndexChanged += new System.EventHandler(this.comboResult_SelectedIndexChanged);
             // 
@@ -615,7 +615,7 @@
             this.txtInspectedCarton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtInspectedCarton.Location = new System.Drawing.Point(986, 36);
             this.txtInspectedCarton.Name = "txtInspectedCarton";
-            this.txtInspectedCarton.Size = new System.Drawing.Size(105, 23);
+            this.txtInspectedCarton.Size = new System.Drawing.Size(115, 23);
             this.txtInspectedCarton.TabIndex = 10;
             this.txtInspectedCarton.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtInspectedCarton_PopUp);
             this.txtInspectedCarton.Validating += new System.ComponentModel.CancelEventHandler(this.txtInspectedCarton_Validating);
@@ -633,7 +633,7 @@
             0,
             0,
             0});
-            this.numInspectQty.Size = new System.Drawing.Size(105, 23);
+            this.numInspectQty.Size = new System.Drawing.Size(115, 23);
             this.numInspectQty.TabIndex = 11;
             this.numInspectQty.Value = new decimal(new int[] {
             0,
@@ -657,7 +657,7 @@
             0,
             0});
             this.numDefectQty.ReadOnly = true;
-            this.numDefectQty.Size = new System.Drawing.Size(105, 23);
+            this.numDefectQty.Size = new System.Drawing.Size(115, 23);
             this.numDefectQty.TabIndex = 67;
             this.numDefectQty.TabStop = false;
             this.numDefectQty.Value = new decimal(new int[] {
@@ -681,7 +681,7 @@
             0,
             0});
             this.numSQR.ReadOnly = true;
-            this.numSQR.Size = new System.Drawing.Size(105, 23);
+            this.numSQR.Size = new System.Drawing.Size(115, 23);
             this.numSQR.TabIndex = 68;
             this.numSQR.TabStop = false;
             this.numSQR.Value = new decimal(new int[] {
@@ -695,9 +695,9 @@
             this.labelStatus.BackColor = System.Drawing.Color.Transparent;
             this.labelStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
             this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.labelStatus.Location = new System.Drawing.Point(1095, 9);
+            this.labelStatus.Location = new System.Drawing.Point(1104, 9);
             this.labelStatus.Name = "labelStatus";
-            this.labelStatus.Size = new System.Drawing.Size(134, 25);
+            this.labelStatus.Size = new System.Drawing.Size(125, 25);
             this.labelStatus.TabIndex = 69;
             this.labelStatus.Text = "status";
             this.labelStatus.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;

@@ -40,9 +40,9 @@
             this.label6 = new System.Windows.Forms.Label();
             this.dateBuyerDev = new Sci.Win.UI.DateRange();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.label10 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
+            this.label10 = new Sci.Win.UI.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -65,13 +65,11 @@
             // 
             this.buttonCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCustomized.Location = new System.Drawing.Point(442, 155);
-            this.buttonCustomized.Visible = true;
             // 
             // checkUseCustomized
             // 
             this.checkUseCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkUseCustomized.Location = new System.Drawing.Point(468, 189);
-            this.checkUseCustomized.Visible = true;
             // 
             // txtVersion
             // 
@@ -208,15 +206,6 @@
             this.groupBox1.TabIndex = 108;
             this.groupBox1.TabStop = false;
             // 
-            // label10
-            // 
-            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label10.Location = new System.Drawing.Point(476, 128);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(92, 22);
-            this.label10.TabIndex = 109;
-            this.label10.Text = "Paper Size A4";
-            // 
             // label7
             // 
             this.label7.Location = new System.Drawing.Point(12, 55);
@@ -245,6 +234,15 @@
             this.label8.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label8.TextStyle.Color = System.Drawing.Color.Black;
             // 
+            // label10
+            // 
+            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label10.Location = new System.Drawing.Point(476, 128);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(92, 22);
+            this.label10.TabIndex = 109;
+            this.label10.Text = "Paper Size A4";
+            // 
             // R31
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -252,7 +250,6 @@
             this.ClientSize = new System.Drawing.Size(582, 286);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.groupBox1);
-            this.IsSupportCustomized = true;
             this.IsSupportPrint = false;
             this.Name = "R31";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
