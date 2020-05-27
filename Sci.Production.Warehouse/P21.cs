@@ -41,6 +41,10 @@ namespace Sci.Production.Warehouse
             cellActWeight.CellValidating += (s, e) =>
             {
                 DataRow curDr = this.gridReceiving.GetDataRow(e.RowIndex);
+                if (curDr["ReceivingSource"].ToString() != "Receiving")
+                {
+                    return;
+                }
                 curDr["Differential"] = (decimal)e.FormattedValue - (decimal)curDr["Weight"];
                 curDr["ActualWeight"] = e.FormattedValue;
                 curDr.EndEdit();
@@ -318,9 +322,9 @@ SELECT
 ,td.StockType
 ,[Location]=Location.MtlLocationID 
 ,[OldLocation] = Location.MtlLocationID 
-,td.Weight
+,[Weight]=0
 ,ActualWeight=td.Weight
-,[OldActualWeight] = 0
+,[OldActualWeight] = td.Weight
 ,[Differential] = 0,
 [FtyInventoryUkey] = fi.Ukey,
 [FtyInventoryQty] = fi.InQty - fi.OutQty + fi.AdjustQty,
