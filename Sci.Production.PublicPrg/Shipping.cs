@@ -757,10 +757,10 @@ select  t.*
         , f.PcsWidth
         , f.PcsLength
         , f.PcsKg
-        , o.Qty as OrderQty
         , f.Description
         , f.Type
         , SuppID=''
+        , rd.PoId
 into #tmpFtyMaterial
 from #tmpAllStyle t
 inner join Receiving_detail rd WITH (NOLOCK) on rd.PoId = (select TOP 1 POID
@@ -771,7 +771,6 @@ inner join Receiving_detail rd WITH (NOLOCK) on rd.PoId = (select TOP 1 POID
 inner join  Receiving r with (nolock) on rd.ID = r.ID and r.Type='B' and r.Status = 'Confirmed' -- W/H P08 Type='B'
 left join PO_Supp_Detail  psd  with (nolock) on psd .ID = rd.PoId and psd.SEQ1 = rd.Seq1 and psd.SEQ2 = rd.Seq2
 left join Fabric f with (nolock) on f.SCIRefno = psd.SCIRefno
-left join Orders o WITH (NOLOCK) on rd.PoId = o.ID
 
 ----廠工料2----------------------------------------------------------------------------------------------------------------------------------------
 select  StyleID
@@ -784,8 +783,7 @@ select  StyleID
         , StyleCPU
         , StyleUKey
         , Refno
-        , Qty
-        , OrderQty
+        , Qty = sum(Qty)
         , IIF(UnitId = 'CONE','M',UnitId) as UnitId
         , NLCode
         , HSCode
@@ -796,8 +794,11 @@ select  StyleID
         , Description
         , Type
         , SuppID
+        , PoId
 into #tmpFtyMaterial2
 from #tmpFtyMaterial
+group by StyleID, SeasonID, OrderBrandID, Category, SizeCode, Article, GMTQty, StyleCPU, StyleUKey, Refno
+, IIF(UnitId = 'CONE','M',UnitId), NLCode, HSCode, CustomsUnit, PcsWidth, PcsLength, PcsKg, Description, Type, SuppID, PoId
 
 ----廠工料3----------------------------------------------------------------------------------------------------------------------------------------
 select  StyleID
@@ -826,8 +827,8 @@ select  StyleID
         , isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = UnitId and UnitTo = CustomsUnit),'') as UnitRate
         , isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = UnitId and UnitTo = 'M'),'') as M2UnitRate
 into #tmpFtyMaterial3
-from #tmpFtyMaterial2
-
+from #tmpFtyMaterial2 t
+outer apply(select OrderQty= sum(o.Qty) from Orders o WITH (NOLOCK) where t.PoId = o.PoId)x
 ----廠工料4----------------------------------------------------------------------------------------------------------------------------------------
 select  StyleID
         , SeasonID
@@ -856,7 +857,7 @@ into #tmpFtyMaterial4
 from #tmpFtyMaterial3
 
 ----廠工料5----------------------------------------------------------------------------------------------------------------------------------------
-select  StyleID
+select distinct  StyleID
         , SeasonID
         , OrderBrandID
         , Category
@@ -869,7 +870,7 @@ select  StyleID
         , NLCode
         , HSCode
         , CustomsUnit
-        , sum(isnull(NewQty,0)) as Qty
+        , Qty = isnull(NewQty,0)
         , 1 as LocalItem
         , StyleCPU
         , StyleUKey
@@ -877,15 +878,13 @@ select  StyleID
         , Type
         , SuppID
 		, StockUnit
-		, [StockQty] = sum(isnull(StockQty,0))
+		, [StockQty] =isnull(StockQty,0)
         , [FabricType] = 'L' 
         , UsageUnit
-        , [UsageQty] = sum(isnull(UsageQty,0)) 
+        , [UsageQty] = isnull(UsageQty,0)
 into #tmpFtyMaterial5
 from #tmpFtyMaterial4
-group by StyleID, SeasonID, OrderBrandID, Category, SizeCode, Article, GMTQty
-         , SCIRefno, Refno, BrandID, NLCode, HSCode, CustomsUnit ,StyleCPU 
-         , StyleUKey, Description, Type, SuppID, StockUnit, UsageUnit
+
 
 ----Get Thread Data---------------------------------------------------------------------------------------------------------------------------------
 select distinct StyleUkey,FabricType,ThickFabric,ProgramID,OrderBrandID as BrandID,SeasonID,StyleID 
