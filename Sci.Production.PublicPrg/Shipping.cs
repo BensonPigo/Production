@@ -346,7 +346,7 @@ where   1=1");
 group by o.StyleUkey, oqd.SizeCode, oqd.Article, o.Category, o.StyleID
          , o.SeasonID, o.BrandID, isnull(s.CPU,0), isnull(s.CTNQty,0), s.FabricType, s.ThickFabric, s.ProgramID
 		 
---------------------------------------------------------------------------------------------------------------------------------------------------
+---BOF--------------------------------------------------------------------------------------------------------------------------------------------
 select  ts.*
         , sm.MarkerName
         , sm.FabricPanelCode
@@ -491,7 +491,7 @@ group by StyleID, SeasonID, OrderBrandID, Category, SizeCode, Article
          , GMTQty, SCIRefno, Refno, BrandID, NLCode, HSCode, CustomsUnit
          , StyleCPU, StyleUKey, Description, Type, StockUnit, UsageUnit
 
---------------------------------------------------------------------------------------------------------------------------------------------------
+---BOA--------------------------------------------------------------------------------------------------------------------------------------------
 select  t.*
         , sb.Ukey
         , sb.Refno
@@ -745,6 +745,148 @@ from #tmpLocalNewQty
 group by StyleID, SeasonID, OrderBrandID, Category, SizeCode, Article, GMTQty
          , SCIRefno, Refno, BrandID, NLCode, HSCode, CustomsUnit ,StyleCPU 
          , StyleUKey, Description, Type, SuppID, StockUnit, UsageUnit
+
+----廠工料----------------------------------------------------------------------------------------------------------------------------------------
+select  t.*
+        , f.Refno
+        , Qty=rd.StockQty
+        , UnitId=rd.stockunit
+        , f.NLCode
+        , f.HSCode
+        , CustomsUnit = isnull (f.CustomsUnit, '')
+        , f.PcsWidth
+        , f.PcsLength
+        , f.PcsKg
+        , o.Qty as OrderQty
+        , f.Description
+        , f.Type
+        , SuppID=''
+into #tmpFtyMaterial
+from #tmpAllStyle t
+inner join Receiving_detail rd WITH (NOLOCK) on rd.PoId = (select TOP 1 POID
+															from Orders WITH (NOLOCK) 
+                                                            where   StyleUkey = t.StyleUkey 
+                                                                    and Category = t.Category 
+                                                            order by BuyerDelivery, ID) 
+inner join  Receiving r with (nolock) on rd.ID = r.ID and r.Type='B' and r.Status = 'Confirmed' -- W/H P08 Type='B'
+left join PO_Supp_Detail  psd  with (nolock) on psd .ID = rd.PoId and psd.SEQ1 = rd.Seq1 and psd.SEQ2 = rd.Seq2
+left join Fabric f with (nolock) on f.SCIRefno = psd.SCIRefno
+left join Orders o WITH (NOLOCK) on rd.PoId = o.ID
+
+----廠工料2----------------------------------------------------------------------------------------------------------------------------------------
+select  StyleID
+        , SeasonID
+        , OrderBrandID
+        , Category
+        , SizeCode
+        , Article
+        , GMTQty
+        , StyleCPU
+        , StyleUKey
+        , Refno
+        , Qty
+        , OrderQty
+        , IIF(UnitId = 'CONE','M',UnitId) as UnitId
+        , NLCode
+        , HSCode
+        , CustomsUnit
+        , PcsWidth
+        , PcsLength
+        , PcsKg
+        , Description
+        , Type
+        , SuppID
+into #tmpFtyMaterial2
+from #tmpFtyMaterial
+
+----廠工料3----------------------------------------------------------------------------------------------------------------------------------------
+select  StyleID
+        , SeasonID
+        , OrderBrandID
+        , Category
+        , SizeCode
+        , Article
+        , GMTQty
+        , StyleCPU
+        , StyleUKey
+        , Refno
+        , iif(OrderQty=0.000,0.000,Qty/OrderQty) as Qty
+		, UnitId
+        , NLCode
+        , HSCode
+        , CustomsUnit
+        , PcsWidth
+        , PcsLength
+        , PcsKg
+        , Description
+        , Type
+        , SuppID
+        , isnull((select RateValue from dbo.View_Unitrate where FROM_U = UnitId and TO_U = CustomsUnit),1) as RateValue
+        , (select RateValue from dbo.View_Unitrate where FROM_U = UnitId and TO_U = 'M') as M2RateValue
+        , isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = UnitId and UnitTo = CustomsUnit),'') as UnitRate
+        , isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = UnitId and UnitTo = 'M'),'') as M2UnitRate
+into #tmpFtyMaterial3
+from #tmpFtyMaterial2
+
+----廠工料4----------------------------------------------------------------------------------------------------------------------------------------
+select  StyleID
+        , SeasonID
+        , OrderBrandID
+        , Category
+        , SizeCode
+        , Article
+        , GMTQty
+        , Refno as SCIRefno
+        , Refno
+        , '' as BrandID
+        , NLCode
+        , HSCode
+        , CustomsUnit
+        , StyleCPU
+        , StyleUKey
+        , Description
+        , Type
+        , SuppID
+        , [dbo].getVNUnitTransfer(Category,UnitId,CustomsUnit,Qty,0,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate),Refno) as NewQty
+		, [StockUnit] = UnitId
+		, [StockQty] = Qty
+        , [UsageUnit] = UnitId
+		, [UsageQty] = Qty
+into #tmpFtyMaterial4
+from #tmpFtyMaterial3
+
+----廠工料5----------------------------------------------------------------------------------------------------------------------------------------
+select  StyleID
+        , SeasonID
+        , OrderBrandID
+        , Category
+        , SizeCode
+        , Article
+        , GMTQty
+        , SCIRefno
+        , Refno
+        , BrandID
+        , NLCode
+        , HSCode
+        , CustomsUnit
+        , sum(isnull(NewQty,0)) as Qty
+        , 1 as LocalItem
+        , StyleCPU
+        , StyleUKey
+        , Description
+        , Type
+        , SuppID
+		, StockUnit
+		, [StockQty] = sum(isnull(StockQty,0))
+        , [FabricType] = 'L' 
+        , UsageUnit
+        , [UsageQty] = sum(isnull(UsageQty,0)) 
+into #tmpFtyMaterial5
+from #tmpFtyMaterial4
+group by StyleID, SeasonID, OrderBrandID, Category, SizeCode, Article, GMTQty
+         , SCIRefno, Refno, BrandID, NLCode, HSCode, CustomsUnit ,StyleCPU 
+         , StyleUKey, Description, Type, SuppID, StockUnit, UsageUnit
+
 ----Get Thread Data---------------------------------------------------------------------------------------------------------------------------------
 select distinct StyleUkey,FabricType,ThickFabric,ProgramID,OrderBrandID as BrandID,SeasonID,StyleID 
 into #tmpthreadStyle
@@ -990,6 +1132,10 @@ from (
         union all
         select * 
         from #tmpThreadData
+
+        union all
+        select * 
+        from #tmpFtyMaterial5
     ) a
     group by StyleID, SeasonID, OrderBrandID, Category, SizeCode, Article
              , GMTQty, SCIRefno, Refno, BrandID, NLCode, HSCode, CustomsUnit
