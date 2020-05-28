@@ -1635,4 +1635,7 @@ BEGIN
 	        [StdOutput] = iif(isnull(s.TotalSewingTime,0) = 0, 0, (3600*s.Sewer)/s.TotalSewingTime) 
 	from    SewingSchedule s with (nolock)
 	where   exists (select 1 from #tmpSewingScheduleGZ t where t.Action in ('I','U') and s.ID = t.ID)
+
+	select ID
+	from #tmpSewingScheduleGZ where Action = 'D'
 END

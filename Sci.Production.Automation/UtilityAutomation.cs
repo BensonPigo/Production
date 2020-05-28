@@ -23,6 +23,11 @@ namespace Sci.Production.Automation
             get { return MyUtility.Check.Seek("select 1 from dbo.System where Automation = 1"); }
         }
 
+        public static bool IsModuleAutomationEnable(string suppid, string module)
+        {
+            return IsAutomationEnable && MyUtility.Check.Seek($"select 1 from dbo.WebApiURL where SuppID = '{suppid}' and ModuleName = '{module}' and Junk = 0");
+        }
+
         public static dynamic AppendBaseInfo(dynamic bodyObject, string apiTag)
         {
             dynamic newBodyObject = bodyObject;

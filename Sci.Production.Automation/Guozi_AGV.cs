@@ -15,8 +15,8 @@ namespace Sci.Production.Automation
     public class Guozi_AGV
     {
         private static string baseUrl = string.Empty;
-        private string guoziSuppID = "3A0197";
-        private string moduleName = "AGV";
+        private string guoziSuppID = "SCI";
+        private string moduleName = "SCI";
         private AutomationErrMsgPMS automationErrMsg;
 
         public Guozi_AGV()
@@ -34,14 +34,17 @@ namespace Sci.Production.Automation
             {
                 if (MyUtility.Check.Empty(baseUrl))
                 {
-                    lock (baseUrl)
-                    {
-                        baseUrl = GetBaseUrl(this.guoziSuppID, this.moduleName);
-                    }
+                    baseUrl = this.GetBaseUrl();
                 }
 
                 return baseUrl;
             }
+        }
+
+
+        private string GetBaseUrl()
+        {
+            return MyUtility.GetValue.Lookup($"select URL from WebApiURL with (nolock) where SuppID = '{this.guoziSuppID}' and ModuleName = '{this.moduleName}' ");
         }
 
         /// <summary>
@@ -50,7 +53,7 @@ namespace Sci.Production.Automation
         /// <param name="dtWorkOrder">dtWorkOrder</param>
         public void SentWorkOrderToAGV(DataTable dtWorkOrder)
         {
-            if (!IsAutomationEnable)
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
             {
                 return;
             }
@@ -58,7 +61,7 @@ namespace Sci.Production.Automation
             List<WorkOrderToAGV_PostBody> listWorkOrder = new List<WorkOrderToAGV_PostBody>();
             DataTable dtWorkOrder_Distribute;
             string apiThread = "SentWorkOrderToAGV";
-            string suppAPIThread = "api/Utility/TestWebAPI2";
+            string suppAPIThread = "api/GuoziAGV/SentDataByApiTag";
             string sqlGetData;
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
@@ -100,14 +103,14 @@ namespace Sci.Production.Automation
         /// <param name="dtBundle">dtBundle</param>
         public void SentBundleToAGV(Func<List<BundleToAGV_PostBody>> funListBundle)
         {
-            if (!IsAutomationEnable)
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
             {
                 return;
             }
 
             DataTable dtBundle_SubProcess;
             string apiThread = "SentBundleToAGV";
-            string suppAPIThread = "api/Utility/TestWebAPI2";
+            string suppAPIThread = "api/GuoziAGV/SentDataByApiTag";
             string sqlGetData;
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
@@ -168,13 +171,13 @@ where bda.BundleNo = '{bundle.BundleNo}'";
         /// <param name="dtSubprocess">dtSubprocess</param>
         public void SentSubprocessToAGV(DataTable dtSubprocess)
         {
-            if (!IsAutomationEnable)
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
             {
                 return;
             }
 
             string apiThread = "SentSubprocessToAGV";
-            string suppAPIThread = "api/Utility/TestWebAPI2";
+            string suppAPIThread = "api/GuoziAGV/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
@@ -197,13 +200,13 @@ where bda.BundleNo = '{bundle.BundleNo}'";
         /// <param name="dtCutCell">dtCutCell</param>
         public void SentCutCellToAGV(DataTable dtCutCell)
         {
-            if (!IsAutomationEnable)
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
             {
                 return;
             }
 
             string apiThread = "SentCutCellToAGV";
-            string suppAPIThread = "api/Utility/TestWebAPI2";
+            string suppAPIThread = "api/GuoziAGV/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
@@ -226,13 +229,13 @@ where bda.BundleNo = '{bundle.BundleNo}'";
         /// <param name="dtSewingLine">dtSewingLine</param>
         public void SentSewingLineToAGV(DataTable dtSewingLine)
         {
-            if (!IsAutomationEnable)
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
             {
                 return;
             }
 
             string apiThread = "SentSewingLineToAGV";
-            string suppAPIThread = "api/Utility/TestWebAPI2";
+            string suppAPIThread = "api/GuoziAGV/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
@@ -255,13 +258,13 @@ where bda.BundleNo = '{bundle.BundleNo}'";
         /// <param name="dtSewingSchedule">dtSewingSchedule</param>
         public void SentSewingScheduleToAGV(DataTable dtSewingSchedule)
         {
-            if (!IsAutomationEnable)
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
             {
                 return;
             }
 
             string apiThread = "SentSewingScheduleToAGV";
-            string suppAPIThread = "api/Utility/TestWebAPI2";
+            string suppAPIThread = "api/GuoziAGV/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
@@ -275,6 +278,159 @@ where bda.BundleNo = '{bundle.BundleNo}'";
                     Inline = (DateTime?)s["Inline"],
                     Offline = (DateTime?)s["Offline"],
                     StdOutput = (int)s["StdOutput"]
+                });
+
+            string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "SewingSchedule"));
+
+            SendWebAPI(this.BaseUrl, suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
+        /// <summary>
+        /// SentDeleteWorkOrder
+        /// </summary>
+        /// <param name="dtWorkOrder">dtSewingSchedule</param>
+        public void SentDeleteWorkOrder(List<long> dtWorkOrder)
+        {
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
+            {
+                return;
+            }
+
+            if (dtWorkOrder.Count == 0)
+            {
+                return;
+            }
+
+            string apiThread = "SentDeleteWorkOrder";
+            string suppAPIThread = "api/GuoziAGV/SentDeleteDataByApiTag";
+            this.automationErrMsg.apiThread = apiThread;
+            this.automationErrMsg.suppAPIThread = suppAPIThread;
+
+            dynamic bodyObject = new ExpandoObject();
+            bodyObject.WorkOrder = dtWorkOrder.Select(s => new
+            {
+                Ukey = s
+            });
+
+            string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "WorkOrder"));
+
+            SendWebAPI(this.BaseUrl, suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
+        /// <summary>
+        /// SentDeleteWorkOrder_Distribute
+        /// </summary>
+        /// <param name="dtWorkOrder_Distribute">dtSewingSchedule</param>
+        public void SentDeleteWorkOrder_Distribute(List<WorkOrder_Distribute> deleteWorkOrder_Distribute)
+        {
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
+            {
+                return;
+            }
+
+            if (deleteWorkOrder_Distribute.Count == 0)
+            {
+                return;
+            }
+
+            string apiThread = "SentDeleteWorkOrderFromAGV";
+            string suppAPIThread = "api/GuoziAGV/SentDeleteDataByApiTag";
+            this.automationErrMsg.apiThread = apiThread;
+            this.automationErrMsg.suppAPIThread = suppAPIThread;
+
+            dynamic bodyObject = new ExpandoObject();
+            bodyObject.WorkOrder_Distribute = deleteWorkOrder_Distribute;
+
+            string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "WorkOrder_Distribute"));
+
+            SendWebAPI(this.BaseUrl, suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
+        public class WorkOrder_Distribute
+        {
+            public long WorkOrderUkey;
+            public string OrderID;
+            public string Article;
+            public string SizeCode;
+        }
+
+        /// <summary>
+        /// SentDeleteBundle
+        /// </summary>
+        /// <param name="dtBundle">dtSewingSchedule</param>
+        public void SentDeleteBundle(DataTable dtBundle)
+        {
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
+            {
+                return;
+            }
+
+            string apiThread = "SentDeleteBundle";
+            string suppAPIThread = "api/GuoziAGV/SentDeleteDataByApiTag";
+            this.automationErrMsg.apiThread = apiThread;
+            this.automationErrMsg.suppAPIThread = suppAPIThread;
+
+            dynamic bodyObject = new ExpandoObject();
+            bodyObject.Bundle = dtBundle.AsEnumerable()
+                .Select(s => new
+                {
+                    BundleNo = (string)s["BundleNo"]
+                });
+
+            string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Bundle"));
+
+            SendWebAPI(this.BaseUrl, suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
+        /// <summary>
+        /// SentDeleteBundle_SubProcess
+        /// </summary>
+        /// <param name="dtBundle_SubProcess">dtSewingSchedule</param>
+        public void SentDeleteBundle_SubProcess(DataTable dtBundle_SubProcess)
+        {
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
+            {
+                return;
+            }
+
+            string apiThread = "SentDeleteBundle_SubProcess";
+            string suppAPIThread = "api/GuoziAGV/SentDeleteDataByApiTag";
+            this.automationErrMsg.apiThread = apiThread;
+            this.automationErrMsg.suppAPIThread = suppAPIThread;
+
+            dynamic bodyObject = new ExpandoObject();
+            bodyObject.Bundle_SubProcess = dtBundle_SubProcess.AsEnumerable()
+                .Select(s => new
+                {
+                    Ukey = (long)s["Ukey"]
+                });
+
+            string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Bundle_SubProcess"));
+
+            SendWebAPI(this.BaseUrl, suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
+        /// <summary>
+        /// SentDeleteSewingSchedule
+        /// </summary>
+        /// <param name="dtSewingSchedule">dtSewingSchedule</param>
+        public void SentDeleteSewingSchedule(DataTable dtSewingSchedule)
+        {
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
+            {
+                return;
+            }
+
+            string apiThread = "SentDeleteSewingSchedule";
+            string suppAPIThread = "api/GuoziAGV/SentDeleteDataByApiTag";
+            this.automationErrMsg.apiThread = apiThread;
+            this.automationErrMsg.suppAPIThread = suppAPIThread;
+
+            dynamic bodyObject = new ExpandoObject();
+            bodyObject.SewingSchedule = dtSewingSchedule.AsEnumerable()
+                .Select(s => new
+                {
+                    ID = (long)s["ID"]
                 });
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "SewingSchedule"));

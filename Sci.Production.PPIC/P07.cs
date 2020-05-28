@@ -94,6 +94,11 @@ update factory set LastDownloadAPSDate  = getdate() where id = '{2}'
                     .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 
+            if (dsForAutomation[2].Rows.Count > 0)
+            {
+                Task.Run(() => new Guozi_AGV().SentDeleteSewingSchedule(dsForAutomation[2]));
+            }
+
             this.Setcuttingdate();
 
             this.HideWaitMessage();
