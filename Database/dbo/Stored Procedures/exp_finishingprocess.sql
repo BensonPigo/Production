@@ -400,7 +400,7 @@ VALUES(s.id, s.BrandID, s.ProgramID, s.StyleID, s.SeasonID, s.ProjectID, s.Categ
 	,s.CmdTime, s.SunriseUpdated, s.GenSongUpdated, s.CustPONo, s.POID)	;
 
 	--並記錄下這次有哪些OrderID異動
-	SELECT ID
+	SELECT ID ,POID
 	INTO #tmpOrders
 	FROM Production.dbo.Orders o
 	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate or convert(date,PulloutCmplDate) = @cDate)
@@ -926,7 +926,7 @@ MERGE Order_SizeCode AS T
 USING(
 	SELECT *
 	FROM Production.dbo.Order_SizeCode
-	WHERE (convert(date,AddDate) = @cDate OR convert(date,EditDate) = @cDate) OR ID IN (SELECT ID FROM #tmpOrders)
+	WHERE (convert(date,AddDate) = @cDate OR convert(date,EditDate) = @cDate) OR ID IN (SELECT POID FROM #tmpOrders)
 ) as s
 on t.ID = s.ID AND t.SizeCode = s.SizeCode AND t.Ukey = s.Ukey
 WHEN MATCHED THEN
