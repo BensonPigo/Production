@@ -323,11 +323,13 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             this.btnMCHandleCFM.Enabled = this.CurrentMaintain != null && this.dataType == "1" && lConfirm && !this.EditMode;
             this.btnLocalMRCFM.Enabled = this.CurrentMaintain != null && this.dataType == "1" && lConfirm && !this.EditMode;
             this.btnbdown.Enabled = this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["CtnType"]) == "2" && !this.EditMode;
+            this.BtnBuyBack.Enabled = !this.EditMode;
 
             // 按鈕變色
             bool haveTmsCost = MyUtility.Check.Seek(string.Format("select ID from Order_TmsCost WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             this.btnProductionOutput.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             this.btnOrderRemark.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
+            this.BtnBuyBack.ForeColor = MyUtility.Check.Seek(string.Format("select 1 from Order_BuyBack WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
 
             //若有資料顯示藍色，否則黑色
             this.btnPoRemark.ForeColor = MyUtility.Check.Seek(string.Format("select PoRemark from PO WITH (NOLOCK) where ID = '{0}' AND PoRemark != '' ", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
@@ -1657,6 +1659,16 @@ and p.Type in ('L', 'B')
         {
             P01_QtyChangeList frm = new P01_QtyChangeList(this.CurrentMaintain["ID"].ToString());
             frm.ShowDialog();
+        }
+
+        private void BtnBuyBack_Click(object sender, EventArgs e)
+        {
+            P01_BuyBack frm = new P01_BuyBack(false, this.CurrentMaintain["ID"].ToString());
+            frm.ShowDialog();
+
+            this.RenewData();
+            this.OnDetailEntered();
+
         }
     }
 }
