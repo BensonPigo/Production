@@ -50,6 +50,7 @@ BEGIN
 	[CmdTime]			[datetime] NOT NULL,
 	[SunriseUpdated]	[bit] NOT NULL DEFAULT ((0)),
 	[GenSongUpdated]	[bit] NOT NULL DEFAULT ((0)),
+	[Junk]				[bit] NOT NULL DEFAULT ((0)),
  CONSTRAINT [PK_Order_QtyShip] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC,
@@ -398,14 +399,21 @@ VALUES(s.id, s.BrandID, s.ProgramID, s.StyleID, s.SeasonID, s.ProjectID, s.Categ
 	,s.Dest, s.CustCDID, s.StyleUnit, s.SetQty, s.Location, s.PulloutComplete, s.Junk
 	,s.CmdTime, s.SunriseUpdated, s.GenSongUpdated, s.CustPONo, s.POID)	;
 
---02. 轉出區間 [Production].[dbo].[Order_QtyShip].AddDate or EditDate= 今天
+	--並記錄下這次有哪些OrderID異動
+	SELECT ID
+	INTO #tmpOrders
+	FROM Production.dbo.Orders o
+	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate or convert(date,PulloutCmplDate) = @cDate)
+
+
+--02. 轉出區間 [Production].[dbo].[Order_QtyShip].ID 在本次有更新的 Orders 之中
 MERGE Order_QtyShip AS T
 USING(
 	SELECT id, Seq, ShipmodeID, BuyerDelivery, Qty, EstPulloutDate
 	,ReadyDate,[CmdTime] = GetDate()
 	,[SunriseUpdated] = 0, [GenSongUpdated] = 0
 	FROM Production.dbo.Order_QtyShip o
-	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
+	WHERE o.ID IN (SELECT ID FROM #tmpOrders)
 ) as S
 on T.ID = S.ID and T.SEQ = S.SEQ
 WHEN MATCHED THEN
@@ -419,12 +427,13 @@ UPDATE SET
 	t.ReadyDate = s.ReadyDate,
 	t.CmdTime = s.CmdTime,
 	t.SunriseUpdated = s.SunriseUpdated,
-	t.GenSongUpdated = s.GenSongUpdated
+	t.GenSongUpdated = s.GenSongUpdated,
+	t.Junk = s.Junk
 WHEN NOT MATCHED BY TARGET THEN
 INSERT(  id,   Seq,   ShipmodeID,   BuyerDelivery,   Qty,   EstPulloutDate,   ReadyDate,
-	     SunriseUpdated,   GenSongUpdated,   CmdTime ) 
+	     SunriseUpdated,   GenSongUpdated,   CmdTime,	Junk) 
 VALUES(s.id, s.Seq, s.ShipmodeID, s.BuyerDelivery, s.Qty, s.EstPulloutDate, s.ReadyDate,
-	   s.SunriseUpdated, s.GenSongUpdated, s.CmdTime)	;
+	   s.SunriseUpdated, s.GenSongUpdated, s.CmdTime,	s.Junk)	;
 
 --03. 轉出區間 當AddDate or EditDate =今天、Category = 'HTML'
 MERGE ShippingMark AS T
@@ -917,7 +926,7 @@ MERGE Order_SizeCode AS T
 USING(
 	SELECT *
 	FROM Production.dbo.Order_SizeCode
-	WHERE (convert(date,AddDate) = @cDate OR convert(date,EditDate) = @cDate)
+	WHERE (convert(date,AddDate) = @cDate OR convert(date,EditDate) = @cDate) OR ID IN (SELECT ID FROM #tmpOrders)
 ) as s
 on t.ID = s.ID AND t.SizeCode = s.SizeCode AND t.Ukey = s.Ukey
 WHEN MATCHED THEN
