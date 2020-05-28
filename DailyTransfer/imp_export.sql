@@ -25,10 +25,6 @@ BEGIN
 	)MainExportID08
 	where FactoryID in (select id from @Sayfty)
 
-	update TE1
-	set TE1.factoryID = PF.FTYGroup
-	from #TExport TE1
-	inner join Production.dbo.Factory PF on pf.ID = TE1.FactoryID
 	
 
 --------------------------Export---------------------------
