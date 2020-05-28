@@ -195,13 +195,6 @@ where ed.ID = '{0}'", masterID);
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.txtdropdownlistContainerType.SelectedValue))
-            {
-                this.txtdropdownlistContainerType.Select();
-                MyUtility.Msg.WarningBox("Container Type cannot be empty!!");
-                return false;
-            }
-
             if (MyUtility.Check.Empty(MyUtility.Convert.GetInt(this.numPackages.Text)))
             {
                 this.numPackages.Focus();
