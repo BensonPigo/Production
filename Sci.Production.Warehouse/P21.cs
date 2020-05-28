@@ -41,6 +41,10 @@ namespace Sci.Production.Warehouse
             cellActWeight.CellValidating += (s, e) =>
             {
                 DataRow curDr = this.gridReceiving.GetDataRow(e.RowIndex);
+                if (curDr["ReceivingSource"].ToString() != "Receiving")
+                {
+                    return;
+                }
                 curDr["Differential"] = (decimal)e.FormattedValue - (decimal)curDr["Weight"];
                 curDr["ActualWeight"] = e.FormattedValue;
                 curDr.EndEdit();
@@ -156,44 +160,53 @@ namespace Sci.Production.Warehouse
         private void Query()
         {
             string sqlWhere = string.Empty;
+            string sqlWhere2 = string.Empty;
 
             if (!txtSeq.checkSeq1Empty() && txtSeq.checkSeq2Empty())
             {
                 sqlWhere += $" and rd.seq1 = '{this.txtSeq.seq1}'";
+                sqlWhere2 += $" and td.seq1 = '{this.txtSeq.seq1}'";
             }
             else if (!txtSeq.checkEmpty(showErrMsg: false))
             {
                 sqlWhere += $" and rd.seq1 = '{this.txtSeq.seq1}' and rd.seq2 = '{this.txtSeq.seq2}'";
+                sqlWhere2 += $" and td.seq1 = '{this.txtSeq.seq1}' and td.seq2 = '{this.txtSeq.seq2}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtRef.Text))
             {
                 sqlWhere += $" and psd.refno = '{this.txtRef.Text}'";
+                sqlWhere2 += $" and psd.refno = '{this.txtRef.Text}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtColor.Text))
             {
                 sqlWhere += $" and (psd.SuppColor = '{this.txtColor.Text}' or psd.ColorID = '{this.txtColor.Text}')";
+                sqlWhere2 += $" and (psd.SuppColor = '{this.txtColor.Text}' or psd.ColorID = '{this.txtColor.Text}')";
             }
 
             if (!MyUtility.Check.Empty(this.txtRoll.Text))
             {
                 sqlWhere += $" and rd.roll like '%{this.txtRoll.Text}%'";
+                sqlWhere2 += $" and td.roll like '%{this.txtRoll.Text}%'";
             }
 
             if (!MyUtility.Check.Empty(this.txtDyelot.Text))
             {
                 sqlWhere += $" and rd.dyelot = '{this.txtDyelot.Text}'";
+                sqlWhere2 += $" and td.dyelot = '{this.txtDyelot.Text}'";
             }
 
             if (!MyUtility.Check.Empty(this.cmbMaterialType.SelectedValue.ToString()))
             {
                 sqlWhere += $" and psd.FabricType = '{this.cmbMaterialType.SelectedValue.ToString()}'";
+                sqlWhere2 += $" and psd.FabricType = '{this.cmbMaterialType.SelectedValue.ToString()}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtRecivingID.Text))
             {
                 sqlWhere += $" and r.ID = '{this.txtRecivingID.Text}'";
+                sqlWhere2 += $" and t.ID = '{this.txtRecivingID.Text}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtWK.Text))
@@ -204,16 +217,19 @@ namespace Sci.Production.Warehouse
             if (!MyUtility.Check.Empty(this.txtSP.Text))
             {
                 sqlWhere += $" and rd.POID like '%{this.txtSP.Text}%'";
+                sqlWhere2 += $" and td.POID like '%{this.txtSP.Text}%'";
             }
 
             if (!MyUtility.Check.Empty(this.dateBoxArriveWH.Value1))
             {
                 sqlWhere += $" and r.WhseArrival >= '{Convert.ToDateTime(this.dateBoxArriveWH.Value1).ToString("yyyy/MM/dd")}'";
+                sqlWhere2 += $" and t.IssueDate >= '{Convert.ToDateTime(this.dateBoxArriveWH.Value1).ToString("yyyy/MM/dd")}'";
             }
 
             if (!MyUtility.Check.Empty(this.dateBoxArriveWH.Value2))
             {
                 sqlWhere += $" and r.WhseArrival <= '{Convert.ToDateTime(this.dateBoxArriveWH.Value2).ToString("yyyy/MM/dd")}'";
+                sqlWhere2 += $" and t.IssueDate <= '{Convert.ToDateTime(this.dateBoxArriveWH.Value2).ToString("yyyy/MM/dd")}'";
             }
 
             if (MyUtility.Check.Empty(sqlWhere))
@@ -257,6 +273,7 @@ rd.Seq2
 ,[Remark]=''
 ,[LastRemark] = LastEditDate.Remark
 ,[LastEditDate]=LastEditDate.EditDate
+,[ReceivingSource]='Receiving'
 from  Receiving r with (nolock)
 inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
 inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
@@ -287,6 +304,71 @@ OUTER APPLY(
 )Location
 
 where r.MDivisionID  = '{Env.User.Keyword}' {sqlWhere}
+
+UNION 
+
+SELECT 
+[select] = 0
+,ExportID=''
+,ID=t.ID
+,td.PoId
+,[Seq] = td.Seq1 + ' ' + td.Seq2
+,td.Roll
+,td.Dyelot
+,[Description] = dbo.getmtldesc(td.POID, td.Seq1, td.Seq2, 2, 0)
+,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' , psd.SuppColor, psd.ColorID)
+,[ActualQty]=td.Qty
+,[StockTypeDesc] = st.Name
+,td.StockType
+,[Location]=Location.MtlLocationID 
+,[OldLocation] = Location.MtlLocationID 
+,[Weight]=0
+,ActualWeight=td.Weight
+,[OldActualWeight] = td.Weight
+,[Differential] = 0,
+[FtyInventoryUkey] = fi.Ukey,
+[FtyInventoryQty] = fi.InQty - fi.OutQty + fi.AdjustQty,
+td.Seq1,
+td.Seq2
+,[Remark]=''
+,[LastRemark] = LastEditDate.Remark
+,[LastEditDate]=LastEditDate.EditDate
+,[ReceivingSource]='TransferIn'
+FROM TransferIn t with (nolock)
+INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
+INNER JOIN PO_Supp_Detail psd with (nolock) on td.PoId = psd.ID and td.Seq1 = psd.SEQ1 and td.Seq2 = psd.SEQ2
+INNER JOIN Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
+INNER JOIN Ftyinventory  fi with (nolock) on    td.POID = fi.POID and
+                                                td.Seq1 = fi.Seq1 and
+                                                td.Seq2 = fi.Seq2 and
+                                                td.Roll = fi.Roll and
+                                                td.Dyelot  = fi.Dyelot and
+                                                td.StockType = fi.StockType
+INNER JOIN #tmpStockType st with (nolock) on st.ID = td.StockType
+OUTER APPLY(
+
+	SELECT [MtlLocationID] = STUFF(
+			(
+			SELECT DISTINCT IIF(fid.MtlLocationID IS NULL OR fid.MtlLocationID = '' ,'' , ','+fid.MtlLocationID)
+			FROM FtyInventory_Detail fid
+			WHERE fid.Ukey = fi.Ukey
+			FOR XML PATH('') )
+			, 1, 1, '')
+)Location
+OUTER APPLY(
+	SELECT top 1 lt.EditDate, lt.Remark
+	FROM LocationTrans lt
+	INNER JOIN LocationTrans_detail ltd ON lt.ID=ltd.ID
+	WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey=fi.Ukey 
+    order by lt.EditDate desc
+)LastEditDate
+
+
+WHERE t.Status='Confirmed' 
+AND t.MDivisionID  = '{Env.User.Keyword}'
+{sqlWhere2}
+
+DROP TABLE #tmpStockType
 ";
 
             DualResult result = DBProxy.Current.Select(null, sqlQuery, out this.dtReceiving);
@@ -493,16 +575,30 @@ Insert into LocationTrans_Detail(   ID,
             }
 
             string sqlUpdateReceiving_Detail = string.Empty;
-            foreach (var receivingDetailItem in drArryActualWeight)
+            foreach (var updateItem in drArryActualWeight)
             {
-                sqlUpdateReceiving_Detail += $@"update Receiving_Detail set ActualWeight  = {receivingDetailItem["ActualWeight"]}
-                                                    where   ID = '{receivingDetailItem["ID"]}' and
-                                                            POID = '{receivingDetailItem["POID"]}' and
-                                                            Seq1 = '{receivingDetailItem["Seq1"]}' and
-                                                            Seq2 = '{receivingDetailItem["Seq2"]}' and
-                                                            Roll = '{receivingDetailItem["Roll"]}' and
-                                                            Dyelot = '{receivingDetailItem["Dyelot"]}'
+                if (updateItem["ReceivingSource"].ToString()== "Receiving")
+                {
+                    sqlUpdateReceiving_Detail += $@"update Receiving_Detail set ActualWeight  = {updateItem["ActualWeight"]}
+                                                    where   ID = '{updateItem["ID"]}' and
+                                                            POID = '{updateItem["POID"]}' and
+                                                            Seq1 = '{updateItem["Seq1"]}' and
+                                                            Seq2 = '{updateItem["Seq2"]}' and
+                                                            Roll = '{updateItem["Roll"]}' and
+                                                            Dyelot = '{updateItem["Dyelot"]}'
 ";
+                }
+                if (updateItem["ReceivingSource"].ToString() == "TransferIn")
+                {
+                    sqlUpdateReceiving_Detail += $@"update TransferIn_Detail set Weight  = {updateItem["ActualWeight"]}
+                                                    where   ID = '{updateItem["ID"]}' and
+                                                            POID = '{updateItem["POID"]}' and
+                                                            Seq1 = '{updateItem["Seq1"]}' and
+                                                            Seq2 = '{updateItem["Seq2"]}' and
+                                                            Roll = '{updateItem["Roll"]}' and
+                                                            Dyelot = '{updateItem["Dyelot"]}'
+";
+                }
             }
 
             Exception errMsg = null;
