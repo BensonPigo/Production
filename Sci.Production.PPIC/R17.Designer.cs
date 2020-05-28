@@ -190,7 +190,7 @@
             // 
             this.txtSP_E.BackColor = System.Drawing.Color.White;
             this.txtSP_E.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP_E.Location = new System.Drawing.Point(275, 91);
+            this.txtSP_E.Location = new System.Drawing.Point(281, 91);
             this.txtSP_E.Name = "txtSP_E";
             this.txtSP_E.Size = new System.Drawing.Size(100, 23);
             this.txtSP_E.TabIndex = 4;
@@ -198,11 +198,11 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(253, 97);
+            this.label1.Location = new System.Drawing.Point(253, 94);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(16, 17);
+            this.label1.Size = new System.Drawing.Size(22, 17);
             this.label1.TabIndex = 553;
-            this.label1.Text = "~";
+            this.label1.Text = "～";
             // 
             // R17
             // 
