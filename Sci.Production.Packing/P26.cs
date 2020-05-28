@@ -3,6 +3,7 @@ using Ict.Win;
 using org.apache.pdfbox.pdmodel;
 using org.apache.pdfbox.util;
 using Sci.Data;
+using Sci.Production.Automation;
 using Spire.Pdf;
 using Spire.Pdf.Graphics;
 using System;
@@ -16,6 +17,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -715,6 +717,16 @@ namespace Sci.Production.Packing
                         }
                     }
                 }
+
+                #region ISP20200757 資料交換 - Sunrise
+                List<string> listPackingID = new List<string>();
+                this.UpdateModel_List.ForEach(first => first.ForEach(second => listPackingID.Add(second.PackingListID)));
+                if (listPackingID.Count > 0)
+                {
+                    Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(listPackingID.JoinToString(","), string.Empty))
+                        .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
+                #endregion
 
                 this.HideWaitMessage();
                 #endregion

@@ -2263,7 +2263,8 @@ inner join Bundle b with (nolock) on bd.ID = b.ID
                     return null;
                 }
             };
-            Task.Run(() => new Guozi_AGV().SentBundleToAGV(funListBundle));
+            Task.Run(() => new Guozi_AGV().SentBundleToAGV(funListBundle))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
 
             #endregion
 

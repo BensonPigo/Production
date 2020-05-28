@@ -11,6 +11,8 @@ using Sci.Data;
 using System.Runtime.InteropServices;
 using System.Linq;
 using Sci.Production.PublicPrg;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Shipping
 {
@@ -719,6 +721,12 @@ where	exists (
                 MyUtility.Msg.WarningBox("Confirmed fail!!\r\n" + result.ToString());
                 return;
             }
+
+            #region ISP20200757 資料交換 - Sunrise
+            string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
+            Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{listOrderID}','Orders,Order_QtyShip'"))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            #endregion
         }
 
         /// <inheritdoc/>
@@ -800,6 +808,11 @@ where ID = '{orderid}'
                 return;
             }
 
+            #region ISP20200757 資料交換 - Sunrise
+            string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
+            Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{listOrderID}','Orders,Order_QtyShip'"))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            #endregion
         }
 
         // History
