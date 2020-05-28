@@ -15,7 +15,8 @@ namespace Sci.Production.PPIC
     public partial class R17 : Sci.Win.Tems.PrintForm
     {
         private DataTable printData;
-        private string sp;
+        private string sp_S;
+        private string sp_E;
         private string MDivisionID;
         private string FactoryID;
         private DateTime? BuyerDev_S;
@@ -44,7 +45,8 @@ namespace Sci.Production.PPIC
         {
             if (!this.dateRangeCDate.Value1.HasValue && !this.dateRangeCDate.Value2.HasValue &&
                 !this.dateRangeByerDev.Value1.HasValue && !this.dateRangeByerDev.Value2.HasValue &&
-                !MyUtility.Check.Empty(this.txtSP.Text))
+                !MyUtility.Check.Empty(this.txtSP_S.Text) &&
+                !MyUtility.Check.Empty(this.txtSP_E.Text))
             {
                 MyUtility.Msg.InfoBox("Create Date & Buyer Delivery & SP# can not all be empty!");
                 this.dateRangeByerDev.Focus();
@@ -56,7 +58,8 @@ namespace Sci.Production.PPIC
             this.BuyerDev_S = this.dateRangeByerDev.Value1;
             this.BuyerDev_E = this.dateRangeByerDev.Value2;
             this.MDivisionID = this.txtMdivision.Text;
-            this.sp = this.txtSP.Text;
+            this.sp_S = this.txtSP_S.Text;
+            this.sp_E = this.txtSP_E.Text;
             this.FactoryID = this.txtfactory.Text;
 
             return base.ValidateInput();
@@ -89,9 +92,14 @@ namespace Sci.Production.PPIC
                 sqlWhere.Append($"AND o.BuyerDelivery <= '{this.BuyerDev_E.Value.ToString("yyyyMMdd")}'" + Environment.NewLine);
             }
 
-            if (!MyUtility.Check.Empty(this.sp))
+            if (!MyUtility.Check.Empty(this.sp_S))
             {
-                sqlWhere.Append($"AND o.ID = '{this.sp}'" + Environment.NewLine);
+                sqlWhere.Append($"AND o.ID >= '{this.sp_S}'" + Environment.NewLine);
+            }
+
+            if (!MyUtility.Check.Empty(this.sp_E))
+            {
+                sqlWhere.Append($"AND o.ID <= '{this.sp_E}'" + Environment.NewLine);
             }
 
             if (!MyUtility.Check.Empty(this.MDivisionID))
