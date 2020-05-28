@@ -344,11 +344,11 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
                     {
                         if (dr.RowState == DataRowState.Added)
                         {
-                                result = this.WriteRevise("Missing", dr);
-                                if (!result)
-                                {
-                                    return result;
-                                }
+                            result = this.WriteRevise("Missing", dr);
+                            if (!result)
+                            {
+                                return result;
+                            }
                         }
                         else if (dr.RowState == DataRowState.Modified)
                         {
@@ -380,17 +380,17 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
                         }
                         else if (dr.RowState == DataRowState.Deleted)
                         {
-                                result = this.WriteRevise("Delete", dr);
+                            result = this.WriteRevise("Delete", dr);
 
-                                #region update PulloutID 到PackingList
-                                string updatePklst = string.Format(@"Update PackingList set pulloutID = '' where id='{0}'", dr["PackingListID"]);
-                                DBProxy.Current.Execute(null, updatePklst);
-                                #endregion
+                            #region update PulloutID 到PackingList
+                            string updatePklst = string.Format(@"Update PackingList set pulloutID = '' where id='{0}'", dr["PackingListID"]);
+                            DBProxy.Current.Execute(null, updatePklst);
+                            #endregion
 
-                                if (!result)
-                                {
-                                    return result;
-                                }
+                            if (!result)
+                            {
+                                return result;
+                            }
                         }
                     }
                 }
@@ -723,9 +723,12 @@ where	exists (
             }
 
             #region ISP20200757 資料交換 - Sunrise
-            string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
-            Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{listOrderID}','Orders,Order_QtyShip'"))
-                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            if (UtilityAutomation.IsAutomationEnable)
+            {
+                string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
+                Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{listOrderID}','Orders,Order_QtyShip'"))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
             #endregion
         }
 
@@ -809,9 +812,12 @@ where ID = '{orderid}'
             }
 
             #region ISP20200757 資料交換 - Sunrise
-            string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
-            Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{listOrderID}','Orders,Order_QtyShip'"))
-                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            if (UtilityAutomation.IsAutomationEnable)
+            {
+                string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
+                Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{listOrderID}','Orders,Order_QtyShip'"))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
             #endregion
         }
 

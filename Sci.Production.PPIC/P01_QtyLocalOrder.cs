@@ -411,8 +411,12 @@ namespace Sci.Production.PPIC
                 }
             }
 
-            Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{this.orderID}','Orders,Order_QtyShip,Order_SizeCode'"))
+            if (UtilityAutomation.IsAutomationEnable)
+            {
+                Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{this.orderID}','Orders,Order_QtyShip,Order_SizeCode'"))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+
             return Result.True;
         }
 

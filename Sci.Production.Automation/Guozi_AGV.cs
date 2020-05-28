@@ -301,7 +301,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
                 return;
             }
 
-            string apiThread = "SentDeleteWorkOrder";
+            string apiThread = "SentDeleteWorkOrderFromAGV";
             string suppAPIThread = "api/GuoziAGV/SentDeleteDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
@@ -365,7 +365,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
                 return;
             }
 
-            string apiThread = "SentDeleteBundle";
+            string apiThread = "SentDeleteBundleFromAGV";
             string suppAPIThread = "api/GuoziAGV/SentDeleteDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
@@ -393,7 +393,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
                 return;
             }
 
-            string apiThread = "SentDeleteBundle_SubProcess";
+            string apiThread = "SentDeleteBundle_SubProcessFromAGV";
             string suppAPIThread = "api/GuoziAGV/SentDeleteDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
@@ -421,7 +421,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
                 return;
             }
 
-            string apiThread = "SentDeleteSewingSchedule";
+            string apiThread = "SentDeleteSewingScheduleFromAGV";
             string suppAPIThread = "api/GuoziAGV/SentDeleteDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;

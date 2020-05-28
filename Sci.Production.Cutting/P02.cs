@@ -2675,6 +2675,7 @@ select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrd
         protected override DualResult ClickSavePost()
         {
             List<Guozi_AGV.WorkOrder_Distribute> deleteWorkOrder_Distribute = new List<Guozi_AGV.WorkOrder_Distribute>();
+            List<Guozi_AGV.WorkOrder_Distribute> editWorkOrder_Distribute = new List<Guozi_AGV.WorkOrder_Distribute>();
             List<long> deleteWorkOrder = new List<long>();
 
             #region RevisedMarkerOriginalData AdditionalRevisedMarker功能處理的資料, 在此取拆出來資料的ukey,處理刪除的資料
@@ -2766,6 +2767,10 @@ select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrd
             #region 修改
             foreach (DataRow dr in distqtyTb.AsEnumerable().Where(x => x.RowState == DataRowState.Modified))
             {
+                editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute()
+                {
+                    WorkOrderUkey = (long)dr["WorkOrderUkey"]
+                });
                 updatesql += $@"
 Update WorkOrder_distribute
 set Qty = {dr["Qty"]},SizeCode = '{dr["SizeCode"]}',Article = '{dr["Article"]}',OrderID = '{dr["OrderID"]}'
@@ -2780,6 +2785,10 @@ and ID ='{dr["ID", DataRowVersion.Original]}'; ";
             #region 新增
             foreach (DataRow dr in distqtyTb.AsEnumerable().Where(x => x.RowState == DataRowState.Added))
             {
+                editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute()
+                {
+                    WorkOrderUkey = (long)dr["WorkOrderUkey"]
+                });
                 insertsql = insertsql + string.Format("Insert into WorkOrder_distribute(WorkOrderUkey,SizeCode,Qty,Article,OrderID,ID) values({0},'{1}',{2},'{3}','{4}','{5}'); ", dr["WorkOrderUkey"], dr["SizeCode"], dr["Qty"], dr["Article"], dr["OrderID"], cId);
             }
             #endregion
@@ -2845,7 +2854,8 @@ and ID ='{dr["ID", DataRowVersion.Original]}'; ";
                 {
                     return  (
                                 s.RowState == DataRowState.Added ||
-                                (s.RowState == DataRowState.Modified && s.CompareDataRowVersionValue(compareCol))
+                                (s.RowState == DataRowState.Modified && s.CompareDataRowVersionValue(compareCol)) ||
+                                editWorkOrder_Distribute.Any(ed => ed.WorkOrderUkey == (long)s["Ukey"])
                             )
                             &&
                             !MyUtility.Check.Empty(s["CutRef"]);

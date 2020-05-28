@@ -753,8 +753,11 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         {
             base.ClickSaveAfter();
             #region ISP20200757 資料交換 - Sunrise
-            Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{this.CurrentMaintain["ID"]}','Orders,Order_QtyShip,Order_SizeCode'"))
+            if (UtilityAutomation.IsAutomationEnable)
+            {
+                Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{this.CurrentMaintain["ID"]}','Orders,Order_QtyShip,Order_SizeCode'"))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
             #endregion
         }
 
