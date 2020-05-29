@@ -113,10 +113,10 @@ left join Cutting C on O.ID=C.ID
 Inner join dbo.View_Order_Artworks OA on  OA.ID=APD.OrderID and OA.PatternCode=APD.PatternCode and OA.ArtworkID=APD.ArtworkId and OA.ArtworkTypeID=APD.ArtworkTypeID
 Inner join Order_Qty OQ on OQ.ID=OA.ID and OQ.SizeCode=OA.SizeCode and OQ.Article=OA.Article
 outer apply (
-	select [BuyerDelivery] = max(o.BuyerDelivery), [SciDelivery] = min(o.SciDelivery)
-	from Orders o with (nolock)
-	where o.ID = APD.OrderID
-	group by o.ID
+	select [BuyerDelivery] = max(o2.BuyerDelivery), [SciDelivery] = min(o2.SciDelivery)
+	from Orders o2 with (nolock)
+	where o2.OrderComboID = o.OrderComboID
+	group by o2.OrderComboID
 ) o2
 Where	AP.POType='O' 
 		and APD.ArtworkTypeID='PRINTING' 
