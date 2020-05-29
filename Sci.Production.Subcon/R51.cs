@@ -98,20 +98,26 @@ select	AP.ID
 		, APD.PoQty
 		, APD.ArtworkTypeID
 		, FirstCutDate = isnull(C.FirstCutDate,O.CutInLine)
-		, AP.Delivery
+		, [Delivery] = o2.SciDelivery
 		, OA.Article
 		, QTY = APD.PoQty
 		, UnitPrice = OA.Cost 
 		, Detail_Amount = APD.PoQty * OA.Cost		
 		, O.AddDate as OrderAdddate
 		, O.EditDate as OrderEditDate
-        , o.BuyerDelivery
+        , [BuyerDelivery] = o2.BuyerDelivery
 From ArtworkPO AP
 Inner join ArtworkPO_Detail APD on AP.ID=APD.ID
 Inner join Orders O on APD.OrderID=O.ID
 left join Cutting C on O.ID=C.ID    
 Inner join dbo.View_Order_Artworks OA on  OA.ID=APD.OrderID and OA.PatternCode=APD.PatternCode and OA.ArtworkID=APD.ArtworkId and OA.ArtworkTypeID=APD.ArtworkTypeID
 Inner join Order_Qty OQ on OQ.ID=OA.ID and OQ.SizeCode=OA.SizeCode and OQ.Article=OA.Article
+outer apply (
+	select [BuyerDelivery] = max(o.BuyerDelivery), [SciDelivery] = min(o.SciDelivery)
+	from Orders o with (nolock)
+	where o.ID = APD.OrderID
+	group by o.ID
+) o2
 Where	AP.POType='O' 
 		and APD.ArtworkTypeID='PRINTING' 
 		and AP.Status <> 'New' 
@@ -122,7 +128,7 @@ Where	AP.POType='O'
 
 group by AP.ID, O.poid,AP.FactoryId, AP.Remark, AP.Handle, AP.CurrencyId, AP.VatRate, AP.Vat, AP.AddName, AP.AddDate, AP.EditName, AP.EditDate 
 		 , APD.OrderID, O.StyleID, O.BrandID, O.SeasonID, APD.PatternCode, APD.PatternDesc, APD.Farmout, APD.Farmin, APD.PoQty, APD.ArtworkTypeID
-		 , isnull(C.FirstCutDate,O.CutInLine), AP.Delivery, OA.Article,OA.Cost,O.AddDate,O.EditDate, o.BuyerDelivery");
+		 , isnull(C.FirstCutDate,O.CutInLine), o2.SciDelivery, OA.Article,OA.Cost,O.AddDate,O.EditDate, o2.BuyerDelivery");
                 //, (filte.Count > 0) ? "and " + filte.JoinToString("\n\r and ") : "");
             #endregion
             #region Get Data
