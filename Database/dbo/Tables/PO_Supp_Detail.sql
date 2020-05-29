@@ -69,6 +69,8 @@
     [StockUnit]       VARCHAR (8)     CONSTRAINT [DF_PO_Supp_Detail_StockUnit] DEFAULT ('') NULL,
     [CfmETA]          DATE            NULL,
     [RevisedETD]      DATE            NULL,
+    [POAmt] NUMERIC(16, 4) NOT NULL DEFAULT ((0)), 
+    [ShipAmt] NUMERIC(16, 4) NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_PO_Supp_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [SEQ1] ASC, [SEQ2] ASC)
 );
 
