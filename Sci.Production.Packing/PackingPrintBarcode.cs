@@ -321,10 +321,12 @@ namespace Sci.Production.Packing
                         string cartonNo = "CTN: " + printData.Rows[p]["CTNStartNo"] + " OF " + printData.Rows[p]["CtnQty"];
                         string poNo = "PO#: " + printData.Rows[p]["PONo"];
                         string sizeQty = "Size/Qty:" + printData.Rows[p]["SizeCode"] + "/" + printData.Rows[p]["ShipQty"];
+                        string custCTN = printData.Rows[p]["CustCTN"].ToString();
                         #endregion
 
                         tables.Cell(((p % pageItemCount) * 3) + 1, 1).Range.Text = packingNo + Environment.NewLine + spNo + Environment.NewLine + poNo;
                         tables.Cell(((p % pageItemCount) * 3) + 2, 1).Range.Text = sizeQty + "  " + cartonNo;
+                        tables.Cell(((p % pageItemCount) * 3) + 3, 1).Range.Text = custCTN;
 
                         Bitmap oriBitmap = this.NewQRcode(barcode);
                         Clipboard.SetImage(oriBitmap);
@@ -332,11 +334,14 @@ namespace Sci.Production.Packing
                         Word.Shape qrCodeImg = tables.Cell(((p % pageItemCount) * 3) + 1, 2).Range.InlineShapes[1].ConvertToShape();
                         qrCodeImg.Width = 34;
                         qrCodeImg.Height = 34;
-                        Timer timer = new Timer();
+
                         qrCodeImg.WrapFormat.Type = Word.WdWrapType.wdWrapBehind;
                         qrCodeImg.RelativeHorizontalPosition = Word.WdRelativeHorizontalPosition.wdRelativeHorizontalPositionColumn;
                         qrCodeImg.RelativeVerticalPosition = Word.WdRelativeVerticalPosition.wdRelativeVerticalPositionParagraph;
+
+                        // 由於設定相對距離，因此要給個位置設定，避免漂走
                         qrCodeImg.Top = MyUtility.Convert.GetFloat(0.05);
+                        qrCodeImg.Left = MyUtility.Convert.GetFloat(0.00);
                     }
                 }
                 #endregion
@@ -364,6 +369,116 @@ namespace Sci.Production.Packing
 
             return new DualResult(true);
 
+        }
+
+        public DualResult PrintCustCTN(string packingID, string ctn1, string ctn2, string print_type = "", bool country = false)
+        {
+            DataTable printData;
+            DualResult result = PublicPrg.Prgs.PackingBarcodePrint(MyUtility.Convert.GetString(packingID), ctn1, ctn2, out printData);
+            if (!result)
+            {
+                return result;
+            }
+            else if (printData == null || printData.Rows.Count == 0)
+            {
+                return new DualResult(false, "Data not found.");
+            }
+
+            Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
+            winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
+            winword.Visible = false;
+            object printFile;
+            Microsoft.Office.Interop.Word._Document document;
+            Word.Table tables = null;
+
+            printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_Barcode_CustCTN.dotx";
+            document = winword.Documents.Add(ref printFile);
+
+            try
+            {
+                document.Activate();
+                Word.Tables table = document.Tables;
+
+                #region 計算頁數
+                winword.Selection.Tables[1].Select();
+                winword.Selection.Copy();
+                int page = (printData.Rows.Count / 24) + ((printData.Rows.Count % 24 > 0) ? 1 : 0);
+                for (int i = 1; i < page; i++)
+                {
+                    winword.Selection.MoveDown();
+                    if (page > 1)
+                    {
+                        winword.Selection.InsertNewPage();
+                    }
+
+                    winword.Selection.Paste();
+                }
+                #endregion
+
+                for (int i = 0; i < page; i++)
+                {
+                    tables = table[i + 1];
+
+                    // 直的
+                    int countPerLine = 8;
+
+                    // 橫的
+                    int countPerRow = 3;
+
+                    // 1~3行
+                    for (int p = 1; p <= countPerRow; p++)
+                    {
+                        // 1~8列
+                        for (int x = 1; x <= countPerLine; x++)
+                        {
+                            int dataTableIndex = (countPerLine * (p - 1)) + (x - 1) + (24 * i);
+
+                            if (dataTableIndex > printData.Rows.Count - 1)
+                            {
+                                break;
+                            }
+
+                            #region 準備資料
+                            string barcode = printData.Rows[dataTableIndex]["CustCTN"].ToString();
+                            string cartonNo = "CTN: " + printData.Rows[dataTableIndex]["CTNStartNo"] + " of " + printData.Rows[p]["CTNQty"];
+                            #endregion
+
+                            Bitmap oriBitmap = this.NewBarcode(barcode);
+                            Clipboard.SetImage(oriBitmap);
+
+                            tables.Cell((x * 2) - 1, p).Range.Paste();
+                            tables.Cell((x * 2) - 1, p).Range.InlineShapes[1].ScaleHeight = 37.5f;
+                            tables.Cell((x * 2) - 1, p).Range.InlineShapes[1].ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapTight;
+
+                            tables.Cell(x * 2, p).Range.Text = cartonNo;
+                        }
+                    }
+                }
+
+                winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
+
+                #region Save & Show Word
+                winword.Visible = true;
+                Marshal.ReleaseComObject(winword);
+                Marshal.ReleaseComObject(document);
+                Marshal.ReleaseComObject(table);
+                #endregion
+            }
+            catch (Exception ex)
+            {
+                if (winword != null)
+                {
+                    winword.Quit();
+                }
+
+                return new DualResult(false, "Export word error.", ex);
+            }
+            finally
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+            return new DualResult(true);
         }
 
         /// <summary>
