@@ -352,6 +352,12 @@ begin
 end
 
 --01. 轉出區間 [Production].[dbo].[Orders].AddDate or EditDate= 今天
+--並記錄下這次有哪些OrderID異動
+SELECT ID ,POID
+INTO #tmpOrders
+FROM Production.dbo.Orders o
+where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate or convert(date,PulloutCmplDate) = @cDate)
+
 MERGE Orders AS T
 USING(
 	SELECT id,BrandID,ProgramID,StyleID,SeasonID,ProjectID,Category,OrderTypeID,Dest,CustCDID,StyleUnit
@@ -366,7 +372,7 @@ USING(
 		where StyleUkey=o.StyleUkey
 		for xml path('')
 	),1,1,'')) SL
-	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate or convert(date,PulloutCmplDate) = @cDate)
+	where o.id in (select ID from #tmpOrders)
 ) as S
 on T.ID = S.ID
 WHEN MATCHED THEN
@@ -399,13 +405,6 @@ VALUES(s.id, s.BrandID, s.ProgramID, s.StyleID, s.SeasonID, s.ProjectID, s.Categ
 	,s.Dest, s.CustCDID, s.StyleUnit, s.SetQty, s.Location, s.PulloutComplete, s.Junk
 	,s.CmdTime, s.SunriseUpdated, s.GenSongUpdated, s.CustPONo, s.POID)	;
 
-	--並記錄下這次有哪些OrderID異動
-	SELECT ID ,POID
-	INTO #tmpOrders
-	FROM Production.dbo.Orders o
-	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate or convert(date,PulloutCmplDate) = @cDate)
-
-
 --02. 轉出區間 [Production].[dbo].[Order_QtyShip].ID 在本次有更新的 Orders 之中
 MERGE Order_QtyShip AS T
 USING(
@@ -427,7 +426,8 @@ UPDATE SET
 	t.ReadyDate = s.ReadyDate,
 	t.CmdTime = s.CmdTime,
 	t.SunriseUpdated = s.SunriseUpdated,
-	t.GenSongUpdated = s.GenSongUpdated
+	t.GenSongUpdated = s.GenSongUpdated,
+	t.Junk = 0
 WHEN NOT MATCHED BY TARGET THEN
 INSERT(  id,   Seq,   ShipmodeID,   BuyerDelivery,   Qty,   EstPulloutDate,   ReadyDate,
 	     SunriseUpdated,   GenSongUpdated,   CmdTime) 
@@ -437,12 +437,13 @@ VALUES(s.id, s.Seq, s.ShipmodeID, s.BuyerDelivery, s.Qty, s.EstPulloutDate, s.Re
 	   
 ----不刪除，只Junk
 UPDATE t
-SET Junk = 1, CmdTime = GetDate()
+SET t.Junk = 1, t.CmdTime = GetDate() ,t.SunriseUpdated = 0 ,t.GenSongUpdated = 0
 FROM Order_QtyShip t
 WHERE NOT EXISTS(
 	SELECT 1 FROM Production.dbo.Order_QtyShip s
 	WHERE t.ID = s.ID and t.SEQ = s.SEQ
 )
+AND t.Junk = 0
 
 --03. 轉出區間 當AddDate or EditDate =今天、Category = 'HTML'
 MERGE ShippingMark AS T
