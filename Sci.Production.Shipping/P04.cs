@@ -131,7 +131,7 @@ where ed.ID = '{0}'", masterID);
                 .Text("UnitId", header: "Unit", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("Qty", header: "Import Q'ty", decimal_places: 2)
                 .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2)
-                .Numeric("WeightKg", header: "N.W.(kg)", decimal_places: 2);
+                .Numeric("WeightKg", header: "G.W.(kg)", decimal_places: 2);
         }
 
         /// <inheritdoc/>
