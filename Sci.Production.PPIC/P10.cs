@@ -776,13 +776,8 @@ FROM Lack l
 INNER JOIN Pass1 p ON p.ID = l.ApplyName
 WHERE l.ID='{this.CurrentMaintain["ID"]}'
 ");
-                string apvEmail = MyUtility.GetValue.Lookup($@"
-SELECT p.EMail
-FROM Pass1 p
-WHERE p.ID='{Sci.Env.User.UserID}'
-");
                 string toAddress = dt.Rows[0]["ToAddress"].ToString();
-                string ccAddress = dt.Rows[0]["CCAddress"].ToString() + $";{applyName}" + $";{apvEmail}";
+                string ccAddress = dt.Rows[0]["CCAddress"].ToString() + $";{applyName}";
                 string subject = dt.Rows[0]["Subject"].ToString();
 
                 // 取得表頭 P10 的單號
