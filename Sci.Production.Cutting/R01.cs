@@ -25,7 +25,6 @@ namespace Sci.Production.Cutting
         DataTable detailData;
         DataTable summaryData;
         DateTime? SewingDate_s, SewingDate_e;
-        DateTime MinInLine, MaxOffLine;
         List<string> FtyFroup = new List<string>();
         List<InOffLineList> AllDataTmp = new List<InOffLineList>();
         List<InOffLineList> AllData = new List<InOffLineList>();
@@ -75,7 +74,7 @@ namespace Sci.Production.Cutting
 
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-            DataTable dt;
+            DataTable dt_Schedule;
             string cmd = string.Empty;
             DualResult result;
 
@@ -100,235 +99,73 @@ AND (
                 cmd += Environment.NewLine + $@"AND s.FactoryID='{this.FactoryID}'";
             }
 
-            result = DBProxy.Current.Select(null, cmd, out dt);
+            result = DBProxy.Current.Select(null, cmd, out dt_Schedule);
 
             if (!result)
             {
                 return result;
             }
 
-            if (dt.Rows.Count == 0)
+            if (dt_Schedule.Rows.Count == 0)
             {
                 return result;
             }
 
             #endregion
 
-            //取出整份報表最早InLine / 最晚OffLine，先存下來待會用
-            this.MinInLine = dt.AsEnumerable().Min(o => Convert.ToDateTime(o["Inline"]));
-            this.MaxOffLine = dt.AsEnumerable().Max(o => Convert.ToDateTime(o["offline"]));
+            #region 準備 this.Days 時間軸 : (輸入)起始 - (最大Lead Time & 假日 & 星期天)  ~ 結束(不推算，因function需要判斷 推算日~結束日 之間是否有標記假日)
+            //PS:this.Days 準備日期清單,前後可多日期,不影響function中判斷 和 顯示結果(最後會刪除多餘的),但影響效能
+            DateTime MaxOffLine = dt_Schedule.AsEnumerable().Max(o => Convert.ToDateTime(o["offline"])).Date;
 
-            #region 處理報表上橫向日期的時間軸 (扣除Lead Time)
-
-            // 取得時間軸 ： (最早Inline - 最大Lead Time) ~ (最晚Offline - 最小Lead Time)
             int maxLeadTime = this.LeadTimeList.Max(o => o.LeadTimeDay);
             int minLeadTime = this.LeadTimeList.Min(o => o.LeadTimeDay);
-
-            // 起點 = (最早Inline - 最大Lead Time)、終點 = (最晚Offline - 最小Lead Time)
-            DateTime start = Convert.ToDateTime(this.SewingDate_s.Value.AddDays((-1 * maxLeadTime)).ToString("yyyy/MM/dd"));
-            DateTime end = this.MaxOffLine.Date;
-
-            // 算出總天數
-            TimeSpan ts = end - start;
-            int DayCount = Math.Abs(ts.Days) + 1;
-
-            // 找出時間軸內，所有的假日
-            DataTable dt2;
-            string cmd2 = $@"
-SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
-FROM
-(
-	SElECt * 
-	FROM Holiday WITH(NOLOCK)
-	WHERE HolidayDate >= '{start.ToString("yyyy/MM/dd")}'
-)a
-WHERE HolidayDate <= '{end.ToString("yyyy/MM/dd")}'
-AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
-";
-
-            result = DBProxy.Current.Select(null, cmd2, out dt2);
-
-            // 開始組合時間軸
-            this.Days.Clear();
-
-            for (int Day = 0; Day <= DayCount - 1; Day++)
-            {
-                PublicPrg.Prgs.Day day = new PublicPrg.Prgs.Day();
-                day.Date = end.AddDays(-1 * Day);
-                bool IsHoliday = false;
-
-                // 假日或國定假日要註記
-                if (dt2.Rows.Count > 0)
-                {
-                    IsHoliday = dt2.AsEnumerable().Where(o => Convert.ToDateTime(o["HolidayDate"]) == day.Date).Any();
-                }
-                if (day.Date.DayOfWeek == DayOfWeek.Sunday)
-                {
-                    IsHoliday = true;
-
-                    // 為避免假日推移的影響，讓時間軸不夠長，因此每遇到一次假日，就要加長一次時間軸
-                    DayCount += 1;
-
-
-                    start = start.AddDays(-1);
-                    cmd2 = $@"
-SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
-FROM
-(
-	SElECt * 
-	FROM Holiday WITH(NOLOCK)
-	WHERE HolidayDate >= '{start.ToString("yyyy/MM/dd")}'
-)a
-WHERE HolidayDate <= '{end.ToString("yyyy/MM/dd")}'
-AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
-";
-                    DBProxy.Current.Select(null, cmd2, out dt2);
-                }
-
-                day.IsHoliday = IsHoliday;
-                this.Days.Add(day);
-            }
-
-            #endregion
-
-            this.Days = this.Days.OrderBy(o => o.Date).ToList();
-
-            int hoidayDatas = this.Days.Where(o => o.IsHoliday).Count();
-
-            for (int i = 1; i <= hoidayDatas; i++)
-            {
-                for (int x = 1; x <= 365; x++)
-                {
-                    var firstDay = this.Days.FirstOrDefault();
-                    //firstDay.Date = firstDay.Date.AddDays(-1);
-
-                    PublicPrg.Prgs.Day nDay = new PublicPrg.Prgs.Day() { Date = firstDay.Date.AddDays(-1 * x), IsHoliday = false };
-
-                    if (nDay.Date.DayOfWeek == DayOfWeek.Sunday)
-                    {
-                        nDay.IsHoliday = true;
-                        this.Days.Add(nDay);
-                        continue;
-                    }
-                    else
-                    {
-                        string cmd3 = $@"
-
-	SElECt * 
-	FROM Holiday WITH(NOLOCK)
-	WHERE FactoryID IN ('{this.FtyFroup.JoinToString("','")}') AND HolidayDate = '{nDay.Date.ToString("yyyy/MM/dd")}'
-";
-                        DBProxy.Current.Select(null, cmd3, out dt2);
-                        if (dt2.Rows.Count > 0)
-                        {
-                            nDay.IsHoliday = true;
-                            this.Days.Add(nDay);
-                            continue;
-                        }
-
-                        nDay.IsHoliday = false;
-                        this.Days.Add(nDay);
-
-
-                        break;
-                    }
-                }
-                this.Days = this.Days.OrderBy(o => o.Date).ToList();
-            }
-
-
-
-            #region 推算報表要使用的開始和結束時間
-            maxLeadTime = this.LeadTimeList.Max(o => o.LeadTimeDay);
-            minLeadTime = this.LeadTimeList.Min(o => o.LeadTimeDay);
             int maxLeadTime_u = maxLeadTime;
             int minLeadTime_u = minLeadTime;
-            // 起點 = (最早Inline - 最大Lead Time)、終點 = (最晚Offline - 最小Lead Time)
             DateTime start_where = this.SewingDate_s.Value.Date;
             DateTime end_where = this.SewingDate_e.Value.Date;
-            start = start_where.AddDays(-maxLeadTime).Date;
-            end = end_where.AddDays(-minLeadTime).Date;
+            DateTime start = start_where.AddDays(-maxLeadTime).Date;
+            DateTime end = end_where.AddDays(-minLeadTime).Date;
 
-            #region 推算 (start)
-            cmd2 = $@"
-SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
-FROM Holiday WITH(NOLOCK)
-WHERE HolidayDate >= '{start.ToString("yyyy/MM/dd")}'
-AND HolidayDate <= '{start_where.ToString("yyyy/MM/dd")}'
-AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
-";
-            result = DBProxy.Current.Select(null, cmd2, out dt2);
-            // 開始組合時間軸
-            for (int Day = 0; Day <= maxLeadTime_u; Day++)
+            this.Days.Clear();
+
+            List<PublicPrg.Prgs.Day> daylist1 = PublicPrg.Prgs.GetDays(maxLeadTime, start_where, this.FtyFroup);
+            lastprocessday1 = daylist1.Select(s => s.Date).Min(m => m.Date); // 報表顯示開始日
+            List<PublicPrg.Prgs.Day> daylist2 = PublicPrg.Prgs.GetDays(minLeadTime, end_where, this.FtyFroup);
+            lastprocessday2 = daylist2.Select(s => s.Date).Min(m => m.Date); // 報表顯示結束日
+            foreach (var item in daylist1)
             {
-                DateTime dtime = start_where.AddDays(-Day);
-
-                // 是否行事曆設定假日
-                bool IsHoliday = dt2.AsEnumerable().Where(o => MyUtility.Convert.GetDate(o["HolidayDate"]) == dtime).Any();
-                // 是行事曆設定假日 or 星期天
-                if (IsHoliday || dtime.DayOfWeek == DayOfWeek.Sunday)
-                {
-                    IsHoliday = true;
-
-                    // 為避免假日推移的影響，讓時間軸不夠長，因此每遇到一次假日，就要加長一次時間軸
-                    maxLeadTime_u++;
-                    start = start.AddDays(-1);
-
-                    cmd2 = $@"
-SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
-FROM Holiday WITH(NOLOCK)
-WHERE HolidayDate >= '{start.ToString("yyyy/MM/dd")}'
-AND HolidayDate <= '{start_where.ToString("yyyy/MM/dd")}'
-AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
-";
-                    DBProxy.Current.Select(null, cmd2, out dt2);
-                }
-
-                lastprocessday1 = dtime;
+                this.Days.Add(item);
             }
-            #endregion
-            #region 推算 (end)
-            cmd2 = $@"
-SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
-FROM Holiday WITH(NOLOCK)
-WHERE HolidayDate >= '{end.ToString("yyyy/MM/dd")}'
-AND HolidayDate <= '{end_where.ToString("yyyy/MM/dd")}'
-AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
-";
-            result = DBProxy.Current.Select(null, cmd2, out dt2);
-            for (int Day = 0; Day <= minLeadTime_u; Day++)
+            foreach (var item in daylist2)
             {
-                DateTime dtime = end_where.AddDays(-Day);
-
-                // 是否行事曆設定假日
-                bool IsHoliday = dt2.AsEnumerable().Where(o => MyUtility.Convert.GetDate(o["HolidayDate"]) == dtime).Any();
-                // 是行事曆設定假日 or 星期天
-                if (IsHoliday || dtime.DayOfWeek == DayOfWeek.Sunday)
-                {
-                    IsHoliday = true;
-
-                    // 為避免假日推移的影響，讓時間軸不夠長，因此每遇到一次假日，就要加長一次時間軸
-                    minLeadTime_u++;
-                    end = end.AddDays(-1);
-
-                    cmd2 = $@"
-SELECT FactoryID ,[HolidayDate] = Cast(HolidayDate as Date)
-FROM Holiday WITH(NOLOCK)
-WHERE HolidayDate >= '{end.ToString("yyyy/MM/dd")}'
-AND HolidayDate <= '{end_where.ToString("yyyy/MM/dd")}'
-AND FactoryID IN ('{this.FtyFroup.JoinToString("','")}')
-";
-                    DBProxy.Current.Select(null, cmd2, out dt2);
-                }
-
-                lastprocessday2 = dtime;
+                this.Days.Add(item);
             }
-            #endregion
+
+            // 若 daylist1 是1/1~1/3, daylist2 是1/10~1/12, 中間也要補上
+            if (start_where < lastprocessday2)
+            {
+                List<PublicPrg.Prgs.Day> daylist3 = PublicPrg.Prgs.GetRangeHoliday(start_where, (DateTime)lastprocessday2, this.FtyFroup);
+                foreach (var item in daylist3)
+                {
+                    this.Days.Add(item);
+                }
+            }
+            if (start_where < MaxOffLine) // 報表篩選是時間範圍, 狀況是SewingSchedule的最晚OffLine超過條件
+            {
+                List<PublicPrg.Prgs.Day> daylist3 = PublicPrg.Prgs.GetRangeHoliday(start_where, MaxOffLine, this.FtyFroup);
+                foreach (var item in daylist3)
+                {
+                    this.Days.Add(item);
+                }
+            }
+
+            this.Days = this.Days
+                .Select(s => new { s.Date, s.IsHoliday }).Distinct() // start和end加入日期有重複
+                .Select(s => new PublicPrg.Prgs.Day { Date = s.Date, IsHoliday = s.IsHoliday })
+                .OrderBy(o => o.Date).ToList();
             #endregion
 
-            List<string> allOrder = dt.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct().ToList();
-
-            this.AllData = GetInOffLineList(dt, this.Days);
+            this.AllData = GetInOffLineList(dt_Schedule, this.Days);
 
             List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days, this.AllData);
 
@@ -565,7 +402,6 @@ drop table #OrderList
                 return false;
             }
 
-            List<string> PoID_List = PoID_dt.AsEnumerable().Select(o => o["POID"].ToString()).Distinct().ToList();
             this.FtyFroup = PoID_dt.AsEnumerable().Select(o => o["FtyGroup"].ToString()).Distinct().ToList();
             List<string> Msg = new List<string>();
 
