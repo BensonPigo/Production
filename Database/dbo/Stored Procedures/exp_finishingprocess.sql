@@ -427,13 +427,22 @@ UPDATE SET
 	t.ReadyDate = s.ReadyDate,
 	t.CmdTime = s.CmdTime,
 	t.SunriseUpdated = s.SunriseUpdated,
-	t.GenSongUpdated = s.GenSongUpdated,
-	t.Junk = s.Junk
+	t.GenSongUpdated = s.GenSongUpdated
 WHEN NOT MATCHED BY TARGET THEN
 INSERT(  id,   Seq,   ShipmodeID,   BuyerDelivery,   Qty,   EstPulloutDate,   ReadyDate,
-	     SunriseUpdated,   GenSongUpdated,   CmdTime,	Junk) 
+	     SunriseUpdated,   GenSongUpdated,   CmdTime) 
 VALUES(s.id, s.Seq, s.ShipmodeID, s.BuyerDelivery, s.Qty, s.EstPulloutDate, s.ReadyDate,
-	   s.SunriseUpdated, s.GenSongUpdated, s.CmdTime,	s.Junk)	;
+	   s.SunriseUpdated, s.GenSongUpdated, s.CmdTime)	;
+
+	   
+----不刪除，只Junk
+UPDATE t
+SET Junk = 1, CmdTime = GetDate()
+FROM Order_QtyShip t
+WHERE NOT EXISTS(
+	SELECT 1 FROM Production.dbo.Order_QtyShip s
+	WHERE t.ID = s.ID and t.SEQ = s.SEQ
+)
 
 --03. 轉出區間 當AddDate or EditDate =今天、Category = 'HTML'
 MERGE ShippingMark AS T
