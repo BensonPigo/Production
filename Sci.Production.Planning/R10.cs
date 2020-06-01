@@ -34,6 +34,7 @@ namespace Sci.Production.Planning
         private string Fty;
         private bool byCPU;
         private bool byBrand;
+        private bool IncludeCancelOrder;
 
         private int sheetStart = 6;
         private string title = string.Empty;
@@ -107,6 +108,7 @@ namespace Sci.Production.Planning
             this.zone = this.TxtZone.Text;
             this.byCPU = this.chkByCPU.Checked;
             this.byBrand = this.chkByBrand.Checked;
+            this.IncludeCancelOrder = this.chkIncludeCancelOrder.Checked;
             return true;
         }
 
@@ -214,7 +216,8 @@ namespace Sci.Production.Planning
                         { "HideFoundry", this.chkHideFoundry.Checked },
                         { "Zone", this.zone },
                         { "CalculateCPU", this.byCPU },
-                        { "CalculateByBrand", this.byBrand }
+                        { "CalculateByBrand", this.byBrand },
+                        { "IncludeCancelOrder", this.IncludeCancelOrder }
                     };
 
                     result = RunPlanningR10Report(false, this.chkByCPU.Checked, this.ReportType, artworkLis, paras);

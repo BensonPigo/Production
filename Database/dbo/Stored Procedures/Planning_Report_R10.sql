@@ -13,6 +13,7 @@ CREATE PROCEDURE [dbo].[Planning_Report_R10]
 	,@Zone varchar(8) = ''
 	,@CalculateCPU bit = 0
 	,@CalculateByBrand bit = 0
+	,@IncludeCancelOrder bit = 1
 AS
 BEGIN
 	/*
@@ -108,6 +109,8 @@ BEGIN
 	AND @HasOrders = 1
 	And localorder = 0
 	and Factory.IsProduceFty = 1
+	and ((@IncludeCancelOrder = 0 and Orders.Junk = 0 AND Orders.IsBuyBack = 0) 
+	  or (@IncludeCancelOrder = 1 and Orders.IsBuyBack = 0 AND (Orders.Junk = 0 OR (Orders.Junk = 1 AND Orders.NeedProduction = 1))))
 	
 	Select Orders.ID
 	, rtrim(iif(Factory.FactorySort = '999', Factory.KpiCode, Factory.ID)) as FactoryID
@@ -165,6 +168,8 @@ BEGIN
 	AND Orders.LocalOrder = 1 -- PMS此處才加, 當地訂單在trade是記錄在Table:FactoryOrder
 	AND Orders.IsForecast = 0
 	and Factory.IsProduceFty = 1
+	and ((@IncludeCancelOrder = 0 and Orders.Junk = 0 AND Orders.IsBuyBack = 0) 
+	  or (@IncludeCancelOrder = 1 and Orders.IsBuyBack = 0 AND (Orders.Junk = 0 OR (Orders.Junk = 1 AND Orders.NeedProduction = 1))))
 
 	Select FactoryOrder.ID, rtrim(FactoryOrder.FactoryID) as FactoryID
 	, iif(Factory.Type = 'S', 'Sample', Factory.MDivisionID) as MDivisionID
@@ -248,6 +253,8 @@ BEGIN
 	And localorder = 0
 	AND Orders.IsForecast = 1 -- PMS此處才加, 預估單 在trade是記錄在Table:FactoryOrder
 	and Factory.IsProduceFty = 1
+	and ((@IncludeCancelOrder = 0 and Orders.Junk = 0 AND Orders.IsBuyBack = 0) 
+	  or (@IncludeCancelOrder = 1 and Orders.IsBuyBack = 0 AND (Orders.Junk = 0 OR (Orders.Junk = 1 AND Orders.NeedProduction = 1))))
 
 	---------------------------------------------------------------------------------------------------------------------------------
 	
