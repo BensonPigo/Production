@@ -2425,7 +2425,7 @@ ELSE
                     return;
                 }
 
-                if (seekData["InvNo"].ToString() == "Y")
+                if (!MyUtility.Check.Empty(seekData["InvNo"]))
                 {
                     MyUtility.Msg.WarningBox("SP# was booking!! You can't switch to packing list.");
                     return;
