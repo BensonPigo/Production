@@ -128,12 +128,12 @@ namespace Sci.Production.Centralized
             List<string> listWhereSource = new List<string>();
             if (this.Order)
             {
-                listWhereSource.Add(" (Qty > 0  And Category in ('B','S')  and (localorder = 0 or SubconInType=2)) ");
+                listWhereSource.Add(" ( Category in ('B','S')  and (localorder = 0 or SubconInType=2)) ");
             }
 
             if (this.Forecast)
             {
-                listWhereSource.Add(" (Qty > 0 AND IsForecast = 1 and (localorder = 0 or SubconInType=2)) ");
+                listWhereSource.Add(" ( IsForecast = 1 and (localorder = 0 or SubconInType=2)) ");
             }
 
             if (this.FtyLocalOrder)
@@ -239,7 +239,7 @@ select  ID,
         --summary頁面不算Junk訂單使用，Forecast沒排掉是因為Planning R10有含
         [isNormalOrderCanceled] = iif(  Junk = 1 and 
                                         --正常訂單
-                                        ((Qty > 0  And Category in ('B','S')  and (localorder = 0 or SubconInType=2)) or
+                                        (( Category in ('B','S')  and (localorder = 0 or SubconInType=2)) or
                                         --當地訂單
                                         (LocalOrder = 1 )),1,0),
         FtyZone,
@@ -328,13 +328,13 @@ select  FtyGroup,
         SewingOutputCPU,
         FtyZone,
         [IsTransOrder] = 0
-from    #tmpBaseBySource
+from    #tmpBaseBySource where TransFtyZone = ''
 union all
 select  FtyGroup,
         [Date] = SUBSTRING(Date,1,4)+'/'+SUBSTRING(Date,5,6),
         ID,
         OutputDate,
-        [OrderCPU] = iif(isNormalOrderCanceled = 1,0, (OrderCPU - OrderShortageCPU) * -1),
+        [OrderCPU] = iif(isNormalOrderCanceled = 1,0, (OrderCPU - OrderShortageCPU)),
         [CanceledCPU] = 0,
         [OrderShortageCPU] = 0,
         [SewingOutput] = 0,
@@ -348,7 +348,7 @@ from    #tmpBase
 where   Junk=1 and OutputDate is not null 
 group by FtyGroup,OutputDate,FtyZone
 
-drop table #tmpBaseOrderID,#tmpBaseByOrderID,#tmpBaseTransOrderID,#tmpBaseStep1,#tmpBase,#tmpBaseBySource,#tmpOrder_QtyShip
+drop table #tmpBaseOrderID,#tmpBaseByOrderID,#tmpBaseTransOrderID,#tmpBaseStep1,#tmpBase,#tmpBaseBySource,#tmpOrder_QtyShip,#tmpPullout_Detail
 ";
             #endregion
 
@@ -416,13 +416,14 @@ drop table #tmpBaseOrderID,#tmpBaseByOrderID,#tmpBaseTransOrderID,#tmpBaseStep1,
             {
                 #region summary
                 string sqlsum = $@"
-select Date,ID,OrderCPU,CanceledCPU,BalanceCPU=OrderCPU-sum(SewingOutputCPU),OrderShortageCPU
+select Date,ID,OrderCPU,CanceledCPU,BalanceCPU=iif(IsTransOrder = 1, 0, OrderCPU-sum(SewingOutputCPU)), OrderShortageCPU, IsTransOrder
 into #tmp2_0
 from #tmp
 where FtyZone = '{ftyZone}'
-group by Date,ID,OrderCPU,CanceledCPU,OrderShortageCPU
+group by Date,ID,OrderCPU,CanceledCPU,OrderShortageCPU,IsTransOrder
 
-select Date,OrderCPU=sum(OrderCPU),CanceledCPU = sum(CanceledCPU),BalanceCPU=sum(BalanceCPU),[OrderShortageCPU] = sum(OrderShortageCPU)
+select  Date,OrderCPU=sum(iif(IsTransOrder = 1, -OrderCPU, OrderCPU)),CanceledCPU = sum(CanceledCPU),BalanceCPU=sum(BalanceCPU),[OrderShortageCPU] = sum(OrderShortageCPU),
+        [SubconOutCPU] = sum(iif(IsTransOrder = 1, OrderCPU, 0))
 into #tmp2
 from #tmp2_0
 group by Date
@@ -453,7 +454,7 @@ for xml path('')
 
 declare @sql nvarchar(max)=N'
 select t2.Date,
-	Loading=t2.OrderCPU,[Shortage] = t2.OrderShortageCPU, [Canceled] = t2.CanceledCPU, Balance=t2.BalanceCPU,
+	Loading=t2.OrderCPU,[Shortage] = t2.OrderShortageCPU, [Canceled] = t2.CanceledCPU, [SubconOut] = t2.SubconOutCPU, Balance=t2.BalanceCPU,
 	'+@col+N'
 into #tmp3
 from #tmp2 t2
@@ -474,13 +475,13 @@ order by t2.Date
 
 select*from #tmp3
 union all
-select ''Total'' ,sum(Loading),sum(Shortage), sum(Canceled), sum(Balance),'+@col2+' from #tmp3
+select ''Total'' ,sum(Loading),sum(Shortage), sum(Canceled), sum(SubconOut), sum(Balance),'+@col2+' from #tmp3
 '
 exec (@sql)
 
 if @sql is null
 begin
-	select Date='',Loading=null,Shortage = null, Canceled = null,Balance=null,[ ]=''
+	select Date='',Loading=null,Shortage = null, Canceled = null,SubconOut=null,Balance=null,[ ]=''
 end
 
 drop table #tmp,#tmp2_0,#tmp2
@@ -630,13 +631,13 @@ drop table #tmp
             {
                 string ftyZone = MyUtility.Convert.GetString(this.listFtyZone[j - 1]);
                 worksheet = excelApp.ActiveWorkbook.Worksheets[j];
-                worksheet.Name = ftyZone + "-Summary";
+                worksheet.Name = ftyZone;
                 MyUtility.Excel.CopyToXls(this.Summarydt[j - 1], string.Empty, xltfile: excelFile, headerRow: 4, excelApp: excelApp, wSheet: excelApp.Sheets[j], showExcel: false, DisplayAlerts_ForSaveFile: true);
                 worksheet.Cells[1, 1] = "Fty:" + ftyZone;
                 int i = 1;
                 foreach (DataColumn col in this.Summarydt[j - 1].Columns)
                 {
-                    if (i > 5)
+                    if (i > 6)
                     {
                         worksheet.Cells[4, i] = col.ColumnName;
                     }
@@ -645,7 +646,7 @@ drop table #tmp
                 }
 
                 i--;
-                worksheet.get_Range((Excel.Range)worksheet.Cells[3, 6], (Excel.Range)worksheet.Cells[3, i]).Merge(false);
+                worksheet.get_Range((Excel.Range)worksheet.Cells[3, 7], (Excel.Range)worksheet.Cells[3, i]).Merge(false);
                 worksheet.get_Range((Excel.Range)worksheet.Cells[3, 1], (Excel.Range)worksheet.Cells[this.Summarydt[j - 1].Rows.Count + 4, i]).Borders.Weight = 3; // 設定全框線
                 worksheet.Columns.AutoFit();
             }

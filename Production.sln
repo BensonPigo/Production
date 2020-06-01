@@ -5,6 +5,7 @@ VisualStudioVersion = 16.0.29418.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.Production", "Sci.Production\Sci.Production.csproj", "{E6C6EDF1-923A-47B6-AC08-147B8517BFB0}"
 	ProjectSection(ProjectDependencies) = postProject
+		{CB61A07F-7D72-490E-AEB6-BA5080F8D652} = {CB61A07F-7D72-490E-AEB6-BA5080F8D652}
 		{4CB3BF8F-1C15-4D8C-95C1-6C9F0A5383B0} = {4CB3BF8F-1C15-4D8C-95C1-6C9F0A5383B0}
 	EndProjectSection
 EndProject
