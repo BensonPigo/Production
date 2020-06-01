@@ -1071,7 +1071,9 @@ order by DataType,SCIRefno,UsageUnit",
                     newRow["LocalItem"] = dr["LocalItem"];
                     newRow["FabricBrandID"] = dr["BrandID"];
                     newRow["FabricType"] = dr["FabricType"];
+                    newRow["UsageUnit"] = dr["UsageUnit"];
                     newRow["SystemQty"] = dr["Qty"];
+                    newRow["UsageQty"] = dr["UsageQty"];
                     newRow["Qty"] = dr["Qty"];
                     newRow["StockQty"] = dr["StockQty"];
                     newRow["StockUnit"] = dr["StockUnit"];

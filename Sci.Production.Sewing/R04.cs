@@ -269,9 +269,11 @@ select t.*
     ,[FtyType] = f.Type
     ,[FtyCountry] = f.CountryID
     ,[CumulateDate] = (select cumulate from dbo.getSewingOutputCumulateOfDays(IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.OutputDate,t.FactoryID))
+    ,[SPFactory] = o.FactoryID
 into #tmp1stFilter
 from #tmpSewingGroup t
 left join Factory f on t.FactoryID = f.ID
+left join Orders o on t.OrderId = o.ID
 where 1=1");
             if (!MyUtility.Check.Empty(this.category) && this.category != "Mockup")
             {
@@ -442,8 +444,9 @@ select * from(
 
             sqlCmd.Append($@",Diff = t.QAQty-InlineQty
 		,rate
-        ,t.Remark
+        ,t.Remark        
         ,t.SewingReasonDesc
+        ,t.SPFactory
 		{(this.chk_Include_Artwork.Checked ? "'+@TTLZ+N'" : " ")}
     from #tmp1stFilter t");
             if (this.show_Accumulate_output == true)
@@ -507,11 +510,11 @@ EXEC sp_executesql @lastSql
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             if (this.show_Accumulate_output == true)
             {
-                start_column = 42;
+                start_column = 43;
             }
             else
             {
-                start_column = 40;
+                start_column = 41;
                 objSheets.get_Range("AM:AN").EntireColumn.Delete();
             }
 

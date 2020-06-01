@@ -28,7 +28,7 @@ namespace Sci.Production.Warehouse
             dt_detail = detail;
             this.EditMode = true;
 
-            Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
+            Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
             comboBox1_RowSource.Add("", "All");
             comboBox1_RowSource.Add("F", "Fabric");
             comboBox1_RowSource.Add("A", "Accessory");
@@ -45,16 +45,16 @@ namespace Sci.Production.Warehouse
         private void btnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
-            String sp = this.txtSPNo.Text.TrimEnd();
-            String refno = this.txtRef.Text.TrimEnd();
-            String color = this.txtColor.Text.TrimEnd();
-            String roll = this.txtRoll.Text.TrimEnd();
-            String dyelot = this.txtDyelot.Text.TrimEnd();
-            String transid = this.txtTransactionID.Text.TrimEnd();
-            String wk = this.txtWk.Text.TrimEnd();
-            String locationid = this.txtLocation.Text.TrimEnd();
-            String MaterialType = this.cmbMaterialType.SelectedValue.ToString();
-            String StockType = this.comboStockType.SelectedValue.ToString();
+            string sp = this.txtSPNo.Text.TrimEnd();
+            string refno = this.txtRef.Text.TrimEnd();
+            string color = this.txtColor.Text.TrimEnd();
+            string roll = this.txtRoll.Text.TrimEnd();
+            string dyelot = this.txtDyelot.Text.TrimEnd();
+            string transid = this.txtTransactionID.Text.TrimEnd();
+            string wk = this.txtWk.Text.TrimEnd();
+            string locationid = this.txtLocation.Text.TrimEnd();
+            string MaterialType = this.cmbMaterialType.SelectedValue.ToString();
+            string StockType = this.comboStockType.SelectedValue.ToString();
             //SP#, Transaction ID, Ref#,Location#,WK#不可同時為空
             bool sql1 = false;
             if (MyUtility.Check.Empty(sp) && MyUtility.Check.Empty(transid) && MyUtility.Check.Empty(locationid) && MyUtility.Check.Empty(refno) && MyUtility.Check.Empty(wk))
@@ -100,7 +100,7 @@ where    f.MDivisionID='{0}'
                 if (!MyUtility.Check.Empty(sp))
                 {
                     strSQLCmd.Append(string.Format(@" 
-        and a.poid='{0}' ", sp));
+        and a.poid like '%{0}%' ", sp));
                 }
                 if (!txtSeq.checkSeq1Empty() && txtSeq.checkSeq2Empty())
                 {
@@ -125,7 +125,7 @@ where    f.MDivisionID='{0}'
                 if (!MyUtility.Check.Empty(dyelot))
                 {
                     strSQLCmd.Append(string.Format(@" 
-        and a.dyelot='{0}' ", dyelot));
+        and a.dyelot like '%{0}%' ", dyelot));
                 }
                 if (!MyUtility.Check.Empty(MaterialType))
                 {
@@ -150,7 +150,7 @@ where    f.MDivisionID='{0}'
                 if (!MyUtility.Check.Empty(roll))
                 {
                     strSQLCmd.Append(string.Format(@" 
-        and a.Roll='{0}'", roll));
+        and a.Roll like '%{0}%' ", roll));
                 }
 
                 strSQLCmd.Append(@" 
@@ -431,7 +431,7 @@ WHERE   StockType='{0}'
                     dr["ToLocation"] = string.Join(",", (trueLocation).ToArray());
                     //去除錯誤的Location將正確的Location填回
 
-                    dr["selected"] = (!String.IsNullOrEmpty(dr["ToLocation"].ToString())) ? 1 : 0; 
+                    dr["selected"] = (!string.IsNullOrEmpty(dr["ToLocation"].ToString())) ? 1 : 0; 
 
                     gridImport.RefreshEdit();
                 }
