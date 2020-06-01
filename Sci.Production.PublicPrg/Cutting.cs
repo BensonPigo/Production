@@ -80,7 +80,13 @@ namespace Sci.Production.PublicPrg
         }
         #endregion;
 
-        #region 均分數量 EX:10均分4份→3,3,2,2
+        /// <summary>
+        /// 均分數量 EX:10均分4份→3,3,2,2
+        /// </summary>
+        /// <param name="dr"></param>
+        /// <param name="columnName"></param>
+        /// <param name="TotalNumeric"></param>
+        /// <param name="deleteZero"></param>
         public static void AverageNumeric(DataRow[] dr, string columnName = "Qty", int TotalNumeric = 0, bool deleteZero = false)
         {
             if (dr.Count() == 0) return;
@@ -245,7 +251,6 @@ WHERE OrderID IN ('{OrderIDs.JoinToString("','")}')
             return APSNoDailyStdQty;
         }
 
-        #endregion;
         /// <summary>
         /// 取得Cutting成套的數量
         /// </summary>
@@ -604,8 +609,16 @@ order by WOD.OrderID,EstCutDate.EstCutDate
         /// <param name="dt_SewingSchedule">SewingSchedule的Datatable</param>
         /// <param name="Days">處理過的時間軸，可見Cutting R01報表搜尋"處理報表上橫向日期的時間軸 (扣除Lead Time)" </param>
         /// <returns></returns>
-        public static List<InOffLineList> GetInOffLineList(DataTable dt_SewingSchedule, List<Day> Days, System.ComponentModel.BackgroundWorker bw = null)
+        public static List<InOffLineList> GetInOffLineList(DataTable dt_SewingSchedule, List<Day> Days, DateTime? startdate = null, DateTime? Enddate = null, System.ComponentModel.BackgroundWorker bw = null)
         {
+            if (startdate == null)
+            {
+                startdate = Days.Min(m => m.Date.Date).Date;
+            }
+            if (Enddate == null)
+            {
+                Enddate = Days.Max(m => m.Date.Date).Date;
+            }
             decimal processInt = 10; // 給進度條顯示值
             decimal pc = 10;
             List<DataTable> resultList = new List<DataTable>();
@@ -688,7 +701,11 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                             Pdate = APSday.AddDays(-HolidayCount - LeadTime);
                         }
                         #endregion
-
+                        // 推算後的日期，不在最終顯示範圍
+                        if (startdate > Pdate || Enddate < Pdate)
+                        {
+                            continue;
+                        }
                         // 如果這 OrderID & 這天(用推算後比較) 已經紀錄在 nOnj, 則跳過這天, 因下方標準數,裁減數是以(天)計算成套,故同天不用重複算
                         if (nOnj.InOffLines.Where(w => w.DateWithLeadTime == Pdate).Any())
                         {
@@ -725,7 +742,10 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                         nOnj.InOffLines.Add(nLineObj);
                     }
                 }
-                AllDataTmp.Add(nOnj);
+                if (nOnj.InOffLines.Any())
+                {
+                    AllDataTmp.Add(nOnj);
+                }
                 
                 if (bw != null)
                 {
@@ -762,8 +782,16 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             return AllData;
         }
 
-        public static List<InOffLineList_byFabricPanelCode> GetInOffLineList_byFabricPanelCode(DataTable dt_SewingSchedule, List<Day> Days, System.ComponentModel.BackgroundWorker bw = null)
+        public static List<InOffLineList_byFabricPanelCode> GetInOffLineList_byFabricPanelCode(DataTable dt_SewingSchedule, List<Day> Days, DateTime? startdate = null, DateTime? Enddate = null, System.ComponentModel.BackgroundWorker bw = null)
         {
+            if (startdate == null)
+            {
+                startdate = Days.Min(m => m.Date.Date).Date;
+            }
+            if (Enddate == null)
+            {
+                Enddate = Days.Max(m => m.Date.Date).Date;
+            }
             decimal processInt = 10; // 給進度條顯示值
             decimal pc = 10;
 
@@ -793,7 +821,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 
             if (SPFabricPanelCodeList.Count > 0)
             {
-                pc = (decimal)70 / SPFabricPanelCodeList.Count; // 此迴圈佔 70% , 85%
+                pc = (decimal)70 / SPFabricPanelCodeList.Count; // 此迴圈佔 70% → 85%
             }
 
             // 處理不同 OrderID, FabricPanelCode
@@ -846,11 +874,15 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                                 }
                             }
 
-                            Pdate = APSday.AddDays(-HolidayCount);
+                            Pdate = APSday.AddDays(-HolidayCount - LeadTime);
                         }
                         #endregion
-
-                        // 如果這 OrderID & 這天(用推算後比較) 已經紀錄在 nOnj, 則跳過這天, 因下方標準數,裁減數是以(天)計算成套,故同天不用重複算
+                        // 推算後的日期，不在最終顯示範圍
+                        if (startdate > Pdate || Enddate < Pdate)
+                        {
+                            continue;
+                        }
+                        // 如果這 OrderID & FabricPanelCode & 這天(用推算後比較) 已經紀錄在 nOnj, 則跳過這天, 因下方標準數,裁減數是以(天)計算成套,故同天不用重複算
                         if (nOnj.InOffLines.Where(w => w.DateWithLeadTime == Pdate).Any())
                         {
                             continue;
@@ -887,7 +919,10 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                         nOnj.InOffLines.Add(nLineObj);
                     }
                 }
-                AllDataTmp.Add(nOnj);
+                if (nOnj.InOffLines.Any())
+                {
+                    AllDataTmp.Add(nOnj);
+                }
 
                 if (bw != null)
                 {
@@ -1798,34 +1833,6 @@ DROP TABLE #beforeTmp
             return rtn;
         }
 
-//        public static int GetAccuAlloQtyByDate(string OrderID, DateTime beforeSewingDate)
-//        {
-//            string sqlcmd = $@"
-//SELECT ComboType, AlloQty=SUM(AlloQty)
-//INTO #beforeTmp
-//FROM (
-//	SELECT ComboType,AlloQty
-//	FROM SewingSchedule with(nolock)
-//	WHERE OrderID='{OrderID}'
-//	and cast(Inline as date) <= '{beforeSewingDate.ToString("yyyy/MM/dd")}'
-//)a
-//where AlloQty is not null
-//GROUP BY ComboType
-
-
-//---- 取裁片數最少的 = 成套件數
-//SELECT MIN( ISNULL(u.AlloQty,0))
-//FROM Orders o with(nolock)
-//INNER JOIN Style_Location s with(nolock) ON o.StyleUkey = s.StyleUkey
-//LEFT JOIN #beforeTmp u ON u.ComboType = s.Location
-//WHERE o.ID='{OrderID}'
-
-//DROP TABLE #beforeTmp
-//";
-//            string value = MyUtility.GetValue.Lookup(sqlcmd);
-//            int rtn = MyUtility.Check.Empty(value) ? 0 : Convert.ToInt32(value);
-//            return rtn;
-//        }
         #region 類別
 
         /// <summary>

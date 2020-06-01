@@ -786,6 +786,7 @@ where   id = '{0}'
         List<InOffLineList_byFabricPanelCode> AllDataTmp2 = new List<InOffLineList_byFabricPanelCode>();
         List<InOffLineList_byFabricPanelCode> AllData2 = new List<InOffLineList_byFabricPanelCode>();
         List<PublicPrg.Prgs.Day> Days = new List<PublicPrg.Prgs.Day>();
+        List<PublicPrg.Prgs.Day> Days2 = new List<PublicPrg.Prgs.Day>();
         List<LeadTime> LeadTimeList = new List<LeadTime>();
 
         private bool Query1()
@@ -808,13 +809,11 @@ where   id = '{0}'
             DualResult result = DBProxy.Current.Select(null, cmd, out dt_Schedule);
             if (!result)
             {
-                //this.finalmsg = result.ToString();
                 return false;
             }
 
             if (dt_Schedule.Rows.Count == 0)
             {
-                //this.finalmsg = "Data not Found";
                 return false;
             }
             #endregion
@@ -832,8 +831,8 @@ where   id = '{0}'
             DateTime start_where = this.MinInLine;
             DateTime end_where = this.MaxOffLine;
 
-            List<PublicPrg.Prgs.Day> daylist1 = PublicPrg.Prgs.GetDays(maxLeadTime, start_where, this.FtyFroup);
-            List<PublicPrg.Prgs.Day> daylist2 = PublicPrg.Prgs.GetDays(minLeadTime, end_where, this.FtyFroup);
+            List<PublicPrg.Prgs.Day> daylist1 = PublicPrg.Prgs.GetDays(maxLeadTime, start_where.Date, this.FtyFroup);
+            List<PublicPrg.Prgs.Day> daylist2 = PublicPrg.Prgs.GetDays(minLeadTime, end_where.Date, this.FtyFroup);
             foreach (var item in daylist1)
             {
                 this.Days.Add(item);
@@ -854,24 +853,22 @@ where   id = '{0}'
             }
 
             this.Days = this.Days
-                .Select(s => new { s.Date, s.IsHoliday }).Distinct() // start和end加入日期有重複
-                .Select(s => new PublicPrg.Prgs.Day { Date = s.Date, IsHoliday = s.IsHoliday })
+                .Select(s => new { Date = s.Date.Date, IsHoliday = s.IsHoliday }).Distinct()
+                .Select(s => new PublicPrg.Prgs.Day { Date = s.Date.Date, IsHoliday = s.IsHoliday })
                 .OrderBy(o => o.Date).ToList();
             #endregion
 
-            if (this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
             this.bgWorkerUpdateInfo.ReportProgress(5);
 
-            List<string> allOrder = dt_Schedule.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct().ToList();
+            this.AllData = GetInOffLineList(dt_Schedule, this.Days, startdate: DateTime.Today.Date, bw: this.bgWorkerUpdateInfo);
 
-            this.AllData = GetInOffLineList(dt_Schedule, this.Days, this.bgWorkerUpdateInfo);
-
-            if (this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
             this.bgWorkerUpdateInfo.ReportProgress(90);
 
-            List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days, this.AllData);
+            List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days, this.AllData.OrderBy(o => o.OrderID).ToList());
 
-            if (this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
             this.bgWorkerUpdateInfo.ReportProgress(95);
 
             this.summaryData = LeadTimeList[0];
@@ -911,7 +908,6 @@ where   id = '{0}'
 
             return true;
         }
-
         private bool Query2()
         {
             List<string> orderIDs = DistqtyTb.AsEnumerable()
@@ -932,7 +928,6 @@ where   id = '{0}'
             DualResult result = DBProxy.Current.Select(null, cmd, out dt_Schedule);
             if (!result)
             {
-                //this.finalmsg = result.ToString();
                 return false;
             }
 
@@ -943,7 +938,7 @@ where   id = '{0}'
             #endregion
 
             #region 時間軸
-            this.Days.Clear();
+            this.Days2.Clear();
             // 取出最早InLine / 最晚OffLine
             this.MinInLine = dt_Schedule.AsEnumerable().Min(o => Convert.ToDateTime(o["Inline"]));
             this.MaxOffLine = dt_Schedule.AsEnumerable().Max(o => Convert.ToDateTime(o["offline"]));
@@ -959,11 +954,11 @@ where   id = '{0}'
             List<PublicPrg.Prgs.Day> daylist2 = PublicPrg.Prgs.GetDays(minLeadTime, end_where, this.FtyFroup);
             foreach (var item in daylist1)
             {
-                this.Days.Add(item);
+                this.Days2.Add(item);
             }
             foreach (var item in daylist2)
             {
-                this.Days.Add(item);
+                this.Days2.Add(item);
             }
             DateTime d2 = daylist2.Select(s => s.Date).Min(m => m.Date);
             // 若 daylist1 是1/1~1/3, daylist2 是1/10~1/12, 中間也要補上
@@ -972,24 +967,27 @@ where   id = '{0}'
                 List<PublicPrg.Prgs.Day> daylist3 = PublicPrg.Prgs.GetRangeHoliday(start_where, d2, this.FtyFroup);
                 foreach (var item in daylist3)
                 {
-                    this.Days.Add(item);
+                    this.Days2.Add(item);
                 }
             }
 
-            this.Days = this.Days
+            this.Days2 = this.Days2
                 .Select(s => new { s.Date, s.IsHoliday }).Distinct() // start和end加入日期有重複
                 .Select(s => new PublicPrg.Prgs.Day { Date = s.Date, IsHoliday = s.IsHoliday })
                 .OrderBy(o => o.Date).ToList();
             #endregion
 
-            if (this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
             this.bgWorkerUpdateInfo.ReportProgress(5);
 
-            this.AllData2 = GetInOffLineList_byFabricPanelCode(dt_Schedule, this.Days, this.bgWorkerUpdateInfo);
+            this.AllData2 = GetInOffLineList_byFabricPanelCode(dt_Schedule, this.Days2, startdate: DateTime.Today.Date, bw: this.bgWorkerUpdateInfo);
 
-            List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days, this.AllData2);
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            this.bgWorkerUpdateInfo.ReportProgress(90);
 
-            if (this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days2, this.AllData2.OrderBy(o => o.OrderID).ToList());
+
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
             this.bgWorkerUpdateInfo.ReportProgress(95);
 
             this.summaryData = LeadTimeList[0];
@@ -1029,7 +1027,6 @@ where   id = '{0}'
 
             return true;
         }
-
         private void AfterQuery1()
         {
             this.listControlBindingSource1.DataSource = dtG;
@@ -1121,7 +1118,7 @@ where   id = '{0}'
             }
 
             int ColumnIndex = 2;
-            foreach (var day in this.Days)
+            foreach (var day in this.Days2)
             {
                 //string dateStr = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
 
@@ -1137,7 +1134,7 @@ where   id = '{0}'
             //扣除無產出的日期
             List<PublicPrg.Prgs.Day> removeDays = new List<PublicPrg.Prgs.Day>();
 
-            foreach (var day in this.Days)
+            foreach (var day in this.Days2)
             {
                 //如果該日期，不是「有資料」，則刪掉
                 if (!this.AllData2.Where(x => x.InOffLines.Where(
@@ -1167,7 +1164,7 @@ where   id = '{0}'
             }
 
             ColumnIndex = 2;
-            foreach (var day in this.Days)
+            foreach (var day in this.Days2)
             {
                 if (removeDays.Where(o => o.Date == day.Date).Any())
                 {
@@ -1343,7 +1340,6 @@ When the settings are complete, can be use this function!!
                 e.AdvancedBorderStyle.Bottom = ((Win.UI.Grid)sender).AdvancedCellBorderStyle.Bottom;
             }
         }
-
         private bool IsEmptyCellValue(int row, Win.UI.Grid grid)
         {
             if (row == grid.Rows.Count - 1)
@@ -1360,7 +1356,7 @@ When the settings are complete, can be use this function!!
         private int Qrun = 1;
         private void BgWorkerUpdateInfo_DoWork(object sender, DoWorkEventArgs e)
         {
-            if ((this.bgWorkerUpdateInfo.CancellationPending == true))
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
             {
                 e.Cancel = true;
             }
@@ -1376,7 +1372,7 @@ When the settings are complete, can be use this function!!
                 }
                 Qend = 1;
 
-                if (this.bgWorkerUpdateInfo.CancellationPending == true) return;
+                if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return;
                 this.bgWorkerUpdateInfo.ReportProgress(100);
 
                 Qrun = 2;
@@ -1394,7 +1390,7 @@ When the settings are complete, can be use this function!!
 
         private void BgWorkerUpdateInfo_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if (this.bgWorkerUpdateInfo.CancellationPending == true)
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
             {
                 return;
             }
@@ -1407,22 +1403,30 @@ When the settings are complete, can be use this function!!
                 progressBar2.Value = e.ProgressPercentage;
             }
 
-            if (Qend == 1)
+            try
             {
-                progressBar1.Visible = false;
-                AfterQuery1();
-                Qend = 0;
+
+                if (Qend == 1)
+                {
+                    progressBar1.Visible = false;
+                    AfterQuery1();
+                    Qend = 0;
+                }
+                else if (Qend == 2)
+                {
+                    progressBar2.Visible = false;
+                    AfterQuery2();
+                    Qend = 0;
+                }
+                else if (Qend == 3)
+                {
+                    progressBar1.Visible = false;
+                    progressBar2.Visible = false;
+                }
             }
-            else if (Qend == 2)
+            catch (Exception ex)
             {
-                progressBar2.Visible = false;
-                AfterQuery2();
-                Qend = 0;
-            }
-            else if (Qend == 3)
-            {
-                progressBar1.Visible = false;
-                progressBar2.Visible = false;
+                this.ShowErr(ex);
             }
         }
 

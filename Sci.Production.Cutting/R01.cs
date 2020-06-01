@@ -30,8 +30,8 @@ namespace Sci.Production.Cutting
         List<InOffLineList> AllData = new List<InOffLineList>();
         List<PublicPrg.Prgs.Day> Days = new List<PublicPrg.Prgs.Day>();
         List<LeadTime> LeadTimeList = new List<LeadTime>();
-        DateTime? lastprocessday1;
-        DateTime? lastprocessday2;
+        DateTime? displayday1;
+        DateTime? displayday2;
 
         protected override void OnFormLoaded()
         {
@@ -113,7 +113,7 @@ AND (
 
             #endregion
 
-            #region 準備 this.Days 時間軸 : (輸入)起始 - (最大Lead Time & 假日 & 星期天)  ~ 結束(不推算，因function需要判斷 推算日~結束日 之間是否有標記假日)
+            #region 準備 this.Days 時間軸 : 用來判斷假日，並非最終顯示範圍
             //PS:this.Days 準備日期清單,前後可多日期,不影響function中判斷 和 顯示結果(最後會刪除多餘的),但影響效能
             DateTime MaxOffLine = dt_Schedule.AsEnumerable().Max(o => Convert.ToDateTime(o["offline"])).Date;
 
@@ -129,9 +129,9 @@ AND (
             this.Days.Clear();
 
             List<PublicPrg.Prgs.Day> daylist1 = PublicPrg.Prgs.GetDays(maxLeadTime, start_where, this.FtyFroup);
-            lastprocessday1 = daylist1.Select(s => s.Date).Min(m => m.Date); // 報表顯示開始日
+            displayday1 = daylist1.Select(s => s.Date).Min(m => m.Date); // 報表顯示開始日
             List<PublicPrg.Prgs.Day> daylist2 = PublicPrg.Prgs.GetDays(minLeadTime, end_where, this.FtyFroup);
-            lastprocessday2 = daylist2.Select(s => s.Date).Min(m => m.Date); // 報表顯示結束日
+            displayday2 = daylist2.Select(s => s.Date).Min(m => m.Date); // 報表顯示結束日
             foreach (var item in daylist1)
             {
                 this.Days.Add(item);
@@ -142,9 +142,9 @@ AND (
             }
 
             // 若 daylist1 是1/1~1/3, daylist2 是1/10~1/12, 中間也要補上
-            if (start_where < lastprocessday2)
+            if (start_where < displayday2)
             {
-                List<PublicPrg.Prgs.Day> daylist3 = PublicPrg.Prgs.GetRangeHoliday(start_where, (DateTime)lastprocessday2, this.FtyFroup);
+                List<PublicPrg.Prgs.Day> daylist3 = PublicPrg.Prgs.GetRangeHoliday(start_where, (DateTime)displayday2, this.FtyFroup);
                 foreach (var item in daylist3)
                 {
                     this.Days.Add(item);
@@ -165,9 +165,9 @@ AND (
                 .OrderBy(o => o.Date).ToList();
             #endregion
 
-            this.AllData = GetInOffLineList(dt_Schedule, this.Days);
+            this.AllData = GetInOffLineList(dt_Schedule, this.Days, Enddate: displayday2);
 
-            List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days, this.AllData);
+            List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days, this.AllData.OrderBy(o => o.OrderID).ToList());
 
             this.summaryData = LeadTimeList[0];
             this.detailData = LeadTimeList[1];
@@ -205,7 +205,7 @@ AND (
                 {
                     removeDays.Add(day);
                 }
-                if (day.Date < lastprocessday1 || day.Date > lastprocessday2)
+                if (day.Date < displayday1 || day.Date > displayday2)
                 {
                     removeDays.Add(day);
                 }

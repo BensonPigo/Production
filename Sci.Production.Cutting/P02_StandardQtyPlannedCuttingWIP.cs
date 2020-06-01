@@ -32,6 +32,7 @@ namespace Sci.Production.Cutting
         List<InOffLineList_byFabricPanelCode> AllDataTmp2 = new List<InOffLineList_byFabricPanelCode>();
         List<InOffLineList_byFabricPanelCode> AllData2 = new List<InOffLineList_byFabricPanelCode>();
         List<PublicPrg.Prgs.Day> Days = new List<PublicPrg.Prgs.Day>();
+        List<PublicPrg.Prgs.Day> Days2 = new List<PublicPrg.Prgs.Day>();
         List<LeadTime> LeadTimeList = new List<LeadTime>();
         public P02_StandardQtyPlannedCuttingWIP(string id, DataTable distqtyTb)
         {
@@ -123,17 +124,17 @@ namespace Sci.Production.Cutting
                 .OrderBy(o => o.Date).ToList();
             #endregion
 
-            if (this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
             this.bgWorkerUpdateInfo.ReportProgress(5);
 
-            this.AllData = GetInOffLineList(dt_Schedule, this.Days, this.bgWorkerUpdateInfo);
+            this.AllData = GetInOffLineList(dt_Schedule, this.Days, bw: this.bgWorkerUpdateInfo);
 
-            if (this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
             this.bgWorkerUpdateInfo.ReportProgress(90);
 
-            List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days, this.AllData);
+            List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days, this.AllData.OrderBy(o => o.OrderID).ToList());
 
-            if (this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
             this.bgWorkerUpdateInfo.ReportProgress(95);
 
             this.summaryData = LeadTimeList[0];
@@ -173,7 +174,6 @@ namespace Sci.Production.Cutting
 
             return true;
         }
-
         private bool Query2()
         {
             List<string> orderIDs = DistqtyTb.AsEnumerable()
@@ -205,7 +205,7 @@ namespace Sci.Production.Cutting
             #endregion
 
             #region 時間軸
-            this.Days.Clear();
+            this.Days2.Clear();
             // 取出最早InLine / 最晚OffLine
             this.MinInLine = dt_Schedule.AsEnumerable().Min(o => Convert.ToDateTime(o["Inline"]));
             this.MaxOffLine = dt_Schedule.AsEnumerable().Max(o => Convert.ToDateTime(o["offline"]));
@@ -221,11 +221,11 @@ namespace Sci.Production.Cutting
             List<PublicPrg.Prgs.Day> daylist2 = PublicPrg.Prgs.GetDays(minLeadTime, end_where, this.FtyFroup);
             foreach (var item in daylist1)
             {
-                this.Days.Add(item);
+                this.Days2.Add(item);
             }
             foreach (var item in daylist2)
             {
-                this.Days.Add(item);
+                this.Days2.Add(item);
             }
             DateTime d2 = daylist2.Select(s => s.Date).Min(m => m.Date);
             // 若 daylist1 是1/1~1/3, daylist2 是1/10~1/12, 中間也要補上
@@ -234,24 +234,27 @@ namespace Sci.Production.Cutting
                 List<PublicPrg.Prgs.Day> daylist3 = PublicPrg.Prgs.GetRangeHoliday(start_where, d2, this.FtyFroup);
                 foreach (var item in daylist3)
                 {
-                    this.Days.Add(item);
+                    this.Days2.Add(item);
                 }
             }
 
-            this.Days = this.Days
+            this.Days2 = this.Days2
                 .Select(s => new { s.Date, s.IsHoliday }).Distinct() // start和end加入日期有重複
                 .Select(s => new PublicPrg.Prgs.Day { Date = s.Date, IsHoliday = s.IsHoliday })
                 .OrderBy(o => o.Date).ToList();
             #endregion
 
-            if (this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
             this.bgWorkerUpdateInfo.ReportProgress(5);
 
-            this.AllData2 = GetInOffLineList_byFabricPanelCode(dt_Schedule, this.Days, this.bgWorkerUpdateInfo);
+            this.AllData2 = GetInOffLineList_byFabricPanelCode(dt_Schedule, this.Days2, bw: this.bgWorkerUpdateInfo);
 
-            List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days, this.AllData2);
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            this.bgWorkerUpdateInfo.ReportProgress(90);
 
-            if (this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days2, this.AllData2.OrderBy(o => o.OrderID).ToList());
+
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
             this.bgWorkerUpdateInfo.ReportProgress(95);
 
             this.summaryData = LeadTimeList[0];
@@ -291,7 +294,6 @@ namespace Sci.Production.Cutting
 
             return true;
         }
-
         private void AfterQuery1()
         {
             this.listControlBindingSource1.DataSource = dtG;
@@ -362,7 +364,6 @@ namespace Sci.Production.Cutting
             }
             #endregion
         }
-
         private void AfterQuery2()
         {
             this.listControlBindingSource2.DataSource = dtF;
@@ -374,7 +375,7 @@ namespace Sci.Production.Cutting
             }
 
             int ColumnIndex = 2;
-            foreach (var day in this.Days)
+            foreach (var day in this.Days2)
             {
                 //string dateStr = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
 
@@ -390,7 +391,7 @@ namespace Sci.Production.Cutting
             //扣除無產出的日期
             List<PublicPrg.Prgs.Day> removeDays = new List<PublicPrg.Prgs.Day>();
 
-            foreach (var day in this.Days)
+            foreach (var day in this.Days2)
             {
                 //如果該日期，不是「有資料」，則刪掉
                 if (!this.AllData2.Where(x => x.InOffLines.Where(
@@ -416,7 +417,7 @@ namespace Sci.Production.Cutting
             }
 
             ColumnIndex = 2;
-            foreach (var day in this.Days)
+            foreach (var day in this.Days2)
             {
                 if (removeDays.Where(o => o.Date == day.Date).Any())
                 {
@@ -603,7 +604,7 @@ When the settings are complete, can be use this function!!
         private int Qrun = 1;
         private void BgWorkerUpdateInfo_DoWork(object sender, DoWorkEventArgs e)
         {
-            if ((this.bgWorkerUpdateInfo.CancellationPending == true))
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
             {
                 e.Cancel = true;
             }
@@ -619,7 +620,7 @@ When the settings are complete, can be use this function!!
                 }
                 Qend = 1;
 
-                if (this.bgWorkerUpdateInfo.CancellationPending == true) return;
+                if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return;
                 this.bgWorkerUpdateInfo.ReportProgress(100);
 
                 Qrun = 2;
@@ -638,7 +639,7 @@ When the settings are complete, can be use this function!!
 
         private void BgWorkerUpdateInfo_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if (this.bgWorkerUpdateInfo.CancellationPending == true)
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
             {
                 if (!MyUtility.Check.Empty(this.finalmsg))
                 {
