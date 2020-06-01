@@ -37,14 +37,15 @@
             this.txtWKno_s = new Sci.Win.UI.TextBox();
             this.txtWKno_e = new Sci.Win.UI.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
             this.txtConsignee = new Sci.Win.UI.TextBox();
             this.txtshipmode = new Sci.Production.Class.txtshipmode();
+            this.txtscifactory = new Sci.Production.Class.txtscifactory();
             this.SuspendLayout();
             // 
             // print
             // 
             this.print.Location = new System.Drawing.Point(422, 12);
+            this.print.Visible = false;
             // 
             // toexcel
             // 
@@ -141,40 +142,26 @@
             this.txtWKno_s.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtWKno_s.Location = new System.Drawing.Point(110, 48);
             this.txtWKno_s.Name = "txtWKno_s";
-            this.txtWKno_s.Size = new System.Drawing.Size(100, 23);
+            this.txtWKno_s.Size = new System.Drawing.Size(110, 23);
             this.txtWKno_s.TabIndex = 2;
             // 
             // txtWKno_e
             // 
             this.txtWKno_e.BackColor = System.Drawing.Color.White;
             this.txtWKno_e.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtWKno_e.Location = new System.Drawing.Point(244, 48);
+            this.txtWKno_e.Location = new System.Drawing.Point(254, 48);
             this.txtWKno_e.Name = "txtWKno_e";
-            this.txtWKno_e.Size = new System.Drawing.Size(100, 23);
+            this.txtWKno_e.Size = new System.Drawing.Size(110, 23);
             this.txtWKno_e.TabIndex = 3;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(216, 51);
+            this.label5.Location = new System.Drawing.Point(226, 51);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(22, 17);
             this.label5.TabIndex = 105;
             this.label5.Text = "～";
-            // 
-            // txtfactory
-            // 
-            this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
-            this.txtfactory.FilteMDivision = false;
-            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory.IsProduceFty = false;
-            this.txtfactory.IssupportJunk = false;
-            this.txtfactory.Location = new System.Drawing.Point(110, 84);
-            this.txtfactory.MDivision = null;
-            this.txtfactory.Name = "txtfactory";
-            this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 4;
             // 
             // txtConsignee
             // 
@@ -198,14 +185,23 @@
             this.txtshipmode.TabIndex = 6;
             this.txtshipmode.UseFunction = null;
             // 
+            // txtscifactory
+            // 
+            this.txtscifactory.BackColor = System.Drawing.Color.White;
+            this.txtscifactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtscifactory.Location = new System.Drawing.Point(110, 84);
+            this.txtscifactory.Name = "txtscifactory";
+            this.txtscifactory.Size = new System.Drawing.Size(66, 23);
+            this.txtscifactory.TabIndex = 4;
+            // 
             // R19
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(514, 224);
+            this.Controls.Add(this.txtscifactory);
             this.Controls.Add(this.txtshipmode);
             this.Controls.Add(this.txtConsignee);
-            this.Controls.Add(this.txtfactory);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.txtWKno_e);
             this.Controls.Add(this.txtWKno_s);
@@ -234,9 +230,9 @@
             this.Controls.SetChildIndex(this.txtWKno_s, 0);
             this.Controls.SetChildIndex(this.txtWKno_e, 0);
             this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.txtfactory, 0);
             this.Controls.SetChildIndex(this.txtConsignee, 0);
             this.Controls.SetChildIndex(this.txtshipmode, 0);
+            this.Controls.SetChildIndex(this.txtscifactory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -253,8 +249,8 @@
         private Win.UI.TextBox txtWKno_s;
         private Win.UI.TextBox txtWKno_e;
         private System.Windows.Forms.Label label5;
-        private Class.txtfactory txtfactory;
         private Win.UI.TextBox txtConsignee;
         private Class.txtshipmode txtshipmode;
+        private Class.txtscifactory txtscifactory;
     }
 }
