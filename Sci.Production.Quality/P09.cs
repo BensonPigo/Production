@@ -157,6 +157,23 @@ namespace Sci.Production.Quality
             #endregion Color
             #endregion tabPage1_grid1
             #region tabPage2
+            #region settings Event
+            DataGridViewGeneratorDateColumnSettings FirstDyelot = new DataGridViewGeneratorDateColumnSettings();
+
+            FirstDyelot.CellValidating += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                var dr = this.grid2.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr) return;
+                if (MyUtility.Check.Empty(dr["SeasonSCIID"]) && !MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    MyUtility.Msg.WarningBox("Approved Seanson is empty, you can't enter the data , please reference 1st Bulk Dyelot Supp Sent Date column information。");
+                    dr["FirstDyelot"] = DBNull.Value;
+                    dr.EndEdit();
+                }
+            };
+
+            #endregion
             #region Set_grid2 Columns
             this.grid2.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid2)
@@ -167,7 +184,7 @@ namespace Sci.Production.Quality
             .Text("SeasonID", header: "Season", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SeasonSCIID", header: "Approved Season", width: Widths.AnsiChars(8), iseditingreadonly: true).Get(out col_ApprovedSeason)
             .Numeric("Period", header: "Period", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Date("FirstDyelot", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10)).Get(out col_FirstDyelot) // W (Pink)
+            .Date("FirstDyelot", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10), settings: FirstDyelot).Get(out col_FirstDyelot) // W (Pink)
             .Text("TPEFirstDyelot", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
             #endregion Set_grid2 Columns
@@ -258,7 +275,7 @@ namespace Sci.Production.Quality
                tPEFirstDyelot.Equals("RIB no need frist dye lot"))
             {
                 return false;
-            }
+            } 
 
             return true;
         }
@@ -782,18 +799,18 @@ drop table #tmp
 
             DataTable changedt = dt2.AsEnumerable().Where(r => r.RowState == DataRowState.Modified).Distinct().CopyToDataTable();
             string sqlupdate = $@"
-merge FirstDyelot t
-using (select TestDocFactoryGroup,Suppid,Refno,ColorID,SeasonSCIID,max(convert(date,FirstDyelot)) as FirstDyelot 
-from #tmp
-group by  TestDocFactoryGroup,Suppid,Refno,ColorID,SeasonSCIID) s
-on t.Refno = s.Refno and t.SuppID = s.SuppID and t.ColorID = s.ColorID and t.TestDocFactoryGroup = s.TestDocFactoryGroup  and t.SeasonSCIID = s.SeasonSCIID
-when matched then update set 
-	FirstDyelot=s.FirstDyelot,
-	EditName = '{Sci.Env.User.UserID}',
-	EditDate = GETDATE()
-when not matched by target then 
-insert([Refno],[SuppID],[ColorID],TestDocFactoryGroup,SeasonSCIID,[FirstDyelot],[EditName],[EditDate])
-VALUES(s.[Refno],s.[SuppID],s.[ColorID],s.TestDocFactoryGroup,SeasonSCIID,s.[FirstDyelot],'{Sci.Env.User.UserID}',GETDATE())
+update t
+	set FirstDyelot= s.FirstDyelot,
+		EditName = '{Sci.Env.User.UserID}',
+		EditDate = GETDATE()
+from FirstDyelot t
+inner join
+(
+	select TestDocFactoryGroup, Suppid, Refno, ColorID, SeasonSCIID, max(convert(date,FirstDyelot)) as FirstDyelot 
+	from #tmp
+	group by  TestDocFactoryGroup,Suppid,Refno,ColorID,SeasonSCIID
+) s
+on t.Refno = s.Refno and t.SuppID = s.SuppID and t.ColorID = s.ColorID and t.TestDocFactoryGroup = s.TestDocFactoryGroup and t.SeasonSCIID = s.SeasonSCIID
 ;
 ";
             DataTable odt;
