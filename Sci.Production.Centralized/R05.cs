@@ -405,9 +405,9 @@ drop table #tmpBaseOrderID,#tmpBaseByOrderID,#tmpBaseTransOrderID,#tmpBaseStep1,
 select Date
     , ID
     , OrderCPU
-    , CanceledCPU
-    , BalanceCPU=iif(TransFtyZone = '{ftyZone}', 0, OrderCPU-sum(SewingOutputCPU))
-    , OrderShortageCPU
+    , CanceledCPU = iif(TransFtyZone = '{ftyZone}', 0,  CanceledCPU)
+    , BalanceCPU = iif(TransFtyZone = '{ftyZone}', 0, OrderCPU-sum(SewingOutputCPU))
+    , OrderShortageCPU = iif(TransFtyZone = '{ftyZone}', 0,  OrderShortageCPU)
     , TransFtyZone
 into #tmp2_0
 from #tmp
