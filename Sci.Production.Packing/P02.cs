@@ -429,7 +429,7 @@ where o.ID = @orderid";
             {
                 List<string> listRefNo = ((DataTable)this.detailgridbs.DataSource)
                          .AsEnumerable()
-                         .GroupBy(x => x.Field<string>("RefNo"))
+                         .GroupBy(x => x.Field<string>("RefNoForBalance"))
                          .Select(x => x.Key).ToList();
                 if (listRefNo.Count() > 1)
                 {
@@ -1530,7 +1530,7 @@ CLOSE cursor_groupbyarticle
 DEALLOCATE cursor_groupbyarticle
 
 --找出目前最大箱號
-SELECT @ctnno = MAX(CtnNo) FROM @tempPackingList
+SELECT @ctnno = isnull(MAX(CtnNo),0) FROM @tempPackingList
 --宣告變數
 DECLARE @ctnqty INT, --Carton數
 		@nwperpcs NUMERIC(5,3) --每件淨重
@@ -2088,7 +2088,7 @@ BEGIN
 	CLOSE cursor_packingguide
 	
 	--整理餘箱資料
-	SELECT @ctnno = MAX(CtnNo) FROM @tempPackingList where Article = @article
+	SELECT @ctnno = isnull(MAX(CtnNo),0) FROM @tempPackingList where Article = @article
 	SET @firstsize = ''
 	OPEN cursor_packingguide
 	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance
