@@ -1,21 +1,53 @@
-﻿CREATE PROCEDURE [dbo].[ImportForecastLoadingBI] 
+﻿-- =============================================
+-- Description:	
+-- Import ForecastLoading in BI
+-- =============================================
+-- 2020/03/17 [ISP20200433] ForecastLoadingBI_Factory_Tms add import column [Half Key]
+-- 2020/04/27 [ISP20200709] Table[Factory_TMS],[Factory_WorkHour] use server name to call regular Production data
+-- 2020/05/18 [ISP20200840] Add Columns[Sew_Qty],[Shortage]
+-- 2020/05/29 [ISP20200920] Add Columns[Buyer Key],[Buyer HalfKey]
+CREATE PROCEDURE [dbo].[ImportForecastLoadingBI] 
 AS
 BEGIN
 	SET NOCOUNT ON;
-	DECLARE @Date_S DATE = DATEADD(m, DATEDIFF(m,0,GETDATE()),7); --當月8號
-	DECLARE @Date_E DATE = DATEADD(m, DATEDIFF(m,0,DATEADD(yy,1,GETDATE())),6);--隔年7號
-	DECLARE @YearMonth_S date = getdate();--當月
-	DECLARE @YearMonth_E date = dateadd(m, 11, getdate())--往後推算12個月
-	--重新建立Power BI的Report Table
+	DECLARE @Date_S DATE = '2019-01-08'; --���8��
+	DECLARE @Date_E DATE = DATEADD(m, DATEDIFF(m,0,DATEADD(yy,1,GETDATE())),6);--�j�~7��
+	DECLARE @YearMonth_S date = '2019-01-01';--���
+	DECLARE @YearMonth_E date = dateadd(m, 11, getdate())--�������12�Ӥ�
+	--���s�إ�Power BI��Report Table
 	DECLARE @TableNameA VARCHAR(20);
 	DECLARE @TableNameB VARCHAR(20);
-	DECLARE @ExecSQL NVARCHAR(MAX);
+
+	declare @SqlCmd1 nvarchar(max) ='';
+
+	/*判斷當前Server後, 指定帶入正式機Server名稱*/
+	declare @current_ServerName varchar(50) = (SELECT [Server Name] = @@SERVERNAME)
+	--依不同Server來抓到對應的備機ServerName
+	declare @current_PMS_ServerName nvarchar(50) 
+	= (
+		select [value] = 
+			CASE WHEN @current_ServerName= 'PHL-NEWPMS-02' THEN 'PHL-NEWPMS' -- PH1
+				 WHEN @current_ServerName= 'VT1-PH2-PMS2b' THEN 'VT1-PH2-PMS2' -- PH2
+				 WHEN @current_ServerName= 'system2017BK' THEN 'SYSTEM2017' -- SNP
+				 WHEN @current_ServerName= 'SPS-SQL2' THEN 'SPS-SQL.spscd.com' -- SPS
+				 WHEN @current_ServerName= 'SQLBK' THEN 'PMS-SXR' -- SPR
+				 WHEN @current_ServerName= 'newerp-bak' THEN 'newerp' -- HZG		
+				 WHEN @current_ServerName= 'SQL' THEN 'NDATA' -- HXG
+				 when (select top 1 MDivisionID from Production.dbo.Factory) in ('VM2','VM1') then 'SYSTEM2016' -- ESP & SPT
+			ELSE '' END
+	)
 
 	/******************************************
 	   移除原本的 先Drop 在Create方式
 	*******************************************/
 	If Exists(Select * From POWERBIReportData.sys.tables Where Name = 'ForecastLoadingBI') TRUNCATE Table ForecastLoadingBI;
 	If Exists(Select * From POWERBIReportData.sys.tables Where Name = 'ForecastLoadingBI_Factory_Tms') TRUNCATE Table ForecastLoadingBI_Factory_Tms;
+
+	if not exists(select * from syscolumns where id=OBJECT_ID('ForecastLoadingBI_Factory_Tms') and name='Half key')
+	begin
+		ALTER TABLE dbo.ForecastLoadingBI_Factory_Tms 
+		ADD	[Half key] [varchar](8)
+	end
 
 ------------------------------T_OrderList ->  ForecastLoadingBI------------------------------
 select ID
@@ -113,7 +145,7 @@ From(
 		From Production.dbo.Orders
 		Left join Production.dbo.Order_TmsCost tmsCost on tmsCost.Id = orders.ID
 		Left join #UseArtworkType at on at.id = tmsCost.ArtworkTypeID
-		Outer Apply (select CpuRate From Production.dbo.GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'O')) getCPURate
+		Outer Apply (select CpuRate From Production.dbo.GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'O')) getCPURate -- 加入
 		WHERE Orders.Category IN ('B', 'S') and Orders.SciDelivery between @Date_S and @Date_E and Orders.LocalOrder <> '1'
 	) as a
 	PIVOT
@@ -276,16 +308,29 @@ Select
 	[TTL_SUBLIMATION ROLLER (CPU)] = isnull([TTL_SUBLIMATION ROLLER (CPU)],0),
 	[TTL_ULTRASONIC MACHINE (CPU)] = isnull([TTL_ULTRASONIC MACHINE (CPU)],0),
 	[TTL_VELCRO MACHINE (CPU)] = isnull([TTL_VELCRO MACHINE (CPU)],0),
-	[TTL_ZIG ZAG (CPU)] = isnull([TTL_ZIG ZAG (CPU)],0)
+	[TTL_ZIG ZAG (CPU)] = isnull([TTL_ZIG ZAG (CPU)],0),
+	[Sew_Qty] = isnull(Production.dbo.getMinCompleteSewQty(Orders.ID,null,null) ,0),
+	[Shortage] = iif(Orders.GMTComplete = 'S', Orders.Qty - GetPulloutData.Qty, 0),
+	[Buyer Key]         = convert(varchar(6),dateadd(day,-7, Orders.BuyerDelivery), 112),
+	[Buyer Halfkey]		= case
+						  when day(Orders.BuyerDelivery) BETWEEN 1 and 7 then LEFT(CONVERT(varchar, dateadd(month, -1, Orders.BuyerDelivery),112),6) + '02'
+						  when day(Orders.BuyerDelivery) BETWEEN 8 and 22 then LEFT(CONVERT(varchar, Orders.BuyerDelivery, 112),6) + '01'
+						  when day(Orders.BuyerDelivery) BETWEEN 23 and 31 then LEFT(CONVERT(varchar, Orders.BuyerDelivery, 112),6) + '02'
+						  else ''	end
 
 From Production.dbo.Orders 
 LEFT JOIN Production.dbo.Factory ON Orders.FactoryID =Factory.ID 
 LEFT JOIN Production.dbo.Dropdownlist ON Orders.Category =Dropdownlist.ID and Dropdownlist.Type='Category'
 LEFT JOIN Production.dbo.OrderType ON OrderType.ID = Orders.OrderTypeID and OrderType.BrandID = Orders.BrandID
 LEFT JOIN Production.dbo.CDCode ON CDCode.ID = Orders.CdCodeID
-outer apply (select CpuRate from Production.dbo.GetCPURate(Orders.OrderTypeID,Orders.ProgramID,Orders.Category,Orders.BrandID,'O')) as CPURate
-outer apply (select * from Production.dbo.GetCurrencyRate('FX', Orders.CurrencyID, 'USD', Orders.cfmDate)) as GetCurrencyRate
-outer apply (select * from Production.dbo.GetOrderAmount(orders.ID)) goa
+outer apply (select CpuRate from Production.dbo.GetCPURate(Orders.OrderTypeID,Orders.ProgramID,Orders.Category,Orders.BrandID,'O')) as CPURate --加入
+--outer apply (select * from Production.dbo.GetCurrencyRate('FX', Orders.CurrencyID, 'USD', Orders.cfmDate)) as GetCurrencyRate
+outer apply (select * from Production.dbo.GetOrderAmount(orders.ID)) goa--加入
+outer apply(
+	select Qty = sum(ShipQty) 
+	from Production.dbo.Pullout_Detail_Detail
+	where OrderID=Orders.ID
+)GetPulloutData
 inner JOIN #atSource atSource on atSource.ID = Orders.ID
 WHERE orders.Category IN ('B', 'S')
 and Orders.SciDelivery between @Date_S and @Date_E
@@ -363,7 +408,15 @@ Select
 	[TTL_SUBLIMATION ROLLER (CPU)] = isnull([TTL_SUBLIMATION ROLLER (CPU)],0),
 	[TTL_ULTRASONIC MACHINE (CPU)] = isnull([TTL_ULTRASONIC MACHINE (CPU)],0),
 	[TTL_VELCRO MACHINE (CPU)] = isnull([TTL_VELCRO MACHINE (CPU)],0),
-	[TTL_ZIG ZAG (CPU)] = isnull([TTL_ZIG ZAG (CPU)],0)
+	[TTL_ZIG ZAG (CPU)] = isnull([TTL_ZIG ZAG (CPU)],0),
+	[Sew_Qty] = 0,
+	[Shortage] = 0,
+	[Buyer Key]         = convert(varchar(6),dateadd(day,-7, Forecast.BuyerDelivery), 112),
+	[Buyer Halfkey]		= case
+						  when day(Forecast.BuyerDelivery) BETWEEN 1 and 7 then LEFT(CONVERT(varchar, dateadd(month, -1, Forecast.BuyerDelivery),112),6) + '02'
+						  when day(Forecast.BuyerDelivery) BETWEEN 8 and 22 then LEFT(CONVERT(varchar, Forecast.BuyerDelivery, 112),6) + '01'
+						  when day(Forecast.BuyerDelivery) BETWEEN 23 and 31 then LEFT(CONVERT(varchar, Forecast.BuyerDelivery, 112),6) + '02'
+						  else ''	end
 
 From #tmp_Forecast  as Forecast
 LEFT JOIN Production.dbo.Style ON Forecast.BrandID=Style.BrandID and Forecast.StyleID =Style.ID and  Forecast.SeasonID = Style.SeasonID
@@ -375,7 +428,7 @@ LEFT JOIN Production.dbo.CDCode AS ForecastCDCode ON ForecastCDCode.ID = Forecas
 inner JOIN #atSource atSource on atSource.ID = Forecast.ID
 outer apply (select CpuRate from Production.dbo.GetCPURate(Forecast.OrderTypeID, Forecast.ProgramID, Forecast.Category, Forecast.BrandID, null)) as CPURate
 outer apply (select cast(0 as numeric(16,4)) Price) as Price
-outer apply (select Rate from Production.dbo.GetCurrencyRate('FX', Forecast.CurrencyID, 'USD', Forecast.AddDate)) as Rate
+--outer apply (select Rate from Production.dbo.GetCurrencyRate('FX', Forecast.CurrencyID, 'USD', Forecast.AddDate)) as Rate
 WHERE Forecast.ForecastCategory IN ('B', 'S')
 and Forecast.BuyerDelivery between @Date_S and @Date_E
 
@@ -451,7 +504,15 @@ Select
 	[TTL_SUBLIMATION ROLLER (CPU)] = isnull([TTL_SUBLIMATION ROLLER (CPU)],0),
 	[TTL_ULTRASONIC MACHINE (CPU)] = isnull([TTL_ULTRASONIC MACHINE (CPU)],0),
 	[TTL_VELCRO MACHINE (CPU)] = isnull([TTL_VELCRO MACHINE (CPU)],0),
-	[TTL_ZIG ZAG (CPU)] = isnull([TTL_ZIG ZAG (CPU)],0)
+	[TTL_ZIG ZAG (CPU)] = isnull([TTL_ZIG ZAG (CPU)],0),
+	[Sew_Qty] = isnull(Production.dbo.getMinCompleteSewQty(FactoryOrder.ID,null,null) ,0),
+	[Shortage] = 0,
+	[Buyer Key]         = convert(varchar(6),dateadd(day,-7, FactoryOrder.BuyerDelivery), 112),
+	[Buyer Halfkey]		= case
+						  when day(FactoryOrder.BuyerDelivery) BETWEEN 1 and 7 then LEFT(CONVERT(varchar, dateadd(month, -1, FactoryOrder.BuyerDelivery),112),6) + '02'
+						  when day(FactoryOrder.BuyerDelivery) BETWEEN 8 and 22 then LEFT(CONVERT(varchar, FactoryOrder.BuyerDelivery, 112),6) + '01'
+						  when day(FactoryOrder.BuyerDelivery) BETWEEN 23 and 31 then LEFT(CONVERT(varchar, FactoryOrder.BuyerDelivery, 112),6) + '02'
+						  else ''	end
 
 From #tmp_FactoryOrder FactoryOrder
 LEFT JOIN Production.dbo.Style ON FactoryOrder.BrandID=Style.BrandID and FactoryOrder.StyleID =Style.ID and  FactoryOrder.SeasonID = Style.SeasonID
@@ -487,6 +548,11 @@ From #tmpOrderList
 				  Else isnull(orders.Qty * getCPURate.CpuRate,0)
 				  End
 		, [Key]				= convert(varchar(6),dateadd(day,-7,Orders.SCIDelivery),112)
+		, [Half key] = case
+						when day(Orders.SCIDelivery) BETWEEN 1 and 7 then LEFT(CONVERT(varchar, dateadd(month, -1, Orders.SCIDelivery),112),6) + '02'
+						when day(Orders.SCIDelivery) BETWEEN 8 and 22 then LEFT(CONVERT(varchar, Orders.SCIDelivery, 112),6) + '01'
+						when day(Orders.SCIDelivery) BETWEEN 23 and 31 then LEFT(CONVERT(varchar, Orders.SCIDelivery, 112),6) + '02'
+						else ''	end
 		From Production.dbo.Orders
 		--
 		Left join Production.dbo.Order_TmsCost tmsCost on tmsCost.Id = orders.ID
@@ -508,6 +574,11 @@ From #tmpOrderList
 			Else Forecast.Qty * getCPURate.CpuRate
 			End
 		, [Key]               =  convert(varchar(6),dateadd(day,-7, Forecast.BuyerDelivery), 112)
+		, [Half key] = case
+						when day(Forecast.BuyerDelivery) BETWEEN 1 and 7 then LEFT(CONVERT(varchar, dateadd(month, -1, Forecast.BuyerDelivery),112),6) + '02'
+						when day(Forecast.BuyerDelivery) BETWEEN 8 and 22 then LEFT(CONVERT(varchar, Forecast.BuyerDelivery, 112),6) + '01'
+						when day(Forecast.BuyerDelivery) BETWEEN 23 and 31 then LEFT(CONVERT(varchar, Forecast.BuyerDelivery, 112),6) + '02'
+						else ''	end
 		From #tmp_Forecast as Forecast
 		Left join Production.dbo.Style	on Forecast.BrandID=Style.BrandID and Forecast.StyleID =Style.ID and  Forecast.SeasonID = Style.SeasonID
 		Left join Production.dbo.Style_TmsCost tmsCost on tmsCost.StyleUKey = Style.Ukey
@@ -526,6 +597,11 @@ From #tmpOrderList
 			Else FactoryOrder.Qty * getCPURate.CpuRate
 			End
 		, [Key]               =  convert(varchar(6),dateadd(day,-7, FactoryOrder.SCIDelivery), 112)
+		, [Half key] = case
+						when day(FactoryOrder.SCIDelivery) BETWEEN 1 and 7 then LEFT(CONVERT(varchar, dateadd(month, -1, FactoryOrder.SCIDelivery),112),6) + '02'
+						when day(FactoryOrder.SCIDelivery) BETWEEN 8 and 22 then LEFT(CONVERT(varchar, FactoryOrder.SCIDelivery, 112),6) + '01'
+						when day(FactoryOrder.SCIDelivery) BETWEEN 23 and 31 then LEFT(CONVERT(varchar, FactoryOrder.SCIDelivery, 112),6) + '02'
+						else ''	end
 		From #tmp_FactoryOrder FactoryOrder
 		Left join Production.dbo.Factory On FactoryOrder.FactoryID = Factory.ID
 		Left join Production.dbo.Style	on FactoryOrder.BrandID=Style.BrandID and FactoryOrder.StyleID =Style.ID and  FactoryOrder.SeasonID = Style.SeasonID
@@ -545,6 +621,11 @@ From #tmpOrderList
 			Else FactoryOrder.Qty * getCPURate.CpuRate
 			End * -1
 		, [Key]               =  convert(varchar(6),dateadd(day,-7, FactoryOrder.SCIDelivery), 112)
+		, [Half key] = case
+						when day(FactoryOrder.SCIDelivery) BETWEEN 1 and 7 then LEFT(CONVERT(varchar, dateadd(month, -1, FactoryOrder.SCIDelivery),112),6) + '02'
+						when day(FactoryOrder.SCIDelivery) BETWEEN 8 and 22 then LEFT(CONVERT(varchar, FactoryOrder.SCIDelivery, 112),6) + '01'
+						when day(FactoryOrder.SCIDelivery) BETWEEN 23 and 31 then LEFT(CONVERT(varchar, FactoryOrder.SCIDelivery, 112),6) + '02'
+						else ''	end
 		From #tmp_FactoryOrder FactoryOrder
 		Left join Production.dbo.Factory On FactoryOrder.ProgramID = Factory.ID
 		Left join Production.dbo.Style	on FactoryOrder.BrandID=Style.BrandID and FactoryOrder.StyleID =Style.ID and  FactoryOrder.SeasonID = Style.SeasonID
@@ -559,46 +640,61 @@ select
 	, a.MDivisionID
 	, a.ArtworkTypeID
 	, a.[Key]
+	, a.[Half key]
 	, sumValue = sum(Value)
 into #SourceB
 From #SourceA a
-Group by a.FactoryID, a.MDivisionID, a.ArtworkTypeID, a.[Key]
+Group by a.FactoryID, a.MDivisionID, a.ArtworkTypeID, a.[Key] , a.[Half key]
 
 -- 建立所有的Key
-Declare @KeyTable Table ([key] varchar(6) not null primary key)
+Declare @KeyTable Table ([Half key] varchar(8) not null  primary key, [key] varchar(6) not null)
 Declare @tmpDate DATE = @YearMonth_S
 While (@tmpDate <= @YearMonth_E)
 Begin
-	Insert Into @KeyTable VALUES(Format(@tmpDate,'yyyyMM'))
+	Insert Into @KeyTable VALUES(Format(@tmpDate,'yyyyMM01'),Format(@tmpDate,'yyyyMM'))
+	Insert Into @KeyTable VALUES(Format(@tmpDate,'yyyyMM02'),Format(@tmpDate,'yyyyMM'))
 	Select @tmpDate = DATEADD(m, 1, @tmpDate )
 End
+
+
+select * into #tmpKeyTable from @KeyTable
 
 --Insert T_Factory_Tms
 --1.找所有Factory_TMS的ArtworkType與T_Order_List範圍的二大類ArtworkType
 --2.Factory只顯示IsSCI = true
 --3.排除Capacity(CPU)與Loading (CPU)皆為0的資料
+
+SET @SqlCmd1 = '
 INSERT ForecastLoadingBI_Factory_Tms
 Select * From
 (
 	select Factory.mDivisionID
 	, Factory.KpiCode
-	, [Key] = keyTable.[Key]
+	, [Key] = keyTable.[Key]	
 	, ArtworkTypeID = at.Id
-	, [Capacity(CPU)] = SUM(iif(at.ArtworkUnit = '', isnull(ftms.TMS, 0)/GetStandardTMS.StandardTMS * IIF(ftms.ArtworkTypeID = 'SEWING', 3600, 60), isnull(ftms.TMS, 0)))
+	, [Capacity(CPU)] = SUM(iif(Right(keyTable.[Half key],2) = ''01'', isnull(GetCapacityHalf1.Capacity,0), isnull(GetCapacityHalf2.Capacity,0)))
 	, [Loading (CPU)] = SUM(isnull(tmpSumValue.sumValue,0))
+	, [Half key] = keyTable.[Half key]
 	From Production.dbo.Factory 
 	Full join Production.dbo.ArtworkType at on 1 = 1
-	Full join @KeyTable keyTable on 1 = 1
-	Left join Production.dbo.Factory_TMS ftms on Factory.ID = ftms.id and at.Id = ftms.ArtworkTypeID and Concat(ftms.Year, ftms.Month) = keyTable.[key]
+	Full join #tmpKeyTable keyTable on 1 = 1
+	Left join ['+@current_PMS_ServerName+'].Production.dbo.Factory_TMS ftms on Factory.ID = ftms.id and at.Id = ftms.ArtworkTypeID and Concat(ftms.Year, ftms.Month) = keyTable.[key] 
+	Left join ['+@current_PMS_ServerName+'].Production.dbo.Factory_WorkHour fw on fw.ID = Factory.ID and fw.Year = ftms.Year and fw.Month = ftms.Month  
 	outer apply (Select top 1 [StandardTMS] = StdTMS From Production.dbo.System) GetStandardTMS
-	Left join #SourceB as tmpSumValue On tmpSumValue.[Key] = keyTable.[Key] and tmpSumValue.FactoryID = Factory.ID and tmpSumValue.ArtworkTypeID = at.ID and tmpSumValue.MDivisionID = Factory.MDivisionID
+	Left join #SourceB as tmpSumValue On isnull(tmpSumValue.[Half Key],'''') = keyTable.[Half Key] and tmpSumValue.FactoryID = Factory.ID and tmpSumValue.ArtworkTypeID = at.ID and tmpSumValue.MDivisionID = Factory.MDivisionID
+	outer apply (Select WorkDay = fw.HalfMonth1 + fw.HalfMonth2) GetWorkingDay
+	outer apply (Select Capacity = iif(at.ArtworkUnit = '''', isnull(convert(float,ftms.TMS), 0) / convert(float,GetStandardTMS.StandardTMS) * IIF(ftms.ArtworkTypeID = ''SEWING'', 3600, 60), isnull(ftms.TMS, 0))) GetCapacity
+	outer apply (Select Capacity = Round(iif(GetWorkingDay.WorkDay = 0, 0, GetCapacity.Capacity * fw.HalfMonth1 / GetWorkingDay.WorkDay),6)) GetCapacityHalf1
+	outer apply (Select Capacity = Round(iif(GetWorkingDay.WorkDay = 0, 0, GetCapacity.Capacity * fw.HalfMonth2 / GetWorkingDay.WorkDay),6)) GetCapacityHalf2
 	Where Factory.IsSCI = 1 And at.Junk = 0
-	Group by  Factory.mDivisionID, at.Id, keyTable.[Key], GetStandardTMS.StandardTMS, Factory.KpiCode
+	Group by  Factory.mDivisionID, at.Id,keyTable.[Key], keyTable.[Half Key], GetStandardTMS.StandardTMS, Factory.KpiCode
 )b
 where b.[Capacity(CPU)] != 0 or b.[Loading (CPU)] != 0
-order by b.[Key],b.mDivisionID,b.ArtworkTypeID
+order by b.[Key],b.mDivisionID,b.ArtworkTypeID'
 
+EXEC sp_executesql @SqlCmd1
 -- drop temp table
+DROP TABLE #tmpKeyTable
 DROP TABLE #ArtworkTypeList;
 DROP TABLE #UseArtworkType;
 DROP TABLE #atSource;
@@ -607,4 +703,9 @@ DROP TABLE #SourceA;
 DROP TABLE #SourceB;
 DROP TABLE #tmp_Forecast
 DROP TABLE #tmp_FactoryOrder
+
 End
+
+GO
+
+
