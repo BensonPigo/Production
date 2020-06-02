@@ -41,6 +41,11 @@ BEGIN
 	SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(sizecode),N',' + QUOTENAME(sizecode))
 	from #tmp
 	order by Seq asc
+
+	DECLARE @cols2 NVARCHAR(MAX)= N''
+	SELECT @cols2 = @cols2 + iif(@cols2 = N'',N'isnull(' +QUOTENAME(sizecode)+',999)',N',isnull(' + QUOTENAME(sizecode)+',999)')
+	from #tmp
+	order by Seq desc
 	drop table #tmp
 
 	DECLARE @sql NVARCHAR(MAX)
@@ -50,6 +55,7 @@ BEGIN
 	from(
 		select	Ukey
 				, sizecode,Qty
+				,ct=COUNT(1) over(PARTITION by Ukey)
 		from WorkOrder w 
 		left join WorkOrder_SizeRatio ws on ws.WorkOrderUkey = w.Ukey 
 		where w.id = '''+ @OrderID +N'''
@@ -107,7 +113,7 @@ BEGIN
 		)
 	)C
 	where w.id = '''+@OrderID+N'''
-	order by w.FabricCombo, w.Cutno
+	order by w.FabricCombo,w.Colorid,isnull(w.CutNo,9999),iif(t.ct>1,2,1), '+@cols2+N' ,w.Markername
 
 	select	distinct Info = concat(''<'', wOrder.FabricPanelCode, ''>#'', wOrder.Refno, '' '', F.Description)
 	from WorkOrder wOrder
