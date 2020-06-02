@@ -25,6 +25,9 @@
     [OSTClogQty]        VARCHAR (10) CONSTRAINT [DF_P_OustandingPO_OSTClogQty] DEFAULT ('') NOT NULL,
     [OSTClogCtn]        INT          CONSTRAINT [DF_P_OustandingPO_OSTClogCtn] DEFAULT ((0)) NOT NULL,
     [PulloutComplete]   VARCHAR (1)  CONSTRAINT [DF_P_OustandingPO_PulloutCompleted] DEFAULT ('') NOT NULL,
+    [Dest]              VARCHAR (30) NULL,
     CONSTRAINT [PK_P_OustandingPO] PRIMARY KEY CLUSTERED ([FactoryID] ASC, [OrderID] ASC, [Seq] ASC)
 );
+
+
 
