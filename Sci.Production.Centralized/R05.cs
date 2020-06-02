@@ -172,25 +172,25 @@ from (
 
 
 select
-o.ID,
-[Date]=format(iif('{this.Date}'='1',dateadd(day,-7,o.SciDelivery),o.BuyerDelivery),'yyyyMM'),
-[OutputDate] = FORMAT(s.OutputDate,'yyyyMM'),
-[OrderCPU] = o.Qty * gcRate.CpuRate * o.CPU,
-[OrderShortageCPU] = iif(o.GMTComplete = 'S' ,(o.Qty - GetPulloutData.Qty)  * gcRate.CpuRate * o.CPU ,0),
-[SewingOutput] = isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) / 100,
-[SewingOutputCPU] = isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) * gcRate.CpuRate * o.CPU / 100,
-o.Junk,
-o.Qty,
-o.Category,
-o.SubconInType,
-o.IsForecast,
-o.LocalOrder,
-o.FactoryID,
-o.FtyGroup,
-f.IsProduceFty,
-f.FtyZone,
-o.ProgramID,
-tbs.TransFtyZone
+    o.ID,
+    [Date]=format(iif('{this.Date}'='1',dateadd(day,-7,o.SciDelivery),o.BuyerDelivery),'yyyyMM'),
+    [OutputDate] = FORMAT(s.OutputDate,'yyyyMM'),
+    [OrderCPU] = o.Qty * gcRate.CpuRate * o.CPU,
+    [OrderShortageCPU] = iif(o.GMTComplete = 'S' ,(o.Qty - GetPulloutData.Qty)  * gcRate.CpuRate * o.CPU ,0),
+    [SewingOutput] = isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) / 100,
+    [SewingOutputCPU] = isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) * gcRate.CpuRate * o.CPU / 100,
+    o.Junk,
+    o.Qty,
+    o.Category,
+    o.SubconInType,
+    o.IsForecast,
+    o.LocalOrder,
+    o.FactoryID,
+    o.FtyGroup,
+    f.IsProduceFty,
+    f.FtyZone,
+    o.ProgramID,
+    tbs.TransFtyZone
 into #tmpBase
 from #tmpBaseStep1 tbs
 inner join Orders o with(nolock) on o.ID = tbs.ID
@@ -250,14 +250,14 @@ from #tmpBase
 where   {whereSource} or TransFtyZone <> ''
 
 select
-ID,
-Date,
-OrderCPU,
-OrderShortageCPU,
-[SewingOutput] = SUM(SewingOutput),
-[SewingOutputCPU] = SUM(SewingOutputCPU),
-FtyZone,
-TransFtyZone
+    ID,
+    Date,
+    OrderCPU,
+    OrderShortageCPU,
+    [SewingOutput] = SUM(SewingOutput),
+    [SewingOutputCPU] = SUM(SewingOutputCPU),
+    FtyZone,
+    TransFtyZone
 into #tmpBaseByOrderID
 from #tmpBaseBySource
 group by ID,Date,OrderCPU,OrderShortageCPU,FtyZone,TransFtyZone
@@ -316,32 +316,18 @@ left join #tmpOrder_QtyShip toq on toq.ID = tb.ID
 left join #tmpPullout_Detail tpd on tpd.OrderID = tb.ID
 left join CDCode with(nolock) on CDCode.ID = o.CdCodeID
 
-
 select  FtyGroup,
-        [Date] = SUBSTRING(Date,1,4)+'/'+SUBSTRING(Date,5,6),
-        ID,
-        OutputDate,
-        [OrderCPU] = iif(isNormalOrderCanceled = 1,0, OrderCPU - OrderShortageCPU),
-        [CanceledCPU] = iif(isNormalOrderCanceled = 1,OrderCPU, 0),
-        OrderShortageCPU,
-        SewingOutput,
-        SewingOutputCPU,
-        FtyZone,
-        [IsTransOrder] = 0
-from    #tmpBaseBySource where TransFtyZone = ''
-union all
-select  FtyGroup,
-        [Date] = SUBSTRING(Date,1,4)+'/'+SUBSTRING(Date,5,6),
-        ID,
-        OutputDate,
-        [OrderCPU] = iif(isNormalOrderCanceled = 1,0, (OrderCPU - OrderShortageCPU)),
-        [CanceledCPU] = 0,
-        [OrderShortageCPU] = 0,
-        [SewingOutput] = 0,
-        [SewingOutputCPU] = 0,
-        [FtyZone] = TransFtyZone,
-        [IsTransOrder] = 1
-from    #tmpBaseBySource where TransFtyZone <> ''
+		[Date] = SUBSTRING(Date,1,4)+'/'+SUBSTRING(Date,5,6),
+		ID,
+		OutputDate,
+		[OrderCPU] = iif(isNormalOrderCanceled = 1,0, OrderCPU - OrderShortageCPU),
+		[CanceledCPU] = iif(isNormalOrderCanceled = 1,OrderCPU, 0),
+		OrderShortageCPU,
+		SewingOutput,
+		SewingOutputCPU,
+		FtyZone,
+		TransFtyZone 
+from #tmpBaseBySource 
 
 select  FtyGroup,OutputDate,[SewingOutputCPU] = sum(SewingOutputCPU) * -1,FtyZone
 from    #tmpBase
@@ -412,18 +398,28 @@ drop table #tmpBaseOrderID,#tmpBaseByOrderID,#tmpBaseTransOrderID,#tmpBaseStep1,
             this.dtAllDetail = allDetail.CopyToDataTable();
             this.listFtyZone = allDetail.Where(s => MyUtility.Check.Empty(s["TransFtyZone"])).Select(s => MyUtility.Convert.GetString(s["FtyZone"])).Distinct().ToList();
 
-            foreach (string ftyZone in listFtyZone)
+            foreach (string ftyZone in this.listFtyZone)
             {
                 #region summary
                 string sqlsum = $@"
-select Date,ID,OrderCPU,CanceledCPU,BalanceCPU=iif(IsTransOrder = 1, 0, OrderCPU-sum(SewingOutputCPU)), OrderShortageCPU, IsTransOrder
+select Date
+    , ID
+    , OrderCPU
+    , CanceledCPU
+    , BalanceCPU=iif(TransFtyZone = '{ftyZone}', 0, OrderCPU-sum(SewingOutputCPU))
+    , OrderShortageCPU
+    , TransFtyZone
 into #tmp2_0
 from #tmp
-where FtyZone = '{ftyZone}'
-group by Date,ID,OrderCPU,CanceledCPU,OrderShortageCPU,IsTransOrder
+where (FtyZone = '{ftyZone}' or TransFtyZone = '{ftyZone}')
+group by Date,ID,OrderCPU,CanceledCPU,OrderShortageCPU, TransFtyZone
 
-select  Date,OrderCPU=sum(iif(IsTransOrder = 1, -OrderCPU, OrderCPU)),CanceledCPU = sum(CanceledCPU),BalanceCPU=sum(BalanceCPU),[OrderShortageCPU] = sum(OrderShortageCPU),
-        [SubconOutCPU] = sum(iif(IsTransOrder = 1, OrderCPU, 0))
+select  Date
+    , OrderCPU=sum(iif(TransFtyZone = '{ftyZone}', -OrderCPU, OrderCPU))
+    , CanceledCPU = sum(CanceledCPU)
+    , BalanceCPU = sum(BalanceCPU)
+    , [OrderShortageCPU] = sum(OrderShortageCPU)
+    , [SubconOutCPU] = sum(iif(TransFtyZone = '{ftyZone}', OrderCPU, 0))
 into #tmp2
 from #tmp2_0
 group by Date
@@ -453,8 +449,12 @@ for xml path('')
 ),1,1,''))
 
 declare @sql nvarchar(max)=N'
-select t2.Date,
-	Loading=t2.OrderCPU,[Shortage] = t2.OrderShortageCPU, [Canceled] = t2.CanceledCPU, [SubconOut] = t2.SubconOutCPU, Balance=t2.BalanceCPU,
+select t2.Date
+    ,[Loading] = t2.OrderCPU
+    ,[Shortage] = t2.OrderShortageCPU
+    ,[Canceled] = t2.CanceledCPU
+    ,[SubconOut] = t2.SubconOutCPU
+    ,[Balance] = t2.BalanceCPU,
 	'+@col+N'
 into #tmp3
 from #tmp2 t2
@@ -487,7 +487,7 @@ end
 drop table #tmp,#tmp2_0,#tmp2
 ";
                 DataTable ftySummarydt;
-                DualResult dual = MyUtility.Tool.ProcessWithDatatable(this.dtAllData[1], "FtyGroup,Date,ID,OrderCPU,SewingOutputCPU,OutputDate,OrderShortageCPU,FtyZone,CanceledCPU,IsTransOrder", sqlsum, out ftySummarydt);
+                DualResult dual = MyUtility.Tool.ProcessWithDatatable(this.dtAllData[1], "FtyGroup,Date,ID,OrderCPU,SewingOutputCPU,OutputDate,OrderShortageCPU,FtyZone,CanceledCPU,TransFtyZone", sqlsum, out ftySummarydt);
                 if (!dual)
                 {
                     return dual;
