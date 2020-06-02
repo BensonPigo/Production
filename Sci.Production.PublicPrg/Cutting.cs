@@ -279,7 +279,7 @@ INNER JOIN Order_ColorCombo occ ON o.poid = occ.id AND occ.Article = oq.Article
 INNER JOIN order_Eachcons cons ON occ.id = cons.id AND cons.FabricCombo = occ.PatternPanel AND cons.CuttingPiece='0' and cons.FabricPanelCode = occ.FabricPanelCode
 WHERE occ.FabricCode !='' AND occ.FabricCode IS NOT NULL
 AND o.id IN ('{OrderIDs.JoinToString("','")}')
-AND (exists(select 1 from Order_EachCons_Article oea where oea.Order_EachConsUkey = cons.Ukey and oea.Article = oq.Article )
+AND (exists(select 1 from Order_EachCons_Article oea where  oea.Id = o.POID and oea.Article = oq.Article )
 	or not exists (select 1 from Order_EachCons_Article oea where  oea.Id = o.POID)
 )
 --AND o.id='20032468LL004'
