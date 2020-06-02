@@ -1735,7 +1735,7 @@ and s.FactoryID = '{FactoryID}'
             string sqlcmd = $@"
 SELECT s.ComboType, x.APSNo,x.Date
 	,StdQ = IIF(SUM(x.StdQ)over(partition by s.APSNo order by x.Date) > s.AlloQty
-				, x.StdQ - (SUM(x.StdQ)over(partition by s.APSNo order by x.Date) - s.AlloQty)
+				, iif(x.StdQ - (SUM(x.StdQ)over(partition by s.APSNo order by x.Date) - s.AlloQty)<0,0,x.StdQ - (SUM(x.StdQ)over(partition by s.APSNo order by x.Date) - s.AlloQty))
 				, x.StdQ)
 into #currBase
 FROM SewingSchedule  s
@@ -1806,7 +1806,7 @@ DROP TABLE #today,#beforeTmp,#before,#sum,#tmp,#currBase
             string sqlcmd = $@"
 SELECT s.OrderID,s.ComboType, x.APSNo,x.Date
 	,StdQ = IIF(SUM(x.StdQ)over(partition by s.APSNo order by x.Date) > s.AlloQty
-				, x.StdQ - (SUM(x.StdQ)over(partition by s.APSNo order by x.Date) - s.AlloQty)
+				, iif(x.StdQ - (SUM(x.StdQ)over(partition by s.APSNo order by x.Date) - s.AlloQty)<0,0,x.StdQ - (SUM(x.StdQ)over(partition by s.APSNo order by x.Date) - s.AlloQty))
 				, x.StdQ)
 into #currBase
 FROM SewingSchedule  s
