@@ -14,38 +14,9 @@ namespace Sci.Production.Automation
 {
     public class Guozi_AGV
     {
-        private static string baseUrl = string.Empty;
-        private string guoziSuppID = "SCI";
-        private string moduleName = "SCI";
-        private AutomationErrMsgPMS automationErrMsg;
-
-        public Guozi_AGV()
-        {
-            this.automationErrMsg = new AutomationErrMsgPMS()
-            {
-                suppID = this.guoziSuppID,
-                moduleName = this.moduleName
-            };
-        }
-
-        public string BaseUrl
-        {
-            get
-            {
-                if (MyUtility.Check.Empty(baseUrl))
-                {
-                    baseUrl = this.GetBaseUrl();
-                }
-
-                return baseUrl;
-            }
-        }
-
-
-        private string GetBaseUrl()
-        {
-            return MyUtility.GetValue.Lookup($"select URL from WebApiURL with (nolock) where SuppID = '{this.guoziSuppID}' and ModuleName = '{this.moduleName}' ");
-        }
+        private readonly string guoziSuppID = "3A0197";
+        private readonly string moduleName = "AGV";
+        private AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS();
 
         /// <summary>
         /// SentWorkOrderToAGV
@@ -53,7 +24,7 @@ namespace Sci.Production.Automation
         /// <param name="dtWorkOrder">dtWorkOrder</param>
         public void SentWorkOrderToAGV(DataTable dtWorkOrder)
         {
-            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.moduleName))
             {
                 return;
             }
@@ -94,7 +65,7 @@ namespace Sci.Production.Automation
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "WorkOrder"));
 
-            SendWebAPI(this.BaseUrl, suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -103,7 +74,7 @@ namespace Sci.Production.Automation
         /// <param name="dtBundle">dtBundle</param>
         public void SentBundleToAGV(Func<List<BundleToAGV_PostBody>> funListBundle)
         {
-            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.moduleName))
             {
                 return;
             }
@@ -162,7 +133,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Bundle"));
 
-            SendWebAPI(this.BaseUrl, suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -171,7 +142,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
         /// <param name="dtSubprocess">dtSubprocess</param>
         public void SentSubprocessToAGV(DataTable dtSubprocess)
         {
-            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.moduleName))
             {
                 return;
             }
@@ -191,7 +162,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "SubProcess"));
 
-            SendWebAPI(this.BaseUrl, suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -200,7 +171,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
         /// <param name="dtCutCell">dtCutCell</param>
         public void SentCutCellToAGV(DataTable dtCutCell)
         {
-            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.moduleName))
             {
                 return;
             }
@@ -220,7 +191,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "CutCell"));
 
-            SendWebAPI(this.BaseUrl, suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -229,7 +200,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
         /// <param name="dtSewingLine">dtSewingLine</param>
         public void SentSewingLineToAGV(DataTable dtSewingLine)
         {
-            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.moduleName))
             {
                 return;
             }
@@ -249,7 +220,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "SewingLine"));
 
-            SendWebAPI(this.BaseUrl, suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -258,7 +229,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
         /// <param name="dtSewingSchedule">dtSewingSchedule</param>
         public void SentSewingScheduleToAGV(DataTable dtSewingSchedule)
         {
-            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.moduleName))
             {
                 return;
             }
@@ -282,7 +253,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "SewingSchedule"));
 
-            SendWebAPI(this.BaseUrl, suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -291,7 +262,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
         /// <param name="dtWorkOrder">dtSewingSchedule</param>
         public void SentDeleteWorkOrder(List<long> dtWorkOrder)
         {
-            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.moduleName))
             {
                 return;
             }
@@ -314,7 +285,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "WorkOrder"));
 
-            SendWebAPI(this.BaseUrl, suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -323,7 +294,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
         /// <param name="dtWorkOrder_Distribute">dtSewingSchedule</param>
         public void SentDeleteWorkOrder_Distribute(List<WorkOrder_Distribute> deleteWorkOrder_Distribute)
         {
-            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.moduleName))
             {
                 return;
             }
@@ -343,7 +314,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "WorkOrder_Distribute"));
 
-            SendWebAPI(this.BaseUrl, suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         public class WorkOrder_Distribute
@@ -360,7 +331,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
         /// <param name="dtBundle">dtSewingSchedule</param>
         public void SentDeleteBundle(DataTable dtBundle)
         {
-            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.moduleName))
             {
                 return;
             }
@@ -379,7 +350,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Bundle"));
 
-            SendWebAPI(this.BaseUrl, suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -388,7 +359,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
         /// <param name="dtBundle_SubProcess">dtSewingSchedule</param>
         public void SentDeleteBundle_SubProcess(DataTable dtBundle_SubProcess)
         {
-            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.moduleName))
             {
                 return;
             }
@@ -407,7 +378,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Bundle_SubProcess"));
 
-            SendWebAPI(this.BaseUrl, suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -416,7 +387,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
         /// <param name="dtSewingSchedule">dtSewingSchedule</param>
         public void SentDeleteSewingSchedule(DataTable dtSewingSchedule)
         {
-            if (!IsModuleAutomationEnable(this.guoziSuppID, this.guoziSuppID))
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.moduleName))
             {
                 return;
             }
@@ -435,7 +406,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "SewingSchedule"));
 
-            SendWebAPI(this.BaseUrl, suppAPIThread, jsonBody, this.automationErrMsg);
+            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         private class WorkOrderToAGV_PostBody

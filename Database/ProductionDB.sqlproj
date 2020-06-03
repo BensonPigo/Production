@@ -2498,6 +2498,7 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="dbo\Views\View_AirPP.sql" />
+    <Build Include="dbo\Functions\GetWebApiURL.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

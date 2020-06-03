@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using PmsWebApiUtility20;
 using Sci.Data;
+using Sci.Production.Prg;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -18,14 +19,31 @@ namespace Sci.Production.Automation
     /// </summary>
     public static class UtilityAutomation
     {
+        public static string Sci { get { return "SCI"; } }
+
         public static bool IsAutomationEnable
         {
             get { return MyUtility.Check.Seek("select 1 from dbo.System where Automation = 1"); }
         }
 
+        public static string ModuleType
+        {
+            get
+            {
+                if (PmsWebAPI.IsDummy)
+                {
+                    return "Dummy";
+                }
+                else
+                {
+                    return "Formal";
+                }
+            }
+        }
+
         public static bool IsModuleAutomationEnable(string suppid, string module)
         {
-            return IsAutomationEnable && MyUtility.Check.Seek($"select 1 from dbo.WebApiURL where SuppID = '{suppid}' and ModuleName = '{module}' and Junk = 0");
+            return IsAutomationEnable && MyUtility.Check.Seek($"select 1 from dbo.WebApiURL where SuppID = '{suppid}' and ModuleName = '{module}'  and ModuleType = '{ModuleType}' and Junk = 0 ");
         }
 
         public static dynamic AppendBaseInfo(dynamic bodyObject, string apiTag)
@@ -82,6 +100,12 @@ namespace Sci.Production.Automation
 
         public class AutomationErrMsgPMS : AutomationErrMsg
         {
+            public AutomationErrMsgPMS()
+            {
+                this.suppID = Sci;
+                this.moduleName = Sci;
+            }
+
             public void SetErrInfo(DualResult result)
             {
                 this.errorCode = string.Empty;
@@ -90,9 +114,14 @@ namespace Sci.Production.Automation
             }
         }
 
+        public static string GetSciUrl()
+        {
+            return MyUtility.GetValue.Lookup($"select URL from WebApiURL with (nolock) where SuppID = '{Sci}' and ModuleName = '{Sci}' and ModuleType = '{ModuleType}' ");
+        }
+
         public static string GetBaseUrl(string suppID, string moduleName)
         {
-            return MyUtility.GetValue.Lookup($"select URL from WebApiURL with (nolock) where SuppID = '{suppID}' and ModuleName = '{moduleName}' ");
+            return MyUtility.GetValue.Lookup($"select URL from WebApiURL with (nolock) where SuppID = '{suppID}' and ModuleName = '{moduleName}' and ModuleType = '{ModuleType}' ");
         }
     }
 }

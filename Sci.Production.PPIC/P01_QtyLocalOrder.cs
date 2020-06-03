@@ -411,7 +411,7 @@ namespace Sci.Production.PPIC
                 }
             }
 
-            if (UtilityAutomation.IsAutomationEnable)
+            if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
             {
                 Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{this.orderID}','Orders,Order_QtyShip,Order_SizeCode'"))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);

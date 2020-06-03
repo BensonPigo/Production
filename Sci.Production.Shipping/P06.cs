@@ -723,7 +723,7 @@ where	exists (
             }
 
             #region ISP20200757 資料交換 - Sunrise
-            if (UtilityAutomation.IsAutomationEnable)
+            if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
             {
                 string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
                 Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{listOrderID}','Orders,Order_QtyShip'"))
@@ -812,7 +812,7 @@ where ID = '{orderid}'
             }
 
             #region ISP20200757 資料交換 - Sunrise
-            if (UtilityAutomation.IsAutomationEnable)
+            if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
             {
                 string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
                 Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{listOrderID}','Orders,Order_QtyShip'"))

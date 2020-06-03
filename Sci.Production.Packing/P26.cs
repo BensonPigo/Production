@@ -723,7 +723,7 @@ namespace Sci.Production.Packing
                 this.UpdateModel_List.ForEach(first => first.ForEach(second => listPackingID.Add(second.PackingListID)));
                 if (listPackingID.Count > 0)
                 {
-                    Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(listPackingID.JoinToString(","), string.Empty))
+                    Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(listPackingID.Distinct().JoinToString(","), string.Empty))
                         .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
                 }
                 #endregion
