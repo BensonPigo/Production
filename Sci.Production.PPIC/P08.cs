@@ -209,7 +209,7 @@ and (psd.SEQ2 = rd.NewSeq2 or psd.OutputSeq2 = rd.NewSeq2)
 where rd.id = '{this.CurrentMaintain["ID"]}'
 ";
 
-            if (!(result = DBProxy.Current.Select(null,cmdRelp,out dtRelp)))
+            if (!(result = DBProxy.Current.Select(null, cmdRelp, out dtRelp)))
             {
                 this.ShowErr(result);
                 return;
@@ -555,8 +555,8 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
                     System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", this.txtSPNo.Text);
 
                     // 用登入的Factory 抓取對應的FtyGroup
-                     DataTable ftyGroupData;
-                     DBProxy.Current.Select(null, string.Format("select FTYGroup from Factory where id='{0}' and IsProduceFty = 1", Sci.Env.User.Factory), out ftyGroupData);
+                    DataTable ftyGroupData;
+                    DBProxy.Current.Select(null, string.Format("select FTYGroup from Factory where id='{0}' and IsProduceFty = 1", Sci.Env.User.Factory), out ftyGroupData);
                     if (ftyGroupData.Rows.Count == 0)
                     {
                         MyUtility.Msg.WarningBox("SP No. not found!!");
@@ -566,7 +566,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
                         return;
                     }
 
-                     System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@factoryid", ftyGroupData.Rows[0]["FTYGroup"].ToString());
+                    System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@factoryid", ftyGroupData.Rows[0]["FTYGroup"].ToString());
 
                     IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                     cmds.Add(sp1);
@@ -814,9 +814,9 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(this.CurrentMain
         // Mail to
         private void SendMail()
         {
-                DataTable allMail;
-                string sqlCmd = string.Format(
-                    @"select isnull((select EMail from Pass1 WITH (NOLOCK) where ID = r.ApplyName),'') as ApplyName,
+            DataTable allMail;
+            string sqlCmd = string.Format(
+                @"select isnull((select EMail from Pass1 WITH (NOLOCK) where ID = r.ApplyName),'') as ApplyName,
 isnull((select Name from Pass1 WITH (NOLOCK) where ID = r.ApvName),'') as ApvName,
 isnull((select Email from Pass1 WITH (NOLOCK) where ID = r.ApvName),'') as CCMAIL,
 isnull((select EMail from TPEPass1 WITH (NOLOCK) where ID = o.MRHandle),'') as MRHandle,
@@ -829,76 +829,76 @@ from ReplacementReport r WITH (NOLOCK)
 left join Orders o WITH (NOLOCK) on o.ID = r.POID
 left join PO p WITH (NOLOCK) on p.ID = o.POID
 where r.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, out allMail);
-                if (!result)
-                {
-                    MyUtility.Msg.ErrorBox("Query mail list fail.\r\n" + result.ToString());
-                    return;
-                }
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out allMail);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Query mail list fail.\r\n" + result.ToString());
+                return;
+            }
 
-                string mailto = MyUtility.Convert.GetString(allMail.Rows[0]["POSMR"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["POHandle"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["PCSMR"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["PCHandle"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["SMR"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["MRHandle"]) + ";";
-                string cc = MyUtility.Convert.GetString(allMail.Rows[0]["ApplyName"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["CCMAIL"]) + ";";
-                string subject = string.Format("{0} - Fabric Replacement report", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-                StringBuilder content = new StringBuilder();
-                #region 組Content
-                content.Append(@"Hi PO Handle,
+            string mailto = MyUtility.Convert.GetString(allMail.Rows[0]["POSMR"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["POHandle"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["PCSMR"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["PCHandle"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["SMR"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["MRHandle"]) + ";";
+            string cc = MyUtility.Convert.GetString(allMail.Rows[0]["ApplyName"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["CCMAIL"]) + ";";
+            string subject = string.Format("{0} - Fabric Replacement report", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            StringBuilder content = new StringBuilder();
+            #region 組Content
+            content.Append(@"Hi PO Handle,
 
 Please refer attached replacement report and confirm rcvd in reply. The defect sample will send via courier AWB#      on     .please clarify with supplier and advise the result. Thanks.
 If the replacement report can be accept and cfm to proceed, please approve it through system
 
 ");
-                #endregion
+            #endregion
 
-                // 產生Excel
-                this.ToExcel(true);
+            // 產生Excel
+            this.ToExcel(true);
 
-                // 帶出夾檔的檔案
-                sqlCmd = string.Format("select *, YEAR(AddDate) as Year, MONTH(AddDate) as Month from Clip WITH (NOLOCK) where TableName = '{0}' and UniqueKey = '{1}'", "ReplacementReport", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-                DataTable clipData;
-                double totalSize = 0;
-                string totalFile;
-                StringBuilder allFile = new StringBuilder();
-                result = DBProxy.Current.Select(null, sqlCmd, out clipData);
-                if (result && clipData.Rows.Count > 0)
+            // 帶出夾檔的檔案
+            sqlCmd = string.Format("select *, YEAR(AddDate) as Year, MONTH(AddDate) as Month from Clip WITH (NOLOCK) where TableName = '{0}' and UniqueKey = '{1}'", "ReplacementReport", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            DataTable clipData;
+            double totalSize = 0;
+            string totalFile;
+            StringBuilder allFile = new StringBuilder();
+            result = DBProxy.Current.Select(null, sqlCmd, out clipData);
+            if (result && clipData.Rows.Count > 0)
+            {
+                foreach (DataRow dr in clipData.Rows)
                 {
-                    foreach (DataRow dr in clipData.Rows)
+                    string targetFile = Env.Cfg.ClipDir + "\\" + MyUtility.Convert.GetString(dr["Year"]) + Convert.ToString(dr["Month"]).PadLeft(2, '0') + "\\" + MyUtility.Convert.GetString(dr["TableName"]) + MyUtility.Convert.GetString(dr["PKey"]) + MyUtility.Convert.GetString(dr["SourceFile"]).Substring(MyUtility.Convert.GetString(dr["SourceFile"]).LastIndexOf('.'));
+                    System.IO.FileInfo fi = new System.IO.FileInfo(targetFile);
+                    if (fi.Exists)
                     {
-                        // var dataFile = dr;
-                        // string targetFile;
-                        // Sci.Win.PrivUtils.GetClipFileName(dataFile, out targetFile);
-                        string targetFile = Env.Cfg.ClipDir + "\\" + MyUtility.Convert.GetString(dr["Year"]) + Convert.ToString(dr["Month"]).PadLeft(2, '0') + "\\" + MyUtility.Convert.GetString(dr["TableName"]) + MyUtility.Convert.GetString(dr["PKey"]) + MyUtility.Convert.GetString(dr["SourceFile"]).Substring(MyUtility.Convert.GetString(dr["SourceFile"]).LastIndexOf('.'));
                         allFile.Append(string.Format(",{0}", targetFile));
-                        System.IO.FileInfo fi = new System.IO.FileInfo(targetFile);
                         totalSize += (double)fi.Length;
                     }
                 }
+            }
 
-                if (totalSize > 10485760)
-                {
-                    // 當To Excel的檔案與迴紋針裡的檔案加起來超過10MB的話，就在信件中顯示下面訊息，附件只夾To Excel的檔案
-                    content.Append("Due to the attach files is more than 10MB, please ask factory's related person to provide the attach file.");
-                    totalFile = this.excelFile;
-                }
-                else
-                {
-                    totalFile = this.excelFile + allFile.ToString();
-                }
+            if (totalSize > 10485760)
+            {
+                // 當To Excel的檔案與迴紋針裡的檔案加起來超過10MB的話，就在信件中顯示下面訊息，附件只夾To Excel的檔案
+                content.Append("Due to the attach files is more than 10MB, please ask factory's related person to provide the attach file.");
+                totalFile = this.excelFile;
+            }
+            else
+            {
+                totalFile = this.excelFile + allFile.ToString();
+            }
 
-                var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, cc, subject, totalFile, content.ToString(), false, true);
-                email.ShowDialog(this);
+            var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, cc, subject, totalFile, content.ToString(), false, true);
+            email.ShowDialog(this);
 
-                // 刪除Excel File
-                if (System.IO.File.Exists(this.excelFile))
+            // 刪除Excel File
+            if (System.IO.File.Exists(this.excelFile))
+            {
+                try
                 {
-                    try
-                    {
-                        System.IO.File.Delete(this.excelFile);
-                    }
-                    catch (System.IO.IOException)
-                    {
-                        MyUtility.Msg.WarningBox("Delete excel file fail!!");
-                    }
+                    System.IO.File.Delete(this.excelFile);
                 }
+                catch (System.IO.IOException)
+                {
+                    MyUtility.Msg.WarningBox("Delete excel file fail!!");
+                }
+            }
         }
 
         private void P08_FormLoaded(object sender, EventArgs e)
@@ -983,7 +983,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
 
         private void BtnBatchReCalculateResponsibilityDeptAmt_Click(object sender, EventArgs e)
         {
-            var frm = new P08_BatchConfirmRespDept("F",  true);
+            var frm = new P08_BatchConfirmRespDept("F", true);
             frm.ShowDialog(this);
             frm.Dispose();
             this.ReloadDatas();
