@@ -1496,25 +1496,26 @@ BEGIN
 						SET @firstsize = @sizecode
 					END
 
+				IF ISNULL(@RefNoForBalance,'') <> ''
+					BEGIN
+						SELECT @GwBalance = CtnWeight FROM LocalItem WHERE RefNo = @RefNoForBalance
+					END
+				ELSE
+					BEGIN
+						SET @RefNoForBalance = null
+						SET @GwBalance = null
+					END
+
+
 				IF @firstsize = @sizecode
 					BEGIN
-						IF ISNULL(@RefNoForBalance,'') = ''
-						BEGIN
-							INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,SizeSeq,BarCode)
-								VALUES (@refno, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, @gw-@nw, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @remaindercount, @seq,@BarCode)
-						END
-						ELSE
-						BEGIN
-							SELECT @GwBalance = CtnWeight FROM LocalItem WHERE RefNo = @RefNoForBalance
-							-- 有設定尾箱的料號
-							INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,SizeSeq,BarCode)
-								VALUES (@RefNoForBalance, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, @GwBalance, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @remaindercount, @seq,@BarCode)
-						END
+						INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,SizeSeq,BarCode)
+							VALUES (ISNULL(@RefNoForBalance,@refno), 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ISNULL(@GwBalance,@gw-@nw), (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @remaindercount, @seq,@BarCode)
 					END
 				ELSE
 					BEGIN
 						INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,SizeSeq,BarCode)
-							VALUES (@refno, 0, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, 0, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @remaindercount, @seq,@BarCode)
+							VALUES (ISNULL(@RefNoForBalance,@refno), 0, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, 0, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @remaindercount, @seq,@BarCode)
 					END
 			END
 		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance
@@ -2104,26 +2105,27 @@ BEGIN
 						SET @firstsize = @sizecode
 					END
 
+				IF ISNULL(@RefNoForBalance,'') <> ''
+					BEGIN
+						SELECT @GwBalance = CtnWeight FROM LocalItem WHERE RefNo = @RefNoForBalance
+					END
+				ELSE
+					BEGIN
+						SET @RefNoForBalance = null
+						SET @GwBalance = null
+					END
+
 				IF @firstsize = @sizecode
 					BEGIN
 						SET @ctnno = @ctnno + 1
-						IF ISNULL(@RefNoForBalance,'') = ''
-						BEGIN
-							INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,LastCntNo,ArticleSeq,Barcode)
-								VALUES (@refno, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, @gw-@nw, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @ctnno, @seq, @lastctn, @articleSeq, @Barcode)
-						END
-						ELSE
-						BEGIN
-							SELECT @GwBalance = CtnWeight FROM LocalItem WHERE RefNo = @RefNoForBalance
-							-- 有設定尾箱的料號
-							INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,LastCntNo,ArticleSeq,Barcode)
-								VALUES (@RefNoForBalance, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, @GwBalance, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @ctnno, @seq, @lastctn, @articleSeq, @Barcode)
-						END
+
+						INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,LastCntNo,ArticleSeq,Barcode)
+							VALUES (ISNULL(@RefNoForBalance,@refno), 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ISNULL(@GwBalance,@gw-@nw), (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @ctnno, @seq, @lastctn, @articleSeq, @Barcode)
 					END
 				ELSE
 					BEGIN
 						INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,LastCntNo,ArticleSeq,Barcode)
-							VALUES (@refno, 0, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, 0, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @ctnno, @seq, @lastctn, @articleSeq, @Barcode)
+							VALUES (ISNULL(@RefNoForBalance,@refno), 0, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, 0, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @ctnno, @seq, @lastctn, @articleSeq, @Barcode)
 					END
 			END
 		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance
