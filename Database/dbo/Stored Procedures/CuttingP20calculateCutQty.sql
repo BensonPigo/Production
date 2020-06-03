@@ -13,31 +13,6 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	
-	If Object_ID('tempdb..#tmp2_A') Is Null
-	Begin
-		Create Table #tmp2_A
-		(  
-			 Orderid Varchar(16)
-			, SizeCode VarChar(8)
-			, Article VarChar(8)
-			, PatternPanel VarChar(8)
-			, MDivisionid VarChar(8)
-			, cutQty int
-		);
-	End;	
-	If Object_ID('tempdb..#tmp2_B') Is Null
-	Begin
-		Create Table #tmp2_B
-		(  
-			 Orderid Varchar(16)
-			, SizeCode VarChar(8)
-			, Article VarChar(8)
-			, PatternPanel VarChar(8)
-			, MDivisionid VarChar(8)
-			, cutQty int
-		);
-	End;
 
 	select wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,wd.WorkOrderUkey,
 		cutqty= iif(sum(cod.Layer*ws.Qty)>wd.Qty,wd.Qty,sum(cod.Layer*ws.Qty)),
@@ -69,14 +44,12 @@ BEGIN
 	------------------
 	if @type = 0
 	begin
-		insert into #tmp2_A
 		select OrderID,SizeCode,Article,PatternPanel,MDivisionid,[cutqty] = sum(cQty)
 		from #tmp2_1
 		group by OrderID,SizeCode,Article,PatternPanel,MDivisionid
 	end
 	else
 	begin
-		insert into #tmp2_B
 		select OrderID,SizeCode,Article,PatternPanel,MDivisionid,[cutqty] = sum(cQty)
 		from #tmp2_1
 		group by OrderID,SizeCode,Article,PatternPanel,MDivisionid

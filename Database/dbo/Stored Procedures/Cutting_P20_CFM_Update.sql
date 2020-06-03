@@ -49,7 +49,11 @@ BEGIN
 				, cutQty int
 			);
 		End;
+
+		insert into #tmp2_A
 		exec CuttingP20calculateCutQty '0',@ID,@Cdate
+		
+		insert into #tmp2_B
 		exec CuttingP20calculateCutQty '1',@ID,@Cdate
 		
 		select a.*,pre_cutqty=b.cutqty 
