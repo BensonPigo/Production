@@ -33,8 +33,8 @@ namespace Sci.Production.PPIC
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(14))
                 .Text("ID", header: "Order Application", width: Widths.AnsiChars(14))
                 .Text("Reason", header: "Reason", width: Widths.AnsiChars(30))
-                .Text("NeedProduction", header: "Still need prod.", width: Widths.AnsiChars(4))
                 .Text("ToSP", header: "To New SP#", width: Widths.AnsiChars(14))
+                .Text("NeedProduction", header: "Cancel Still need prod.", width: Widths.AnsiChars(4))
                 .Text("FromSP", header: "From SP#", width: Widths.AnsiChars(14))
                 ;
         }
