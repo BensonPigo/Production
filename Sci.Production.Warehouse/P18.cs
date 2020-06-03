@@ -1194,9 +1194,8 @@ from dbo.TransferIn_Detail a WITH (NOLOCK)
 left join Po_Supp_Detail p WITH (NOLOCK)  on a.poid = p.id
                               and a.seq1 = p.seq1
                               and a.seq2 = p.seq2
-left join Invtrans I WITH (NOLOCK)  on a.poid = I.InventoryPOID
-                              and a.seq1 = I.InventorySeq1
-                              and a.seq2 = I.InventorySeq2 and I.FactoryID = '{1}' and I.type = '3'
+outer apply ( select top 1 FabricType from Invtrans I WITH (NOLOCK)  
+             where a.poid = I.InventoryPOID and a.seq1 = I.InventorySeq1 and a.seq2 = I.InventorySeq2 and I.FactoryID = '{1}' and I.type = '3' ) I
 Where a.id = '{0}'", masterID, fromFty);
             return base.OnDetailSelectCommandPrepare(e);
         }
