@@ -165,7 +165,7 @@ AND (
                 .OrderBy(o => o.Date).ToList();
             #endregion
 
-            this.AllData = GetInOffLineList(dt_Schedule, this.Days, Enddate: displayday2);
+            this.AllData = GetInOffLineList(dt_Schedule, this.Days, Enddate: displayday2, ori_startdate: start_where, ori_Enddate: end_where);
 
             List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days, this.AllData.OrderBy(o => o.OrderID).ToList());
 

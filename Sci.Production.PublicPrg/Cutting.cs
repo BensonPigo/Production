@@ -605,15 +605,13 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             return FabricPanelCodeCutPlanQty;
         }
 
-
-
         /// <summary>
         /// 取得所有In/Off Line資料 (成套數量內部自行處理)
         /// </summary>
         /// <param name="dt_SewingSchedule">SewingSchedule的Datatable</param>
         /// <param name="Days">處理過的時間軸，可見Cutting R01報表搜尋"處理報表上橫向日期的時間軸 (扣除Lead Time)" </param>
         /// <returns></returns>
-        public static List<InOffLineList> GetInOffLineList(DataTable dt_SewingSchedule, List<Day> Days, DateTime? startdate = null, DateTime? Enddate = null, System.ComponentModel.BackgroundWorker bw = null)
+        public static List<InOffLineList> GetInOffLineList(DataTable dt_SewingSchedule, List<Day> Days, DateTime? startdate = null, DateTime? Enddate = null, DateTime? ori_startdate = null, DateTime? ori_Enddate = null, System.ComponentModel.BackgroundWorker bw = null)
         {
             if (startdate == null)
             {
@@ -681,6 +679,12 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                     // 這筆 SewingSchedule 日期範圍
                     for (DateTime APSday = Convert.ToDateTime(dr["Inline"]).Date; APSday <= Convert.ToDateTime(dr["Offline"]).Date; APSday = APSday.AddDays(1))
                     {
+                        // 原始日期，不在初始篩選範圍內
+                        if (ori_startdate !=null && ori_Enddate !=null && (ori_startdate > APSday || ori_Enddate < APSday))
+                        {
+                            continue;
+                        }
+
                         // 原始日期不存在當日標準數
                         if (!StdQtyList.Where(w => w.OrderID == OrderID && w.APSNo == ApsNO && w.Date == APSday).Any())
                         {
@@ -792,7 +796,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             return AllData;
         }
 
-        public static List<InOffLineList_byFabricPanelCode> GetInOffLineList_byFabricPanelCode(DataTable dt_SewingSchedule, List<Day> Days, DateTime? startdate = null, DateTime? Enddate = null, System.ComponentModel.BackgroundWorker bw = null)
+        public static List<InOffLineList_byFabricPanelCode> GetInOffLineList_byFabricPanelCode(DataTable dt_SewingSchedule, List<Day> Days, DateTime? startdate = null, DateTime? Enddate = null, DateTime? ori_startdate = null, DateTime? ori_Enddate = null, System.ComponentModel.BackgroundWorker bw = null)
         {
             if (startdate == null)
             {
@@ -863,6 +867,18 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                     // 這筆 SewingSchedule 日期範圍
                     for (DateTime APSday = Convert.ToDateTime(dr["Inline"]).Date; APSday <= Convert.ToDateTime(dr["Offline"]).Date; APSday = APSday.AddDays(1))
                     {
+                        // 原始日期，不在初始篩選範圍內
+                        if (ori_startdate != null && ori_Enddate != null && (ori_startdate > APSday || ori_Enddate < APSday))
+                        {
+                            continue;
+                        }
+
+                        // 原始日期不存在當日標準數
+                        if (!StdQtyList.Where(w => w.OrderID == OrderID && w.APSNo == ApsNO && w.Date == APSday).Any())
+                        {
+                            continue;
+                        }
+
                         DateTime Pdate = APSday; // 紀錄推算後的日期
                         #region 原始日 - LeadTime 之間有多少天 Holiday  PS:時間軸 Days 傳入時範圍是剛好的
                         if (!Days.Where(w => w.Date == APSday && w.IsHoliday).Any()) // 假日不推算
