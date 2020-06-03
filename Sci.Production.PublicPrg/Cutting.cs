@@ -681,6 +681,12 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                     // 這筆 SewingSchedule 日期範圍
                     for (DateTime APSday = Convert.ToDateTime(dr["Inline"]).Date; APSday <= Convert.ToDateTime(dr["Offline"]).Date; APSday = APSday.AddDays(1))
                     {
+                        // 原始日期不存在當日標準數
+                        if (!StdQtyList.Where(w => w.OrderID == OrderID && w.APSNo == ApsNO && w.Date == APSday).Any())
+                        {
+                            continue;
+                        }
+
                         DateTime Pdate = APSday; // 紀錄推算後的日期
                         #region 原始日 - LeadTime 之間有多少天 Holiday  PS:時間軸 Days 傳入時範圍是剛好的
                         if (!Days.Where(w => w.Date == APSday && w.IsHoliday).Any()) // 假日不推算
