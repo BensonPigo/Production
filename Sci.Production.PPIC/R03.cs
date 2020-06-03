@@ -173,7 +173,7 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
 
             seperCmdkpi = this.seperate ? "oq.FtyKPI" : "o.FtyKPI";
             seperCmdkpi2 = this.seperate ? @" left join Order_QtyShip oq WITH (NOLOCK) on o.id=oq.Id" : string.Empty;
-            string whereIncludeCancelOrder = this.chkIncludeCancelOrder.Checked ? string.Empty : " and isnull(o.Junk,0) = 0 ";
+            string whereIncludeCancelOrder = this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
             // 注意!! 新增欄位也要一併新增在poCombo (搜尋KeyWork: union)
             sqlCmd.Append($@"
 with tmpOrders as (
@@ -257,7 +257,7 @@ with tmpOrders as (
             , {seperCmdkpi}
             , o.KPIChangeReason
             , o.EachConsApv
-            , Junk = isnull(o.Junk,0)
+            , o.Junk
             , o.StyleUkey
             , o.CuttingSP
             , o.RainwearTestPassed
@@ -273,7 +273,7 @@ with tmpOrders as (
 			, isForecast = iif(isnull(o.Category,'')='','1','')
             , [AirFreightByBrand] = IIF(o.AirFreightByBrand='1','Y','')
             , [BuyBack] = iif(exists (select 1 from Order_BuyBack where ID = o.ID), 'Y', '')
-            , [Cancelled] = case when isnull(o.junk,0) = 1 then 
+            , [Cancelled] = case when o.junk = 1 then 
                                  case when o.NeedProduction = 1 then 'Y' 
                                       when o.KeepPanels = 1 then 'K'
                                       else 'N' end
@@ -582,7 +582,7 @@ tmpFilterZone as (
             , " + seperCmdkpi + @"
             , o.KPIChangeReason
             , o.EachConsApv
-            , Junk = isnull(o.Junk,0)
+            , o.Junk
             , o.StyleUkey
             , o.CuttingSP
             , o.RainwearTestPassed
@@ -598,7 +598,7 @@ tmpFilterZone as (
 			, isForecast = iif(isnull(o.Category,'')='','1','') 
             , [AirFreightByBrand] = IIF(o.AirFreightByBrand='1','Y','')
             , [BuyBack] = iif(exists (select 1 from Order_BuyBack where ID = o.ID), 'Y', '')
-            , [Cancelled] = case when isnull(o.junk,0) = 1 then 
+            , [Cancelled] = case when o.junk = 1 then 
                                  case when o.NeedProduction = 1 then 'Y' 
                                       when o.KeepPanels = 1 then 'K'
                                       else 'N' end
@@ -714,7 +714,7 @@ group by pd.OrderID, pd.OrderShipmodeSeq
             , t.FtyKPI
             , t.KPIChangeReason
             , t.EachConsApv
-            , Junk = isnull(t.Junk,0)
+            , t.Junk
             , t.StyleUkey
             , t.CuttingSP
             , t.RainwearTestPassed
