@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.CoverPanel = new Sci.Win.UI.Panel();
             this.tabControl = new Sci.Win.UI.TabControl();
             this.tab_QtyBreakdown = new System.Windows.Forms.TabPage();
@@ -85,6 +85,10 @@
             this.btnCreateInsRecord = new Sci.Win.UI.Button();
             this.btnByRecord = new Sci.Win.UI.Button();
             this.txtSpSeq = new Sci.Production.Class.txtSpSeq();
+            this.label1 = new Sci.Win.UI.Label();
+            this.disSeason = new Sci.Win.UI.DisplayBox();
+            this.label22 = new Sci.Win.UI.Label();
+            this.disArticle = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -110,6 +114,10 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.disArticle);
+            this.masterpanel.Controls.Add(this.label22);
+            this.masterpanel.Controls.Add(this.disSeason);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnByRecord);
             this.masterpanel.Controls.Add(this.btnCreateInsRecord);
             this.masterpanel.Controls.Add(this.ByCarton);
@@ -156,7 +164,7 @@
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Size = new System.Drawing.Size(1318, 309);
+            this.masterpanel.Size = new System.Drawing.Size(1318, 333);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
@@ -204,20 +212,24 @@
             this.masterpanel.Controls.SetChildIndex(this.ByCarton, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnCreateInsRecord, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnByRecord, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.disSeason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label22, 0);
+            this.masterpanel.Controls.SetChildIndex(this.disArticle, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 309);
-            this.detailpanel.Size = new System.Drawing.Size(1318, 294);
+            this.detailpanel.Location = new System.Drawing.Point(0, 333);
+            this.detailpanel.Size = new System.Drawing.Size(1318, 315);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(5, 274);
+            this.gridicon.Location = new System.Drawing.Point(5, 298);
             // 
             // detailgridcont
             // 
             this.detailgridcont.Controls.Add(this.CoverPanel);
-            this.detailgridcont.Size = new System.Drawing.Size(1318, 294);
+            this.detailgridcont.Size = new System.Drawing.Size(1318, 315);
             this.detailgridcont.Controls.SetChildIndex(this.CoverPanel, 0);
             // 
             // detail2
@@ -234,15 +246,15 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1318, 641);
+            this.detail.Size = new System.Drawing.Size(1318, 686);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1318, 603);
+            this.detailcont.Size = new System.Drawing.Size(1318, 648);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 603);
+            this.detailbtm.Location = new System.Drawing.Point(0, 648);
             this.detailbtm.Size = new System.Drawing.Size(1318, 38);
             // 
             // browse
@@ -251,7 +263,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1326, 670);
+            this.tabs.Size = new System.Drawing.Size(1326, 715);
             // 
             // CoverPanel
             // 
@@ -259,7 +271,7 @@
             this.CoverPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.CoverPanel.Location = new System.Drawing.Point(0, 0);
             this.CoverPanel.Name = "CoverPanel";
-            this.CoverPanel.Size = new System.Drawing.Size(1318, 294);
+            this.CoverPanel.Size = new System.Drawing.Size(1318, 315);
             this.CoverPanel.TabIndex = 2;
             // 
             // tabControl
@@ -270,7 +282,7 @@
             this.tabControl.Location = new System.Drawing.Point(0, 0);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(1318, 294);
+            this.tabControl.Size = new System.Drawing.Size(1318, 315);
             this.tabControl.TabIndex = 0;
             // 
             // tab_QtyBreakdown
@@ -279,7 +291,7 @@
             this.tab_QtyBreakdown.Location = new System.Drawing.Point(4, 25);
             this.tab_QtyBreakdown.Name = "tab_QtyBreakdown";
             this.tab_QtyBreakdown.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_QtyBreakdown.Size = new System.Drawing.Size(1310, 265);
+            this.tab_QtyBreakdown.Size = new System.Drawing.Size(1310, 286);
             this.tab_QtyBreakdown.TabIndex = 0;
             this.tab_QtyBreakdown.Text = "Qty breakdown";
             // 
@@ -298,20 +310,20 @@
             this.gridQtyBreakdown.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQtyBreakdown.Location = new System.Drawing.Point(3, 3);
             this.gridQtyBreakdown.Name = "gridQtyBreakdown";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBreakdown.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBreakdown.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.gridQtyBreakdown.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQtyBreakdown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBreakdown.RowTemplate.Height = 24;
             this.gridQtyBreakdown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakdown.ShowCellToolTips = false;
-            this.gridQtyBreakdown.Size = new System.Drawing.Size(1304, 259);
+            this.gridQtyBreakdown.Size = new System.Drawing.Size(1304, 280);
             this.gridQtyBreakdown.TabIndex = 0;
             // 
             // tab_CartonSummary
@@ -340,20 +352,20 @@
             this.gridCartonSummary.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridCartonSummary.Location = new System.Drawing.Point(3, 3);
             this.gridCartonSummary.Name = "gridCartonSummary";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridCartonSummary.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridCartonSummary.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.gridCartonSummary.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridCartonSummary.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCartonSummary.RowTemplate.Height = 24;
             this.gridCartonSummary.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCartonSummary.ShowCellToolTips = false;
-            this.gridCartonSummary.Size = new System.Drawing.Size(1304, 262);
+            this.gridCartonSummary.Size = new System.Drawing.Size(878, 5);
             this.gridCartonSummary.TabIndex = 0;
             // 
             // label2
@@ -510,7 +522,7 @@
             // 
             // label21
             // 
-            this.label21.Location = new System.Drawing.Point(23, 154);
+            this.label21.Location = new System.Drawing.Point(23, 181);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(100, 23);
             this.label21.TabIndex = 21;
@@ -552,7 +564,7 @@
             this.chkForThird.AutoSize = true;
             this.chkForThird.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CFAIs3rdInspect", true));
             this.chkForThird.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkForThird.Location = new System.Drawing.Point(21, 235);
+            this.chkForThird.Location = new System.Drawing.Point(21, 262);
             this.chkForThird.Name = "chkForThird";
             this.chkForThird.Size = new System.Drawing.Size(177, 21);
             this.chkForThird.TabIndex = 3;
@@ -677,7 +689,7 @@
             this.editBoxRemark.BackColor = System.Drawing.Color.White;
             this.editBoxRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CFARemark", true));
             this.editBoxRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBoxRemark.Location = new System.Drawing.Point(127, 155);
+            this.editBoxRemark.Location = new System.Drawing.Point(127, 182);
             this.editBoxRemark.Multiline = true;
             this.editBoxRemark.Name = "editBoxRemark";
             this.editBoxRemark.Size = new System.Drawing.Size(1149, 74);
@@ -737,7 +749,7 @@
             // 
             // ByCarton
             // 
-            this.ByCarton.Location = new System.Drawing.Point(1161, 235);
+            this.ByCarton.Location = new System.Drawing.Point(1161, 262);
             this.ByCarton.Name = "ByCarton";
             this.ByCarton.Size = new System.Drawing.Size(115, 30);
             this.ByCarton.TabIndex = 44;
@@ -757,7 +769,7 @@
             // 
             // btnByRecord
             // 
-            this.btnByRecord.Location = new System.Drawing.Point(1161, 270);
+            this.btnByRecord.Location = new System.Drawing.Point(1161, 297);
             this.btnByRecord.Name = "btnByRecord";
             this.btnByRecord.Size = new System.Drawing.Size(115, 30);
             this.btnByRecord.TabIndex = 46;
@@ -777,11 +789,46 @@
             this.txtSpSeq.TextBoxSeqBinding = "";
             this.txtSpSeq.TextBoxSPBinding = "";
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(23, 152);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(100, 23);
+            this.label1.TabIndex = 47;
+            this.label1.Text = "Season";
+            // 
+            // disSeason
+            // 
+            this.disSeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.disSeason.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StyleID", true));
+            this.disSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.disSeason.Location = new System.Drawing.Point(127, 152);
+            this.disSeason.Name = "disSeason";
+            this.disSeason.Size = new System.Drawing.Size(100, 23);
+            this.disSeason.TabIndex = 48;
+            // 
+            // label22
+            // 
+            this.label22.Location = new System.Drawing.Point(293, 152);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(75, 23);
+            this.label22.TabIndex = 49;
+            this.label22.Text = "Article";
+            // 
+            // disArticle
+            // 
+            this.disArticle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.disArticle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.disArticle.Location = new System.Drawing.Point(371, 152);
+            this.disArticle.Name = "disArticle";
+            this.disArticle.Size = new System.Drawing.Size(905, 23);
+            this.disArticle.TabIndex = 50;
+            // 
             // P31
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1326, 703);
+            this.ClientSize = new System.Drawing.Size(1326, 748);
             this.GridAlias = "Order_QtyShip_Detail";
             this.IsDeleteOnBrowse = false;
             this.IsGridIcon2Visible = false;
@@ -882,5 +929,9 @@
         private Win.UI.Button btnByRecord;
         private Win.UI.Button btnCreateInsRecord;
         private Win.UI.Button ByCarton;
+        private Win.UI.DisplayBox disArticle;
+        private Win.UI.Label label22;
+        private Win.UI.DisplayBox disSeason;
+        private Win.UI.Label label1;
     }
 }

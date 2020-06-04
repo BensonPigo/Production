@@ -32,8 +32,11 @@ namespace Sci.Production.Quality
             this._Type = type;
 
             string Isfinished = type == "1" ? "0" : "1";
+            string inId = MyUtility.GetValue.Lookup($"SELECT STUFF((SELECT ''','''+ID FROM Orders WITH (NOLOCK) WHERE MDivisionID='{Sci.Env.User.Keyword}' AND Finished = {Isfinished} FOR XML  PATH('')),1,3,'')");
             string defaultwhere = $"EXISTS (SELECT 1 FROM Orders WITH (NOLOCK) WHERE MDivisionID='{Sci.Env.User.Keyword}' AND Finished = {Isfinished} AND ID = Order_QtyShip.ID)";
+            string defaultFilter = $"ID IN ('{inId}')";
             this.DefaultWhere = defaultwhere;
+            //this.DefaultFilter = defaultFilter;
 
             if (type != "1")
             {
@@ -89,10 +92,25 @@ SELECT  BrandID
 FROM Orders 
 WHERE ID = '{this.CurrentMaintain["ID"].ToString()}'
 ");
-            this.disDest.Value = MyUtility.GetValue.Lookup($@"
-SELECT  Dest
+            this.disSeason.Value = MyUtility.GetValue.Lookup($@"
+SELECT SeasonID
 FROM Orders 
 WHERE ID = '{this.CurrentMaintain["ID"].ToString()}'
+");
+            this.disDest.Value = MyUtility.GetValue.Lookup($@"
+SELECT c.Alias
+FROM Orders o
+INNER JOIN Country c ON o.Dest = c.ID
+WHERE o.ID = '{this.CurrentMaintain["ID"].ToString()}'
+");
+            this.disArticle.Value = MyUtility.GetValue.Lookup($@"
+SELECT STUFF(
+    (SELECT DISTINCT ','+Article 
+    FROM Order_QtyShip_Detail 
+    WHERE ID = '{this.CurrentMaintain["ID"].ToString()}' AND Seq = '{this.CurrentMaintain["Seq"].ToString()}'
+    FOR XML PATH('')
+    )
+,1,1,'')
 ");
             this.disSewingOutput.Value = MyUtility.GetValue.Lookup($@"
 SELECT  dbo.getMinCompleteSewQty('{this.CurrentMaintain["ID"].ToString()}',NULL,NULL)
