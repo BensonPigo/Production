@@ -192,7 +192,7 @@ inner join Orders o WITH (NOLOCK) on o.ID=oq.ID
 inner join Order_ColorCombo occ WITH (NOLOCK) on o.poid = occ.id and occ.Article = oq.Article
 inner join order_Eachcons cons WITH (NOLOCK) on occ.id = cons.id and cons.FabricCombo = occ.PatternPanel and cons.FabricPanelCode = occ.FabricPanelCode and cons.CuttingPiece='0'
 left join Order_BOF bof WITH (NOLOCK) on bof.Id = cons.Id and bof.FabricCode = cons.FabricCode
-left join Bundle B WITH (NOLOCK) on o.ID=b.Orderid and cons.FabricCombo=b.PatternPanel and cons.FabricPanelCode= b.FabricPanelCode and oq.Article=b.Article
+left join Bundle B WITH (NOLOCK) on o.ID=b.Orderid and cons.FabricCombo=b.PatternPanel and oq.Article=b.Article
 left join Bundle_Detail BD WITH (NOLOCK) on B.ID=BD.Id and oq.SizeCode=bd.Sizecode
 where occ.FabricCode !='' and occ.FabricCode is not null and bof.Kind = 1
 and exists (select 1 from {tempTable} t where t.OrderID = o.ID and o.LocalOrder = 0) --非local單
