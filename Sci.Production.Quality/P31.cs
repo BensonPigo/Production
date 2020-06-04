@@ -32,18 +32,14 @@ namespace Sci.Production.Quality
             this._Type = type;
 
             string Isfinished = type == "1" ? "0" : "1";
-            string inId = MyUtility.GetValue.Lookup($"SELECT STUFF((SELECT ''','''+ID FROM Orders WITH (NOLOCK) WHERE MDivisionID='{Sci.Env.User.Keyword}' AND Finished = {Isfinished} FOR XML  PATH('')),1,3,'')");
-            string defaultwhere = $"EXISTS (SELECT 1 FROM Orders WITH (NOLOCK) WHERE MDivisionID='{Sci.Env.User.Keyword}' AND Finished = {Isfinished} AND ID = Order_QtyShip.ID)";
-            string defaultFilter = $"ID IN ('{inId}')";
-            this.DefaultWhere = defaultwhere;
-            //this.DefaultFilter = defaultFilter;
+            string defaultFilter = $" EXISTS (SELECT 1 FROM Orders WITH (NOLOCK) WHERE MDivisionID='{Sci.Env.User.Keyword}' AND Finished = {Isfinished} AND ID = Order_QtyShip.ID)";
+            this.DefaultFilter = defaultFilter;
 
             if (type != "1")
             {
                 this.IsSupportEdit = false;
             }
         }
-
 
         protected override void OnFormLoaded()
         {
