@@ -212,6 +212,7 @@ namespace Sci.Production.Warehouse
             if (!MyUtility.Check.Empty(this.txtWK.Text))
             {
                 sqlWhere += $" and r.ExportID = '{this.txtWK.Text}'";
+                sqlWhere2 += $" and 1=0 ";
             }
 
             if (!MyUtility.Check.Empty(this.txtSP.Text))
