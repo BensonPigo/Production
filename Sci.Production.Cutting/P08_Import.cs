@@ -36,7 +36,7 @@ namespace Sci.Production.Cutting
             .Text("CuttingID", header: "CuttingID", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Fab Combo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
             .Text("MarkerName", header: "Mark Name", width: Widths.AnsiChars(2), iseditingreadonly: true)
-            .Numeric("Each Cons", header: "Each Cons", width: Widths.AnsiChars(2), integer_places: 8, decimal_places: 4, iseditingreadonly: true)
+            .DateTime("Each Cons", header: "Each Cons", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .DateTime("Mtl ETA", header: "Mtl ETA", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .DateTime("1stSewingDate", header: "1st Sewing Date", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Type of Cutting", header: "Type of Cutting", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -97,11 +97,12 @@ select
 	, [Buyer Dlv] = format(Cutcombo.BuyerDelivery,'yyyy/MM/dd')
 	, [Ref#] = Fabric.Refno
 	, [Color Desc] = col.ColorDesc
-	, Remark.remark
+	, Remark=''
 	, c.ColorID
 	, Order_EachConsUkey = e.Ukey
 	, POID = o.POID
     , MDivisionID = (select MDivisionID from Factory where Id = o.FactoryID)
+	, e.ConsPC
 from dbo.Order_EachCons e WITH (NOLOCK)
 left join dbo.Order_EachCons_Color c WITH (NOLOCK) on c.Order_EachConsUkey = e.Ukey
 left join dbo.Order_BOF bof WITH (NOLOCK) on bof.Id = e.Id and bof.FabricCode = e.FabricCode
@@ -136,22 +137,8 @@ outer apply(
 	where b.ID = o.poid and b.SEQ1 = mtl.Seq1 and b.SEQ2 = mtl.Seq2
 		and color.id = b.ColorID and color.BrandId = o.brandid
 ) col
-outer apply(
-	select remark = STUFF((
-		select concat(',',wd.OrderID,'\',wd.Article,'\',wd.SizeCode,'\',wd.Qty)
-		from(
-			select distinct wd.OrderID,wd.Article,wd.SizeCode,wd.Qty,wd.WorkOrderUkey
-			from WorkOrder w with(nolock)
-			inner join WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w.Ukey
-			where w.Order_EachconsUkey = e.Ukey
-		)wd
-		order by wd.OrderID,wd.Article,wd.SizeCode,wd.Qty
-		for xml path('')
-	),1,1,'')
-)remark
 where e.Id = @CuttingID and e.CuttingPiece = 1 
 order by MarkerName, ColorID 
-
 ";
 
             DualResult result = DBProxy.Current.Select(null, sqlcmd, sqlParameters, out gridTable);
@@ -160,6 +147,8 @@ order by MarkerName, ColorID
                 ShowErr(result);
                 return;
             }
+
+
 
             this.listControlBindingSource1.DataSource = gridTable;
         }
@@ -294,12 +283,12 @@ select
     ,[MarkerName]
     ,[ColorID]
     ,[Dyelot]
-    ,[RefNo]
+    ,[Ref#]
     ,[Qty]
     ,[ReleaseQty]
-    ,[FabricCombo]
-    ,[Direction]
-    ,[CuttingWidth]
+    ,[Fab Combo]
+    ,[Type of Cutting]
+    ,[Cut Width]
     ,[ConsPC]
     ,[Seq1]
     ,[Seq2]
