@@ -63,7 +63,7 @@ BEGIN
 		inner join Production.dbo.Orders c on b.ID = c.ID 
 											  and a.FactoryID != b.FTY_Group
 		left join Production.dbo.Factory f on b.FTY_Group = f.ID
-		where 	(b.Junk=0 or (b.Junk=1 and b.NeedProduction=1))
+		where 	(isnull(b.Junk,0) = 0 or (isnull(b.Junk,0) = 1 and b.NeedProduction=1))
 				and b.IsForecast = '0'
 
 		--delete cutting
@@ -71,7 +71,7 @@ BEGIN
 		from #TOrder a 		
 		inner join Production.dbo.Cutting b on a.id = b.ID 
 											   and b.FactoryID <> a.FTY_Group
-		where	(a.Junk=0 or (a.Junk=1 and a.NeedProduction=1))
+		where	(isnull(a.Junk,0) = 0 or (isnull(a.Junk,0) = 1 and a.NeedProduction=1))
 				and a.IsForecast = '0'
 				and not exists(select 1 from Production.dbo.MDivision m where m.ID = a.MDivisionID )
 
@@ -292,8 +292,8 @@ BEGIN
 						, N_SMnorderApv		= iif(isnull(a.SMnorderApv, '') != isnull(b.SMnorderApv, ''), b.SMnorderApv, null)
 						, O_MnorderApv2		= iif(isnull(a.MnorderApv2, '') != isnull(b.MnorderApv2, ''), A.MnorderApv2, null)
 						, N_MnorderApv2		= iif(isnull(a.MnorderApv2, '') != isnull(b.MnorderApv2, ''), b.MnorderApv2, null)
-						, O_Junk			= iif(isnull(a.Junk, '') != isnull(b.Junk, ''), A.Junk, 0)
-						, N_Junk			= iif(isnull(a.Junk, '') != isnull(b.Junk, ''), b.Junk, 0)
+						, O_Junk			= iif(isnull(a.Junk, '') != isnull(b.Junk, ''), isnull(A.Junk,0), 0)
+						, N_Junk			= iif(isnull(a.Junk, '') != isnull(b.Junk, ''), isnull(b.Junk,0), 0)
 						, O_KPILETA			= iif(isnull(a.KPILETA, '') != isnull(b.KPILETA, ''), A.KPILETA, null)
 						, N_KPILETA			= iif(isnull(a.KPILETA, '') != isnull(b.KPILETA, ''), b.KPILETA, null)
 						, O_LETA			= IIF(isnull(A.LETA, '') != isnull(B.LETA, ''), A.LETA, null)
@@ -519,7 +519,7 @@ BEGIN
 				t.BuyerDelivery			= s.BuyerDelivery,
 				t. SciDelivery			= s.SciDelivery, 
 				t.CFMDate				= s.CFMDate, 
-				t.Junk					= s.Junk,
+				t.Junk					= isnull(s.Junk,0),
 				t.CdCodeID				= s.CdCodeID, 
 				t.CPU					= s.CPU, 
 				t.Qty					= s.Qty, 
@@ -585,7 +585,7 @@ BEGIN
 			, s.MnorderApv			, s.CRDDate				, s.InitialPlanDate		, s.PlanDate			, s.FirstProduction 
 			, s.FirstProductionLock , s.OrigBuyerDelivery	, s.ExCountry			, s.InDCDate			, s.CFMShipment 
 			, s.PFETA				, s.PackLETA			, s.LETA				, s.MRHandle			, s.SMR 
-			, s.ScanAndPack			, s.VasShas				, s.SpecialCust			, s.TissuePaper			, s.Junk 
+			, s.ScanAndPack			, s.VasShas				, s.SpecialCust			, s.TissuePaper			, isnull(s.Junk,0) 
 			, s.Packing				, s.MarkFront			, s.MarkBack			, s.MarkLeft			, s.MarkRight 
 			, s.Label				, s.OrderRemark			, s.ArtWorkCost			, s.StdCost				, s.CtnType 
 			, s.FOCQty				, s.SMnorderApv			, s.FOC					, s.MnorderApv2			, s.Packing2 
@@ -642,7 +642,7 @@ BEGIN
 	Merge Production.dbo.Order_Qty_Garment as t
 	Using (
 		select a.*
-			   , OrdersJunk = b.Junk
+			   , OrdersJunk = isnull(b.Junk,0)
 		from Trade_To_Pms.dbo.Order_Qty_Garment a With (NoLock) 
 		inner join #TOrder b on a.id = b.id
 	) as s on t.ID = s.ID
