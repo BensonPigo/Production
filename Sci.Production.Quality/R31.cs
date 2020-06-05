@@ -77,7 +77,7 @@ oq.CFAFinalInspectResult
 ,o.StyleID
 ,s.StyleName
 ,o.SeasonID
-,o.Dest
+,[Dest]=c.Alias
 ,o.Customize1
 ,o.CustCDID
 ,oq.Seq
@@ -111,6 +111,7 @@ oq.CFAFinalInspectResult
 
 FROM Order_QtyShip oq
 INNER JOIN Orders o ON o.ID = oq.Id
+LEFT JOIN Country c ON o.Dest = c.ID
 INNER JOIN Style s ON o.StyleID=s.ID AND s.SeasonID = o.SeasonID
 OUTER APPLY(
 	SELECT [Val]=STUFF((

@@ -69,8 +69,9 @@ namespace Sci.Production.Class
             {
                 return;
             }
-
-            bool IsSameM = MyUtility.Check.Seek($"SELECT 1 FROM Orders WHERE ID='{OrderID}' AND MDivisionID = '{Sci.Env.User.Keyword}'");
+            List<SqlParameter> paras = new List<SqlParameter>();
+            paras.Add(new SqlParameter("@ID", OrderID));
+            bool IsSameM = MyUtility.Check.Seek($"SELECT 1 FROM Orders WHERE ID=@ID AND MDivisionID = '{Sci.Env.User.Keyword}'",paras);
 
             if (!IsSameM)
             {
@@ -81,8 +82,7 @@ namespace Sci.Production.Class
 
             DataTable dt;
             DualResult result;
-            List<SqlParameter> paras = new List<SqlParameter>();
-            paras.Add(new SqlParameter("@ID", OrderID));
+
             paras.Add(new SqlParameter("@Seq", Seq));
 
             string cmd = string.Empty;

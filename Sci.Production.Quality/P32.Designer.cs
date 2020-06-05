@@ -77,6 +77,8 @@
             this.txtshift = new Sci.Production.Class.txtDropDownList();
             this.txtCFA = new Sci.Production.Class.txtuser();
             this.txtSpSeq = new Sci.Production.Class.txtSpSeq();
+            this.disArticle = new Sci.Win.UI.DisplayBox();
+            this.label9 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -95,6 +97,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.disArticle);
+            this.masterpanel.Controls.Add(this.label9);
             this.masterpanel.Controls.Add(this.labelStatus);
             this.masterpanel.Controls.Add(this.numSQR);
             this.masterpanel.Controls.Add(this.numDefectQty);
@@ -189,6 +193,8 @@
             this.masterpanel.Controls.SetChildIndex(this.numDefectQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.numSQR, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStatus, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
+            this.masterpanel.Controls.SetChildIndex(this.disArticle, 0);
             // 
             // detailpanel
             // 
@@ -342,7 +348,7 @@
             // 
             // label21
             // 
-            this.label21.Location = new System.Drawing.Point(23, 175);
+            this.label21.Location = new System.Drawing.Point(23, 203);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(100, 23);
             this.label21.TabIndex = 21;
@@ -418,7 +424,7 @@
             this.editBoxRemark.BackColor = System.Drawing.Color.White;
             this.editBoxRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editBoxRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBoxRemark.Location = new System.Drawing.Point(126, 178);
+            this.editBoxRemark.Location = new System.Drawing.Point(126, 203);
             this.editBoxRemark.Multiline = true;
             this.editBoxRemark.Name = "editBoxRemark";
             this.editBoxRemark.Size = new System.Drawing.Size(1077, 74);
@@ -737,6 +743,23 @@
             this.txtSpSeq.TextBoxSPBinding = "";
             this.txtSpSeq.Leave += new System.EventHandler(this.txtSpSeq_Leave);
             // 
+            // disArticle
+            // 
+            this.disArticle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.disArticle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.disArticle.Location = new System.Drawing.Point(126, 175);
+            this.disArticle.Name = "disArticle";
+            this.disArticle.Size = new System.Drawing.Size(1077, 23);
+            this.disArticle.TabIndex = 71;
+            // 
+            // label9
+            // 
+            this.label9.Location = new System.Drawing.Point(23, 175);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(100, 23);
+            this.label9.TabIndex = 70;
+            this.label9.Text = "Article";
+            // 
             // P32
             // 
             this.ApvChkValue = "New";
@@ -827,5 +850,7 @@
         private Win.UI.NumericBox numDefectQty;
         private Win.UI.NumericBox numSQR;
         private Win.UI.Label labelStatus;
+        private Win.UI.DisplayBox disArticle;
+        private Win.UI.Label label9;
     }
 }
