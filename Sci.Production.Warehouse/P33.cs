@@ -2206,7 +2206,6 @@ INTO #tmp
 FROM Issue_Summary iis WITH(NOLOCK)
 INNER JOIN Issue_Detail iid WITH(NOLOCK) ON iis.Id = iid.Id AND iis.Ukey = iid.Issue_SummaryUkey
 INNER JOIN Fabric f WITH(NOLOCK) ON f.SCIRefno = iis.SCIRefno
-LEFT JOIN FtyInventory_Detail ftd WITH(NOLOCK) ON ftd.Ukey= iid.FtyInventoryUkey
 OUTER APPLY(
 	SELECT TOP 1 PSD.StockUnit  ,u.Description
 	FROM PO_Supp_Detail PSD 
