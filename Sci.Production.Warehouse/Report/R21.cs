@@ -44,11 +44,22 @@ namespace Sci.Production.Warehouse
     ,[MaterialComplete] = case when psd.Complete = 1 then 'Y' else '' end
     ,[ETA] = psd.FinalETA
     ,[ArriveWHDate] = stuff((
-	            	select concat(char(10),isnull(Format(Export.whsearrival,'yyyy/MM/dd'),'　'))
-	            	from Export_Detail with (nolock) 
-                    inner join Export with (nolock) on Export.ID = Export_Detail.ID
-	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 order by Export_Detail.ID
-	            	for xml path('')
+                    select distinct concat(char(10),isnull(Format(a.date,'yyyy/MM/dd'),'　'))
+                    from (
+	                    select date = Export.whsearrival
+	                    from Export_Detail with (nolock) 
+	                    inner join Export with (nolock) on Export.ID = Export_Detail.ID
+	                    where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
+
+	                    union all
+
+	                    select date = ts.IssueDate
+	                    from TransferIn ts with (nolock) 
+	                    inner join TransferIn_Detail tsd with (nolock) on tsd.ID = ts.ID
+	                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
+	                    and ts.Status='Confirmed'
+                    )a
+                    for xml path('')
 	            ),1,1,'')
     ,[WK] = stuff((
 	            	select concat(char(10),ID)
@@ -103,11 +114,22 @@ namespace Sci.Production.Warehouse
     ,[BuyerDelivery]=o.BuyerDelivery
     ,[ETA] = psd.FinalETA
     ,[ArriveWHDate] = stuff((
-	            	select concat(char(10),isnull(Format(Export.whsearrival,'yyyy/MM/dd'),'　'))
-	            	from Export_Detail with (nolock) 
-                    inner join Export with (nolock) on Export.ID = Export_Detail.ID
-	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 order by Export_Detail.ID
-	            	for xml path('')
+                    select distinct concat(char(10),isnull(Format(a.date,'yyyy/MM/dd'),'　'))
+                    from (
+	                    select date = Export.whsearrival
+	                    from Export_Detail with (nolock) 
+	                    inner join Export with (nolock) on Export.ID = Export_Detail.ID
+	                    where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
+
+	                    union all
+
+	                    select date = ts.IssueDate
+	                    from TransferIn ts with (nolock) 
+	                    inner join TransferIn_Detail tsd with (nolock) on tsd.ID = ts.ID
+	                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
+	                    and ts.Status='Confirmed'
+                    )a
+                    for xml path('')
 	            ),1,1,'')
     ,[WK] = stuff((
 	            	select concat(char(10),ID)
@@ -416,25 +438,63 @@ where 1=1
 
             if (!MyUtility.Check.Empty(arriveWH1) && !MyUtility.Check.Empty(arriveWH2))
             {
-                sqlcmd.Append($@" and exists (select 1 from Export_Detail with (nolock) 
-                    inner join Export with (nolock) on Export.ID = Export_Detail.ID
-	            	where   POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 and  
-                            Export.whsearrival >='{((DateTime)arriveWH1).ToString("yyyy/MM/dd")}' and
-                            Export.whsearrival <='{((DateTime)arriveWH2).ToString("yyyy/MM/dd")}') ");
+                sqlcmd.Append($@" 
+ and (
+	exists (
+	select 1 from Export_Detail with (nolock) 
+	inner join Export with (nolock) on Export.ID = Export_Detail.ID
+	where   POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
+	and Export.whsearrival between '{((DateTime)arriveWH1).ToString("yyyy/MM/dd")}' and '{((DateTime)arriveWH2).ToString("yyyy/MM/dd")}' )
+or
+	exists (	
+	select 1
+	from TransferIn ts with (nolock) 
+	inner join TransferIn_Detail tsd with (nolock) on tsd.ID = ts.ID
+	where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
+	and ts.Status='Confirmed'
+	and ts.IssueDate between '{((DateTime)arriveWH1).ToString("yyyy/MM/dd")}' and '{((DateTime)arriveWH2).ToString("yyyy/MM/dd")}') 
+)
+");
             }
             else if (!MyUtility.Check.Empty(arriveWH1))
             {
-                sqlcmd.Append($@" and exists (select 1 from Export_Detail with (nolock) 
-                    inner join Export with (nolock) on Export.ID = Export_Detail.ID
-	            	where   POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 and  
-                            Export.whsearrival >='{((DateTime)arriveWH1).ToString("yyyy/MM/dd")}') ");
+                sqlcmd.Append($@" 
+ and (
+	exists (
+	select 1 from Export_Detail with (nolock) 
+	inner join Export with (nolock) on Export.ID = Export_Detail.ID
+	where   POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
+	and Export.whsearrival >= '{((DateTime)arriveWH1).ToString("yyyy/MM/dd")}' )
+or
+	exists (	
+	select 1
+	from TransferIn ts with (nolock) 
+	inner join TransferIn_Detail tsd with (nolock) on tsd.ID = ts.ID
+	where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
+	and ts.Status='Confirmed'
+	and ts.IssueDate >= '{((DateTime)arriveWH1).ToString("yyyy/MM/dd")}' ) 
+)
+");
             }
             else if (!MyUtility.Check.Empty(arriveWH2))
             {
-                sqlcmd.Append($@" and exists (select 1 from Export_Detail with (nolock) 
-                    inner join Export with (nolock) on Export.ID = Export_Detail.ID
-	            	where   POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 and  
-                            Export.whsearrival <='{((DateTime)arriveWH2).ToString("yyyy/MM/dd")}') ");
+                sqlcmd.Append($@" 
+ and (
+	exists (
+	select 1 from Export_Detail with (nolock) 
+	inner join Export with (nolock) on Export.ID = Export_Detail.ID
+	where   POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
+	and Export.whsearrival <= '{((DateTime)arriveWH2).ToString("yyyy/MM/dd")}' )
+or
+	exists (	
+	select 1
+	from TransferIn ts with (nolock) 
+	inner join TransferIn_Detail tsd with (nolock) on tsd.ID = ts.ID
+	where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
+	and ts.Status='Confirmed'
+	and ts.IssueDate <= '{((DateTime)arriveWH2).ToString("yyyy/MM/dd")}' ) 
+)
+");
             }
 
             #endregion
