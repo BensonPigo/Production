@@ -12,6 +12,7 @@ using Ict;
 using System.Data.SqlClient;
 using Ict.Win.UI;
 using System.Linq;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Quality
 {
@@ -55,6 +56,11 @@ namespace Sci.Production.Quality
             this.gridCartonSummary.Columns.Clear();
 
             bool IsSample =MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.CurrentMaintain["ID"].ToString()}' "));
+            
+            bool canConfrim = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanNew");
+
+            this.btnCreateInsRecord.Enabled = canConfrim;
+
 
             if (IsSample)
             {
@@ -949,11 +955,21 @@ WHERE ID = '{this.CurrentMaintain["ID"].ToString()}'
                 BuyerDev = this.CurrentMaintain["BuyerDelivery"].ToString(),
                 OrderQty = this.CurrentMaintain["Qty"].ToString(),
                 Dest = MyUtility.GetValue.Lookup($@"
-SELECT  Dest
-FROM Orders 
-WHERE ID = '{this.CurrentMaintain["ID"].ToString()}'
+SELECT c.Alias
+FROM Orders o
+INNER JOIN Country c ON o.Dest = c.ID
+WHERE o.ID = '{this.CurrentMaintain["ID"].ToString()}'
+"),
+                Article = MyUtility.GetValue.Lookup($@"
+SELECT STUFF(
+    (SELECT DISTINCT ','+Article 
+    FROM Order_QtyShip_Detail 
+    WHERE ID = '{this.CurrentMaintain["ID"].ToString()}' AND Seq = '{this.CurrentMaintain["Seq"].ToString()}'
+    FOR XML PATH('')
+    )
+,1,1,'')
 ")
-        };
+            };
 
             Sci.Production.Quality.P32 p32 = new P32(new ToolStripMenuItem(), "1",sourceHeader: obj);
             p32.ShowDialog(this);

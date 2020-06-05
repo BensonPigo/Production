@@ -69,19 +69,30 @@ GROUP BY pd.ID,pd.OrderID,CTNStartNo,pd.OrderShipmodeSeq
 
 SELECT * FROM (
     ----不是混尺碼的正常做
-    SELECT DISTINCT  pd.CTNStartNo
+    SELECT   pd.CTNStartNo
 		    ,pd.Article 
 		    ,pd.SizeCode 
 			,[ShipQty]=SUM(pd.ShipQty)
-		    ,[Result]=CASE WHEN Result.val=1 THEN 'Pass' WHEN Result.val=0 THEN 'Fail' ELSE '' END	
+		    ,[Result]=IIF(ResultPass.Data IS NOT NULL , 'Pass',IIF(ResultFail.Data IS NOT NULL ,'Fail',''))
 		    ,[ReceiveDate]=Max(pd.ReceiveDate)	
 	FROM PackingList_Detail pd
     LEFT JOIN CFAInspectionRecord  CFA  ON pd.OrderID=cfa.OrderID AND pd.OrderShipmodeSeq = cfa.SEQ AND CFA.Carton = pd.CTNStartNo AND CFA.Status='Confirmed' 
     OUTER APPLY (
-	    SELECT val=SUM(IIF(Result='Pass',1,0))
-	    FROM CFAInspectionRecord cfa2 
-	    WHERE OrderID=pd.OrderID AND Seq=pd.OrderShipmodeSeq AND Carton = pd.CTNStartNo AND Status='Confirmed' 
-    )Result
+		SELECT Data from dbo.SplitString((
+			SELECT TOP 1 Carton 
+			FROM CFAInspectionRecord cfa2 
+			WHERE OrderID=pd.OrderID AND Seq=pd.OrderShipmodeSeq 
+			AND Status='Confirmed' AND Result='Pass'
+		),',') WHERE Data=pd.CTNStartNo
+    )ResultPass
+    OUTER APPLY (
+		SELECT Data from dbo.SplitString((
+			SELECT TOP 1 Carton 
+			FROM CFAInspectionRecord cfa2 
+			WHERE OrderID=pd.OrderID AND Seq=pd.OrderShipmodeSeq 
+			AND Status='Confirmed' AND Result='Fail'
+		),',') WHERE Data=pd.CTNStartNo
+    )ResultFail
 	WHERE pd.OrderID= '{this._OrderID}'
 	AND pd.OrderShipmodeSeq = '{this._OrderShipmodeSeq}'
 	AND NOT EXISTS(
@@ -90,7 +101,7 @@ SELECT * FROM (
 		WHERE t.ID = pd.ID AND t.OrderID = pd.OrderID 
 		AND t.OrderShipmodeSeq=pd.OrderShipmodeSeq AND t.CTNStartNo=pd.CTNStartNo
 	)
-	GROUP BY CTNStartNo,Article ,SizeCode , Result.val
+	GROUP BY CTNStartNo,Article ,SizeCode ,ResultPass.Data ,ResultFail.Data
 	UNION
     ----混尺碼分開處理
 	SELECt t.CTNStartNo
@@ -134,19 +145,29 @@ SELECT * FROM (
 			AND ISNULL(pd.ReceiveDate,'1999/07/20') = t.ReceiveDate
 	)ShipQty
 	OUTER APPLY(
-		SELECT TOP 1 [Result]=CASE WHEN Result.val=1 THEN 'Pass' WHEN Result.val=0 THEN 'Fail' ELSE '' END	
+
+		SELECT   [Result]=IIF(ResultPass.Data IS NOT NULL , 'Pass',IIF(ResultFail.Data IS NOT NULL ,'Fail',''))
 		FROM PackingList_Detail pd
-        LEFT JOIN CFAInspectionRecord  CFA  ON pd.OrderID=cfa.OrderID AND pd.OrderShipmodeSeq = cfa.SEQ AND CFA.Carton = pd.CTNStartNo AND CFA.Status='Confirmed' 
-        OUTER APPLY (
-	        SELECT val=SUM(IIF(Result='Pass',1,0))
-	        FROM CFAInspectionRecord cfa2 
-	        WHERE OrderID=pd.OrderID AND Seq=pd.OrderShipmodeSeq AND Carton = pd.CTNStartNo AND Status='Confirmed' 
-        )Result
+		LEFT JOIN CFAInspectionRecord  CFA  ON pd.OrderID=cfa.OrderID AND pd.OrderShipmodeSeq = cfa.SEQ AND CFA.Carton = pd.CTNStartNo AND CFA.Status='Confirmed' 
+		OUTER APPLY (
+			SELECT Data from dbo.SplitString((
+				SELECT TOP 1 Carton 
+				FROM CFAInspectionRecord cfa2 
+				WHERE OrderID=pd.OrderID AND Seq=pd.OrderShipmodeSeq 
+				AND Status='Confirmed' AND Result='Pass'
+			),',') WHERE Data=pd.CTNStartNo
+		)ResultPass
+		OUTER APPLY (
+			SELECT Data from dbo.SplitString((
+				SELECT TOP 1 Carton 
+				FROM CFAInspectionRecord cfa2 
+				WHERE OrderID=pd.OrderID AND Seq=pd.OrderShipmodeSeq 
+				AND Status='Confirmed' AND Result='Fail'
+			),',') WHERE Data=pd.CTNStartNo
+		)ResultFail
 		WHERE pd.ID = t.ID 
-		AND pd.OrderID = t.OrderID 
-			AND pd.OrderShipmodeSeq = t.OrderShipmodeSeq
-		AND pd.CTNStartNo = t.CTNStartNo
-			AND ISNULL(pd.ReceiveDate,'1999/07/20') = t.ReceiveDate
+		AND pd.OrderID = t.OrderID 			AND pd.OrderShipmodeSeq = t.OrderShipmodeSeq
+		AND pd.CTNStartNo = t.CTNStartNo			AND ISNULL(pd.ReceiveDate,'1999/07/20') = t.ReceiveDate
 	)Result
 ) a
 ORDER BY Cast(CTNStartNo as int)

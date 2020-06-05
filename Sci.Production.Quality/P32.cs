@@ -370,6 +370,8 @@ WHERE a.ID ='{masterID}'
                 CurrentMaintain["MDivisionid"] = _sourceHeader.M;
                 CurrentMaintain["FactoryID"] = _sourceHeader.Factory;
                 this.disOrderQty.Value = _sourceHeader.OrderQty;
+                this.disDest.Value = _sourceHeader.Dest;
+                this.disArticle.Value = _sourceHeader.Article;
                 this.dateBuyerDev.Value = MyUtility.Convert.GetDate(_sourceHeader.BuyerDev);
 
             }
@@ -391,7 +393,7 @@ WHERE a.ID ='{masterID}'
         {
             string updateCmd = "";
 
-            if (this.CurrentMaintain["Stage"].ToString() != "Staggered")
+            if (this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString() == "3rd party")
             {
                 updateCmd += $@"
 UPDATE CFAInspectionRecord SET Status='Confirmed',EditName='{Sci.Env.User.UserID}' ,EditDate=GETDATE() WHERE ID='{this.CurrentMaintain["ID"]}' 
@@ -461,7 +463,7 @@ WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.CurrentMaintain["
         protected override void ClickUnconfirm()
         {
             string updateCmd = "";
-            if (this.CurrentMaintain["Stage"].ToString() != "Staggered")
+            if (this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString() == "3rd party")
             {
 
                 updateCmd += $@"
@@ -471,7 +473,9 @@ UPDATE CFAInspectionRecord SET Status='New',EditName='{Sci.Env.User.UserID}' ,Ed
 IF NOT EXISTS(
     SELECT * 
     FROM CFAInspectionRecord
-    WHERE (Result = 'Pass' OR Result='Fail but release')
+    WHERE (Result = 'Pass' OR Result='Fail but release')	
+    AND OrderID='{this.CurrentMaintain["OrderID"].ToString()}'
+	AND Seq='{this.CurrentMaintain["Seq"].ToString()}'
     AND Stage='{this.CurrentMaintain["Stage"].ToString()}'
     AND ID != '{this.CurrentMaintain["ID"].ToString()}'
 )
@@ -482,6 +486,8 @@ BEGIN
 	INTO #LastFail
     FROM CFAInspectionRecord
     WHERE Result='Fail'
+    AND OrderID='{this.CurrentMaintain["OrderID"].ToString()}'
+	AND Seq='{this.CurrentMaintain["Seq"].ToString()}'
     AND Stage='{this.CurrentMaintain["Stage"].ToString()}'
 	AND Status = 'Confirmed'
     AND ID != '{this.CurrentMaintain["ID"].ToString()}'
@@ -599,7 +605,7 @@ AND StaggeredCFAInspectionRecordID <> ''
 
             }
             //
-            if ((this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString() == "3rd party") && (this.CurrentMaintain["Result"].ToString() == "Pass" || this.CurrentMaintain["Result"].ToString() == "Fail But Release"))
+            if ((this.CurrentMaintain["Stage"].ToString().ToLower() == "final" || this.CurrentMaintain["Stage"].ToString().ToLower() == "3rd party") && (this.CurrentMaintain["Result"].ToString().ToLower() == "pass" || this.CurrentMaintain["Result"].ToString().ToLower() == "fail but release"))
             {
                 bool hasSameSpSeq = MyUtility.Check.Seek($@"
 SELECT 1 
@@ -608,7 +614,7 @@ WHERE ID <> '{this.CurrentMaintain["ID"]}'
 AND OrderID = '{this.CurrentMaintain["OrderID"]}'
 AND Seq = '{this.CurrentMaintain["Seq"]}'
 AND Stage='{this.CurrentMaintain["Stage"].ToString()}'
-AND (Result='Pass' OR Result='Fail But Release')
+AND (Result='Pass' OR Result='Fail but release')
 ");
                 if (hasSameSpSeq)
                 {
@@ -1124,7 +1130,7 @@ AND CFAIs3rdInspect = 1
 
             }
 
-            // Final的時候Inspection result才能有Fail But Release
+            // Final的時候Inspection result才能有Fail but release
             if (Stage == "Final")
                 Reset_comboResult(true);
             else
@@ -1233,7 +1239,7 @@ SELECT STUFF(
         {
             this.comboResult.Items.Clear();
 
-            // Final的時候Inspection result才能有Fail But Release
+            // Final的時候Inspection result才能有Fail but release
             if (!IsFinal)
             {
                 this.comboResult.Items.AddRange(new object[] {
@@ -1267,5 +1273,6 @@ SELECT STUFF(
         public string BuyerDev { get; set; }
         public string OrderQty { get; set; }
         public string Dest { get; set; }
+        public string Article { get; set; }
     }
 }
