@@ -1,26 +1,23 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Production.Class;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Sci.Win;
 using Sci.Data;
 using System.Transactions;
-using Sci.Win.Tools;
 using System.Data.SqlClient;
 using System.Linq;
+using Sci.Production.PublicPrg;
+using System.Threading.Tasks;
 
 namespace Sci.Production.Cutting
 {
     public partial class P08_Import : Sci.Win.Subs.Base
     {
         DataTable gridTable;
-        DataTable copyTable;
         public P08_Import()
         {
             InitializeComponent();
@@ -36,9 +33,9 @@ namespace Sci.Production.Cutting
             .Text("CuttingID", header: "CuttingID", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Fab Combo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
             .Text("MarkerName", header: "Mark Name", width: Widths.AnsiChars(2), iseditingreadonly: true)
-            .DateTime("Each Cons", header: "Each Cons", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .DateTime("Mtl ETA", header: "Mtl ETA", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .DateTime("1stSewingDate", header: "1st Sewing Date", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Date("Each Cons", header: "Each Cons", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Date("Mtl ETA", header: "Mtl ETA", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Date("1stSewingDate", header: "1st Sewing Date", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Type of Cutting", header: "Type of Cutting", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("Cut Width", header: "Cut Width", width: Widths.AnsiChars(2), integer_places: 8, decimal_places: 4, iseditingreadonly: true)
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(8), integer_places: 5, decimal_places: 2, iseditingreadonly: true)
@@ -46,8 +43,8 @@ namespace Sci.Production.Cutting
             .Text("Seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
             .Text("Seq2", header: "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5))
-            .DateTime("SCI Dlv", header: "SCI Dlv.", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .DateTime("Buyer Dlv", header: "Buyer Dlv..", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Date("SCI Dlv", header: "SCI Dlv.", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Date("Buyer Dlv", header: "Buyer Dlv..", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Ref#", header: "Ref#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Color Desc", header: "Color Desc", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(10))
@@ -58,20 +55,21 @@ namespace Sci.Production.Cutting
             this.gridImport.Columns["Dyelot"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridImport.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
         }
-        private void btnClose_Click(object sender, EventArgs e)
+
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(dateEstCutDate.Value))
+            if (MyUtility.Check.Empty(this.txtCuttingID.Text))
             {
-                MyUtility.Msg.WarningBox("<Est. Cut Date> can not be empty.");
                 return;
             }
 
             this.listControlBindingSource1.DataSource = null;
+            this.gridTable = null;
             List<SqlParameter> sqlParameters = new List<SqlParameter>();
             sqlParameters.Add(new SqlParameter("@ID", this.txtCuttingID.Text));
 
@@ -103,8 +101,10 @@ select
 	, POID = o.POID
     , MDivisionID = (select MDivisionID from Factory where Id = o.FactoryID)
 	, e.ConsPC
+	, oeca.Article
 from dbo.Order_EachCons e WITH (NOLOCK)
 left join dbo.Order_EachCons_Color c WITH (NOLOCK) on c.Order_EachConsUkey = e.Ukey
+left join dbo.Order_EachCons_Color_Article oeca WITH (NOLOCK) on oeca.Order_EachCons_ColorUkey = c.Ukey
 left join dbo.Order_BOF bof WITH (NOLOCK) on bof.Id = e.Id and bof.FabricCode = e.FabricCode
 left join dbo.Fabric WITH (NOLOCK) on Fabric.SCIRefno = bof.SCIRefno
 left join dbo.Orders o WITH (NOLOCK) on o.ID = e.Id
@@ -140,7 +140,6 @@ outer apply(
 where e.Id = @CuttingID and e.CuttingPiece = 1 
 order by MarkerName, ColorID 
 ";
-
             DualResult result = DBProxy.Current.Select(null, sqlcmd, sqlParameters, out gridTable);
             if (!result)
             {
@@ -148,15 +147,37 @@ order by MarkerName, ColorID
                 return;
             }
 
-
+            DataTable dt0 = Prgs.GetCuttingTapeData(this.txtCuttingID.Text);
+            if (dt0.Rows.Count > 0)
+            {
+                Parallel.ForEach(gridTable.AsEnumerable(), row =>
+                {
+                    var x = dt0.AsEnumerable().Where(w => 
+                    MyUtility.Convert.GetString(w["MarkerName"]) == MyUtility.Convert.GetString(row["MarkerName"]) &&
+                    MyUtility.Convert.GetString(w["ColorID"]) == MyUtility.Convert.GetString(row["ColorID"]) &&
+                    MyUtility.Convert.GetString(w["Article"]) == MyUtility.Convert.GetString(row["Article"])
+                    );
+                    if (x.Any())
+                    {
+                        row["remark"] = x.Select(s => new
+                        {
+                            remark = MyUtility.Convert.GetString(s["SP"]) + "\\" +
+                                 MyUtility.Convert.GetString(s["Article"]) + "\\" +
+                                 MyUtility.Convert.GetString(s["SizeCode"]) + "\\" +
+                                 MyUtility.Convert.GetString(s["CutQty"])
+                        }).OrderBy(o => o.remark).Select(s => s.remark).JoinToString(",");
+                    }
+                });
+            }
 
             this.listControlBindingSource1.DataSource = gridTable;
+            this.gridImport.AutoResizeColumns();
         }
 
         private void DateEstCutDate_Validating(object sender, CancelEventArgs e)
         {
             // 只能輸入今天和未來的日期
-            if (MyUtility.Check.Empty(this.dateEstCutDate.Value) && ((DateTime)this.dateEstCutDate.Value).Date < DateTime.Today)
+            if (!MyUtility.Check.Empty(this.dateEstCutDate.Value) && ((DateTime)this.dateEstCutDate.Value).Date < DateTime.Today)
             {
                 MyUtility.Msg.WarningBox("Est. Cutting Date can't earlier than today!");
                 e.Cancel = true;
@@ -164,39 +185,55 @@ order by MarkerName, ColorID
             }
         }
 
-        public List<String> importedIDs = new List<string>();
-        private void btnImport_Click(object sender, EventArgs e)
+        public List<string> importedIDs = new List<string>();
+
+        private void BtnImport_Click(object sender, EventArgs e)
         {
+            this.gridImport.ValidateControl();
             importedIDs.Clear();
             if (this.listControlBindingSource1.DataSource == null || gridTable.Rows.Count == 0)
             {
                 return;
             }
 
+            if (this.gridTable.Select("selected = 1").Length == 0)
+            {
+                MyUtility.Msg.WarningBox("Please select data first!");
+                return;
+            }
+
+            if (MyUtility.Check.Empty(dateEstCutDate.Value))
+            {
+                MyUtility.Msg.WarningBox("<Est. Cut Date> can not be empty.");
+                return;
+            }
+
             // 只能輸入今天和未來的日期
-            if (MyUtility.Check.Empty(this.dateEstCutDate.Value) && ((DateTime)this.dateEstCutDate.Value).Date < DateTime.Today)
+            if (!MyUtility.Check.Empty(this.dateEstCutDate.Value) && ((DateTime)this.dateEstCutDate.Value).Date < DateTime.Today)
             {
                 MyUtility.Msg.WarningBox("Est. Cutting Date can't earlier than today!");
                 dateEstCutDate.Value = null;
                 return;
             }
 
+            DataTable seldt = this.gridTable.Select("selected = 1").CopyToDataTable();
+
             // Release Qty 要大於 0
-            if (this.gridTable.AsEnumerable().Where(w => MyUtility.Convert.GetDecimal(w["IssueQty"]) <= 0).Any())
+            if (seldt.AsEnumerable().Where(w => MyUtility.Convert.GetDecimal(w["ReleaseQty"]) <= 0).Any())
             {
                 MyUtility.Msg.WarningBox("Dyelot or Release Qty can't empty!");
                 return;
             }
 
             #region 相同的 CuttingID, FabCombo, MarkerName, ColorID, Dyelot 只能有出現一次
-            if (this.gridTable.AsEnumerable()
+            if (seldt.AsEnumerable()
                 .GroupBy(g => new
                 {
                     CuttingID = g["CuttingID"].ToString(),
-                    FabCombo = g["FabCombo"].ToString(),
+                    FabCombo = g["Fab Combo"].ToString(),
                     MarkerName = g["MarkerName"].ToString(),
                     ColorID = g["ColorID"].ToString(),
-                    Dyelot = g["Dyelot "].ToString(),
+                    Dyelot = g["Dyelot"].ToString(),
                 })
                 .Select(s => new
                 {
@@ -214,11 +251,11 @@ order by MarkerName, ColorID
             #endregion
 
             #region 檢查 Release Qty, 依據 FabCombo, MarkerName, ColorID 做群組加總, Sum of Release Qty 不能大於該群組的 Qty
-            var x = this.gridTable.AsEnumerable()
+            var x = seldt.AsEnumerable()
                 .GroupBy(g => new
                 {
                     CuttingID = g["CuttingID"].ToString(),
-                    FabCombo = g["FabCombo"].ToString(),
+                    FabCombo = g["Fab Combo"].ToString(),
                     MarkerName = g["MarkerName"].ToString(),
                     ColorID = g["ColorID"].ToString(),
                     Qty = MyUtility.Convert.GetDecimal(g["Qty"])
@@ -230,17 +267,16 @@ order by MarkerName, ColorID
                     s.Key.MarkerName,
                     s.Key.ColorID,
                     s.Key.Qty,
-                    IssueQty = s.Sum(i => MyUtility.Convert.GetDecimal(i["IssueQty"]))
+                    ReleaseQty = s.Sum(i => MyUtility.Convert.GetDecimal(i["ReleaseQty"]))
                 });
-            if (x.Where(w => w.IssueQty > w.Qty).Any())
+            if (x.Where(w => w.ReleaseQty > w.Qty).Any())
             {
                 MyUtility.Msg.WarningBox("According to <Fab Combo>, <Mark Name> and <Color> the total <Release Qty> cannot be greater than <Qty>");
                 return;
             }
             #endregion
 
-
-            string cutTapePlanID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "CT", "CutTapePlan");
+            string cutTapePlanID = MyUtility.GetValue.GetID(Env.User.Keyword + "CT", "CutTapePlan");
             importedIDs.Add(cutTapePlanID);
             string insertsql = $@"
 INSERT INTO [dbo].[CutTapePlan]
@@ -254,14 +290,14 @@ INSERT INTO [dbo].[CutTapePlan]
            ,[AddName])
      VALUES
            ('{cutTapePlanID}'
-           ,'{this.gridTable.Rows[0]["CuttingID"]}'
-           ,'{this.gridTable.Rows[0]["MDivisionID"]}'
-           ,'{this.gridTable.Rows[0]["FactoryID"]}'
+           ,'{seldt.Rows[0]["CuttingID"]}'
+           ,'{seldt.Rows[0]["MDivisionID"]}'
+           ,'{seldt.Rows[0]["FactoryID"]}'
            ,'{((DateTime)this.dateEstCutDate.Value).ToString("yyyy/MM/dd")}'
            ,'New'
            ,getdate()
-           ,'{Sci.Env.User.UserID}')
-GO
+           ,'{Env.User.UserID}')
+
 INSERT INTO [dbo].[CutTapePlan_Detail]
            ([ID]
            ,[MarkerName]
@@ -296,16 +332,15 @@ select
     ,[Order_EachConsUkey]
 from #tmp
 ";
-
-
             #region transaction
             DualResult upResult;
+            DataTable odt;
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
-                if (!(upResult = DBProxy.Current.Execute(null, insertsql)))
+                if (!(upResult = MyUtility.Tool.ProcessWithDatatable(seldt, string.Empty, insertsql, out odt)))
                 {
-                    _transactionscope.Dispose(); // 彈窗前,要先釋放,不然會咬住
+                    _transactionscope.Dispose(); // TransactionScope 內彈窗前,先主動釋放,不然會咬住
                     this.ShowErr(upResult);
                     return;
                 }
@@ -315,14 +350,28 @@ from #tmp
 
             MyUtility.Msg.WarningBox("Successfully");
             #endregion
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+
+            this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
         private void BtnSplit_Click(object sender, EventArgs e)
         {
-            if (this.listControlBindingSource1.DataSource == null || gridTable.Rows.Count == 0) return;
+            this.gridImport.ValidateControl();
+            if (this.listControlBindingSource1.DataSource == null || gridTable.Rows.Count == 0)
+            {
+                return;
+            }
 
+            if (this.gridTable.Select("selected = 1").Length == 0)
+            {
+                MyUtility.Msg.WarningBox("Please select data first!");
+                return;
+            }
+
+            DataTable seldt = this.gridTable.Select("selected = 1").CopyToDataTable();
+            Parallel.ForEach(seldt.AsEnumerable(), row => { row["ReleaseQty"] = 0; row["Selected"] = 0; });
+            this.gridTable.Merge(seldt);
         }
 
         private void BtnDelete_Click(object sender, EventArgs e)

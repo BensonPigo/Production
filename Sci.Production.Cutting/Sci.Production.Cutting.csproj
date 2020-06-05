@@ -143,6 +143,18 @@
     <Compile Include="B01.Designer.cs">
       <DependentUpon>B01.cs</DependentUpon>
     </Compile>
+    <Compile Include="P08_MailTo_Detail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P08_MailTo_Detail.Designer.cs">
+      <DependentUpon>P08_MailTo_Detail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P08_MailTo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P08_MailTo.Designer.cs">
+      <DependentUpon>P08_MailTo.cs</DependentUpon>
+    </Compile>
     <Compile Include="B07.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -531,6 +543,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B02.resx">
       <DependentUpon>B02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P08_MailTo_Detail.resx">
+      <DependentUpon>P08_MailTo_Detail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P08_MailTo.resx">
+      <DependentUpon>P08_MailTo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B03.resx">
       <DependentUpon>B03.cs</DependentUpon>

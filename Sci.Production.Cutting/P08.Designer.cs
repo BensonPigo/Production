@@ -37,7 +37,7 @@
             this.btnSendMail = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.displayfactory = new Sci.Win.UI.DisplayBox();
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnSetDefaultMail = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -54,7 +54,7 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.button1);
+            this.masterpanel.Controls.Add(this.btnSetDefaultMail);
             this.masterpanel.Controls.Add(this.displayfactory);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnSendMail);
@@ -75,7 +75,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnSendMail, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayfactory, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnSetDefaultMail, 0);
             // 
             // detailpanel
             // 
@@ -187,10 +187,8 @@
             // dateCuttingDate
             // 
             this.dateCuttingDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "estcutdate", true));
-            this.dateCuttingDate.IsSupportEditMode = false;
             this.dateCuttingDate.Location = new System.Drawing.Point(133, 42);
             this.dateCuttingDate.Name = "dateCuttingDate";
-            this.dateCuttingDate.ReadOnly = true;
             this.dateCuttingDate.Size = new System.Drawing.Size(130, 23);
             this.dateCuttingDate.TabIndex = 15;
             // 
@@ -202,7 +200,7 @@
             this.btnSendMail.TabIndex = 20;
             this.btnSendMail.Text = "Send Mail";
             this.btnSendMail.UseVisualStyleBackColor = true;
-            this.btnSendMail.Click += new System.EventHandler(this.btnSendMail_Click);
+            this.btnSendMail.Click += new System.EventHandler(this.BtnSendMail_Click);
             // 
             // label1
             // 
@@ -222,14 +220,15 @@
             this.displayfactory.Size = new System.Drawing.Size(75, 23);
             this.displayfactory.TabIndex = 22;
             // 
-            // button1
+            // btnSetDefaultMail
             // 
-            this.button1.Location = new System.Drawing.Point(782, 9);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(146, 30);
-            this.button1.TabIndex = 23;
-            this.button1.Text = "Set Default Mail";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnSetDefaultMail.Location = new System.Drawing.Point(782, 9);
+            this.btnSetDefaultMail.Name = "btnSetDefaultMail";
+            this.btnSetDefaultMail.Size = new System.Drawing.Size(146, 30);
+            this.btnSetDefaultMail.TabIndex = 23;
+            this.btnSetDefaultMail.Text = "Set Default Mail";
+            this.btnSetDefaultMail.UseVisualStyleBackColor = true;
+            this.btnSetDefaultMail.Click += new System.EventHandler(this.BtnSetDefaultMail_Click);
             // 
             // P08
             // 
@@ -243,7 +242,6 @@
             this.IsSupportClip = false;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
-            this.IsSupportPrint = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "id";
             this.Name = "P08";
@@ -281,6 +279,6 @@
         private Win.UI.Label labelCuttingSPNo;
         private Win.UI.DisplayBox displayfactory;
         private Win.UI.Label label1;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnSetDefaultMail;
     }
 }

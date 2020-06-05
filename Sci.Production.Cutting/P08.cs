@@ -1,35 +1,32 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Production.Class;
-
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Sci.Win;
 using Sci.Data;
-using System.Transactions;
 using Sci.Win.Tools;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Linq;
+using System.Data.SqlClient;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P08 : Sci.Win.Tems.Input6
+    public partial class P08 : Win.Tems.Input6
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
         string fileNameExt, pathName;
+
         public P08(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = string.Format("MDivisionID = '{0}'", keyWord);
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
         }
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -42,7 +39,7 @@ select '' FTYGroup
 union 
 select distinct FTYGroup 
 from Factory 
-where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+where MDivisionID = '{0}'", Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
             queryfors.SelectedIndex = 0;
@@ -54,12 +51,13 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                         this.DefaultWhere = "";
                         break;
                     default:
-                        this.DefaultWhere = string.Format("(select FactoryID from Cutting where CutTapePlan.CuttingID = Cutting.ID) = '{0}'", queryfors.SelectedValue);
+                        this.DefaultWhere = string.Format("FactoryID='{0}'", queryfors.SelectedValue);
                         break;
                 }
                 this.ReloadDatas();
             };
         }
+
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -73,45 +71,49 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             .Text("direction", header: "Type of Cutting", width: Widths.Auto(), iseditingreadonly: true)
             .Text("CuttingWidth", header: "Cut Width", width: Widths.Auto(), iseditingreadonly: true)
             .Numeric("Qty", header: "Qty", width: Widths.Auto(), integer_places: 5, decimal_places: 2, iseditingreadonly: true)
-            .Numeric("IssueQty", header: "Release Qty", width: Widths.Auto(), integer_places: 5, decimal_places: 2)
+            .Numeric("ReleaseQty", header: "Release Qty", width: Widths.Auto(), integer_places: 5, decimal_places: 2)
             .Text("Dyelot", header: "Dyelot", width: Widths.Auto())
             .Text("Refno", header: "Refno", width: Widths.Auto(), iseditingreadonly: true)
             .Numeric("ConsPC", header: "Cons", width: Widths.Auto(), integer_places: 8, decimal_places: 4, iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.Auto())
             ;
-            this.detailgrid.Columns["IssueQty"].DefaultCellStyle.BackColor = Color.Pink;
+
+            this.detailgrid.Columns["ReleaseQty"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["Dyelot"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
         }
+
         protected override bool ClickEditBefore()
         {
-            #region 判斷Encode 不可,MarkerReqid 存在
             if (CurrentMaintain["Status"].ToString() == "Confirmed")
             {
                 MyUtility.Msg.WarningBox("The record status is confimed, you can not modify.");
                 return false;
             }
-            #endregion
+
             return base.ClickEditBefore();
         }
+
         protected override bool ClickNew()
         {
             detailgrid.ValidateControl();
-            var frm = new Sci.Production.Cutting.P08_Import();
+            var frm = new P08_Import();
             DialogResult dr = frm.ShowDialog(this);
-            //dr == System.Windows.Forms.DialogResult.
             this.ReloadDatas();
-            if (dr == System.Windows.Forms.DialogResult.OK)
+            if (dr == DialogResult.OK)
             {
                 var topID = frm.importedIDs[0];
                 int newDataIdx = gridbs.Find("ID", topID);
                 gridbs.Position = newDataIdx;
             }
+
             return true;
         }
+
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
+
             #region 存在 Issue 不可 Uncomfirm
             DataTable dt;
             string Query = string.Format("Select 1 from Issue WITH (NOLOCK) Where Cutplanid ='{0}'", CurrentMaintain["ID"]);
@@ -130,7 +132,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             }
             #endregion
 
-            string updSql = $@"update CutTapePlan_Detail set status = 'New',[EditDate]=getdate(),[EditName]='{Sci.Env.User.UserID}' where id = '{this.CurrentMaintain["ID"]}'";
+            string updSql = $@"update CutTapePlan set status = 'New',[EditDate]=getdate(),[EditName]='{Env.User.UserID}' where id = '{this.CurrentMaintain["ID"]}'";
 
             if (!(result = DBProxy.Current.Execute(null, updSql)))
             {
@@ -138,24 +140,26 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 return;
             }
         }
+
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
-            #region 檢查不能空值  表頭: EstCutDate / 表身:Dyelot, IssueQty[Release Qty]
+
+            #region 檢查不能空值  表頭: EstCutDate / 表身:Dyelot, [Release Qty]
             if (MyUtility.Check.Empty(this.CurrentMaintain["EstCutDate"]))
             {
                 MyUtility.Msg.WarningBox("Est. Cutting Date can't empty!");
                 return;
             }
 
-            if (this.DetailDatas.AsEnumerable().Where(w=> MyUtility.Check.Empty(w["Dyelot"]) || MyUtility.Check.Empty(w["IssueQty"])).Any())
+            if (this.DetailDatas.AsEnumerable().Where(w=> MyUtility.Check.Empty(w["Dyelot"]) || MyUtility.Check.Empty(w["ReleaseQty"])).Any())
             {
                 MyUtility.Msg.WarningBox("Dyelot or Release Qty can't empty!");
                 return;
             }
             #endregion
 
-            string updSql = $@"update CutTapePlan_Detail set status = 'Confirmed',[EditDate]=getdate(),[EditName]='{Sci.Env.User.UserID}' where id = '{this.CurrentMaintain["ID"]}'";
+            string updSql = $@"update CutTapePlan set status = 'Confirmed',[EditDate] = getdate(),[EditName]='{Env.User.UserID}' where id = '{this.CurrentMaintain["ID"]}'";
 
             DualResult result = DBProxy.Current.Execute(null, updSql);
             if (!result)
@@ -164,6 +168,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 return;
             }
         }
+
         protected override bool ClickSaveBefore()
         {
             #region 檢查表頭 Est. Cut Date 只能輸入今天和未來的日期 , 一定要填
@@ -191,7 +196,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             }
 
             // Release Qty 要大於 0
-            if (this.DetailDatas.AsEnumerable().Where(w => MyUtility.Convert.GetDecimal(w["IssueQty"]) <= 0).Any())
+            if (this.DetailDatas.AsEnumerable().Where(w => MyUtility.Convert.GetDecimal(w["ReleaseQty"]) <= 0).Any())
             {
                 MyUtility.Msg.WarningBox("Dyelot or Release Qty can't empty!");
                 return false;
@@ -213,30 +218,29 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                     s.Key.MarkerName,
                     s.Key.ColorID,
                     s.Key.Qty,
-                    IssueQty = s.Sum(i => MyUtility.Convert.GetDecimal(i["IssueQty"]))
+                    ReleaseQty = s.Sum(i => MyUtility.Convert.GetDecimal(i["ReleaseQty"]))
                 });
-            if (x.Where(w => w.IssueQty > w.Qty).Any())
+            if (x.Where(w => w.ReleaseQty > w.Qty).Any())
             {
                 MyUtility.Msg.WarningBox("According to <Fab Combo>, <Mark Name> and <Color> the total <Release Qty> cannot be greater than <Qty>");
                 return false;
             }
-
             #endregion
 
             return base.ClickSaveBefore();
         }
+
         protected override bool ClickDeleteBefore()
         {
-            #region 判斷 Confirmed 不可刪除
             if (CurrentMaintain["Status"].ToString() == "Confirmed")
             {
                 MyUtility.Msg.WarningBox("The record status is confimed, you can not delete.");
                 return false;
             }
-            #endregion
 
             return base.ClickDeleteBefore();
         }
+
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -244,156 +248,162 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             this.detailgrid.AutoResizeColumns();
         }
 
-        private bool ToExcel(bool autoSave)
+        private bool ToExcel(bool excelVisivle)
         {
             if (MyUtility.Check.Empty(CurrentDetailData))
             {
                 MyUtility.Msg.InfoBox("No any data.");
                 return false;
             }
-            DataTable ExcelTb;
-            string cmdsql = string.Format(
-            @"select cd.id,cd.sewinglineid,cd.orderid,w.seq1,w.seq2,cd.StyleID,cd.cutref,cd.cutno,w.FabricCombo,w.FabricCode,
-(
-    Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
-    From WorkOrder_SizeRatio c WITH (NOLOCK) 
-    Where  c.WorkOrderUkey =cd.WorkOrderUkey 
-                
-    For XML path('')
-) as SizeCode,
-(
-    Select distinct Article+'/ ' 
-	From dbo.WorkOrder_Distribute b WITH (NOLOCK) 
-	Where b.workorderukey = cd.WorkOrderUkey and b.article!=''
-    For XML path('')
-) as article,cd.colorid,
-(
-    Select c.sizecode+'/ '+convert(varchar(8),c.qty*w.layer)+', ' 
-    From WorkOrder_SizeRatio c WITH (NOLOCK) 
-    Where  c.WorkOrderUkey =cd.WorkOrderUkey and c.WorkOrderUkey = w.Ukey
-               
-    For XML path('')
-) as CutQty,
-cd.cons,isnull(f.DescDetail,'') as DescDetail,cd.remark 
-from Cutplan_Detail cd WITH (NOLOCK) 
-inner join WorkOrder w on cd.WorkorderUkey = w.Ukey
-left join Fabric f on f.SCIRefno = w.SCIRefno
-where cd.id = '{0}'", CurrentDetailData["ID"]);
-            DualResult dResult = DBProxy.Current.Select(null, cmdsql, out ExcelTb);
-            
-            if (dResult)
+
+            this.ShowWaitMessage("Excel processing...");
+            DataTable excelTb;
+            List<SqlParameter> sqlParameters = new List<SqlParameter>();
+            sqlParameters.Add(new SqlParameter("@ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            string cmdsql = $@"
+declare @CT varchar(13) = @ID
+select 
+	[Cut tape plan#] = c.id
+	, d.MarkerName
+	, [SP#] =o.POID, d.Seq1, d.Seq2
+	, [Style#] = o.StyleID
+	, [Comb.]= d.FabricCombo
+	, [Fab_Code]=e.FabricCode
+	, Size.SizeRatio
+	, art.Article
+	, d.ColorID
+	, Cuts.CutQty 
+	, [Fab Cons.] = d.ReleaseQty
+	, [Fab Desc] = Fabric.DescDetail
+	, d.Remark
+from dbo.CutTapePlan c
+left join dbo.CutTapePlan_Detail d on d.id = c.id
+left join dbo.Orders o on o.ID = c.CuttingID
+left join dbo.Order_EachCons e on e.Ukey = d.Order_EachConsUkey
+left join dbo.Order_BOF bof WITH (NOLOCK) on bof.Id = e.Id and bof.FabricCode = e.FabricCode
+left join dbo.Fabric WITH (NOLOCK) on Fabric.SCIRefno = bof.SCIRefno
+outer apply (
+	select SizeRatio = STUFF((
+		Select CONCAT(',', oes.sizecode, '/ ', oes.qty)
+		From Order_EachCons_SizeQty oes WITH (NOLOCK) 
+		Where  oes.Order_EachConsUkey = d.Order_EachConsUkey 
+		For XML path('')
+	),1,1,'')
+) as Size 
+outer apply ( 
+	select Article = STUFF((
+		Select distinct CONCAT('/ ', tmpa.Article)
+		From Order_EachCons_Color tmpB WITH (NOLOCK) 
+		left join Order_EachCons_Color_Article tmpA WITH (NOLOCK) on tmpa.Order_EachCons_ColorUkey = tmpb.Ukey
+		Where  tmpb.Order_EachConsUkey =d.Order_EachConsUkey and tmpb.ColorID = d.ColorID
+		For XML path('')
+	),1,2,'')
+) art
+outer apply(
+	select CutQty = STUFF((
+		Select concat(', ', tmp.sizecode, '/ ',  isnull(tmp.qty, 0) * isnull(w.Cuts, 0))
+		From Order_EachCons_SizeQty tmp WITH (NOLOCK) 
+		outer apply(select Cuts = iif(isnull(d.ConsPC, 0) = 0, 0, isnull(d.ReleaseQty, 0) / isnull(d.ConsPC, 0))) w
+		Where  tmp.Order_EachConsUkey =d.Order_EachConsUkey                
+		For XML path('')
+	),1,2,'')
+) as Cuts
+where c.id = @CT
+";
+            DualResult result = DBProxy.Current.Select(null, cmdsql, sqlParameters, out excelTb);
+            if (!result)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P08.xltx"); //預先開啟excel app
-              
-
-                //createfolder();
-                //if (MyUtility.Excel.CopyToXls(ExcelTb, "", "Cutting_P08.xltx", 5, !autoSave, null, objApp, false))
-                if (MyUtility.Excel.CopyToXls(ExcelTb, "", "Cutting_P08.xltx", 5, showExcel: false, excelApp: objApp))
-                {// 將datatable copy to excel
-                    Microsoft.Office.Interop.Excel._Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                    Microsoft.Office.Interop.Excel._Workbook objBook = objApp.ActiveWorkbook;
-
-                    objSheet.Cells[1, 1] = keyWord;   // 條件字串寫入excel
-                    objSheet.Cells[3, 2] = dateCuttingDate.Text;
-                    objSheet.Cells[3, 5] = CurrentMaintain["POID"].ToString();
-                    objSheet.Cells[3, 10] = CurrentMaintain["SpreadingNoID"].ToString();
-                    objSheet.Cells[3, 12] = CurrentMaintain["CutCellid"].ToString();
-                    objSheet.Cells[3, 15] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(loginID);
-                    pathName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_Daily_Plan");
-                    objBook.SaveAs(pathName);
-                    if (autoSave)
-                    {
-                      
-                        objBook.Close();
-                        objApp.Workbooks.Close();
-                        objApp.Quit();
-
-                        Marshal.ReleaseComObject(objApp);
-                        Marshal.ReleaseComObject(objSheet);
-                        Marshal.ReleaseComObject(objBook);
-
-                        if (objSheet != null) Marshal.FinalReleaseComObject(objSheet);
-                        if (objBook != null) Marshal.FinalReleaseComObject(objBook);
-                        if (objApp != null) Marshal.FinalReleaseComObject(objApp);
-                        objApp = null;
-                        fileNameExt = pathName.Substring(pathName.LastIndexOf("\\") + 1);
-                    }
-                    else
-                    {
-                        objBook.Close();
-                        objApp.Workbooks.Close();
-                        objApp.Quit();
-
-                        Marshal.ReleaseComObject(objApp);
-                        Marshal.ReleaseComObject(objSheet);
-                        Marshal.ReleaseComObject(objBook);
-
-                        if (objSheet != null) Marshal.FinalReleaseComObject(objSheet);    //釋放sheet
-                        if (objBook != null) Marshal.FinalReleaseComObject(objBook);
-                        if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-
-                        pathName.OpenFile();
-                    }
-                }
-            }
-            else
-            {
-                ShowErr(cmdsql, dResult);
+                this.ShowErr(result);
+                this.HideWaitMessage();
                 return false;
             }
+
+            string filename = "Cutting_P08.xltx";
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + filename); //預先開啟excel app
+            bool isexcelWrite = MyUtility.Excel.CopyToXls(excelTb, String.Empty, filename, 5, showExcel: false, excelApp: excelApp);
+
+            if (!isexcelWrite)
+            {
+                Marshal.ReleaseComObject(excelApp);
+                this.HideWaitMessage();
+                return false;
+            }
+
+            Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
+            worksheet.Cells[1, 1] = this.CurrentMaintain["FactoryID"];
+            worksheet.Cells[3, 2] = dateCuttingDate.Text;
+            worksheet.Cells[3, 6] = CurrentMaintain["CuttingID"];
+            worksheet.Cells[3, 13] = PublicPrg.Prgs.GetAddOrEditBy(Env.User.UserID);
+            worksheet.Rows.AutoFit();
+            pathName = MicrosoftFile.GetName("Cutting_Tape_Plan");
+            Excel.Workbook workbook = excelApp.Workbooks[1];
+            workbook.SaveAs(pathName);
+            excelApp.Visible = excelVisivle; // 此excel物件直接顯示，再次產生的excel物件會在不同視窗
+            fileNameExt = pathName.Substring(pathName.LastIndexOf("\\") + 1);
+
+            if (!excelVisivle)
+            {
+                excelApp.Quit(); // 在excelApp物件關閉之後才能刪除檔案，sendmail之後
+            }
+
+            Marshal.ReleaseComObject(excelApp);
+            this.HideWaitMessage();
+
             return true;
         }
-        private void btnSendMail_Click(object sender, EventArgs e)
+
+        private void BtnSendMail_Click(object sender, EventArgs e)
         {
-          
-            //createfolder();
-            if (!ToExcel(true))
+            if (!this.ToExcel(false))
             {
                 return;
             }
+
             DataRow seekdr;
-            if (MyUtility.Check.Seek("select * from mailto WITH (NOLOCK) where Id='005'", out seekdr))
+            if (MyUtility.Check.Seek("select * from mailto WITH (NOLOCK) where Id='022'", out seekdr))
             {
-                string mailFrom = Sci.Env.Cfg.MailFrom;
+                string mailFrom = Env.Cfg.MailFrom;
                 string mailto = seekdr["ToAddress"].ToString();
                 string cc = seekdr["ccAddress"].ToString();
                 string content = seekdr["content"].ToString();
                 string subject = "<" + CurrentMaintain["mDivisionid"].ToString() + ">BulkMarkerRequest#:" + CurrentMaintain["ID"].ToString(); 
                 var email = new MailTo(mailFrom, mailto, cc, subject + "-" + fileNameExt, pathName, content, false, true);
-                DialogResult DR = email.ShowDialog(this);
-                if (DR == DialogResult.OK)
+                DialogResult dialogResult = email.ShowDialog(this);
+                if (dialogResult == DialogResult.OK)
                 {
-                    DateTime NOW = DateTime.Now;
-                    string sql = string.Format("Update MarkerReq set sendDate = '{0}'  where id ='{1}'", NOW.ToString("yyyy/MM/dd HH:mm:ss"), CurrentMaintain["ID"]);
-                    DualResult Result;
-                    if (!(Result = DBProxy.Current.Execute(null, sql)))
+                    string sql = $"Update MarkerReq set sendDate = getdate() where id ='{CurrentMaintain["ID"]}'";
+                    DualResult result;
+                    if (!(result = DBProxy.Current.Execute(null, sql)))
                     {
-                        ShowErr(sql, Result);
+                        ShowErr(result);
                     }
                     else
                     {
-                      
+                        this.RenewData();
                         this.OnDetailEntered();
                     }
                 }
-
             }
-            //刪除Excel File
-            if (System.IO.File.Exists(pathName))
+
+            try
             {
-                try
-                {
-                    System.IO.File.Delete(pathName);
-                }
-                catch (System.IO.IOException)
-                {
-                    MyUtility.Msg.WarningBox("Delete excel file fail!!");
-                }
+                File.Delete(pathName);
+            }
+            catch (IOException ex)
+            {
+                this.ShowErr(ex);
             }
         }
+
+        private void BtnSetDefaultMail_Click(object sender, EventArgs e)
+        {
+            P08_MailTo callNextForm = new P08_MailTo(this.IsSupportEdit, null, null, null);
+            callNextForm.ShowDialog(this);
+        }
+
         protected override bool ClickPrint()
         {
-            ToExcel(false);
+            this.ToExcel(true);
             return base.ClickPrint();
         }
     }
