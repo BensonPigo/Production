@@ -2196,7 +2196,12 @@ SELECT f.Refno
 		,[Issue_Summary_Qty]=Cast( iis.Qty as int)
 		,[Unit]=Unit.StockUnit
 		,[UnitDesc]=Unit.Description
-		,[Location]=ftd.MtlLocationID
+		,[Location]= Stuff((SELECT Concat(',', MtlLocationID) 
+						FROM (
+							SELECT DISTINCT MtlLocationID 
+							FROM FtyInventory_Detail 
+							WITH(NOLOCK) WHERE Ukey= iid.FtyInventoryUkey and isnull(MtlLocationID,'') <> '' 
+					 ) fty FOR xml path('')), 1, 1, '')
 INTO #tmp
 FROM Issue_Summary iis WITH(NOLOCK)
 INNER JOIN Issue_Detail iid WITH(NOLOCK) ON iis.Id = iid.Id AND iis.Ukey = iid.Issue_SummaryUkey
