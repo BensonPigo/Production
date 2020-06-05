@@ -232,6 +232,7 @@ SELECT s.OrderID,s.ComboType,x.*
 FROM SewingSchedule  s
 outer apply(select * from [dbo].[getDailystdq](s.APSNo))x
 WHERE OrderID IN ('{OrderIDs.JoinToString("','")}')
+and x.APSNo is not null
 ";
             DataTable tmpDt;
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out tmpDt);
