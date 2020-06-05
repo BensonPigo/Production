@@ -995,9 +995,10 @@ INNER JOIN Orders o WITH (NOLOCK) on o.id = t.OrderId
 INNER JOIN Brand bra on bra.id=o.BrandID
 OUTER APPLY(--標準價
 	        select orders.POID
-	        ,sum(orders.qty) order_qty        --實際外發數量
-	        ,sum(orders.qty*Price) order_amt  --外發成本
+	        ,sum(oq.qty) order_qty        --實際外發數量
+	        ,sum(oq.qty*Price) order_amt  --外發成本
 	        from orders WITH (NOLOCK) 
+            inner join Order_Qty oq with (nolock) on orders.ID = oq.ID
 	        inner join Order_TmsCost WITH (NOLOCK) on Order_TmsCost.id = orders.ID 
 	        where POID= t.POID                   --相同母單
 			AND ArtworkTypeID= t.ArtworkTypeID   --相同加工
