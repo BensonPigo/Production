@@ -1,6 +1,5 @@
 ﻿
 
-
 CREATE view [dbo].[View_AllReceivingDetail]
 as 
 SELECT	a.[ID],
@@ -42,7 +41,7 @@ SELECT	a.[ID],
 		[StockQty] = a.Qty,
 		[ActualQty] = a.Qty,
 		[WhseArrival] = IssueDate,
-		[InvNo] = null,
+		[InvNo] = InvNo,
 		[ExportId] = null,
 		[ETA] = null,
 		[PoUnit] = '',
