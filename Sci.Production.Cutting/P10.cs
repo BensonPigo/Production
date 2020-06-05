@@ -746,7 +746,7 @@ Where a.cutref='{0}' and a.mDivisionid = '{1}' and a.orderid = b.id"
                 displayStyle.Text = cutdr["Styleid"].ToString();
                 displayEstCutDate.Text = MyUtility.Check.Empty(cutdr["Estcutdate"]) ? "" : ((DateTime)cutdr["Estcutdate"]).ToString("yyyy/MM/dd");
 
-                string cellid = MyUtility.GetValue.Lookup("SewingCell", cutdr["sewline"].ToString() + cutdr["factoryid"].ToString(), "SewingLine", "ID+factoryid");
+                string cellid = MyUtility.GetValue.Lookup("SewingCell", CurrentMaintain["sewinglineid"].ToString() + cutdr["factoryid"].ToString(), "SewingLine", "ID+factoryid");
                 CurrentMaintain["SewingCell"] = cellid;
 
                 #region Startno
@@ -862,7 +862,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
                     #region Cell
                     if (!MyUtility.Check.Empty(cutdr["sewline"].ToString()))
                     {
-                        string cellid = MyUtility.GetValue.Lookup("SewingCell", cutdr["sewline"].ToString().Split('/')[0] + cutdr["Factoryid"].ToString(), "SewingLine", "ID+factoryid");
+                        string cellid = MyUtility.GetValue.Lookup("SewingCell", CurrentMaintain["sewinglineid"].ToString() + cutdr["Factoryid"].ToString(), "SewingLine", "ID+factoryid");
 
                         CurrentMaintain["SewingCell"] = cellid;
                     }
