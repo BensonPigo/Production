@@ -212,27 +212,33 @@ inner join Bundle bun WITH (NOLOCK) on bun.id = bd.id
 inner join Orders o WITH (NOLOCK) on bun.Orderid = o.ID and  bun.MDivisionID = o.MDivisionID
 and exists (select 1 from {tempTable} t where t.OrderID = o.ID and o.LocalOrder = 1) --Local單
 
---2020/03/18↓效能調整,重組#Table where和join順序
-select distinct bunD.ID
-		, bunD.BundleGroup
-		, bunD.BundleNo
-		, bun.AddDate
-		, bun.Orderid
-		, bun.PatternPanel
-		, bun.FabricPanelCode
-		, bun.Article
-		, bunD.Sizecode
-		, bunD.Patterncode
-		, bunD.Qty
-		, bunD.IsPair
+--2020/06/08 效能調整
+select bunD.ID
+    , bunD.BundleGroup
+    , bunD.BundleNo
+    , bun.AddDate
+    , bun.Orderid
+    , bun.PatternPanel
+    , bun.FabricPanelCode
+    , bun.Article
+    , bunD.Sizecode
+    , bunD.Patterncode
+    , bunD.Qty
+    , bunD.IsPair
 into #tmp_Bundle_QtyBySubprocess
-from #AllOrders x0
-inner join Bundle_Detail bunD WITH (NOLOCK) on bunD.Sizecode = x0.Sizecode
-inner join Bundle bun WITH (NOLOCK) on bunD.Id = bun.ID and bun.Orderid = x0.Orderid and bun.FabricPanelCode = x0.FabricPanelCode
-    and bun.PatternPanel = x0.PatternPanel and bun.Article = x0.Article
-inner join  Orders o WITH (NOLOCK) ON x0.Orderid=o.ID AND bun.MDivisionid=o.MDivisionID 
+from Bundle_Detail bunD WITH (NOLOCK)
+inner join Bundle bun WITH (NOLOCK) on bunD.Id = bun.ID
+where exists (
+	select 1
+	from #AllOrders x0
+	where bunD.Sizecode = x0.Sizecode
+	and bun.Orderid = x0.Orderid
+	and bun.PatternPanel = x0.PatternPanel
+	and bun.FabricPanelCode = x0.FabricPanelCode
+	and bun.Article = x0.Article
+)
 group by bunD.ID, bunD.BundleGroup, bunD.BundleNo, bun.AddDate, bun.Orderid, bun.PatternPanel, bun.FabricPanelCode, bun.Article,
-    bunD.Sizecode, bunD.Patterncode, bunD.Qty, bunD.IsPair
+bunD.Sizecode, bunD.Patterncode, bunD.Qty, bunD.IsPair
 ";
 
             foreach (string subprocessID in subprocessIDs)
@@ -311,6 +317,13 @@ outer apply (
 	) QtyBySubprocess
 	group by bunD.Patterncode
 ) CutpartCount
+WHERE Patterncode IS NOT NULL
+
+----整理出標準共有幾個部位
+SELECT OrderID,Article,SizeCode,PatternPanel ,FabricPanelCode,[Ctn]=COUNT(DISTINCT Patterncode)
+INTO #{subprocessIDtmp}_StdCount
+FROM #tmp_Bundle_QtyBySubprocess 
+GROUP BY OrderID,Article,SizeCode,PatternPanel ,FabricPanelCode
 
 -- Step 3. --加總每個訂單各 Fabric Combo 所有捆包的『數量』
 select	st2.Orderid
@@ -344,7 +357,7 @@ select    st0.Orderid
 		, st0.PatternCode
 		, bunIO.InComing
 		, bunIO.OutGoing
-		, bunD.Qty
+		, [Qty] = IIF( RealCont.Ctn < Std.Ctn ,0 ,bunD.Qty)  ----如果部位數有少，直接歸零不算；如果超過沒關係
 		, [IsPair]=ISNULL(TopIsPair.IsPair,0)--isnull(bunD.IsPair,0) 
 		, m=iif (sub.IsRFIDDefault = 1, st0.QtyBySet, st0.QtyBySubprocess)
 		, NoBundleCardAfterSubprocess=case when sub.id = 'Loading' Or sub.id = 'SEWINGLINE' then isnull(x.NoBundleCardAfterSubprocess,0) else 0 end
@@ -388,6 +401,20 @@ outer apply(
 		and bunD.Sizecode = st0.SizeCode
 	order by bun.AddDate desc
 )TopIsPair
+OUTER APPLY(
+    ----PMS系統內，實際建立的Bundle 部位數
+	SELECT [Ctn]=COUNT(DISTINCT Patterncode)
+	FROM #tmp_Bundle_QtyBySubprocess
+	WHERE ID = bund.ID AND BundleGroup = bund.BundleGroup AND Orderid = bund.Orderid AND Article = bund.Article 
+    AND SizeCode = bund.SizeCode AND PatternPanel = bund.PatternPanel   AND FabricPanelCode = bund.FabricPanelCode
+)RealCont
+OUTER APPLY(
+    ----標準的部位數
+	SELECT Ctn
+	FROM #{subprocessIDtmp}_StdCount
+	WHERE Orderid = bund.Orderid AND Article = bund.Article AND SizeCode = bund.SizeCode
+		AND PatternPanel = bund.PatternPanel  AND FabricPanelCode = bund.FabricPanelCode
+)Std
 where (sub.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0) AND bunD.BundleGroup IS NOT NULL
 
 select	Orderid
