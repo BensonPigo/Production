@@ -129,7 +129,11 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,td.Template
       ,(isnull(td.Frequency,0) * isnull(o.SeamLength,0)) as ttlSeamLength
 	  ,o.MasterPlusGroup
+	  ,t.StyleID
+	  ,t.SeasonID
+	  ,t.BrandID
 from TimeStudy_Detail td WITH (NOLOCK) 
+INNER JOIN  TimeStudy t WITH (NOLOCK)  ON t.ID = td.ID
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join Mold m WITH (NOLOCK) on m.ID=td.Mold
 where td.ID = '{0}'
@@ -252,6 +256,8 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             }
 
             this.numTotalSMV.Value = Convert.ToInt32(MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("SUM(SMV)", string.Empty)));
+
+            this.ChanTextColor();
         }
 
         /// <summary>
@@ -263,7 +269,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             Ict.Win.DataGridViewGeneratorTextColumnSettings seq = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
 
-            celltxtMachineGroup txtSubReason = (celltxtMachineGroup)celltxtMachineGroup.GetGridCell();
+            celltxtMachineGroup txtSubReason = (celltxtMachineGroup)celltxtMachineGroup.GetGridCell("IE_P01");
 
             #region Seq & Operation Code & Frequency & SMV & ST/MC Type & Attachment按右鍵與Validating
             #region Seq的Valid
@@ -373,7 +379,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                             cmds.Add(sp1);
 
-                            string sqlCmd = "select DescEN,SMV,MachineTypeID,SeamLength,MoldID,MtlFactorID,Annotation from Operation WITH (NOLOCK) where CalibratedCode = 1 and ID = @id";
+                            string sqlCmd = "select ID,DescEN,SMV,MachineTypeID,SeamLength,MoldID,MtlFactorID,Annotation,MasterPlusGroup from Operation WITH (NOLOCK) where CalibratedCode = 1 and ID = @id";
                             DataTable opData;
                             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out opData);
                             if (result)
@@ -388,7 +394,8 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                                     dr["OperationID"] = e.FormattedValue.ToString();
                                     dr["OperationDescEN"] = opData.Rows[0]["DescEN"].ToString();
                                     dr["MachineTypeID"] = opData.Rows[0]["MachineTypeID"].ToString();
-
+                                    dr["Mold"] = opData.Rows[0]["MoldID"].ToString();
+                                    dr["Template"] = string.Empty;  // 將[Template]清空
                                     dr["MtlFactorID"] = opData.Rows[0]["MtlFactorID"].ToString();
                                     dr["Frequency"] = 1;
                                     dr["SeamLength"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SeamLength"]);
@@ -396,6 +403,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                                     dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SMV"]);
                                     dr["ttlSeamLength"] = MyUtility.Convert.GetDecimal(dr["Frequency"]) * MyUtility.Convert.GetDecimal(dr["SeamLength"]);
                                     dr["Annotation"] = opData.Rows[0]["Annotation"].ToString();
+                                    dr["MasterPlusGroup"] = opData.Rows[0]["MasterPlusGroup"].ToString();
                                 }
                             }
                             else
@@ -449,6 +457,19 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                     }
                 }
             };
+            this.frequency.CellEditable += (s, e) =>
+            {
+                bool isLocalStyle = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"SELECT LocalStyle FROM Style WHERE ID='{this.CurrentMaintain["StyleID"]}' AND SeasonID='{this.CurrentMaintain["SeasonID"]}' AND BrandID='{this.CurrentMaintain["BrandID"]}'"));
+
+                if (isLocalStyle)
+                {
+                    e.IsEditable = true;
+                }
+                else
+                {
+                    e.IsEditable = false;
+                }
+            };
             #endregion
             #region SMV
             this.smvsec.CellValidating += (s, e) =>
@@ -474,6 +495,19 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                     // }
                 }
             };
+            this.smvsec.CellEditable += (s, e) =>
+             {
+                 bool isLocalStyle = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"SELECT LocalStyle FROM Style WHERE ID='{this.CurrentMaintain["StyleID"]}' AND SeasonID='{this.CurrentMaintain["SeasonID"]}' AND BrandID='{this.CurrentMaintain["BrandID"]}'"));
+
+                 if (isLocalStyle)
+                 {
+                     e.IsEditable = true;
+                 }
+                 else
+                 {
+                     e.IsEditable = false;
+                 }
+             };
             #endregion
             #region ST/MC Type
             this.machine.EditingMouseDown += (s, e) =>
@@ -520,7 +554,19 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                     }
                 }
             };
+            this.machine.CellEditable += (s, e) =>
+             {
+                 bool isLocalStyle = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"SELECT LocalStyle FROM Style WHERE ID='{this.CurrentMaintain["StyleID"]}' AND SeasonID='{this.CurrentMaintain["SeasonID"]}' AND BrandID='{this.CurrentMaintain["BrandID"]}'"));
 
+                 if (isLocalStyle)
+                 {
+                     e.IsEditable = true;
+                 }
+                 else
+                 {
+                     e.IsEditable = false;
+                 }
+             };
             #endregion
             #region Attachment
             this.mold.EditingMouseDown += (s, e) =>
@@ -1053,6 +1099,16 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
             return base.ClickPrint();
         }
 
+        protected override void OnDetailGridAppendClick()
+        {
+            base.OnDetailGridAppendClick();
+            DataRow newrow = this.detailgrid.GetDataRow(this.detailgrid.GetSelectedRowIndex());
+            newrow["StyleID"] = this.CurrentMaintain["StyleID"].ToString();
+            newrow["SeasonID"] = this.CurrentMaintain["SeasonID"].ToString();
+            newrow["BrandID"] = this.CurrentMaintain["BrandID"].ToString();
+            
+        }
+
         // Style
         private void TxtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
@@ -1522,6 +1578,8 @@ where ID = {0}",
             {
                 this.displayCD.Value = cdCode.Rows.Count > 0 ? cdCode.Rows[0]["CdCodeID"].ToString() : string.Empty;
             }
+
+            this.ChanTextColor();
         }
 
         private void BtnDel_Click(object sender, EventArgs e)
@@ -1766,6 +1824,43 @@ where ID = {0}",
 
             }
 
+        }
+
+        private void ChanTextColor()
+        {
+
+            if (this.CurrentMaintain == null)
+            {
+
+                this.detailgrid.Columns["Frequency"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
+                this.detailgrid.Columns["SMV"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
+                this.detailgrid.Columns["MachineTypeID"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
+                this.detailgrid.Columns["MasterPlusGroup"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
+                return;
+            }
+
+            bool isLocalStyle = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"SELECT LocalStyle FROM Style WHERE ID='{this.CurrentMaintain["StyleID"]}' AND SeasonID='{this.CurrentMaintain["SeasonID"]}' AND BrandID='{CurrentMaintain["BrandID"]}'"));
+
+            this.detailgrid.Columns["Frequency"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.detailgrid.Columns["SMV"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.detailgrid.Columns["MachineTypeID"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.detailgrid.Columns["MasterPlusGroup"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
+
+            if (isLocalStyle)
+            {
+                this.detailgrid.Columns["Frequency"].DefaultCellStyle.ForeColor = System.Drawing.Color.Red;
+                this.detailgrid.Columns["SMV"].DefaultCellStyle.ForeColor = System.Drawing.Color.Red;
+                this.detailgrid.Columns["MachineTypeID"].DefaultCellStyle.ForeColor = System.Drawing.Color.Red;
+                this.detailgrid.Columns["MasterPlusGroup"].DefaultCellStyle.ForeColor = System.Drawing.Color.Red;
+            }
+
+            if (!this.EditMode)
+            {
+                this.detailgrid.Columns["Frequency"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
+                this.detailgrid.Columns["SMV"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
+                this.detailgrid.Columns["MachineTypeID"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
+                this.detailgrid.Columns["MasterPlusGroup"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
+            }
         }
     }
 }
