@@ -156,7 +156,6 @@ SELECT  DISTINCT
 		, psd.SCIRefno 
         , psd.Refno
         , psd.ColorID
-		, psd.SuppColor
 		, f.DescDetail
 		, [@Qty]= ThreadUsedQtyByBOT.Val
 		, [Use Qty By Stock Unit] = CEILING (ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) )--並轉換為Stock Unit
@@ -221,7 +220,6 @@ SELECT  [Selected]
 		, SCIRefno 
         , Refno
         , ColorID
-		, SuppColor
 		, DescDetail
 		, [@Qty] = SUM([@Qty])
 		, [Use Qty By Stock Unit] = CEILING (SUM([Use Qty By Stock Unit] ))
@@ -239,7 +237,6 @@ GROUP BY [Selected]
 		, SCIRefno 
         , Refno
         , ColorID
-		, SuppColor
 		, DescDetail
 		, [Stock Unit]
 		, [Use Unit]
@@ -253,7 +250,7 @@ SELECT  [Selected]
 		, SCIRefno 
         , Refno
         , ColorID
-		, SuppColor
+		, SuppColor = (SELECT top 1 psd.SuppColor FROM PO_Supp_Detail psd WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}' and SuppColor <>'' Order by SuppColor)
 		, DescDetail
 		, [@Qty] 
 		, [Use Qty By Stock Unit]
@@ -272,7 +269,6 @@ OUTER APPLY(
 	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
 	WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}'
 )Balance 
-
 
 DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final,#final2,#tmp,#tmp_sumQty
 

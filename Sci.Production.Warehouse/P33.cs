@@ -357,7 +357,7 @@ OUTER APPLY(
                     string sqlcmd = $@"
  SELECT   DISTINCT [Refno]= psd.Refno
 		 , [ColorID]=psd.ColorID
-         , [SuppColor]=psd.SuppColor
+		, SuppColor = isnull((SELECT top 1 t.SuppColor FROM PO_Supp_Detail t WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID=t.ID and t.SuppColor <>'' Order by t.SuppColor),'')
 		 , [MtlType]=fc.MtlTypeID
 		 , [Desc]=fc.DescDetail
 		 , [Stock Unit]=StockUnit.Val
@@ -501,7 +501,6 @@ SELECT  DISTINCT
   psd.SCIRefno
 , psd.Refno
 , psd.ColorID
-, psd.SuppColor
 , f.DescDetail
 , [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0)
 , [AccuIssued] = (
@@ -570,7 +569,6 @@ AND psd.SCIRefno='{SCIRefno}'
 SELECT    SCIRefno 
         , Refno
         , ColorID
-		, SuppColor
 		, DescDetail
 		, [@Qty] = SUM([@Qty])
         , [AccuIssued]
@@ -590,7 +588,6 @@ FROM #final
 GROUP BY SCIRefno 
         , Refno
         , ColorID
-		, SuppColor
 		, DescDetail
         , [AccuIssued]
         , [IssueQty]
@@ -606,7 +603,7 @@ GROUP BY SCIRefno
 SELECT    SCIRefno 
         , Refno
         , ColorID
-		, SuppColor
+		, SuppColor = isnull((SELECT top 1 psd.SuppColor FROM PO_Supp_Detail psd WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}' and SuppColor <>'' Order by SuppColor),'')
 		, DescDetail
 		, [@Qty] 
         , [AccuIssued]
@@ -737,7 +734,6 @@ SELECT  DISTINCT
   psd.SCIRefno
 , psd.Refno
 , psd.ColorID
-, psd.SuppColor
 , f.DescDetail
 , [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0)
 , [AccuIssued] = (
@@ -816,7 +812,6 @@ AND psd.Refno='{e.FormattedValue}'
 SELECT    SCIRefno 
         , Refno
         , ColorID
-		, SuppColor
 		, DescDetail
 		, [@Qty] = SUM([@Qty])
         , [AccuIssued]
@@ -836,7 +831,6 @@ FROM #final
 GROUP BY SCIRefno 
         , Refno
         , ColorID
-		, SuppColor
 		, DescDetail
         , [AccuIssued]
         , [IssueQty]
@@ -852,7 +846,7 @@ GROUP BY SCIRefno
 SELECT    SCIRefno 
         , Refno
         , ColorID
-		, SuppColor
+		, SuppColor = isnull((SELECT top 1 psd.SuppColor FROM PO_Supp_Detail psd WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}' and SuppColor <>'' Order by SuppColor),'')
 		, DescDetail
 		, [@Qty] 
         , [AccuIssued]
@@ -953,7 +947,7 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                     string sqlcmd = $@"
  SELECT  DISTINCT  [Refno]= psd.Refno
 		 , [ColorID]=psd.ColorID
-		 , [SuppColor]=psd.SuppColor
+		, SuppColor = isnull((SELECT top 1 t.SuppColor FROM PO_Supp_Detail t WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID=t.id and SuppColor <>'' Order by SuppColor),'')
 		 , [MtlType]=fc.MtlTypeID
 		 , [Desc]=fc.DescDetail
 		 , [Stock Unit]=StockUnit.Val
@@ -1102,7 +1096,6 @@ SELECT  DISTINCT
   psd.SCIRefno
 , psd.Refno
 , psd.ColorID
-, psd.SuppColor
 , f.DescDetail
 , [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0)
 , [AccuIssued] = (
@@ -1170,7 +1163,6 @@ AND psd.ColorID='{ColorID}'
 SELECT    SCIRefno 
         , Refno
 		, ColorID
-        , SuppColor
 		, DescDetail
 		, [@Qty] = SUM([@Qty])
         , [AccuIssued]
@@ -1190,7 +1182,6 @@ FROM #final
 GROUP BY SCIRefno 
         , Refno
 		, ColorID
-        , SuppColor
 		, DescDetail
         , [AccuIssued]
         , [IssueQty]
@@ -1206,7 +1197,7 @@ GROUP BY SCIRefno
 SELECT    SCIRefno 
         , Refno
 		, ColorID
-        , SuppColor
+		, SuppColor = isnull((SELECT top 1 psd.SuppColor FROM PO_Supp_Detail psd WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}' and SuppColor <>'' Order by SuppColor),'')
 		, DescDetail
 		, [@Qty] 
         , [AccuIssued]
@@ -1335,7 +1326,6 @@ SELECT  DISTINCT
   psd.SCIRefno
 , psd.Refno
 , psd.ColorID
-, psd.SuppColor
 , f.DescDetail
 , [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0)
 , [AccuIssued] = (
@@ -1415,7 +1405,6 @@ AND psd.ColorID='{e.FormattedValue}'
 SELECT    SCIRefno 
         , Refno
         , ColorID
-		, SuppColor
 		, DescDetail
 		, [@Qty] = SUM([@Qty])
         , [AccuIssued]
@@ -1435,7 +1424,6 @@ FROM #final
 GROUP BY SCIRefno 
         , Refno
         , ColorID
-		, SuppColor
 		, DescDetail
         , [AccuIssued]
         , [IssueQty]
@@ -1451,7 +1439,7 @@ GROUP BY SCIRefno
 SELECT    SCIRefno 
         , Refno
         , ColorID
-		, SuppColor
+		, SuppColor = isnull((SELECT top 1 psd.SuppColor FROM PO_Supp_Detail psd WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}' and SuppColor <>'' Order by SuppColor),'')
 		, DescDetail
 		, [@Qty] 
         , [AccuIssued]
@@ -2209,7 +2197,7 @@ where id = @MDivision", pars, out dt);
             string cmd = $@"
 SELECT f.Refno
 		,iis.SCIRefno 
-        ,lis.ColorID
+        ,iis.ColorID
 		,iis.SuppColor 
 		,[Seq]=iid.Seq1 +'-'+iid.Seq2
 		,[Desc]=f.DescDetail
