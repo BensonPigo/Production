@@ -571,6 +571,12 @@ WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.CurrentMaintain["
 
             List<string> Cartons = this.CurrentMaintain["Carton"].ToString().Split(',').ToList();
 
+
+            if (Cartons.Where(o => !MyUtility.Check.Empty(o)).Count() == 0)
+            {
+                return false;
+            }
+
             string cmd = $@"
 SELECT 1
 FROM PackingList_Detail

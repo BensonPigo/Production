@@ -292,7 +292,13 @@ DROP TABLE #tmp
 ";
             #endregion
             // 取得基礎資料
-            DBProxy.Current.Select(null, cmd, out dtQtybreakdown);
+            DualResult r = DBProxy.Current.Select(null, cmd, out dtQtybreakdown);
+
+            if (!r)
+            {
+                this.ShowErr(r);
+                return;
+            }
 
             var Qtybreakdown = dtQtybreakdown.AsEnumerable().ToList();
 
@@ -576,8 +582,13 @@ DROP TABLE #MixCTNStartNo ,#Is_MixCTNStartNo ,#Not_MixCTNStartNo ,#Not_Mix_Final
 ";
             #endregion
             // 取得基礎資料
-            DBProxy.Current.Select(null, cmd, out dtCtnSummary);
+            r = DBProxy.Current.Select(null, cmd, out dtCtnSummary);
 
+            if (!r)
+            {
+                this.ShowErr(r);
+                return;
+            }
             var CartonSummary = dtCtnSummary.AsEnumerable().ToList();
 
             List<string> Articles_c = new List<string>();

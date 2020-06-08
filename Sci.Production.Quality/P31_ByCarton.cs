@@ -82,7 +82,7 @@ SELECT * FROM (
 			SELECT TOP 1 Carton 
 			FROM CFAInspectionRecord cfa2 
 			WHERE OrderID=pd.OrderID AND Seq=pd.OrderShipmodeSeq 
-			AND Status='Confirmed' AND Result='Pass'
+			AND Status='Confirmed' AND Result='Pass' AND (Carton LIKE '%'+pd.CTNStartNo +'%' OR Carton LIKE '%,'+pd.CTNStartNo +',%')
 		),',') WHERE Data=pd.CTNStartNo
     )ResultPass
     OUTER APPLY (
@@ -90,7 +90,7 @@ SELECT * FROM (
 			SELECT TOP 1 Carton 
 			FROM CFAInspectionRecord cfa2 
 			WHERE OrderID=pd.OrderID AND Seq=pd.OrderShipmodeSeq 
-			AND Status='Confirmed' AND Result='Fail'
+			AND Status='Confirmed' AND Result='Fail' AND (Carton LIKE '%'+pd.CTNStartNo +'%' OR Carton LIKE '%,'+pd.CTNStartNo +',%')
 		),',') WHERE Data=pd.CTNStartNo
     )ResultFail
 	WHERE pd.OrderID= '{this._OrderID}'
@@ -154,7 +154,7 @@ SELECT * FROM (
 				SELECT TOP 1 Carton 
 				FROM CFAInspectionRecord cfa2 
 				WHERE OrderID=pd.OrderID AND Seq=pd.OrderShipmodeSeq 
-				AND Status='Confirmed' AND Result='Pass'
+				AND Status='Confirmed' AND Result='Pass'  AND (Carton LIKE '%'+pd.CTNStartNo +'%' OR Carton LIKE '%,'+pd.CTNStartNo +',%')
 			),',') WHERE Data=pd.CTNStartNo
 		)ResultPass
 		OUTER APPLY (
@@ -162,7 +162,7 @@ SELECT * FROM (
 				SELECT TOP 1 Carton 
 				FROM CFAInspectionRecord cfa2 
 				WHERE OrderID=pd.OrderID AND Seq=pd.OrderShipmodeSeq 
-				AND Status='Confirmed' AND Result='Fail'
+				AND Status='Confirmed' AND Result='Fail'  AND (Carton LIKE '%'+pd.CTNStartNo +'%' OR Carton LIKE '%,'+pd.CTNStartNo +',%')
 			),',') WHERE Data=pd.CTNStartNo
 		)ResultFail
 		WHERE pd.ID = t.ID 
