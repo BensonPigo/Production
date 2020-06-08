@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.labelID = new Sci.Win.UI.Label();
-            this.labelIssueDate = new Sci.Win.UI.Label();
+            this.ArriveWHDate = new Sci.Win.UI.Label();
             this.label25 = new Sci.Win.UI.Label();
             this.displayID = new Sci.Win.UI.DisplayBox();
             this.dateIssueDate = new Sci.Win.UI.DateBox();
@@ -79,13 +79,13 @@
             this.masterpanel.Controls.Add(this.dateIssueDate);
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.label25);
-            this.masterpanel.Controls.Add(this.labelIssueDate);
+            this.masterpanel.Controls.Add(this.ArriveWHDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 184);
+            this.masterpanel.Size = new System.Drawing.Size(988, 184);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.ArriveWHDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label25, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
@@ -106,7 +106,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 184);
-            this.detailpanel.Size = new System.Drawing.Size(892, 165);
+            this.detailpanel.Size = new System.Drawing.Size(988, 293);
             // 
             // gridicon
             // 
@@ -121,7 +121,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 165);
+            this.detailgridcont.Size = new System.Drawing.Size(988, 293);
             // 
             // detail2
             // 
@@ -134,6 +134,19 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(988, 515);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(988, 477);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 477);
+            this.detailbtm.Size = new System.Drawing.Size(988, 38);
             // 
             // browse
             // 
@@ -164,13 +177,13 @@
             this.labelID.TabIndex = 1;
             this.labelID.Text = "ID";
             // 
-            // labelIssueDate
+            // ArriveWHDate
             // 
-            this.labelIssueDate.Location = new System.Drawing.Point(272, 13);
-            this.labelIssueDate.Name = "labelIssueDate";
-            this.labelIssueDate.Size = new System.Drawing.Size(108, 23);
-            this.labelIssueDate.TabIndex = 11;
-            this.labelIssueDate.Text = "Issue Date";
+            this.ArriveWHDate.Location = new System.Drawing.Point(272, 13);
+            this.ArriveWHDate.Name = "ArriveWHDate";
+            this.ArriveWHDate.Size = new System.Drawing.Size(108, 23);
+            this.ArriveWHDate.TabIndex = 11;
+            this.ArriveWHDate.Text = "Arrive W/H Date";
             // 
             // label25
             // 
@@ -206,7 +219,7 @@
             this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer1.Name = "shapeContainer1";
-            this.shapeContainer1.Size = new System.Drawing.Size(892, 184);
+            this.shapeContainer1.Size = new System.Drawing.Size(988, 184);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -397,7 +410,7 @@
 
         #endregion
 
-        private Win.UI.Label labelIssueDate;
+        private Win.UI.Label ArriveWHDate;
         private Win.UI.Label labelID;
         private Win.UI.DisplayBox displayID;
         private Win.UI.Label label25;

@@ -119,6 +119,7 @@ select
 	PSD.Refno,
 	PSD.ColorID,
 	RD.ActualQty,
+    LD.fromLocation,
 	Location = STUFF((
 				select concat(',',MtlLocationID)
 				from FtyInventory_Detail fd with(nolock)

@@ -62,6 +62,8 @@
     <Folder Include="Security\" />
     <Folder Include="dbo\Functions\" />
     <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="Assemblies\" />
+    <Folder Include="dbo\Stored Procedures\FTY" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\T_AnnualSalesReport.sql" />
@@ -91,20 +93,60 @@
     <Build Include="dbo\Stored Procedures\F_F002_InsertData.sql" />
     <Build Include="dbo\Stored Procedures\F_F001_COPBasic.sql" />
     <Build Include="dbo\Stored Procedures\P_DeleteEfficiencyBI.sql" />
-    <Build Include="dbo\Tables\EfficiencyBI.sql" />
-    <Build Include="dbo\Stored Procedures\ImportEfficiencyBI.sql" />
     <Build Include="dbo\Tables\P_SewingLineSchedule.sql" />
-    <Build Include="dbo\Stored Procedures\ImportSewingLineScheduleBIData.sql" />
     <Build Include="dbo\Tables\SewingLineScheduleBI.sql" />
     <Build Include="dbo\Tables\ForecastLoadingBI.sql" />
     <Build Include="dbo\Tables\ForecastLoadingBI_Factory_Tms.sql" />
-    <Build Include="dbo\Stored Procedures\ImportForecastLoadingBI.sql" />
     <Build Include="dbo\Stored Procedures\P_ImportOustandingPO.sql" />
     <Build Include="dbo\Tables\P_OustandingPO.sql" />
+    <Build Include="dbo\Tables\P_TransRegion.sql" />
+    <Build Include="dbo\Tables\P_TransLog.sql" />
+    <Build Include="dbo\Tables\P_TransImport.sql" />
+    <Build Include="dbo\Tables\P_SDPOrderDetail.sql" />
+    <Build Include="dbo\Stored Procedures\P_ImportSewingLineScheduleData.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\ImportEfficiencyBI.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_ImportOustandingPO.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_ImportSDPOrderDetail.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\ImportForecastLoadingBI.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\execAllPowerBISP.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\ImportSewingLineScheduleBIData.sql" />
+    <Build Include="dbo\Stored Procedures\P_ImportSDPOrderDetail.sql" />
+    <Build Include="dbo\Functions\P_GetTPEPass1_ExtNo.sql" />
+    <Build Include="dbo\Functions\P_GetPoPriceByArticleSize.sql" />
+    <Build Include="dbo\Functions\GetSuppPaymentTerm.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
     <None Include="SqlCallWebAPI.dll" />
     <None Include="Newtonsoft.Json.dll" />
+    <None Include="Assemblies\SqlCallWebAPI.dll" />
+    <None Include="Assemblies\Utility.dll" />
+    <None Include="Assemblies\Newtonsoft.Json.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="SqlCallWebAPI">
+      <HintPath>Assemblies\SqlCallWebAPI.dll</HintPath>
+      <SqlAssemblyName>SqlCallWebAPI</SqlAssemblyName>
+      <IsModelAware>True</IsModelAware>
+      <GenerateSqlClrDdl>False</GenerateSqlClrDdl>
+      <SqlOwnerName>dbo</SqlOwnerName>
+      <SqlPermissionSet>UNSAFE</SqlPermissionSet>
+    </Reference>
+    <Reference Include="Utility">
+      <HintPath>Assemblies\Utility.dll</HintPath>
+      <SqlAssemblyName>Utility</SqlAssemblyName>
+      <IsModelAware>True</IsModelAware>
+      <GenerateSqlClrDdl>False</GenerateSqlClrDdl>
+      <SqlOwnerName>dbo</SqlOwnerName>
+      <SqlPermissionSet>UNSAFE</SqlPermissionSet>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Assemblies\Newtonsoft.Json.dll</HintPath>
+      <SqlAssemblyName>Newtonsoft.Json</SqlAssemblyName>
+      <IsModelAware>True</IsModelAware>
+      <GenerateSqlClrDdl>False</GenerateSqlClrDdl>
+      <SqlOwnerName>dbo</SqlOwnerName>
+      <SqlPermissionSet>UNSAFE</SqlPermissionSet>
+    </Reference>
   </ItemGroup>
 </Project>

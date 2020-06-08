@@ -746,9 +746,17 @@ Order by CTNNo,Seq1,Seq2", masterID);
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            if (!(MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "New" || MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Sent"))
+            if (!( MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "New" ||
+                   MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Sent" ||
+                   MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved"))
             {
                 MyUtility.Msg.WarningBox("Status is not 'New' or 'Sent', can't modify!");
+                return false;
+            }
+
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved" && !MyUtility.Check.Empty(this.CurrentMaintain["PayDate"]))
+            {
+                MyUtility.Msg.WarningBox("Already have payment, can't modify!");
                 return false;
             }
 
@@ -765,6 +773,24 @@ Order by CTNNo,Seq1,Seq2", masterID);
                 this.txtCarrier.ReadOnly = true;
                 this.txtCarrierbyCustomer.ReadOnly = true;
                 this.txtCarrierbyFty.ReadOnly = true;
+            }
+            else if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved")
+            {
+                this.txtFrom.ReadOnly = true;
+                this.txtTO.ReadOnly = true;
+                this.txtShipMark.ReadOnly = true;
+                this.txtPort.ReadOnly = true;
+                this.txtBLNo.ReadOnly = true;
+                this.comboFrom.ReadOnly = true;
+                this.comboTO.ReadOnly = true;
+                this.txtUserHandle.TextBox1.ReadOnly = true;
+                this.txtUserManager.TextBox1.ReadOnly = true;
+                this.dateShipDate.ReadOnly = true;
+                this.dateETD.ReadOnly = true;
+                this.dateETA.ReadOnly = true;
+                this.editRemark.ReadOnly = true;
+                this.txtCountryDestination.TextBox1.ReadOnly = true;
+                this.txtInvoiceNo.ReadOnly = true;
             }
             else
             {

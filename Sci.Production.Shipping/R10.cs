@@ -130,6 +130,8 @@ as (
 		, g.ID
 		, [OnBoardDate] = g.ETD 
 		, g.Shipper
+		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
+		, s.SisFtyAPID
 		, g.BrandID
 		, [Category] = case when o.Category = 'B' then 'Bulk'
 							  when o.Category = 'S' then 'Sample'
@@ -156,6 +158,13 @@ as (
 	) pd on pd.id = p.id
     inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
     inner join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder 
+	outer apply (
+		select top 1 Foundry 
+		from GMTBooking WITH (NOLOCK) 
+		where ISNULL(s.BLNo,'') != '' 
+　　	  and (BLNo = s.BLNo or BL2No = s.BLNo) 
+　　	  and Foundry = 1
+	)gm
     where s.Type = 'EXPORT'
 ");
                         if (!MyUtility.Check.Empty(this.date1))
@@ -231,6 +240,8 @@ tmpPL as
 		, p.ID
 		, [OnBoardDate] = null
 		, [Shipper] = ''  
+		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
+		, s.SisFtyAPID
 		, o.BrandID
 		, [Category] = case when o.Category = 'B' then 'Bulk'
 							  when o.Category = 'S' then 'Sample'
@@ -252,10 +263,17 @@ tmpPL as
     inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
     inner join (
 		select distinct id,OrderID,OrderShipmodeSeq 
-		from PackingList_Detail	pd	
+		from PackingList_Detail	pd WITH (NOLOCK) 
 	) pd on pd.id = p.id
     inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-    inner join SciFMS_AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
+    inner join SciFMS_AccountNo a WITH (NOLOCK)  on a.ID = se.AccountID
+	outer apply (
+		select top 1 Foundry 
+		from GMTBooking WITH (NOLOCK) 
+		where ISNULL(s.BLNo,'') != '' 
+　　	  and (BLNo = s.BLNo or BL2No = s.BLNo) 
+　　	  and Foundry = 1
+	)gm
     where s.Type = 'EXPORT'
 ");
                         if (!MyUtility.Check.Empty(this.date1))
@@ -344,6 +362,8 @@ as (
         , o.FactoryID
 		, o.MDivisionID
 		, f.KPICode
+		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
+		, s.SisFtyAPID
     from ShippingAP s WITH (NOLOCK) 
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
@@ -356,6 +376,13 @@ as (
     inner join Order_QtyShip oq WITH (NOLOCK) on pd.OrderID=oq.Id and oq.Seq = pd.OrderShipmodeSeq
     inner join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
     inner join Factory f with (nolock) on o.FactoryID = f.ID
+	outer apply (
+		select top 1 Foundry 
+		from GMTBooking WITH (NOLOCK) 
+		where ISNULL(s.BLNo,'') != '' 
+　　	  and (BLNo = s.BLNo or BL2No = s.BLNo) 
+　　	  and Foundry = 1
+	)gm
     where s.Type = 'EXPORT'
 ");
                         if (!MyUtility.Check.Empty(this.date1))
@@ -453,6 +480,8 @@ tmpPL as
         , o.FactoryID
 		, o.MDivisionID
 		, f.KPICode
+		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
+		, s.SisFtyAPID
     from ShippingAP s WITH (NOLOCK) 
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
@@ -464,6 +493,13 @@ tmpPL as
     inner join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID 
     inner join SciFMS_AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
     inner join Factory f with (nolock) on o.FactoryID = f.ID
+	outer apply (
+		select top 1 Foundry 
+		from GMTBooking WITH (NOLOCK) 
+		where ISNULL(s.BLNo,'') != '' 
+　　	  and (BLNo = s.BLNo or BL2No = s.BLNo) 
+　　	  and Foundry = 1
+	)gm
     where s.Type = 'EXPORT'
 ");
                         if (!MyUtility.Check.Empty(this.date1))
@@ -541,6 +577,8 @@ select distinct [type]
 	, id
 	, OnBoardDate
 	, shipper
+	, Foundry
+	, SisFtyAPID
 	, Brandid
 	, category
 	, custcdid
@@ -573,6 +611,8 @@ select [type]
 	, id
 	, OnBoardDate
 	, Shipper
+	, Foundry
+	, SisFtyAPID
 	, BrandID
 	, [Category] = Category.value
 	, [OQty]=sum(oqs.OQty)
@@ -606,13 +646,15 @@ outer apply(
 ) Category
 group by type,id,OnBoardDate,Shipper,BrandID,Category.value,CustCDID,
 Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID
-,AccountID,Amount
+,AccountID,Amount, Foundry, SisFtyAPID
 
 select 
 	a.[type]
 	, a.id
 	, a.OnBoardDate
 	, a.Shipper
+	, a.Foundry
+	, a.SisFtyAPID
 	, a.BrandID
 	, a.[Category]
 	, a.[OQty]
@@ -644,6 +686,8 @@ select distinct [type]
     ,FactoryID
 	,MDivisionID
 	,KPICode
+	,Foundry
+	,SisFtyAPID
 	,Brandid
 	,category
 	,OrderID
@@ -682,6 +726,8 @@ select [type]
     ,FactoryID
 	,MDivisionID
 	,KPICode
+	,Foundry
+	,SisFtyAPID
 	,BrandID
 	,Category
 	,orderID
@@ -708,7 +754,7 @@ from #temp2 a
 outer apply(select sum(qty) as OQty from Order_QtyShip WITH (NOLOCK)  where id=a.OrderID) as oqs
 outer apply(select sum(shipqty) as shipqty,sum(CTNQty)as CTNQty,sum(GW) as GW,sum(CBM)as CBM from PackingList WITH (NOLOCK)  where id=a.packingID) as pt
 group by type,id,OnBoardDate,Shipper,FactoryID,MDivisionID,KPICode,BrandID,Category,CustCDID,
-Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID,orderID ,BuyerDelivery,packingid,PulloutID,Rate,AccountID,Amount
+Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID,orderID ,BuyerDelivery,packingid,PulloutID,Rate,AccountID,Amount,Foundry,SisFtyAPID
 
 -- 取得TOTAL CBM, 用來計算比例
 select a.id, sum(a.CBM) TotalCBM
@@ -743,6 +789,8 @@ from (
         ,a.FactoryID
 		,a.MDivisionID
 		,a.KPICode
+		,a.Foundry
+		,a.SisFtyAPID
 		,a.BrandID
 		,a.Category
 		,a.OrderID
@@ -773,6 +821,8 @@ union all
         ,a.FactoryID
 		,a.MDivisionID
 		,a.KPICode
+		,a.Foundry
+		,a.SisFtyAPID
 		,a.BrandID
 		,a.Category
 		,a.OrderID
@@ -899,6 +949,8 @@ as (
         , o.FactoryID
 		, o.MDivisionID
 		, f.KPICode
+		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
+		, s.SisFtyAPID
     from ShippingAP s WITH (NOLOCK) 
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
@@ -912,6 +964,13 @@ as (
     left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
     left join SciFMS_AccountNo a WITH (NOLOCK)  on a.ID = se.AccountID
     left join Factory f with (nolock) on o.FactoryID = f.ID    
+	outer apply (
+		select top 1 Foundry 
+		from GMTBooking WITH (NOLOCK) 
+		where ISNULL(s.BLNo,'') != '' 
+　　	  and (BLNo = s.BLNo or BL2No = s.BLNo) 
+　　	  and Foundry = 1
+	)gm
     where s.Type = 'EXPORT'
 ");
                     if (!MyUtility.Check.Empty(this.date1))
@@ -1019,6 +1078,8 @@ tmpPL as
         , o.FactoryID
 		, o.MDivisionID
 		, f.KPICode
+		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
+		, s.SisFtyAPID
     from ShippingAP s WITH (NOLOCK) 
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
@@ -1030,6 +1091,13 @@ tmpPL as
     left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
     left join SciFMS_AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
     left join Factory f with (nolock) on o.FactoryID = f.ID
+	outer apply (
+		select top 1 Foundry 
+		from GMTBooking WITH (NOLOCK) 
+		where ISNULL(s.BLNo,'') != '' 
+　　	  and (BLNo = s.BLNo or BL2No = s.BLNo) 
+　　	  and Foundry = 1
+	)gm
     where s.Type = 'EXPORT'
 ");
                     if (!MyUtility.Check.Empty(this.date1))
@@ -1420,13 +1488,13 @@ where s.Type = 'EXPORT'");
                 int allColumn = 0;
                 if (this.reportType == 1)
                 {
-                    allColumn = 23;
+                    allColumn = 25;
                 }
                 else
                 {
                     if (this.reportContent == 1)
                     {
-                        allColumn = 30;
+                        allColumn = 32;
                     }
                     else
                     {
@@ -1512,60 +1580,62 @@ where s.Type = 'EXPORT'");
                     objArray[0, 14] = dr[14];
                     objArray[0, 15] = dr[15];
                     objArray[0, 16] = dr[16];
+                    objArray[0, 17] = dr[17];
+                    objArray[0, 18] = dr[18];
                     if (this.reportType == 1)
                     {
-                        objArray[0, 17] = MyUtility.Check.Empty(dr[17]) ? 0 : dr[17];
-                        objArray[0, 18] = MyUtility.Check.Empty(dr[18]) ? 0 : dr[18];
-                        // objArray[0, 19] = MyUtility.Check.Empty(dr[19]) ? 0 : dr[19];
-                        // objArray[0, 20] = $"=S{intRowsStart}+T{intRowsStart}";
                         objArray[0, 19] = MyUtility.Check.Empty(dr[19]) ? 0 : dr[19];
                         objArray[0, 20] = MyUtility.Check.Empty(dr[20]) ? 0 : dr[20];
+                        // objArray[0, 19] = MyUtility.Check.Empty(dr[19]) ? 0 : dr[19];
+                        // objArray[0, 20] = $"=S{intRowsStart}+T{intRowsStart}";
                         objArray[0, 21] = MyUtility.Check.Empty(dr[21]) ? 0 : dr[21];
                         objArray[0, 22] = MyUtility.Check.Empty(dr[22]) ? 0 : dr[22];
+                        objArray[0, 23] = MyUtility.Check.Empty(dr[23]) ? 0 : dr[23];
+                        objArray[0, 24] = MyUtility.Check.Empty(dr[24]) ? 0 : dr[24];
 
                         // 多增加的AccountID, 必須要動態的填入欄位值!
                         if (counts > 0)
                         {
                             for (int t = 1; t <= counts; t++)
                             {
-                                if (MyUtility.Convert.GetString(dr.Table.Columns[22 + t].ColumnName).Contains("5912"))
+                                if (MyUtility.Convert.GetString(dr.Table.Columns[24 + t].ColumnName).Contains("5912"))
                                 {
                                     if (MyUtility.Check.Empty(sumCol5912start))
                                     {
-                                        sumCol5912start = PublicPrg.Prgs.GetExcelEnglishColumnName(23 + t);
+                                        sumCol5912start = PublicPrg.Prgs.GetExcelEnglishColumnName(25 + t);
                                     }
                                 }
 
-                                if (MyUtility.Convert.GetString(dr.Table.Columns[22 + t].ColumnName).EqualString("5912-Total"))
+                                if (MyUtility.Convert.GetString(dr.Table.Columns[24 + t].ColumnName).EqualString("5912-Total"))
                                 {
                                     if (MyUtility.Check.Empty(sumCol5912))
                                     {
-                                        sumCol5912 = PublicPrg.Prgs.GetExcelEnglishColumnName(22 + t);
-                                        sumCol5912TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(23 + t);
+                                        sumCol5912 = PublicPrg.Prgs.GetExcelEnglishColumnName(24 + t);
+                                        sumCol5912TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(25 + t);
                                     }
 
-                                    objArray[0, 22 + t] = $"=W{intRowsStart}+SUM({sumCol5912start}{intRowsStart}:{sumCol5912}{intRowsStart})";
+                                    objArray[0, 24 + t] = $"=W{intRowsStart}+SUM({sumCol5912start}{intRowsStart}:{sumCol5912}{intRowsStart})";
                                 }
-                                else if (MyUtility.Convert.GetString(dr.Table.Columns[22 + t].ColumnName).EqualString("6105-Total"))
+                                else if (MyUtility.Convert.GetString(dr.Table.Columns[24 + t].ColumnName).EqualString("6105-Total"))
                                 {
                                     if (MyUtility.Check.Empty(sumCol6105))
                                     {
-                                        sumCol6105 = PublicPrg.Prgs.GetExcelEnglishColumnName(22 + t);
-                                        sumCol6105TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(23 + t);
+                                        sumCol6105 = PublicPrg.Prgs.GetExcelEnglishColumnName(24 + t);
+                                        sumCol6105TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(25 + t);
                                     }
 
-                                    objArray[0, 22 + t] = $"=SUM({first6105Column}{intRowsStart}:{sumCol6105}{intRowsStart})";
+                                    objArray[0, 24 + t] = $"=SUM({first6105Column}{intRowsStart}:{sumCol6105}{intRowsStart})";
                                 }
                                 else
                                 {
-                                    objArray[0, 22 + t] = MyUtility.Check.Empty(dr[22 + t]) ? 0 : dr[22 + t];
+                                    objArray[0, 24 + t] = MyUtility.Check.Empty(dr[24 + t]) ? 0 : dr[24 + t];
                                 }
                             }
                         }
                     }
                     else
                     {
-                        for (int f = 17; f < allColumn; f++)
+                        for (int f = 19; f < allColumn; f++)
                         {
                             if (f >= allColumn - 6)
                             {
@@ -1642,17 +1712,17 @@ where s.Type = 'EXPORT'");
                 {
                     if (this.reportContent == 1)
                     {
-                        worksheet.Cells[1, 25] = worksheet.Cells[1, 25].Value + "\r\n(USD)";
+                        worksheet.Cells[1, 27] = worksheet.Cells[1, 25].Value + "\r\n(USD)";
                     }
                     else
                     {
-                        worksheet.Cells[1, 22] = worksheet.Cells[1, 22].Value + "\r\n(USD)";
+                        worksheet.Cells[1, 24] = worksheet.Cells[1, 22].Value + "\r\n(USD)";
                     }
                 }
 
                 // 填內容值
                 int intRowsStart = 2;
-                object[,] objArray = new object[1, 32];
+                object[,] objArray = new object[1, 34];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     if (this.reportContent == 1)
@@ -1663,34 +1733,36 @@ where s.Type = 'EXPORT'");
                         objArray[0, 3] = dr["FactoryID"];
                         objArray[0, 4] = dr["MDivisionID"];
                         objArray[0, 5] = dr["KPICode"];
-                        objArray[0, 6] = dr["BrandID"];
-                        objArray[0, 7] = dr["Category"];
-                        objArray[0, 8] = dr["OrderID"];
-                        objArray[0, 9] = dr["BuyerDelivery"];
-                        objArray[0, 10] = dr["OQty"];
-                        objArray[0, 11] = dr["CustCDID"];
-                        objArray[0, 12] = dr["Dest"];
-                        objArray[0, 13] = dr["ShipModeID"];
-                        objArray[0, 14] = dr["PackID"];
-                        objArray[0, 15] = dr["PulloutID"];
-                        objArray[0, 16] = dr["PulloutDate"];
-                        objArray[0, 17] = dr["ShipQty"];
-                        objArray[0, 18] = dr["CTNQty"];
-                        objArray[0, 19] = dr["GW"];
-                        objArray[0, 20] = dr["CBM"];
-                        objArray[0, 21] = dr["Forwarder"];
-                        objArray[0, 22] = dr["BLNo"];
-                        objArray[0, 23] = dr["FeeType"];
-                        objArray[0, 24] = dr["Amount"];
-                        objArray[0, 25] = dr["CurrencyID"];
-                        objArray[0, 26] = dr["APID"];
-                        objArray[0, 27] = dr["CDate"];
-                        objArray[0, 28] = dr["ApvDate"];
-                        objArray[0, 29] = dr["VoucherID"];
-                        objArray[0, 30] = dr["VoucherDate"];
-                        objArray[0, 31] = dr["SubType"];
+                        objArray[0, 6] = dr["Foundry"];
+                        objArray[0, 7] = dr["SisFtyAPID"];
+                        objArray[0, 8] = dr["BrandID"];
+                        objArray[0, 9] = dr["Category"];
+                        objArray[0, 10] = dr["OrderID"];
+                        objArray[0, 11] = dr["BuyerDelivery"];
+                        objArray[0, 12] = dr["OQty"];
+                        objArray[0, 13] = dr["CustCDID"];
+                        objArray[0, 14] = dr["Dest"];
+                        objArray[0, 15] = dr["ShipModeID"];
+                        objArray[0, 16] = dr["PackID"];
+                        objArray[0, 17] = dr["PulloutID"];
+                        objArray[0, 18] = dr["PulloutDate"];
+                        objArray[0, 19] = dr["ShipQty"];
+                        objArray[0, 20] = dr["CTNQty"];
+                        objArray[0, 21] = dr["GW"];
+                        objArray[0, 22] = dr["CBM"];
+                        objArray[0, 23] = dr["Forwarder"];
+                        objArray[0, 24] = dr["BLNo"];
+                        objArray[0, 25] = dr["FeeType"];
+                        objArray[0, 26] = dr["Amount"];
+                        objArray[0, 27] = dr["CurrencyID"];
+                        objArray[0, 28] = dr["APID"];
+                        objArray[0, 29] = dr["CDate"];
+                        objArray[0, 30] = dr["ApvDate"];
+                        objArray[0, 31] = dr["VoucherID"];
+                        objArray[0, 32] = dr["VoucherDate"];
+                        objArray[0, 33] = dr["SubType"];
 
-                        worksheet.Range[string.Format("A{0}:AF{0}", intRowsStart)].Value2 = objArray;
+                        worksheet.Range[string.Format("A{0}:AH{0}", intRowsStart)].Value2 = objArray;
                     }
                     else
                     {

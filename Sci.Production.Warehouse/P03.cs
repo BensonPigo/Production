@@ -563,7 +563,7 @@ from #ArticleForThread_Detail a
 	            else a.result
 	          END as [Result] 
     from dbo.FIR a WITH (NOLOCK) 
-    left join dbo.Receiving c WITH (NOLOCK) on c.Id = a.ReceivingID
+    left join [dbo].[View_AllReceiving] c WITH (NOLOCK) on c.Id = a.ReceivingID
     where   a.POID LIKE @id
     UNION all
 	Select   c.InvNo InvNo
@@ -575,7 +575,7 @@ from #ArticleForThread_Detail a
 	            else a.result
 	          END as [Result] 
 	from dbo.AIR a WITH (NOLOCK) 
-    left join dbo.Receiving c WITH (NOLOCK) on c.Id = a.ReceivingID
+    left join [dbo].[View_AllReceiving] c WITH (NOLOCK) on c.Id = a.ReceivingID
     where   a.POID like @id 
             and a.Result !=''
 ) , washlabQA as (

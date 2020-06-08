@@ -117,3 +117,10 @@ Database/ProductionDB.jfm
 Production.Daily/.vs/Production.Daily/v16/Server/sqlite3/db.lock
 Production.Daily/.vs/Production.Daily/v16/Server/sqlite3/storage.ide
 ProductionTPE/ProductionTPE.dbmdl
+PowerBI.Daily/bin/
+PowerBI.Daily/obj/
+PMSUploadDataToAPS.Daily/.vs/
+PowerBI.Daily/.vs/PowerBI.Daily/v16/Server/sqlite3/storage.ide
+SNPAutoTransferToSewingOutput.Daily/.vs/
+Sci.Production.PPIC/.vs/Sci.Production.PPIC/v16/
+PowerBI.Daily/.vs/PowerBI.Daily/v16/

@@ -1,6 +1,5 @@
 ﻿
 
-
 CREATE view [dbo].[View_AllReceiving]
 as 
 SELECT	[ID],
@@ -14,7 +13,7 @@ SELECT	[ID],
 union ALL
 SELECT	[ID],
 		[WhseArrival] = IssueDate,
-		[InvNo] = null,
+		[InvNo] = InvNo,
 		[ExportId] = null,
 		[ETA] = null,
 		MDivisionID,

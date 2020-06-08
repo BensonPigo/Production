@@ -15,15 +15,14 @@ BEGIN
 	SET NOCOUNT ON;
 	BEGIN TRY
 		--find all PatternPanel
-		Select distinct orderid = o.ID,wd.SizeCode,wd.article,occ.PatternPanel,o.MDivisionID
+		Select distinct orderid = wd.OrderID,wd.SizeCode,wd.article,wp.PatternPanel,w.MDivisionID
 		into #tmp1
-		from Orders o WITH (NOLOCK)
-		inner join WorkOrder_Distribute wd WITH (NOLOCK) on o.id = wd.OrderID
-		inner join Order_ColorCombo occ on o.poid = occ.id and occ.Article = wd.Article
-		inner join order_Eachcons cons on occ.id = cons.id and cons.FabricCombo = occ.PatternPanel and cons.CuttingPiece='0'
-		inner join CuttingOutput_Detail cud WITH (NOLOCK) on cud.WorkOrderUkey = wd.WorkOrderUkey
-		where occ.FabricCode !='' and occ.FabricCode is not null 
-		and cud.id = @ID
+		from WorkOrder w WITH (NOLOCK)
+		inner join WorkOrder_Distribute wd WITH (NOLOCK) on wd.WorkOrderUkey = w.Ukey
+		inner join WorkOrder_PatternPanel wp  WITH (NOLOCK) on wp.WorkOrderUkey = w.Ukey
+		inner join CuttingOutput_Detail cud WITH (NOLOCK) on cud.CuttingID = w.ID
+		where cud.id = @ID
+		and wd.OrderID <>'EXCESS'
 		--
 		If Object_ID('tempdb..#tmp2_A') Is Null
 		Begin
@@ -50,7 +49,11 @@ BEGIN
 				, cutQty int
 			);
 		End;
+
+		insert into #tmp2_A
 		exec CuttingP20calculateCutQty '0',@ID,@Cdate
+		
+		insert into #tmp2_B
 		exec CuttingP20calculateCutQty '1',@ID,@Cdate
 		
 		select a.*,pre_cutqty=b.cutqty 

@@ -265,6 +265,7 @@ select
 	rrd.EstInQty,
 	rrd.ActInQty,
 	FinalNeedQty =IIF(rr.Type = 'F', rrd.FinalNeedQty,  rrd.TotalRequest),
+    [Unit] = rrd.ReplacementUnit,
 	rrd.TotalRequest,
 	rrd.AfterCuttingRequest,
     EstReplacementAMT = case when rrd.Junk =1 then 0

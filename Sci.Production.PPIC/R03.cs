@@ -279,6 +279,7 @@ with tmpOrders as (
                                       else 'N' end
                             else ''
                             end
+            , o.Customize2
             { seperCmd }
      from Orders o WITH (NOLOCK) 
    left join style s WITH (NOLOCK) on o.styleukey = s.ukey
@@ -604,6 +605,7 @@ tmpFilterZone as (
                                       else 'N' end
                             else ''
                             end
+            , o.Customize2
 "
             + seperCmd +
     @"from Orders o  WITH (NOLOCK) 
@@ -738,6 +740,7 @@ group by pd.OrderID, pd.OrderShipmodeSeq
 			, t.AirFreightByBrand
             , [BuyBack] = iif(exists (select 1 from Order_BuyBack where ID = t.ID), 'Y', '')
             , t.Cancelled
+            , t.Customize2
     into #tmpFilterSeperate
     from #tmpListPoCombo t
     inner join Order_QtyShip oq WITH(NOLOCK) on t.ID = oq.Id and t.Seq = oq.Seq
@@ -902,6 +905,7 @@ select  t.*
         , [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail where id=p.ID  and FabricType='A')
         , CDCode.ProductionFamilyID
 		, t.Cancelled
+        , t.Customize2
 from #tmpFilterSeperate t
 left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
@@ -1106,6 +1110,7 @@ select distinct t.*
         , [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail where id=p.ID  and FabricType='F')
         , [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail where id=p.ID  and FabricType='A')
         , CDCode.ProductionFamilyID
+        , t.Customize2
 from #tmpListPoCombo t
 left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
@@ -1501,8 +1506,8 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
         }
 
         // 最後一欄 , 有新增欄位要改這
-        // 注意!新增欄位也要新增到StandardReport_Detail。
-        private int lastColA = 128;
+        // 注意!新增欄位也要新增到StandardReport_Detail(Customized)。
+        private int lastColA = 129;
 
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -1724,14 +1729,15 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                 objArray[intRowsStart, 118] = dr["InspHandle"];
                 objArray[intRowsStart, 119] = dr["SewLine"];
                 objArray[intRowsStart, 120] = dr["ShipModeList"];
-                objArray[intRowsStart, 121] = dr["Article"];
-                objArray[intRowsStart, 122] = dr["SpecialMarkName"];
-                objArray[intRowsStart, 123] = dr["FTYRemark"];
-                objArray[intRowsStart, 124] = dr["SampleReasonName"];
-                objArray[intRowsStart, 125] = dr["IsMixMarker"];
-                objArray[intRowsStart, 126] = dr["CuttingSP"];
-                objArray[intRowsStart, 127] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-                objArray[intRowsStart, 128] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
+                objArray[intRowsStart, 121] = dr["Customize2"];
+                objArray[intRowsStart, 122] = dr["Article"];
+                objArray[intRowsStart, 123] = dr["SpecialMarkName"];
+                objArray[intRowsStart, 124] = dr["FTYRemark"];
+                objArray[intRowsStart, 125] = dr["SampleReasonName"];
+                objArray[intRowsStart, 126] = dr["IsMixMarker"];
+                objArray[intRowsStart, 127] = dr["CuttingSP"];
+                objArray[intRowsStart, 128] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+                objArray[intRowsStart, 129] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
                 #endregion
 
                 if (this.artwork || this.pap)

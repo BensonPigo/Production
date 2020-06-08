@@ -159,7 +159,7 @@ BEGIN
 
 	
 	---------------------------------pmsdb
-	IF(@ServerName='[PMS\pmsdb\ph1]')
+	IF(@ServerName='[PMS\pmsdb\PH1]')
 	BEGIN
 		-- Add the T-SQL statements to compute the return value here
 		IF (select b.styleunit from [PMS\pmsdb\ph1].Production.dbo.orders a WITH (NOLOCK) inner join [PMS\pmsdb\ph1].Production.dbo.style b WITH (NOLOCK) on  b.ukey = a.StyleUkey where a.id = @OrderId) = 'PCS'
@@ -173,7 +173,7 @@ BEGIN
 		-- Return the result of the function
 	
 	END
-	IF(@ServerName='[PMS\pmsdb\ph2]')
+	IF(@ServerName='[PMS\pmsdb\PH2]')
 	BEGIN
 		-- Add the T-SQL statements to compute the return value here
 		IF (select b.styleunit from [PMS\pmsdb\ph2].Production.dbo.orders a WITH (NOLOCK) inner join [PMS\pmsdb\ph2].Production.dbo.style b WITH (NOLOCK) on  b.ukey = a.StyleUkey where a.id = @OrderId) = 'PCS'
@@ -246,7 +246,7 @@ BEGIN
 	END
 	IF(@ServerName='[PMS\pmsdb\SPS]')
 	BEGIN
-		-- Add the T-SQL statements to compute the return value here
+		 --Add the T-SQL statements to compute the return value here
 		IF (select b.styleunit from [PMS\pmsdb\SPS].Production.dbo.orders a WITH (NOLOCK) inner join [PMS\pmsdb\SPS].Production.dbo.style b WITH (NOLOCK) on  b.ukey = a.StyleUkey where a.id = @OrderId) = 'PCS'
 		Begin
 			set @Rate = 100
