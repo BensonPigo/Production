@@ -1293,7 +1293,7 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                     }
                     else
                     {
-                        string Refno = MyUtility.Check.Empty(CurrentDetailData["Refno"]) ? string.Empty : CurrentDetailData["Refno"].ToString();
+                        string Refno = MyUtility.Convert.GetString(CurrentDetailData["Refno"]);
 
                         #region 將IssueBreakDown整理成Datatable
                         if (dtIssueBreakDown == null)
@@ -1712,11 +1712,7 @@ GROUP BY Article
             }
 
             #region 檢查不可為空
-
-            string OrderID = this.CurrentMaintain["OrderID"].ToString();
-            string IssueDate =MyUtility.Check.Empty(this.CurrentMaintain["IssueDate"]) ? string.Empty : this.CurrentMaintain["IssueDate"].ToString();
-
-            if (MyUtility.Check.Empty(OrderID) || MyUtility.Check.Empty(IssueDate))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderID"]) || MyUtility.Check.Empty(this.CurrentMaintain["IssueDate"]))
             {
                 MyUtility.Msg.InfoBox("[SP#] , [Issue Date] can't be empty !!");
                 return false;
@@ -2518,9 +2514,9 @@ WHERE o.id = '{CurrentOrderID}'  AND o.sewline != '') t FOR xml path('')
                     string Refno = key["Refno"].ToString();
                     string DescDetail = key["DescDetail"].ToString();
                     string @Qty = MyUtility.Check.Empty(key["@Qty"].ToString()) ? "0" : key["@Qty"].ToString();
-                    string UseQtyByStockUnit = MyUtility.Check.Empty(key["Use Qty By Stock Unit"].ToString()) ? "0" : key["Use Qty By Stock Unit"].ToString();
+                    decimal UseQtyByStockUnit = MyUtility.Convert.GetDecimal(key["Use Qty By Stock Unit"]);
                     string StockUnit = key["Stock Unit"].ToString();
-                    string UseQtyByUseUnit = MyUtility.Check.Empty(key["Use Qty By Use Unit"].ToString()) ? "0" : key["Use Qty By Use Unit"].ToString();
+                    decimal UseQtyByUseUnit = MyUtility.Convert.GetDecimal(key["Use Qty By Use Unit"]);
                     string UseUnit = key["Use Unit"].ToString();
                     string StockUnitDesc = key["Stock Unit Desc."].ToString();
                     string OutputQty = key["Output Qty(Garment)"].ToString();
@@ -2538,9 +2534,9 @@ WHERE o.id = '{CurrentOrderID}'  AND o.sewline != '') t FOR xml path('')
                     nRow["SuppColor"] = SuppColor;
                     nRow["DescDetail"] = DescDetail;
                     nRow["@Qty"] =Convert.ToDecimal(Qty);
-                    nRow["Use Qty By Stock Unit"] = Convert.ToDecimal(UseQtyByStockUnit);
+                    nRow["Use Qty By Stock Unit"] = UseQtyByStockUnit;
                     nRow["Stock Unit"] = StockUnit;
-                    nRow["Use Qty By Use Unit"] = Convert.ToDecimal(UseQtyByUseUnit);
+                    nRow["Use Qty By Use Unit"] = UseQtyByUseUnit;
                     nRow["Use Unit"] = UseUnit;
                     nRow["Stock Unit Desc."] = StockUnitDesc;
                     nRow["OutputQty"] = OutputQty;
