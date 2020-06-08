@@ -583,9 +583,9 @@ select  Selected = 0
         , ard.PatternDesc
         , ard.QtyGarment
         , Cost = sum(isnull(oa.Cost, 0)) / count(1)
-        , unitprice = sum(isnull(oa.Price, 0)) / count(1)
-        , price = sum(isnull(oa.Price, 0)) / count(1)
-        , amount = ard.ReqQty *  sum(isnull(oa.Price, 0)) / count(1)
+        , unitprice = sum(isnull(oa.Cost, 0)) / count(1)
+        , price = sum(isnull(oa.Cost, 0)) / count(1)
+        , amount = ard.ReqQty *  sum(isnull(oa.Cost, 0)) / count(1)
         , Style = o.StyleID
         , [ArtworkReqID] = ar.ID
         , [Article] = oat.Article
@@ -593,7 +593,6 @@ select  Selected = 0
         , [IrregularQtyReason] = sr.ID +'-'+sr.Reason
 		,[Farmout] = ISNULL(FarmOut.Value,0)
 		,[FarmIn] = ISNULL(FarmIn.Value,0)
-		, COUNT(1),sum(isnull(oa.Price, 0))
 from  orders o WITH (NOLOCK)
 inner join Order_Article oat with (nolock) on o.ID = oat.ID
 inner join ArtworkReq ar WITH (NOLOCK) on ar.Status = 'Approved'
