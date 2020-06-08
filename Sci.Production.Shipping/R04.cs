@@ -142,7 +142,6 @@ namespace Sci.Production.Shipping
 		,o.PoPrice
 		,o.Customize1
 		,o.Customize2
-        ,plds.CTNQty
 		,plds.GW
 		,cbm.CTNQty
 		,oq.ShipmodeID
