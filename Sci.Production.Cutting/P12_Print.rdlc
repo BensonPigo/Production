@@ -1352,7 +1352,9 @@
                                       <TextRuns>
                                         <TextRun>
                                           <Value>=Fields!brand.Value</Value>
-                                          <Style />
+                                          <Style>
+                                            <FontSize>8pt</FontSize>
+                                          </Style>
                                         </TextRun>
                                       </TextRuns>
                                       <Style />
@@ -2571,7 +2573,9 @@
                                       <TextRuns>
                                         <TextRun>
                                           <Value>=Fields!brand2.Value</Value>
-                                          <Style />
+                                          <Style>
+                                            <FontSize>8pt</FontSize>
+                                          </Style>
                                         </TextRun>
                                       </TextRuns>
                                       <Style />
@@ -3782,7 +3786,9 @@
                                       <TextRuns>
                                         <TextRun>
                                           <Value>=Fields!brand3.Value</Value>
-                                          <Style />
+                                          <Style>
+                                            <FontSize>8pt</FontSize>
+                                          </Style>
                                         </TextRun>
                                       </TextRuns>
                                       <Style />
