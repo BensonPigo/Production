@@ -10,6 +10,7 @@ namespace Sci.Production.Warehouse
     {
         public string RefNo { get; set; }
         public string Color { get; set; }
+        public string SuppColor { get; set; }
         public string Seq { get; set; }
         public string Desc { get; set; }
         public string Issue_Detail_Qty { get; set; }

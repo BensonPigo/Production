@@ -85,7 +85,8 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
             this.displayRefno.Text = CurrentDetailData["Refno"].ToString();
             this.displaySCIRefno.Text = CurrentDetailData["SCIRefno"].ToString();
             this.displaySPNo.Text = CurrentDetailData["POID"].ToString();
-            this.displayColorID.Text = CurrentDetailData["SuppColor"].ToString();
+            this.displayColorID.Text = CurrentDetailData["ColorID"].ToString();
+            this.displaySuppColor.Text = CurrentDetailData["SuppColor"].ToString();
             this.editDesc.Text = CurrentDetailData["DescDetail"].ToString();
 
             this.numAccuIssue.Text = CurrentDetailData["AccuIssued"].ToString();
