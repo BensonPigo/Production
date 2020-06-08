@@ -57,9 +57,6 @@ namespace Sci.Production.Quality
 
             bool IsSample =MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.CurrentMaintain["ID"].ToString()}' "));
             
-            bool canConfrim = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanNew");
-
-            this.btnCreateInsRecord.Enabled = canConfrim;
 
 
             if (IsSample)
@@ -191,7 +188,9 @@ AND (SELECT  COUNT(ID) FROM GarmentTest WHERE OrderID = '{this.CurrentMaintain["
             }
             else
             {
-                this.btnCreateInsRecord.Enabled = true;
+                bool canNew = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanNew");
+
+                this.btnCreateInsRecord.Enabled = canNew;
             }
 
 

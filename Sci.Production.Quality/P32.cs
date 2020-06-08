@@ -788,11 +788,11 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
             }
             bool IsSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.CurrentMaintain["OrderID"].ToString()}' "));
 
-            if (IsSample)
+            if (IsSample && this.comboStage.Items.Contains("Staggered"))
             {
                 this.comboStage.Items.RemoveAt(2);
             }
-            else
+            else if(!IsSample)
             {
                 this.comboStage.Items.Clear();
                 this.comboStage.Items.AddRange(new object[] {
