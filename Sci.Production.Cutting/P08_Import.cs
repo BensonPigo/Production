@@ -147,6 +147,12 @@ order by MarkerName, ColorID
                 return;
             }
 
+            if (gridTable.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                return;
+            }
+
             DataTable dt0 = Prgs.GetCuttingTapeData(this.txtCuttingID.Text);
             if (dt0.Rows.Count > 0)
             {
@@ -218,8 +224,8 @@ order by MarkerName, ColorID
 
             DataTable seldt = this.gridTable.Select("selected = 1").CopyToDataTable();
 
-            // Release Qty 要大於 0
-            if (seldt.AsEnumerable().Where(w => MyUtility.Convert.GetDecimal(w["ReleaseQty"]) <= 0).Any())
+            // Dyelot 必填 && Release Qty 要大於 0
+            if (seldt.AsEnumerable().Where(w => MyUtility.Check.Empty(w["dyelot"]) || MyUtility.Convert.GetDecimal(w["ReleaseQty"]) <= 0).Any())
             {
                 MyUtility.Msg.WarningBox("Dyelot or Release Qty can't empty!");
                 return;

@@ -195,8 +195,8 @@ where MDivisionID = '{0}'", Env.User.Keyword);
                 return false;
             }
 
-            // Release Qty 要大於 0
-            if (this.DetailDatas.AsEnumerable().Where(w => MyUtility.Convert.GetDecimal(w["ReleaseQty"]) <= 0).Any())
+            // Dyelot 必填 && Release Qty 要大於 0
+            if (this.DetailDatas.AsEnumerable().Where(w => MyUtility.Check.Empty(w["dyelot"]) || MyUtility.Convert.GetDecimal(w["ReleaseQty"]) <= 0).Any())
             {
                 MyUtility.Msg.WarningBox("Dyelot or Release Qty can't empty!");
                 return false;
