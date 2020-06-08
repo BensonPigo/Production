@@ -195,7 +195,7 @@ left join Order_BOF bof WITH (NOLOCK) on bof.Id = cons.Id and bof.FabricCode = c
 left join Bundle B WITH (NOLOCK) on o.ID=b.Orderid and cons.FabricCombo=b.PatternPanel and oq.Article=b.Article
 left join Bundle_Detail BD WITH (NOLOCK) on B.ID=BD.Id and oq.SizeCode=bd.Sizecode
 where occ.FabricCode !='' and occ.FabricCode is not null and bof.Kind = 1
-and exists (select 1 from #cte t where t.OrderID = o.ID and o.LocalOrder = 0) --非local單
+and exists (select 1 from {tempTable} t where t.OrderID = o.ID and o.LocalOrder = 0) --非local單
 AND (exists(select 1 from Order_EachCons_Article oea where oea.Id = o.POID and oea.Article = oq.Article )
 	or not exists (select 1 from Order_EachCons_Article oea where  oea.Id = o.POID)
 )
@@ -210,7 +210,7 @@ select	distinct
 from Bundle_Detail bd WITH (NOLOCK)
 inner join Bundle bun WITH (NOLOCK) on bun.id = bd.id
 inner join Orders o WITH (NOLOCK) on bun.Orderid = o.ID and  bun.MDivisionID = o.MDivisionID
-and exists (select 1 from #cte t where t.OrderID = o.ID and o.LocalOrder = 1) --Local單
+and exists (select 1 from {tempTable} t where t.OrderID = o.ID and o.LocalOrder = 1) --Local單
 
 --2020/03/18↓效能調整,重組#Table where和join順序
 select distinct bunD.ID
@@ -354,7 +354,7 @@ from #QtyBySetPerCutpart{subprocessIDtmp} st0
 inner join SubProcess sub WITH (NOLOCK) on sub.ID = '{subprocessID}'
 left join #tmp_Bundle_QtyBySubprocess bund on bunD.Orderid = st0.Orderid 
 							and bunD.PatternPanel = st0.PatternPanel 
-							--and	bunD.FabricPanelCode = st0.FabricPanelCode 
+							and	bunD.FabricPanelCode = st0.FabricPanelCode 
 							and	bunD.Article = st0.Article  
 							and	bunD.Patterncode = st0.Patterncode 
 							and	bunD.Sizecode = st0.SizeCode
