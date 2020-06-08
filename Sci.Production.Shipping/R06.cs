@@ -98,10 +98,12 @@ namespace Sci.Production.Shipping
 		s.[Remark],
 		s.[InvNo],
 		ExportINV =  Stuff((select distinct iif(WKNo = '','',concat( '/',WKNo)) + iif(InvNo = '','',concat( '/',InvNo) )   
-                            from ShareExpense she 
+                            from ShareExpense she WITH (NOLOCK) 
                             where she.ShippingAPID = s.ID 
                                   and she.Junk != 1
                             FOR XML PATH('')),1,1,'') ,
+		[Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y'),
+		s.SisFtyAPID,
 		sd.[ShipExpenseID],
 		se.Description,
 		sd.[Qty],
@@ -115,34 +117,43 @@ namespace Sci.Production.Shipping
 		an.Name
 from ShippingAP s WITH (NOLOCK)
 inner join ShippingAP_Detail sd WITH (NOLOCK) ON s.ID = sd.ID
-left join ShipExpense se  WITH (NOLOCK) ON sd.ShipExpenseID = se.ID
-left join SciFMS_AccountNo an on an.ID = se.AccountID 
+left join ShipExpense se WITH (NOLOCK) ON sd.ShipExpenseID = se.ID
+left join SciFMS_AccountNo an WITH (NOLOCK) on an.ID = se.AccountID 
 left join LocalSupp ls WITH (NOLOCK) on s.LocalSuppID = ls.ID
+outer apply (
+	select top 1 Foundry 
+	from GMTBooking WITH (NOLOCK) 
+	where ISNULL(s.BLNo,'') != '' 
+　　and (BLNo = s.BLNo or BL2No = s.BLNo) 
+　　and Foundry = 1
+)gm
 where s.Status = 'Approved'");
             }
             else if (this.radioByInvWK.Checked)
             {
                 sqlCmd.Append($@"select
-        s.Type,
-        s.SubType,
-		Supplier = s.LocalSuppID+'-'+ISNULL(ls.Abb,''),
-		s.ID,
-		s.VoucherID,
-        s.VoucherDate,
-		[APDate]=s.CDate,
-		s.[ApvDate],
-		s.[MDivisionID],
-		s.[CurrencyID],
-		[APAmt]=s.[Amount] * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate)),
-		s.[BLNo],
-		s.[Remark],
-		[Invoice ]= s.InvNo,
-		[ExportINV] =  case
+        s.Type
+        ,s.SubType
+		,Supplier = s.LocalSuppID+'-'+ISNULL(ls.Abb,'')
+		,s.ID
+		,s.VoucherID
+        ,s.VoucherDate
+		,[APDate]=s.CDate
+		,s.[ApvDate]
+		,s.[MDivisionID]
+		,s.[CurrencyID]
+		,[APAmt]=s.[Amount] * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+		,s.[BLNo]
+		,s.[Remark]
+		,[Invoice ]= s.InvNo
+		,[ExportINV] =  case
                             when sh.WKNo = '' and sh.InvNo != '' then sh.InvNo
                             when sh.WKNo != '' and sh.InvNo = '' then sh.WKNo
                             when sh.WKNo != '' and sh.InvNo != '' then Concat (sh.WKNo, '/', sh.InvNo)
                             else ''
                         end
+		,[Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
+		,s.SisFtyAPID
 		,[CurrencyID]= ISNULL(sh.CurrencyID , ShippingAP_Deatai.CurrencyID)
 		,[Amount]= ISNULL(sh.Amount , ShippingAP_Deatai.Amount) * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
 		,[AccountID]= ISNULL(sh.AccountID , ShippingAP_Deatai.AccountID)
@@ -150,20 +161,26 @@ where s.Status = 'Approved'");
 from ShippingAP s WITH (NOLOCK)
 left join ShareExpense sh WITH (NOLOCK) ON s.ID = sh.ShippingAPID
                                            and sh.Junk != 1
-left join SciFMS_AccountNo an on an.ID = sh.AccountID 
+left join SciFMS_AccountNo an WITH (NOLOCK) on an.ID = sh.AccountID 
 left join LocalSupp ls WITH (NOLOCK) on s.LocalSuppID = ls.ID
 
 OUTER APPLY(
 	SELECT sd.AccountID,[AccountName]=a.Name,sd.CurrencyID,[Amount]=SUM(Amount)
-	FROM ShippingAP_Detail sd
+	FROM ShippingAP_Detail sd WITH (NOLOCK) 
 	left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
-	left join SciFMS_AccountNO a on a.ID = se.AccountID
+	left join SciFMS_AccountNO a WITH (NOLOCK) on a.ID = se.AccountID
 	WHERE sd.ID=s.ID
 	----若ShareExpense有資料，就不必取表身加總的值
 	AND NOT EXISTS (SELECT 1 FROM ShareExpense WHERE ShippingAPID=sd.ID and Junk != 1)
 	GROUP BY sd.AccountID,a.Name,sd.CurrencyID
 )ShippingAP_Deatai
-
+outer apply (
+	select top 1 Foundry 
+	from GMTBooking WITH (NOLOCK) 
+	where ISNULL(s.BLNo,'') != '' 
+　　and (BLNo = s.BLNo or BL2No = s.BLNo) 
+　　and Foundry = 1
+)gm
 where s.Status = 'Approved'");
             }
             else if (this.radioByAPP.Checked)
@@ -185,6 +202,8 @@ select
 		,s.[Remark]
 		,[Invoice ]= s.InvNo
 		,[ExportINV] =  sp.InvNo
+		,[Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
+		,s.SisFtyAPID
 		,[CurrencyID]= sp.CurrencyID
 		,[Amount]= iif(isnull(s.APPExchageRate,0) = 0, 0,
             (isnull(sp.AmtFty,0) + isnull(sp.AmtOther,0)) / iif('{this.rateType}' = '' ,1 ,s.APPExchageRate))
@@ -199,12 +218,12 @@ from ShippingAP s WITH (NOLOCK)
 left join LocalSupp ls WITH (NOLOCK) on s.LocalSuppID = ls.ID
 left join ShareExpense_APP sp WITH (NOLOCK) on s.ID = sp.ShippingAPID
 											and sp.Junk != 1
-left join SciFMS_AccountNo an on an.ID = sp.AccountID 
+left join SciFMS_AccountNo an WITH (NOLOCK)  on an.ID = sp.AccountID 
 left join AirPP air WITH (NOLOCK) on sp.AirPPID = air.ID
 left join PackingList p WITH (NOLOCK) on sp.PackingListID = p.ID
 OUTER APPLY (
 	SELECT sd.AccountID,[AccountName]=a.Name,sd.CurrencyID,[Amount]=SUM(Amount)
-	FROM ShippingAP_Detail sd
+	FROM ShippingAP_Detail sd WITH (NOLOCK) 
 	left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
 	left join SciFMS_AccountNO a on a.ID = se.AccountID
 	WHERE sd.ID=s.ID
@@ -214,10 +233,17 @@ OUTER APPLY (
 )ShippingAP_Deatai
 OUTER APPLY (
 	select [ShipQty] = sum(pd.ShipQty)
-	from PackingList_Detail pd
+	from PackingList_Detail pd WITH (NOLOCK) 
 	where pd.ID = sp.PackingListID
 		and pd.OrderID = air.OrderID
 )PackingList_Detail
+outer apply (
+	select top 1 Foundry 
+	from GMTBooking WITH (NOLOCK) 
+	where ISNULL(s.BLNo,'') != '' 
+　　and (BLNo = s.BLNo or BL2No = s.BLNo) 
+　　and Foundry = 1
+)gm
 where s.Status = 'Approved'");
             }
             else
@@ -237,6 +263,8 @@ select s.Type
         ,s.Remark
         ,s.InvNo
         ,ExportInv= iif( isnull(x1.InvNo,'') <>'' and isnull(x2.WKNo,'') <>'', x1.InvNo +'/'+x2.WKNo ,concat(x1.InvNo,x2.WKNo))
+		,[Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
+		,s.SisFtyAPID
 from ShippingAP s WITH (NOLOCK) 
 left join LocalSupp l WITH (NOLOCK) on s.LocalSuppID = l.ID
 outer apply(
@@ -259,6 +287,13 @@ outer apply(
                  ) a 
                 for xml path('')),1,1,'')
 )x2
+outer apply (
+	select top 1 Foundry 
+	from GMTBooking WITH (NOLOCK) 
+	where ISNULL(s.BLNo,'') != '' 
+　　and (BLNo = s.BLNo or BL2No = s.BLNo) 
+　　and Foundry = 1
+)gm
 where s.Status = 'Approved'");
             }
 
@@ -408,7 +443,7 @@ where s.Status = 'Approved'");
             {
                 // 填內容值
                 int intRowsStart = 3;
-                object[,] objArray = new object[1, 14];
+                object[,] objArray = new object[1, 16];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["Type"];
@@ -425,7 +460,9 @@ where s.Status = 'Approved'");
                     objArray[0, 11] = dr["Remark"];
                     objArray[0, 12] = dr["InvNo"];
                     objArray[0, 13] = MyUtility.Check.Empty(dr["ExportInv"]) ? string.Empty : dr["ExportInv"];
-                    worksheet.Range[string.Format("A{0}:N{0}", intRowsStart)].Value2 = objArray;
+                    objArray[0, 14] = dr["Foundry"];
+                    objArray[0, 15] = dr["SisFtyAPID"];
+                    worksheet.Range[string.Format("A{0}:P{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }
 

@@ -189,7 +189,8 @@ as (
            , Type = 'GARMENT'
            , g.ID
            , OnBoardDate = g.ETD
-           , g.Shipper
+           , g.Shipper 
+           , [Foundry] = iif(ISNULL(g.Foundry,'0') = '0', '' , 'Y')
            , g.BrandID
            , Category = 
 		   Stuff((
@@ -265,6 +266,7 @@ and exists(select 1 from PackingList p WITH (NOLOCK) where INVNo = g.ID and p.Pu
 			, p.ID
 			, OnBoardDate = null 
 			, p.MDivisionID
+            , [Foundry] = ''
 			, p.BrandID
 			, Category = IIF((select top 1 o.Category 
 							  from Orders o WITH (NOLOCK) 
@@ -334,6 +336,7 @@ as (
            , OnBoardDate = g.ETD
            , g.Shipper
 		   , [Factory]=Factory.Value
+           , [Foundry] = iif(ISNULL(g.Foundry,'0') = '0', '' , 'Y')
            , g.BrandID
            , Category = IIF(p.Type = 'B','Bulk',IIF(p.Type = 'S','Sample','')) 
            , OrderQty = isnull((select sum(a.Qty) 
@@ -442,6 +445,7 @@ PLData as (
 			, OnBoardDate = null 
 			, p.MDivisionID
 		    , [Factory]=Factory.Value
+            , [Foundry] = ''
 			, p.BrandID
 			, Category = IIF((select top 1 o.Category 
 							  from Orders o WITH (NOLOCK) 
