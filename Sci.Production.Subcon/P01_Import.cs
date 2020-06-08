@@ -567,8 +567,7 @@ WHERE bio.RFIDProcessLocationID=''
             }
 
             strSQLCmd += string.Format(@"
-select distinct  Selected = 0
-        , ot.LocalSuppId
+select  Selected = 0
         , id = ''
         , orderid = ard.OrderID
         , OrderQty = o.qty 
@@ -579,14 +578,14 @@ select distinct  Selected = 0
         , ard.PatternCode
         , o.SewInLIne
         , o.SciDelivery
-        , coststitch = ot.Qty
+        , coststitch = sum(isnull(oa.Qty, 0)) / count(1)
         , ard.Stitch
         , ard.PatternDesc
         , ard.QtyGarment
-        , Cost = ot.Price
-        , unitprice = isnull(ot.Price,0)
-        , price = ot.Price
-        , amount = ard.ReqQty *  isnull(ot.Price,0)
+        , Cost = sum(isnull(oa.Cost, 0)) / count(1)
+        , unitprice = sum(isnull(oa.Cost, 0)) / count(1)
+        , price = sum(isnull(oa.Cost, 0)) / count(1)
+        , amount = ard.ReqQty *  sum(isnull(oa.Cost, 0)) / count(1)
         , Style = o.StyleID
         , [ArtworkReqID] = ar.ID
         , [Article] = oat.Article
@@ -597,10 +596,14 @@ select distinct  Selected = 0
 from  orders o WITH (NOLOCK)
 inner join Order_Article oat with (nolock) on o.ID = oat.ID
 inner join ArtworkReq ar WITH (NOLOCK) on ar.Status = 'Approved'
-inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID and ot.ArtworkTypeID = ar.ArtworkTypeID
 inner join ArtworkReq_Detail ard with (nolock) on   ard.ID = ar.ID  and
                                                     ard.OrderId = o.ID and 
                                                     ard.ArtworkPOID = ''
+inner join dbo.Order_Artwork oa WITH (NOLOCK) on oa.ID = o.ID and 
+                                                 oa.ArtworkTypeID = ar.ArtworkTypeID and
+                                                 oa.ArtworkID = ard.ArtworkID      and
+                                                 oa.PatternCode = ard.PatternCode  and
+                                                 oa.PatternDesc = ard.PatternDesc  
 left join ArtworkReq_IrregularQty ai with (nolock) on ai.OrderID = ard.OrderID and ai.ArtworkTypeID = ar.ArtworkTypeID and ard.ExceedQty > 0
 left join SubconReason sr with (nolock) on sr.Type = 'SQ' and sr.ID = ai.SubconReasonID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
@@ -630,7 +633,7 @@ OUTER APPLY(
 where f.IsProduceFty=1
 and o.category  in ('B','S')
 and o.MDivisionID='{0}' and ar.ArtworkTypeID = '{1}' and ar.LocalSuppId = '{2}' and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
-and ((o.Category = 'B' and  ot.InhouseOSP='O' and ot.price > 0) or (o.category !='B'))
+and ((o.Category = 'B' and  oa.price > 0) or (o.category !='B'))
 ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"], dr_artworkpo["localsuppid"]);
 
             if (!(dateSCIDelivery.Value1 == null)) { strSQLCmd += string.Format(" and o.SciDelivery >= '{0}' ", sciDelivery_b); }
@@ -643,6 +646,29 @@ and ((o.Category = 'B' and  ot.InhouseOSP='O' and ot.price > 0) or (o.category !
                 string whereReasonID = this.txtIrregularQtyReason.WhereString();
                 strSQLCmd += $@" and ai.SubconReasonID in ({whereReasonID})";
             }
+
+            strSQLCmd += @"
+group by  ard.OrderID
+        , o.qty 
+        , IssueQty.IssueQty 
+        , ard.ReqQty
+        , ar.ArtworkTypeID
+        , ard.ArtworkID
+        , ard.PatternCode
+        , o.SewInLIne
+        , o.SciDelivery
+        , ard.Stitch
+        , ard.PatternDesc
+        , ard.QtyGarment
+        , o.StyleID
+        , ar.ID
+        , oat.Article
+        , o.Category
+        , sr.ID 
+		, sr.Reason
+		, FarmOut.Value
+		, FarmIn.Value
+";
 
             return strSQLCmd;
         }
