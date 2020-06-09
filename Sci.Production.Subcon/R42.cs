@@ -153,7 +153,7 @@ Select
 	             )
             ) as sub*/
 			outer apply(
-				SELECT [val] = DD.id + '-' + DD.NAME 
+				SELECT top 1 [val] = DD.id + '-' + DD.NAME 
 				FROM dropdownlist DD 
 				OUTER apply(
 						SELECT OB.kind, 
@@ -166,10 +166,7 @@ Select
 						INNER JOIN order_bof OB WITH (NOLOCK) ON OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
 					) LIST 
 					WHERE LIST.id = b.poid 
-					AND LIST.article = b.article 
-					AND LIST.colorid = b.colorid 
 					AND LIST.patternpanel = b.patternpanel 
-					AND LIST.fabricpanelcode = b.fabricpanelcode 
 					AND DD.[type] = 'FabricKind' 
 					AND DD.id = LIST.kind 
 			)FabricKind
@@ -281,7 +278,7 @@ outer apply(
     and bda.SubprocessId = bt.SubprocessId
 ) as nbs 
 outer apply(
-	SELECT [val] = DD.id + '-' + DD.NAME 
+	SELECT top 1 [val] = DD.id + '-' + DD.NAME 
 	FROM dropdownlist DD 
 	OUTER apply(
 			SELECT OB.kind, 
@@ -293,11 +290,8 @@ outer apply(
 			FROM order_colorcombo OCC WITH (NOLOCK)
 			INNER JOIN order_bof OB WITH (NOLOCK) ON OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
 		) LIST 
-		WHERE LIST.id = b.poid 
-		AND LIST.article = b.article 
-		AND LIST.colorid = b.colorid 
+		WHERE LIST.id = b.poid
 		AND LIST.patternpanel = b.patternpanel 
-		AND LIST.fabricpanelcode = b.fabricpanelcode 
 		AND DD.[type] = 'FabricKind' 
 		AND DD.id = LIST.kind 
 )FabricKind

@@ -331,7 +331,7 @@ outer apply(
 	    ),1,1,'')
 )wk
 outer apply(
-	SELECT [val] = DD.id + '-' + DD.NAME 
+	SELECT top 1 [val] = DD.id + '-' + DD.NAME 
 	FROM dropdownlist DD 
 	OUTER apply(
 			SELECT OB.kind, 
@@ -344,10 +344,7 @@ outer apply(
 			INNER JOIN order_bof OB WITH (NOLOCK) ON OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
 		) LIST 
 		WHERE LIST.id = b.poid 
-		AND LIST.article = b.article 
-		AND LIST.colorid = b.colorid 
 		AND LIST.patternpanel = b.patternpanel 
-		AND LIST.fabricpanelcode = b.fabricpanelcode 
 		AND DD.[type] = 'FabricKind' 
 		AND DD.id = LIST.kind 
 )FabricKind

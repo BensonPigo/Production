@@ -78,6 +78,8 @@
             this.txtFabricPanelCode = new Sci.Win.UI.TextBox();
             this.ckIsEXCESS = new Sci.Win.UI.CheckBox();
             this.btnBatchDelete = new Sci.Win.UI.Button();
+            this.label1 = new Sci.Win.UI.Label();
+            this.dispFabricKind = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -94,6 +96,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.dispFabricKind);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.ckIsEXCESS);
             this.masterpanel.Controls.Add(this.txtFabricPanelCode);
             this.masterpanel.Controls.Add(this.labelFabPanelCode);
@@ -192,6 +196,8 @@
             this.masterpanel.Controls.SetChildIndex(this.labelFabPanelCode, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtFabricPanelCode, 0);
             this.masterpanel.Controls.SetChildIndex(this.ckIsEXCESS, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dispFabricKind, 0);
             // 
             // detailpanel
             // 
@@ -667,6 +673,7 @@
             this.txtFabricCombo.Name = "txtFabricCombo";
             this.txtFabricCombo.Size = new System.Drawing.Size(53, 23);
             this.txtFabricCombo.TabIndex = 9;
+            this.txtFabricCombo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtFabricCombo_Validating);
             // 
             // txtSize
             // 
@@ -713,7 +720,7 @@
             // btnGenerate
             // 
             this.btnGenerate.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnGenerate.Location = new System.Drawing.Point(780, 191);
+            this.btnGenerate.Location = new System.Drawing.Point(903, 183);
             this.btnGenerate.Name = "btnGenerate";
             this.btnGenerate.Size = new System.Drawing.Size(80, 30);
             this.btnGenerate.TabIndex = 23;
@@ -767,7 +774,7 @@
             this.ckIsEXCESS.AutoSize = true;
             this.ckIsEXCESS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsEXCESS", true));
             this.ckIsEXCESS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.ckIsEXCESS.Location = new System.Drawing.Point(661, 185);
+            this.ckIsEXCESS.Location = new System.Drawing.Point(892, 151);
             this.ckIsEXCESS.Name = "ckIsEXCESS";
             this.ckIsEXCESS.Size = new System.Drawing.Size(91, 21);
             this.ckIsEXCESS.TabIndex = 49;
@@ -784,6 +791,23 @@
             this.btnBatchDelete.Text = "Batch Delete";
             this.btnBatchDelete.UseVisualStyleBackColor = true;
             this.btnBatchDelete.Click += new System.EventHandler(this.BtnBatchDelete_Click);
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(661, 183);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 50;
+            this.label1.Text = "Fabric Kind";
+            // 
+            // dispFabricKind
+            // 
+            this.dispFabricKind.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.dispFabricKind.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.dispFabricKind.Location = new System.Drawing.Point(739, 183);
+            this.dispFabricKind.Name = "dispFabricKind";
+            this.dispFabricKind.Size = new System.Drawing.Size(133, 23);
+            this.dispFabricKind.TabIndex = 51;
             // 
             // P10
             // 
@@ -875,5 +899,7 @@
         private Win.UI.Label labelFabPanelCode;
         private Win.UI.CheckBox ckIsEXCESS;
         private Win.UI.Button btnBatchDelete;
+        private Win.UI.DisplayBox dispFabricKind;
+        private Win.UI.Label label1;
     }
 }
