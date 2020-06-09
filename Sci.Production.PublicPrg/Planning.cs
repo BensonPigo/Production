@@ -319,11 +319,18 @@ outer apply (
 ) CutpartCount
 WHERE Patterncode IS NOT NULL
 
-----整理出標準共有幾個部位
-SELECT OrderID,Article,SizeCode,PatternPanel ,FabricPanelCode,[Ctn]=COUNT(DISTINCT Patterncode)
+----整理出標準：根據EachCons需要有哪些PatternPanel+FabricPanelCode組合，以及這些組合底下共有幾個部位(Patterncode)
+----總共要檢查：1. Bundle的PatternPanel+FabricPanelCode組合，是否跟EachCons的一樣
+----           2. Bundle每個組合底下的部位數量，是否都 >= 上面那一段取出來TOP 1 的部位數量
+----有一個為否，則不能算做成套
+SELECT  a.OrderID,a.Article,a.SizeCode,a.PatternPanel ,a.FabricPanelCode ,[Ctn]=COUNT(DISTINCT Patterncode)
 INTO #{subprocessIDtmp}_StdCount
-FROM #tmp_Bundle_QtyBySubprocess 
-GROUP BY OrderID,Article,SizeCode,PatternPanel ,FabricPanelCode
+FROM #AllOrders a
+LEFT JOIN #tmp_Bundle_QtyBySubprocess b ON a.OrderID=b.OrderID AND a.Article=b.Article
+AND a.SizeCode=b.SizeCode
+AND a.PatternPanel=b.PatternPanel
+AND a.FabricPanelCode=b.FabricPanelCode
+GROUP BY a.OrderID,a.Article,a.SizeCode,a.PatternPanel ,a.FabricPanelCode
 
 -- Step 3. --加總每個訂單各 Fabric Combo 所有捆包的『數量』
 select	st2.Orderid
@@ -357,7 +364,7 @@ select    st0.Orderid
 		, st0.PatternCode
 		, bunIO.InComing
 		, bunIO.OutGoing
-		, [Qty] = IIF( RealCont.Ctn < Std.Ctn ,0 ,bunD.Qty)  ----如果部位數有少，直接歸零不算；如果超過沒關係
+		, [Qty] = IIF( RealCont.Ctn < Std.Ctn OR IsLackPatternPanel.Ctn > 0,0 ,bunD.Qty)  ----如果部位數有少，直接歸零不算；如果超過沒關係
 		, [IsPair]=ISNULL(TopIsPair.IsPair,0)--isnull(bunD.IsPair,0) 
 		, m=iif (sub.IsRFIDDefault = 1, st0.QtyBySet, st0.QtyBySubprocess)
 		, NoBundleCardAfterSubprocess=case when sub.id = 'Loading' Or sub.id = 'SEWINGLINE' then isnull(x.NoBundleCardAfterSubprocess,0) else 0 end
@@ -415,6 +422,16 @@ OUTER APPLY(
 	WHERE Orderid = bund.Orderid AND Article = bund.Article AND SizeCode = bund.SizeCode
 		AND PatternPanel = bund.PatternPanel  AND FabricPanelCode = bund.FabricPanelCode
 )Std
+OUTER APPLY(----裁剪組合缺少的數量
+	SELECT [Ctn]=COUNT(t.PatternPanel)
+	FROM #{subprocessIDtmp}_StdCount t
+	WHERE NOT EXISTS(
+		SELECT 1
+		FROM #QtyBySetPerCutpart{subprocessIDtmp} q 
+		WHERE q.OrderID=t.OrderID AND q.Article=t.Article AND q.SizeCode=t.SizeCode AND q.PatternPanel=t.PatternPanel AND q.FabricPanelCode=t.FabricPanelCode
+	)AND 
+	t.OrderID=st0.OrderID AND t.Article=st0.Article AND t.SizeCode=st0.SizeCode
+)IsLackPatternPanel
 where (sub.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0) AND bunD.BundleGroup IS NOT NULL
 
 select	Orderid
