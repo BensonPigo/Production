@@ -159,6 +159,10 @@ Where a.ID = '{0}' Order by a.Seq", KeyValue1);
             sizetb.DefaultView.RowFilter =string.Format("Order_EachConsUkey = '{0}'", CurrentData["ukey"]);
             base.OnGridRowChanged();
             DataRow row = this.grid.GetDataRow(this.gridbs.Position);
+            if (row == null)
+            {
+                return;
+            }
             DataRow dr;
             if (MyUtility.Check.Seek(string.Format(@"
 select Article = 
