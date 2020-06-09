@@ -47,7 +47,8 @@ namespace Sci.Production.Warehouse
             this.displaySCIRefno.Text = dr_master["SCIRefno"].ToString();
             this.displayRefno.Text = dr_master["refno"].ToString();
             this.displaySPNo.Text = dr_master["poid"].ToString();
-            this.displayColorID.Text = dr_master["SuppColor"].ToString();
+            this.displayColorID.Text = dr_master["ColorID"].ToString();
+            this.displaySuppColor.Text = dr_master["SuppColor"].ToString();
             this.editDesc.Text = dr_master["DescDetail"].ToString();
             this.numAccuIssue.Value = _AccuIssued;
             this.numRequestQty.Value = _RequestQty;
@@ -80,7 +81,7 @@ OUTER APPLY(
 )Location
 WHERE psd.id = '{dr_master["poid"]}' 
 AND psd.SCIRefno='{dr_master["SCIRefno"]}' 
-AND psd.SuppColor='{dr_master["SuppColor"]}'
+AND psd.ColorID='{dr_master["ColorID"]}'
 AND (a.stocktype = 'B' OR a.stocktype IS NULL)
 
 ");
