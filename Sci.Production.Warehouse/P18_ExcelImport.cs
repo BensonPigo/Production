@@ -384,7 +384,7 @@ namespace Sci.Production.Warehouse
                     grid2Data.Rows.Add(newRow);
                 }
 
-                dr["Status"] = (intRowsCount - 1 == count) ? "Check & Import Completed." : "Some Data Faild. Please check Error Message.";
+                dr["Status"] = (intRowsCount - 2 == count) ? "Check & Import Completed." : "Some Data Faild. Please check Error Message.";
                 dr["Count"] = count;
 
 
