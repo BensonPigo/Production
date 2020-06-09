@@ -423,12 +423,12 @@ OUTER APPLY(
 		AND PatternPanel = bund.PatternPanel  AND FabricPanelCode = bund.FabricPanelCode
 )Std
 OUTER APPLY(----裁剪組合缺少的數量
-	SELECT [Ctn]=COUNT(t.PatternPanel)
+	SELECT [Ctn]=COUNT(t.FabricPanelCode)
 	FROM #{subprocessIDtmp}_StdCount t
 	WHERE NOT EXISTS(
 		SELECT 1
 		FROM #QtyBySetPerCutpart{subprocessIDtmp} q 
-		WHERE q.OrderID=t.OrderID AND q.Article=t.Article AND q.SizeCode=t.SizeCode AND q.PatternPanel=t.PatternPanel AND q.FabricPanelCode=t.FabricPanelCode
+		WHERE q.OrderID=t.OrderID AND q.Article=t.Article AND q.SizeCode=t.SizeCode AND q.PatternPanel=t.PatternPanel
 	)AND 
 	t.OrderID=st0.OrderID AND t.Article=st0.Article AND t.SizeCode=st0.SizeCode
 )IsLackPatternPanel
