@@ -326,7 +326,7 @@ WHERE Patterncode IS NOT NULL
 SELECT  a.OrderID,a.Article,a.SizeCode,a.PatternPanel ,a.FabricPanelCode ,[Ctn]=COUNT(DISTINCT Patterncode)
 INTO #{subprocessIDtmp}_StdCount
 FROM #AllOrders a
-LEFT JOIN #tmp_Bundle_QtyBySubprocess b ON a.OrderID=b.OrderID AND a.Article=b.Article
+LEFT JOIN #QtyBySetPerCutpart{subprocessIDtmp} b ON a.OrderID=b.OrderID AND a.Article=b.Article
 AND a.SizeCode=b.SizeCode
 AND a.PatternPanel=b.PatternPanel
 AND a.FabricPanelCode=b.FabricPanelCode
