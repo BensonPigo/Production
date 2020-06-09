@@ -276,7 +276,8 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
             }
 
             // 依CtnStart#排序 來計算混尺碼重量 
-            if (PackingListDetaildata.Columns.Contains("tmpKey") == false) {
+            if (PackingListDetaildata.Columns.Contains("tmpKey") == false)
+            {
                 PackingListDetaildata.Columns.Add("tmpKey", typeof(decimal));
             }
 
@@ -292,7 +293,7 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
             DataTable dtSort = PackingListDetaildata.DefaultView.ToTable();
             foreach (DataRow dr in dtSort.Rows)
             {
-                if(dr.RowState == DataRowState.Deleted)
+                if (dr.RowState == DataRowState.Deleted)
                     continue;
 
                 if (!MyUtility.Check.Empty(dr["CTNQty"]) || ctnNo != dr["CTNStartNo"].ToString())
@@ -702,7 +703,7 @@ where isnull(p.ShipQty,0) + ISNULL(t.DiffQty,0) < isnull(oqd.Qty,0)
                 var os = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["msg"])).ToList();
                 string msg = @"Ship Qty<Order Qty, please be sure this is Short Shipment before Save/Confirm the Packing List.
 " + string.Join("\t", os);
-                
+
                 MyUtility.Msg.WarningBox(msg);
                 return Result.True;
             }
@@ -710,8 +711,19 @@ where isnull(p.ShipQty,0) + ISNULL(t.DiffQty,0) < isnull(oqd.Qty,0)
             return Result.True;
         }
 
+        public static bool IsCancelOrder(string orderID)
+        {
+            return MyUtility.Check.Seek($"select 1 from orders with (nolock) where id = '{orderID}' and Junk = 1");
+        }
+
         public static DualResult CompareOrderQtyPackingQty(string orderID, string plID, int curAddPlQty)
         {
+            //ISP20200981 只要訂單為 Cancel 則跳過 Packing 與訂單總量比對的判斷
+            if (IsCancelOrder(orderID))
+            {
+                return new DualResult(true);
+            }
+
             string sqlGetData = $@"
 ----1. 除了目前正在編輯的 PL 以外其他的 PL
 select  p.ID, [ShipQty] = isnull(sum(isnull(pd.ShipQty,0)),0)
@@ -745,7 +757,7 @@ select * from #tmpPL
                 return result;
             }
 
-            int orderQty =  MyUtility.Convert.GetInt(dtResults[0].Rows[0]["Qty"]);
+            int orderQty = MyUtility.Convert.GetInt(dtResults[0].Rows[0]["Qty"]);
             int plQty = MyUtility.Convert.GetInt(dtResults[0].Rows[0]["PLQty"]) + curAddPlQty;
 
             if (orderQty >= plQty)
@@ -762,7 +774,7 @@ Ttl Packing Qty ({plQty}) cannot exceed Order Qty ({orderQty}).
 Please check below packing list.
 {plQtyListString}
 ";
-            return new DualResult(false, errorMsg);            
+            return new DualResult(false, errorMsg);
         }
 
         /// <summary>
@@ -788,7 +800,7 @@ SELECT
 ,[ShipQty]=SUM(pd.ShipQty)
 INTO #tmp
 FROM PackingList_Detail pd
-INNER JOIN Orders o on pd.OrderID = o.ID
+INNER JOIN Orders o on pd.OrderID = o.ID and o.Junk = 0
 WHERE pd.OrderID IN (SELECT OrderID FROM #OrderList)
 GROUP BY pd.ID, o.ID,o.Qty 
 
@@ -827,7 +839,7 @@ DROP TABLE #OrderList,#tmp,#TPEAdjust,#Summary
                 return dualResult;
             }
             string msgSum = "";
-            if (dtchk[0].Rows.Count > 0 )
+            if (dtchk[0].Rows.Count > 0)
             {
                 foreach (DataRow item in dtchk[0].AsEnumerable().ToList())
                 {
@@ -842,7 +854,7 @@ Ttl Packing Qty ({AllShipQty}) cannot exceed Order Qty ({AllOrderQty}).
 Please check below packing list.
 ";
 
-                    foreach (DataRow dr in dtchk[1].AsEnumerable().Where(o=>o["OrderID"].ToString()== OrderID).ToList())
+                    foreach (DataRow dr in dtchk[1].AsEnumerable().Where(o => o["OrderID"].ToString() == OrderID).ToList())
                     {
                         string PackingListID = dr["PackingListID"].ToString();
                         string TtlShipQty = dr["TtlShipQty"].ToString();
@@ -1512,7 +1524,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                 }
                 #endregion
             }
-            
+
             //MyUtility.Msg.WaitClear();
             excel.Columns.AutoFit();
             excel.CutCopyMode = Microsoft.Office.Interop.Excel.XlCutCopyMode.xlCopy;
@@ -1546,7 +1558,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             return b;
         }
         #endregion
-        
+
         #region Query Packing List Print out Pacging Guide Report Data
         /// <summary>
         /// QueryPackingGuideReportData(string,DataTable,DataTable,DataTable,DataTable,DataTable,DataTable,string)
@@ -1568,7 +1580,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             articleSizeTtlShipQty = null;
             printGroupData = null;
             clipData = null;
-            specialInstruction = MyUtility.GetValue.Lookup (string.Format (@"
+            specialInstruction = MyUtility.GetValue.Lookup(string.Format(@"
 select top 1 Packing = isnull(o.Packing, '') 
 from PackingList_Detail pd WITH (NOLOCK) 
      , Orders o WITH (NOLOCK) 
@@ -1819,7 +1831,7 @@ where   p.ID = '{0}'
         /// <param name="Special Instruction"></param>
         /// <returns></returns>
         public static void PackingListToExcel_PackingGuideReport(string XltxName, DataTable PrintData, DataTable CtnDim, DataTable QtyCtn, DataTable ArticleSizeTtlShipQty, DataTable PrintGroupData, DataTable ClipData, DataRow PacklistData, int OrderQty, string SpecialInstruction, bool visRow3)
-        {            
+        {
             string strXltName = Sci.Env.Cfg.XltPathDir + XltxName;
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return;
@@ -1855,7 +1867,7 @@ where   p.ID = '{0}'
                 {
                     break;
                 }
-                
+
                 if (MyUtility.Check.Empty(PrintGroupData.Rows[i]["CTNQty"]))
                 {
                     excelRow++;
@@ -1896,7 +1908,7 @@ where   p.ID = '{0}'
                                 rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                                 Marshal.ReleaseComObject(rngToInsert);
                             }
-                            if (article != MyUtility.Convert.GetString(dr["Article"])||size != MyUtility.Convert.GetString(dr["SizeCode"]) || qtyPerCTN != MyUtility.Convert.GetInt(dr["QtyPerCTN"]))
+                            if (article != MyUtility.Convert.GetString(dr["Article"]) || size != MyUtility.Convert.GetString(dr["SizeCode"]) || qtyPerCTN != MyUtility.Convert.GetInt(dr["QtyPerCTN"]))
                             {
                                 worksheet.Cells[excelRow, 2] = MyUtility.Convert.GetString(dr["SizeCode"]);
                                 worksheet.Cells[excelRow, 3] = MyUtility.Convert.GetString(dr["SizeSpec"]);
@@ -1951,7 +1963,7 @@ where   p.ID = '{0}'
                     Marshal.ReleaseComObject(rng);
                 }
             }
-            
+
             //Carton Dimension:
             excelRow++;
             StringBuilder ctnDimension = new StringBuilder();
@@ -1983,7 +1995,7 @@ where   p.ID = '{0}'
                 }
             }
             cdsi += cdsab.Length - 1;
-            
+
             for (int i = 1; i <= cdsi; i++)
             {
                 Microsoft.Office.Interop.Excel.Range rangeRowCD = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[excelRow, System.Type.Missing];
@@ -1991,7 +2003,7 @@ where   p.ID = '{0}'
                 Marshal.ReleaseComObject(rangeRowCD);
             }
             worksheet.Cells[excelRow, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : "";
-            
+
             //填Remarks
             excelRow = excelRow + 2;
             worksheet.Cells[excelRow, 2] = MyUtility.Convert.GetString(PacklistData["Remark"]);
@@ -2042,14 +2054,14 @@ where   p.ID = '{0}'
             //調整寫法, 只需要多加兩行空白即可
             dataRow = 2 + ctmpc;
             excelRow++;
-           
+
             if (dataRow > 2)
             {
                 for (int i = 3; i < dataRow; i++)
                 {
                     Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow + 1)), Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
-                    rngToInsert.RowHeight = 19.5 ;
+                    rngToInsert.RowHeight = 19.5;
                     Marshal.ReleaseComObject(rngToInsert);
                 }
             }
@@ -2057,7 +2069,7 @@ where   p.ID = '{0}'
             worksheet.Cells[excelRow, 3] = "'" + SpecialInstruction;
 
             excelRow = excelRow + (dataRow > 2 ? dataRow - 1 : 2);
-            
+
             //貼圖
             int picCount = 0;
             excelRow = excelRow + 5;
@@ -2100,7 +2112,7 @@ where   p.ID = '{0}'
             #endregion 
         }
         #endregion
-        
+
         #region Packing Barcode Print
         /// <summary>
         /// PackingBarcodePrint(string,string,string,DataTable)
@@ -2204,7 +2216,7 @@ where pd.CTNQty > 0");
             int page = 1;
             foreach (DataTable DT in PrintData) // by custpono
             {
-                decimal pcount = Math.Ceiling(((decimal)DT.Rows.Count /50));
+                decimal pcount = Math.Ceiling(((decimal)DT.Rows.Count / 50));
                 for (int i = 0; i < pcount; i++)
                 {
                     #region sqlcommand
@@ -2256,13 +2268,13 @@ select BuyerDelivery = stuff((
 ";
                     #endregion
                     Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[page];
-                    worksheet.Cells[1, 3] = MyUtility.Convert.GetString(DT.Rows[0]["CustPONo"]) +" of "+ MyUtility.Convert.GetString(masterdata["CTNQty"]);
+                    worksheet.Cells[1, 3] = MyUtility.Convert.GetString(DT.Rows[0]["CustPONo"]) + " of " + MyUtility.Convert.GetString(masterdata["CTNQty"]);
                     worksheet.Cells[5, 2] = MyUtility.GetValue.Lookup(orderids);
                     worksheet.Cells[6, 2] = MyUtility.GetValue.Lookup(styles);
                     worksheet.Cells[7, 2] = DT.Rows[0]["CustPONo"];
                     worksheet.Cells[8, 2] = MyUtility.GetValue.Lookup(colors);
                     worksheet.Cells[5, 6] = masterdata["CTNQty"];
-                    worksheet.Cells[6, 6] = MyUtility.Convert.GetInt(masterdata["ShipQty"]).ToString("#,#.#")+" pcs.";
+                    worksheet.Cells[6, 6] = MyUtility.Convert.GetInt(masterdata["ShipQty"]).ToString("#,#.#") + " pcs.";
                     worksheet.Cells[8, 6] = MyUtility.GetValue.Lookup(BuyerDelivery);
                     worksheet.Cells[5, 8] = Alias;
                     for (int j = i * 50, k = 10; j < DT.Rows.Count && j < (i + 1) * 50; j++, k++)
@@ -2543,7 +2555,7 @@ order by min(pd.seq)
         #endregion
 
         #region Get SCICtnNo P03/P04/P05
-        public static bool GetSCICtnNo(DataTable dt,string id, string type)
+        public static bool GetSCICtnNo(DataTable dt, string id, string type)
         {
             if (type.EqualString("IsDetailInserting"))
             {
@@ -2623,7 +2635,7 @@ order by min(pd.seq)
                 MyUtility.Msg.WarningBox(result.ToString());
                 return false;
             }
-            
+
             if (!PublicPrg.Prgs.GetSCICtnNo(packinglist_detaildt, id, "IsDetailInserting"))
             {
                 return false;
@@ -2916,7 +2928,7 @@ where oqd.Id = '{1}'
                     {
                         detailGrid.Rows[count].DefaultCellStyle.BackColor = Color.Pink;
                     }
-                    
+
                 }
                 #endregion
 
@@ -2998,7 +3010,7 @@ where oqd.Id = '{1}'
                 MyUtility.Msg.WarningBox("Quantity entered is greater than order quantity!!");
                 return false;
             }
-            
+
             // 表身重新計算後,再判斷CBM or GW 是不是0
             if (MyUtility.Check.Empty(currentMaintain["CBM"]) || MyUtility.Check.Empty(currentMaintain["GW"]))
             {
