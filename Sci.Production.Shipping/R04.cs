@@ -106,6 +106,7 @@ namespace Sci.Production.Shipping
 		,Category = IIF(o.Category = 'B', 'Bulk'
 										, 'Sample')
         ,oq.seq
+        ,[If Partial] = (select iif(count(1) > 1, 'Y', '') from Order_QtyShip with (nolock) where ID = o.ID)
 		,pkid.pkid
         ,pkstatus.v
 		,pkINVNo.pkINVNo
@@ -120,24 +121,36 @@ namespace Sci.Production.Shipping
 					where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) - [dbo].getInvAdjQty(o.ID,oq.Seq) 
 		,OrderTtlQty=o.Qty
 		,ShipTtlQty=isnull(plds.ShipQty,0)
+        ,plds.CTNQty
         ,gb2.SONo
         ,gb2.SOCFMDate
         ,gb2.CutOffDate
 		,[ShipPlanID] = gb2.ShipPlanID
+        ,[Carton Qty at C-Log] = isnull(o.ClogCTN, 0)
+        ,[SP Prod. Output Qty] = [dbo].[getMinCompleteSewQty](o.ID, null, null)
 		,o.MDivisionID
 		,o.ftygroup
-		,Alias = isnull(c.Alias,'')		
+        ,[KPI Factory] = f.Kpicode
+        ,o.CustCDID
+		,Alias = isnull(c.Alias,'')
+        ,o.OrderTypeID
+        ,[On Site] = iif(o.OnSiteSample = 1, 'Y', '')
+        ,[BuyBack] = iif(exists(select 1 from Order_BuyBack with (nolock) where ID = o.ID), 'Y', '')
 		,Payment = isnull((select Term 
 						   from PayTermAR WITH (NOLOCK) 
 						   where ID = o.PayTermARID), '')
 		,o.PoPrice
 		,o.Customize1
 		,o.Customize2
-		,CustCDID.CustCDID
-		,plds.CTNQty
 		,plds.GW
 		,cbm.CTNQty
 		,oq.ShipmodeID
+        ,[Loading Type] = gbCYCFS.CYCFS
+        ,OSReason = oq.OutstandingReason + ' - ' + isnull((select Name 
+														   from Reason WITH (NOLOCK) 
+														   where ReasonTypeID = 'Delivery_OutStand' and Id = oq.OutstandingReason), '') 
+		,oq.OutstandingRemark
+        ,o.EstPODD
 		,SMP = IIF(o.ScanAndPack = 1,'Y','')
 		,VasShas = IIF(o.VasShas = 1,'Y','') 
 		,Handle = o.MRHandle+' - '+isnull((select Name + ' #' + ExtNo 
@@ -149,10 +162,7 @@ namespace Sci.Production.Shipping
 		,LocalMR = o.LocalMR+' - '+isnull((select Name + ' #' + ExtNo 
 										   from Pass1 WITH (NOLOCK) 
 										   where ID = o.LocalMR), '')
-		,OSReason = oq.OutstandingReason + ' - ' + isnull((select Name 
-														   from Reason WITH (NOLOCK) 
-														   where ReasonTypeID = 'Delivery_OutStand' and Id = oq.OutstandingReason), '') 
-		,oq.OutstandingRemark
+        ,[Carton Qty at C-Log=Pack Qty] = '=IF(INDEX(V:V,ROW()) = INDEX(AA:AA,ROW()), ""True"", """")'
 from Orders o WITH (NOLOCK) 
 inner join Factory f with (nolock) on o.FactoryID = f.ID and f.IsProduceFty=1
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
@@ -212,6 +222,21 @@ outer apply(
 		for xml path('')
 	),1,1,'')
 )gb
+outer apply(
+	select CYCFS = stuff((
+		select concat(',',a.CYCFS)
+		from(
+			select distinct gb.CYCFS,p.id
+			from packinglist_detail pd
+			inner join PackingList p on p.id = pd.id
+			inner join GMTBooking gb on gb.id = p.INVNo
+			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+            
+		)a
+		order by a.id
+		for xml path('')
+	),1,1,'')
+)gbCYCFS
 outer apply(
 	select top 1 p.CustCDID
 	from packinglist_detail pd
