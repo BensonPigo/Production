@@ -306,7 +306,7 @@ select DISTINCT c.FactoryID
 	        ,b.Remark
 from localpo a WITH (NOLOCK) 
 inner join LocalPO_Detail b WITH (NOLOCK) on a.id=b.id
-left join orders c WITH (NOLOCK) on c.ID = b.POID
+left join orders c WITH (NOLOCK) on c.ID = b.OrderId
 left join localsupp d  WITH (NOLOCK) on  d.id =a.LocalSuppID 
 left join ThreadColor on b.ThreadColorID = ThreadColor.ID
 left join LocalItem li WITH (NOLOCK) on li.RefNo=b.Refno
@@ -340,7 +340,7 @@ select  [LocalPOID] = a.id
 into #tmp
 from localpo a WITH (NOLOCK) 
 inner join LocalPO_Detail b WITH (NOLOCK) on a.id=b.id
-left join orders c WITH (NOLOCK) on c.id=b.poid
+left join orders c WITH (NOLOCK) on c.id=b.OrderId
 left join ThreadColor on b.ThreadColorID = ThreadColor.ID
 " + sqlWhere + @"
 group by a.id, a.FactoryId, b.OrderId,a.LocalSuppID, b.Delivery, b.Refno, b.ThreadColorID + ' - ' + ThreadColor.Description, a.IssueDate, a.Category, b.UnitId "
@@ -414,7 +414,7 @@ select  e.NameEN [Title1]
         into #temp  
 from dbo.localpo a WITH (NOLOCK) 
 inner join LocalPO_Detail b WITH (NOLOCK) on b.id=a.Id
-left join orders c WITH (NOLOCK) on c.id=b.POID
+left join orders c WITH (NOLOCK) on c.id=b.OrderId
 left join LocalSupp d WITH (NOLOCK) on a.LocalSuppID=d.ID
 left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
 " + sqlWhere + " " + all, lis, out dt);
