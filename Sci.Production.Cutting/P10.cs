@@ -211,8 +211,6 @@ order by bundlegroup"
 
             string factoryid = MyUtility.GetValue.Lookup(string.Format("SELECT o.FactoryID FROM Bundle b WITH (NOLOCK) inner join orders o WITH (NOLOCK) on b.Orderid=o.ID where b.Orderid='{0}'", orderid), null);
 
-            //txtsewingline1.factoryobjectName = (Control)factoryid;
-
             if (!MyUtility.Check.Empty(this.CurrentMaintain["printdate"]))
             {
                 DateTime? lastTime = (DateTime?)this.CurrentMaintain["printdate"];
@@ -223,6 +221,8 @@ order by bundlegroup"
             {
                 this.displayPrintDate.Text = "";
             }
+
+            this.getFabricKind();
         }
 
         public void queryTable()
@@ -663,7 +663,7 @@ order by bundlegroup"
             CurrentMaintain["cutref"] = "";
             CurrentMaintain["ITEM"] = "";
             txtFabricPanelCode.Text = "";
-
+            dispFabricKind.Text = "";
             DetailDatas.Clear();
             bundle_Detail_allpart_Tb.Clear();
             bundle_Detail_Art_Tb.Clear();
@@ -768,6 +768,7 @@ Where a.cutref='{0}' and a.mDivisionid = '{1}' and a.orderid = b.id"
                 {
                     WorkOrder_Ukey = WorkOrder_Ukey + dr["Ukey"].ToString() + ",";
                 }
+                this.getFabricKind();
                 CurrentMaintain.EndEdit();
             }
             ((DataTable)this.detailgridbs.DataSource).Clear();
@@ -890,8 +891,9 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
                     }
                     #endregion
                 }
-
             }
+
+            this.getFabricKind();
         }
 
         private void btnGarmentList_Click(object sender, EventArgs e)
@@ -1155,6 +1157,36 @@ where Article!='' and WorkorderUkey in ({0}) and Article='{1}'"
                 MyUtility.Msg.WarningBox(string.Format("< Sewing Line> : {0} not found!!!", newvalue));
                 return;
             }
+        }
+
+        private void TxtFabricCombo_Validating(object sender, CancelEventArgs e)
+        {
+            this.getFabricKind();
+        }
+
+        private void getFabricKind()
+        {
+            string sqlcmd = $@"
+SELECT TOP 1 DD.id + '-' + DD.NAME 
+FROM dropdownlist DD 
+OUTER apply(
+	SELECT
+		OB.kind, 
+		OCC.id, 
+		OCC.article, 
+		OCC.colorid, 
+		OCC.fabricpanelcode, 
+		OCC.patternpanel 
+	FROM order_colorcombo OCC 
+	INNER JOIN order_bof OB 
+	ON OCC.id = OB.id 
+	AND OCC.fabriccode = OB.fabriccode
+) LIST 
+WHERE LIST.id = '{this.displayPOID.Text}'--bundle.poid 
+AND LIST.patternpanel = '{this.txtFabricCombo.Text}'--bundle.patternpanel 
+AND DD.[type] = 'FabricKind' 
+AND DD.id = LIST.kind ";
+            this.dispFabricKind.Text = MyUtility.GetValue.Lookup(sqlcmd);
         }
 
         protected override DualResult ClickDeletePost()

@@ -533,8 +533,9 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
            .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3), iseditingreadonly: true)
            .Text("Item", header: "Item", width: Widths.AnsiChars(20), iseditingreadonly: false, settings: itemsetting).Get(out item)
            .Text("SpreadingNoID", header: "Spreading No", width: Widths.AnsiChars(5), iseditingreadonly: true)
-
+           .Text("FabricKind", header: "Fabric Kind", width: Widths.AnsiChars(5), iseditingreadonly: true)
            ;
+
             gridCutRef.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             gridCutRef.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             gridCutRef.Columns["Item"].DefaultCellStyle.BackColor = Color.Pink;
@@ -666,7 +667,7 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
 
             this.ShowWaitMessage("Query");
             #region 條件式
-            string query_cmd = string.Format(@"
+            string query_cmd = $@"
 Select  distinct 0 as sel
         , a.cutref
         , ord.poid
@@ -682,14 +683,34 @@ Select  distinct 0 as sel
                            and Style.ApparelType = Reason.id ) 
         , a.SpreadingNoID
         , a.Ukey
-from    workorder a WITH (NOLOCK) 
-        ,orders ord WITH (NOLOCK) 
-        , workorder_PatternPanel b WITH (NOLOCK)  
-Where   a.ukey = b.workorderukey 
-        and a.orderid = ord.id 
-        and ord.mDivisionid = '{0}' 
-        and a.id = ord.cuttingsp 
-        and isnull(a.CutRef,'') <> '' ", keyWord);
+        , FabricKind = FabricKind.value
+from  workorder a WITH (NOLOCK) 
+inner join orders ord WITH (NOLOCK) on a.orderid = ord.id and a.id = ord.cuttingsp 
+inner join workorder_PatternPanel b WITH (NOLOCK) on a.ukey = b.workorderukey 
+outer apply(
+    SELECT TOP 1 value = DD.id + '-' + DD.NAME 
+    FROM dropdownlist DD 
+    OUTER apply(
+	    SELECT
+		    OB.kind, 
+		    OCC.id, 
+		    OCC.article, 
+		    OCC.colorid, 
+		    OCC.fabricpanelcode, 
+		    OCC.patternpanel 
+	    FROM order_colorcombo OCC 
+	    INNER JOIN order_bof OB 
+	    ON OCC.id = OB.id 
+	    AND OCC.fabriccode = OB.fabriccode
+    ) LIST 
+    WHERE LIST.id = a.id
+    AND LIST.patternpanel = b.patternpanel
+    AND DD.[type] = 'FabricKind'
+    AND DD.id = LIST.kind
+)FabricKind
+where  ord.mDivisionid = '{keyWord}' 
+and isnull(a.CutRef,'') <> ''
+";
 
             string distru_cmd = string.Format(@"
 Select  distinct 0 as sel
