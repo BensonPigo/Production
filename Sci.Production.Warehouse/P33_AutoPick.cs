@@ -111,7 +111,7 @@ GROUP BY Article
 --------------取得哪些要打勾--------------
 ---- 從Issue breakdown的Article，找到包含在哪些物料裡面
 ---- 傳入OrderID
-Select distinct tcd.SCIRefNo, tcd.SuppColor ,tcd.Article 
+Select distinct tcd.SCIRefNo,tcd.Article ,tcd.ColorID
 INTO #step1
 From dbo.Orders as o
 Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
@@ -122,22 +122,22 @@ WHERE O.ID='{this.poid}' AND tcd.Article IN ( SELECT Article FROM #tmp )
 
 ----取得這些物料的項次號，然後取得Order List，如果NULL就直接打勾不用判斷後續
 ---- 傳入OrderID
-SELECT DISTINCT  pso.OrderID,a.SCIRefNo,a.SuppColor
+SELECT DISTINCT  pso.OrderID,a.SCIRefNo, a.ColorID
 INTO #step2
 FROM PO_Supp_Detail a
 LEFT JOIN  PO_Supp_Detail_OrderList pso ON a.ID = pso.ID AND a.SEQ1 = pso.SEQ1 AND a.SEQ2 = pso.SEQ2
 WHERE a.ID = '{this.poid}'
 AND EXISTS(
 	SELECT * FROM #step1
-	WHERE SCIRefNo = a.SCIRefNo AND SuppColor = a.SuppColor
+	WHERE SCIRefNo = a.SCIRefNo AND ColorID = a.ColorID
 )
 
-SELECT DISTINCT SCIRefno,SuppColor
+SELECT DISTINCT SCIRefno,ColorID
 INTO #SelectList1
 FROM #step2 
 WHERE OrderID IS NULL 
 
-SELECT DISTINCT a.SCIRefno,a.SuppColor--,b.* 
+SELECT DISTINCT a.SCIRefno,a.ColorID--,b.* 
 INTO #SelectList2
 FROM #step2 a
 INNER JOIN Order_Article b ON a.OrderID = b.id
@@ -150,12 +150,12 @@ WHERE OrderID IS NOT NULL
 
 
 SELECT  DISTINCT 
-		[Selected] = IIF(   EXISTS(SELECT 1 FROM #SelectList1 WHERE SCIRefno =psd.SCIRefno AND SuppColor=psd.SuppColor) OR
-							EXISTS(SELECT 1 FROM #SelectList2 WHERE SCIRefno =psd.SCIRefno AND SuppColor=psd.SuppColor)
+		[Selected] = IIF(   EXISTS(SELECT 1 FROM #SelectList1 WHERE SCIRefno =psd.SCIRefno AND ColorID=psd.ColorID) OR
+							EXISTS(SELECT 1 FROM #SelectList2 WHERE SCIRefno =psd.SCIRefno AND ColorID=psd.ColorID)
 						,1 ,0)
 		, psd.SCIRefno 
         , psd.Refno
-		, psd.SuppColor
+        , psd.ColorID
 		, f.DescDetail
 		, [@Qty]= ThreadUsedQtyByBOT.Val
 		, [Use Qty By Stock Unit] = CEILING (ISNULL(ThreadUsedQtyByBOT.Qty,0) *  ThreadUsedQtyByBOT.Val/ 100 * ISNULL(UnitRate.RateValue,1) )--並轉換為Stock Unit
@@ -171,7 +171,7 @@ SELECT  DISTINCT
 					from dbo.issue I2 WITH (NOLOCK) 
 					inner join dbo.Issue_Summary [IS] WITH (NOLOCK) on I2.id = [IS].Id 
 					where I2.type = 'E' and I2.Status = 'Confirmed' 
-					and [IS].Poid=psd.ID AND [IS].SCIRefno=psd.SCIRefno AND [IS].SuppColor=psd.SuppColor and i2.[EditDate]<GETDATE()
+					and [IS].Poid=psd.ID AND [IS].SCIRefno=psd.SCIRefno AND [IS].ColorID=psd.ColorID and i2.[EditDate]<GETDATE()
 				)
 INTO #final
 FROM PO_Supp_Detail psd
@@ -180,7 +180,7 @@ OUTER APPLY(
 	SELECT TOP 1 a.StockUnit ,u.Description
 	FROM PO_Supp_Detail a
 	INNER JOIN Unit u ON a.StockUnit = u.ID
-	WHERE a.ID =psd.ID	AND a.SCIRefno=psd.SCIRefno AND a.SuppColor=psd.SuppColor
+	WHERE a.ID =psd.ID	AND a.SCIRefno=psd.SCIRefno AND a.ColorID=psd.ColorID
 )StockUnit
 OUTER APPLY(
 	SELECT RateValue
@@ -189,21 +189,21 @@ OUTER APPLY(
 )UnitRate
 OUTER APPLY(
 	SELECT SCIRefNo
-		,SuppColor
+		,ColorID
 		,[Val]=SUM(((SeamLength  * Frequency * UseRatio ) +  (Allowance * Segment) )) 
 		,[Qty] = (	
 			SELECt [Qty]=SUM(b.Qty)
 			FROM #step1 a
 			INNER JOIN #tmp_sumQty b ON a.Article = b.Article
-			WHERE SCIRefNo=psd.SCIRefNo AND  SuppColor= psd.SuppColor AND a.Article=g.Article
+			WHERE SCIRefNo=psd.SCIRefNo AND  ColorID= psd.ColorID AND a.Article=g.Article
 			GROUP BY a.Article
 		)
 	FROM DBO.GetThreadUsedQtyByBOT(psd.ID) g
-	WHERE SCIRefNo= psd.SCIRefNo AND SuppColor = psd.SuppColor  
+	WHERE SCIRefNo= psd.SCIRefNo AND ColorID = psd.ColorID  
 	AND Article IN (
-		SELECt Article FROM #step1 WHERE SCIRefNo = psd.SCIRefNo  AND SuppColor = psd.SuppColor 
+		SELECt Article FROM #step1 WHERE SCIRefNo = psd.SCIRefNo  AND ColorID = psd.ColorID 
 	)
-	GROUP BY SCIRefNo,SuppColor , Article
+	GROUP BY SCIRefNo,ColorID , Article
 )ThreadUsedQtyByBOT
 WHERE psd.ID='{this.poid}'
 AND psd.FabricType ='A'
@@ -214,12 +214,12 @@ AND EXISTS(
 	WHERE f.SCIRefno = psd.SCIRefNo
 	AND m.IsThread=1 
 )
-AND psd.SuppColor <> ''
+AND psd.ColorID <> ''
 
 SELECT  [Selected] 
 		, SCIRefno 
         , Refno
-		, SuppColor
+        , ColorID
 		, DescDetail
 		, [@Qty] = SUM([@Qty])
 		, [Use Qty By Stock Unit] = CEILING (SUM([Use Qty By Stock Unit] ))
@@ -236,7 +236,7 @@ FROM #final
 GROUP BY [Selected] 
 		, SCIRefno 
         , Refno
-		, SuppColor
+        , ColorID
 		, DescDetail
 		, [Stock Unit]
 		, [Use Unit]
@@ -249,7 +249,8 @@ GROUP BY [Selected]
 SELECT  [Selected] 
 		, SCIRefno 
         , Refno
-		, SuppColor
+        , ColorID
+		, SuppColor = (SELECT top 1 psd.SuppColor FROM PO_Supp_Detail psd WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}' and SuppColor <>'' Order by SuppColor)
 		, DescDetail
 		, [@Qty] 
 		, [Use Qty By Stock Unit]
@@ -266,9 +267,8 @@ OUTER APPLY(
 	SELECT [Qty]=ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0)
 	FROM PO_Supp_Detail psd 
 	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
-	WHERE psd.SCIRefno=t.SCIRefno AND psd.SuppColor=t.SuppColor AND psd.ID='{this.poid}'
+	WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}'
 )Balance 
-
 
 DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final,#final2,#tmp,#tmp_sumQty
 
@@ -314,14 +314,14 @@ DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final,#final2,#tmp,#tmp_s
                 DataRow currentRow = detail.Rows[e.RowIndex];
 
                 string SCIRefNo = currentRow["SCIRefNo"].ToString();
-                string SuppColor = currentRow["SuppColor"].ToString();
+                string ColorID = currentRow["ColorID"].ToString();
                 List<string> Articles = _IssueQtyBreakdownList.Where(o => o.Qty > 0).Select(o => o.Article).Distinct().ToList();
                 string cmd = $@"
 
 SELECT Article, [Qty]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance *Segment))) 
 FROM dbo.GetThreadUsedQtyByBOT('{this.poid}')
 WHERE SCIRefNo='{SCIRefNo}' 
-AND SuppColor='{SuppColor}'
+AND ColorID='{ColorID}'
 AND Article IN ('{Articles.JoinToString("','")}')
 GROUP BY Article
 
@@ -346,6 +346,7 @@ GROUP BY Article
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                  .Text("SCIRefno", header: "SCIRefno", width: Widths.AnsiChars(25), iseditingreadonly: true)
                  .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                 .Text("ColorID", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)
                  .Text("SuppColor", header: "SuppColor", width: Widths.AnsiChars(7), iseditingreadonly: true)
                  .Text("DescDetail", header: "Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(15), decimal_places: 2, iseditingreadonly: true, settings: Qty)
