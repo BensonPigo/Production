@@ -7,11 +7,15 @@
 -- 2020/05/18 [ISP20200840] Add Columns[Sew_Qty],[Shortage]
 -- 2020/05/29 [ISP20200920] Add Columns[Buyer Key],[Buyer HalfKey]
 CREATE PROCEDURE [dbo].[ImportForecastLoadingBI] 
+
+@StartDate date,
+@EndDate date
+
 AS
 BEGIN
 	SET NOCOUNT ON;
-	DECLARE @Date_S DATE = '2019-01-08'; --���8��
-	DECLARE @Date_E DATE = DATEADD(m, DATEDIFF(m,0,DATEADD(yy,1,GETDATE())),6);--�j�~7��
+	DECLARE @Date_S DATE = @StartDate--'2019-01-08'; --���8��
+	DECLARE @Date_E DATE = @EndDate--DATEADD(m, DATEDIFF(m,0,DATEADD(yy,1,GETDATE())),6);--�j�~7��
 	DECLARE @YearMonth_S date = '2019-01-01';--���
 	DECLARE @YearMonth_E date = dateadd(m, 11, getdate())--�������12�Ӥ�
 	--���s�إ�Power BI��Report Table
@@ -707,5 +711,3 @@ DROP TABLE #tmp_FactoryOrder
 End
 
 GO
-
-

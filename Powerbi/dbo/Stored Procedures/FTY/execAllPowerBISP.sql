@@ -14,10 +14,25 @@ DECLARE @desc nvarchar(1000)  = '';
 DECLARE @ErrorMessage NVARCHAR(1000) = '';
 DECLARE @ErrorStatus bit = 1;
 DECLARE @StartTime datetime = getdate();
+DECLARE @StartDate date
+DECLARE @EndDate date
+-- ImportForecastLoadingBI
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
 
+DECLARE @desc nvarchar(1000)  = '';
+DECLARE @ErrorMessage NVARCHAR(1000) = '';
+DECLARE @ErrorStatus bit = 1;
+DECLARE @StartTime datetime = getdate();
+DECLARE @StartDate date
+DECLARE @EndDate date
 -- ImportForecastLoadingBI
 BEGIN TRY
-	EXEC ImportForecastLoadingBI
+	set @StartDate = '2019-01-08'
+	set @EndDate = DATEADD(m, DATEDIFF(m,0,DATEADD(yy,1,GETDATE())),6)
+	EXEC ImportForecastLoadingBI @StartDate,@EndDate
 END TRY
 
 BEGIN CATCH
@@ -46,8 +61,9 @@ SET @ErrorMessage = ''
 
 -- ImportEfficiencyBI 
 BEGIN TRY
-	declare @nowDate as datetime = getdate()
-	exec  ImportEfficiencyBI @nowDate	
+	set @StartDate = CAST(DATEADD(day,-60, GETDATE()) AS date)
+	set @EndDate   = CAST(GETDATE() AS date)
+	EXEC  ImportEfficiencyBI @StartDate	,@EndDate
 END TRY
 BEGIN CATCH
 	SET @ErrorMessage = 
@@ -72,8 +88,9 @@ SET @ErrorMessage = ''
 
 --ImportSewingLineScheduleBIData
 BEGIN TRY
-	declare @Inline date= '2020/01/01'
-	execute [dbo].[ImportSewingLineScheduleBIData] @Inline
+	set @StartDate = CAST(DATEADD(day,-60, GETDATE()) AS date)
+	set @EndDate   = CAST(DATEADD(day,120, GETDATE()) AS date)
+	execute [dbo].[ImportSewingLineScheduleBIData] @StartDate,@EndDate
 END TRY
 
 BEGIN CATCH
@@ -99,7 +116,9 @@ SET @ErrorMessage = ''
 
 --P_ImportOustandingPO_Fty、P_ImportSDPOrderDetail
 BEGIN TRY
-	execute [dbo].[P_ImportOustandingPO_Fty]
+	set @StartDate = CAST(DATEADD(day,-150, GETDATE()) AS date)
+	set @EndDate   = CAST(DATEADD(day,30, GETDATE()) AS date)
+	execute [dbo].[P_ImportOustandingPO_Fty] @StartDate,@EndDate
 	DECLARE @BuyerDelivery_s as Date = '2020/01/01'
 	DECLARE @BuyerDelivery_e as Date = '2020/07/31'
 	execute [dbo].[P_ImportSDPOrderDetail] @BuyerDelivery_s,@BuyerDelivery_e
@@ -132,7 +151,7 @@ DECLARE @comboDesc nvarchar(4000);
 Please check below information.
 Transfer date: '+ (select convert(nvarchar(30), convert(date,getdate()))) +
 '
-M: VM2
+M: ESP
 ' + @desc
 
 
@@ -158,5 +177,4 @@ END
 
 
 GO
-
 
