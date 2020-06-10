@@ -2567,12 +2567,16 @@ and [IS].Poid='{POID}' AND [IS].SCIRefno='{SCIRefno}' AND [IS].ColorID='{ColorID
                         List<DataRow> issuedList = PublicPrg.Prgs.Thread_AutoPick(key, Convert.ToDecimal(AccuIssued));
                         foreach (var issued in issuedList)
                         {
-                            totalQty += (decimal)issued["Qty"];
-                            issued.AcceptChanges();
-                            issued.SetAdded();
-                            _subDetail.ImportRow(issued);
+                            if (MyUtility.Convert.GetDecimal(issued["Qty"]) != 0)
+                            {
+                                totalQty += (decimal)issued["Qty"];
+                                issued.AcceptChanges();
+                                issued.SetAdded();
+                                _subDetail.ImportRow(issued);
+                            }
                         }
                         sum_subDetail(_detail.Rows[_detail.Rows.Count - 1], _subDetail);
+
                     }
                     //_subDetail.AcceptChanges();
                     _detail.Rows[_detail.Rows.Count - 1]["IssueQty"] = totalQty;
