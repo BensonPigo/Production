@@ -778,6 +778,7 @@ Select  distinct 0 as sel
 	    , a.Ukey
 	    , ord.StyleUkey
 		, isEXCESS = 'Y'
+        , byTone = 0
 from workorder a WITH (NOLOCK) 
 inner join workorder_Distribute b WITH (NOLOCK) on a.ukey = b.workorderukey and a.id = b.id 
 outer apply(
