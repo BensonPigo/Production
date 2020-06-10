@@ -8,17 +8,9 @@ namespace Sci.Production.Subcon
 {
     class P36_PrintData
     {
-        public string Supplier { get; set; }
-        public string No { get; set; }
-        public string SP { get; set; }
-        public string Subject { get; set; }
-        public string DESC { get; set; }
-        public string Amount { get; set; }
-        public string Exchange { get; set; }
-        public string taxrate { get; set; }
-        public string Total { get; set; }
-        public string Remark { get; set; }
-        public string Purchaser { get; set; }
-        public string currencyid { get; set; }
+        public string OrderID { get; set; }
+        public string AffectQty { get; set; }
+        public string Reason { get; set; }
+        public string Desc { get; set; }
     }
 }

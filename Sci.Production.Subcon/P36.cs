@@ -47,7 +47,7 @@ namespace Sci.Production.Subcon
                 this.displayConfirmed.Text = Convert.ToDateTime(CurrentMaintain["cfmdate"]).ToString("yyyy/MM/dd");
             }
             else this.displayConfirmed.Text = "";
-          
+
             lblStatus.Text = CurrentMaintain["status"].ToString();
             if (!MyUtility.Check.Empty(CurrentMaintain["amtrevisedate"]))
             {
@@ -90,7 +90,7 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
 
             #region 依台北轉入 or 工廠建立 開放表頭欄位編輯
             // TaipeiDBC = true or 1 >> 台北轉入, 其餘為工廠建立
-            if (EditMode==true)
+            if (EditMode == true)
             {
                 if (MyUtility.Check.Empty(CurrentMaintain["TaipeiDBC"]))
                 {
@@ -108,7 +108,7 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                 this.numExchange.ReadOnly = true;
                 this.numAmount.ReadOnly = true;
             }
-           
+
             #endregion
         }
 
@@ -130,7 +130,7 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                     DataRow dr = DetailDatas[e.RowIndex];
                     string reason_desc = string.Format("select concat(id,name) from dbo.reason WITH (NOLOCK) where ReasonTypeID='DebitNote_Factory' and id = '{0}'", dr["reasonid"]);
                     dr["reason_desc"] = MyUtility.GetValue.Lookup(reason_desc);
-                  if (!EditMode) return;
+                    if (!EditMode) return;
                     #region 加總明細金額至表頭
                     string strExact = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", CurrentMaintain["currencyId"]), null);
                     if (strExact == null || string.IsNullOrWhiteSpace(strExact))
@@ -144,7 +144,7 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                     object detail_Addition = ((DataTable)detailgridbs.DataSource).Compute("sum(ADDITION)", "");
 
                     CurrentMaintain["amount"] = MyUtility.Math.Round(((decimal)detail_Amount + (decimal)detail_Addition) * exchange, exact);
-                    
+
                     ReCalculateTax();
                     #endregion
                 }
@@ -326,7 +326,7 @@ select a.ID,Ukey
 from localdebit_detail a WITH (NOLOCK) 
 inner join LocalDebit b with(nolock) on a.ID=b.ID
 Where a.id = '{0}' order by orderid ", masterID);
-            
+
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -443,7 +443,7 @@ where id = '{4}'"
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-          
+
         }
 
         protected override void ClickSend()
@@ -495,7 +495,7 @@ where id = '{4}'"
             base.ClickUnconfirm();
             updateStatus(CurrentMaintain["status"].ToString(), "Received", true);
         }
-        
+
         protected override void ClickJunk()
         {
             base.ClickJunk();
@@ -529,7 +529,7 @@ where id = '{4}'"
         {
             var dr = this.CurrentMaintain; if (null == dr) return;
             //var frm = new Sci.Production.Subcon.P37_DebitSchedule(Production.PublicPrg.Prgs.GetAuthority(dr["cfmname"].ToString()), dr["ID"].ToString(), null, null);
-            var frm = new Sci.Production.Subcon.P37_DebitSchedule(true, dr["ID"].ToString(), null, null,this.CurrentMaintain,"P36",(bool)this.CurrentMaintain["TaipeiDBC"]);  //調成跟舊系統一樣，不管誰都可以編輯
+            var frm = new Sci.Production.Subcon.P37_DebitSchedule(true, dr["ID"].ToString(), null, null, this.CurrentMaintain, "P36", (bool)this.CurrentMaintain["TaipeiDBC"]);  //調成跟舊系統一樣，不管誰都可以編輯
             frm.ShowDialog(this);
             this.RenewData();
             this.Refresh();
@@ -538,8 +538,8 @@ where id = '{4}'"
         //print
         protected override bool ClickPrint()
         {
-           
-            if (CurrentMaintain["status"].ToString() == "Junked"){return false;}
+
+            if (CurrentMaintain["status"].ToString() == "Junked") { return false; }
             //if (Sci.Env.User.UserID!=CurrentMaintain["handle"].ToString()){return false;}//20170416 mark by dyson
 
             //如果已經列印過的，則提醒是否再次列印。
@@ -549,44 +549,50 @@ where id = '{4}'"
                 DialogResult dResult = MyUtility.Msg.QuestionBox("In" + ' ' + printdate + ' ' + " has been printed ,Do you want to print again?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
                 if (dResult.ToString().ToUpper() == "NO") return false;
             }
-          
+
             DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
-           
+
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
-    
+
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DualResult result;
             ReportDefinition report = new ReportDefinition();
-            
+
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
-           
+
             #endregion
             #region -- 撈表身資料 --
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtDetail;
-            string sqlcmd = @"
+            DataRow drSubject;
+
+            string sqlSubject = @"
 select 
-    Ldeb.ID,dbo.getPass1(Ldeb.handle)[FROM],F.nameEn,Ldeb.LocalSuppID+L.name AS Supplier,
-    poids.poid,
-    (Select t.name +',' from (SELECT name FROM DBO.Reason WITH (NOLOCK) 
-    inner join dbo.localdebit_detail WITH (NOLOCK) on dbo.localdebit_detail.reasonid = DBO.Reason.id
-    WHERE reason.ReasonTypeID = 'DebitNote_Factory' 
-    and localdebit_detail.id =Ldeb.id) t for xml path(''))[Subject],
-    Ldeb.Description,Ldeb.Currencyid,format(Ldeb.Amount,'#,###,###,##0.00') Amount,
-    Iif(Ldeb.Exchange=0,'',FORMAT(Ldeb.Exchange,'###.00'))as ExchangeRate,
-    CONCAT( Ldeb.taxrate , ' %TAX')as titletaxrate,FORMAT(Ldeb.tax,'#,##0.00')as taxrate
-    ,FORMAT(Ldeb.Amount+Ldeb.Tax,'#,##0.00')as total,dbo.getpass1(Ldeb.Handle)+ '/' +  dbo.getpass1 (Ldeb.SMR) as Purchaser					
+    Ldeb.ID,
+    F.nameEn,
+    [Supplier] = Ldeb.LocalSuppID+L.name,
+    [FROM] = dbo.getPass1(Ldeb.handle),
+    [SP] = poids.poid,
+    [Subject] = (Select t.name +',' from (SELECT name FROM DBO.Reason WITH (NOLOCK) 
+                    inner join dbo.localdebit_detail WITH (NOLOCK) on dbo.localdebit_detail.reasonid = DBO.Reason.id
+                    WHERE reason.ReasonTypeID = 'DebitNote_Factory' 
+                    and localdebit_detail.id =Ldeb.id) t for xml path('')),
+    [DESC] = Ldeb.Description,
+    Ldeb.Currencyid,
+    [Amount] = format(Ldeb.Amount,'#,###,###,##0.00') ,
+    [ExchangeRate] = Iif(Ldeb.Exchange=0,'',FORMAT(Ldeb.Exchange,'###.00')),
+    [titletaxrate] = CONCAT( Ldeb.taxrate , ' %TAX'),
+    [taxrate] = FORMAT(Ldeb.tax,'#,##0.00') ,
+    [total] = FORMAT(Ldeb.Amount+Ldeb.Tax,'#,##0.00'),
+    [Purchaser] = dbo.getpass1(Ldeb.Handle)+ '/' +  dbo.getpass1(Ldeb.SMR)					
 from DBO.LocalDebit Ldeb WITH (NOLOCK) 
-LEFT JOIN dbo.factory F WITH (NOLOCK) 
-ON  F.ID = Ldeb.factoryid
-LEFT JOIN dbo.LocalSupp L WITH (NOLOCK) 
-ON  L.ID = Ldeb.LocalSuppID
-LEFT JOIN dbo.localdebit_detail Ldetail WITH (NOLOCK) 
-ON  Ldetail.ID = Ldeb.ID
+LEFT JOIN dbo.factory F WITH (NOLOCK) ON  F.ID = Ldeb.factoryid
+LEFT JOIN dbo.LocalSupp L WITH (NOLOCK) ON  L.ID = Ldeb.LocalSuppID
+LEFT JOIN dbo.localdebit_detail Ldetail WITH (NOLOCK) ON  Ldetail.ID = Ldeb.ID
 outer apply
 (
 	select poid =
@@ -598,33 +604,38 @@ outer apply
 	),1,1,'')
 )poids
 where Ldeb.ID= @ID";
-            result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
-            if (!result) { this.ShowErr(sqlcmd, result); }
-            string Barcode = dtDetail.Rows[0]["ID"].ToString();
-            string FROM = dtDetail.Rows[0]["FROM"].ToString();
-            string title = dtDetail.Rows[0]["nameEn"].ToString();
-            string titletaxrate = dtDetail.Rows[0]["titletaxrate"].ToString();
+
+            MyUtility.Check.Seek(sqlSubject, pars, out drSubject);
+
+            string Barcode = drSubject["ID"].ToString();
+            string FROM = drSubject["FROM"].ToString();
+            string title = drSubject["nameEn"].ToString();
+            string titletaxrate = drSubject["titletaxrate"].ToString();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Barcode", Barcode));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FROM", FROM));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("title", title));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("titletaxrate", titletaxrate));
-               
-            // 傳 list 資料            
-            List<P36_PrintData> data = dtDetail.AsEnumerable()
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", drSubject["Supplier"].ToString()));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("No", drSubject["ID"].ToString()));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SP", drSubject["SP"].ToString()));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Subject", drSubject["Subject"].ToString()));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("DESC", drSubject["DESC"].ToString()));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Currencyid", drSubject["Currencyid"].ToString()));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Amount", drSubject["Amount"].ToString()));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ExchangeRate", drSubject["ExchangeRate"].ToString()));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("taxrate", drSubject["taxrate"].ToString()));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("total", drSubject["total"].ToString()));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Purchaser", drSubject["Purchaser"].ToString()));
+
+            // 傳 list 資料     
+            List<P36_PrintData> data = this.DetailDatas
                 .Select(row1 => new P36_PrintData()
                 {
-                    Supplier = row1["Supplier"].ToString(),
-                    No = row1["ID"].ToString(),
-                    SP = row1["poid"].ToString(),
-                    currencyid = row1["Currencyid"].ToString(),
-                    Subject = row1["Subject"].ToString(),
-                    DESC = row1["Description"].ToString(),
-                    Amount = row1["Amount"].ToString(),
-                    Exchange = row1["ExchangeRate"].ToString(),
-                    taxrate = row1["taxrate"].ToString(),
-                    Total = row1["total"].ToString(),
-                    Purchaser = row1["Purchaser"].ToString()
-                
+                    OrderID = row1["OrderID"].ToString(),
+                    AffectQty = row1["Qty"].ToString(),
+                    Reason = row1["reason_desc"].ToString(),
+                    Desc = row1["description"].ToString()
+
                 }).ToList();
 
             report.ReportDataSource = data;
@@ -647,7 +658,7 @@ where Ldeb.ID= @ID";
             // 開啟 report view
             var frm = new Sci.Win.Subs.ReportView(report);
             //有按才更新列印日期printdate。
-            frm.viewer.Print += (s, eArgs) => { var result3 = DBProxy.Current.Execute(null, string.Format("update localdebit set printdate=getdate() where id = '{0}'", CurrentMaintain["id"])); }; 
+            frm.viewer.Print += (s, eArgs) => { var result3 = DBProxy.Current.Execute(null, string.Format("update localdebit set printdate=getdate() where id = '{0}'", CurrentMaintain["id"])); };
             if (MdiParent != null) frm.MdiParent = MdiParent;
             frm.Show();
 
