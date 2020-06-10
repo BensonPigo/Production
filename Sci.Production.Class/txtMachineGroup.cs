@@ -61,7 +61,7 @@ namespace Sci.Production.Class
     }
     public class celltxtMachineGroup : DataGridViewGeneratorTextColumnSettings
     {
-        public static DataGridViewGeneratorTextColumnSettings GetGridCell(string function = "")
+        public static DataGridViewGeneratorTextColumnSettings GetGridCell()
         {
             ////pur 為ture 表示需判斷PurchaseFrom
             celltxtMachineGroup ts = new celltxtMachineGroup();
@@ -113,28 +113,6 @@ namespace Sci.Production.Class
                 }
 
             };
-
-            if (function == "IE_P01")
-            {
-                ts.CellEditable += (s, e) =>
-                {
-                    DataGridView grid = ((DataGridViewColumn)s).DataGridView;
-                    // Parent form 若是非編輯狀態就 return 
-                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
-                    // 右鍵彈出功能
-                    DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
-                    bool isLocalStyle = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"SELECT LocalStyle FROM Style WHERE ID='{row["StyleID"]}' AND SeasonID='{row["SeasonID"]}' AND BrandID='{row["BrandID"]}'"));
-
-                    if (isLocalStyle)
-                    {
-                        e.IsEditable = true;
-                    }
-                    else
-                    {
-                        e.IsEditable = false;
-                    }
-                };
-            }
             return ts;
         }
 
