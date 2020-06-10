@@ -6,71 +6,34 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>2.5cm</Width>
+              <Width>2.36759cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.19902cm</Width>
+              <Width>1.6511cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.48253cm</Width>
+              <Width>9.42588cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>9.25731cm</Width>
+              <Width>1.25314cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.08457cm</Width>
+              <Width>1.37129cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.20272cm</Width>
+              <Width>2.43911cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.27054cm</Width>
+              <Width>3.13761cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>4.03457cm</Width>
-            </TablixColumn>
-            <TablixColumn>
-              <Width>2.06767cm</Width>
+              <Width>2.23624cm</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
               <Height>0.75875cm</Height>
               <TablixCells>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox7">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>Color</Value>
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Center</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox7</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>Double</Style>
-                        </Border>
-                        <BottomBorder>
-                          <Color>Black</Color>
-                        </BottomBorder>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
                 <TablixCell>
                   <CellContents>
                     <Textbox Name="Textbox89">
@@ -316,49 +279,6 @@
             <TablixRow>
               <Height>0.75875cm</Height>
               <TablixCells>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox8">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Fields!Color.Value</Value>
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox8</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                        <TopBorder>
-                          <Style>None</Style>
-                        </TopBorder>
-                        <BottomBorder>
-                          <Style>None</Style>
-                        </BottomBorder>
-                        <LeftBorder>
-                          <Color>Black</Color>
-                          <Style>Double</Style>
-                        </LeftBorder>
-                        <RightBorder>
-                          <Color>Black</Color>
-                          <Style>Double</Style>
-                        </RightBorder>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
                 <TablixCell>
                   <CellContents>
                     <Textbox Name="Color">
@@ -711,49 +631,6 @@
             <TablixRow>
               <Height>0.09729cm</Height>
               <TablixCells>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox9">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value />
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox9</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                        <TopBorder>
-                          <Style>None</Style>
-                        </TopBorder>
-                        <BottomBorder>
-                          <Style>Double</Style>
-                        </BottomBorder>
-                        <LeftBorder>
-                          <Color>Black</Color>
-                          <Style>Double</Style>
-                        </LeftBorder>
-                        <RightBorder>
-                          <Color>Black</Color>
-                          <Style>Double</Style>
-                        </RightBorder>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
                 <TablixCell>
                   <CellContents>
                     <Textbox Name="Textbox187">
@@ -1112,14 +989,13 @@
             <TablixMember />
             <TablixMember />
             <TablixMember />
-            <TablixMember />
           </TablixMembers>
         </TablixColumnHierarchy>
         <TablixRowHierarchy>
           <TablixMembers>
             <TablixMember>
               <TablixHeader>
-                <Size>4.16285cm</Size>
+                <Size>3.87985cm</Size>
                 <CellContents>
                   <Textbox Name="Textbox114">
                     <CanGrow>true</CanGrow>
@@ -1170,7 +1046,7 @@
                 </SortExpression>
               </SortExpressions>
               <TablixHeader>
-                <Size>4.16285cm</Size>
+                <Size>3.87985cm</Size>
                 <CellContents>
                   <Textbox Name="RefNo1">
                     <CanGrow>true</CanGrow>
@@ -1233,7 +1109,7 @@
         <Top>0.17639cm</Top>
         <Left>0.21506cm</Left>
         <Height>1.61479cm</Height>
-        <Width>30.26178cm</Width>
+        <Width>27.76178cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -1260,7 +1136,7 @@
       </RightBorder>
     </Style>
   </Body>
-  <Width>11.99876in</Width>
+  <Width>11.01959in</Width>
   <Page>
     <PageHeader>
       <Height>4.70896cm</Height>
