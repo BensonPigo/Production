@@ -357,7 +357,7 @@ BEGIN
 		And (@MDivisionID = '' or Factory.MDivisionID = @MDivisionID)
 		And (@Fty = '' or Factory.ID = @Fty) -- PMS這才有
 		And (@Zone = '' or Factory.Zone = @Zone)
-		and (@HideFoundry = 0 or (@HideFoundry = 1 and Foundry = 0))
+		and (@HideFoundry = 0 or (@HideFoundry = 1 and isnull(Foundry,0) = 0))
 		AND Factory.IsProduceFty = 1
 
 		if(@CalculateByBrand = 0)
@@ -501,7 +501,7 @@ BEGIN
 		And (@MDivisionID = '' or Factory.MDivisionID = @MDivisionID)
 		And (@Fty = '' or Factory.ID = @Fty) -- PMS這才有
 		And (@Zone = '' or Factory.Zone = @Zone)	
-		and (@HideFoundry = 0 or (@HideFoundry = 1 and Foundry = 0))
+		and (@HideFoundry = 0 or (@HideFoundry = 1 and isnull(Foundry,0) = 0))
 		AND Factory.IsProduceFty = 1
 
 		if(@CalculateByBrand = 0)
