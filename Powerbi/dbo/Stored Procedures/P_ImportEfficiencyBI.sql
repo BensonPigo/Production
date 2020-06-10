@@ -2,14 +2,18 @@
 
 
 CREATE PROCEDURE [dbo].[P_ImportEfficiencyBI]
-	(
-	 @LinkServerName varchar(50)
-	)
+
+@StartDate date,
+@EndDate date,
+@LinkServerName varchar(50)
+
 AS
 
 BEGIN
 
-declare @SewingoutputDate as varchar(20) = convert(nvarchar(20) ,getdate(),120) 
+declare @SDate as varchar(20) = CAST(@StartDate AS varchar) 
+declare @EDate as varchar(20) = CAST(@EndDate AS varchar)   
+
 declare @SqlCmd_Combin nvarchar(max) =''
 declare @SqlCmd1 nvarchar(max) ='';
 declare @SqlCmd2 nvarchar(max) ='';
@@ -71,10 +75,9 @@ where 1=1
 and s.Shift <>''O''
 --排除non sister的資料o.LocalOrder = 1 and o.SubconInSisterFty = 0
 and((o.LocalOrder <> 1 and o.SubconInType not in (1, 2)) or (o.LocalOrder = 1 and o.SubconInType <> 0))
-and (s.OutputDate between CAST(DATEADD(day,-60,'''+@SewingoutputDate+''') AS date) and  CAST(DATEADD(day,-1,'''+@SewingoutputDate+''') AS date) 
-	OR cast(s.EditDate as date) between CAST(DATEADD(day,-60,'''+@SewingoutputDate+''') AS date) and  CAST(DATEADD(day,-1,'''+@SewingoutputDate+''') AS date) )
+and (s.OutputDate between '''+@SDate+''' and  '''+@EDate+'''
+	OR cast(s.EditDate as date) between '''+@SDate+''' and  '''+@EDate+''' )
 and f.Type != ''S''
--- AND CAST('''+@SewingoutputDate+'''  AS date)
 ';
 
 SET @SqlCmd2 = '
@@ -325,7 +328,7 @@ WHEN NOT MATCHED THEN
 
 delete t
 from P_SewingDailyOutput t WITH (NOLOCK)
-where t.OutputDate between CAST(DATEADD(day,-60,'''+@SewingoutputDate+''') AS date) and  CAST(DATEADD(day,-1,'''+@SewingoutputDate+''') AS date) 
+where t.OutputDate between '''+@SDate+''' and  '''+@EDate+'''
 and exists (select OrderID from #Final f where t.FactoryID=f.FactoryID  AND t.MDivisionID=f.MDivisionID ) 
 and not exists (
 select OrderID from #Final s 

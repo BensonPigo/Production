@@ -1,11 +1,13 @@
-﻿-- =============================================
--- Create date: 2020/03/20
+﻿
+-- =============================================
 -- Description:	Data Query Logic by PMS.PPIC R01, Import Data to P_SewingLineSchedule
 -- =============================================
 CREATE PROCEDURE [dbo].[P_ImportSewingLineScheduleData]
-(
-	 @LinkServerName varchar(50)
-)
+
+@StartDate Date,
+@EndDate Date,
+@LinkServerName varchar(50)
+
 AS
 BEGIN
 
@@ -13,18 +15,15 @@ BEGIN
 
 declare @SqlCmd_Combin nvarchar(max) =''
 declare @SqlCmd1 nvarchar(max) ='';
-declare @StartDate Date = '2020/01/01'--dateadd(DAY,-30,getdate())
-declare @EndDate Date = dateadd(YEAR,20,getdate())
+declare @SDate varchar(20) = cast(@StartDate as varchar)
+declare @EDate varchar(20) = cast(@EndDate as varchar)
 --注意，Store Procedure 產生出來的欄位順序，必須與下列INSERT的順序一致
 SET @SqlCmd1 = 
 '
-declare @StartDate Date = ''2020/01/01''--dateadd(DAY,-30,getdate())
-declare @EndDate Date = dateadd(year,20,getdate())
-
-SELECT * into #Final FROM OPENQUERY(['+@LinkServerName+'], ''exec production.dbo.GetSewingLineScheduleData '''''+ CAST(@StartDate as VARCHAR(100))+'''''
-,'''''+ CAST(@EndDate as VARCHAR(100))+'''''
+SELECT * into #Final FROM OPENQUERY(['+@LinkServerName+'], ''exec production.dbo.GetSewingLineScheduleData '''''+ @SDate+'''''
+,'''''+ @EDate +'''''
 '')
-where SewingDay between @StartDate and @EndDate
+where SewingDay between '''+@SDate+'''  and '''+@EDate+'''
 
 MERGE INTO P_SewingLineSchedule t --要被insert/update/delete的表
 USING #Final s --被參考的表
@@ -195,7 +194,7 @@ WHEN NOT MATCHED BY TARGET THEN
 	s.New_SwitchTime,
 	s.FirststCuttingOutputDate	
 	)
-WHEN NOT MATCHED BY SOURCE AND T.SewingDay between @StartDate and @EndDate 
+WHEN NOT MATCHED BY SOURCE AND T.SewingDay between '''+@SDate+''' and '''+@EDate+'''
 	and t.MDivisionID in (select distinct MDivisionID from #Final ) THEN
 DELETE ;
 

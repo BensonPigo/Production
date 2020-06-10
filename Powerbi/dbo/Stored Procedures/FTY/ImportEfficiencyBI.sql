@@ -3,16 +3,16 @@
 -- Description:	Data Query Logic by PMS.Sewing R04, Import Data to P_SewingDailyOutput
 -- =============================================
 CREATE PROCEDURE [dbo].[ImportEfficiencyBI]
-	(
-	 @OutputDate datetime
-	)
+
+@StartDate date,
+@EndDate date
+
 AS
 
 BEGIN
---select name from sys.servers WHERE Name Like 'PMS\pmsdb\%'
---declare	 @OutputDate datetime = getdate(), @ServerName varchar(50) = 'PMS\pmsdb\PH1'
 
-declare @SewingoutputDate as varchar(20) = convert(nvarchar(20) ,@OutputDate,120) 
+declare @SDate as varchar(20) = CAST(@StartDate AS varchar) 
+declare @EDate as varchar(20) = CAST(@EndDate AS varchar)   
 
 --根據條件撈基本資料
 select s.id
@@ -94,8 +94,8 @@ where 1=1
 and s.Shift <>'O'
 --�ư�non sister�����o.LocalOrder = 1 and o.SubconInSisterFty = 0
 and((o.LocalOrder <> 1 and o.SubconInType not in (1, 2)) or (o.LocalOrder = 1 and o.SubconInType <> 0))
-and (s.OutputDate between CAST(DATEADD(day,-60, @SewingoutputDate) AS date) and  CAST(@SewingoutputDate AS date) 
-	OR cast(s.EditDate as date) between CAST(DATEADD(day,-60, @SewingoutputDate) AS date) and  CAST(@SewingoutputDate AS date) )
+and (s.OutputDate between @SDate and  @EDate
+	OR cast(s.EditDate as date) between @SDate and @EDate )
 and f.Type != 'S'
 
 
@@ -312,7 +312,7 @@ WHEN NOT MATCHED THEN
 
 delete t
 from P_SewingDailyOutput t 
-where t.OutputDate between CAST(DATEADD(day,-60, @SewingoutputDate) AS date) and  CAST(@SewingoutputDate AS date) 
+where t.OutputDate between @SDate and  @EDate
 and exists (select OrderID from #Final f where t.FactoryID=f.FactoryID  AND t.MDivisionID=f.MDivisionID ) 
 and not exists (
 select OrderID from #Final s 
