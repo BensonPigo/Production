@@ -1602,7 +1602,7 @@ namespace Sci.Production.Planning
                     int shortageStart = sheetStart;
                     wks.Cells[sheetStart, 3].Value = string.Format("{0} Shortage.", mdivisionID);
                     idx = 0;
-                    DataTable dtShortage = SafeGetDt(dt1, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", countryID, mdivisionID));
+                    DataTable dtShortage = SafeGetDt(dt1, $"CountryID = '{countryID}' And MDivisionID = '{mdivisionID}'" + filterZoneMdivisionAdd);
                     for (int mon = intMonth; mon < intMonth + 6; mon++)
                     {
                         DataRow[] rows = dtShortage.Select(string.Format("MONTH = '{0}'", GetCurrMonth(intYear, mon)));
