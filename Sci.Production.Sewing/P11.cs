@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
@@ -12,10 +9,6 @@ using System.Linq;
 using System.Transactions;
 using System.Data.SqlClient;
 using Sci.Win.Tools;
-using System.Runtime.InteropServices;
-using Sci.Production.Class;
-using System.IO;
-using Sci.Win.Tems;
 
 namespace Sci.Production.Sewing
 {
@@ -750,19 +743,21 @@ end
 
             try
             {
-                using (TransactionScope scope = new TransactionScope())
+                TransactionOptions tOpt = new TransactionOptions();
+                tOpt.Timeout = new TimeSpan(0, 5, 0);
+                using (TransactionScope scope = new TransactionScope(TransactionScopeOption.RequiresNew, tOpt))
                 {
-                    if (!this.UpdateSewingOutputTransfer())
+                    if (!this.UpdateSewingOutputTransfer(scope))
                     {
                         return;
                     }
 
-                    if (!this.TransferQty())
+                    if (!this.TransferQty(scope))
                     {
                         return;
                     }
 
-                    if (!this.UpdateMESInspection())
+                    if (!this.UpdateMESInspection(scope))
                     {
                         return;
                     }
@@ -779,7 +774,7 @@ end
             MyUtility.Msg.InfoBox("Complete!");
         }
 
-        private bool UpdateSewingOutputTransfer()
+        private bool UpdateSewingOutputTransfer(TransactionScope scope)
         {
             string sqlcmd = $@"
 update SewingOutputTransfer set
@@ -800,6 +795,7 @@ inner join #tmp t on t.ukey = sotd.ukey and sotd.id = t.id
             DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, string.Empty, sqlcmd, out dt);
             if (!result)
             {
+                scope.Dispose();
                 this.ShowErr(result);
                 return false;
             }
@@ -807,7 +803,7 @@ inner join #tmp t on t.ukey = sotd.ukey and sotd.id = t.id
             return true;
         }
 
-        private bool TransferQty()
+        private bool TransferQty(TransactionScope scope)
         {
             #region 準備分配資料與計算 轉走Qty, 轉至Qty
             string sqlcmd = $@"
@@ -860,6 +856,7 @@ drop table #tmp,#tmpFromG,#tmpByIDCanTransQty,#tmpFromToG,#tmpUp
             DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, string.Empty, sqlcmd, out dt);
             if (!result)
             {
+                scope.Dispose();
                 this.ShowErr(result);
                 return false;
             }
@@ -899,6 +896,7 @@ drop table #tmp,#tmpFromG,#tmpByIDCanTransQty,#tmpFromToG,#tmpUp
             }
             catch (Exception e)
             {
+                scope.Dispose();
                 this.ShowErr(e);
                 return false;
             }
@@ -927,6 +925,7 @@ DEALLOCATE CUR_SewingOutput_Detail";
             result = MyUtility.Tool.ProcessWithDatatable(toDt, string.Empty, sqlcmd, out dto);
             if (!result)
             {
+                scope.Dispose();
                 this.ShowErr(result);
                 return false;
             }
@@ -959,6 +958,7 @@ where t.TransferredQty > 0 -- 找到有更新第3層對應第2層更新
             result = MyUtility.Tool.ProcessWithDatatable(fromDt, string.Empty, sqlcmd, out dto);
             if (!result)
             {
+                scope.Dispose();
                 this.ShowErr(result);
                 return false;
             }
@@ -1080,6 +1080,7 @@ where so.id in(select distinct id from #tmp t where t.WillTransferQty > 0 )
             result = MyUtility.Tool.ProcessWithDatatable(toDt, string.Empty, sqlcmd, out dto);
             if (!result)
             {
+                scope.Dispose();
                 this.ShowErr(result);
                 return false;
             }
@@ -1091,6 +1092,7 @@ where so.id in(select distinct id from #tmp t where t.WillTransferQty > 0 )
             result = MyUtility.Tool.ProcessWithDatatable(toDt, "ID,WillTransferQty", sqlcmd, out dto);
             if (!result)
             {
+                scope.Dispose();
                 this.ShowErr(result);
                 return false;
             }
@@ -1109,6 +1111,7 @@ where SD.QAQty <> SDD.SDD_Qty and SD.ID in (select distinct t.id from #tmp t whe
             result = MyUtility.Tool.ProcessWithDatatable(toDt, "ID,WillTransferQty", sqlcmd, out dto);
             if (!result)
             {
+                scope.Dispose();
                 this.ShowErr(result);
                 return false;
             }
@@ -1128,6 +1131,7 @@ group by ID
             result = MyUtility.Tool.ProcessWithDatatable(toDt, "ID,WillTransferQty", sqlcmd, out sumQaQty);
             if (!result)
             {
+                scope.Dispose();
                 this.ShowErr(result);
                 return false;
             }
@@ -1143,6 +1147,7 @@ group by ID
                 result = DBProxy.Current.Select(null, sqlcmd, out dtid);
                 if (!result)
                 {
+                    scope.Dispose();
                     this.ShowErr(result);
                     return false;
                 }
@@ -1152,6 +1157,7 @@ group by ID
                 result = DBProxy.Current.Select(null, sqlcmd, out dtid);
                 if (!result)
                 {
+                    scope.Dispose();
                     this.ShowErr(result);
                     return false;
                 }
@@ -1181,6 +1187,7 @@ inner join #tmp t on t.[UKey] = sod.[UKey]
                 result = MyUtility.Tool.ProcessWithDatatable(dtid, string.Empty, sqlcmd, out dto);
                 if (!result)
                 {
+                    scope.Dispose();
                     this.ShowErr(result);
                     return false;
                 }
@@ -1208,6 +1215,7 @@ inner join SewingOutput so with(nolock) on so.id = t.id
             result = MyUtility.Tool.ProcessWithDatatable(toDt, "ID,WillTransferQty", sqlcmd, out dto);
             if (!result)
             {
+                scope.Dispose();
                 this.ShowErr(result);
                 return false;
             }
@@ -1294,7 +1302,7 @@ inner join SewingOutput so with(nolock) on so.id = t.id
             return true;
         }
 
-        private bool UpdateMESInspection()
+        private bool UpdateMESInspection(TransactionScope scope)
         {
             // 先準備to OrderID的styleUkey
             string sqlcmd = $@"
@@ -1310,6 +1318,7 @@ inner join orders o with(nolock) on o.id = t.ToOrderID
             DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, string.Empty, sqlcmd, out dt);
             if (!result)
             {
+                scope.Dispose();
                 this.ShowErr(result);
                 return false;
             }
@@ -1340,6 +1349,7 @@ and AddDate in (
                 result = DBProxy.Current.Execute("ManufacturingExecution", sqlcmd);
                 if (!result)
                 {
+                    scope.Dispose();
                     this.ShowErr(result);
                     return false;
                 }
