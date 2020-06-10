@@ -729,9 +729,18 @@ WHERE OrderID = '{this.CurrentMaintain["OrderID"]}'
                 if (this.tabs.SelectedIndex != 0)
                 {
                     bool canConfrim = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanConfirm");
+                    bool canUnConfrim = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanUnConfirm");
+                    bool canNew = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanNew");
+                    bool canEdit = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanEdit");
+                    bool canDelete = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanDelete");
+
+
+                    this.toolbar.cmdNew.Enabled = !this.EditMode  && canNew;
+                    this.toolbar.cmdEdit.Enabled = !this.EditMode &&  canEdit;
+                    this.toolbar.cmdDelete.Enabled = !this.EditMode && canDelete;
 
                     this.toolbar.cmdConfirm.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "New" && canConfrim;
-                    this.toolbar.cmdUnconfirm.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Confirmed" && canConfrim;
+                    this.toolbar.cmdUnconfirm.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Confirmed" && canUnConfrim;
 
                     this.toolbar.cmdConfirm.Visible = true;
                     this.toolbar.cmdUnconfirm.Visible = true;
