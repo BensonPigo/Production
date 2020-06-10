@@ -503,17 +503,17 @@ outer apply(
 where 1=1
 {where}
 
-select b.Orderid,b.Article,b.Sizecode,bd.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
+select b.Orderid,b.Article,bd.Sizecode,bd.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
 into #tmpBundleNo
 from Bundle b with(nolock)
-inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID and b.Article = o.Article and b.Sizecode = o.SizeCode
 inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
+inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID and b.Article = o.Article and bd.Sizecode = o.SizeCode
+
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
 	from SubProcess s
 	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1
 )s
-
 
 select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,
 	NoBundleCardAfterSubprocess= case when SubProcessID = 'Loading' Or SubProcessID = 'SEWINGLINE' then isnull(x.NoBundleCardAfterSubprocess,0) else 0 end,
@@ -948,7 +948,7 @@ where o.ID ='{drSelected["OrderID"]}' and oq.Article='{drSelected["Article"]}' a
 
 select   b.Orderid
         ,b.Article
-        ,b.Sizecode
+        ,bd.Sizecode
         ,bd.BundleNo
         ,s.SubProcessID
         ,s.ShowSeq
@@ -962,8 +962,8 @@ select   b.Orderid
 		,[FabricKind] = FabricKind.val
 into #tmpBundleNo
 from Bundle b with(nolock)
-inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID and b.Article = o.Article and b.Sizecode = o.SizeCode
 inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
+inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID and b.Article = o.Article and bd.Sizecode = o.SizeCode
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
 	from SubProcess s
