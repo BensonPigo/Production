@@ -12,7 +12,7 @@
     [Model]                VARCHAR (25)   CONSTRAINT [DF_Orders_Model] DEFAULT ('') NULL,
     [HsCode1]              VARCHAR (14)   CONSTRAINT [DF_Orders_HsCode1] DEFAULT ('') NULL,
     [HsCode2]              VARCHAR (14)   CONSTRAINT [DF_Orders_HsCode2] DEFAULT ('') NULL,
-    [PayTermARID]          VARCHAR (10)    CONSTRAINT [DF_Orders_PayTermARID] DEFAULT ('') NULL,
+    [PayTermARID]          VARCHAR (10)   CONSTRAINT [DF_Orders_PayTermARID] DEFAULT ('') NULL,
     [ShipTermID]           VARCHAR (5)    CONSTRAINT [DF_Orders_ShipTermID] DEFAULT ('') NULL,
     [ShipModeList]         VARCHAR (30)   CONSTRAINT [DF_Orders_ShipModeList] DEFAULT ('') NULL,
     [CdCodeID]             VARCHAR (6)    CONSTRAINT [DF_Orders_CdCodeID] DEFAULT ('') NULL,
@@ -85,7 +85,7 @@
     [SizeRange]            NVARCHAR (MAX) CONSTRAINT [DF_Orders_SizeRange] DEFAULT ('') NULL,
     [MTLComplete]          BIT            CONSTRAINT [DF_Orders_MTLComplete] DEFAULT ((0)) NULL,
     [SpecialMark]          VARCHAR (5)    CONSTRAINT [DF_Orders_SpecialMark] DEFAULT ('') NULL,
-    [OutstandingRemark]    NVARCHAR (60)  CONSTRAINT [DF_Orders_OutstandingRemark] DEFAULT ('') NULL,
+    [OutstandingRemark]    NVARCHAR (MAX) CONSTRAINT [DF_Orders_OutstandingRemark] DEFAULT ('') NULL,
     [OutstandingInCharge]  VARCHAR (10)   CONSTRAINT [DF_Orders_OutstandingInCharge] DEFAULT ('') NULL,
     [OutstandingDate]      DATETIME       NULL,
     [OutstandingReason]    VARCHAR (5)    CONSTRAINT [DF_Orders_OutstandingReason] DEFAULT ('') NULL,
@@ -150,22 +150,25 @@
     [DRYCTN]               INT            CONSTRAINT [DF_Orders_DRYCTN] DEFAULT ((0)) NOT NULL,
     [PackErrCTN]           INT            CONSTRAINT [DF_Orders_PackErrCTN] DEFAULT ((0)) NULL,
     [ForecastSampleGroup]  VARCHAR (1)    CONSTRAINT [DF_Orders_ForecastSampleGroup] DEFAULT ('') NULL,
-    [DyeingLoss] NUMERIC(3) NULL DEFAULT ((0)), 
-    [SubconInType] VARCHAR NULL, 
-    [LastProductionDate] DATE NULL, 
-    [EstPODD] DATE NULL, 
-    [AllowanceComboID] VARCHAR(13) NULL, 
-    [ChangeMemoDate] DATE NULL, 
-    [BuyBack] VARCHAR(20) NULL, 
-    [BuyBackOrderID] VARCHAR(13) NULL, 
-    [ForecastCategory] VARCHAR NULL DEFAULT (''), 
-    [OnSiteSample] BIT NULL DEFAULT ((0)), 
-    [PulloutCmplDate] DATE NULL, 
-    [NeedProduction] BIT NULL DEFAULT ((0)), 
-    [KeepPanels] BIT NULL DEFAULT (0), 
-    [IsBuyBack] BIT NOT NULL DEFAULT ((0)), 
+    [DyeingLoss]           NUMERIC (3)    DEFAULT ((0)) NULL,
+    [SubconInType]         VARCHAR (1)    NULL,
+    [LastProductionDate]   DATE           NULL,
+    [EstPODD]              DATE           NULL,
+    [AirFreightByBrand]    BIT            DEFAULT ((0)) NULL,
+    [AllowanceComboID]     VARCHAR (13)   NULL,
+    [ChangeMemoDate]       DATE           NULL,
+    [BuyBack]              VARCHAR (20)   NULL,
+    [BuyBackOrderID]       VARCHAR (13)   NULL,
+    [ForecastCategory]     VARCHAR (1)    DEFAULT ('') NULL,
+    [OnSiteSample]         BIT            DEFAULT ((0)) NULL,
+    [PulloutCmplDate]      DATE           NULL,
+    [NeedProduction]       BIT            DEFAULT ((0)) NULL,
+    [IsBuyBack]            BIT            DEFAULT ((0)) NOT NULL,
+    [KeepPanels]           BIT            DEFAULT ((0)) NULL,
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -804,19 +807,25 @@ GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CFA箱數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CfaCTN';
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'除溼室箱數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'DRYCTN';
+
+
 
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'預估單分類', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'ForecastCategory';
 
+
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'PulloutComplete 最後的更新時間',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Orders',
-    @level2type = N'COLUMN',
-    @level2name = N'PulloutCmplDate'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'PulloutComplete 最後的更新時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'PulloutCmplDate';
+
+
+GO
+CREATE NONCLUSTERED INDEX [IDX_Orders_MES_EndlineR01]
+    ON [dbo].[Orders]([CustPONo] ASC, [StyleUkey] ASC)
+    INCLUDE([StyleUnit]);
+
