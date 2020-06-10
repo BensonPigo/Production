@@ -948,7 +948,7 @@ where o.ID ='{drSelected["OrderID"]}' and oq.Article='{drSelected["Article"]}' a
 
 select   b.Orderid
         ,b.Article
-        ,b.Sizecode
+        ,bd.Sizecode
         ,bd.BundleNo
         ,s.SubProcessID
         ,s.ShowSeq
@@ -962,8 +962,8 @@ select   b.Orderid
 		,[FabricKind] = FabricKind.val
 into #tmpBundleNo
 from Bundle b with(nolock)
-inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID and b.Article = o.Article and b.Sizecode = o.SizeCode
 inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
+inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID and b.Article = o.Article and bd.Sizecode = o.SizeCode
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
 	from SubProcess s
