@@ -116,23 +116,41 @@ namespace Sci.Production.PPIC
             #region 組SQL
 
             sqlcmd.Append(string.Format(
-                @"select o.MDivisionID
-	                  ,o.FactoryID
-	                  ,o.ID
-	                  ,ob.OrderIDFrom
-	                  ,o.StyleID
-	                  ,o.SeasonID
-	                  ,o.BrandID
-	                  ,o.BuyerDelivery
-	                  ,obq.Article
-	                  ,obq.SizeCode
-	                  ,obq.Qty
-	                  ,[SewingOutputQty] = dbo.getMinCompleteSewQty(o.ID, obq.Article, obq.SizeCode)
-                  from Order_BuyBack ob
-                  inner join Orders o on ob.ID = o.ID
-                  inner join Order_BuyBack_Qty obq on obq.ID = ob.ID and obq.OrderIDFrom = ob.OrderIDFrom
-                  where 1=1
-                  {0}",
+                @"
+select
+    o.MDivisionID
+	,o.FactoryID
+	,o.ID
+	,ob.OrderIDFrom
+	,[Cancel Still need Prod] = 
+		case when o.junk=1 and o.needproduction=1 then 'Y'
+			 when o.junk=1 and o.keeppanels=1then 'K'
+			 when o.junk=1 and o.needproduction<>1 and o.keeppanels <> 1 then 'N'
+			 else ''
+			 end
+	,o.StyleID
+    ,o.StyleUnit
+	,o.SeasonID
+	,o.BrandID
+	,o.BuyerDelivery
+	,obq.Article
+	,obq.SizeCode
+	,oq.Qty     
+	,[SewingOutputQty] = isnull(dbo.getMinCompleteSewQty(o.ID, obq.Article, obq.SizeCode),0)
+	,obq.Qty    
+	,FromSPOrderQty.Qty 
+	,[From SP# Sewing Qty] = isnull(dbo.[getMinCompleteSewQty](ob.OrderIDFrom, obq.Article, obq.SizeCode),0) 
+	,[Transferred Qty] = isnull(dbo.[getMinCompleteSewTransferQty](ob.OrderIDFrom,o.ID, obq.Article, obq.SizeCode),0)
+from Order_BuyBack ob
+inner join Orders o on ob.ID = o.ID
+inner join Order_BuyBack_Qty obq on obq.ID = ob.ID and obq.OrderIDFrom = ob.OrderIDFrom
+left join Order_Qty oq on oq.ID=o.ID and oq.Article = obq.Article and oq.SizeCode = obq.SizeCode
+outer apply (
+ select oq.Qty from order_qty ori where ori.id=ob.OrderIDFrom and ori.Article = obq.Article and ori.SizeCode = obq.SizeCode
+) FromSPOrderQty
+where 1=1
+
+{0}",
                 sqlWhere.ToString()));
             #endregion
 
@@ -157,19 +175,15 @@ namespace Sci.Production.PPIC
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R17.xltx"); // 預先開啟excel app
-            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "PPIC_R17.xltx", 1, false, null, objApp); // 將datatable copy to excel
-
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            Microsoft.Office.Interop.Excel.Application excelAPP = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R17.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "PPIC_R17.xltx", 1, false, null, excelAPP); // 將datatable copy to excel
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R17");
-            objApp.ActiveWorkbook.SaveAs(strExcelName);
-            objApp.Quit();
-            Marshal.ReleaseComObject(objApp);
-            Marshal.ReleaseComObject(objSheets);
+            excelAPP.ActiveWorkbook.SaveAs(strExcelName);
+            excelAPP.Visible = true;
 
-            strExcelName.OpenFile();
+            Marshal.ReleaseComObject(excelAPP);
             #endregion
 
             return true;
