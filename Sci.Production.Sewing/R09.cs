@@ -81,7 +81,7 @@ select distinct
 	o.MDivisionID,
 	o.FactoryID,
     oca.ID,
-    Reason = (SELECT ID + '-' + Name as Name FROM Reason WHERE ReasonTypeID = 'OMQtychange' and ID = oca.ReasonID)
+    Reason = (SELECT ID + '-' + Name as Name FROM Reason WHERE ReasonTypeID = 'OMQtychange' and ID = oca.ReasonID),
 	oca.OrderID,
 	o.StyleID,
 	o.SeasonID,

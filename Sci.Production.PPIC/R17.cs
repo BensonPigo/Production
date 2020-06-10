@@ -129,21 +129,25 @@ select
 			 else ''
 			 end
 	,o.StyleID
+    ,o.StyleUnit
 	,o.SeasonID
 	,o.BrandID
 	,o.BuyerDelivery
 	,obq.Article
 	,obq.SizeCode
-	,oq.Qty
-	,[SewingOutputQty] = dbo.getMinCompleteSewQty(o.ID, obq.Article, obq.SizeCode)
-	,obq.Qty
-	,o.Qty
-	,[From SP# Sewing Qty] = dbo.[getMinCompleteSewQty](ob.OrderIDFrom, null, null)
-	,[Transferred Qty] = dbo.[getMinCompleteSewTransferQty](ob.OrderIDFrom,o.ID,null,null)
+	,oq.Qty     
+	,[SewingOutputQty] = isnull(dbo.getMinCompleteSewQty(o.ID, obq.Article, obq.SizeCode),0)
+	,obq.Qty    
+	,FromSPOrderQty.Qty 
+	,[From SP# Sewing Qty] = isnull(dbo.[getMinCompleteSewQty](ob.OrderIDFrom, obq.Article, obq.SizeCode),0) 
+	,[Transferred Qty] = isnull(dbo.[getMinCompleteSewTransferQty](ob.OrderIDFrom,o.ID, obq.Article, obq.SizeCode),0)
 from Order_BuyBack ob
 inner join Orders o on ob.ID = o.ID
 inner join Order_BuyBack_Qty obq on obq.ID = ob.ID and obq.OrderIDFrom = ob.OrderIDFrom
 left join Order_Qty oq on oq.ID=o.ID and oq.Article = obq.Article and oq.SizeCode = obq.SizeCode
+outer apply (
+ select oq.Qty from order_qty ori where ori.id=ob.OrderIDFrom and ori.Article = obq.Article and ori.SizeCode = obq.SizeCode
+) FromSPOrderQty
 where 1=1
 
 {0}",
