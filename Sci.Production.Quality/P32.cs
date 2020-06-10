@@ -572,8 +572,9 @@ WHERE ID='{this.CurrentMaintain["OrderID"]}'  AND Seq = '{this.CurrentMaintain["
             List<string> Cartons = this.CurrentMaintain["Carton"].ToString().Split(',').ToList();
 
 
-            if (Cartons.Where(o => !MyUtility.Check.Empty(o)).Count() == 0)
+            if (Cartons.Where(o => !MyUtility.Check.Empty(o)).Count() == 0 && this.CurrentMaintain["Stage"].ToString() == "Staggered")
             {
+                MyUtility.Msg.WarningBox("Inspected Carton can't be empty!!");
                 return false;
             }
 
