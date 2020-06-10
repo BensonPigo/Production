@@ -256,8 +256,6 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             }
 
             this.numTotalSMV.Value = Convert.ToInt32(MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("SUM(SMV)", string.Empty)));
-
-            this.ChanTextColor();
         }
 
         /// <summary>
@@ -1099,16 +1097,6 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
             return base.ClickPrint();
         }
 
-        protected override void OnDetailGridAppendClick()
-        {
-            base.OnDetailGridAppendClick();
-            DataRow newrow = this.detailgrid.GetDataRow(this.detailgrid.GetSelectedRowIndex());
-            newrow["StyleID"] = this.CurrentMaintain["StyleID"].ToString();
-            newrow["SeasonID"] = this.CurrentMaintain["SeasonID"].ToString();
-            newrow["BrandID"] = this.CurrentMaintain["BrandID"].ToString();
-            
-        }
-
         // Style
         private void TxtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
@@ -1578,8 +1566,6 @@ where ID = {0}",
             {
                 this.displayCD.Value = cdCode.Rows.Count > 0 ? cdCode.Rows[0]["CdCodeID"].ToString() : string.Empty;
             }
-
-            this.ChanTextColor();
         }
 
         private void BtnDel_Click(object sender, EventArgs e)
@@ -1824,43 +1810,6 @@ where ID = {0}",
 
             }
 
-        }
-
-        private void ChanTextColor()
-        {
-
-            if (this.CurrentMaintain == null)
-            {
-
-                this.detailgrid.Columns["Frequency"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
-                this.detailgrid.Columns["SMV"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
-                this.detailgrid.Columns["MachineTypeID"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
-                this.detailgrid.Columns["MasterPlusGroup"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
-                return;
-            }
-
-            bool isLocalStyle = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"SELECT LocalStyle FROM Style WHERE ID='{this.CurrentMaintain["StyleID"]}' AND SeasonID='{this.CurrentMaintain["SeasonID"]}' AND BrandID='{CurrentMaintain["BrandID"]}'"));
-
-            this.detailgrid.Columns["Frequency"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.detailgrid.Columns["SMV"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.detailgrid.Columns["MachineTypeID"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.detailgrid.Columns["MasterPlusGroup"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
-
-            if (isLocalStyle)
-            {
-                this.detailgrid.Columns["Frequency"].DefaultCellStyle.ForeColor = System.Drawing.Color.Red;
-                this.detailgrid.Columns["SMV"].DefaultCellStyle.ForeColor = System.Drawing.Color.Red;
-                this.detailgrid.Columns["MachineTypeID"].DefaultCellStyle.ForeColor = System.Drawing.Color.Red;
-                this.detailgrid.Columns["MasterPlusGroup"].DefaultCellStyle.ForeColor = System.Drawing.Color.Red;
-            }
-
-            if (!this.EditMode)
-            {
-                this.detailgrid.Columns["Frequency"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
-                this.detailgrid.Columns["SMV"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
-                this.detailgrid.Columns["MachineTypeID"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
-                this.detailgrid.Columns["MasterPlusGroup"].DefaultCellStyle.ForeColor = System.Drawing.SystemColors.WindowText;
-            }
         }
     }
 }
