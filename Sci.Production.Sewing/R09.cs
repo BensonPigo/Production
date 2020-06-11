@@ -108,9 +108,9 @@ and IIF(oca.ToOrderID is null,'', oca.ToOrderID) <> ''
 {where}
 
 select *,
-	Balance=concat('=MAX(0,(L',
+	Balance=concat('=MAX(0,(M',
         ROW_NUMBER() over(order by 	MDivisionID,FactoryID,ID,OrderID,StyleID,SeasonID,BrandID)+1
-        ,'-K',
+        ,'-L',
         ROW_NUMBER() over(order by 	MDivisionID,FactoryID,ID,OrderID,StyleID,SeasonID,BrandID)+1,'))')	
 from #tmp
 order by MDivisionID,FactoryID,ID,OrderID,StyleID,SeasonID,BrandID
