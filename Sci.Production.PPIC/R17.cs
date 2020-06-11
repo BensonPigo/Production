@@ -123,9 +123,9 @@ select
 	,o.ID
 	,ob.OrderIDFrom
 	,[Cancel Still need Prod] = 
-		case when o.junk=1 and o.needproduction=1 then 'Y'
-			 when o.junk=1 and o.keeppanels=1then 'K'
-			 when o.junk=1 and o.needproduction<>1 and o.keeppanels <> 1 then 'N'
+		case when FromSP.junk=1 and isnull(FromSP.needproduction,0)=1 then 'Y'
+			 when FromSP.junk=1 and isnull(FromSP.keeppanels,0)=1then 'K'
+			 when FromSP.junk=1 and isnull(FromSP.needproduction,0)<>1 and isnull(FromSP.keeppanels,0) <> 1 then 'N'
 			 else ''
 			 end
 	,o.StyleID
@@ -148,6 +148,9 @@ left join Order_Qty oq on oq.ID=o.ID and oq.Article = obq.Article and oq.SizeCod
 outer apply (
  select oq.Qty from order_qty ori where ori.id=ob.OrderIDFrom and ori.Article = obq.Article and ori.SizeCode = obq.SizeCode
 ) FromSPOrderQty
+outer apply (
+ select ori.junk,ori.needproduction,ori.keeppanels from orders ori where ori.id=ob.OrderIDFrom
+) FromSP
 where 1=1
 
 {0}",
