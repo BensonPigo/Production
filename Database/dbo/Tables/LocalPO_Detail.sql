@@ -17,7 +17,7 @@
     [POID] VARCHAR(13) NULL, 
     [BuyerID] VARCHAR(8) CONSTRAINT [DF_LocalPO_Detail_BuyerID] DEFAULT ('') NULL,
     [ReasonID] VARCHAR(10) NOT NULL DEFAULT (''), 
-    CONSTRAINT [PK_LocalPO_Detail] PRIMARY KEY CLUSTERED ([Id] ASC, [Ukey] ASC)
+    CONSTRAINT [PK_LocalPO_Detail] PRIMARY KEY ([Ukey]) 
 );
 
 
