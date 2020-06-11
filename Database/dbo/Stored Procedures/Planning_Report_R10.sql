@@ -542,24 +542,26 @@ BEGIN
 
 		----(K) By Factory 最細的上下半月Capacity
 		--(L) By Factory Loading CPU
-		select a.CountryID, a.MDivisionID, a.tmpBrandFty as FactoryID, a.OrderYYMM as MONTH, b.OrderLoadingCPU as Capacity1, c.OrderLoadingCPU as Capacity2, a.FtyTmsCapa1, a.FtyTmsCapa2
+		select a.Zone, a.CountryID, a.MDivisionID, a.tmpBrandFty as FactoryID, a.OrderYYMM as MONTH, b.OrderLoadingCPU as Capacity1, c.OrderLoadingCPU as Capacity2, a.FtyTmsCapa1, a.FtyTmsCapa2
 		,a.CountryName, b.OrderShortage as OrderShortage1, c.OrderShortage as OrderShortage2
 		from (
 			select 
-				ma.CountryID,
+				Factory.Zone,
+				Factory.CountryID,
 				ma.MDivisionID,
 				tmpBrandFty,
 				OrderYYMM,
-				CountryName = ma.CountryID + '-' + Country.Alias,
+				CountryName = Factory.CountryID + '-' + Country.Alias,
 				sum(HalfLoading1) as FtyTmsCapa1,
 				sum(HalfLoading2) as FtyTmsCapa2
 			from (
-				select CountryID, MDivisionID, FactoryID, IIF(@CalculateByBrand = 1, BrandID, FactoryID) as tmpBrandFty, substring(OrderYYMM,1,6) as OrderYYMM, 0 as HalfLoading1, 0 as HalfLoading2, FactorySort from #tmpFinal UNION ALL
-				select CountryID, MDivisionID, FactoryID, IIF(@CalculateByBrand = 1, '', FactoryID) as tmpBrandFty, OrderYYMM as Month, HalfLoading1, HalfLoading2, FactorySort from #tmpFactory WHERE @CalculateByBrand = 0
+				select MDivisionID, FactoryID, IIF(@CalculateByBrand = 1, BrandID, FactoryID) as tmpBrandFty, substring(OrderYYMM,1,6) as OrderYYMM, 0 as HalfLoading1, 0 as HalfLoading2, FactorySort from #tmpFinal UNION ALL
+				select MDivisionID, FactoryID, IIF(@CalculateByBrand = 1, '', FactoryID) as tmpBrandFty, OrderYYMM as Month, HalfLoading1, HalfLoading2, FactorySort from #tmpFactory WHERE @CalculateByBrand = 0
 			) ma
-			inner join Country on ma.CountryID = Country.ID
+			inner join Factory on ma.FactoryID = Factory.ID
+			inner join Country on Factory.CountryID = Country.ID
 			where ma.tmpBrandFty in (select FactoryID from #tmpFtyList2)
-			group by ma.CountryID, ma.MDivisionID, tmpBrandFty, OrderYYMM, Country.Alias
+			group by Factory.Zone, Factory.CountryID, ma.MDivisionID, tmpBrandFty, OrderYYMM, Country.Alias
 		) a 
 		left join (
 			select 
