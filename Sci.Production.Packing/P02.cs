@@ -62,6 +62,7 @@ select a.ID
 	   , a.NNW
 	   , c.Description
        , selected = cast(0 as bit)
+       , [Balance] = a.ShipQty % a.QtyPerCTN
 	   , a.RefNoForBalance
        , [DescriptionforBalance] = c2.Description
 from PackingGuide_Detail a WITH (NOLOCK) 
@@ -186,6 +187,7 @@ order by e.Seq, f.Seq", masterID);
                 .Numeric("NW", header: "N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
                 .Numeric("GW", header: "G.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
                 .Numeric("NNW", header: "N.N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
+                .Numeric("Balance", header: "Balance", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0, iseditingreadonly: true)
                 .CellCartonItem("RefNoForBalance", header: "Ref No. for Balance", width: Widths.AnsiChars(15)).Get(out this.col_refno_Balance)
                 .Text("DescriptionforBalance", header: "Description for Balance", width: Widths.AnsiChars(20), iseditingreadonly: true);
 
