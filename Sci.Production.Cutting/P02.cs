@@ -2935,7 +2935,7 @@ where b.poid = '{0}'
         {
             DataRow dr;
             string new_FabricPanelCode = txtFabricPanelCode.Text;
-            string sqlcmd = string.Format(@"select ob.SCIRefno,f.Description ,f.WeaveTypeID
+            string sqlcmd = string.Format(@"select ob.SCIRefno,f.Description ,f.WeaveTypeID,ob.Refno
                             from Order_BoF ob 
                             left join Fabric f on ob.SCIRefno = f.SCIRefno
                              where 
@@ -2944,6 +2944,7 @@ where b.poid = '{0}'
 
             if (MyUtility.Check.Seek(sqlcmd, out dr))
             {
+                CurrentDetailData["Refno"] = dr["Refno"].ToString();
                 CurrentDetailData["SCIRefno"] = dr["SCIRefno"].ToString();
                 CurrentDetailData["MtlTypeID_SCIRefno"] = dr["WeaveTypeID"].ToString() + " / " + dr["SCIRefno"].ToString();
                 CurrentDetailData["Description"] = dr["Description"].ToString();
