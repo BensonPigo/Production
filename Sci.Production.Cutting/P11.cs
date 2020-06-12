@@ -1707,6 +1707,36 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                 MyUtility.Msg.InfoBox("Please select data first !!");
                 return;
             }
+
+            if (CutrefAy.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["item"]).Length > 20).Any())
+            {
+                DataTable wdt = CutRefTb.Select("Sel=1 and len(item) > 20").CopyToDataTable();
+                MsgGridForm m = new MsgGridForm(wdt, "Item string length can not more 20", "Warning");
+
+                m.Width = 800;
+
+                m.grid1.Columns[0].Visible = false;
+                m.grid1.Columns[2].Visible = false;
+                m.grid1.Columns[3].Visible = false;
+                m.grid1.Columns[4].Visible = false;
+                m.grid1.Columns[5].Visible = false;
+                m.grid1.Columns[6].Visible = false;
+                m.grid1.Columns[7].Width = 200;
+                m.grid1.Columns[8].Visible = false;
+                m.grid1.Columns[9].Visible = false;
+                m.grid1.Columns[10].Visible = false;
+                m.text_Find.Width = 140;
+                m.btn_Find.Location = new Point(150, 6);
+                m.btn_Find.Anchor = (AnchorStyles.Left | AnchorStyles.Top);
+                this.FormClosing += (s, args) => {
+                    if (m.Visible)
+                        m.Close();
+                };
+                m.ShowDialog(this);
+
+                return;
+            }
+
             #region 判斷Pattern(Cutpart_grid)的Artwork  不可為空
             DataRow[] findr = patternTb.Select("PatternCode<>'ALLPARTS' and (art='' or art is null)", "");
             var tmpArticleSizeTb = ArticleSizeTb.AsEnumerable();
