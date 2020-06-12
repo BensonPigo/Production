@@ -26,6 +26,10 @@ namespace Sci.Production.Warehouse
             dr_master = master;
             dt_detail = detail;
             this.Type = type;
+            if (type == 1)
+            {
+                this.Text = "P62_Detail_Detail";
+            }
         }
 
         private void sum_checkedqty()

@@ -392,24 +392,22 @@ outer apply(
                     return false;
                 }
                 CurrentMaintain["id"] = tmpId;
-
-                //assign 給detail table ID
-                DataTable tmp = (DataTable)detailgridbs.DataSource;
-
-                foreach (DataRow row in tmp.Rows)
-                {
-                    row.SetField("ID", tmpId);
-                    DataTable subDT;
-                    if (GetSubDetailDatas(row, out subDT))
-                    {
-                        foreach (DataRow ddrow in subDT.Rows)
-                        {
-                            ddrow.SetField("ID", tmpId);
-                        }
-                    }
-                }
-
             }
+
+            ////assign 給detail table ID
+            //DataTable tmp = (DataTable)detailgridbs.DataSource;
+            //foreach (DataRow row in tmp.Rows)
+            //{
+            //    row.SetField("ID", MyUtility.Convert.GetString(CurrentMaintain["id"]));
+            //    DataTable subDT;
+            //    if (GetSubDetailDatas(row, out subDT))
+            //    {
+            //        foreach (DataRow ddrow in subDT.Rows)
+            //        {
+            //            ddrow.SetField("ID", MyUtility.Convert.GetString(CurrentMaintain["id"]));
+            //        }
+            //    }
+            //}
 
             // 取BarcodeNo
             IList<DataRow> listSubDetail = new List<DataRow>();

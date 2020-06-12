@@ -61,14 +61,14 @@
             this.masterpanel.Controls.Add(this.txtRequest);
             this.masterpanel.Controls.Add(this.labelRequest);
             this.masterpanel.Controls.Add(this.labelIssueDate);
-            this.masterpanel.Controls.Add(this.dateIssueDate);
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.labelID);
-            this.masterpanel.Size = new System.Drawing.Size(1009, 102);
+            this.masterpanel.Controls.Add(this.dateIssueDate);
+            this.masterpanel.Size = new System.Drawing.Size(892, 102);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelRequest, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtRequest, 0);
@@ -80,7 +80,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 102);
-            this.detailpanel.Size = new System.Drawing.Size(1009, 341);
+            this.detailpanel.Size = new System.Drawing.Size(892, 247);
             // 
             // gridicon
             // 
@@ -88,20 +88,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1009, 341);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1009, 481);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(1009, 443);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 443);
-            this.detailbtm.Size = new System.Drawing.Size(1009, 38);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 247);
             // 
             // browse
             // 
@@ -188,7 +175,7 @@
             this.labelNotApprove.BackColor = System.Drawing.Color.Transparent;
             this.labelNotApprove.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "status", true));
             this.labelNotApprove.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.labelNotApprove.Location = new System.Drawing.Point(866, 9);
+            this.labelNotApprove.Location = new System.Drawing.Point(749, 9);
             this.labelNotApprove.Name = "labelNotApprove";
             this.labelNotApprove.Size = new System.Drawing.Size(115, 23);
             this.labelNotApprove.TabIndex = 45;
@@ -199,7 +186,7 @@
             // 
             this.btnAutoPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAutoPick.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnAutoPick.Location = new System.Drawing.Point(866, 34);
+            this.btnAutoPick.Location = new System.Drawing.Point(749, 34);
             this.btnAutoPick.Name = "btnAutoPick";
             this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
             this.btnAutoPick.TabIndex = 46;
@@ -226,8 +213,8 @@
             this.KeyField2 = "id";
             this.Name = "P62";
             this.OnLineHelpID = "Sci.Win.Tems.Input8";
-            this.SubDetailKeyField1 = "Ukey";
-            this.SubDetailKeyField2 = "Issue_SummaryUkey";
+            this.SubDetailKeyField1 = "id,Ukey";
+            this.SubDetailKeyField2 = "id,Issue_SummaryUkey";
             this.SubGridAlias = "Issue_Detail";
             this.SubKeyField1 = "id";
             this.SubKeyField2 = "Ukey";

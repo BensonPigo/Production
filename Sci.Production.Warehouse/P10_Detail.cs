@@ -24,6 +24,7 @@ namespace Sci.Production.Warehouse
             this.KeyField2 = "Issue_SummaryUkey";
             Type = type;
             RequestID = requestID;
+            if (type == 1) this.Text = "P62. Issue Fabric Detail";
         }
 
         protected override void OnSubDetailInsert(int index = -1)
