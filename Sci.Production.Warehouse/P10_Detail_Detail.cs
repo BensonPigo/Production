@@ -19,12 +19,13 @@ namespace Sci.Production.Warehouse
         DataTable dt_detail;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         protected DataTable dtFtyinventory;
-
-        public P10_Detail_Detail(DataRow master, DataTable detail)
+        int Type;
+        public P10_Detail_Detail(DataRow master, DataTable detail, int type = 0)
         {
             InitializeComponent();
             dr_master = master;
             dt_detail = detail;
+            this.Type = type;
         }
 
         private void sum_checkedqty()
@@ -67,7 +68,7 @@ with cte as
             and inqty-OutQty+AdjustQty > 0
             and p.Refno = '{2}' 
             and p.ColorID = '{3}' 
-            and a.Seq1 BETWEEN '00' AND '99'
+            {4}--and a.Seq1 BETWEEN '00' AND '99'
       Group by Dyelot
 ) 
 select 0 as selected 
@@ -93,11 +94,14 @@ from dbo.PO_Supp_Detail a WITH (NOLOCK)
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 inner join cte d on d.Dyelot=c.Dyelot
 Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 
-and a.Refno='{2}' and a.colorid='{3}' and ltrim(a.seq1) between '01' and '99'
+and a.Refno='{2}' and a.colorid='{3}' {5}--and ltrim(a.seq1) between '01' and '99'
 order by d.GroupQty DESC,c.Dyelot,balanceqty DESC", dr_master["poid"]
                                                   , Sci.Env.User.Keyword
                                                   , dr_master["Refno"]
-                                                  , dr_master["colorid"]));
+                                                  , dr_master["colorid"]
+                                                  , this.Type == 0 ? " and a.Seq1 BETWEEN '00' AND '99'" : string.Empty
+                                                  , this.Type == 0 ? " and ltrim(a.seq1) between '01' and '99'" : string.Empty
+                                                  ));
             #endregion
 
             P10_Detail.ShowWaitMessage("Data Loading....");
@@ -107,7 +111,6 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC", dr_master["poid"]
                 if (dtFtyinventory.Rows.Count == 0)
                 { MyUtility.Msg.WarningBox("Data not found!!"); }
                 listControlBindingSource1.DataSource = dtFtyinventory;
-                //dtFtyinventory.DefaultView.Sort = "dyelot,balanceqty desc";
             }
             else { ShowErr(strSQLCmd.ToString(), result); }
             P10_Detail.HideWaitMessage();
@@ -165,7 +168,6 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC", dr_master["poid"]
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            //listControlBindingSource1.EndEdit();
             gridRollNo.ValidateControl();
             DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
@@ -194,7 +196,6 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC", dr_master["poid"]
             dr2 = dtGridBS1.Select("qty <> 0 and Selected = 1");
             foreach (DataRow tmp in dr2)
             {
-                //DataRow[] findrow = dt_detail.Select(string.Format("ftyinventoryukey = {0}" , tmp["ftyinventoryukey"]));
                 DataRow[] findrow = dt_detail.Select(string.Format("poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and roll = '{3}' and dyelot = '{4}'",
                     tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString(), tmp["roll"].ToString(), tmp["dyelot"].ToString()));
 
@@ -210,7 +211,6 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC", dr_master["poid"]
                     dt_detail.ImportRow(tmp);
                 }
             }
-
 
             this.Close();
         }

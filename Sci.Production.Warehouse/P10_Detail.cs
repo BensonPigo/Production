@@ -15,21 +15,23 @@ namespace Sci.Production.Warehouse
 {
     public partial class P10_Detail : Sci.Win.Subs.Input8A
     {
-        public P10_Detail()
+        int Type = 0;
+        string RequestID;
+        public P10_Detail(int type = 0, string requestID = "")
         {
             InitializeComponent();
             this.KeyField1 = "id";
             this.KeyField2 = "Issue_SummaryUkey";
+            Type = type;
+            RequestID = requestID;
         }
 
         protected override void OnSubDetailInsert(int index = -1)
         {
-            var frm = new Sci.Production.Warehouse.P10_Detail_Detail(CurrentDetailData, (DataTable)gridbs.DataSource);
+            var frm = new Sci.Production.Warehouse.P10_Detail_Detail(CurrentDetailData, (DataTable)gridbs.DataSource, this.Type);
             frm.P10_Detail = this;
             frm.ShowDialog(this);
             sum_checkedqty();
-            //base.OnSubDetailInsert(index);
-            //CurrentSubDetailData["Issue_SummaryUkey"] = 0;
         }
 
         protected override void OnAttached()
@@ -91,7 +93,6 @@ order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp"))
                     return;
                 }
                 gridbs.DataSource = dtFtyinventory;
-                //dtFtyinventory.DefaultView.Sort = "dyelot,balanceqty desc";
             }
 
             this.displayID.Text = CurrentDetailData["id"].ToString();
@@ -172,7 +173,16 @@ order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp"))
 
         private void btnAutoPick_Click(object sender, EventArgs e)
         {
-            var issued = PublicPrg.Prgs.autopick(CurrentDetailData);
+            IList<DataRow> issued;
+            if (Type == 0)
+            {
+                issued = PublicPrg.Prgs.autopick(CurrentDetailData);
+            }
+            else
+            {
+                issued = PublicPrg.Prgs.AutoPickTape(CurrentDetailData, RequestID);
+            }
+
             if (issued == null)
             {
                 return;
