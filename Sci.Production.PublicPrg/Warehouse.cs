@@ -1125,7 +1125,7 @@ INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
 INNER JOIN MtlType m ON m.id= f.MtlTypeID
 where    psd.ID = '{material["poid"]}'
 	and psd.SCIRefno = '{material["SCIRefno"]}' 
-	and psd.SuppColor = '{material["SuppColor"]}' 
+	and psd.ColorID = '{material["ColorID"]}' 
     AND (a.stocktype = 'B' OR a.stocktype IS NULL)
     AND m.IsThread=1
 ";
