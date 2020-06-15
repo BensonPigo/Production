@@ -248,8 +248,6 @@ BEGIN
 	And localorder = 0
 	AND Orders.IsForecast = 1 -- PMS此處才加, 預估單 在trade是記錄在Table:FactoryOrder
 	and Factory.IsProduceFty = 1
-    -- 暫時篩選條件ISP20201019 待可開放時會再通知
-    -- 只顯示 SCI Delivery or Buyer Delivery 在『當月份 + 4 個月的月底 + 7 天』內的訂單
 	and (Orders.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or Orders.BuyerDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))
 
 	---------------------------------------------------------------------------------------------------------------------------------

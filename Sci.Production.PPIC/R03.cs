@@ -292,8 +292,6 @@ with tmpOrders as (
     )I
 	outer apply(select oa.Article from Order_article oa WITH (NOLOCK) where oa.id = o.id) a
     where  1=1 {whereIncludeCancelOrder}
-    -- 暫時篩選條件ISP20201019 待可開放時會再通知
-    -- 只顯示 SCI Delivery or Buyer Delivery 在『當月份 + 4 個月的月底 + 7 天』內的訂單
     and (o.IsForecast = 0 or (o.IsForecast = 1 and (o.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or o.BuyerDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))))
 ");
             if (this.seperate)
@@ -623,8 +621,6 @@ tmpFilterZone as (
         WHERE Pass1.ID=O.InspHandle
     )I
     where o.POID IN (select distinct POID from tmpFilterSubProcess) 
-    -- 暫時篩選條件ISP20201019 待可開放時會再通知
-    -- 只顯示 SCI Delivery or Buyer Delivery 在『當月份 + 4 個月的月底 + 7 天』內的訂單
     and (o.IsForecast = 0 or (o.IsForecast = 1 and (o.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or o.BuyerDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))))
 )");
             }
@@ -1328,8 +1324,6 @@ with ArtworkData as (
 OrderID as(
     select ID from orders O  WITH (NOLOCK)
     where  1=1
-    -- 暫時篩選條件ISP20201019 待可開放時會再通知
-    -- 只顯示 SCI Delivery or Buyer Delivery 在『當月份 + 4 個月的月底 + 7 天』內的訂單
     and (o.IsForecast = 0 or (o.IsForecast = 1 and (o.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or o.BuyerDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))))
 ");
 

@@ -50,12 +50,7 @@ namespace Sci.Production.PPIC
             this.Text = type == "1" ? "P01. PPIC Master List" : "P011. PPIC Master List (History)";
             this.DefaultFilter = $@"MDivisionID = '{Sci.Env.User.Keyword}'";
             this.DefaultFilter += type == "1" ? " AND Finished = 0" : " AND Finished = 1";
-
-            #region 暫時篩選條件--ISP20201019 待可開放時會再通知
-            /*--只顯示 SCI Delivery or Buyer Delivery 在『當月份 + 4 個月的月底 + 7 天』內的訂單
-              --例今天是 2020 / 06 / 10（2020 / 06）Forecast 訂單系統只會顯示/ 計算 SCI Delivery or Buyer Delivery 小於等於 2020 / 11 / 07*/
             this.DefaultFilter += " and (IsForecast = 0 or (IsForecast = 1 and (SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or BuyerDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))))";
-            #endregion
 
             this.dataType = type;
             this.btnShipmentFinished.Visible = this.dataType == "1"; // Shipment Finished
