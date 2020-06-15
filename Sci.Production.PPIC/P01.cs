@@ -34,6 +34,7 @@ namespace Sci.Production.PPIC
     {
         private string dataType;
         private bool muustEmpty = false;
+
         /// <summary>
         /// P01
         /// </summary>
@@ -47,7 +48,10 @@ namespace Sci.Production.PPIC
             this.IsSupportEdit = type == "1" ? true : false;
 
             this.Text = type == "1" ? "P01. PPIC Master List" : "P011. PPIC Master List (History)";
-            this.DefaultFilter = type == "1" ? string.Format("MDivisionID = '{0}' AND Finished = 0", Sci.Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND Finished = 1", Sci.Env.User.Keyword);
+            this.DefaultFilter = $@"MDivisionID = '{Sci.Env.User.Keyword}'";
+            this.DefaultFilter += type == "1" ? " AND Finished = 0" : " AND Finished = 1";
+            this.DefaultFilter += " and (IsForecast = 0 or (IsForecast = 1 and (SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or BuyerDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))))";
+
             this.dataType = type;
             this.btnShipmentFinished.Visible = this.dataType == "1"; // Shipment Finished
             this.btnBacktoPPICMasterList.Visible = this.dataType != "1"; // Back to P01. PPIC Master List
