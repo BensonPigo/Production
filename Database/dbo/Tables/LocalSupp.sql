@@ -23,6 +23,7 @@
     [email] VARCHAR(50) NOT NULL DEFAULT (''), 
     [Status] VARCHAR(15) NOT NULL DEFAULT (''), 
     [Remark] NVARCHAR(600) NULL, 
+	IsFreightForwarder BIT			 CONSTRAINT [DF_LocalSupp_IsFreightForwarder] DEFAULT((0)) NOT NULL,
     CONSTRAINT [PK_LocalSupp] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -122,3 +123,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��Misc�
 
 
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'判斷付費對象是否為 Forwarder',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LocalSupp',
+    @level2type = N'COLUMN',
+    @level2name = N'IsFreightForwarder'

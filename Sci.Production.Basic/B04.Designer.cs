@@ -70,6 +70,7 @@ namespace Sci.Production.Basic
             this.label3 = new Sci.Win.UI.Label();
             this.txtEmail = new Sci.Win.UI.TextBox();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.chkIsFreightForwarder = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -87,6 +88,7 @@ namespace Sci.Production.Basic
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkIsFreightForwarder);
             this.detailcont.Controls.Add(this.panel1);
             this.detailcont.Controls.Add(this.txtEmail);
             this.detailcont.Controls.Add(this.label3);
@@ -559,6 +561,18 @@ namespace Sci.Production.Basic
             this.panel1.Size = new System.Drawing.Size(896, 146);
             this.panel1.TabIndex = 212;
             // 
+            // chkIsFreightForwarder
+            // 
+            this.chkIsFreightForwarder.AutoSize = true;
+            this.chkIsFreightForwarder.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsFreightForwarder", true));
+            this.chkIsFreightForwarder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIsFreightForwarder.Location = new System.Drawing.Point(585, 183);
+            this.chkIsFreightForwarder.Name = "chkIsFreightForwarder";
+            this.chkIsFreightForwarder.Size = new System.Drawing.Size(153, 21);
+            this.chkIsFreightForwarder.TabIndex = 18;
+            this.chkIsFreightForwarder.Text = "Is Freight Forwarder";
+            this.chkIsFreightForwarder.UseVisualStyleBackColor = true;
+            // 
             // B04
             // 
             this.ClientSize = new System.Drawing.Size(953, 770);
@@ -639,5 +653,6 @@ namespace Sci.Production.Basic
         private Win.UI.TextBox txtEmail;
         private Win.UI.Label label3;
         private Win.UI.Panel panel1;
+        private Win.UI.CheckBox chkIsFreightForwarder;
     }
 }
