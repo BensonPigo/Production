@@ -174,6 +174,7 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
             seperCmdkpi = this.seperate ? "oq.FtyKPI" : "o.FtyKPI";
             seperCmdkpi2 = this.seperate ? @" left join Order_QtyShip oq WITH (NOLOCK) on o.id=oq.Id" : string.Empty;
             string whereIncludeCancelOrder = this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
+
             // 注意!! 新增欄位也要一併新增在poCombo (搜尋KeyWork: union)
             sqlCmd.Append($@"
 with tmpOrders as (
@@ -280,17 +281,21 @@ with tmpOrders as (
                             else ''
                             end
             , o.Customize2
-            { seperCmd }
+            {seperCmd}
      from Orders o WITH (NOLOCK) 
-   left join style s WITH (NOLOCK) on o.styleukey = s.ukey
-   {seperCmdkpi2}
+    left join style s WITH (NOLOCK) on o.styleukey = s.ukey
+    {seperCmdkpi2}
     OUTER APPLY(
         SELECT  Name 
         FROM Pass1 WITH (NOLOCK) 
         WHERE Pass1.ID = O.InspHandle
     )I
 	outer apply(select oa.Article from Order_article oa WITH (NOLOCK) where oa.id = o.id) a
-    where  1=1 {whereIncludeCancelOrder}");
+    where  1=1 {whereIncludeCancelOrder}
+    -- 暫時篩選條件ISP20201019 待可開放時會再通知
+    -- 只顯示 SCI Delivery or Buyer Delivery 在『當月份 + 4 個月的月底 + 7 天』內的訂單
+    and (o.IsForecast = 0 or (o.IsForecast = 1 and (o.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or o.BuyerDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))))
+");
             if (this.seperate)
             {
                 if (!MyUtility.Check.Empty(this.buyerDlv1))
@@ -449,6 +454,7 @@ with tmpOrders as (
                 {
                     sqlCmd.Append(" or o.Category = 'T'");
                 }
+
                 // 如果沒勾seperate但有勾forecast的情況，不用將forecast資料另外收
                 if (this.forecast && !this.seperate)
                 {
@@ -617,6 +623,9 @@ tmpFilterZone as (
         WHERE Pass1.ID=O.InspHandle
     )I
     where o.POID IN (select distinct POID from tmpFilterSubProcess) 
+    -- 暫時篩選條件ISP20201019 待可開放時會再通知
+    -- 只顯示 SCI Delivery or Buyer Delivery 在『當月份 + 4 個月的月底 + 7 天』內的訂單
+    and (o.IsForecast = 0 or (o.IsForecast = 1 and (o.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or o.BuyerDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))))
 )");
             }
             else
@@ -1298,8 +1307,7 @@ from (
                         classify,
                         !this.artwork ? string.Empty : strUnion,
                         this.lastColA,
-                        this.checkByCPU.Checked
-                        ));
+                        this.checkByCPU.Checked));
                     #endregion
                     result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.subprocessColumnName);
                     if (!result)
@@ -1318,7 +1326,12 @@ with ArtworkData as (
     from #tmp
 ),
 OrderID as(
-    select ID from orders O  WITH (NOLOCK)  where  1=1 ");
+    select ID from orders O  WITH (NOLOCK)
+    where  1=1
+    -- 暫時篩選條件ISP20201019 待可開放時會再通知
+    -- 只顯示 SCI Delivery or Buyer Delivery 在『當月份 + 4 個月的月底 + 7 天』內的訂單
+    and (o.IsForecast = 0 or (o.IsForecast = 1 and (o.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or o.BuyerDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))))
+");
 
                         if (!MyUtility.Check.Empty(this.buyerDlv1))
                         {
@@ -1635,7 +1648,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                 objArray[intRowsStart, 26] = dr["OrderTypeID"];
                 objArray[intRowsStart, 27] = dr["ProjectID"];
                 objArray[intRowsStart, 28] = dr["Customize1"];
-                objArray[intRowsStart, 29] = MyUtility.Check.Empty(dr["isForecast"]) ? dr["BuyMonth"] : string.Empty; 
+                objArray[intRowsStart, 29] = MyUtility.Check.Empty(dr["isForecast"]) ? dr["BuyMonth"] : string.Empty;
                 objArray[intRowsStart, 30] = dr["CustPONo"];
                 objArray[intRowsStart, 31] = MyUtility.Convert.GetString(dr["VasShas"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
                 objArray[intRowsStart, 32] = dr["MnorderApv2"];
@@ -1671,7 +1684,6 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                 objArray[intRowsStart, 62] = dr["NotFOCAdjQty"];
                 objArray[intRowsStart, 63] = dr["PoPrice"];
                 objArray[intRowsStart, 64] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["PoPrice"]);
-                //objArray[intRowsStart, 64] = MyUtility.Convert.GetString(dr["LocalOrder"]).ToUpper() == "TRUE" ? dr["PoPrice"] : dr["CMPPrice"]; // 移除CMPQ字樣的欄位
                 objArray[intRowsStart, 65] = dr["KPILETA"];  // BG
                 objArray[intRowsStart, 66] = dr["PFETA"];
                 objArray[intRowsStart, 67] = dr["PFRemark"];
@@ -1842,6 +1854,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                         intRowsStart++;
                         break;
                 }
+
                 maxRow++;
             }
 
@@ -1875,9 +1888,10 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
 
             worksheet.Range[string.Format("A{0}:{1}{0}", 1, excelColEng)].AutoFilter(1); // 篩選
             worksheet.Range[string.Format("A{0}:{1}{0}", 1, excelColEng)].Interior.Color = Color.FromArgb(191, 191, 191); // 底色
-            worksheet.Range[string.Format("A{0}:{1}{2}", maxRow < tRow ? 2 : (maxRow / tRow * tRow) + 3 , excelColEng, maxRow + 2)].Value2 = objArray;
+            worksheet.Range[string.Format("A{0}:{1}{2}", maxRow < tRow ? 2 : (maxRow / tRow * tRow) + 3, excelColEng, maxRow + 2)].Value2 = objArray;
             this.Subtrue = 0;
             this.CreateCustomizedExcel(ref worksheet);
+
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(maxRow);
 
