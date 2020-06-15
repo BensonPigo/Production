@@ -995,15 +995,14 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
         private void BtnShareExpense_Click(object sender, EventArgs e)
         {
             bool apflag = false;
-            if (((DataTable)this.detailgridbs.DataSource).Rows.Count > 0)
+            DataTable dt;
+            DBProxy.Current.Select(null, $@"SELECT IsFreightForwarder FROM LocalSupp WHERE ID = '{this.CurrentMaintain["LocalSuppID"].ToString()}'", out dt);
+            foreach (DataRow dr in dt.Rows)
             {
-                var dt = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().
-                    Where(w => MyUtility.Convert.GetString(w["Account"]).Substring(0, 4) == "6105" || MyUtility.Convert.GetString(w["Account"]).Substring(0, 4) == "5912").ToList();
-                if (dt.Count > 0)
-                {
-                    apflag = true;
-                }
+                apflag = MyUtility.Convert.GetBool(dr["IsFreightForwarder"]);
             }
+
+            dt.Dispose();
 
             Sci.Production.Shipping.P08_ShareExpense callNextForm = new Sci.Production.Shipping.P08_ShareExpense(this.CurrentMaintain, apflag);
             callNextForm.ShowDialog(this);
