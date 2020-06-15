@@ -748,6 +748,7 @@ select   b.Orderid
         ,s.IsRFIDDefault
         ,b.IsEXCESS
         ,bd.PatternDesc
+		,SubProcess.SubProcess
         ,b.Article
         ,bd.BundleGroup
         ,bd.SizeCode
@@ -780,6 +781,15 @@ outer apply(
 		AND DD.[type] = 'FabricKind' 
 		AND DD.id = LIST.kind 
 )FabricKind
+outer apply(
+	select SubProcess = stuff((
+		Select concat('+',Subprocessid)
+		From Bundle_Detail_art c WITH (NOLOCK) 
+		Where c.bundleno = bd.BundleNo
+		Order by Subprocessid
+		For XML path('')
+	),1,1,'')
+)SubProcess
 
 select   Orderid
         ,BundleNo
@@ -789,6 +799,7 @@ select   Orderid
         ,IsRFIDDefault
         ,IsEXCESS
         ,PatternDesc
+	    ,SubProcess
         ,Article
         ,BundleGroup
         ,SizeCode
@@ -814,6 +825,7 @@ select   Orderid
         ,s.IsRFIDDefault
         ,IsEXCESS
         ,PatternDesc
+	    ,SubProcess
         ,Article
         ,BundleGroup
         ,SizeCode
@@ -832,6 +844,7 @@ select
 
 	IsEXCESS
     ,PatternDesc
+	,SubProcess
     ,Article
     ,BundleGroup
     ,SizeCode
@@ -863,6 +876,7 @@ select
 	,EXCESS=iif(IsEXCESS=1,'Y','')
 	,t.FabricKind
     ,PatternDesc
+	,SubProcess
     ,Article
     ,BundleGroup
     ,SizeCode
@@ -947,6 +961,7 @@ where o.ID ='{drSelected["OrderID"]}' and oq.Article='{drSelected["Article"]}' a
 
 
 select   b.Orderid
+		,SubProcess.SubProcess
         ,b.Article
         ,bd.Sizecode
         ,bd.BundleNo
@@ -987,8 +1002,17 @@ outer apply(
 		AND DD.[type] = 'FabricKind' 
 		AND DD.id = LIST.kind 
 )FabricKind
+outer apply(
+	select SubProcess = stuff((
+		Select concat('+',Subprocessid)
+		From Bundle_Detail_art c WITH (NOLOCK) 
+		Where c.bundleno = bd.BundleNo
+		Order by Subprocessid
+		For XML path('')
+	),1,1,'')
+)SubProcess
 
-select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,IsEXCESS
+select Orderid,SubProcess,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,IsEXCESS
 	,NoBundleCardAfterSubprocess= case when SubProcessID = 'Loading' Or SubProcessID = 'SEWINGLINE' then isnull(x.NoBundleCardAfterSubprocess,0) else 0 end
 	,PostSewingSubProcess=0
     ,PatternDesc
@@ -1006,7 +1030,7 @@ outer apply(
 
 union
 
-select Orderid,Article,Sizecode,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,IsEXCESS,bda.NoBundleCardAfterSubprocess,bda.PostSewingSubProcess
+select Orderid,SubProcess,Article,Sizecode,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,IsEXCESS,bda.NoBundleCardAfterSubprocess,bda.PostSewingSubProcess
     ,PatternDesc
     ,BundleGroup
     ,[BD_SizeCode]
@@ -1018,6 +1042,7 @@ inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDPro
 
 select
 	b.Orderid,
+    SubProcess,
 	b.Article,
 	b.Sizecode,
 	b.BundleNo,
@@ -1054,6 +1079,7 @@ select
 	,EXCESS=iif(IsEXCESS=1,'Y','')
 	,t.FabricKind
     ,PatternDesc
+    ,SubProcess
     ,Article
     ,BundleGroup
     ,SizeCode
@@ -1111,6 +1137,7 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
             .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Bundle#", header: "BundleNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("PatternDesc", header: "PatternDesc", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("SubProcess", header: "SubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("BundleGroup", header: "BundleGroup", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(6), iseditingreadonly: true)
