@@ -3,12 +3,16 @@
 -- Description:	Data Query Logic by PMS.PPIC R16, Import Data to P_OustandingPO
 -- =============================================
 CREATE PROCEDURE [dbo].[P_ImportOustandingPO_Fty]	
+
+@StartDate Date,
+@EndDate Date
+
 AS
 
 BEGIN
 
-declare @StartDate Date = '2020/01/01'
-declare @EndDate Date = DATEADD(DAY,30,getdate())
+declare @SDate varchar(20)  = cast(@StartDate as varchar)--DATEADD(DAY,-150,getdate())
+declare @EDate varchar(20) = cast(@EndDate as varchar)--DATEADD(DAY,30,getdate())
 
 SELECT 
 	 o.FactoryID
@@ -48,8 +52,8 @@ outer apply(
 )s
 where o.Category IN ('B','G') 
       and isnull(ot.IsGMTMaster,0) = 0
-      AND oq.BuyerDelivery >= @StartDate
-AND oq.BuyerDelivery <= @EndDate
+      AND oq.BuyerDelivery >= @SDate
+AND oq.BuyerDelivery <= @EDate
 AND f.IsProduceFty=1
 
 
@@ -79,8 +83,8 @@ where exists( select 1
                 INNER JOIN [Production].[dbo].Factory f WITH(NOLOCK) ON f.ID=o.FactoryID
                 LEFT JOIN  [Production].[dbo].Order_QtyShip oq WITH(NOLOCK) ON o.ID=oq.ID
                 where o.ID = ins.OrderID 
-                        AND oq.BuyerDelivery >= @StartDate
-AND oq.BuyerDelivery <= @EndDate
+                        AND oq.BuyerDelivery >= @SDate
+AND oq.BuyerDelivery <= @EDate
 AND f.IsProduceFty=1
                 )
 group by ins.OrderId,ins.Location
@@ -238,14 +242,12 @@ WHEN NOT MATCHED THEN
 			s.PulloutComplete,
 			s.dest
 		  )
-	when not matched by source AND T.BuyerDelivery between @StartDate and @EndDate
+	when not matched by source AND T.BuyerDelivery between @SDate and @EDate
 	then 
 			delete;
 
 	drop table #final
 End
-
-
 GO
 
 

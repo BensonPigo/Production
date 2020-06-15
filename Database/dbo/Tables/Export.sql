@@ -74,6 +74,7 @@
     [CustomOTRespFty1] VARCHAR(8) NOT NULL DEFAULT (''), 
     [CustomOTRespFty2] VARCHAR(8) NOT NULL DEFAULT (''), 
     [OTFee] NUMERIC(10, 2) NOT NULL DEFAULT ((0)), 
+    [CIFTerms] BIT    CONSTRAINT [DF_Export_CIFTerms] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Export] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -335,3 +336,15 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�N�Ԥu�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠商因為貨量較小，不安排海運或空運，而改成廠商付費快遞出貨。', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Export', @level2type = N'COLUMN', @level2name = N'SQCS';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'台北船務可能會合併不同Shipment Term 到同一筆WK#, 當Shipment Term非CIF時, 工廠務仍可由 "CIF terms by supplier" flag 辨識該 Shipment 可能為 CIF',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Export',
+    @level2type = N'COLUMN',
+    @level2name = N'CIFTerms'
+
+GO

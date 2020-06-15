@@ -105,6 +105,7 @@
             this.numFtyTruckFee = new Sci.Win.UI.NumericBox();
             this.numOTFee = new Sci.Win.UI.NumericBox();
             this.labOTFee = new Sci.Win.UI.Label();
+            this.chkCIFTermsBySupplier = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -121,6 +122,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.chkCIFTermsBySupplier);
             this.masterpanel.Controls.Add(this.numOTFee);
             this.masterpanel.Controls.Add(this.labOTFee);
             this.masterpanel.Controls.Add(this.numFtyTruckFee);
@@ -197,7 +199,7 @@
             this.masterpanel.Controls.Add(this.dateArrivePortDate);
             this.masterpanel.Controls.Add(this.dateArriveWHDate);
             this.masterpanel.Controls.Add(this.dateDoxRcvDate);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 350);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 375);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDoxRcvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateArriveWHDate, 0);
@@ -275,15 +277,16 @@
             this.masterpanel.Controls.SetChildIndex(this.numFtyTruckFee, 0);
             this.masterpanel.Controls.SetChildIndex(this.labOTFee, 0);
             this.masterpanel.Controls.SetChildIndex(this.numOTFee, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkCIFTermsBySupplier, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 350);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 223);
+            this.detailpanel.Location = new System.Drawing.Point(0, 375);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 198);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(882, 278);
+            this.gridicon.Location = new System.Drawing.Point(882, 303);
             // 
             // refresh
             // 
@@ -291,7 +294,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 223);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 198);
             // 
             // detail2
             // 
@@ -1102,11 +1105,11 @@
             this.chkCustomOT.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CustomOT", true));
             this.chkCustomOT.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkCustomOT.IsSupportEditMode = false;
-            this.chkCustomOT.Location = new System.Drawing.Point(466, 326);
+            this.chkCustomOT.Location = new System.Drawing.Point(466, 348);
             this.chkCustomOT.Name = "chkCustomOT";
             this.chkCustomOT.ReadOnly = true;
             this.chkCustomOT.Size = new System.Drawing.Size(98, 21);
-            this.chkCustomOT.TabIndex = 68;
+            this.chkCustomOT.TabIndex = 67;
             this.chkCustomOT.Text = "Custom OT";
             this.chkCustomOT.UseVisualStyleBackColor = true;
             // 
@@ -1122,7 +1125,7 @@
             // lbRespFty
             // 
             this.lbRespFty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.lbRespFty.Location = new System.Drawing.Point(567, 324);
+            this.lbRespFty.Location = new System.Drawing.Point(567, 346);
             this.lbRespFty.Name = "lbRespFty";
             this.lbRespFty.Size = new System.Drawing.Size(65, 23);
             this.lbRespFty.TabIndex = 71;
@@ -1137,11 +1140,11 @@
             this.txtCustomOTRespFty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCustomOTRespFty1.IsProduceFty = false;
             this.txtCustomOTRespFty1.IssupportJunk = false;
-            this.txtCustomOTRespFty1.Location = new System.Drawing.Point(635, 324);
+            this.txtCustomOTRespFty1.Location = new System.Drawing.Point(635, 346);
             this.txtCustomOTRespFty1.MDivision = null;
             this.txtCustomOTRespFty1.Name = "txtCustomOTRespFty1";
             this.txtCustomOTRespFty1.Size = new System.Drawing.Size(76, 23);
-            this.txtCustomOTRespFty1.TabIndex = 69;
+            this.txtCustomOTRespFty1.TabIndex = 68;
             this.txtCustomOTRespFty1.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCustomOTRespFty1_Validating);
             // 
             // txtCustomOTRespFty2
@@ -1153,11 +1156,11 @@
             this.txtCustomOTRespFty2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCustomOTRespFty2.IsProduceFty = false;
             this.txtCustomOTRespFty2.IssupportJunk = false;
-            this.txtCustomOTRespFty2.Location = new System.Drawing.Point(713, 324);
+            this.txtCustomOTRespFty2.Location = new System.Drawing.Point(713, 346);
             this.txtCustomOTRespFty2.MDivision = null;
             this.txtCustomOTRespFty2.Name = "txtCustomOTRespFty2";
             this.txtCustomOTRespFty2.Size = new System.Drawing.Size(76, 23);
-            this.txtCustomOTRespFty2.TabIndex = 70;
+            this.txtCustomOTRespFty2.TabIndex = 69;
             this.txtCustomOTRespFty2.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCustomOTRespFty2_Validating);
             // 
             // numFtyTruckFee
@@ -1190,7 +1193,7 @@
             this.numOTFee.DecimalPlaces = 2;
             this.numOTFee.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numOTFee.IsSupportEditMode = false;
-            this.numOTFee.Location = new System.Drawing.Point(864, 324);
+            this.numOTFee.Location = new System.Drawing.Point(864, 346);
             this.numOTFee.Name = "numOTFee";
             this.numOTFee.NullValue = new decimal(new int[] {
             0,
@@ -1199,7 +1202,7 @@
             0});
             this.numOTFee.ReadOnly = true;
             this.numOTFee.Size = new System.Drawing.Size(100, 23);
-            this.numOTFee.TabIndex = 73;
+            this.numOTFee.TabIndex = 70;
             this.numOTFee.Value = new decimal(new int[] {
             0,
             0,
@@ -1209,11 +1212,25 @@
             // labOTFee
             // 
             this.labOTFee.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labOTFee.Location = new System.Drawing.Point(796, 324);
+            this.labOTFee.Location = new System.Drawing.Point(796, 346);
             this.labOTFee.Name = "labOTFee";
             this.labOTFee.Size = new System.Drawing.Size(65, 23);
             this.labOTFee.TabIndex = 72;
             this.labOTFee.Text = "OT Fee";
+            // 
+            // chkCIFTermsBySupplier
+            // 
+            this.chkCIFTermsBySupplier.AutoSize = true;
+            this.chkCIFTermsBySupplier.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CIFTerms", true));
+            this.chkCIFTermsBySupplier.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkCIFTermsBySupplier.IsSupportEditMode = false;
+            this.chkCIFTermsBySupplier.Location = new System.Drawing.Point(567, 322);
+            this.chkCIFTermsBySupplier.Name = "chkCIFTermsBySupplier";
+            this.chkCIFTermsBySupplier.ReadOnly = true;
+            this.chkCIFTermsBySupplier.Size = new System.Drawing.Size(159, 21);
+            this.chkCIFTermsBySupplier.TabIndex = 66;
+            this.chkCIFTermsBySupplier.Text = "CIF terms by supplier";
+            this.chkCIFTermsBySupplier.UseVisualStyleBackColor = true;
             // 
             // P03
             // 
@@ -1336,5 +1353,6 @@
         private Win.UI.NumericBox numFtyTruckFee;
         private Win.UI.NumericBox numOTFee;
         private Win.UI.Label labOTFee;
+        private Win.UI.CheckBox chkCIFTermsBySupplier;
     }
 }
