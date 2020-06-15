@@ -113,8 +113,8 @@ select DISTINCT
 from Orders o
 inner join Order_Artwork oa on o.ID = oa.ID
 left join Order_Article oaa on oaa.id = o.id
-left join Order_Qty oq on o.ID = oq.ID and oq.Article = oa.Article
-outer apply(select article=iif(oa.article='----', oaa.article,oa.article))ax
+outer apply(select article=iif(oa.article='----', oaa.article,oa.article)) ax
+left join Order_Qty oq on o.ID = oq.ID and oq.Article = ax.Article
 where o.ID in (select  id from Orders o1 where 
 o1.POID = o.POID 
 AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{this.Order_ArtworkId}') )
@@ -135,8 +135,8 @@ select DISTINCT
 from Orders o
 inner join Order_Artwork oa on o.ID = oa.ID
 left join Order_Article oaa on oaa.id = o.id
-left join Order_Qty oq on o.ID = oq.ID and oq.Article = oa.Article
 outer apply(select article=iif(oa.article='----', oaa.article,oa.article))ax
+left join Order_Qty oq on o.ID = oq.ID and oq.Article = ax.Article
 where o.ID in (select  id from Orders o1 where 
 o1.POID = o.POID 
 AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{this.Order_ArtworkId}') )
@@ -244,10 +244,13 @@ order by oa.ArtworkTypeID";
 )
 SELECT 
 DISTINCT 
-lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode ,article=iif(oa.article='----', art.article,oa.article),CASE WHEN o.Junk = 1 and o.NeedProduction=0 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty  
+lc.ArtworkTypeID,
+lc.ArtworkID,
+lc.PatternCode ,
+ax.Article
+,CASE WHEN o.Junk = 1 and o.NeedProduction=0 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty  
 FROM Orders o
 INNER JOIN Order_Artwork oa ON o.ID = oa.ID
-LEFT JOIN Order_Qty oq ON o.ID = oq.ID AND oq.Article = oa.Article
 LEFT JOIN LeftCol lc ON  lc.ArtworkTypeID=oa.ArtworkTypeID AND lc.ArtworkID=oa.ArtworkID AND lc.PatternCode=oa.PatternCode
 outer apply(
 	select article = stuff((
@@ -257,10 +260,12 @@ outer apply(
 		for xml path('')
 	),1,1,'')
 )art
+outer apply(select article=iif(oa.article='----', art.article,oa.article)) ax
+LEFT JOIN Order_Qty oq ON o.ID = oq.ID AND oq.Article = ax.Article
 WHERE Exists (select 1 FROM Orders o1 WHERE 
 o1.POID = o.POID 
 AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{this.Order_ArtworkId}') )
-GROUP BY lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode,art.Article,oa.article,o.Junk,o.NeedProduction
+GROUP BY lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode,ax.Article,o.Junk,o.NeedProduction
 ORDER BY  lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode,Article
 ";
             DataTable Content;
