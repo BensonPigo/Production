@@ -1700,7 +1700,7 @@ where s.Type = 'EXPORT'");
                         sc2 = $"-{sumCol6105TTL}{intRowsStart}";
                     }
 
-                    objArray[0, allColumn + this.accnoData.Rows.Count] = string.Format("=SUM({2}{0}:{1}{0}) {3} {4}", intRowsStart, excelSumCol, this.reportType == 1 ? "R" : "V", sc1, sc2);
+                    objArray[0, allColumn + this.accnoData.Rows.Count] = string.Format("=SUM({2}{0}:{1}{0}) {3} {4}", intRowsStart, excelSumCol, this.reportType == 1 ? "T" : "AA", sc1, sc2);
                     worksheet.Range[string.Format("A{0}:{1}{0}", intRowsStart, excelColumn)].Value2 = objArray;
                     intRowsStart++;
                 }
