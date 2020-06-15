@@ -382,8 +382,23 @@ from #tmp
 
         private void BtnDelete_Click(object sender, EventArgs e)
         {
-            this.listControlBindingSource1.DataSource = null;
-            this.gridTable = null;
+            this.gridImport.ValidateControl();
+            if (this.listControlBindingSource1.DataSource == null || gridTable.Rows.Count == 0)
+            {
+                return;
+            }
+
+            if (this.gridTable.Select("selected = 1").Length == 0)
+            {
+                MyUtility.Msg.WarningBox("Please select data first!");
+                return;
+            }
+
+            for (int i = this.gridTable.Select("selected = 1").Count() - 1; i >= 0; i--)
+            {
+                this.gridTable.Select("selected = 1")[i].Delete();
+            }
+             
         }
     }
 }
