@@ -156,9 +156,9 @@ order by MarkerName, ColorID
             DataTable dt0 = Prgs.GetCuttingTapeData(this.txtCuttingID.Text);
             if (dt0.Rows.Count > 0)
             {
-                Parallel.ForEach(gridTable.AsEnumerable(), row =>
+                foreach (DataRow row in gridTable.Rows)
                 {
-                    var x = dt0.AsEnumerable().Where(w => 
+                    var x = dt0.AsEnumerable().Where(w =>
                     MyUtility.Convert.GetString(w["MarkerName"]) == MyUtility.Convert.GetString(row["MarkerName"]) &&
                     MyUtility.Convert.GetString(w["ColorID"]) == MyUtility.Convert.GetString(row["ColorID"]) &&
                     MyUtility.Convert.GetString(w["Article"]) == MyUtility.Convert.GetString(row["Article"])
@@ -173,7 +173,7 @@ order by MarkerName, ColorID
                                  MyUtility.Convert.GetString(s["CutQty"])
                         }).OrderBy(o => o.remark).Select(s => s.remark).JoinToString(",");
                     }
-                });
+                }
             }
 
             this.listControlBindingSource1.DataSource = gridTable;
