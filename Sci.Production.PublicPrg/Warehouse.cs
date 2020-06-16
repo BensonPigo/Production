@@ -1121,6 +1121,11 @@ drop table #tmp", materials["poid"], cutplanid, stocktype);
             }
 
             DataTable findrow = null;
+            if (dt.Rows.Count == 0 || dt.Select("balanceqty<>0").Length == 0)
+            {
+                return null;
+            }
+
             dt = dt.Select("balanceqty<>0").CopyToDataTable();
             if (dt.AsEnumerable().Any(n => ((decimal)n["qty"]).EqualDecimal(request)))
             {
