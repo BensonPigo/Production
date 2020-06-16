@@ -24,6 +24,7 @@ namespace Sci.Production.Packing
         private Ict.Win.UI.DataGridViewTextBoxColumn col_refno;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_refno_Balance;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_qtyperctn;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_shipqty;
         private string printPackMethod = string.Empty;
         private int orderQty = 0;
         private int ttlShipQty = 0;
@@ -176,14 +177,14 @@ order by e.Seq, f.Seq", masterID);
         {
             base.OnDetailGridSetup();
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .CheckBox("selected", header: "", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0)
+                .CheckBox("selected", header: string.Empty, width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0)
                 .CellCartonItem("RefNo", header: "Ref No.", width: Widths.AnsiChars(13)).Get(out this.col_refno)
                 .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Article", header: "ColorWay", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("QtyPerCTN", header: "Qty/Ctn").Get(out this.col_qtyperctn)
-                .Numeric("ShipQty", header: "ShipQty")
+                .Numeric("ShipQty", header: "ShipQty").Get(out this.col_shipqty)
                 .Numeric("NW", header: "N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
                 .Numeric("GW", header: "G.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
                 .Numeric("NNW", header: "N.N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
@@ -193,11 +194,10 @@ order by e.Seq, f.Seq", masterID);
 
             this.detailgrid.CellValueChanged += (s, e) =>
             {
+                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                 #region 選完RefNo後，要自動帶出Description與G.W
                 if (this.detailgrid.Columns[e.ColumnIndex].DataPropertyName == this.col_refno.DataPropertyName)
                 {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-
                     if (MyUtility.Check.Empty(dr["RefNo"]))
                     {
                         dr["Description"] = string.Empty;
@@ -240,11 +240,9 @@ order by e.Seq, f.Seq", masterID);
                 }
                 #endregion
 
-                #region 輸入Qty/Ctn後要重算N.W.,G.W.,N.N.W.
+                #region 輸入Qty/Ctn後要重算N.W.,G.W.,N.N.W.,Balance
                 if (this.detailgrid.Columns[e.ColumnIndex].DataPropertyName == this.col_qtyperctn.DataPropertyName)
                 {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-
                     // sql參數
                     System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
                     System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
@@ -295,14 +293,22 @@ where o.ID = @orderid";
                         dr["NNW"] = 0;
                     }
 
+                    dr["Balance"] = MyUtility.Convert.GetInt(dr["ShipQty"]) % MyUtility.Convert.GetInt(dr["QtyPerCTN"]);
                     dr.EndEdit();
                 }
                 #endregion
 
-                #region 選完RefNo後，要自動帶出Description與G.W
+                #region 輸入ShipQty後要重算Balance
+                if (this.detailgrid.Columns[e.ColumnIndex].DataPropertyName == this.col_shipqty.DataPropertyName)
+                {
+                    dr["Balance"] = MyUtility.Convert.GetInt(dr["ShipQty"]) % MyUtility.Convert.GetInt(dr["QtyPerCTN"]);
+                    dr.EndEdit();
+                }
+                #endregion
+
+                #region 選完RefNoForBalance後，要自動帶出DescriptionforBalance
                 if (this.detailgrid.Columns[e.ColumnIndex].DataPropertyName == this.col_refno_Balance.DataPropertyName)
                 {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     dr["DescriptionforBalance"] = string.Empty;
                     if (!MyUtility.Check.Empty(dr["RefNoForBalance"]))
                     {
@@ -845,6 +851,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(this.CurrentMaintain["Order
             int startIndex = 0;
             int endIndex = 0;
             int dataRow = 0;
+
             // Carton Dimension:
             StringBuilder ctnDimension = new StringBuilder();
             foreach (DataRow dr in ctnDim.Rows)
@@ -952,7 +959,6 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(this.CurrentMaintain["Order
             {
                 worksheet.Cells[row, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["SpecialInstruction"]);
             }
-
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P02");
@@ -2710,7 +2716,11 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select RefNo,Description,STR(CtnLength,8,4)+'*'+STR(CtnWidth,8,4)+'*'+STR(CtnHeight,8,4) as Dim from LocalItem where Category = 'CARTON' and Junk = 0 order by RefNo", "10,25,25", this.txtCartonRef.Text.Trim());
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.txtCartonRef.Text = item.GetSelectedString();
         }
 
@@ -2718,7 +2728,11 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select RefNo,Description,STR(CtnLength,8,4)+'*'+STR(CtnWidth,8,4)+'*'+STR(CtnHeight,8,4) as Dim from LocalItem where Category = 'CARTON' and Junk = 0 order by RefNo", "10,25,25", this.txtCartonRefBalance.Text.Trim());
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.txtCartonRefBalance.Text = item.GetSelectedString();
         }
 
