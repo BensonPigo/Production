@@ -13,6 +13,8 @@ using System.Data.SqlClient;
 using Sci.Win;
 using System.Linq;
 using Sci.Production.PublicForm;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Warehouse
 {
@@ -561,6 +563,15 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
                 var frm = new P01_ReTransferMtlToScrap(CurrentMaintain["poid"].ToString());
                 frm.ShowDialog(this);
             }
+
+            #region Sent WHClose to Gensong
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                string strPOID = CurrentMaintain["PoID"].ToString();
+                Task.Run(() => new Gensong_AutoWHFabric().SentWHCloseToGensongAutoWHFabric(strPOID))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+            #endregion
         }
 
         //Quantity breakdown

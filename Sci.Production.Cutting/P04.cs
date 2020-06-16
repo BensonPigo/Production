@@ -15,6 +15,8 @@ using System.Transactions;
 using Sci.Win.Tools;
 using System.Runtime.InteropServices;
 using System.IO;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Cutting
 {
@@ -167,7 +169,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             @"Insert into MarkerReq
             (id,estcutdate,mDivisionid,CutCellid,Status,Cutplanid,AddName,AddDate) 
             values('{0}','{1}','{2}','{3}','New','{4}','{5}',getdate());",
-            reqid,dateCuttingDate.Text, CurrentMaintain["mDivisionid"],
+            reqid, dateCuttingDate.Text, CurrentMaintain["mDivisionid"],
             CurrentMaintain["cutcellid"], CurrentMaintain["ID"], loginID);
 
             #region 表身
@@ -265,8 +267,16 @@ and o.ID=b.OrderID ", CurrentMaintain["ID"]);
             _transactionscope.Dispose();
             _transactionscope = null;
 
-            
+
             #endregion
+
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                DataTable dtDetail = (DataTable)detailgridbs.DataSource;
+                Task.Run(() => new Gensong_AutoWHFabric().SentCutplan_DetailToGensongAutoWHFabric(dtDetail))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
 
         }
         protected override void OnDetailEntered()

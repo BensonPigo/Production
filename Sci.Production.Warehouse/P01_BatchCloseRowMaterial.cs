@@ -4,11 +4,13 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci;
 using Sci.Data;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Warehouse
 {
@@ -262,6 +264,15 @@ Drop table #cte_temp;", Sci.Env.User.Keyword, categorySql));
                     MyUtility.Msg.WarningBox(ex.Message);
                     //return;
                 }
+
+                #region Sent WHClose to Gensong
+                if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+                {
+                    string strPOID = tmp["poid"].ToString();
+                    Task.Run(() => new Gensong_AutoWHFabric().SentWHCloseToGensongAutoWHFabric(strPOID))
+                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
+                #endregion
             }
             //this.QueryData();
             MyUtility.Msg.InfoBox("Finish closing R/Mtl!!");
