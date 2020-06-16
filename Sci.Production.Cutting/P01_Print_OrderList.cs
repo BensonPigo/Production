@@ -17,6 +17,7 @@ using Sci.Utility.Excel;
 using System.Runtime.InteropServices;
 using System.Collections;
 using Sci.Production.PublicPrg;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Cutting
 {
@@ -110,6 +111,105 @@ namespace Sci.Production.Cutting
                 sxr.BoOpenFile = true;
                 sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_CuttingWorkOrder"));
                 #endregion
+            }
+            if (radioCuttingTape.Checked)
+            {
+                #region Header
+                string sqlcmd = $@"
+declare @CuttingSP varchar(13) = @OrderID
+select [SP] =
+		Replace(
+			Stuff((
+				SELECT distinct concat('/', t.val)
+				from (
+					select [val] = o.ID 
+					from dbo.orders o
+					where o.CuttingSP = @CuttingSP
+				)t
+				for xml path('')),1,1,'')
+		, '/'+@CuttingSP, '/')
+
+	, [StyleID] = (select concat(o.StyleID , '-', o.SeasonID) from orders o where o.id = @CuttingSP)
+
+	, [Qty] = (select Sum(q.Qty)
+				from dbo.orders o 
+				left join dbo.Order_Qty q on q.ID = o.ID 
+				where o.CuttingSP = @CuttingSP)
+
+	, [Pattern] =
+		Stuff((
+			SELECT distinct concat( '/', t.PatternNo)
+			from (
+				select distinct m.PatternNo
+				from (
+					select distinct o.SMNoticeID
+					from dbo.Order_EachCons o
+					where o.id = @CuttingSP and o.CuttingPiece = 1
+				) s
+				left join dbo.SMNotice m on s.SMNoticeID = m.ID
+			)t
+			for xml path('')),1,1,'')
+";
+                DataTable dtHeader;
+                DualResult result = DBProxy.Current.Select(null, sqlcmd, new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dtHeader);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
+                #endregion
+
+                #region Body
+                DataTable dt0 = Prgs.GetCuttingTapeData(_id);
+                if (dt0 == null || dt0.Rows.Count == 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!");
+                    return false;
+                }
+                DataColumnCollection columns = dt0.Columns;
+                Prgs.TryRemoveColumn("SizeCode", dt0);
+                Prgs.TryRemoveColumn("FabricPanelCode", dt0);
+                #endregion
+
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_CuttingTape.xltx");
+                // keepApp=true 產生excel後才可修改編輯                
+                sxrc sxr = new sxrc(xltPath, keepApp: true);
+
+                sxr.DicDatas.Add(sxr.VPrefix + "SP", MyUtility.Convert.GetString(dtHeader.Rows[0]["SP"]));
+                sxr.DicDatas.Add(sxr.VPrefix + "StyleID", MyUtility.Convert.GetString(dtHeader.Rows[0]["StyleID"]));
+                sxr.DicDatas.Add(sxr.VPrefix + "OrderQty", "Order Qty: "+ MyUtility.Convert.GetString(dtHeader.Rows[0]["Qty"]));
+                sxr.DicDatas.Add(sxr.VPrefix + "Pattern", "Used the pattern of " + MyUtility.Convert.GetString(dtHeader.Rows[0]["Pattern"]));
+                sxrc.XltRptTable dt = new sxrc.XltRptTable(dt0);
+                // 不顯示標題列
+                dt.ShowHeader = false;
+                sxr.ActionAfterFillData = this.SetPageAutoFit;
+                sxr.DicDatas.Add(sxr.VPrefix + "tbl1", dt);
+                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_CuttingTape"));
+
+                int row = dt0.Rows.Count + 4;
+
+                Microsoft.Office.Interop.Excel.Worksheet worksheet = sxr.ExcelApp.Sheets[1];
+                worksheet.Range[$"D4:D4"].Interior.Color = Color.FromArgb(252, 213, 180);
+                worksheet.Range[$"A{row}:J{row}"].Interior.Color = Color.FromArgb(252, 213, 180);
+                worksheet.Range[$"K{row}:K{row}"].Interior.Color = Color.Yellow;
+                worksheet.Range[$"K{row}:K{row}"].Font.Color = Color.Red;
+                worksheet.Range[$"K{row}:K{row}"].Font.Bold = true; // 指定粗體
+                worksheet.Range[$"B5:B{row}"].Font.Bold = true; // 指定粗體
+                worksheet.Range[$"A5:K{row}"].Borders.Weight = 2; // 設定全框線
+
+                int i = 5;
+                foreach (DataRow item in dt0.Rows)
+                {
+                    if (MyUtility.Check.Empty(item["MarkerName"]))
+                    {
+                        worksheet.Range[$"D{i}:D{i}"].Font.Color = Color.FromArgb(187, 1, 147);
+                        worksheet.Range[$"D{i}:D{i}"].Font.Bold = true; // 指定粗體
+                    }
+                    i++;
+                }
+
+
+                sxr.FinishSave();
             }
             if (radioCuttingschedule.Checked)
             {
@@ -1192,7 +1292,6 @@ select distinct sizecode,Seq
             }            
 
         }
-
 
         private void SetPageAutoFit(Microsoft.Office.Interop.Excel.Worksheet wks)
         {
