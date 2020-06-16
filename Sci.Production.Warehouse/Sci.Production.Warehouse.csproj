@@ -528,7 +528,9 @@
       <DependentUpon>P61.cs</DependentUpon>
     </Compile>
     <Compile Include="P61_PrintData.cs" />
-    <Compile Include="P62.cs" />
+    <Compile Include="P62.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="P62.Designer.cs">
       <DependentUpon>P62.cs</DependentUpon>
     </Compile>
