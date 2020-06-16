@@ -188,16 +188,26 @@ order by ID
 
 -- Combo by Artwork Type
 
-select	ArtworkTypeID,
-		ArtworkID,
-		PatternCode,
-		Article,
-		[OrderQty] = sum(OrderQty)
-from #comboBySP
-group by ArtworkTypeID,
-		 ArtworkID,
-		 PatternCode,
-         Article
+select	bao.ArtworkTypeID,
+		bao.ArtworkID,
+		bao.PatternCode,
+		art.Article,
+		[OrderQty] = sum(isnull(bao.Qty, 0))
+from #baseArtworkOrderQty bao
+outer apply(
+	select article = stuff((
+		select distinct concat(',', baoo.Article)
+		from #baseArtworkOrderQty baoo with(nolock)
+		where	bao.ArtworkTypeID = baoo.ArtworkTypeID and
+				bao.ArtworkID = baoo.ArtworkID and
+				bao.PatternCode = baoo.PatternCode 
+		for xml path('')
+	),1,1,'')
+)art
+group by bao.ArtworkTypeID,
+		 bao.ArtworkID,
+		 bao.PatternCode,
+         art.Article
 
 drop table #baseArtworkOrderQty,#comboBySP
 ";
