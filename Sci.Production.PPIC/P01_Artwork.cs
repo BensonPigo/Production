@@ -31,14 +31,14 @@ namespace Sci.Production.PPIC
             string sqlCmd = $@" 
 SELECT oa.ID,oa.AddDate,oa.AddName,oa.ArtworkID,oa.ArtworkName,oa.ArtworkTypeID,oa.Cost,oa.EditDate,oa.EditName,oa.PatternCode,oa.PatternDesc,oa.Price,oa.Qty,oa.Remark,oa.TMS,oa.Ukey 
 	,''AS CreateBy,''AS EditBy,''AS UnitID, a.ArtworkUnit,article=iif(oa.article='----', art.article,oa.article)
-FROM Order_Artwork oa 
+FROM  Order_Artwork oa 
 LEFT JOIN ArtworkType a WITH (NOLOCK) on oa.ArtworkTypeID = a.ID
 outer apply(
 	select article = stuff((
 		select distinct concat(',',oaa.Article)
 		from Order_Article oaa with(nolock)
 		inner join orders o with(nolock) on oaa.id = o.id
-		where o.id = (select poid from orders o2 with(nolock) where o2.id = oa.id)
+		where o.poid = (select poid from orders o2 with(nolock) where o2.id = oa.id)
 		for xml path('')
 	),1,1,'')
 )art
@@ -87,63 +87,143 @@ ORDER BY ArtworkTypeID,Article";
 
             #region Comb by SP#
 
-            //表格的head是動態的，ArtworkTypeID + ArtworkID = 一組key
-            sqlCmd = string.Format(
-                            $@"  select  DISTINCT
+            // 表格的head是動態的，ArtworkTypeID + ArtworkID = 一組key
+            sqlCmd = $@"  select  DISTINCT
                                 oa.ArtworkTypeID
                                 ,oa.ArtworkID
-
                                 from Orders o
                                 inner join Order_Artwork oa on o.ID = oa.ID
-                                left join Order_Qty oq on o.ID = oq.ID and oq.Article = oa.Article
-                                where o.ID in (select  id from Orders o1 where 
-                                o1.POID = o.POID 
-                                AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{0}') )
+                                where o.POID = (SELECT POID FROM Orders WHERE ID='{this.Order_ArtworkId}') 
                                 group by oa.PatternCode,oa.Article,oa.ID,oa.ArtworkTypeID,oa.ArtworkID
-                                order by oa.ArtworkTypeID", this.Order_ArtworkId);
+                                order by oa.ArtworkTypeID";
             DataTable head;
             result = DBProxy.Current.Select(null, sqlCmd, out head);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
 
-            //左半邊的單號
+            // 左半邊的單號
             sqlCmd = $@"
-select DISTINCT
-    oa.ID
-    ,ax.article
-    ,CASE WHEN o.Junk = 1  and o.NeedProduction=0 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty  
-from Orders o
-inner join Order_Artwork oa on o.ID = oa.ID
-left join Order_Article oaa on oaa.id = o.id
-left join Order_Qty oq on o.ID = oq.ID and oq.Article = oa.Article
-outer apply(select article=iif(oa.article='----', oaa.article,oa.article))ax
-where o.ID in (select  id from Orders o1 where 
-o1.POID = o.POID 
-AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{this.Order_ArtworkId}') )
-group by oa.PatternCode,ax.Article,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,o.Junk,o.NeedProduction
-order by oa.ID";
-            DataTable Left;
-            result = DBProxy.Current.Select(null, sqlCmd, out Left);
+--因為Order_Artwork有可能同一個OrderID下Article同時有----和正常的Article
+--所以要先distinct 去除Order_Artwork重複的部分
+SELECT 
+distinct
+oa.ID,
+oa.ArtworkTypeID,
+oa.ArtworkID,
+oa.PatternCode ,
+oq.Article,
+oq.SizeCode,
+[Qty] = CASE    WHEN    o.Junk = 1  and o.NeedProduction=0 THEN 0 
+                else    oq.Qty  end
+into #baseArtworkOrderQty
+FROM Orders o
+INNER JOIN Order_Artwork oa ON o.ID = oa.ID
+LEFT JOIN Order_Qty oq ON o.ID = oq.ID AND (oq.Article = oa.Article or oa.article='----')
+WHERE   o.POID = (SELECT POID FROM Orders WHERE ID='{this.Order_ArtworkId}')
 
-            //一組key對應的只會有一組 PatternCode
-            sqlCmd = $@"
-select DISTINCT
-    oa.ID                               
-    ,oa.ArtworkTypeID
-    ,oa.ArtworkID
-    ,ax.Article
-    ,CASE WHEN o.Junk = 1 and o.NeedProduction = 0 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty  
-    ,oa.PatternCode
-from Orders o
-inner join Order_Artwork oa on o.ID = oa.ID
-left join Order_Article oaa on oaa.id = o.id
-left join Order_Qty oq on o.ID = oq.ID and oq.Article = oa.Article
-outer apply(select article=iif(oa.article='----', oaa.article,oa.article))ax
-where o.ID in (select  id from Orders o1 where 
-o1.POID = o.POID 
-AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{this.Order_ArtworkId}') )
-group by oa.PatternCode,ax.Article,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,o.Junk,o.NeedProduction
-order by oa.ArtworkTypeID";
-            DataTable value;
-            result = DBProxy.Current.Select(null, sqlCmd, out value);
+select  bao.ID,
+        bao.ArtworkTypeID,
+        bao.ArtworkID,
+        bao.PatternCode,
+        [Article] = art.article,
+        [OrderQty] = sum(isnull(bao.Qty, 0))
+into    #comboBySP
+from    #baseArtworkOrderQty bao
+outer apply(
+	select article = stuff((
+		select distinct concat(',', baoo.Article)
+		from #baseArtworkOrderQty baoo with(nolock)
+		where	bao.ID = baoo.ID and
+                bao.ArtworkTypeID = baoo.ArtworkTypeID and
+				bao.ArtworkID = baoo.ArtworkID and
+				bao.PatternCode = baoo.PatternCode 
+		for xml path('')
+	),1,1,'')
+)art
+group by bao.ID,
+        bao.ArtworkTypeID,
+        bao.ArtworkID,
+        bao.PatternCode,
+        art.article
+order by bao.ID
+
+-- combo by SP Right Value
+select  cbs.ID,
+        cbs.Article,
+        cbs.ArtworkTypeID,
+        cbs.ArtworkID,
+        [PatternCode] = ptCode.PatternCode
+from    (select  distinct
+            		ID,
+                    ArtworkTypeID,
+                    ArtworkID,
+                    Article
+            from    #comboBySP) cbs
+outer apply(
+	select PatternCode = stuff((
+		select distinct concat(',', cbss.PatternCode)
+		from #comboBySP cbss with(nolock)
+		where	cbs.ID = cbss.ID and
+                cbs.ArtworkTypeID = cbss.ArtworkTypeID and
+				cbs.ArtworkID = cbss.ArtworkID and
+				cbs.Article = cbss.Article 
+		for xml path('')
+	),1,1,'')
+) ptCode
+
+-- combo by SP Left
+select  a.ID,
+		a.Article,
+		[OrderQty] = sum(OrderQty)
+from ( select  distinct
+				ID,
+				Article,
+				OrderQty
+				from    #comboBySP) a
+group by ID, Article
+order by ID
+
+-- Combo by Artwork Type
+
+select	bao.ArtworkTypeID,
+		bao.ArtworkID,
+		bao.PatternCode,
+		art.Article,
+		[OrderQty] = sum(isnull(bao.Qty, 0))
+from #baseArtworkOrderQty bao
+outer apply(
+	select article = stuff((
+		select distinct concat(',', baoo.Article)
+		from #baseArtworkOrderQty baoo with(nolock)
+		where	bao.ArtworkTypeID = baoo.ArtworkTypeID and
+				bao.ArtworkID = baoo.ArtworkID and
+				bao.PatternCode = baoo.PatternCode 
+		for xml path('')
+	),1,1,'')
+)art
+group by bao.ArtworkTypeID,
+		 bao.ArtworkID,
+		 bao.PatternCode,
+         art.Article
+
+drop table #baseArtworkOrderQty,#comboBySP
+";
+            DataTable[] dtComboResults;
+            result = DBProxy.Current.Select(null, sqlCmd, out dtComboResults);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            DataTable Left = dtComboResults[1];
+
+            // 一組key對應的只會有一組 PatternCode
+            DataTable value = dtComboResults[0];
 
             //開始畫表格
 
@@ -153,7 +233,6 @@ order by oa.ArtworkTypeID";
             dt.Columns.Add("Article", typeof(string));
             dt.Columns.Add("Order Qty", typeof(string));
 
-
             this.Helper.Controls.Grid.Generator(this.CombBySPgrid)
                .Text("SP#", header: "SP#", width: Widths.AnsiChars(18))
                .Text("Article", header: "Article", width: Widths.AnsiChars(10))
@@ -162,7 +241,6 @@ order by oa.ArtworkTypeID";
             //設定"有幾個"head
             if (head.Rows.Count>0)
             {
-
                 foreach (DataRow item in head.Rows)
                 {
                     //標投的文字內容，拿Key值來填
@@ -190,8 +268,7 @@ order by oa.ArtworkTypeID";
                         //開始填入PatternCode
                         //必須對應ID、Article、OrderQty
                         if (valueitem["ID"].ToString()== leftitem["ID"].ToString() && 
-                            valueitem["Article"].ToString() == leftitem["Article"].ToString() &&
-                            valueitem["OrderQty"].ToString() == leftitem["OrderQty"].ToString()
+                            valueitem["Article"].ToString() == leftitem["Article"].ToString()
                             )
                         {
                             row[valueitem["ArtworkTypeID"].ToString() + valueitem["ArtworkID"].ToString()] = valueitem["PatternCode"].ToString();
@@ -212,67 +289,7 @@ order by oa.ArtworkTypeID";
 
             #region Comb By Artwork
 
-            // 左邊
-            sqlCmd = string.Format(
-                            @"  
-                                SELECT DISTINCT 
-                                oa.ArtworkTypeID ,oa.ArtworkID,oa.PatternCode
-                                FROM Orders o
-                                INNER JOIN Order_Artwork oa ON o.ID = oa.ID
-                                LEFT JOIN Order_Qty oq ON o.ID = oq.ID AND oq.Article = oa.Article
-                                WHERE Exists (select 1 FROM Orders o1 WHERE
-                                o1.POID = o.POID 
-                                AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{0}') )
-                                GROUP BY o.POID ,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,oa.Article,o.Junk
-                                ORDER BY  oa.ArtworkTypeID, oa.ArtworkID, oa.PatternCode
-
-                                ", this.Order_ArtworkId);
-
-            DataTable Left_2;
-            result = DBProxy.Current.Select(null, sqlCmd, out Left_2);
-
-            sqlCmd = $@"
-;with LeftCol as (
-	SELECT DISTINCT oa.ArtworkTypeID ,oa.ArtworkID,oa.PatternCode
-	FROM Orders o
-	INNER JOIN Order_Artwork oa ON o.ID = oa.ID
-	LEFT JOIN Order_Qty oq ON o.ID = oq.ID AND oq.Article = oa.Article
-	WHERE Exists (select 1 FROM Orders o1 WHERE
-	o1.POID = o.POID 
-	AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{this.Order_ArtworkId}') )
-	GROUP BY o.POID ,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,oa.Article,o.Junk
-)
-SELECT 
-DISTINCT 
-lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode ,article=iif(oa.article='----', art.article,oa.article),CASE WHEN o.Junk = 1 and o.NeedProduction=0 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty  
-FROM Orders o
-INNER JOIN Order_Artwork oa ON o.ID = oa.ID
-LEFT JOIN Order_Qty oq ON o.ID = oq.ID AND oq.Article = oa.Article
-LEFT JOIN LeftCol lc ON  lc.ArtworkTypeID=oa.ArtworkTypeID AND lc.ArtworkID=oa.ArtworkID AND lc.PatternCode=oa.PatternCode
-outer apply(
-	select article = stuff((
-		select distinct concat(',', oaa.Article)
-		from Order_Article oaa with(nolock)
-		where oaa.id = o.poid
-		for xml path('')
-	),1,1,'')
-)art
-WHERE Exists (select 1 FROM Orders o1 WHERE 
-o1.POID = o.POID 
-AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{this.Order_ArtworkId}') )
-GROUP BY lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode,art.Article,oa.article,o.Junk,o.NeedProduction
-ORDER BY  lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode,Article
-";
-            DataTable Content;
-            result = DBProxy.Current.Select(null, sqlCmd, out Content);
-
-            DataTable OrderArtworks = new DataTable();
-
-            OrderArtworks.Columns.Add("ArtworkTypeID", typeof(string));
-            OrderArtworks.Columns.Add("ArtworkID", typeof(string));
-            OrderArtworks.Columns.Add("PatternCode", typeof(string));
-            OrderArtworks.Columns.Add("Article", typeof(string));
-            OrderArtworks.Columns.Add("OrderQty", typeof(int));
+            DataTable orderArtworks = dtComboResults[2];
 
             this.Helper.Controls.Grid.Generator(this.CombByArtworkGrid)
                .Text("ArtworkTypeID", header: "Artwork", width: Widths.AnsiChars(20))
@@ -281,42 +298,7 @@ ORDER BY  lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode,Article
                .Text("Article", header: "Article", width: Widths.AnsiChars(20))
                .Text("OrderQty", header: "Order Qty", width: Widths.AnsiChars(20));
 
-            if (Left_2.Rows.Count>0)
-            {
-                foreach (DataRow Left_item in Left_2.Rows)
-                {
-                    DataRow row;
-                    row = OrderArtworks.NewRow();
-
-                    // 前面是固定的
-                    row["ArtworkTypeID"] = Left_item["ArtworkTypeID"].ToString();
-                    row["ArtworkID"] = Left_item["ArtworkID"].ToString();
-                    row["PatternCode"] = Left_item["PatternCode"].ToString();
-
-                    List<string> Article = new List<string>();
-                    int sum = 0;
-
-                    // Article
-                    foreach (DataRow Content_item in Content.Rows)
-                    {
-                        if (Left_item["ArtworkTypeID"].ToString() == Content_item["ArtworkTypeID"].ToString() &&
-                            Left_item["ArtworkID"].ToString() == Content_item["ArtworkID"].ToString() &&
-                            Left_item["PatternCode"].ToString() == Content_item["PatternCode"].ToString() 
-                            )
-                        {
-                            Article.Add(Content_item["Article"].ToString());
-                            sum += Convert.ToInt32(Content_item["OrderQty"]);
-                        }
-                    }
-
-                    row["Article"] = Article.JoinToString(",");
-                    row["OrderQty"] = sum;
-
-                    OrderArtworks.Rows.Add(row);
-                }
-            }
-
-            this.CombByArtworkTypeSource.DataSource = OrderArtworks;
+            this.CombByArtworkTypeSource.DataSource = orderArtworks;
             this.CombByArtworkGrid.IsEditingReadOnly = true;
             this.CombByArtworkGrid.DataSource = this.CombByArtworkTypeSource;
             #endregion
