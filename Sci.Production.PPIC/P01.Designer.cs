@@ -303,6 +303,7 @@
             this.chkKeepPanels = new Sci.Win.UI.CheckBox();
             this.btnQtyChangeList = new Sci.Win.UI.Button();
             this.BtnBuyBack = new Sci.Win.UI.Button();
+            this.btnComboType = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -319,6 +320,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.btnComboType);
             this.detailcont.Controls.Add(this.BtnBuyBack);
             this.detailcont.Controls.Add(this.btnQtyChangeList);
             this.detailcont.Controls.Add(this.chkKeepPanels);
@@ -452,10 +454,10 @@
             this.detailcont.Controls.Add(this.txtpaytermar1);
             this.detailcont.Controls.Add(this.txtcurrency1);
             this.detailcont.Controls.Add(this.txtcountry1);
-            this.detailcont.Controls.Add(this.txtuser2);
             this.detailcont.Controls.Add(this.txtuser1);
-            this.detailcont.Controls.Add(this.txttpeuser2);
+            this.detailcont.Controls.Add(this.txtuser2);
             this.detailcont.Controls.Add(this.txttpeuser1);
+            this.detailcont.Controls.Add(this.txttpeuser2);
             this.detailcont.Size = new System.Drawing.Size(1000, 661);
             // 
             // detailbtm
@@ -3386,6 +3388,16 @@
             this.BtnBuyBack.UseVisualStyleBackColor = true;
             this.BtnBuyBack.Click += new System.EventHandler(this.BtnBuyBack_Click);
             // 
+            // btnComboType
+            // 
+            this.btnComboType.Location = new System.Drawing.Point(798, 628);
+            this.btnComboType.Name = "btnComboType";
+            this.btnComboType.Size = new System.Drawing.Size(194, 27);
+            this.btnComboType.TabIndex = 238;
+            this.btnComboType.Text = "Combo Type";
+            this.btnComboType.UseVisualStyleBackColor = true;
+            this.btnComboType.Click += new System.EventHandler(this.BtnComboType_Click);
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 722);
@@ -3692,5 +3704,6 @@
         private Win.UI.CheckBox chkKeepPanels;
         private Win.UI.Button btnQtyChangeList;
         private Win.UI.Button BtnBuyBack;
+        private Win.UI.Button btnComboType;
     }
 }

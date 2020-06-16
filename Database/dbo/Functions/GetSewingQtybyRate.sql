@@ -3,7 +3,7 @@ CREATE FUNCTION [dbo].GetSewingQtybyRate(@orderid varchar(13), @article varchar(
 
 RETURNS decimal(15,3)
 BEGIN
-	DECLARE @ret decimal(15,3) = 0
+	DECLARE @ret decimal(15,2) = 0
 	DECLARE @StyleUnit varchar(5), @StyleUkey bigint
 	select @StyleUkey = StyleUkey,@StyleUnit = StyleUnit from Orders WITH (NOLOCK) where ID = @orderid
 
