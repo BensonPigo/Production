@@ -33,13 +33,13 @@
             this.labelSeason = new Sci.Win.UI.Label();
             this.lbToolType = new Sci.Win.UI.Label();
             this.comboToolType = new Sci.Win.UI.ComboBox();
-            this.labelInlineDate = new Sci.Win.UI.Label();
             this.dateInlineDate = new Sci.Win.UI.DateRange();
             this.txtfactory = new Sci.Production.Class.txtfactory();
             this.txtseason = new Sci.Production.Class.txtseason();
             this.txtstyle = new Sci.Production.Class.txtstyle();
             this.comboVersion = new Sci.Win.UI.ComboBox();
             this.lbVersion = new Sci.Win.UI.Label();
+            this.lbInlineDate = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -110,14 +110,6 @@
             this.comboToolType.Size = new System.Drawing.Size(130, 24);
             this.comboToolType.TabIndex = 5;
             // 
-            // labelInlineDate
-            // 
-            this.labelInlineDate.Location = new System.Drawing.Point(9, 12);
-            this.labelInlineDate.Name = "labelInlineDate";
-            this.labelInlineDate.Size = new System.Drawing.Size(75, 23);
-            this.labelInlineDate.TabIndex = 98;
-            this.labelInlineDate.Text = "Inline Date";
-            // 
             // dateInlineDate
             // 
             // 
@@ -151,7 +143,7 @@
             this.txtfactory.Location = new System.Drawing.Point(87, 48);
             this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
-            this.txtfactory.Size = new System.Drawing.Size(130, 23);
+            this.txtfactory.Size = new System.Drawing.Size(80, 23);
             this.txtfactory.TabIndex = 2;
             // 
             // txtseason
@@ -161,7 +153,7 @@
             this.txtseason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtseason.Location = new System.Drawing.Point(87, 119);
             this.txtseason.Name = "txtseason";
-            this.txtseason.Size = new System.Drawing.Size(130, 23);
+            this.txtseason.Size = new System.Drawing.Size(80, 23);
             this.txtseason.TabIndex = 4;
             // 
             // txtstyle
@@ -196,16 +188,30 @@
             this.lbVersion.TabIndex = 104;
             this.lbVersion.Text = "Version";
             // 
+            // lbInlineDate
+            // 
+            this.lbInlineDate.Location = new System.Drawing.Point(9, 12);
+            this.lbInlineDate.Name = "lbInlineDate";
+            this.lbInlineDate.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.lbInlineDate.RectStyle.BorderWidth = 1F;
+            this.lbInlineDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbInlineDate.RectStyle.ExtBorderWidth = 1F;
+            this.lbInlineDate.Size = new System.Drawing.Size(75, 23);
+            this.lbInlineDate.TabIndex = 105;
+            this.lbInlineDate.Text = "Inline Date";
+            this.lbInlineDate.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.lbInlineDate.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // R03
             // 
             this.ClientSize = new System.Drawing.Size(541, 255);
+            this.Controls.Add(this.lbInlineDate);
             this.Controls.Add(this.comboVersion);
             this.Controls.Add(this.lbVersion);
             this.Controls.Add(this.txtstyle);
             this.Controls.Add(this.txtseason);
             this.Controls.Add(this.txtfactory);
             this.Controls.Add(this.dateInlineDate);
-            this.Controls.Add(this.labelInlineDate);
             this.Controls.Add(this.comboToolType);
             this.Controls.Add(this.lbToolType);
             this.Controls.Add(this.labelSeason);
@@ -228,13 +234,13 @@
             this.Controls.SetChildIndex(this.labelSeason, 0);
             this.Controls.SetChildIndex(this.lbToolType, 0);
             this.Controls.SetChildIndex(this.comboToolType, 0);
-            this.Controls.SetChildIndex(this.labelInlineDate, 0);
             this.Controls.SetChildIndex(this.dateInlineDate, 0);
             this.Controls.SetChildIndex(this.txtfactory, 0);
             this.Controls.SetChildIndex(this.txtseason, 0);
             this.Controls.SetChildIndex(this.txtstyle, 0);
             this.Controls.SetChildIndex(this.lbVersion, 0);
             this.Controls.SetChildIndex(this.comboVersion, 0);
+            this.Controls.SetChildIndex(this.lbInlineDate, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -247,12 +253,12 @@
         private Win.UI.Label labelSeason;
         private Win.UI.Label lbToolType;
         private Win.UI.ComboBox comboToolType;
-        private Win.UI.Label labelInlineDate;
         private Win.UI.DateRange dateInlineDate;
         private Class.txtfactory txtfactory;
         private Class.txtseason txtseason;
         private Class.txtstyle txtstyle;
         private Win.UI.ComboBox comboVersion;
         private Win.UI.Label lbVersion;
+        private Win.UI.Label lbInlineDate;
     }
 }

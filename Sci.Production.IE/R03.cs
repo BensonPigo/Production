@@ -136,7 +136,7 @@ where EXISTS (
                     sqlCmd.Append("And ld.Template <> ''" + Environment.NewLine);
                     break;
                 default:
-                    sqlCmd.Append("And ld.Attachment <> '' And ld.Template <> ''" + Environment.NewLine);
+                    sqlCmd.Append("And (ld.Attachment <> '' or ld.Template <> '')" + Environment.NewLine);
                     break;
             }
 
@@ -154,7 +154,7 @@ where EXISTS (
                 return failResult;
             }
 
-            return Result.True;
+            return result;
         }
 
         /// <summary>
