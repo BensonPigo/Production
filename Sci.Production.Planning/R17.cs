@@ -225,60 +225,26 @@ from(
 )x
 group by OrderID
 
-select 
-	 t.OrderID
-	,t.Seq
-	,ReceiveDate=max(cr.AddDate)
-into #tmpReceiveDate1
-from #tmp_main t
-inner join PackingList_Detail pd on pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.Seq
-inner join ClogReceive cr on (cr.PackingListID = pd.ID and cr.OrderID = pd.OrderID and cr.CTNStartNo = pd.CTNStartNo and pd.SCICtnNo <>'')
-where pd.OrderID = t.OrderID
-and pd.OrderShipmodeSeq = t.Seq
-and not exists(select 1 
-			from PackingList_Detail pdCheck
-			where pdCheck.OrderID =t.OrderID
-					and pdCheck.OrderShipmodeSeq = t.Seq
-					and CTNQty > 0
-					and pdCheck.ReceiveDate is null
-		)
-group by t.OrderID,t.Seq
-
-select
-	 t.OrderID
-	,t.Seq
-	,ReceiveDate=max(cr.AddDate)
-into #tmpReceiveDate2
-from #tmp_main t
-inner join PackingList_Detail pd on pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.Seq
-inner join ClogReceive cr on cr.SCICtnNo = pd.SCICtnNo and pd.SCICtnNo <>''
-where pd.OrderID = t.OrderID
-and pd.OrderShipmodeSeq = t.Seq
-and not exists(select 1 
-			from PackingList_Detail pdCheck
-			where pdCheck.OrderID =t.OrderID
-					and pdCheck.OrderShipmodeSeq = t.Seq
-					and CTNQty > 0
-					and pdCheck.ReceiveDate is null
-		)
-group by t.OrderID,t.Seq
-
-select  t.OrderID,t.Seq,ReceiveDate=max(t.ReceiveDate)
-into #maxReceiveDate
-from(
-	select *from #tmpReceiveDate1
-	union all
-	select *from #tmpReceiveDate2
-)t
-group by t.OrderID,t.Seq
-
 SELECT  
 	[orderid]= t.OrderID
 	,[ordershipmodeseq]= t.Seq
-	,[CTNLastReceiveDate]= format(r.ReceiveDate, 'yyyy/MM/dd HH:mm:ss')
+	,[CTNLastReceiveDate]= format(pd.ReceiveDate, 'yyyy/MM/dd HH:mm:ss')
 into #tmp_ClogReceive
 from #tmp_main t
-left join #maxReceiveDate r on t.OrderID = r.orderid and t.Seq = r.Seq
+outer apply(
+	select ReceiveDate = max(pd.ReceiveDate) 
+	from Production.dbo.PackingList_Detail pd
+	where	pd.OrderID = t.OrderID
+			and pd.OrderShipmodeSeq = t.Seq
+			and not exists (
+				-- 每個紙箱必須放在 Clog（ReceiveDate 有日期）
+				select 1 
+				from Production.dbo.PackingList_Detail pdCheck
+				where pd.OrderID = pdCheck.OrderID 
+					  and pd.OrderShipmodeSeq = pdCheck.OrderShipmodeSeq
+					  and pdCheck.ReceiveDate is null)
+	group by pd.OrderID, pd.ordershipmodeseq 
+) pd 
 
 Select  oqsD.ID,oqsD.Seq
         ,sum (case when dbo.GetPoPriceByArticleSize(oqsd.id,oqsD.Article,oqsD.SizeCode) > 0 then oqsD.Qty else 0 end) as FOB
