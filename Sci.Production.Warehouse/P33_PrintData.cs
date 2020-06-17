@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sci.Production.Warehouse
+﻿namespace Sci.Production.Warehouse
 {
     class P33_PrintData
     {
@@ -18,5 +12,6 @@ namespace Sci.Production.Warehouse
         public string Unit { get; set; }
         public string UnitDesc { get; set; }
         public string Location { get; set; }
+        public string OutputQty { get; set; }
     }
 }
