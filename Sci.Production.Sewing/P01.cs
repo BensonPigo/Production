@@ -3902,7 +3902,7 @@ select
 	, TMS=0
 	, HourlyStandardOutput = 0
 	, [QAQty] = sum(iif(ins.Status in ('Pass','Fixed'),1,0))
-	, [DefectQty] = sum(iif(ins.Status ='Reject',1,0))
+	, [DefectQty] = sum(iif(ins.Status in ('Reject','Dispose'),1,0))
 	, [InlineQty] = count(1)
 	, [ImportFromDQS] = 1
 	, [AutoCreate] = 0
