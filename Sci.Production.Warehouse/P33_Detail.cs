@@ -224,7 +224,11 @@ AND SCIRefno = '{CurrentDetailData["SCIRefno"]}'
 AND ColorID='{CurrentDetailData["ColorID"]}'
 AND Seq1 = '{seq1}' AND Seq2 = '{seq2}'
 ");
-                allSuppColor.Add(suppColor);
+                // 重複就不加進去了
+                if (!allSuppColor.Contains(suppColor))
+                {
+                    allSuppColor.Add(suppColor);
+                }
 
                 // 若還沒有Issue.ID，表示是全新的第三層，因此除了Deleted的都是Add
                 if (item.RowState != DataRowState.Added && MyUtility.Check.Empty(CurrentDetailData["ID"]))
