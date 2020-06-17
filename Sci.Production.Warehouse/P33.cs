@@ -1862,7 +1862,7 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
 
 
             StringBuilder sqlupd2 = new StringBuilder();
-            String sqlcmd = "", sqlupd3 = "", ids = "";
+            String sqlcmd = "", sqlupd3 = "";
             DualResult result, result2;
             DataTable datacheck;
             string sqlupd2_FIO = "";
@@ -2052,7 +2052,7 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             if (dResult == DialogResult.No) return;
             var dr = this.CurrentMaintain; if (null == dr) return;
             StringBuilder sqlupd2 = new StringBuilder();
-            string sqlcmd = "", sqlupd3 = "", ids = "";
+            string sqlcmd = "", sqlupd3 = "";
             DualResult result, result2;
             string sqlupd2_FIO = "";
             StringBuilder sqlupd2_B = new StringBuilder();
@@ -2207,6 +2207,7 @@ SELECT f.Refno
 							FROM FtyInventory_Detail 
 							WITH(NOLOCK) WHERE Ukey= iid.FtyInventoryUkey and isnull(MtlLocationID,'') <> '' 
 					 ) fty FOR xml path('')), 1, 1, '')
+        ,[OutputQty] = ThreadUsedQtyByBOT.Qty
 INTO #tmp
 FROM Issue_Summary iis WITH(NOLOCK)
 INNER JOIN Issue_Detail iid WITH(NOLOCK) ON iis.Id = iid.Id AND iis.Ukey = iid.Issue_SummaryUkey
@@ -2217,6 +2218,24 @@ OUTER APPLY(
 	INNER JOIN Unit u ON u.ID = PSD.StockUnit
 	WHERE PSD.ID ='{poID}' AND PSD.SCIRefno=iis.SCIRefno AND PSD.ColorID = iis.ColorID
 )Unit
+OUTER APPLY(
+	 SELECt [Qty]=SUM(b.Qty)
+	 FROM (
+		    Select distinct o.ID,tcd.SCIRefNo, tcd.ColorID ,tcd.Article
+		    From dbo.Orders as o
+		    Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
+		    Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
+		    Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
+		    WHERE O.ID=iis.POID AND tcd.Article IN ( SELECT Article FROM Issue_Breakdown WHERE ID = iis.Id)
+		    ) a
+	 INNER JOIN (		
+				    SELECt Article,[Qty]=SUM(Qty) 
+				    FROM Issue_Breakdown
+				    WHERE ID = iis.Id
+				    GROUP BY Article
+			    ) b ON a.Article = b.Article
+	 WHERE SCIRefNo=iis.SCIRefNo AND  ColorID= iis.ColorID
+)ThreadUsedQtyByBOT
 WHERE iis.ID='{ID}'
 
 
@@ -2270,6 +2289,7 @@ SELECT [Refno]
 					WHERE Refno=t.Refno AND ColorID=t.ColorID
 					ORDER BY Seq
 				), '' , t.Location)
+        , t.OutputQty
 FROM #tmp t
 
 DROP TABLE #tmp
@@ -2299,7 +2319,8 @@ DROP TABLE #tmp
                 Issue_Summary_Qty = o["Issue_Summary_Qty"].ToString().Trim(),
                 Unit = o["Unit"].ToString().Trim(),
                 UnitDesc = o["UnitDesc"].ToString().Trim(),
-                Location = o["Location"].ToString().Trim()
+                Location = o["Location"].ToString().Trim(),
+                OutputQty = o["OutputQty"].ToString().Trim()
             }).ToList();
 
             report.ReportDataSource = PrintDatas;
