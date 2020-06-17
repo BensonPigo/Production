@@ -97,8 +97,8 @@ inner join LineMapping_Detail ld WITH (NOLOCK) on l.ID = ld.ID
 left join Operation op WITH (NOLOCK) on ld.OperationID = op.ID
 outer apply (
 	select [Version] = max(Version)
-	from LineMapping l WITH (NOLOCK)
-	left join Orders o WITH (NOLOCK) on o.StyleID=l.StyleID and o.SeasonID=l.SeasonID and o.BrandID = l.BrandID
+	from LineMapping l2 WITH (NOLOCK) 
+    where l.StyleID = l2.StyleID and l.SeasonID = l2.SeasonID and l.BrandID = l2.BrandID
 )lMax
 where EXISTS (
 	select 1
