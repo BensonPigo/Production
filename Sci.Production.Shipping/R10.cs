@@ -1449,12 +1449,18 @@ where s.Type = 'EXPORT'");
             {
                 return false;
             }
-
+            //excel.Visible = true;
             DataTable tb_onBoardDate = new DataTable();
+            DataTable tb_IncludeFoundry = new DataTable();
+            DataTable tb_SisFtyAP = new DataTable();
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             if (this.reportContent == 2)
             {
-                worksheet.get_Range("C1", "E1").EntireColumn.Delete(Missing.Value);
+                if (this.reportType != 1)
+                {
+                    worksheet.get_Range("C1", "E1").EntireColumn.Delete(Missing.Value);
+                }
+
                 worksheet.Cells[1, 2] = "FTY WK#";
                 worksheet.Cells[1, 3] = "M";
                 if (this.reportType == 1)
@@ -1480,7 +1486,31 @@ where s.Type = 'EXPORT'");
                     }
                 }
 
-                this.printData.Columns.RemoveAt(2);
+                this.printData.Columns.Remove("OnBoardDate");
+
+                tb_IncludeFoundry = this.printData.Copy();
+                for (int f = 0; f < tb_IncludeFoundry.Columns.Count; f++)
+                {
+                    if (!tb_IncludeFoundry.Columns[f].ColumnName.Equals("Foundry"))
+                    {
+                        tb_IncludeFoundry.Columns.RemoveAt(f);
+                        f--;
+                    }
+                }
+
+                this.printData.Columns.Remove("Foundry");
+
+                tb_SisFtyAP = this.printData.Copy();
+                for (int f = 0; f < tb_SisFtyAP.Columns.Count; f++)
+                {
+                    if (!tb_SisFtyAP.Columns[f].ColumnName.Equals("SisFtyAPID"))
+                    {
+                        tb_SisFtyAP.Columns.RemoveAt(f);
+                        f--;
+                    }
+                }
+
+                this.printData.Columns.Remove("SisFtyAPID");
             }
 
             if (this.reportType == 1 || this.reportType == 2)
@@ -1488,13 +1518,13 @@ where s.Type = 'EXPORT'");
                 int allColumn = 0;
                 if (this.reportType == 1)
                 {
-                    allColumn = 25;
+                    allColumn = 23;
                 }
                 else
                 {
                     if (this.reportContent == 1)
                     {
-                        allColumn = 32;
+                        allColumn = 30;
                     }
                     else
                     {
@@ -1580,62 +1610,59 @@ where s.Type = 'EXPORT'");
                     objArray[0, 14] = dr[14];
                     objArray[0, 15] = dr[15];
                     objArray[0, 16] = dr[16];
-                    objArray[0, 17] = dr[17];
-                    objArray[0, 18] = dr[18];
+
                     if (this.reportType == 1)
                     {
+                        objArray[0, 17] = MyUtility.Check.Empty(dr[17]) ? 0 : dr[17];
+                        objArray[0, 18] = MyUtility.Check.Empty(dr[18]) ? 0 : dr[18];
                         objArray[0, 19] = MyUtility.Check.Empty(dr[19]) ? 0 : dr[19];
                         objArray[0, 20] = MyUtility.Check.Empty(dr[20]) ? 0 : dr[20];
-                        // objArray[0, 19] = MyUtility.Check.Empty(dr[19]) ? 0 : dr[19];
-                        // objArray[0, 20] = $"=S{intRowsStart}+T{intRowsStart}";
                         objArray[0, 21] = MyUtility.Check.Empty(dr[21]) ? 0 : dr[21];
                         objArray[0, 22] = MyUtility.Check.Empty(dr[22]) ? 0 : dr[22];
-                        objArray[0, 23] = MyUtility.Check.Empty(dr[23]) ? 0 : dr[23];
-                        objArray[0, 24] = MyUtility.Check.Empty(dr[24]) ? 0 : dr[24];
 
                         // 多增加的AccountID, 必須要動態的填入欄位值!
                         if (counts > 0)
                         {
                             for (int t = 1; t <= counts; t++)
                             {
-                                if (MyUtility.Convert.GetString(dr.Table.Columns[24 + t].ColumnName).Contains("5912"))
+                                if (MyUtility.Convert.GetString(dr.Table.Columns[22 + t].ColumnName).Contains("5912"))
                                 {
                                     if (MyUtility.Check.Empty(sumCol5912start))
                                     {
-                                        sumCol5912start = PublicPrg.Prgs.GetExcelEnglishColumnName(25 + t);
+                                        sumCol5912start = PublicPrg.Prgs.GetExcelEnglishColumnName(23 + t);
                                     }
                                 }
 
-                                if (MyUtility.Convert.GetString(dr.Table.Columns[24 + t].ColumnName).EqualString("5912-Total"))
+                                if (MyUtility.Convert.GetString(dr.Table.Columns[22 + t].ColumnName).EqualString("5912-Total"))
                                 {
                                     if (MyUtility.Check.Empty(sumCol5912))
                                     {
-                                        sumCol5912 = PublicPrg.Prgs.GetExcelEnglishColumnName(24 + t);
-                                        sumCol5912TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(25 + t);
+                                        sumCol5912 = PublicPrg.Prgs.GetExcelEnglishColumnName(22 + t);
+                                        sumCol5912TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(23 + t);
                                     }
 
-                                    objArray[0, 24 + t] = $"=W{intRowsStart}+SUM({sumCol5912start}{intRowsStart}:{sumCol5912}{intRowsStart})";
+                                    objArray[0, 22 + t] = $"=W{intRowsStart}+SUM({sumCol5912start}{intRowsStart}:{sumCol5912}{intRowsStart})";
                                 }
-                                else if (MyUtility.Convert.GetString(dr.Table.Columns[24 + t].ColumnName).EqualString("6105-Total"))
+                                else if (MyUtility.Convert.GetString(dr.Table.Columns[22 + t].ColumnName).EqualString("6105-Total"))
                                 {
                                     if (MyUtility.Check.Empty(sumCol6105))
                                     {
-                                        sumCol6105 = PublicPrg.Prgs.GetExcelEnglishColumnName(24 + t);
-                                        sumCol6105TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(25 + t);
+                                        sumCol6105 = PublicPrg.Prgs.GetExcelEnglishColumnName(22 + t);
+                                        sumCol6105TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(23 + t);
                                     }
 
-                                    objArray[0, 24 + t] = $"=SUM({first6105Column}{intRowsStart}:{sumCol6105}{intRowsStart})";
+                                    objArray[0, 22 + t] = $"=SUM({first6105Column}{intRowsStart}:{sumCol6105}{intRowsStart})";
                                 }
                                 else
                                 {
-                                    objArray[0, 24 + t] = MyUtility.Check.Empty(dr[24 + t]) ? 0 : dr[24 + t];
+                                    objArray[0, 22 + t] = MyUtility.Check.Empty(dr[22 + t]) ? 0 : dr[22 + t];
                                 }
                             }
                         }
                     }
                     else
                     {
-                        for (int f = 19; f < allColumn; f++)
+                        for (int f = 17; f < allColumn; f++)
                         {
                             if (f >= allColumn - 6)
                             {
@@ -1668,7 +1695,7 @@ where s.Type = 'EXPORT'");
                                         sumCol5912TTL = PublicPrg.Prgs.GetExcelEnglishColumnName(allColumn + c);
                                     }
 
-                                    objArray[0, allColumn - 1 + c] = $"=AD{intRowsStart}+SUM({sumCol5912start}{intRowsStart}:{sumCol5912}{intRowsStart})";
+                                    objArray[0, allColumn - 1 + c] = $"=AA{intRowsStart}+SUM({sumCol5912start}{intRowsStart}:{sumCol5912}{intRowsStart})";
                                 }
                                 else if (MyUtility.Convert.GetString(dr.Table.Columns[allColumn - 1 + c].ColumnName).EqualString("6105-Total"))
                                 {
@@ -1700,7 +1727,15 @@ where s.Type = 'EXPORT'");
                         sc2 = $"-{sumCol6105TTL}{intRowsStart}";
                     }
 
-                    objArray[0, allColumn + this.accnoData.Rows.Count] = string.Format("=SUM({2}{0}:{1}{0}) {3} {4}", intRowsStart, excelSumCol, this.reportType == 1 ? "R" : "V", sc1, sc2);
+                    int totalSumcolumn = allColumn + this.accnoData.Rows.Count;
+
+                    //if (this.reportContent == 2)
+                    //{
+                    //    totalSumcolumn += 1;
+                    //}
+                    string sumStartColEng = this.reportType == 1 ? "R" : this.reportContent == 2 ? "V" : "Y";
+                    objArray[0, totalSumcolumn] = string.Format("=SUM({2}{0}:{1}{0}) {3} {4}", intRowsStart, excelSumCol, sumStartColEng, sc1, sc2);
+
                     worksheet.Range[string.Format("A{0}:{1}{0}", intRowsStart, excelColumn)].Value2 = objArray;
                     intRowsStart++;
                 }
@@ -1712,17 +1747,17 @@ where s.Type = 'EXPORT'");
                 {
                     if (this.reportContent == 1)
                     {
-                        worksheet.Cells[1, 27] = worksheet.Cells[1, 25].Value + "\r\n(USD)";
+                        worksheet.Cells[1, 25] = worksheet.Cells[1, 25].Value + "\r\n(USD)";
                     }
                     else
                     {
-                        worksheet.Cells[1, 24] = worksheet.Cells[1, 22].Value + "\r\n(USD)";
+                        worksheet.Cells[1, 22] = worksheet.Cells[1, 22].Value + "\r\n(USD)";
                     }
                 }
 
                 // 填內容值
                 int intRowsStart = 2;
-                object[,] objArray = new object[1, 34];
+                object[,] objArray = new object[1, 32];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     if (this.reportContent == 1)
@@ -1733,36 +1768,34 @@ where s.Type = 'EXPORT'");
                         objArray[0, 3] = dr["FactoryID"];
                         objArray[0, 4] = dr["MDivisionID"];
                         objArray[0, 5] = dr["KPICode"];
-                        objArray[0, 6] = dr["Foundry"];
-                        objArray[0, 7] = dr["SisFtyAPID"];
-                        objArray[0, 8] = dr["BrandID"];
-                        objArray[0, 9] = dr["Category"];
-                        objArray[0, 10] = dr["OrderID"];
-                        objArray[0, 11] = dr["BuyerDelivery"];
-                        objArray[0, 12] = dr["OQty"];
-                        objArray[0, 13] = dr["CustCDID"];
-                        objArray[0, 14] = dr["Dest"];
-                        objArray[0, 15] = dr["ShipModeID"];
-                        objArray[0, 16] = dr["PackID"];
-                        objArray[0, 17] = dr["PulloutID"];
-                        objArray[0, 18] = dr["PulloutDate"];
-                        objArray[0, 19] = dr["ShipQty"];
-                        objArray[0, 20] = dr["CTNQty"];
-                        objArray[0, 21] = dr["GW"];
-                        objArray[0, 22] = dr["CBM"];
-                        objArray[0, 23] = dr["Forwarder"];
-                        objArray[0, 24] = dr["BLNo"];
-                        objArray[0, 25] = dr["FeeType"];
-                        objArray[0, 26] = dr["Amount"];
-                        objArray[0, 27] = dr["CurrencyID"];
-                        objArray[0, 28] = dr["APID"];
-                        objArray[0, 29] = dr["CDate"];
-                        objArray[0, 30] = dr["ApvDate"];
-                        objArray[0, 31] = dr["VoucherID"];
-                        objArray[0, 32] = dr["VoucherDate"];
-                        objArray[0, 33] = dr["SubType"];
+                        objArray[0, 6] = dr["BrandID"];
+                        objArray[0, 7] = dr["Category"];
+                        objArray[0, 8] = dr["OrderID"];
+                        objArray[0, 9] = dr["BuyerDelivery"];
+                        objArray[0, 10] = dr["OQty"];
+                        objArray[0, 11] = dr["CustCDID"];
+                        objArray[0, 12] = dr["Dest"];
+                        objArray[0, 13] = dr["ShipModeID"];
+                        objArray[0, 14] = dr["PackID"];
+                        objArray[0, 15] = dr["PulloutID"];
+                        objArray[0, 16] = dr["PulloutDate"];
+                        objArray[0, 17] = dr["ShipQty"];
+                        objArray[0, 18] = dr["CTNQty"];
+                        objArray[0, 19] = dr["GW"];
+                        objArray[0, 20] = dr["CBM"];
+                        objArray[0, 21] = dr["Forwarder"];
+                        objArray[0, 22] = dr["BLNo"];
+                        objArray[0, 23] = dr["FeeType"];
+                        objArray[0, 24] = dr["Amount"];
+                        objArray[0, 25] = dr["CurrencyID"];
+                        objArray[0, 26] = dr["APID"];
+                        objArray[0, 27] = dr["CDate"];
+                        objArray[0, 28] = dr["ApvDate"];
+                        objArray[0, 29] = dr["VoucherID"];
+                        objArray[0, 30] = dr["VoucherDate"];
+                        objArray[0, 31] = dr["SubType"];
 
-                        worksheet.Range[string.Format("A{0}:AH{0}", intRowsStart)].Value2 = objArray;
+                        worksheet.Range[string.Format("A{0}:AF{0}", intRowsStart)].Value2 = objArray;
                     }
                     else
                     {
@@ -1803,17 +1836,52 @@ where s.Type = 'EXPORT'");
                 }
             }
 
-            // mantis9831 增加On Board Date，因為只針對Garment所以在excel產生後插入
+            // [On Board Date],[Shipper],[Include Foundry]因為只針對Garment所以在excel產生後插入
             if (this.reportContent == 1)
             {
-                Microsoft.Office.Interop.Excel.Range range = (Microsoft.Office.Interop.Excel.Range)worksheet.get_Range("C1", Missing.Value);
+                Microsoft.Office.Interop.Excel.Range range = worksheet.get_Range("C1", Missing.Value);
                 range.EntireColumn.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight, Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow);
                 worksheet.Cells[1, 3] = "On Board Date";
-                range = (Microsoft.Office.Interop.Excel.Range)worksheet.get_Range("C2", "C" + (this.printData.Rows.Count + 1));
+                range = worksheet.get_Range("C2", "C" + (this.printData.Rows.Count + 1));
                 range.EntireColumn.NumberFormat = "yyyy/MM/dd";
-                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM();
+                //Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM();
                 object[,] arrayValues = tb_onBoardDate.ToArray2D();
                 range.Value2 = arrayValues;
+
+                if (this.reportType == 1)
+                {
+                    range = worksheet.get_Range("E1", Missing.Value);
+                    range.EntireColumn.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight, Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow);
+                    worksheet.Cells[1, 5] = "Include Foundry";
+                    range = worksheet.get_Range("E2", "E" + (this.printData.Rows.Count + 1));
+                    arrayValues = tb_IncludeFoundry.ToArray2D();
+                    range.Value2 = arrayValues;
+
+                    range = worksheet.get_Range("F1", Missing.Value);
+                    range.EntireColumn.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight, Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow);
+                    worksheet.Cells[1, 6] = "Sis. Fty A/P#";
+                    range = worksheet.get_Range("F2", "F" + (this.printData.Rows.Count + 1));
+                    arrayValues = tb_SisFtyAP.ToArray2D();
+                    range.Value2 = arrayValues;
+
+                }
+
+                if (this.reportType == 2 || this.reportType == 3)
+                {
+                    range = worksheet.get_Range("H1", Missing.Value);
+                    range.EntireColumn.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight, Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow);
+                    worksheet.Cells[1, 8] = "Include Foundry";
+                    range = worksheet.get_Range("H2", "H" + (this.printData.Rows.Count + 1));
+                    arrayValues = tb_IncludeFoundry.ToArray2D();
+                    range.Value2 = arrayValues;
+
+                    range = worksheet.get_Range("I1", Missing.Value);
+                    range.EntireColumn.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight, Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow);
+                    worksheet.Cells[1, 9] = "Sis. Fty A/P#";
+                    range = worksheet.get_Range("I2", "I" + (this.printData.Rows.Count + 1));
+                    arrayValues = tb_SisFtyAP.ToArray2D();
+                    range.Value2 = arrayValues;
+                }
             }
 
             excel.Cells.EntireColumn.AutoFit();
