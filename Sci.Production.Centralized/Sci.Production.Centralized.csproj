@@ -153,6 +153,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Endline_B13.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Endline_B13.Designer.cs">
+      <DependentUpon>Endline_B13.cs</DependentUpon>
+    </Compile>
     <Compile Include="Endline_B12.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -340,6 +346,9 @@
       <DependentUpon>WH_B01.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Endline_B13.resx">
+      <DependentUpon>Endline_B13.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Endline_B12.resx">
       <DependentUpon>Endline_B12.cs</DependentUpon>
     </EmbeddedResource>

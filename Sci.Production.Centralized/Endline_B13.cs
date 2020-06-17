@@ -14,13 +14,14 @@ using System.Windows.Forms;
 namespace Sci.Production.Centralized
 {
     /// <inheritdoc/>
-    public partial class Endline_B12 : Sci.Win.Tems.Input1
+    public partial class Endline_B13 : Sci.Win.Tems.Input1
     {
-        private string reasonType = "ID";
+        private string reasonType = "DP";
         /// <inheritdoc/>
-        public Endline_B12(ToolStripMenuItem menuitem)
+        public Endline_B13(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
+            this.ConnectionName = "ProductionTPE";
             this.DefaultWhere = $"Type = '{this.reasonType}'";
             this.InitializeComponent();
         }
@@ -30,7 +31,7 @@ namespace Sci.Production.Centralized
         {
             base.OnDetailEntered();
 
-            bool canJunk = Prgs.GetAuthority(Sci.Env.User.UserID, "Endline_B12 Idle Reason", "CanJunk");
+            bool canJunk = Prgs.GetAuthority(Sci.Env.User.UserID, "Endline_B13 Idle Reason", "CanJunk");
 
             this.chkJunk.Enabled = canJunk;
         }
