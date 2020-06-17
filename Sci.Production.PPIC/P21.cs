@@ -202,21 +202,9 @@ where ICR.ID = '{masterID}';
 
             bool canEdit = Prgs.GetAuthority(Sci.Env.User.UserID, "P21. Irregular Cost Report", "CanEdit");
 
-            // 確認Grid Replacement 帶入ReplacementReport 取得VoucherDate有值就沒有編輯權限
-            DataTable dt = (DataTable)this.gridReplacement.DataSource;
-            foreach (DataRow dr in dt.Rows)
-            {
-                string sqlcmd = $@"select 1 from ReplacementReport where id ='{dr["ReplacementNo"]}' and VoucherDate is not null";
-
-                if (MyUtility.Check.Seek(sqlcmd))
-                {
-                    canEdit = false;
-                }
-            }
-
             if (canEdit)
             {
-                canEdit = MyUtility.Check.Seek($"select 1 from ICR with (nolock) where ID = '{this.CurrentMaintain["ID"]}' and RespDeptConfirmDate is null");
+                canEdit = MyUtility.Check.Seek($"select 1 from ICR with (nolock) where ID = '{this.CurrentMaintain["ID"]}' and VoucherDate is null and RespDeptConfirmDate is null ");
             }
 
             var frm = new P21_ResponsibilityDept(canEdit, this.CurrentMaintain["ID"].ToString(), null, null, string.Empty, this.Perm.Confirm, this.Perm.Unconfirm);
