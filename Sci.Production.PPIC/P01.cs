@@ -359,7 +359,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             this.btnArtworkTransactionList.ForeColor = MyUtility.Check.Seek(string.Format("select ID from ArtworkPO_Detail WITH (NOLOCK) where OrderID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             this.btnProductionKits.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits WITH (NOLOCK) where StyleUkey = '{0}' ", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]))) ? Color.Blue : Color.Black;
             this.btnPFHistory.ForeColor = MyUtility.Check.Seek($@"select id from Order_PFHis with(nolock) where id = '{this.CurrentMaintain["ID"]}'") ? Color.Blue : Color.Black;
-
+            this.btnComboType.ForeColor = MyUtility.Check.Seek($@"select 1 from Order_Location where orderid = '{this.CurrentMaintain["ID"]}'") ? Color.Blue : Color.Black;
             #region 控制[m/notice sheet]按鈕是否變色
             bool enableMNotice1 = !MyUtility.Check.Empty(this.CurrentMaintain["MnorderApv"]);
             bool enableMNotice2 = !MyUtility.Check.Empty(this.CurrentMaintain["SMnorderApv"]);
@@ -1673,6 +1673,12 @@ and p.Type in ('L', 'B')
             this.RenewData();
             this.OnDetailEntered();
 
+        }
+
+        private void BtnComboType_Click(object sender, EventArgs e)
+        {
+            P01_ComboType frm = new P01_ComboType(this.CurrentMaintain["ID"].ToString());
+            frm.ShowDialog();
         }
     }
 }
