@@ -103,29 +103,31 @@ namespace Sci.Production.PPIC
 
             this.sqlGetData = $@"
 select
-ICR.ID,
-f.MDivisionID,
-ICR.Department,
-f.KPICode,
-ICR.OrderID,
-o.StyleID,
-o.SeasonID,
-o.BrandID,
-[TotalQty] = iif(o.POID <> ICR.OrderID, o.Qty, (select sum(Qty) from orders with (nolock) where id = ICR.OrderID)),
-[PO_Handle] = [dbo].[getTPEPass1_ExtNo](PO.POHandle) ,
-[PO_SMR] = [dbo].[getTPEPass1_ExtNo](o.SMR),
-[MR] = [dbo].[getTPEPass1_ExtNo](o.MRHandle),
-[SMR] = [dbo].[getTPEPass1_ExtNo](o.SMR),
-[IssueSubject] = (select CONCAT(ID,' - ', Name) from Reason where ID = ICR.IrregularPOCostID And Reason.ReasonTypeID = 'PO_IrregularCost'),
-ICR.RMtlAmtUSD,
-ICR.OtherAmtUSD,
-ICR.ActFreightUSD,
-[TotalUSD] = ICR.RMtlAmtUSD + ICR.ActFreightUSD + ICR.OtherAmtUSD,
-ICR.VoucherID,
-ICR.VoucherDate,
-o.POID,
-ICR.IrregularPOCostID,
-ICR.Status
+    ICR.ID,
+    f.MDivisionID,
+    ICR.Department,
+    f.KPICode,
+    ICR.OrderID,
+    o.StyleID,
+    o.SeasonID,
+    o.BrandID,
+    [TotalQty] = iif(o.POID <> ICR.OrderID, o.Qty, (select sum(Qty) from orders with (nolock) where id = ICR.OrderID)),
+    [PO_Handle] = [dbo].[getTPEPass1_ExtNo](PO.POHandle) ,
+    [PO_SMR] = [dbo].[getTPEPass1_ExtNo](o.SMR),
+    [MR] = [dbo].[getTPEPass1_ExtNo](o.MRHandle),
+    [SMR] = [dbo].[getTPEPass1_ExtNo](o.SMR),
+    [IssueSubject] = (select CONCAT(ID,' - ', Name) from Reason where ID = ICR.IrregularPOCostID And Reason.ReasonTypeID = 'PO_IrregularCost'),
+    ICR.RMtlAmtUSD,
+    ICR.OtherAmtUSD,
+    ICR.ActFreightUSD,
+    [TotalUSD] = ICR.RMtlAmtUSD + ICR.ActFreightUSD + ICR.OtherAmtUSD,
+    ICR.VoucherID,
+    ICR.VoucherDate,
+    o.POID,
+    ICR.IrregularPOCostID,
+    ICR.Status,
+    [AddDate] = format(ICR.AddDate, 'yyyy/MM/dd'), 
+    ICR.CFMDate
 into #tmpBaseICR
 from ICR with (nolock)
 left join Orders o with (nolock) on ICR.OrderID = o.ID
@@ -136,40 +138,42 @@ where 1 = 1 {sqlWhere}
 if ('{this.comboReportType.Text}' = 'Detail List')
 begin
     select
-    ICR.ID,
-    ICR.Status,
-    ICR.MDivisionID,
-    ICR.Department,
-    ICR.KPICode,
-    ICR.OrderID,
-    ICR.StyleID,
-    ICR.SeasonID,
-    ICR.BrandID,
-    ICR.TotalQty,
-    ICR.PO_Handle ,
-    ICR.PO_SMR,
-    ICR.MR,
-    ICR.SMR,
-    ICR.IssueSubject,
-    ICR.RMtlAmtUSD,
-    ICR.OtherAmtUSD,
-    ICR.ActFreightUSD,
-    ICR.TotalUSD,
-    ICR.VoucherID,
-    ICR.VoucherDate,
-    [Seq] = icrd.Seq1 + '-' + icrd.Seq2,
-    [SourceType] = (select DropDownList.Name 
-    					from Fabric, DropDownList 
-    					where psd.SCIRefno = Fabric.SCIRefno 
-    					and Fabric.Type = DropDownList.ID 
-    					and DropDownList.type = 'FabricType' ),
-    [WeaveType] = (SELECT WeaveTypeID FROM Fabric 
-    								  WHERE SCIRefno = (SELECT SCIRefno FROM PO_Supp_Detail WHERE ID = ICR.POID AND Seq1 = icrd.Seq1 AND Seq2 = icrd.Seq2)),
-    icrd.MtltypeID,
-    icrd.ICRQty,
-    icrd.ICRFoc,
-    icrd.PriceUSD,
-    [IrregularAmtUSD] = (Select Amount from dbo.GetAmountByUnit(icrd.PriceUSD, icrd.ICRQty, psd.POUnit,2))
+        ICR.ID,
+        ICR.Status,
+        ICR.MDivisionID,
+        ICR.Department,
+        ICR.KPICode,
+        ICR.OrderID,
+        ICR.StyleID,
+        ICR.SeasonID,
+        ICR.BrandID,
+        ICR.TotalQty,
+        ICR.PO_Handle ,
+        ICR.PO_SMR,
+        ICR.MR,
+        ICR.SMR,
+        ICR.IssueSubject,
+        ICR.RMtlAmtUSD,
+        ICR.OtherAmtUSD,
+        ICR.ActFreightUSD,
+        ICR.TotalUSD,
+        ICR.AddDate,
+        ICR.CFMDate,
+        ICR.VoucherID,
+        ICR.VoucherDate,
+        [Seq] = icrd.Seq1 + '-' + icrd.Seq2,
+        [SourceType] = (select DropDownList.Name 
+    					    from Fabric, DropDownList 
+    					    where psd.SCIRefno = Fabric.SCIRefno 
+    					    and Fabric.Type = DropDownList.ID 
+    					    and DropDownList.type = 'FabricType' ),
+        [WeaveType] = (SELECT WeaveTypeID FROM Fabric 
+    								      WHERE SCIRefno = (SELECT SCIRefno FROM PO_Supp_Detail WHERE ID = ICR.POID AND Seq1 = icrd.Seq1 AND Seq2 = icrd.Seq2)),
+        icrd.MtltypeID,
+        icrd.ICRQty,
+        icrd.ICRFoc,
+        icrd.PriceUSD,
+        [IrregularAmtUSD] = (Select Amount from dbo.GetAmountByUnit(icrd.PriceUSD, icrd.ICRQty, psd.POUnit,2))
     from #tmpBaseICR ICR
     left join ICR_Detail icrd with (nolock) on ICR.ID = icrd.ID
     left join PO_Supp_Detail psd with (nolock) on psd.ID = ICR.POID and psd.SEQ1= icrd.Seq1  and psd.SEQ2= icrd.Seq2
@@ -178,30 +182,32 @@ else
 begin
 
     select 
-    ICR.ID,
-    ICR.Status,
-    ICR.MDivisionID,
-    ICR.Department,
-    ICR.KPICode,
-    ICR.OrderID,
-    ICR.StyleID,
-    ICR.SeasonID,
-    ICR.BrandID,
-    ICR.TotalQty,
-    ICR.IssueSubject,
-    ICR.RMtlAmtUSD,
-    ICR.OtherAmtUSD,
-    ICR.ActFreightUSD,
-    ICR.TotalUSD,
-    icrrd.FactoryID,
-    icrrd.DepartmentID,
-    icrrd.Amount,
-    ICR.VoucherID,
-    ICR.VoucherDate,
-    ICR.PO_Handle ,
-    ICR.PO_SMR,
-    ICR.MR,
-    ICR.SMR
+        ICR.ID,
+        ICR.Status,
+        ICR.MDivisionID,
+        ICR.Department,
+        ICR.KPICode,
+        ICR.OrderID,
+        ICR.StyleID,
+        ICR.SeasonID,
+        ICR.BrandID,
+        ICR.TotalQty,
+        ICR.IssueSubject,
+        ICR.RMtlAmtUSD,
+        ICR.OtherAmtUSD,
+        ICR.ActFreightUSD,
+        ICR.TotalUSD,
+        icrrd.FactoryID,
+        icrrd.DepartmentID,
+        icrrd.Amount,
+        ICR.AddDate,
+        ICR.CFMDate,
+        ICR.VoucherID,
+        ICR.VoucherDate,
+        ICR.PO_Handle ,
+        ICR.PO_SMR,
+        ICR.MR,
+        ICR.SMR
     from #tmpBaseICR ICR
     left join ICR_ResponsibilityDept icrrd with (nolock) on ICR.ID = icrrd.ID
     where 1 = 1 {sqlWhereResponsibilityDept}
