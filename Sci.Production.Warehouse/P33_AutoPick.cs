@@ -250,7 +250,8 @@ SELECT  [Selected]
 		, SCIRefno 
         , Refno
         , ColorID
-		, SuppColor = (SELECT top 1 psd.SuppColor FROM PO_Supp_Detail psd WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}' and SuppColor <>'' Order by SuppColor)
+		, SuppColor = RealSuppCol.Val
+		, [AllSuppColor]=SuppCol.Val
 		, DescDetail
 		, [@Qty] 
 		, [Use Qty By Stock Unit]
@@ -269,6 +270,42 @@ OUTER APPLY(
 	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
 	WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}'
 )Balance 
+OUTER APPLY(
+	----列出所有Seq1 Seq2對應到的SuppColor
+	SELECT [Val]=STUFF((
+		SELECT  DISTINCT ',' + SuppColor
+		FROM PO_Supp_Detail y
+		WHERE EXISTS( 
+			SELECT 1 --psd.Seq1,psd.Seq2 ,psd.ID ,psd.Seq1, psd.Seq2 ,psd.ColorID
+			FROM PO_Supp_Detail psd 
+			LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
+			WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID = t.ColorID AND psd.ID = '{this.poid}'
+			AND psd.SCIRefno = y.SCIRefno AND psd.ColorID = y.ColorID AND psd.ID = y.ID
+			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
+			GROUP BY psd.seq1,psd.seq2
+			--HAVING ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0) > 0
+		)
+		FOR XML PATH('')
+	),1,1,'')
+)SuppCol
+OUTER APPLY(
+	----僅列出Balance 有計算到數量的Seq1 Seq2
+	SELECT [Val]=STUFF((
+		SELECT  DISTINCT ',' + SuppColor
+		FROM PO_Supp_Detail y
+		WHERE EXISTS( 
+			SELECT 1 --psd.Seq1,psd.Seq2 ,psd.ID ,psd.Seq1, psd.Seq2 ,psd.ColorID
+			FROM PO_Supp_Detail psd 
+			LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
+			WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID = t.ColorID AND psd.ID = '{this.poid}'
+			AND psd.SCIRefno = y.SCIRefno AND psd.ColorID = y.ColorID AND psd.ID = y.ID
+			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
+			GROUP BY psd.seq1,psd.seq2
+			HAVING ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0) > 0
+		)
+		FOR XML PATH('')
+	),1,1,'')
+)RealSuppCol
 
 DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final,#final2,#tmp,#tmp_sumQty
 
@@ -347,7 +384,7 @@ GROUP BY Article
                  .Text("SCIRefno", header: "SCIRefno", width: Widths.AnsiChars(25), iseditingreadonly: true)
                  .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("ColorID", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)
-                 .Text("SuppColor", header: "SuppColor", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                 .Text("AllSuppColor", header: "SuppColor", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("DescDetail", header: "Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(15), decimal_places: 2, iseditingreadonly: true, settings: Qty)
                  .Numeric("Use Qty By Stock Unit", header: "Use Qty\r\nBy Stock Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)

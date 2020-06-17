@@ -17,6 +17,7 @@ namespace Sci.Production.Warehouse
     {
         public DataTable dtIssueBreakDown { get; set; }
         public bool combo, isSave;
+        private string oriSuppColor = string.Empty;
 
         public P33_Detail()
         {
@@ -87,6 +88,7 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
             this.displaySPNo.Text = CurrentDetailData["POID"].ToString();
             this.displayColorID.Text = CurrentDetailData["ColorID"].ToString();
             this.displaySuppColor.Text = CurrentDetailData["SuppColor"].ToString();
+            this.oriSuppColor = CurrentDetailData["SuppColor"].ToString();
             this.editDesc.Text = CurrentDetailData["DescDetail"].ToString();
 
             this.numAccuIssue.Text = CurrentDetailData["AccuIssued"].ToString();
@@ -168,6 +170,7 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
         protected override bool OnUndo()
         {
             this.isSave = false;
+            CurrentDetailData["SuppColor"] = this.oriSuppColor;
             return base.OnUndo();
         }
 
@@ -205,6 +208,33 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
             this.numIssueQty.Text = SumIssueQTY.ToString();
             //this.numVariance.Value = this.numBalanceQty.Value - this.numIssueQty.Value;
             CurrentDetailData["IssueQty"] = MyUtility.Check.Empty(subDT.Compute("Sum(Qty)", "")) ? 0 : (decimal)subDT.Compute("Sum(Qty)", "");
+
+            #region 根據新的Seq，動態串出SuppColor，並寫入Issue_Summary
+            List<string> allSuppColor = new List<string>();
+
+            foreach (DataRow item in subDT.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted).ToList())
+            {
+                string seq1 = item["Seq1"].ToString();
+                string seq2 = item["Seq2"].ToString();
+                string suppColor = MyUtility.GetValue.Lookup($@"
+SELECT SuppColor 
+FROM PO_Supp_Detail WITH(NOLOCK) 
+WHERE ID = '{CurrentDetailData["POID"]}' 
+AND SCIRefno = '{CurrentDetailData["SCIRefno"]}' 
+AND ColorID='{CurrentDetailData["ColorID"]}'
+AND Seq1 = '{seq1}' AND Seq2 = '{seq2}'
+");
+                allSuppColor.Add(suppColor);
+
+                // 若還沒有Issue.ID，表示是全新的第三層，因此除了Deleted的都是Add
+                if (item.RowState != DataRowState.Added && MyUtility.Check.Empty(CurrentDetailData["ID"]))
+                {
+                    item.SetAdded();
+                }
+            }
+            CurrentDetailData["SuppColor"] = allSuppColor.JoinToString(",");
+            this.displaySuppColor.Text = this.CurrentDetailData["SuppColor"].ToString();
+            #endregion
         }
 
         private void save_Click(object sender, EventArgs e)
