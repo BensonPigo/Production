@@ -72,6 +72,9 @@ namespace Sci.Production.Cutting
             string byType, byType2;
             string strOrderby = string.Empty;
 
+            string sqlFabricKind = string.Empty;
+            string sqlFabricKindinto = string.Empty;
+            string sqlFabricKindjoin = string.Empty;
             if (radioByCutRefNo.Checked)
             {
                 byType = "Cutref";
@@ -84,6 +87,53 @@ namespace Sci.Production.Cutting
                 {
                     strOrderby = "order by SpreadingNoID,CutCellID,Cutref";
                 }
+                sqlFabricKind = $@"
+SELECT distinct w.CutRef, wp.PatternPanel, x.FabricKind
+into #tmp3
+FROM #tmp W
+INNER JOIN WorkOrder_PatternPanel WP ON W.Ukey = WP.WorkOrderUkey
+outer apply(
+	SELECT  FabricKind=DD.id + '-' + DD.NAME ,Refno
+	FROM dropdownlist DD 
+	OUTER apply(
+			SELECT OB.kind, 
+			OCC.id, 
+			OCC.article, 
+			OCC.colorid, 
+			OCC.fabricpanelcode, 
+			OCC.patternpanel ,
+			Refno
+		FROM order_colorcombo OCC 
+		INNER JOIN order_bof OB ON OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
+		where exists(select 1 from WorkOrder_Distribute wd where wd.WorkOrderUkey = W.Ukey and wd.Article = OCC.Article)
+	) LIST 
+	WHERE LIST.id = w.id 
+	AND LIST.patternpanel = wp.patternpanel 
+	AND DD.[type] = 'FabricKind' 
+	AND DD.id = LIST.kind 
+)x
+
+select CutRef,ct = count(1) into #tmp4 from(select distinct CutRef,FabricKind from #tmp3)x group by CutRef
+
+select t4.CutRef,FabricKind = IIF(t4.ct = 1, x1.FabricKind, x2.FabricKind)
+into #tmp5
+from #tmp4 t4
+outer apply(
+	select distinct t3.FabricKind
+	from #tmp3 t3
+	where t3.CutRef = t4.CutRef and t4.ct = 1
+)x1
+outer apply(
+	select FabricKind = STUFF((
+		select concat(', ', t3.FabricKind, ': ', t3.PatternPanel)
+		from #tmp3 t3
+		where t3.CutRef = t4.CutRef and t4.ct > 1
+		for XML path('')
+	),1,2,'')
+)x2
+";
+                sqlFabricKindinto = $@" , rn=min(rn) into #tmp6 ";
+                sqlFabricKindjoin = $@"select t6.*,t5.FabricKind from #tmp6 t6 inner join #tmp5 t5 on t5.CutRef = t6.CutRef order by rn";
             }
             else
             {
@@ -122,9 +172,14 @@ and a.id='{0}'
 
             string sqlCutrefTb = $@"
 Select {byType},estCutDate{byType2},rn=ROW_NUMBER()over({strOrderby} ) into #tmp2 From #tmp
-select {byType},estCutDate{byType2} from #tmp2 group by {byType},estCutDate{byType2} order by min(rn)
+
+{sqlFabricKind}
+
+select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byType},estCutDate{byType2} order by min(rn)
+
+{sqlFabricKindjoin}
 ";
-            MyUtility.Tool.ProcessWithDatatable(WorkorderTb, "SpreadingNoID,CutCellID,Cutref,Cutplanid,estCutDate,shc", sqlCutrefTb, out CutrefTb);
+            MyUtility.Tool.ProcessWithDatatable(WorkorderTb, "SpreadingNoID,CutCellID,Cutref,Cutplanid,estCutDate,shc,ukey,id", sqlCutrefTb, out CutrefTb);
 
             MyUtility.Tool.ProcessWithDatatable(WorkorderDisTb, string.Format("{0},OrderID",byType), string.Format("Select distinct {0},OrderID From #tmp",byType), out CutDisOrderIDTb); //整理sp
 
@@ -524,8 +579,6 @@ Cutplanid, str_PIVOT);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-            excel.Visible = false;
-
             #region 寫入共用欄位
             worksheet.Cells[1, 6] = OrderDr["factoryid"];
             worksheet.Cells[3, 2] = DateTime.Now.ToShortDateString();
@@ -540,6 +593,7 @@ Cutplanid, str_PIVOT);
                 worksheet.Cells[40, nColumn] = OrderDr["Styleid"];
                 worksheet.Cells[41, nColumn] = detDr["ID"];
             }
+
 
             #endregion
 
@@ -571,6 +625,7 @@ Cutplanid, str_PIVOT);
                 worksheet.Name = Cutrefdr["Cutref"].ToString();
                 worksheet.Cells[3, 18] = Cutrefdr["Cutref"].ToString();
                 worksheet.Cells[9, 13] = ((DateTime)MyUtility.Convert.GetDate(Cutrefdr["Estcutdate"])).ToShortDateString();
+                worksheet.Cells[14, 14] = MyUtility.Convert.GetString(Cutrefdr["FabricKind"]);
                 nSheet++;
             }
             nSheet = 1;
@@ -711,6 +766,7 @@ Cutplanid, str_PIVOT);
 
                 }
                 #endregion
+
                 #region Distribute to SP#
                 if (WorkorderDisArry.Length > 0)
                 {
@@ -749,7 +805,6 @@ Cutplanid, str_PIVOT);
                     }
                     // nrow = nrow + Convert.ToInt16(disRow);
                 }
-
                 #endregion
 
                 string str_PIVOT = "";
