@@ -225,60 +225,57 @@ from(
 )x
 group by OrderID
 
-select 
-	 t.OrderID
-	,t.Seq
-	,ReceiveDate=max(cr.AddDate)
-into #tmpReceiveDate1
-from #tmp_main t
-inner join PackingList_Detail pd on pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.Seq
-inner join ClogReceive cr on (cr.PackingListID = pd.ID and cr.OrderID = pd.OrderID and cr.CTNStartNo = pd.CTNStartNo and pd.SCICtnNo <>'')
-where pd.OrderID = t.OrderID
-and pd.OrderShipmodeSeq = t.Seq
-and not exists(select 1 
-			from PackingList_Detail pdCheck
-			where pdCheck.OrderID =t.OrderID
-					and pdCheck.OrderShipmodeSeq = t.Seq
-					and CTNQty > 0
-					and pdCheck.ReceiveDate is null
-		)
-group by t.OrderID,t.Seq
-
 select
-	 t.OrderID
-	,t.Seq
-	,ReceiveDate=max(cr.AddDate)
-into #tmpReceiveDate2
-from #tmp_main t
-inner join PackingList_Detail pd on pd.OrderID = t.OrderID and pd.OrderShipmodeSeq = t.Seq
-inner join ClogReceive cr on cr.SCICtnNo = pd.SCICtnNo and pd.SCICtnNo <>''
-where pd.OrderID = t.OrderID
-and pd.OrderShipmodeSeq = t.Seq
-and not exists(select 1 
-			from PackingList_Detail pdCheck
-			where pdCheck.OrderID =t.OrderID
-					and pdCheck.OrderShipmodeSeq = t.Seq
-					and CTNQty > 0
-					and pdCheck.ReceiveDate is null
-		)
-group by t.OrderID,t.Seq
+	ID,
+	CTNStartNo,
+	OrderID,
+	OrigID,
+	OrigOrderID,
+	OrigCTNStartNo,
+	OrderShipmodeSeq
+into #PackingList_Detail
+from PackingList_Detail  pld
+where exists(select 1 from #tmp_main where orderid = pld.OrderID)
+and CTNQty > 0
 
-select  t.OrderID,t.Seq,ReceiveDate=max(t.ReceiveDate)
-into #maxReceiveDate
-from(
-	select *from #tmpReceiveDate1
-	union all
-	select *from #tmpReceiveDate2
-)t
-group by t.OrderID,t.Seq
+select OrderID, OrderShipmodeSeq, AddDate = MAX(AddDate)
+into #CReceive
+from (
+	select pd.OrderID, OrderShipmodeSeq, c.AddDate
+	from #PackingList_Detail pd 
+	inner join ClogReceive c WITH (NOLOCK) on pd.ID = c.PackingListID 
+												and pd.OrderID = c.OrderID 
+												and pd.CTNStartNo = c.CTNStartNo
+	where c.PackingListID != ''
+		    and c.OrderID != ''
+		    and c.CTNStartNo != ''
+
+	union all -- 找拆箱
+	select OrderID = pd.OrigOrderID, OrderShipmodeSeq, c.AddDate
+	from #PackingList_Detail pd 
+	inner join ClogReceive c WITH (NOLOCK) on pd.OrigID = c.PackingListID
+												and pd.OrigOrderID = c.OrderID
+												and pd.OrigCTNStartNo = c.CTNStartNo
+	where c.PackingListID != ''
+		    and c.OrderID != ''
+		    and c.CTNStartNo != ''
+) t
+where not exists (
+	-- 每個紙箱必須放在 Clog（ReceiveDate 有日期）
+	select 1 
+	from Production.dbo.PackingList_Detail pdCheck
+	where t.OrderID = pdCheck.OrderID 
+			and t.OrderShipmodeSeq = pdCheck.OrderShipmodeSeq
+			and pdCheck.ReceiveDate is null)
+group by OrderID, OrderShipmodeSeq
 
 SELECT  
 	[orderid]= t.OrderID
 	,[ordershipmodeseq]= t.Seq
-	,[CTNLastReceiveDate]= format(r.ReceiveDate, 'yyyy/MM/dd HH:mm:ss')
+	,[CTNLastReceiveDate]= format(c.AddDate, 'yyyy/MM/dd HH:mm:ss')
 into #tmp_ClogReceive
 from #tmp_main t
-left join #maxReceiveDate r on t.OrderID = r.orderid and t.Seq = r.Seq
+left join #CReceive c on c.OrderID = t.OrderID and c.OrderShipmodeSeq = t.Seq
 
 Select  oqsD.ID,oqsD.Seq
         ,sum (case when dbo.GetPoPriceByArticleSize(oqsd.id,oqsD.Article,oqsD.SizeCode) > 0 then oqsD.Qty else 0 end) as FOB
