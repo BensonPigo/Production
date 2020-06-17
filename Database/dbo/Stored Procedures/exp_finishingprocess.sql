@@ -1022,7 +1022,7 @@ USING(
 	FROM Production.dbo.ClogGarmentDispose a 
 	INNER JOIN Production.dbo.ClogGarmentDispose_Detail b ON a.ID= b.ID
 	INNER JOIN Production.dbo.PackingList p ON p.ID = b.PackingListID
-	INNER JOIN Production.dbo.PackingList_Detail pd On p.ID = pd.ID
+	INNER JOIN Production.dbo.PackingList_Detail pd On p.ID = pd.ID AND pd.CTNStartNO = b.CTNStartNO
 	WHERE (Cast(a.EditDate as Date) = @cDate OR Cast(a.AddDate as Date) = @cDate)
 ) as S
 on t.SCICtnNo = s.SCICtnNo
