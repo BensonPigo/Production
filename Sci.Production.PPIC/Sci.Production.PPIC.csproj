@@ -253,6 +253,12 @@
     <Compile Include="P01_BuyerDeliveryHistory.Designer.cs">
       <DependentUpon>P01_BuyerDeliveryHistory.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_ComboType.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_ComboType.Designer.cs">
+      <DependentUpon>P01_ComboType.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01_CTNStatus.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -797,6 +803,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_BuyerDeliveryHistory.resx">
       <DependentUpon>P01_BuyerDeliveryHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_ComboType.resx">
+      <DependentUpon>P01_ComboType.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01_CTNStatus.resx">
       <DependentUpon>P01_CTNStatus.cs</DependentUpon>
