@@ -63,7 +63,7 @@ select a.ID
 	   , a.NNW
 	   , c.Description
        , selected = cast(0 as bit)
-       , [Balance] = a.ShipQty % a.QtyPerCTN
+       , [Balance] = iif(isnull(a.QtyPerCTN,0) = 0, 0, a.ShipQty % a.QtyPerCTN)
 	   , a.RefNoForBalance
        , [DescriptionforBalance] = c2.Description
 from PackingGuide_Detail a WITH (NOLOCK) 
@@ -293,7 +293,7 @@ where o.ID = @orderid";
                         dr["NNW"] = 0;
                     }
 
-                    dr["Balance"] = MyUtility.Convert.GetInt(dr["ShipQty"]) % MyUtility.Convert.GetInt(dr["QtyPerCTN"]);
+                    dr["Balance"] = MyUtility.Convert.GetInt(dr["QtyPerCTN"]) == 0 ? 0 : MyUtility.Convert.GetInt(dr["ShipQty"]) % MyUtility.Convert.GetInt(dr["QtyPerCTN"]);
                     dr.EndEdit();
                 }
                 #endregion
@@ -301,7 +301,7 @@ where o.ID = @orderid";
                 #region 輸入ShipQty後要重算Balance
                 if (this.detailgrid.Columns[e.ColumnIndex].DataPropertyName == this.col_shipqty.DataPropertyName)
                 {
-                    dr["Balance"] = MyUtility.Convert.GetInt(dr["ShipQty"]) % MyUtility.Convert.GetInt(dr["QtyPerCTN"]);
+                    dr["Balance"] = MyUtility.Convert.GetInt(dr["QtyPerCTN"]) == 0 ? 0 : MyUtility.Convert.GetInt(dr["ShipQty"]) % MyUtility.Convert.GetInt(dr["QtyPerCTN"]);
                     dr.EndEdit();
                 }
                 #endregion
