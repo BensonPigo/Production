@@ -169,7 +169,7 @@ WITH BreakdownByArticle as (
 		    , [Stock Unit Desc.]=StockUnit.Description
 		    , [OutputQty] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
 		    , [Balance(Stock Unit)]= 0
-		    , [Location]=ISNULL(Location.MtlLocationID,'')
+		    , [Location]=''
             , [POID]=iis.POID
             , i.MDivisionID
             , i.ID
@@ -217,17 +217,6 @@ WITH BreakdownByArticle as (
 	    )
 	    GROUP BY SCIRefNo,ColorID , Article
     )ThreadUsedQtyByBOT
-    OUTER APPLY(
-	    SELECT   [MtlLocationID] = STUFF(
-	    (
-		    SELECT DISTINCT ',' +fid.MtlLocationID 
-		    FROM Issue_Detail 
-		    INNER JOIN FtyInventory FI ON FI.POID=Issue_Detail.POID AND FI.Seq1=Issue_Detail.Seq1 AND FI.Seq2=Issue_Detail.Seq2
-		    INNER JOIN FtyInventory_Detail FID ON FID.Ukey= FI.Ukey
-		    WHERE Issue_Detail.ID = i.ID AND  FI.StockType='B' AND  fid.MtlLocationID  <> '' --AND Issue_Detail.ukey=isd.ukey
-		    FOR XML PATH('')
-	    ), 1, 1, '') 
-    )Location
     OUTER APPLY(
 	    SELECT TOP 1 psd2.StockUnit ,u.Description
 	    FROM PO_Supp_Detail psd2
@@ -301,7 +290,7 @@ SELECt SCIRefno
 		, [Stock Unit Desc.]
 		, [OutputQty]
 		, [Balance(Stock Unit)] = Balance.Qty
-		, [Location]
+		, [Location]=Location.MtlLocationID
 		, [POID]
 		, MDivisionID
 		, ID
@@ -313,6 +302,19 @@ OUTER APPLY(
 	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
 	WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}'
 )Balance
+OUTER APPLY(
+
+	    SELECT   [MtlLocationID] = STUFF(
+	    (
+		    SELECT DISTINCT ',' +fid.MtlLocationID 
+		    FROM Issue_Detail 
+		    INNER JOIN FtyInventory FI ON FI.POID=Issue_Detail.POID AND FI.Seq1=Issue_Detail.Seq1 AND FI.Seq2=Issue_Detail.Seq2
+		    INNER JOIN FtyInventory_Detail FID ON FID.Ukey= FI.Ukey
+		    WHERE Issue_Detail.ID = t.ID AND  FI.StockType='B' AND  fid.MtlLocationID  <> '' AND Issue_SummaryUkey= t.Ukey 
+		    FOR XML PATH('')
+	    ), 1, 1, '') 
+)Location
+
 ";
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -2391,13 +2393,13 @@ SELECT [Refno]
 					WHERE Refno=t.Refno AND ColorID=t.ColorID
 					ORDER BY Seq
 				), '' , t.UnitDesc)
-		,[Location]=IIF( Seq <>
+		,[Location]=t.Location /*IIF( Seq <>
 				(
 					SELECT TOP 1 Seq
 					FROM #tmp
 					WHERE Refno=t.Refno AND ColorID=t.ColorID
 					ORDER BY Seq
-				), '' , t.Location)
+				), '' , t.Location)*/
         , t.OutputQty
 FROM #tmp t
 
