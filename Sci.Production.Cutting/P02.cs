@@ -125,6 +125,7 @@ namespace Sci.Production.Cutting
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            this.gridSizeRatio.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.Default;
             DataTable queryDT;
             string querySql = string.Format(@"
 select '' FTYGroup
@@ -3016,6 +3017,30 @@ where b.poid = '{0}'
             GetSubDetailDatas(this.CurrentDetailData, out sudt);
             var x = sudt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["PatternPanel"])).ToList();
             this.CurrentDetailData["PatternPanel"] = string.Join("+", x);
+        }
+
+        private void btnDist_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void GridSizeRatio_EditingKeyProcessing(object sender, Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs e)
+        {
+            if (this.EditMode && e.KeyCode == Keys.Enter)
+            {
+                int rowindex = gridSizeRatio.CurrentCell.RowIndex;
+                int colindex = this.gridSizeRatio.CurrentCell.ColumnIndex;
+
+                if (rowindex == this.gridSizeRatio.RowCount - 1)
+                {
+                    DataRow ndr = sizeratioTb.NewRow();
+                    ndr["newkey"] = CurrentDetailData["newkey"];
+                    ndr["WorkorderUkey"] = CurrentDetailData["Ukey"];
+                    ndr["Qty"] = 0;
+                    sizeratioTb.Rows.Add(ndr);
+                }
+
+            }
         }
 
         private void distribute_grid_DataError(object sender, DataGridViewDataErrorEventArgs e)

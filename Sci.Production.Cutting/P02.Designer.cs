@@ -109,6 +109,7 @@
             this.lbshc = new System.Windows.Forms.Label();
             this.btnCutplanChangeHistory = new Sci.Win.UI.Button();
             this.btnStdQtyWIP = new Sci.Win.UI.Button();
+            this.btnDist = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -220,6 +221,7 @@
             // 
             // detailbtm
             // 
+            this.detailbtm.Controls.Add(this.btnDist);
             this.detailbtm.Controls.Add(this.btn_Refresh);
             this.detailbtm.Controls.Add(this.AutoCut);
             this.detailbtm.Controls.Add(this.comboBox1);
@@ -245,6 +247,7 @@
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
             this.detailbtm.Controls.SetChildIndex(this.btn_Refresh, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnDist, 0);
             // 
             // browse
             // 
@@ -461,11 +464,11 @@
             // btnQuantityBreakdown
             // 
             this.btnQuantityBreakdown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQuantityBreakdown.Location = new System.Drawing.Point(817, 3);
+            this.btnQuantityBreakdown.Location = new System.Drawing.Point(812, 4);
             this.btnQuantityBreakdown.Name = "btnQuantityBreakdown";
-            this.btnQuantityBreakdown.Size = new System.Drawing.Size(181, 30);
+            this.btnQuantityBreakdown.Size = new System.Drawing.Size(109, 30);
             this.btnQuantityBreakdown.TabIndex = 23;
-            this.btnQuantityBreakdown.Text = "Quantity Breakdown";
+            this.btnQuantityBreakdown.Text = "Qty B\'down";
             this.btnQuantityBreakdown.UseVisualStyleBackColor = true;
             this.btnQuantityBreakdown.Click += new System.EventHandler(this.Qtybreak_Click);
             // 
@@ -697,6 +700,7 @@
             this.gridSizeRatio.Size = new System.Drawing.Size(137, 156);
             this.gridSizeRatio.TabIndex = 44;
             this.gridSizeRatio.TabStop = false;
+            this.gridSizeRatio.EditingKeyProcessing += new System.EventHandler<Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs>(this.GridSizeRatio_EditingKeyProcessing);
             // 
             // sizeratioMenuStrip
             // 
@@ -1162,6 +1166,17 @@
             this.btnStdQtyWIP.UseVisualStyleBackColor = true;
             this.btnStdQtyWIP.Click += new System.EventHandler(this.BtnStdQtyWIP_Click);
             // 
+            // btnDist
+            // 
+            this.btnDist.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDist.Location = new System.Drawing.Point(927, 4);
+            this.btnDist.Name = "btnDist";
+            this.btnDist.Size = new System.Drawing.Size(74, 30);
+            this.btnDist.TabIndex = 50;
+            this.btnDist.Text = "Dist.";
+            this.btnDist.UseVisualStyleBackColor = true;
+            this.btnDist.Click += new System.EventHandler(this.btnDist_Click);
+            // 
             // P02
             // 
             this.ClientSize = new System.Drawing.Size(1012, 775);
@@ -1301,5 +1316,6 @@
         private Win.UI.Button btnAdditionalrevisedmarker;
         private Win.UI.Button btnCutplanChangeHistory;
         private Win.UI.Button btnStdQtyWIP;
+        private Win.UI.Button btnDist;
     }
 }
