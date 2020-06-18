@@ -169,7 +169,7 @@ WITH BreakdownByArticle as (
 		    , [Stock Unit Desc.]=StockUnit.Description
 		    , [OutputQty] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
 		    , [Balance(Stock Unit)]= 0
-		    , [Location]=ISNULL(Location.MtlLocationID,'')
+		    , [Location]=''
             , [POID]=iis.POID
             , i.MDivisionID
             , i.ID
@@ -217,17 +217,6 @@ WITH BreakdownByArticle as (
 	    )
 	    GROUP BY SCIRefNo,ColorID , Article
     )ThreadUsedQtyByBOT
-    OUTER APPLY(
-	    SELECT   [MtlLocationID] = STUFF(
-	    (
-		    SELECT DISTINCT ',' +fid.MtlLocationID 
-		    FROM Issue_Detail 
-		    INNER JOIN FtyInventory FI ON FI.POID=Issue_Detail.POID AND FI.Seq1=Issue_Detail.Seq1 AND FI.Seq2=Issue_Detail.Seq2
-		    INNER JOIN FtyInventory_Detail FID ON FID.Ukey= FI.Ukey
-		    WHERE Issue_Detail.ID = i.ID AND  FI.StockType='B' AND  fid.MtlLocationID  <> '' AND Issue_Detail.ukey=isd.ukey
-		    FOR XML PATH('')
-	    ), 1, 1, '') 
-    )Location
     OUTER APPLY(
 	    SELECT TOP 1 psd2.StockUnit ,u.Description
 	    FROM PO_Supp_Detail psd2
@@ -301,7 +290,7 @@ SELECt SCIRefno
 		, [Stock Unit Desc.]
 		, [OutputQty]
 		, [Balance(Stock Unit)] = Balance.Qty
-		, [Location]
+		, [Location]=Location.MtlLocationID
 		, [POID]
 		, MDivisionID
 		, ID
@@ -313,6 +302,19 @@ OUTER APPLY(
 	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
 	WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}'
 )Balance
+OUTER APPLY(
+
+	    SELECT   [MtlLocationID] = STUFF(
+	    (
+		    SELECT DISTINCT ',' +fid.MtlLocationID 
+		    FROM Issue_Detail 
+		    INNER JOIN FtyInventory FI ON FI.POID=Issue_Detail.POID AND FI.Seq1=Issue_Detail.Seq1 AND FI.Seq2=Issue_Detail.Seq2
+		    INNER JOIN FtyInventory_Detail FID ON FID.Ukey= FI.Ukey
+		    WHERE Issue_Detail.ID = t.ID AND  FI.StockType='B' AND  fid.MtlLocationID  <> '' AND Issue_SummaryUkey= t.Ukey 
+		    FOR XML PATH('')
+	    ), 1, 1, '') 
+)Location
+
 ";
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -357,7 +359,7 @@ OUTER APPLY(
                     string sqlcmd = $@"
  SELECT   DISTINCT [Refno]= psd.Refno
 		 , [ColorID]=psd.ColorID
-		, SuppColor = isnull((SELECT top 1 t.SuppColor FROM PO_Supp_Detail t WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID=t.ID and t.SuppColor <>'' Order by t.SuppColor),'')
+		 , SuppColor = SuppCol.Val
 		 , [MtlType]=fc.MtlTypeID
 		 , [Desc]=fc.DescDetail
 		 , [Stock Unit]=StockUnit.Val
@@ -387,6 +389,22 @@ LEFT JOIN MtlType m on m.id= fc.MtlTypeID
 	INNER JOIN FtyInventory F ON F.POID=psd2.ID AND F.SEQ1= psd2.SEQ1 AND F.SEQ2 = psd2.SEQ2
 	WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.ColorID=psd.ColorID AND F.StockType='I' {(MyUtility.Check.Empty(ColorID) ? "AND psd2.ColorID <> ''" : $"AND psd2.ColorID='{ColorID}'")}
  )InventoryQty
+OUTER APPLY(
+	----列出所有Seq1 Seq2對應到的SuppColor
+	SELECT [Val]=STUFF((
+		SELECT  DISTINCT ',' + SuppColor
+		FROM PO_Supp_Detail y
+		WHERE EXISTS( 
+			SELECT 1 
+			FROM PO_Supp_Detail t 
+			LEFT JOIN FtyInventory Fty ON  Fty.poid = t.ID AND Fty.seq1 = t.seq1 AND Fty.seq2 = t.seq2 AND fty.StockType='B'
+			WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID = t.ColorID AND t.ID = '{this.poid}'
+			AND t.SCIRefno = y.SCIRefno AND t.ColorID = y.ColorID AND t.ID = y.ID
+			AND t.SEQ1 = y.SEQ1 AND t.SEQ2 = y.SEQ2
+		)
+		FOR XML PATH('')
+	),1,1,'')
+)SuppCol
 WHERE psd.ID='{this.poid}' 
 AND m.IsThread=1 
 AND psd.FabricType ='A'
@@ -603,7 +621,7 @@ GROUP BY SCIRefno
 SELECT    SCIRefno 
         , Refno
         , ColorID
-		, SuppColor = isnull((SELECT top 1 psd.SuppColor FROM PO_Supp_Detail psd WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}' and SuppColor <>'' Order by SuppColor),'')
+		, SuppColor = RealSuppCol.Val
 		, DescDetail
 		, [@Qty] 
         , [AccuIssued]
@@ -625,6 +643,24 @@ OUTER APPLY(
 	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
 	WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}'
 )Balance 
+OUTER APPLY(
+	----僅列出Balance 有計算到數量的Seq1 Seq2
+	SELECT [Val]=STUFF((
+		SELECT  DISTINCT ',' + SuppColor
+		FROM PO_Supp_Detail y
+		WHERE EXISTS( 
+			SELECT 1 
+			FROM PO_Supp_Detail psd 
+			LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
+			WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID = t.ColorID AND psd.ID = '{this.poid}'
+			AND psd.SCIRefno = y.SCIRefno AND psd.ColorID = y.ColorID AND psd.ID = y.ID
+			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
+			GROUP BY psd.seq1,psd.seq2
+			HAVING ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0) > 0
+		)
+		FOR XML PATH('')
+	),1,1,'')
+)RealSuppCol
 
 DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
 ";
@@ -846,7 +882,7 @@ GROUP BY SCIRefno
 SELECT    SCIRefno 
         , Refno
         , ColorID
-		, SuppColor = isnull((SELECT top 1 psd.SuppColor FROM PO_Supp_Detail psd WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}' and SuppColor <>'' Order by SuppColor),'')
+		, SuppColor = RealSuppCol.Val
 		, DescDetail
 		, [@Qty] 
         , [AccuIssued]
@@ -868,6 +904,24 @@ OUTER APPLY(
 	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
 	WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}'
 )Balance 
+OUTER APPLY(
+	----僅列出Balance 有計算到數量的Seq1 Seq2
+	SELECT [Val]=STUFF((
+		SELECT  DISTINCT ',' + SuppColor
+		FROM PO_Supp_Detail y
+		WHERE EXISTS( 
+			SELECT 1 
+			FROM PO_Supp_Detail psd 
+			LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
+			WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID = t.ColorID AND psd.ID = '{this.poid}'
+			AND psd.SCIRefno = y.SCIRefno AND psd.ColorID = y.ColorID AND psd.ID = y.ID
+			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
+			GROUP BY psd.seq1,psd.seq2
+			HAVING ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0) > 0
+		)
+		FOR XML PATH('')
+	),1,1,'')
+)RealSuppCol
 
 DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
 ";
@@ -947,7 +1001,7 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                     string sqlcmd = $@"
  SELECT  DISTINCT  [Refno]= psd.Refno
 		 , [ColorID]=psd.ColorID
-		, SuppColor = isnull((SELECT top 1 t.SuppColor FROM PO_Supp_Detail t WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID=t.id and SuppColor <>'' Order by SuppColor),'')
+		 , SuppColor = SuppCol.Val
 		 , [MtlType]=fc.MtlTypeID
 		 , [Desc]=fc.DescDetail
 		 , [Stock Unit]=StockUnit.Val
@@ -977,6 +1031,22 @@ LEFT JOIN MtlType m on m.id= fc.MtlTypeID
 	INNER JOIN FtyInventory F ON F.POID=psd2.ID AND F.SEQ1= psd2.SEQ1 AND F.SEQ2 = psd2.SEQ2
 	WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.ColorID=psd.ColorID AND F.StockType='I' {(MyUtility.Check.Empty(Refno) ? "AND psd2.Refno <> ''" : $"AND psd2.Refno='{Refno}'")}
  )InventoryQty
+OUTER APPLY(
+	----列出所有Seq1 Seq2對應到的SuppColor
+	SELECT [Val]=STUFF((
+		SELECT  DISTINCT ',' + SuppColor
+		FROM PO_Supp_Detail y
+		WHERE EXISTS( 
+			SELECT 1 
+			FROM PO_Supp_Detail t 
+			LEFT JOIN FtyInventory Fty ON  Fty.poid = t.ID AND Fty.seq1 = t.seq1 AND Fty.seq2 = t.seq2 AND fty.StockType='B'
+			WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID = t.ColorID AND t.ID = '{this.poid}'
+			AND t.SCIRefno = y.SCIRefno AND t.ColorID = y.ColorID AND t.ID = y.ID
+			AND t.SEQ1 = y.SEQ1 AND t.SEQ2 = y.SEQ2
+		)
+		FOR XML PATH('')
+	),1,1,'')
+)SuppCol
  WHERE psd.ID='{this.poid}'
  AND m.IsThread=1 
 AND psd.FabricType ='A'
@@ -1197,7 +1267,7 @@ GROUP BY SCIRefno
 SELECT    SCIRefno 
         , Refno
 		, ColorID
-		, SuppColor = isnull((SELECT top 1 psd.SuppColor FROM PO_Supp_Detail psd WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}' and SuppColor <>'' Order by SuppColor),'')
+		, SuppColor = RealSuppCol.Val
 		, DescDetail
 		, [@Qty] 
         , [AccuIssued]
@@ -1219,6 +1289,24 @@ OUTER APPLY(
 	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
 	WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}'
 )Balance 
+OUTER APPLY(
+	----僅列出Balance 有計算到數量的Seq1 Seq2
+	SELECT [Val]=STUFF((
+		SELECT  DISTINCT ',' + SuppColor
+		FROM PO_Supp_Detail y
+		WHERE EXISTS( 
+			SELECT 1 
+			FROM PO_Supp_Detail psd 
+			LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
+			WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID = t.ColorID AND psd.ID = '{this.poid}'
+			AND psd.SCIRefno = y.SCIRefno AND psd.ColorID = y.ColorID AND psd.ID = y.ID
+			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
+			GROUP BY psd.seq1,psd.seq2
+			HAVING ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0) > 0
+		)
+		FOR XML PATH('')
+	),1,1,'')
+)RealSuppCol
 
 DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
 ";
@@ -1439,7 +1527,7 @@ GROUP BY SCIRefno
 SELECT    SCIRefno 
         , Refno
         , ColorID
-		, SuppColor = isnull((SELECT top 1 psd.SuppColor FROM PO_Supp_Detail psd WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}' and SuppColor <>'' Order by SuppColor),'')
+		, SuppColor = RealSuppCol.Val
 		, DescDetail
 		, [@Qty] 
         , [AccuIssued]
@@ -1461,7 +1549,24 @@ OUTER APPLY(
 	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
 	WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}'
 )Balance 
-
+OUTER APPLY(
+	----僅列出Balance 有計算到數量的Seq1 Seq2
+	SELECT [Val]=STUFF((
+		SELECT  DISTINCT ',' + SuppColor
+		FROM PO_Supp_Detail y
+		WHERE EXISTS( 
+			SELECT 1 
+			FROM PO_Supp_Detail psd 
+			LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
+			WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID = t.ColorID AND psd.ID = '{this.poid}'
+			AND psd.SCIRefno = y.SCIRefno AND psd.ColorID = y.ColorID AND psd.ID = y.ID
+			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
+			GROUP BY psd.seq1,psd.seq2
+			HAVING ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0) > 0
+		)
+		FOR XML PATH('')
+	),1,1,'')
+)RealSuppCol
 DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
 ";
 
@@ -1630,7 +1735,7 @@ GROUP BY Article
             .Text("SCIRefno", header: "SCIRefno", width: Widths.AnsiChars(25), iseditingreadonly: true)
             .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), settings: RefnoSet)
             .Text("ColorID", header: "Color", width: Widths.AnsiChars(7), settings: ColorSet)
-            .Text("SuppColor", header: "SuppColor", width: Widths.AnsiChars(7), iseditingreadonly: true) 
+            .Text("SuppColor", header: "SuppColor", width: Widths.AnsiChars(15), iseditingreadonly: true) 
             .EditText("DescDetail", header: "Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true) 
             .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(15), decimal_places: 2, integer_places: 10, iseditingreadonly: true,settings: Qty)  
             .Numeric("AccuIssued", header: "Accu. Issued"+Environment.NewLine+"(Stock Unit)", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -2194,7 +2299,7 @@ where id = @MDivision", pars, out dt);
 SELECT f.Refno
 		,iis.SCIRefno 
         ,iis.ColorID
-		,iis.SuppColor 
+		,[SuppColor]=SuppCol.SuppColor
 		,[Seq]=iid.Seq1 +'-'+iid.Seq2
 		,[Desc]=f.DescDetail
 		,[Issue_Detail_Qty]=Cast( iid.Qty as int)
@@ -2236,6 +2341,12 @@ OUTER APPLY(
 			    ) b ON a.Article = b.Article
 	 WHERE SCIRefNo=iis.SCIRefNo AND  ColorID= iis.ColorID
 )ThreadUsedQtyByBOT
+OUTER APPLY(
+	SELECT psd.SuppColor
+	FROM PO_Supp_Detail psd WITH(NOLOCK)
+	WHERE psd.ID ='{poID}' AND psd.SCIRefno = iis.SCIRefno AND psd.ColorID = iis.Colorid
+	AND psd.SEQ1 =iid.Seq1 AND psd.SEQ2 = iid.Seq2
+)SuppCol
 WHERE iis.ID='{ID}'
 
 
@@ -2282,13 +2393,13 @@ SELECT [Refno]
 					WHERE Refno=t.Refno AND ColorID=t.ColorID
 					ORDER BY Seq
 				), '' , t.UnitDesc)
-		,[Location]=IIF( Seq <>
+		,[Location]=t.Location /*IIF( Seq <>
 				(
 					SELECT TOP 1 Seq
 					FROM #tmp
 					WHERE Refno=t.Refno AND ColorID=t.ColorID
 					ORDER BY Seq
-				), '' , t.Location)
+				), '' , t.Location)*/
         , t.OutputQty
 FROM #tmp t
 
@@ -2586,16 +2697,26 @@ and [IS].Poid='{POID}' AND [IS].SCIRefno='{SCIRefno}' AND [IS].ColorID='{ColorID
                     if (GetSubDetailDatas(_detail.Rows[_detail.Rows.Count - 1], out _subDetail))
                     {
                         List<DataRow> issuedList = PublicPrg.Prgs.Thread_AutoPick(key, Convert.ToDecimal(AccuIssued));
+                        List<string> allSuppColor = new List<string>();
                         foreach (var issued in issuedList)
                         {
                             if (MyUtility.Convert.GetDecimal(issued["Qty"]) != 0)
                             {
                                 totalQty += (decimal)issued["Qty"];
+
+                                string suppColor = issued["SuppColor"].ToString();
+                                // 重複就不加進去了
+                                if (!allSuppColor.Contains(suppColor))
+                                {
+                                    allSuppColor.Add(suppColor);
+                                }
+
                                 issued.AcceptChanges();
                                 issued.SetAdded();
                                 _subDetail.ImportRow(issued);
                             }
                         }
+                        _detail.Rows[_detail.Rows.Count - 1]["SuppColor"] = allSuppColor.JoinToString(",");
                         sum_subDetail(_detail.Rows[_detail.Rows.Count - 1], _subDetail);
 
                     }
@@ -2692,7 +2813,6 @@ SELECT  DISTINCT
   psd.SCIRefno
 , psd.Refno
 , psd.ColorID
-, psd.SuppColor
 , f.DescDetail
 , [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0)
 , [AccuIssued] = (
@@ -2713,6 +2833,7 @@ SELECT  DISTINCT
 , [Location] = ''
 , [POID]=psd.ID 
 , o.MDivisionID
+INTO #tmp
 FROM PO_Supp_Detail psd
 INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
 INNER JOIN MtlType m ON m.id= f.MtlTypeID
@@ -2738,7 +2859,63 @@ AND psd.FabricType ='A'
 and psd.ColorID <> ''
 
 
-ORDER BY psd.SCIRefno,psd.ColorID
+SELECT  
+	  SCIRefno
+	, Refno
+	, ColorID
+	, [SuppColor]=SuppCol.Val
+	, DescDetail
+	, [@Qty] 
+	, [AccuIssued] = SUM(AccuIssued)
+	, [IssueQty]
+	, [Use Qty By Stock Unit]
+	, [Stock Unit]
+	, [Use Qty By Use Unit]
+	, [Use Unit]
+	, [Stock Unit Desc.]
+	, [OutputQty]
+	, [Balance(Stock Unit)]
+	, [Location] 
+	, [POID]
+	, MDivisionID
+FROM #tmp t
+OUTER APPLY(
+	----列出所有Seq1 Seq2對應到的SuppColor
+	SELECT [Val]=STUFF((
+		SELECT  DISTINCT ',' + SuppColor
+		FROM PO_Supp_Detail y
+		WHERE EXISTS( 
+			SELECT 1 
+			FROM PO_Supp_Detail psd
+			LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
+			WHERE psd.SCIRefno=t.SCIRefno AND t.ColorID = psd.ColorID AND t.POID = psd.ID
+			AND psd.SCIRefno = y.SCIRefno AND psd.ColorID = y.ColorID AND t.POID = y.ID
+			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
+		)
+		FOR XML PATH('')
+	),1,1,'')
+)SuppCol
+GROUP BY 
+	  SCIRefno
+	, Refno
+	, ColorID
+	, SuppCol.Val
+	, DescDetail
+	, [@Qty] 
+	, [IssueQty]
+	, [Use Qty By Stock Unit]
+	, [Stock Unit]
+	, [Use Qty By Use Unit]
+	, [Use Unit]
+	, [Stock Unit Desc.]
+	, [OutputQty]
+	, [Balance(Stock Unit)]
+	, [Location] 
+	, [POID]
+	, MDivisionID
+ORDER BY SCIRefno,ColorID
+
+DROP TABLE #tmp
 
 ";
             result = DBProxy.Current.Select(null, sql, out subData);
