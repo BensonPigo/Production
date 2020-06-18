@@ -420,6 +420,13 @@ OUTER APPLY(
         }
 
         /// <inheritdoc/>
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            this.txtDept.ReadOnly = true;
+        }
+
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "New")

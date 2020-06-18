@@ -265,11 +265,12 @@ namespace Sci.Production.Warehouse
             if (!MyUtility.Check.Empty(MyUtility.GetValue.Lookup(string.Format(@"select apvdate from lack WITH (NOLOCK) where id = '{0}'", CurrentMaintain["requestid"]))))
             {
                 DataRow dr;
-                if (MyUtility.Check.Seek(string.Format(@"select apvdate,Shift,SubconName from lack WITH (NOLOCK) where id = '{0}'", CurrentMaintain["requestid"]), out dr))
+                if (MyUtility.Check.Seek(string.Format(@"select apvdate,Shift,SubconName,Dept from lack WITH (NOLOCK) where id = '{0}'", CurrentMaintain["requestid"]), out dr))
                 {
                     this.displayApvDate.Text = ((DateTime)dr["apvdate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
                     this.displayBoxShift.Text = dr["Shift"].Equals("D") ? "Day" : dr["Shift"].Equals("N") ? "Night" : "Subcon-Out";
                     this.txtLocalSupp1.TextBox1.Text = dr["SubconName"].ToString();
+                    this.displayDept.Text = dr["Dept"].ToString();
                 }
             }
             else
@@ -831,7 +832,8 @@ where id = @MDivision", pars, out dt);
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Request", Requestno));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
-          
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Dept", this.displayDept.Text));
+
             DataTable dtApv;
             DualResult ApvResult = DBProxy.Current.Select("",
           @"select    
@@ -871,6 +873,7 @@ select  a.POID
         ,b.StockUnit
         ,a.Qty
         ,dbo.Getlocation(fi.ukey)[Location] 
+        ,a.Remark
 from dbo.IssueLack_detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
@@ -895,7 +898,8 @@ where a.id= @ID", pars, out dtDetail);
                     DESC = row1["Description"].ToString().Trim(),
                     StockUnit = row1["StockUnit"].ToString().Trim(),
                     QTY = Convert.ToDecimal(row1["QTY"]),
-                    Location = row1["Location"].ToString().Trim()
+                    Location = row1["Location"].ToString().Trim(),
+                    Remark = row1["Remark"].ToString().Trim()
                 }).ToList();
             #endregion
             report.ReportDataSource = data;

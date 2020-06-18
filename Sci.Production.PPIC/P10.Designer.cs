@@ -61,6 +61,8 @@
             this.labelSubconName = new Sci.Win.UI.Label();
             this.btnAutoOutputQuery = new Sci.Win.UI.Button();
             this.txtLocalSupp1 = new Sci.Production.Class.txtLocalSupp();
+            this.lblDept = new Sci.Win.UI.Label();
+            this.txtDept = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -77,6 +79,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtDept);
+            this.masterpanel.Controls.Add(this.lblDept);
             this.masterpanel.Controls.Add(this.txtLocalSupp1);
             this.masterpanel.Controls.Add(this.labelSubconName);
             this.masterpanel.Controls.Add(this.btnImport);
@@ -143,6 +147,8 @@
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSubconName, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLocalSupp1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lblDept, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtDept, 0);
             // 
             // detailpanel
             // 
@@ -413,7 +419,7 @@
             // 
             this.labelIssueNo.Location = new System.Drawing.Point(393, 84);
             this.labelIssueNo.Name = "labelIssueNo";
-            this.labelIssueNo.Size = new System.Drawing.Size(64, 23);
+            this.labelIssueNo.Size = new System.Drawing.Size(78, 23);
             this.labelIssueNo.TabIndex = 22;
             this.labelIssueNo.Text = "Issue No.";
             // 
@@ -433,7 +439,7 @@
             this.displayIssueNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayIssueNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IssueLackId", true));
             this.displayIssueNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayIssueNo.Location = new System.Drawing.Point(461, 84);
+            this.displayIssueNo.Location = new System.Drawing.Point(474, 84);
             this.displayIssueNo.Name = "displayIssueNo";
             this.displayIssueNo.Size = new System.Drawing.Size(120, 23);
             this.displayIssueNo.TabIndex = 11;
@@ -454,7 +460,7 @@
             // 
             // labelIssueLackDate
             // 
-            this.labelIssueLackDate.Location = new System.Drawing.Point(584, 84);
+            this.labelIssueLackDate.Location = new System.Drawing.Point(597, 84);
             this.labelIssueLackDate.Name = "labelIssueLackDate";
             this.labelIssueLackDate.Size = new System.Drawing.Size(108, 23);
             this.labelIssueLackDate.TabIndex = 37;
@@ -464,9 +470,9 @@
             // 
             this.displayIssueLackDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayIssueLackDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayIssueLackDate.Location = new System.Drawing.Point(695, 84);
+            this.displayIssueLackDate.Location = new System.Drawing.Point(708, 84);
             this.displayIssueLackDate.Name = "displayIssueLackDate";
-            this.displayIssueLackDate.Size = new System.Drawing.Size(167, 23);
+            this.displayIssueLackDate.Size = new System.Drawing.Size(154, 23);
             this.displayIssueLackDate.TabIndex = 38;
             // 
             // txtuserApprove
@@ -486,7 +492,7 @@
             this.txtuserHandle.DisplayBox1Binding = "";
             this.txtuserHandle.Location = new System.Drawing.Point(560, 4);
             this.txtuserHandle.Name = "txtuserHandle";
-            this.txtuserHandle.Size = new System.Drawing.Size(302, 23);
+            this.txtuserHandle.Size = new System.Drawing.Size(315, 23);
             this.txtuserHandle.TabIndex = 5;
             this.txtuserHandle.TextBox1Binding = "";
             // 
@@ -540,6 +546,24 @@
             this.txtLocalSupp1.Size = new System.Drawing.Size(252, 23);
             this.txtLocalSupp1.TabIndex = 44;
             this.txtLocalSupp1.TextBox1Binding = "";
+            // 
+            // lblDept
+            // 
+            this.lblDept.Location = new System.Drawing.Point(393, 111);
+            this.lblDept.Name = "lblDept";
+            this.lblDept.Size = new System.Drawing.Size(78, 23);
+            this.lblDept.TabIndex = 45;
+            this.lblDept.Text = "Department";
+            // 
+            // txtDept
+            // 
+            this.txtDept.BackColor = System.Drawing.Color.White;
+            this.txtDept.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Dept", true));
+            this.txtDept.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDept.Location = new System.Drawing.Point(474, 111);
+            this.txtDept.Name = "txtDept";
+            this.txtDept.Size = new System.Drawing.Size(120, 23);
+            this.txtDept.TabIndex = 46;
             // 
             // P10
             // 
@@ -620,5 +644,7 @@
         private Win.UI.Label labelSubconName;
         private Win.UI.Button btnAutoOutputQuery;
         private Class.txtLocalSupp txtLocalSupp1;
+        private Win.UI.TextBox txtDept;
+        private Win.UI.Label lblDept;
     }
 }
