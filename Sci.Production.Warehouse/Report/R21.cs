@@ -58,6 +58,17 @@ namespace Sci.Production.Warehouse
 	                    inner join TransferIn_Detail tsd with (nolock) on tsd.ID = ts.ID
 	                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
 	                    and ts.Status='Confirmed'
+
+                        union all
+
+                        select date = r.WhseArrival
+                        from Receiving r with (nolock) 
+                        inner join Receiving_detail rd with (nolock) on r.Id = rd.Id
+	                    where r.Status = 'Confirmed' 
+	                    and r.Type = 'B' 
+	                    and rd.POID = psd.ID 
+	                    and rd.Seq1 = psd.Seq1 
+	                    and rd.Seq2 = psd.Seq2
                     )a
                     for xml path('')
 	            ),1,1,'')
@@ -128,6 +139,17 @@ namespace Sci.Production.Warehouse
 	                    inner join TransferIn_Detail tsd with (nolock) on tsd.ID = ts.ID
 	                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
 	                    and ts.Status='Confirmed'
+
+                        union all
+
+                        select date = r.WhseArrival
+                        from Receiving r with (nolock) 
+                        inner join Receiving_detail rd with (nolock) on r.Id = rd.Id
+	                    where r.Status = 'Confirmed' 
+	                    and r.Type = 'B' 
+	                    and rd.POID = psd.ID 
+	                    and rd.Seq1 = psd.Seq1 
+	                    and rd.Seq2 = psd.Seq2
                     )a
                     for xml path('')
 	            ),1,1,'')
@@ -177,7 +199,7 @@ namespace Sci.Production.Warehouse
 
         string sql_cnt = @"select count(*) as datacnt";
 
-        int ReportType;
+        int _reportType;
         bool boolCheckQty;
         int data_cnt = 0;
         StringBuilder sqlcmd = new StringBuilder();
@@ -222,7 +244,7 @@ namespace Sci.Production.Warehouse
             Color = textColor.Text;
             MT = cmbMaterialType.SelectedValue.ToString();
             ST = cmbStockType.SelectedValue.ToString();
-            ReportType = rdbtnDetail.Checked ? 0 : 1;
+            _reportType = rdbtnDetail.Checked ? 0 : 1;
             boolCheckQty = checkQty.Checked;
             BuyerDelivery1 = dateBuyerDelivery.Value1;
             BuyerDelivery2 = dateBuyerDelivery.Value2;
@@ -256,7 +278,7 @@ namespace Sci.Production.Warehouse
             sqlcmd.Clear();
             sqlcmd_fin.Clear();
 
-            if (ReportType == 0)
+            if (_reportType == 0)
             {
                 #region 主要sql Detail
                 sqlcmd.Append($@" 
@@ -354,7 +376,7 @@ where 1=1
             {
                 if (ST != "All")
                 {
-                    if (ReportType == 0)
+                    if (_reportType == 0)
                     {
                             {
                             sqlcmd.Append(string.Format(" and fi.StockType = '{0}'", ST));
@@ -379,7 +401,7 @@ where 1=1
             }
             if (boolCheckQty)
             {
-                if (ReportType == 0)
+                if (_reportType == 0)
                     sqlcmd.Append(" and (round(fi.InQty,2) - round(fi.OutQty,2) + round(fi.AdjustQty,2))>0");
                 else
                     sqlcmd.Append(" and round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2)>0");
@@ -453,6 +475,17 @@ or
 	where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
 	and ts.Status='Confirmed'
 	and ts.IssueDate between '{((DateTime)arriveWH1).ToString("yyyy/MM/dd")}' and '{((DateTime)arriveWH2).ToString("yyyy/MM/dd")}') 
+or 
+    exists ( 
+	select 1 
+    from Receiving r with (nolock) 
+    inner join Receiving_detail rd with (nolock) on r.Id = rd.Id
+	where r.WhseArrival between '{((DateTime)arriveWH1).ToString("yyyy/MM/dd")}' and '{((DateTime)arriveWH2).ToString("yyyy/MM/dd")}'
+    and r.Status = 'Confirmed' 
+    and r.Type = 'B' 
+	and rd.POID = psd.ID 
+	and rd.Seq1 = psd.Seq1 
+	and rd.Seq2 = psd.Seq2 )
 )
 ");
             }
@@ -473,6 +506,17 @@ or
 	where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
 	and ts.Status='Confirmed'
 	and ts.IssueDate >= '{((DateTime)arriveWH1).ToString("yyyy/MM/dd")}' ) 
+or 
+    exists ( 
+	select 1 
+    from Receiving r with (nolock) 
+    inner join Receiving_detail rd with (nolock) on r.Id = rd.Id
+	where r.WhseArrival >= '{((DateTime)arriveWH1).ToString("yyyy/MM/dd")}'
+    and r.Status = 'Confirmed' 
+    and r.Type = 'B' 
+	and rd.POID = psd.ID 
+	and rd.Seq1 = psd.Seq1 
+	and rd.Seq2 = psd.Seq2 )
 )
 ");
             }
@@ -493,6 +537,17 @@ or
 	where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
 	and ts.Status='Confirmed'
 	and ts.IssueDate <= '{((DateTime)arriveWH2).ToString("yyyy/MM/dd")}' ) 
+or 
+    exists ( 
+	select 1 
+    from Receiving r with (nolock) 
+    inner join Receiving_detail rd with (nolock) on r.Id = rd.Id
+	where r.WhseArrival <= '{((DateTime)arriveWH1).ToString("yyyy/MM/dd")}'
+    and r.Status = 'Confirmed' 
+    and r.Type = 'B' 
+	and rd.POID = psd.ID 
+	and rd.Seq1 = psd.Seq1 
+	and rd.Seq2 = psd.Seq2 )
 )
 ");
             }
@@ -529,7 +584,7 @@ or
             #region To Excel
             DualResult result;
             string reportname = "";
-            if (ReportType == 0)
+            if (_reportType == 0)
             {
                 sqlcmd_fin.Append(sqlcolumn + sqlcmd.ToString());
                 reportname = "Warehouse_R21_Detail.xltx";
@@ -547,7 +602,7 @@ or
                 Excel.Application objApp;
                 Excel.Worksheet tmpsheep = null;
                 Sci.Utility.Report.ExcelCOM com;
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName((ReportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary");
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName((_reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary");
                 int sheet_cnt = 1;
                 int split_cnt = 500000;
                 result = DBProxy.Current.Select(null, sql_yyyy + sqlcmd, out printData_yyyy);
@@ -561,7 +616,7 @@ or
                 for (int i = 0; i < printData_yyyy.Rows.Count; i++)
                 {
                     sqlcmd_dtail = sqlcmd_fin.ToString() + string.Format("  and o.SciDelivery >= '{0}' and  o.SciDelivery < = '{1}' ", printData_yyyy.Rows[i][0].ToString() + "0101", printData_yyyy.Rows[i][0].ToString() + "1231");
-                    strExcelName = Sci.Production.Class.MicrosoftFile.GetName((ReportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary" + printData_yyyy.Rows[i][0].ToString());
+                    strExcelName = Sci.Production.Class.MicrosoftFile.GetName((_reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary" + printData_yyyy.Rows[i][0].ToString());
                     exl_name[i] = strExcelName;
                     com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + reportname, null);
                     objApp = com.ExcelApp;
@@ -671,7 +726,7 @@ or
                 //MyUtility.Excel.CopyToXls(printData, "", reportname, 1, showExcel: false, excelApp: objApp);
                 com.WriteTable(printData, 2);
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName((ReportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary");
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName((_reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary");
                 for (int f = 1; f <= objApp.Workbooks[1].Worksheets.Count; f++)
                 {
                     Excel.Worksheet sheet = objApp.Workbooks[1].Worksheets.Item[f];
