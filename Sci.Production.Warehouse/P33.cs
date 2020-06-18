@@ -2813,7 +2813,6 @@ SELECT  DISTINCT
   psd.SCIRefno
 , psd.Refno
 , psd.ColorID
-, psd.SuppColor
 , f.DescDetail
 , [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0)
 , [AccuIssued] = (
@@ -2834,6 +2833,7 @@ SELECT  DISTINCT
 , [Location] = ''
 , [POID]=psd.ID 
 , o.MDivisionID
+INTO #tmp
 FROM PO_Supp_Detail psd
 INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
 INNER JOIN MtlType m ON m.id= f.MtlTypeID
@@ -2859,7 +2859,63 @@ AND psd.FabricType ='A'
 and psd.ColorID <> ''
 
 
-ORDER BY psd.SCIRefno,psd.ColorID
+SELECT  
+	  SCIRefno
+	, Refno
+	, ColorID
+	, [SuppColor]=SuppCol.Val
+	, DescDetail
+	, [@Qty] 
+	, [AccuIssued] = SUM(AccuIssued)
+	, [IssueQty]
+	, [Use Qty By Stock Unit]
+	, [Stock Unit]
+	, [Use Qty By Use Unit]
+	, [Use Unit]
+	, [Stock Unit Desc.]
+	, [OutputQty]
+	, [Balance(Stock Unit)]
+	, [Location] 
+	, [POID]
+	, MDivisionID
+FROM #tmp t
+OUTER APPLY(
+	----列出所有Seq1 Seq2對應到的SuppColor
+	SELECT [Val]=STUFF((
+		SELECT  DISTINCT ',' + SuppColor
+		FROM PO_Supp_Detail y
+		WHERE EXISTS( 
+			SELECT 1 
+			FROM PO_Supp_Detail psd
+			LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
+			WHERE psd.SCIRefno=t.SCIRefno AND t.ColorID = psd.ColorID AND t.POID = psd.ID
+			AND psd.SCIRefno = y.SCIRefno AND psd.ColorID = y.ColorID AND t.POID = y.ID
+			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
+		)
+		FOR XML PATH('')
+	),1,1,'')
+)SuppCol
+GROUP BY 
+	  SCIRefno
+	, Refno
+	, ColorID
+	, SuppCol.Val
+	, DescDetail
+	, [@Qty] 
+	, [IssueQty]
+	, [Use Qty By Stock Unit]
+	, [Stock Unit]
+	, [Use Qty By Use Unit]
+	, [Use Unit]
+	, [Stock Unit Desc.]
+	, [OutputQty]
+	, [Balance(Stock Unit)]
+	, [Location] 
+	, [POID]
+	, MDivisionID
+ORDER BY SCIRefno,ColorID
+
+DROP TABLE #tmp
 
 ";
             result = DBProxy.Current.Select(null, sql, out subData);
