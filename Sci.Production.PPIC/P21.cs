@@ -202,11 +202,6 @@ where ICR.ID = '{masterID}';
 
             bool canEdit = Prgs.GetAuthority(Sci.Env.User.UserID, "P21. Irregular Cost Report", "CanEdit");
 
-            if (canEdit)
-            {
-                canEdit = MyUtility.Check.Seek($"select 1 from ICR with (nolock) where ID = '{this.CurrentMaintain["ID"]}' and VoucherDate is null and RespDeptConfirmDate is null ");
-            }
-
             var frm = new P21_ResponsibilityDept(canEdit, this.CurrentMaintain["ID"].ToString(), null, null, string.Empty, this.Perm.Confirm, this.Perm.Unconfirm);
             frm.ShowDialog(this);
             frm.Dispose();
