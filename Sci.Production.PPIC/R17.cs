@@ -44,13 +44,14 @@ namespace Sci.Production.PPIC
         protected override bool ValidateInput()
         {
             if (!this.dateRangeCDate.Value1.HasValue && !this.dateRangeCDate.Value2.HasValue &&
-                !this.dateRangeByerDev.Value1.HasValue && !this.dateRangeByerDev.Value2.HasValue &&
-                !MyUtility.Check.Empty(this.txtSP_S.Text) &&
-                !MyUtility.Check.Empty(this.txtSP_E.Text))
+                !this.dateRangeByerDev.Value1.HasValue && !this.dateRangeByerDev.Value2.HasValue)
             {
-                MyUtility.Msg.InfoBox("Create Date & Buyer Delivery & SP# can not all be empty!");
-                this.dateRangeByerDev.Focus();
-                return false;
+                if (MyUtility.Check.Empty(this.txtSP_S.Text) && MyUtility.Check.Empty(this.txtSP_E.Text))
+                {
+                    MyUtility.Msg.InfoBox("Create Date & Buyer Delivery & SP# can not all be empty!");
+                    this.dateRangeByerDev.Focus();
+                    return false;
+                }
             }
 
             this.Cdate_S = this.dateRangeCDate.Value1;
@@ -128,6 +129,7 @@ select
 			 when FromSP.junk=1 and isnull(FromSP.needproduction,0)<>1 and isnull(FromSP.keeppanels,0) <> 1 then 'N'
 			 else ''
 			 end
+    ,ob.BuyBackReason
 	,o.StyleID
     ,o.StyleUnit
 	,o.SeasonID
