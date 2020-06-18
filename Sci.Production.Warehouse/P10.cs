@@ -805,7 +805,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 sqlGetData = $@"
 select distinct 
  [Id] = i2.Id 
-,[Type] = i.Type
+,[Type] = 'A'
 ,[CutPlanID] = isnull(i.CutplanID,'')
 ,[EstCutdate] = c.EstCutdate
 ,[SpreadingNoID] = isnull(c.SpreadingNoID,'')
@@ -827,7 +827,7 @@ outer apply(
 	where POID = i2.POID and Seq1=i2.Seq1
 	and Seq2=i2.Seq2 and Roll=i2.Roll and Dyelot=i2.Dyelot
 )fty
-where i.Type in ('A','D')
+where i.Type = 'A'
 and exists(
 		select 1 from Production.dbo.PO_Supp_Detail 
 		where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 

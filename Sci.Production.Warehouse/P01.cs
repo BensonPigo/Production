@@ -567,8 +567,8 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
             #region Sent WHClose to Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
-                string strPOID = CurrentMaintain["PoID"].ToString();
-                Task.Run(() => new Gensong_AutoWHFabric().SentWHCloseToGensongAutoWHFabric(strPOID))
+                DataTable dtMaster = CurrentMaintain.Table.DefaultView.ToTable(true, "POID", "WhseClose");
+                Task.Run(() => new Gensong_AutoWHFabric().SentWHCloseToGensongAutoWHFabric(dtMaster))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
             #endregion

@@ -273,7 +273,7 @@ and o.ID=b.OrderID ", CurrentMaintain["ID"]);
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
-                DataTable dtDetail = (DataTable)detailgridbs.DataSource;
+                DataTable dtDetail = ((DataTable)detailgridbs.DataSource).DefaultView.ToTable(true, "ID", "WorkorderUkey");
                 Task.Run(() => new Gensong_AutoWHFabric().SentCutplan_DetailToGensongAutoWHFabric(dtDetail))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }

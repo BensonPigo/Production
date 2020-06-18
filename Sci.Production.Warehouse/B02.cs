@@ -105,9 +105,12 @@ namespace Sci.Production.Warehouse
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
-                string strID = CurrentMaintain["ID"].ToString();
-                Task.Run(() => new Gensong_AutoWHFabric().SentMtlLocationToGensongAutoWHFabric(strID))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                if (string.Compare(CurrentMaintain["StockType"].ToString(), "B", true) == 0)
+                {
+                    DataTable dtMain = CurrentMaintain.Table.DefaultView.ToTable(true, "ID", "StockType", "Junk", "Description");
+                    Task.Run(() => new Gensong_AutoWHFabric().SentMtlLocationToGensongAutoWHFabric(dtMain))
+                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
             }
         }
 

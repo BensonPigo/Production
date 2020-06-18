@@ -1434,7 +1434,6 @@ END", Env.User.UserID, CurrentMaintain["exportid"], CurrentMaintain["id"]);
         private void SentToGensong_AutoWHFabric()
         {
             DataTable dtDetail = new DataTable();
-            //var listData = ((DataTable)detailgridbs.DataSource).AsEnumerable();
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
                 string sqlGetData = string.Empty;
@@ -1455,9 +1454,8 @@ SELECT [ID] = rd.id
 ,[Weight] = rd.Weight
 ,[StockType] = rd.StockType
 ,[Ukey] = rd.Ukey
-,[IsInspection] = 0
-,Junk = case when r.Status = 'Confirmed' then 0 else 1 end
-,CmdTime = GetDate()
+,[IsInspection] = convert(bit, 0)
+,Junk = case when r.Status = 'Confirmed' then convert(bit, 0) else convert(bit, 1) end
 FROM Production.dbo.Receiving_Detail rd
 inner join Production.dbo.Receiving r on rd.id = r.id
 inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 

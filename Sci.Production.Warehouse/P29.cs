@@ -15,6 +15,8 @@ using System.Transactions;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using Sci.Production.PublicForm;
+using Sci.Production.Automation;
+using System.Threading.Tasks;
 
 namespace Sci.Production.Warehouse
 {
@@ -867,6 +869,13 @@ from #tmp";
                     Alldetailrows.GetParentRow("rel1")["selected"] = true;
                     Alldetailrows.GetParentRow("rel1")["TransID"] = drGetID[0]["ID"];
                 }
+            }
+
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMaster))
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 
             //Create後Btn失效，需重新Qurey才能再使用。

@@ -29,7 +29,7 @@ namespace Sci.Production.Automation
         /// <param name="dtDetail">Detail DataSource</param>
         public void SentReceive_DetailToGensongAutoWHFabric(DataTable dtDetail)
         {
-            if (!IsModuleAutomationEnable(GensongSuppID, moduleName))
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
                 return;
             }
@@ -59,9 +59,9 @@ namespace Sci.Production.Automation
                     Weight = (decimal)dr["Weight"],
                     StockType = dr["StockType"].ToString(),
                     Ukey = (long)dr["Ukey"],
-                    IsInspection = (int)dr["IsInspection"],
-                    Junk = (int)dr["Junk"],
-                    CmdTime = DateTime.Now
+                    IsInspection = (bool)dr["IsInspection"],
+                    Junk = (bool)dr["Junk"],
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Receiving_Detail", bodyObject));
@@ -75,7 +75,7 @@ namespace Sci.Production.Automation
         /// <param name="dtDetail">Detail DataSource</param>
         public void SentIssue_DetailToGensongAutoWHFabric(DataTable dtDetail)
         {
-            if (!IsModuleAutomationEnable(GensongSuppID, moduleName))
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
                 return;
             }
@@ -92,7 +92,7 @@ namespace Sci.Production.Automation
                     Id = dr["id"].ToString(),
                     Type = dr["Type"].ToString(),
                     CutPlanID = dr["CutPlanID"].ToString(),
-                    EstCutdate = (DateTime?)dr["EstCutdate"],
+                    EstCutdate = MyUtility.Check.Empty(dr["EstCutdate"]) ? null : (DateTime?)dr["EstCutdate"],
                     SpreadingNoID = dr["SpreadingNoID"].ToString(),
                     PoId = dr["PoId"].ToString(),
                     Seq1 = dr["Seq1"].ToString(),
@@ -102,7 +102,7 @@ namespace Sci.Production.Automation
                     Barcode = dr["Barcode"].ToString(),
                     Qty = (decimal)dr["Qty"],
                     Ukey = (long)dr["Ukey"],
-                    CmdTime = DateTime.Now
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Issue_Detail", bodyObject));
@@ -114,7 +114,7 @@ namespace Sci.Production.Automation
         /// WHClose To Gensong
         /// </summary>
         /// <param name="strKey">PoID</param>
-        public void SentWHCloseToGensongAutoWHFabric(DataTable dtDetail)
+        public void SentWHCloseToGensongAutoWHFabric(DataTable dtMaster)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName))
             {
@@ -126,19 +126,26 @@ namespace Sci.Production.Automation
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
-            var structureID = //strKey.Split(',').Select(s => new { POID = s });
+            dynamic bodyObject = new ExpandoObject();
+            bodyObject = dtMaster.AsEnumerable()
+                .Select(dr => new
+                {
+                    POID = dr["POID"].ToString(),
+                    WhseClose = MyUtility.Check.Empty(dr["WhseClose"]) ? null : (DateTime?)dr["WhseClose"],
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
+                });
 
-            //string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("WHClose", structureID));
-            //SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("WHClose", bodyObject));
+            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
         /// SubTransfer_Detail To Gensong
         /// </summary>
         /// <param name="dtDetail">Detail DataSource</param>
-        public void SentSubTransfer_DetailToGensongAutoWHFabric(DataTable dtDetail)
+        public void SentSubTransfer_DetailToGensongAutoWHFabric(DataTable dtMaster)
         {
-            if (!IsModuleAutomationEnable(GensongSuppID, moduleName))
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
                 return;
             }
@@ -148,11 +155,58 @@ namespace Sci.Production.Automation
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
+            string sqlcmd = @"
+select distinct 
+[ID] = sd.ID
+,s.Type
+,sd.FromPOID,sd.FromSeq1,sd.FromSeq2,sd.FromRoll,sd.FromDyelot,sd.FromStockType
+,sd.ToPOID,sd.ToSeq1,sd.ToSeq2,sd.ToRoll,sd.ToDyelot,sd.ToStockType
+,fty.Barcode,sd.Ukey
+,CmdTime = GetDate()
+from Production.dbo.SubTransfer_Detail sd
+inner join #tmp s on sd.ID=s.Id
+outer apply(
+		select Barcode
+		from Production.dbo.FtyInventory
+		where POID = sd.ToPOID and Seq1=sd.ToSeq1
+		and Seq2=sd.ToSeq2 and Roll=sd.ToRoll and Dyelot=sd.ToDyelot
+	)fty
+where 1=1
+and exists(
+		select 1 from Production.dbo.PO_Supp_Detail 
+		where id = sd.ToPOID and seq1=sd.ToSeq1 and seq2=sd.ToSeq2 
+		and FabricType='F'
+	)
+and s.Type in ('A','B','D')
+";
+            DataTable dt = new DataTable();
+            MyUtility.Tool.ProcessWithDatatable(dtMaster, null, sqlcmd, out dt);
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return;
+            }
+
             dynamic bodyObject = new ExpandoObject();
-            bodyObject = dtDetail.AsEnumerable()
-                .Select(s => new
+            bodyObject = dt.AsEnumerable()
+                .Select(dr => new
                 {
-                    Ukey = s["Ukey"].ToString()
+                    ID = dr["ID"].ToString(),
+                    Type = dr["Type"].ToString(),
+                    FromPOID = dr["FromPOID"].ToString(),
+                    FromSeq1 = dr["FromSeq1"].ToString(),
+                    FromSeq2 = dr["FromSeq2"].ToString(),
+                    FromRoll = dr["FromRoll"].ToString(),
+                    FromDyelot = dr["FromDyelot"].ToString(),
+                    FromStockType = dr["FromStockType"].ToString(),
+                    ToPOID = dr["ToPOID"].ToString(),
+                    ToSeq1 = dr["ToSeq1"].ToString(),
+                    ToSeq2 = dr["ToSeq2"].ToString(),
+                    ToRoll = dr["ToRoll"].ToString(),
+                    ToDyelot = dr["ToDyelot"].ToString(),
+                    ToStockType = dr["ToStockType"].ToString(),
+                    Barcode = dr["Barcode"].ToString(),
+                    Ukey = (long)dr["Ukey"],
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("SubTransfer_Detail", bodyObject));
@@ -164,9 +218,9 @@ namespace Sci.Production.Automation
         /// MtlLocation To Gensong
         /// </summary>
         /// <param name="strKey">ID</param>
-        public void SentMtlLocationToGensongAutoWHFabric(string strKey)
+        public void SentMtlLocationToGensongAutoWHFabric(DataTable dtMaster)
         {
-            if (!IsModuleAutomationEnable(GensongSuppID, moduleName))
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
                 return;
             }
@@ -175,10 +229,18 @@ namespace Sci.Production.Automation
             string suppAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
+            dynamic bodyObject = new ExpandoObject();
+            bodyObject = dtMaster.AsEnumerable()
+                .Select(dr => new
+                {
+                    ID = dr["ID"].ToString(),
+                    StockType = dr["StockType"].ToString(),
+                    Junk = (bool)dr["Junk"],
+                    Description = dr["Description"].ToString(),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
+                });
 
-            var structureID = strKey.Split(',').Select(s => new { ID = s });
-
-            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("MtlLocation", structureID));
+            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("MtlLocation", bodyObject));
             SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
@@ -191,12 +253,12 @@ namespace Sci.Production.Automation
             /*
              *記得更新Function 也要一併更新到MES Automation.Dll檔
              */
-            if (!IsModuleAutomationEnable(GensongSuppID, moduleName))
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
                 return;
             }
 
-            string apiThread = "SentMtlLocationToGensong";
+            string apiThread = "SentRefnoRelaxtimeToGensong";
             string suppAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
@@ -205,7 +267,10 @@ namespace Sci.Production.Automation
             bodyObject = dtDetail.AsEnumerable()
                 .Select(s => new
                 {
-                    Refno = s["Refno"].ToString()
+                    Refno = s["Refno"].ToString(),
+                    FabricRelaxationID = s["FabricRelaxationID"].ToString(),
+                    RelaxTime = s["RelaxTime"].ToString(),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("RefnoRelaxtime", bodyObject));
@@ -218,22 +283,86 @@ namespace Sci.Production.Automation
         /// <param name="dtDetail">Detail DataSource</param>
         public void SentCutplan_DetailToGensongAutoWHFabric(DataTable dtDetail)
         {
-            if (!IsModuleAutomationEnable(GensongSuppID, moduleName))
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
                 return;
             }
 
-            string apiThread = "SentMtlLocationToGensong";
+            string apiThread = "SentCutplan_DetailToGensong";
             string suppAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
+            string sqlcmd = @"
+select distinct
+    [CutplanID] = cp2.ID
+    ,[CutRef] = cp2.CutRef
+    ,[CutNo] = cp2.CutNo
+    ,[PoID] = wo.ID
+    ,[Seq1] = wo.SEQ1
+    ,[Seq2] = wo.SEQ2
+    ,[Refno] = wo.Refno
+    ,[Article] = Article.value
+    ,[Colorid] = cp2.Colorid
+    ,[SizeCode] = SizeCode.value
+    ,cp2.WorkorderUkey
+	,[CmdTime] = GETDATE()
+    from  Production.dbo.Cutplan_Detail cp2
+    inner join Production.dbo.Cutplan cp1 on cp2.id = cp1.id
+    inner join Production.dbo.WorkOrder wo on cp2.POID = wo.ID and cp2.CutRef = wo.CutRef
+    outer apply(
+        select value = STUFF((
+        	select CONCAT(',',SizeCode)
+        	from(
+        		select distinct SizeCode
+        		from Production.dbo.WorkOrder_Distribute
+        		where WorkOrderUkey = wo.Ukey
+        		)s
+        		for xml path('')
+        	),1,1,'')
+    ) SizeCode
+    outer apply(
+        select value = STUFF((
+        	select CONCAT(',',Article)
+        	from(
+        		select distinct Article
+        		from Production.dbo.WorkOrder_Distribute
+        		where WorkOrderUkey = wo.Ukey
+        		and Article !=''
+        		)s
+        		for xml path('')
+        	),1,1,'')
+    ) Article
+    where exists(
+        select 1 from Issue_Detail where cp2.ID = CutplanID
+    )
+	and exists(
+		select 1 from #tmp s where s.ID = cp2.ID and s.WorkorderUkey = cp2.WorkorderUkey
+	)
+";
+            DataTable dt = new DataTable();
+            MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dt);
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return;
+            }
+
             dynamic bodyObject = new ExpandoObject();
-            bodyObject = dtDetail.AsEnumerable()
+            bodyObject = dt.AsEnumerable()
                 .Select(s => new
                 {
-                    ID = s["ID"].ToString(),
-                    WorkorderUkey = MyUtility.Convert.GetInt(s["WorkorderUkey"])
+                    CutplanID = s["CutplanID"].ToString(),
+                    CutRef = s["CutRef"].ToString(),
+                    CutNo = (decimal)s["CutNo"],
+                    POID = s["POID"].ToString(),
+                    Seq1 = s["Seq1"].ToString(),
+                    Seq2 = s["Seq2"].ToString(),
+                    Refno = s["Refno"].ToString(),
+                    Article = s["Article"].ToString(),
+                    ColorID = s["ColorID"].ToString(),
+                    SizeCode = s["SizeCode"].ToString(),
+                    WorkorderUkey = (long)s["WorkorderUkey"],
+                    CmdTime = DateTime.Now
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Cutplan_Detail", bodyObject));
@@ -250,30 +379,6 @@ namespace Sci.Production.Automation
             resultObj.Add("DataTable", dataStructure);
 
             return resultObj;
-        }
-
-        public class Receiving_DetailToGensong_PostBody
-        {
-            public DataTable Receiving_Detail;
-            public string ID;
-            public string InvNo;
-            public string PoId;
-            public string Seq1;
-            public string Seq2;
-            public string Refno;
-            public string ColorID;
-            public string Roll;
-            public string Dyelot;
-            public string StockUnit;
-            public decimal StockQty;
-            public string PoUnit;
-            public decimal ShipQty;
-            public decimal Weight;
-            public string StockType;
-            public long Ukey;
-            public bool IsInspection;
-            public bool Junk;
-            public DateTime? CmdTime;
         }
 
     }

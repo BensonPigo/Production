@@ -487,7 +487,7 @@ where dbo.Lack_Detail.id = '{1}'
                 sqlGetData = $@"
 select distinct 
 [Id] = ik2.Id
-,[Type] = ik.Type 
+,[Type] = 'R' 
 ,[CutPlanID] = ''
 ,[EstCutdate] = null
 ,[SpreadingNoID] = ''
@@ -515,7 +515,6 @@ and exists(
 		and FabricType='F'
 )
 and ik.id = '{CurrentMaintain["ID"]}'
-
 ";
 
                 DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);

@@ -149,6 +149,7 @@ select  0 Selected
     ,m.ppicClose
     ,dbo.getPOComboList(m.poid,m.poid) [PoCombo] 
     ,[MCHandle] = dbo.getPass1_ExtNo((select MCHandle from orders where id=m.POID))
+    ,x.WhseClose
 from (
     select  a.POID
             ,max(a.ActPulloutDate) ActPulloutDate
@@ -263,17 +264,18 @@ Drop table #cte_temp;", Sci.Env.User.Keyword, categorySql));
                     Exception ex = result.GetException();
                     MyUtility.Msg.WarningBox(ex.Message);
                     //return;
-                }
-
-                #region Sent WHClose to Gensong
-                if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
-                {
-                    string strPOID = tmp["poid"].ToString();
-                    Task.Run(() => new Gensong_AutoWHFabric().SentWHCloseToGensongAutoWHFabric(strPOID))
-                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-                }
-                #endregion
+                }               
             }
+
+            #region Sent WHClose to Gensong
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                DataTable dtFilter = ((DataTable)listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).CopyToDataTable();
+                DataTable dtMaster = dtFilter.DefaultView.ToTable(true, "POID", "WhseClose");
+                Task.Run(() => new Gensong_AutoWHFabric().SentWHCloseToGensongAutoWHFabric(dtMaster))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+            #endregion
             //this.QueryData();
             MyUtility.Msg.InfoBox("Finish closing R/Mtl!!");
             this.HideWaitMessage();

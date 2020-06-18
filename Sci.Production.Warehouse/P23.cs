@@ -16,6 +16,8 @@ using Microsoft.Reporting.WinForms;
 using System.Data.SqlClient;
 using Sci.Win;
 using static Sci.Production.PublicPrg.Prgs;
+using Sci.Production.Automation;
+using System.Threading.Tasks;
 
 namespace Sci.Production.Warehouse
 {
@@ -271,6 +273,14 @@ WHERE   StockType='{0}'
             }
             else
             {
+                // AutoWHFabric WebAPI for Gensong       
+                if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+                {
+                    DataTable dtMaster = CurrentMaintain.Table.DefaultView.ToTable(true, "ID", "Type");
+                    Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMaster))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
+
                 MyUtility.Msg.InfoBox("Confirmed successful");
             }
          
