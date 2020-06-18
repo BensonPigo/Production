@@ -2697,16 +2697,26 @@ and [IS].Poid='{POID}' AND [IS].SCIRefno='{SCIRefno}' AND [IS].ColorID='{ColorID
                     if (GetSubDetailDatas(_detail.Rows[_detail.Rows.Count - 1], out _subDetail))
                     {
                         List<DataRow> issuedList = PublicPrg.Prgs.Thread_AutoPick(key, Convert.ToDecimal(AccuIssued));
+                        List<string> allSuppColor = new List<string>();
                         foreach (var issued in issuedList)
                         {
                             if (MyUtility.Convert.GetDecimal(issued["Qty"]) != 0)
                             {
                                 totalQty += (decimal)issued["Qty"];
+
+                                string suppColor = issued["SuppColor"].ToString();
+                                // 重複就不加進去了
+                                if (!allSuppColor.Contains(suppColor))
+                                {
+                                    allSuppColor.Add(suppColor);
+                                }
+
                                 issued.AcceptChanges();
                                 issued.SetAdded();
                                 _subDetail.ImportRow(issued);
                             }
                         }
+                        _detail.Rows[_detail.Rows.Count - 1]["SuppColor"] = allSuppColor.JoinToString(",");
                         sum_subDetail(_detail.Rows[_detail.Rows.Count - 1], _subDetail);
 
                     }
