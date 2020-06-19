@@ -187,7 +187,8 @@ order by td.Seq", masterID);
             #region modify comboBox1 DataSource as Style_Location
             string sqlCmd = "select distinct Location from Style_Location WITH (NOLOCK) ";
             DualResult result;
-            result = DBProxy.Current.Select(null, sqlCmd, out DataTable dtLocation);
+            DataTable dtLocation;
+            result = DBProxy.Current.Select(null, sqlCmd, out dtLocation);
 
             this.comboStyle.DataSource = dtLocation;
             this.comboStyle.DisplayMember = "Location";
@@ -373,7 +374,8 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                             };
 
                             string sqlCmd = "select DescEN,SMV,MachineTypeID,SeamLength,MoldID,MtlFactorID,Annotation,MasterPlusGroup from Operation WITH (NOLOCK) where CalibratedCode = 1 and ID = @id";
-                            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out DataTable opData);
+                            DataTable opData;
+                            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out opData);
                             if (result)
                             {
                                 if (opData.Rows.Count <= 0)
@@ -549,7 +551,8 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                     List<string> operationList = new List<string>();
                     List<SqlParameter> cmds = new List<SqlParameter>() { new SqlParameter { ParameterName = "@OperationID", Value = MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"]) } };
                     string sqlcmd = "select ID from Mold WITH (NOLOCK) where Junk = 0";
-                    DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtMold);
+                    DataTable dtMold;
+                    DualResult result = DBProxy.Current.Select(null, sqlcmd, out dtMold);
                     if (!result)
                     {
                         this.CurrentDetailData["Mold"] = string.Empty;
@@ -557,7 +560,8 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                     }
 
                     sqlcmd = "select o.MoldID from Operation o WITH (NOLOCK) where o.ID = @OperationID";
-                    result = DBProxy.Current.Select(null, sqlcmd, cmds, out DataTable dtOperation);
+                    DataTable dtOperation;
+                    result = DBProxy.Current.Select(null, sqlcmd, cmds, out dtOperation);
                     if (!result)
                     {
                         this.CurrentDetailData["Mold"] = string.Empty;
@@ -626,7 +630,8 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                 {
                     this.CurrentDetailData["Template"] = e.FormattedValue;
                     string sqlcmd = "select ID,Description from SewingMachineTemplate WITH (NOLOCK) where Junk = 0";
-                    DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
+                    DataTable dt;
+                    DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = this.CurrentDetailData["Template"].ToString().Split(',').Distinct().ToArray();
                     bool selectId = true;
                     List<string> errTemplate = new List<string>();
@@ -827,7 +832,8 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                 sp4
             };
             string sqlCmd = "select sl.Location from Style s WITH (NOLOCK) , Style_Location sl WITH (NOLOCK) where s.ID = @styleid and s.SeasonID = @seasonid and s.BrandID = @brandid and s.Ukey = sl.StyleUkey and sl.Location = @combotype";
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out DataTable locationData);
+            DataTable locationData;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out locationData);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("SQL connection fail!!\r\n" + result.ToString());
@@ -880,8 +886,8 @@ and s.StyleUnit='PCS'
 
             #region 寫表頭的Total Sewing Time與表身的Sewer，只把ArtworkTypeID = 'SEWING'的秒數抓進來加總
             var machineSMV_List = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(o => o.RowState != DataRowState.Deleted).Select(o => new { MachineTypeID = o["MachineTypeID"].ToString(), SMV = MyUtility.Convert.GetDecimal(o["SMV"]) }).ToList();
-
-            DBProxy.Current.Select(null, " SELECT ID FROM Machinetype WHERE ArtworkTypeID = 'SEWING' ", out DataTable tmp);
+            DataTable tmp;
+            DBProxy.Current.Select(null, " SELECT ID FROM Machinetype WHERE ArtworkTypeID = 'SEWING' ", out tmp);
             List<string> sewingMachine_List = tmp.AsEnumerable().Select(o => o["ID"].ToString()).ToList();
 
             decimal ttlSewingTime = machineSMV_List.Where(o => sewingMachine_List.Contains(o.MachineTypeID)).Sum(o => o.SMV);
@@ -902,7 +908,8 @@ and s.StyleUnit='PCS'
                 new SqlParameter() { ParameterName = "@brandid", Value = this.CurrentMaintain["BrandID"].ToString() }
             };
             sqlCmd = "select Ukey from Style WITH (NOLOCK) where ID = @id and SeasonID = @seasonid and BrandID = @brandid";
-            result = DBProxy.Current.Select(null, sqlCmd, parameters, out DataTable styleDT);
+            DataTable styleDT;
+            result = DBProxy.Current.Select(null, sqlCmd, parameters, out styleDT);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("SQL Connection fail!!\r\n" + result.ToString());
@@ -919,7 +926,8 @@ select tms = cast(CEILING(sum(i.ProSMV) * 60) as decimal(20,2))
 from IETMS_Summary i
 where i.IETMSUkey = (select distinct i.Ukey from Style s WITH (NOLOCK) inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version where s.ukey = '{styleUkey}')
 group by i.Location,i.ArtworkTypeID";
-                result = DBProxy.Current.Select(null, sqlCmd, out DataTable dtGSD_Summary);
+                DataTable dtGSD_Summary;
+                result = DBProxy.Current.Select(null, sqlCmd, out dtGSD_Summary);
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox("Check <Total Sewing Time/pc> fail!\r\n" + result.ToString());
@@ -1018,7 +1026,8 @@ inner join style s with(nolock) on s.id = ts.StyleID and s.SeasonID = ts.SeasonI
 inner join ThreadColorComb tcc with(nolock) on tcc.StyleUkey = s.Ukey
 inner join pass1 p on p.id = s.ThreadEditname
 where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["ID"]}'";
-            if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
+            DataRow dr;
+            if (MyUtility.Check.Seek(sqlcmd, out dr))
             {
                 string toAddress = MyUtility.Convert.GetString(dr[0]);
                 string subject = $"IE P01 Factory GSD Style：{this.CurrentMaintain["StyleID"]} ,Brand：{this.CurrentMaintain["BrandID"]} ,Season：{this.CurrentMaintain["SeasonID"]} have changed ";
@@ -1076,8 +1085,8 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
             {
                 sqlCmd = "select ID,SeasonID,Description,BrandID,UKey from Style WITH (NOLOCK) where Junk = 0 and BrandID = @brandid order by ID";
             }
-
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out DataTable styleData);
+            DataTable styleData;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out styleData);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("SQL Connection fail!!\r\n" + result.ToString());
@@ -1100,7 +1109,8 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
             this.CurrentMaintain["BrandID"] = selectedData[0]["BrandID"].ToString();
 
             sqlCmd = string.Format("select Location from Style_Location WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetInt(selectedData[0]["UKey"]).ToString());
-            result = DBProxy.Current.Select(null, sqlCmd, out DataTable locationData);
+            DataTable locationData;
+            result = DBProxy.Current.Select(null, sqlCmd, out locationData);
             if (result)
             {
                 if (locationData.Rows.Count == 1)
@@ -1349,8 +1359,8 @@ where ID = {0}",
             }
 
             sqlCmd += " order by id.SEQ";
-
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out DataTable ietmsData);
+            DataTable ietmsData;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out ietmsData);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query ietms fail!\r\n" + result.ToString());
@@ -1408,7 +1418,8 @@ where ID = {0}",
             };
 
             string sqlCmd = "select Ukey from Style WITH (NOLOCK) where ID = @id and SeasonID = @seasonid and BrandID = @brandid";
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out DataTable styleUkey);
+            DataTable styleUkey;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out styleUkey);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("SQL Connection fail!!\r\n" + result.ToString());
@@ -1525,7 +1536,8 @@ where ID = {0}",
             };
 
             string sqlCmd = "select CdCodeID from Style WITH (NOLOCK) where ID = @styleid and SeasonID = @seasonid and BrandID = @brandid";
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out DataTable cdCode);
+            DataTable cdCode;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out cdCode);
             if (!result)
             {
                 this.displayCD.Value = string.Empty;
