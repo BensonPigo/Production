@@ -1206,7 +1206,8 @@ where o.ID = '{0}'
 	   sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
 	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as NW,
 	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as GW,
-	   isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW 
+	   isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW,
+       [Balance] = iif(isnull(o.CTNQty, 0) = 0, 0, oqd.Qty % o.CTNQty)
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 left Join Orders o WITH (NOLOCK) on o.ID = oqd.Id
 left join View_OrderFAColor voc on voc.id = oqd.Id and voc.Article = oqd.Article
@@ -1233,7 +1234,8 @@ order by oa.Seq,os.Seq",
 	   sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
 	   isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as NW,
 	   isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as GW,
-	   isnull(sw.NNW, isnull(sw2.NNW, 0))*oqc.Qty as NNW 
+	   isnull(sw.NNW, isnull(sw2.NNW, 0))*oqc.Qty as NNW,
+       [Balance] = iif(isnull(oqc.Qty, 0) = 0, 0, oqd.Qty % oqc.Qty)
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 left Join Orders o WITH (NOLOCK) on o.ID = oqd.Id
 left Join Order_QtyCTN oqc WITH (NOLOCK) on oqc.id = oqd.Id and oqc.Article = oqd.Article and oqc.SizeCode = oqd.SizeCode
@@ -1254,7 +1256,8 @@ order by oa.Seq,os.Seq",
 	   sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
 	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as NW,
 	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as GW,
-	   isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW 
+	   isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW,
+       [Balance] = iif(isnull(o.CTNQty,0) = 0, 0, oqd.Qty % o.CTNQty)
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 left Join Orders o WITH (NOLOCK) on o.ID = oqd.Id
 left join View_OrderFAColor voc on voc.id = oqd.Id and voc.Article = oqd.Article
