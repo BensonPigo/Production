@@ -423,7 +423,10 @@ OUTER APPLY(
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.txtDept.ReadOnly = true;
+            if (this.CurrentMaintain["Status"].ToString() != "New")
+            {
+                this.txtDept.ReadOnly = true;
+            }
         }
 
         /// <inheritdoc/>
