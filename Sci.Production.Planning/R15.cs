@@ -59,7 +59,8 @@ namespace Sci.Production.Planning
             DataTable dt;
             DBProxy.Current.Select(null, "select sby = 'SP#' union all select sby = 'Acticle / Size'", out dt);
             MyUtility.Tool.SetupCombox(this.comboBox1, 1, dt);
-            this.comboBox1.SelectedIndex = 0; this.ReportType = "SP#";
+            this.comboBox1.SelectedIndex = 0;
+            this.ReportType = "SP#";
         }
 
         /// <summary>
@@ -273,7 +274,6 @@ namespace Sci.Production.Planning
                     firstRow.AutoFilter(1, Type.Missing, Microsoft.Office.Interop.Excel.XlAutoFilterOperator.xlAnd, Type.Missing, true);
                     objApp.Cells.EntireColumn.AutoFit();  // 自動欄寬
 
-
                     // 客製化欄位，記得設定this.IsSupportCopy = true
                     this.CreateCustomizedExcel(ref objSheets);
 
@@ -485,6 +485,7 @@ namespace Sci.Production.Planning
             }
 
             sqlCmd.Append($" and o.Category in ({this.category})");
+            sqlCmd.Append($" and exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)");
             #endregion
 
             #region -- 有列印Artwork --
@@ -1073,6 +1074,7 @@ WHERE 1=1 {whereIncludeCancelOrder} "));
             }
 
             sqlCmd.Append($" and o.Category in ({this.category})");
+            sqlCmd.Append($" and exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)");
             #endregion
 
             #region -- 有列印Artwork --
@@ -1502,7 +1504,7 @@ outer apply(
 )PackDetail
 ");
 
-            sqlCmd.Append(string.Format(@" order by {0}, t.Article, t.SizeCode" + Environment.NewLine, this.orderby)); 
+            sqlCmd.Append(string.Format(@" order by {0}, t.Article, t.SizeCode" + Environment.NewLine, this.orderby));
             sqlCmd.Append(" drop table #cte, #cte2, #tmp_PackingList_Detail, #imp_LastSewnDate;" + Environment.NewLine);
             foreach (string subprocess in subprocessIDs)
             {
@@ -1519,9 +1521,8 @@ outer apply(
             return sqlCmd;
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-
             switch (this.comboBox1.SelectedIndex)
             {
                 case 0:
@@ -1533,19 +1534,6 @@ outer apply(
                 default:
                     break;
             }
-
-            //if (this.comboBox1.selec)
-            //{
-            //    this.ReportType = "MainList";
-            //    this.dateDelivery.ReadOnly = true;
-            //    this.dateDelivery.Value1 = null;
-            //    this.dateDelivery.Value2 = null;
-            //}
-            //if (this.radioDetailList.Checked)
-            //{
-            //    this.ReportType = "DetailList";
-            //    this.dateDelivery.ReadOnly = false;
-            //}
         }
     }
 }
