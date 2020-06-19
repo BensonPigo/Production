@@ -545,23 +545,13 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
 
             this.mold.CellValidating += (s, e) =>
             {
-                if (this.EditMode
-                    && !MyUtility.Check.Empty(e.FormattedValue))
+                if (this.EditMode)
                 {
-                    List<string> operationList = new List<string>();
                     List<SqlParameter> cmds = new List<SqlParameter>() { new SqlParameter { ParameterName = "@OperationID", Value = MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"]) } };
-                    string sqlcmd = "select ID from Mold WITH (NOLOCK) where Junk = 0";
-                    DataTable dtMold;
-                    DualResult result = DBProxy.Current.Select(null, sqlcmd, out dtMold);
-                    if (!result)
-                    {
-                        this.CurrentDetailData["Mold"] = string.Empty;
-                        MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
-                    }
-
-                    sqlcmd = "select o.MoldID from Operation o WITH (NOLOCK) where o.ID = @OperationID";
+                    string sqlcmd = "select o.MoldID from Operation o WITH (NOLOCK) where o.ID = @OperationID";
                     DataTable dtOperation;
-                    result = DBProxy.Current.Select(null, sqlcmd, cmds, out dtOperation);
+                    DualResult result = DBProxy.Current.Select(null, sqlcmd, cmds, out dtOperation);
+                    List<string> operationList = new List<string>();
                     if (!result)
                     {
                         this.CurrentDetailData["Mold"] = string.Empty;
@@ -574,6 +564,26 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                         {
                             operationList = query.FirstOrDefault().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
                         }
+                    }
+
+                    if (MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        if (operationList.Any())
+                        {
+                            this.CurrentDetailData["Mold"] = string.Join(",", operationList.ToList());
+                        }
+
+                        e.Cancel = true;
+                        return;
+                    }
+
+                    sqlcmd = "select ID from Mold WITH (NOLOCK) where Junk = 0";
+                    DataTable dtMold;
+                    result = DBProxy.Current.Select(null, sqlcmd, out dtMold);
+                    if (!result)
+                    {
+                        this.CurrentDetailData["Mold"] = string.Empty;
+                        MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
                     }
 
                     // 前端轉進來的資料是用[;]區隔，統一用[,]區隔
