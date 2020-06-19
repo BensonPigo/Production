@@ -283,7 +283,6 @@ order by ArticleGroup", patternukey);
             MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,PatternDesc,parts,subProcessid,BundleGroup,isPair,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String", $@"
 Select PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String
 from #tmp where BundleGroup='{BundleGroup}'
-group by PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String
 order by iif(PatternCode='AllParts','ZZZZZZZ',PatternCode)
 ", out tmp);
             //需要使用上一層表身的值,不可重DB撈不然新增的資料就不會存回DB
