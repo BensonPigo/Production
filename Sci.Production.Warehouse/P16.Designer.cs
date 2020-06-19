@@ -53,6 +53,8 @@
             this.labelSubconName = new Sci.Win.UI.Label();
             this.labelshift = new Sci.Win.UI.Label();
             this.txtLocalSupp1 = new Sci.Production.Class.txtLocalSupp();
+            this.lblDept = new Sci.Win.UI.Label();
+            this.displayDept = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -69,6 +71,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.displayDept);
+            this.masterpanel.Controls.Add(this.lblDept);
             this.masterpanel.Controls.Add(this.txtLocalSupp1);
             this.masterpanel.Controls.Add(this.displayBoxShift);
             this.masterpanel.Controls.Add(this.labelSubconName);
@@ -119,6 +123,8 @@
             this.masterpanel.Controls.SetChildIndex(this.labelSubconName, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBoxShift, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLocalSupp1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lblDept, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayDept, 0);
             // 
             // detailpanel
             // 
@@ -196,7 +202,7 @@
             // 
             // label11
             // 
-            this.label11.Location = new System.Drawing.Point(241, 13);
+            this.label11.Location = new System.Drawing.Point(221, 13);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(86, 23);
             this.label11.TabIndex = 11;
@@ -206,7 +212,7 @@
             // 
             this.label25.BackColor = System.Drawing.Color.Transparent;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label25.Location = new System.Drawing.Point(815, 13);
+            this.label25.Location = new System.Drawing.Point(878, 13);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(115, 23);
             this.label25.TabIndex = 43;
@@ -226,7 +232,7 @@
             // dateBox3
             // 
             this.dateBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IssueDate", true));
-            this.dateBox3.Location = new System.Drawing.Point(330, 13);
+            this.dateBox3.Location = new System.Drawing.Point(310, 13);
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
             this.dateBox3.TabIndex = 0;
@@ -318,7 +324,7 @@
             this.editBox1.Location = new System.Drawing.Point(97, 78);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(658, 51);
+            this.editBox1.Size = new System.Drawing.Size(565, 51);
             this.editBox1.TabIndex = 3;
             // 
             // label2
@@ -333,7 +339,7 @@
             // 
             this.btnAccumulatedQty.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnAccumulatedQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAccumulatedQty.Location = new System.Drawing.Point(785, 78);
+            this.btnAccumulatedQty.Location = new System.Drawing.Point(665, 78);
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
             this.btnAccumulatedQty.Size = new System.Drawing.Size(145, 31);
             this.btnAccumulatedQty.TabIndex = 5;
@@ -354,7 +360,7 @@
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(241, 45);
+            this.label6.Location = new System.Drawing.Point(221, 45);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(86, 23);
             this.label6.TabIndex = 67;
@@ -362,9 +368,9 @@
             // 
             // label7
             // 
-            this.label7.Location = new System.Drawing.Point(463, 13);
+            this.label7.Location = new System.Drawing.Point(443, 13);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(86, 23);
+            this.label7.Size = new System.Drawing.Size(69, 23);
             this.label7.TabIndex = 68;
             this.label7.Text = "Apv. Date";
             // 
@@ -372,7 +378,7 @@
             // 
             this.displayApvDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayApvDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayApvDate.Location = new System.Drawing.Point(552, 13);
+            this.displayApvDate.Location = new System.Drawing.Point(515, 13);
             this.displayApvDate.Name = "displayApvDate";
             this.displayApvDate.Size = new System.Drawing.Size(147, 23);
             this.displayApvDate.TabIndex = 70;
@@ -385,7 +391,7 @@
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(330, 44);
+            this.comboBox1.Location = new System.Drawing.Point(310, 44);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.OldText = "";
             this.comboBox1.ReadOnly = true;
@@ -396,9 +402,9 @@
             // 
             this.displayBoxShift.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBoxShift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxShift.Location = new System.Drawing.Point(552, 45);
+            this.displayBoxShift.Location = new System.Drawing.Point(515, 45);
             this.displayBoxShift.Name = "displayBoxShift";
-            this.displayBoxShift.Size = new System.Drawing.Size(110, 23);
+            this.displayBoxShift.Size = new System.Drawing.Size(147, 23);
             this.displayBoxShift.TabIndex = 77;
             // 
             // labelSubconName
@@ -411,9 +417,9 @@
             // 
             // labelshift
             // 
-            this.labelshift.Location = new System.Drawing.Point(463, 45);
+            this.labelshift.Location = new System.Drawing.Point(443, 45);
             this.labelshift.Name = "labelshift";
-            this.labelshift.Size = new System.Drawing.Size(86, 23);
+            this.labelshift.Size = new System.Drawing.Size(69, 23);
             this.labelshift.TabIndex = 75;
             this.labelshift.Text = "Shift";
             // 
@@ -425,6 +431,23 @@
             this.txtLocalSupp1.Size = new System.Drawing.Size(230, 23);
             this.txtLocalSupp1.TabIndex = 79;
             this.txtLocalSupp1.TextBox1Binding = "";
+            // 
+            // lblDept
+            // 
+            this.lblDept.Location = new System.Drawing.Point(665, 13);
+            this.lblDept.Name = "lblDept";
+            this.lblDept.Size = new System.Drawing.Size(78, 23);
+            this.lblDept.TabIndex = 80;
+            this.lblDept.Text = "Department";
+            // 
+            // displayDept
+            // 
+            this.displayDept.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayDept.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayDept.Location = new System.Drawing.Point(746, 13);
+            this.displayDept.Name = "displayDept";
+            this.displayDept.Size = new System.Drawing.Size(114, 23);
+            this.displayDept.TabIndex = 81;
             // 
             // P16
             // 
@@ -499,5 +522,7 @@
         private Win.UI.Label labelSubconName;
         private Win.UI.Label labelshift;
         private Class.txtLocalSupp txtLocalSupp1;
+        private Win.UI.DisplayBox displayDept;
+        private Win.UI.Label lblDept;
     }
 }
