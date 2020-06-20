@@ -269,7 +269,7 @@ and s.Type in ('A','B','D')
                 {
                     Refno = s["Refno"].ToString(),
                     FabricRelaxationID = s["FabricRelaxationID"].ToString(),
-                    RelaxTime = s["RelaxTime"].ToString(),
+                    RelaxTime = (decimal)s["RelaxTime"],
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
                 });
 
