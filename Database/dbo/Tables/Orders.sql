@@ -165,6 +165,7 @@
     [NeedProduction]       BIT            DEFAULT ((0)) NULL,
     [IsBuyBack]            BIT            DEFAULT ((0)) NOT NULL,
     [KeepPanels]           BIT            DEFAULT ((0)) NULL,
+    [BuyBackReason] varchar(20) NOT NULL CONSTRAINT [DF_Orders_BuyBackReason] DEFAULT (''),
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
