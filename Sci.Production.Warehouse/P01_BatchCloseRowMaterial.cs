@@ -267,13 +267,32 @@ Drop table #cte_temp;", Sci.Env.User.Keyword, categorySql));
                 }               
             }
 
-            #region Sent WHClose to Gensong
+            #region Sent W/H Fabric to Gensong
+            // WHClose
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
                 DataTable dtFilter = ((DataTable)listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).CopyToDataTable();
                 DataTable dtMaster = dtFilter.DefaultView.ToTable(true, "POID", "WhseClose");
                 Task.Run(() => new Gensong_AutoWHFabric().SentWHCloseToGensongAutoWHFabric(dtMaster))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+
+            // SubTransfer_Detail
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                DataTable dtMain = new DataTable();
+                dtMain.Columns.Add("ID", typeof(string));
+                dtMain.Columns.Add("Type", typeof(string));
+                foreach (DataRow dr in dr2)
+                {
+                    DataRow row = dtMain.NewRow();
+                    row["ID"] = dr["Poid"].ToString();
+                    row["Type"] = "D";
+                    dtMain.Rows.Add(row);
+                }
+
+                Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain))
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
             #endregion
             //this.QueryData();

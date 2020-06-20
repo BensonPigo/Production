@@ -107,7 +107,8 @@ namespace Sci.Production.Warehouse
             {
                 if (string.Compare(CurrentMaintain["StockType"].ToString(), "B", true) == 0)
                 {
-                    DataTable dtMain = CurrentMaintain.Table.DefaultView.ToTable(true, "ID", "StockType", "Junk", "Description");
+                    DataTable dtMain = CurrentMaintain.Table.Clone();
+                    dtMain.ImportRow(CurrentMaintain);
                     Task.Run(() => new Gensong_AutoWHFabric().SentMtlLocationToGensongAutoWHFabric(dtMain))
                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
                 }

@@ -276,8 +276,9 @@ WHERE   StockType='{0}'
                 // AutoWHFabric WebAPI for Gensong       
                 if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
                 {
-                    DataTable dtMaster = CurrentMaintain.Table.DefaultView.ToTable(true, "ID", "Type");
-                    Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMaster))
+                    DataTable dtMain = CurrentMaintain.Table.Clone();
+                    dtMain.ImportRow(CurrentMaintain);
+                    Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
                 }
 
