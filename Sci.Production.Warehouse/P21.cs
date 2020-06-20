@@ -98,8 +98,23 @@ namespace Sci.Production.Warehouse
                 this.gridReceiving.RefreshEdit();
             };
 
+            Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings col_Select = new DataGridViewGeneratorCheckBoxColumnSettings();
+            col_Select.CellValidating += (s, e) => 
+            {
+                DataRow dr = gridReceiving.GetDataRow(e.RowIndex);
+                bool isCheck = MyUtility.Convert.GetBool(e.FormattedValue);
+                dr["select"] = isCheck;
+                dr.EndEdit();
+                DataTable dt = (DataTable)this.gridReceiving.DataSource;
+                if (dt != null || dt.Rows.Count > 0)
+                {
+                    int cnt = MyUtility.Convert.GetInt(dt.Compute("count(select)", "select = 1"));//+ (isCheck ? 1 : -1);
+                    this.numSelectCnt.Value = cnt;
+                }
+            };
+
             Helper.Controls.Grid.Generator(this.gridReceiving)
-                 .CheckBox("select", header: "", trueValue: 1, falseValue: 0)
+                 .CheckBox("select", header: "", trueValue: 1, falseValue: 0,settings: col_Select)
                  .Text("ExportID", header: "WK#", width: Widths.AnsiChars(14), iseditingreadonly: true)
                  //.Text("ID", header: "Receiving ID", width: Widths.AnsiChars(14), iseditingreadonly: true)
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -231,6 +246,22 @@ namespace Sci.Production.Warehouse
             {
                 sqlWhere += $" and r.WhseArrival <= '{Convert.ToDateTime(this.dateBoxArriveWH.Value2).ToString("yyyy/MM/dd")}'";
                 sqlWhere2 += $" and t.IssueDate <= '{Convert.ToDateTime(this.dateBoxArriveWH.Value2).ToString("yyyy/MM/dd")}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtMtlLocation.Text))
+            {
+                sqlWhere += $@"
+and exists(
+	select 1 from FtyInventory_Detail fid 
+	where fid.Ukey = fi.Ukey
+	and fid.MtlLocationID = '{this.txtMtlLocation.Text}'
+)";
+                sqlWhere2 += $@"
+and exists(
+	select 1 from FtyInventory_Detail fid 
+	where fid.Ukey = fi.Ukey
+	and fid.MtlLocationID = '{this.txtMtlLocation.Text}'
+)";
             }
 
             if (MyUtility.Check.Empty(sqlWhere))
@@ -388,6 +419,7 @@ DROP TABLE #tmpStockType
 
             this.gridReceiving.DataSource = this.dtReceiving;
             this.GridFormatChange();
+            this.numSelectCnt.Value = 0;
         }
 
         private void btnQuery_Click(object sender, EventArgs e)
@@ -699,6 +731,20 @@ Insert into LocationTrans_Detail(   ID,
             else
             {
                 dr["select"] = 0;
+            }
+        }
+
+        private void GridReceiving_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.ColumnIndex == 0)
+            {
+                this.gridReceiving.ValidateControl();
+                DataTable dt = (DataTable)this.gridReceiving.DataSource;
+                if (dt != null || dt.Rows.Count > 0)
+                {
+                    int cnt = MyUtility.Convert.GetInt(dt.Compute("count(select)", "select = 1"));
+                    this.numSelectCnt.Value = cnt;
+                }
             }
         }
     }

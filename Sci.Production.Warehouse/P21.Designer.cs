@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.lblReceivingID = new Sci.Win.UI.Label();
             this.lblWK = new Sci.Win.UI.Label();
@@ -52,6 +53,10 @@
             this.txtDyelot = new Sci.Win.UI.TextBox();
             this.labelDyelot = new Sci.Win.UI.Label();
             this.dateBoxArriveWH = new Sci.Win.UI.DateRange();
+            this.labSelectCnt = new Sci.Win.UI.Label();
+            this.numSelectCnt = new Sci.Win.UI.NumericBox();
+            this.labLocation = new Sci.Win.UI.Label();
+            this.txtMtlLocation = new Sci.Production.Class.txtMtlLocation(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).BeginInit();
             this.SuspendLayout();
             // 
@@ -60,7 +65,7 @@
             this.lblReceivingID.Location = new System.Drawing.Point(9, 9);
             this.lblReceivingID.Name = "lblReceivingID";
             this.lblReceivingID.Size = new System.Drawing.Size(90, 23);
-            this.lblReceivingID.TabIndex = 1;
+            this.lblReceivingID.TabIndex = 12;
             this.lblReceivingID.Text = "Receiving ID";
             // 
             // lblWK
@@ -68,7 +73,7 @@
             this.lblWK.Location = new System.Drawing.Point(9, 43);
             this.lblWK.Name = "lblWK";
             this.lblWK.Size = new System.Drawing.Size(90, 23);
-            this.lblWK.TabIndex = 2;
+            this.lblWK.TabIndex = 16;
             this.lblWK.Text = "WK#";
             // 
             // lblArriveWHDate
@@ -76,7 +81,7 @@
             this.lblArriveWHDate.Location = new System.Drawing.Point(220, 9);
             this.lblArriveWHDate.Name = "lblArriveWHDate";
             this.lblArriveWHDate.Size = new System.Drawing.Size(107, 23);
-            this.lblArriveWHDate.TabIndex = 3;
+            this.lblArriveWHDate.TabIndex = 13;
             this.lblArriveWHDate.Text = "Arrive W/H Date";
             // 
             // lblSP
@@ -84,7 +89,7 @@
             this.lblSP.Location = new System.Drawing.Point(220, 43);
             this.lblSP.Name = "lblSP";
             this.lblSP.Size = new System.Drawing.Size(107, 23);
-            this.lblSP.TabIndex = 4;
+            this.lblSP.TabIndex = 17;
             this.lblSP.Text = "SP#";
             // 
             // txtRecivingID
@@ -103,7 +108,7 @@
             this.txtWK.Location = new System.Drawing.Point(102, 43);
             this.txtWK.Name = "txtWK";
             this.txtWK.Size = new System.Drawing.Size(114, 23);
-            this.txtWK.TabIndex = 3;
+            this.txtWK.TabIndex = 4;
             // 
             // txtSP
             // 
@@ -112,15 +117,15 @@
             this.txtSP.Location = new System.Drawing.Point(330, 43);
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(112, 23);
-            this.txtSP.TabIndex = 4;
+            this.txtSP.TabIndex = 5;
             // 
             // btnQuery
             // 
             this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQuery.Location = new System.Drawing.Point(905, 7);
+            this.btnQuery.Location = new System.Drawing.Point(877, 69);
             this.btnQuery.Name = "btnQuery";
-            this.btnQuery.Size = new System.Drawing.Size(92, 30);
-            this.btnQuery.TabIndex = 10;
+            this.btnQuery.Size = new System.Drawing.Size(119, 30);
+            this.btnQuery.TabIndex = 11;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
@@ -140,7 +145,7 @@
             this.gridReceiving.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridReceiving.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridReceiving.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridReceiving.Location = new System.Drawing.Point(9, 76);
+            this.gridReceiving.Location = new System.Drawing.Point(9, 102);
             this.gridReceiving.Name = "gridReceiving";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -155,9 +160,10 @@
             this.gridReceiving.RowTemplate.Height = 24;
             this.gridReceiving.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridReceiving.ShowCellToolTips = false;
-            this.gridReceiving.Size = new System.Drawing.Size(988, 339);
+            this.gridReceiving.Size = new System.Drawing.Size(988, 313);
             this.gridReceiving.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
-            this.gridReceiving.TabIndex = 10;
+            this.gridReceiving.TabIndex = 26;
+            this.gridReceiving.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.GridReceiving_ColumnHeaderMouseClick);
             this.gridReceiving.Sorted += new System.EventHandler(this.gridReceiving_Sorted);
             // 
             // btnClose
@@ -166,7 +172,7 @@
             this.btnClose.Location = new System.Drawing.Point(917, 423);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
-            this.btnClose.TabIndex = 12;
+            this.btnClose.TabIndex = 25;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
@@ -177,7 +183,7 @@
             this.btnUpdate.Location = new System.Drawing.Point(818, 423);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(80, 30);
-            this.btnUpdate.TabIndex = 11;
+            this.btnUpdate.TabIndex = 24;
             this.btnUpdate.Text = "Update";
             this.btnUpdate.UseVisualStyleBackColor = true;
             this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
@@ -210,14 +216,14 @@
             this.txtSeq.seq1 = "";
             this.txtSeq.seq2 = "";
             this.txtSeq.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq.TabIndex = 5;
+            this.txtSeq.TabIndex = 6;
             // 
             // labelRef
             // 
             this.labelRef.Location = new System.Drawing.Point(513, 43);
             this.labelRef.Name = "labelRef";
             this.labelRef.Size = new System.Drawing.Size(40, 23);
-            this.labelRef.TabIndex = 16;
+            this.labelRef.TabIndex = 18;
             this.labelRef.Text = "Ref#";
             // 
             // txtRef
@@ -228,7 +234,7 @@
             this.txtRef.Location = new System.Drawing.Point(556, 43);
             this.txtRef.Name = "txtRef";
             this.txtRef.Size = new System.Drawing.Size(87, 23);
-            this.txtRef.TabIndex = 6;
+            this.txtRef.TabIndex = 7;
             // 
             // txtRoll
             // 
@@ -238,14 +244,14 @@
             this.txtRoll.Location = new System.Drawing.Point(815, 43);
             this.txtRoll.Name = "txtRoll";
             this.txtRoll.Size = new System.Drawing.Size(60, 23);
-            this.txtRoll.TabIndex = 8;
+            this.txtRoll.TabIndex = 9;
             // 
             // label6
             // 
             this.label6.Location = new System.Drawing.Point(773, 43);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(39, 23);
-            this.label6.TabIndex = 24;
+            this.label6.TabIndex = 20;
             this.label6.Text = "Roll";
             // 
             // txtColor
@@ -256,14 +262,14 @@
             this.txtColor.Location = new System.Drawing.Point(700, 43);
             this.txtColor.Name = "txtColor";
             this.txtColor.Size = new System.Drawing.Size(70, 23);
-            this.txtColor.TabIndex = 7;
+            this.txtColor.TabIndex = 8;
             // 
             // label5
             // 
             this.label5.Location = new System.Drawing.Point(646, 43);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(51, 23);
-            this.label5.TabIndex = 23;
+            this.label5.TabIndex = 19;
             this.label5.Text = "Color";
             // 
             // txtDyelot
@@ -274,14 +280,14 @@
             this.txtDyelot.Location = new System.Drawing.Point(931, 43);
             this.txtDyelot.Name = "txtDyelot";
             this.txtDyelot.Size = new System.Drawing.Size(65, 23);
-            this.txtDyelot.TabIndex = 9;
+            this.txtDyelot.TabIndex = 10;
             // 
             // labelDyelot
             // 
             this.labelDyelot.Location = new System.Drawing.Point(877, 43);
             this.labelDyelot.Name = "labelDyelot";
             this.labelDyelot.Size = new System.Drawing.Size(51, 23);
-            this.labelDyelot.TabIndex = 22;
+            this.labelDyelot.TabIndex = 21;
             this.labelDyelot.Text = "Dyelot";
             // 
             // dateBoxArriveWH
@@ -304,13 +310,64 @@
             this.dateBoxArriveWH.Location = new System.Drawing.Point(330, 7);
             this.dateBoxArriveWH.Name = "dateBoxArriveWH";
             this.dateBoxArriveWH.Size = new System.Drawing.Size(280, 23);
-            this.dateBoxArriveWH.TabIndex = 25;
+            this.dateBoxArriveWH.TabIndex = 1;
+            // 
+            // labSelectCnt
+            // 
+            this.labSelectCnt.Location = new System.Drawing.Point(9, 73);
+            this.labSelectCnt.Name = "labSelectCnt";
+            this.labSelectCnt.Size = new System.Drawing.Size(139, 23);
+            this.labSelectCnt.TabIndex = 22;
+            this.labSelectCnt.Text = "Total Items Selected:";
+            // 
+            // numSelectCnt
+            // 
+            this.numSelectCnt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numSelectCnt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numSelectCnt.IsSupportEditMode = false;
+            this.numSelectCnt.Location = new System.Drawing.Point(151, 73);
+            this.numSelectCnt.Name = "numSelectCnt";
+            this.numSelectCnt.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numSelectCnt.ReadOnly = true;
+            this.numSelectCnt.Size = new System.Drawing.Size(65, 23);
+            this.numSelectCnt.TabIndex = 23;
+            this.numSelectCnt.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // labLocation
+            // 
+            this.labLocation.Location = new System.Drawing.Point(833, 8);
+            this.labLocation.Name = "labLocation";
+            this.labLocation.Size = new System.Drawing.Size(65, 23);
+            this.labLocation.TabIndex = 15;
+            this.labLocation.Text = "Location";
+            // 
+            // txtMtlLocation
+            // 
+            this.txtMtlLocation.BackColor = System.Drawing.Color.White;
+            this.txtMtlLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMtlLocation.Location = new System.Drawing.Point(901, 8);
+            this.txtMtlLocation.Name = "txtMtlLocation";
+            this.txtMtlLocation.Size = new System.Drawing.Size(95, 23);
+            this.txtMtlLocation.StockTypeFilte = "";
+            this.txtMtlLocation.TabIndex = 3;
             // 
             // P21
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 462);
+            this.Controls.Add(this.txtMtlLocation);
+            this.Controls.Add(this.labLocation);
+            this.Controls.Add(this.numSelectCnt);
+            this.Controls.Add(this.labSelectCnt);
             this.Controls.Add(this.dateBoxArriveWH);
             this.Controls.Add(this.txtRoll);
             this.Controls.Add(this.label6);
@@ -360,6 +417,10 @@
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.txtRoll, 0);
             this.Controls.SetChildIndex(this.dateBoxArriveWH, 0);
+            this.Controls.SetChildIndex(this.labSelectCnt, 0);
+            this.Controls.SetChildIndex(this.numSelectCnt, 0);
+            this.Controls.SetChildIndex(this.labLocation, 0);
+            this.Controls.SetChildIndex(this.txtMtlLocation, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -391,5 +452,9 @@
         private Win.UI.TextBox txtDyelot;
         private Win.UI.Label labelDyelot;
         private Win.UI.DateRange dateBoxArriveWH;
+        private Win.UI.Label labSelectCnt;
+        private Win.UI.NumericBox numSelectCnt;
+        private Win.UI.Label labLocation;
+        private Class.txtMtlLocation txtMtlLocation;
     }
 }

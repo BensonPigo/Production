@@ -20,18 +20,25 @@ namespace Sci.Production.PPIC
         private bool canConfirm;
         private bool canUnConfirm;
         private string checkTable;
+        private bool canEdit;
 
         public P21_ResponsibilityDept(bool canedit, string id, string keyvalue2, string keyvalue3, string formType, bool canConfirm, bool canUnConfirm)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
             this.InitializeComponent();
             this.ID = id;
-            this.EditMode = canedit;
             this.FormType = formType;
-
             this.canConfirm = canConfirm;
             this.canUnConfirm = canUnConfirm;
             this.checkTable = formType == "Replacement" ? "ReplacementReport" : "ICR";
+            this.canEdit = canedit;
+        }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            this.save.Text = "Edit";
+            this.save.Visible = true;
             this.ConfirmStatusCheck();
         }
 
@@ -274,7 +281,6 @@ namespace Sci.Production.PPIC
                 .Numeric("Amount", header: "Amt", width: Widths.AnsiChars(13), iseditingreadonly: false, decimal_places: 2, integer_places: 10, settings: col_Amt)
                 ;
             return true;
-
         }
 
         /// <summary>
@@ -304,11 +310,13 @@ namespace Sci.Production.PPIC
             {
                 this.btnConfirm.Enabled = this.canConfirm;
                 this.btnUnConfirm.Enabled = false;
+                this.save.Enabled = this.canEdit;
             }
             else
             {
                 this.btnConfirm.Enabled = false;
                 this.btnUnConfirm.Enabled = this.canUnConfirm && this.IsVoucherNull();
+                this.save.Enabled = false;
             }
         }
 
@@ -470,7 +478,6 @@ where ICR.id = '{this.ID}'
 
             this.ConfirmStatusCheck();
             MyUtility.Msg.InfoBox("Confirm success!");
-            this.save.Visible = false;
         }
 
         private void BtnUnConfirm_Click(object sender, EventArgs e)
@@ -495,7 +502,6 @@ where ICR.id = '{this.ID}'
 
             this.ConfirmStatusCheck();
             MyUtility.Msg.InfoBox("UnConfirm success!");
-            this.save.Visible = true;
         }
     }
 }

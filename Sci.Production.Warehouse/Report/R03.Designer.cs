@@ -71,8 +71,6 @@
             this.chkIncludeJunk = new Sci.Win.UI.CheckBox();
             this.chkExcludeMaterial = new Sci.Win.UI.CheckBox();
             this.chkSeparateByWK = new Sci.Win.UI.CheckBox();
-            this.comboZone = new Sci.Win.UI.ComboBox();
-            this.labelZone = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -308,7 +306,7 @@
             // 
             // labelFabricType
             // 
-            this.labelFabricType.Location = new System.Drawing.Point(13, 470);
+            this.labelFabricType.Location = new System.Drawing.Point(13, 444);
             this.labelFabricType.Name = "labelFabricType";
             this.labelFabricType.Size = new System.Drawing.Size(98, 23);
             this.labelFabricType.TabIndex = 98;
@@ -318,14 +316,14 @@
             // 
             this.txtMdivision.BackColor = System.Drawing.Color.White;
             this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision.Location = new System.Drawing.Point(115, 413);
+            this.txtMdivision.Location = new System.Drawing.Point(115, 387);
             this.txtMdivision.Name = "txtMdivision";
             this.txtMdivision.Size = new System.Drawing.Size(66, 23);
             this.txtMdivision.TabIndex = 16;
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(13, 412);
+            this.labelM.Location = new System.Drawing.Point(13, 386);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(98, 23);
             this.labelM.TabIndex = 103;
@@ -344,7 +342,7 @@
             // comboFabricType
             // 
             this.comboFabricType.FormattingEnabled = true;
-            this.comboFabricType.Location = new System.Drawing.Point(114, 470);
+            this.comboFabricType.Location = new System.Drawing.Point(114, 444);
             this.comboFabricType.Name = "comboFabricType";
             this.comboFabricType.Size = new System.Drawing.Size(121, 24);
             this.comboFabricType.TabIndex = 18;
@@ -424,7 +422,7 @@
             this.comboOrderBy.Items.AddRange(new object[] {
             "Issue Date",
             "Supplier"});
-            this.comboOrderBy.Location = new System.Drawing.Point(114, 499);
+            this.comboOrderBy.Location = new System.Drawing.Point(114, 473);
             this.comboOrderBy.Name = "comboOrderBy";
             this.comboOrderBy.OldText = "";
             this.comboOrderBy.Size = new System.Drawing.Size(121, 24);
@@ -432,7 +430,7 @@
             // 
             // labelOrderBy
             // 
-            this.labelOrderBy.Location = new System.Drawing.Point(13, 500);
+            this.labelOrderBy.Location = new System.Drawing.Point(13, 474);
             this.labelOrderBy.Name = "labelOrderBy";
             this.labelOrderBy.Size = new System.Drawing.Size(98, 23);
             this.labelOrderBy.TabIndex = 137;
@@ -440,7 +438,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(13, 441);
+            this.labelFactory.Location = new System.Drawing.Point(13, 415);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(98, 23);
             this.labelFactory.TabIndex = 138;
@@ -454,7 +452,7 @@
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = true;
-            this.txtfactory.Location = new System.Drawing.Point(115, 441);
+            this.txtfactory.Location = new System.Drawing.Point(115, 415);
             this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
@@ -464,7 +462,7 @@
             // 
             this.chkDWR.AutoSize = true;
             this.chkDWR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkDWR.Location = new System.Drawing.Point(12, 531);
+            this.chkDWR.Location = new System.Drawing.Point(12, 505);
             this.chkDWR.Name = "chkDWR";
             this.chkDWR.Size = new System.Drawing.Size(183, 21);
             this.chkDWR.TabIndex = 20;
@@ -513,7 +511,7 @@
             // 
             this.chkWhseClose.AutoSize = true;
             this.chkWhseClose.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkWhseClose.Location = new System.Drawing.Point(13, 558);
+            this.chkWhseClose.Location = new System.Drawing.Point(13, 532);
             this.chkWhseClose.Name = "chkWhseClose";
             this.chkWhseClose.Size = new System.Drawing.Size(142, 21);
             this.chkWhseClose.TabIndex = 21;
@@ -541,7 +539,7 @@
             // 
             this.chkIncludeJunk.AutoSize = true;
             this.chkIncludeJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkIncludeJunk.Location = new System.Drawing.Point(13, 585);
+            this.chkIncludeJunk.Location = new System.Drawing.Point(13, 559);
             this.chkIncludeJunk.Name = "chkIncludeJunk";
             this.chkIncludeJunk.Size = new System.Drawing.Size(160, 21);
             this.chkIncludeJunk.TabIndex = 22;
@@ -552,7 +550,7 @@
             // 
             this.chkExcludeMaterial.AutoSize = true;
             this.chkExcludeMaterial.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkExcludeMaterial.Location = new System.Drawing.Point(13, 612);
+            this.chkExcludeMaterial.Location = new System.Drawing.Point(13, 586);
             this.chkExcludeMaterial.Name = "chkExcludeMaterial";
             this.chkExcludeMaterial.Size = new System.Drawing.Size(130, 21);
             this.chkExcludeMaterial.TabIndex = 23;
@@ -563,38 +561,16 @@
             // 
             this.chkSeparateByWK.AutoSize = true;
             this.chkSeparateByWK.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkSeparateByWK.Location = new System.Drawing.Point(12, 639);
+            this.chkSeparateByWK.Location = new System.Drawing.Point(12, 613);
             this.chkSeparateByWK.Name = "chkSeparateByWK";
             this.chkSeparateByWK.Size = new System.Drawing.Size(138, 21);
             this.chkSeparateByWK.TabIndex = 24;
             this.chkSeparateByWK.Text = "Separate by WK#";
             this.chkSeparateByWK.UseVisualStyleBackColor = true;
             // 
-            // comboZone
-            // 
-            this.comboZone.BackColor = System.Drawing.Color.White;
-            this.comboZone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboZone.FormattingEnabled = true;
-            this.comboZone.IsSupportUnselect = true;
-            this.comboZone.Location = new System.Drawing.Point(114, 382);
-            this.comboZone.Name = "comboZone";
-            this.comboZone.OldText = "";
-            this.comboZone.Size = new System.Drawing.Size(227, 24);
-            this.comboZone.TabIndex = 15;
-            // 
-            // labelZone
-            // 
-            this.labelZone.Location = new System.Drawing.Point(13, 383);
-            this.labelZone.Name = "labelZone";
-            this.labelZone.Size = new System.Drawing.Size(97, 23);
-            this.labelZone.TabIndex = 150;
-            this.labelZone.Text = "Zone";
-            // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(528, 693);
-            this.Controls.Add(this.comboZone);
-            this.Controls.Add(this.labelZone);
+            this.ClientSize = new System.Drawing.Size(528, 674);
             this.Controls.Add(this.chkSeparateByWK);
             this.Controls.Add(this.chkExcludeMaterial);
             this.Controls.Add(this.chkIncludeJunk);
@@ -691,8 +667,6 @@
             this.Controls.SetChildIndex(this.chkIncludeJunk, 0);
             this.Controls.SetChildIndex(this.chkExcludeMaterial, 0);
             this.Controls.SetChildIndex(this.chkSeparateByWK, 0);
-            this.Controls.SetChildIndex(this.labelZone, 0);
-            this.Controls.SetChildIndex(this.comboZone, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -743,7 +717,5 @@
         private Win.UI.CheckBox chkIncludeJunk;
         private Win.UI.CheckBox chkExcludeMaterial;
         private Win.UI.CheckBox chkSeparateByWK;
-        private Win.UI.ComboBox comboZone;
-        private Win.UI.Label labelZone;
     }
 }
