@@ -21,6 +21,7 @@ namespace Sci.Production.IE
         private object totalCycleTime;
         private DataTable EmployeeData;
         private DataTable distdt;
+
         /// <summary>
         /// P03
         /// </summary>
@@ -170,7 +171,7 @@ order by ld.No, ld.GroupKey", masterID);
             DataGridViewGeneratorTextColumnSettings attachment = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings threadColor = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings Notice = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings notice = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings ppa = new DataGridViewGeneratorCheckBoxColumnSettings();
 
             celltxtMachineGroup txtSubReason = (celltxtMachineGroup)celltxtMachineGroup.GetGridCell();
@@ -277,8 +278,10 @@ order by ld.No, ld.GroupKey", masterID);
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = "select ID,Description from MachineType WITH (NOLOCK) where Junk = 0";
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,43", dr["MachineTypeID"].ToString());
-                            item.Width = 590;
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,43", dr["MachineTypeID"].ToString())
+                            {
+                                Width = 590
+                            };
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -299,12 +302,16 @@ order by ld.No, ld.GroupKey", masterID);
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["MachineTypeID"].ToString())
                     {
                         // sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-                        sp1.ParameterName = "@id";
-                        sp1.Value = e.FormattedValue.ToString();
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
+                        {
+                            ParameterName = "@id",
+                            Value = e.FormattedValue.ToString()
+                        };
 
-                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                        cmds.Add(sp1);
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+                        {
+                            sp1
+                        };
                         string sqlCmd = "select ID from MachineType WITH (NOLOCK) where Junk = 0 and ID = @id";
                         DataTable machineData;
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out machineData);
@@ -342,8 +349,10 @@ order by ld.No, ld.GroupKey", masterID);
 
                             this.GetEmployee(null);
 
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(this.EmployeeData, "ID,Name,Skill,SewingLineID,FactoryID", "10,18,16,2,5", dr["EmployeeID"].ToString(), headercaptions: "ID,Name,Skill,SewingLine,Factory");
-                            item.Width = 700;
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(this.EmployeeData, "ID,Name,Skill,SewingLineID,FactoryID", "10,18,16,2,5", dr["EmployeeID"].ToString(), headercaptions: "ID,Name,Skill,SewingLine,Factory")
+                            {
+                                Width = 700
+                            };
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -398,8 +407,10 @@ order by ld.No, ld.GroupKey", masterID);
                 {
                     string sqlcmd = "select ID,Description from SewingMachineAttachment WITH (NOLOCK) where Junk = 0";
 
-                    Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Attachment"].ToString(), null, null, null);
-                    item.Width = 666;
+                    Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Attachment"].ToString(), null, null, null)
+                    {
+                        Width = 666
+                    };
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -453,8 +464,10 @@ order by ld.No, ld.GroupKey", masterID);
                 {
                     string sqlcmd = "select ID,Description from SewingMachineTemplate WITH (NOLOCK) where Junk = 0";
 
-                    Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Template"].ToString(), null, null, null);
-                    item.Width = 666;
+                    Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Template"].ToString(), null, null, null)
+                    {
+                        Width = 666
+                    };
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -531,7 +544,7 @@ order by ld.No, ld.GroupKey", masterID);
             };
             threadColor.MaxLength = 1;
             no.MaxLength = 4;
-            Notice.MaxLength = 600;
+            notice.MaxLength = 600;
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("OriNo", header: "OriNo.", width: Widths.AnsiChars(4), iseditingreadonly: true)
@@ -546,7 +559,7 @@ order by ld.No, ld.GroupKey", masterID);
             .Text("Attachment", header: "Attachment", width: Widths.AnsiChars(10), settings: attachment)
             .Text("Template", header: "Template", width: Widths.AnsiChars(10), settings: template)
             .Text("ThreadColor", header: "ThreadColor", width: Widths.AnsiChars(1), settings: threadColor)
-            .Text("Notice", header: "Notice", width: Widths.AnsiChars(60), settings: Notice)
+            .Text("Notice", header: "Notice", width: Widths.AnsiChars(60), settings: notice)
             .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: operatorid)
             .Text("EmployeeName", header: "Operator Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -587,60 +600,11 @@ order by ld.No, ld.GroupKey", masterID);
                 #endregion
             };
 
-            /*DataGridViewGeneratorNumericColumnSettings ac = new DataGridViewGeneratorNumericColumnSettings();
-            ac.CellValidating += (s, e) =>
-            {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
-
-                if (!this.EditMode)
-                {
-                    return;
-                }
-
-                DataRow dr = this.grid1.GetDataRow(e.RowIndex);
-                if (MyUtility.Convert.GetDecimal(dr["ActCycle"]) == MyUtility.Convert.GetDecimal(e.FormattedValue))
-                {
-                    return;
-                }
-
-                dr["ActCycle"] = MyUtility.Convert.GetDecimal(e.FormattedValue) == 0 ? DBNull.Value : e.FormattedValue;
-                string tmpno = MyUtility.Convert.GetString(dr["No"]);
-
-                DataRow[] drs = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("No = '{0}'", tmpno));
-                foreach (DataRow item in drs)
-                {
-                    item["ActCycle"] = dr["ActCycle"];
-                }
-            };*/
-
             Ict.Win.UI.DataGridViewNumericBoxColumn act;
             this.Helper.Controls.Grid.Generator(this.grid1)
             .Text("No", header: "No.", width: Widths.AnsiChars(4), iseditingreadonly: true)
             .Numeric("TotalCycle", header: "Act.\r\nCycle\r\nTime", width: Widths.AnsiChars(3), integer_places: 5, decimal_places: 2, iseditingreadonly: true/*, settings: ac*/).Get(out act)
-            .Numeric("TotalGSD", header: "Ttl\r\nGSD\r\nTime", width: Widths.AnsiChars(3), decimal_places: 2, iseditingreadonly: true)
-            /*.Numeric("TotalCycle", header: "Ttl\r\nCycle\r\nTime", width: Widths.AnsiChars(0), decimal_places: 2, iseditingreadonly: true)*/;
-
-            //act.CellFormatting += (s, e) =>
-            //{
-            //    if (e.RowIndex == -1)
-            //    {
-            //        return;
-            //    }
-
-            //    if (!this.EditMode)
-            //    {
-            //        e.CellStyle.BackColor = Color.White;
-            //        e.CellStyle.ForeColor = Color.Black;
-            //    }
-            //    else
-            //    {
-            //        e.CellStyle.BackColor = Color.Pink;
-            //        e.CellStyle.ForeColor = Color.Red;
-            //    }
-            //};
+            .Numeric("TotalGSD", header: "Ttl\r\nGSD\r\nTime", width: Widths.AnsiChars(3), decimal_places: 2, iseditingreadonly: true);
         }
 
         // 撈出Employee資料
@@ -650,8 +614,10 @@ order by ld.No, ld.GroupKey", masterID);
 
             // sql參數
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@factoryid", this.CurrentMaintain["FactoryID"].ToString());
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-            sp2.ParameterName = "@id";
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@id"
+            };
             if (iD != null)
             {
                 sp2.Value = iD;
@@ -661,9 +627,11 @@ order by ld.No, ld.GroupKey", masterID);
                 sp2.Value = DBNull.Value;
             }
 
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-            cmds.Add(sp1);
-            cmds.Add(sp2);
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+            {
+                sp1,
+                sp2
+            };
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
             {
@@ -730,12 +698,6 @@ order by ld.No, ld.GroupKey", masterID);
         /// <returns>bool</returns>
         protected override bool ClickEditBefore()
         {
-            //if (!PublicPrg.Prgs.GetAuthority(this.CurrentMaintain["AddName"].ToString()))
-            //{
-            //    MyUtility.Msg.WarningBox("This record is not created by yourself, so you can't modify this record!!");
-            //    return false;
-            //}
-
             if (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("This record already confirmed, so can't modify this record!!");
@@ -792,6 +754,13 @@ order by ld.No, ld.GroupKey", masterID);
             {
                 MyUtility.Msg.WarningBox("Factory can't empty");
                 this.txtFactory.Focus();
+                return false;
+            }
+
+            if (MyUtility.Convert.GetInt(MyUtility.Convert.GetString(this.CurrentMaintain["Workhour"])) == 0)
+            {
+                MyUtility.Msg.WarningBox("<No .of Hours> cannot be 0!!");
+                this.numNoOfHours.Focus();
                 return false;
             }
             #endregion
@@ -854,7 +823,6 @@ WHERE Ukey={item["Ukey"]}
                 {
                     this.ShowErr(reusult);
                 }
-
             }
         }
 
@@ -1070,8 +1038,10 @@ WHERE Ukey={item["Ukey"]}
         {
             string sqlCmd = "select ID,SeasonID,BrandID,Description,CPU,Ukey from Style WITH (NOLOCK) where Junk = 0 order by ID,SeasonID";
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "15,8,10,40,5,6", this.txtStyleID.Text, "Style#,Season,Brand,Description,CPU,Key", columndecimals: "0,0,0,0,3,0");
-            item.Width = 838;
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "15,8,10,40,5,6", this.txtStyleID.Text, "Style#,Season,Brand,Description,CPU,Key", columndecimals: "0,0,0,0,3,0")
+            {
+                Width = 838
+            };
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -1343,16 +1313,16 @@ where t.StyleID = s.ID
                 return;
             }
 
-            P03CIPFinfo.cutting = false;
-            P03CIPFinfo.inspection = false;
-            P03CIPFinfo.pressing = false;
-            P03CIPFinfo.packing = false;
+            P03CIPFinfo.Cutting = false;
+            P03CIPFinfo.Inspection = false;
+            P03CIPFinfo.Pressing = false;
+            P03CIPFinfo.Packing = false;
             Sci.Production.IE.P03_CopyFromGSD_CIPF callNextForm = new Sci.Production.IE.P03_CopyFromGSD_CIPF();
             callNextForm.ShowDialog(this);
 
-            string ietmsUKEY = MyUtility.GetValue.Lookup($@" select i.Ukey from TimeStudy t WITH (NOLOCK) inner join IETMS i WITH (NOLOCK) on i.id = t.IETMSID and i.Version = t.IETMSVersion where t.id = '{ timeStudy["ID"]}' ");
+            string ietmsUKEY = MyUtility.GetValue.Lookup($@" select i.Ukey from TimeStudy t WITH (NOLOCK) inner join IETMS i WITH (NOLOCK) on i.id = t.IETMSID and i.Version = t.IETMSVersion where t.id = '{timeStudy["ID"]}' ");
             sqlCmd = string.Empty;
-            if (P03CIPFinfo.cutting)
+            if (P03CIPFinfo.Cutting)
             {
                 sqlCmd = $@"
 select 
@@ -1410,7 +1380,7 @@ from TimeStudy_Detail td WITH (NOLOCK)
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 where td.ID = {timeStudy["ID"]} ";
 
-            if (P03CIPFinfo.inspection)
+            if (P03CIPFinfo.Inspection)
             {
                 sqlCmd += $@"
 union all
@@ -1441,7 +1411,7 @@ from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and Artwo
 ";
             }
 
-            if (P03CIPFinfo.pressing)
+            if (P03CIPFinfo.Pressing)
             {
                 sqlCmd += $@"
 union all
@@ -1472,7 +1442,7 @@ from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and Artwo
 ";
             }
 
-            if (P03CIPFinfo.packing)
+            if (P03CIPFinfo.Packing)
             {
                 sqlCmd += $@"
 union all
@@ -1511,9 +1481,9 @@ from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and Artwo
             }
 
             string chkdata = string.Empty;
-            if (P03CIPFinfo.cutting||P03CIPFinfo.inspection || P03CIPFinfo.pressing || P03CIPFinfo.packing)
+            if (P03CIPFinfo.Cutting || P03CIPFinfo.Inspection || P03CIPFinfo.Pressing || P03CIPFinfo.Packing)
             {
-                if (P03CIPFinfo.cutting)
+                if (P03CIPFinfo.Cutting)
                 {
                     if (timeStudy_Detail.Select("OperationID = 'SIOCIPF00001'").Length == 0)
                     {
@@ -1521,7 +1491,7 @@ from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and Artwo
                     }
                 }
 
-                if (P03CIPFinfo.inspection)
+                if (P03CIPFinfo.Inspection)
                 {
                     if (timeStudy_Detail.Select("OperationID = 'SIOCIPF00002'").Length == 0)
                     {
@@ -1529,7 +1499,7 @@ from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and Artwo
                     }
                 }
 
-                if (P03CIPFinfo.packing)
+                if (P03CIPFinfo.Packing)
                 {
                     if (timeStudy_Detail.Select("OperationID = 'SIOCIPF00003'").Length == 0)
                     {
@@ -1537,7 +1507,7 @@ from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and Artwo
                     }
                 }
 
-                if (P03CIPFinfo.pressing)
+                if (P03CIPFinfo.Pressing)
                 {
                     if (timeStudy_Detail.Select("OperationID = 'SIOCIPF00004'").Length == 0)
                     {
@@ -1605,13 +1575,5 @@ from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and Artwo
             this.listControlBindingSource1.DataSource = this.distdt;
             this.grid1.DataSource = this.listControlBindingSource1;
         }
-    }
-
-    static class P03CIPFinfo
-    {
-        public static bool cutting = false;
-        public static bool inspection = false;
-        public static bool pressing = false;
-        public static bool packing = false;
     }
 }

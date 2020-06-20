@@ -290,6 +290,7 @@
     <Compile Include="P03.Designer.cs">
       <DependentUpon>P03.cs</DependentUpon>
     </Compile>
+    <Compile Include="P03CIPFinfo.cs" />
     <Compile Include="P03_CopyFromGSD_CIPF.cs">
       <SubType>Form</SubType>
     </Compile>
