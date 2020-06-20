@@ -250,8 +250,18 @@ namespace Sci.Production.Warehouse
 
             if (!MyUtility.Check.Empty(this.txtMtlLocation.Text))
             {
-                sqlWhere += $" and location.MtlLocationID like '%{this.txtMtlLocation.Text}%'";
-                sqlWhere2 += $" and location.MtlLocationID like '%{this.txtMtlLocation.Text}%'";
+                sqlWhere += $@"
+and exists(
+	select 1 from FtyInventory_Detail fid 
+	where fid.Ukey = fi.Ukey
+	and fid.MtlLocationID = '{this.txtMtlLocation.Text}'
+)";
+                sqlWhere2 += $@"
+and exists(
+	select 1 from FtyInventory_Detail fid 
+	where fid.Ukey = fi.Ukey
+	and fid.MtlLocationID = '{this.txtMtlLocation.Text}'
+)";
             }
 
             if (MyUtility.Check.Empty(sqlWhere))
@@ -409,6 +419,7 @@ DROP TABLE #tmpStockType
 
             this.gridReceiving.DataSource = this.dtReceiving;
             this.GridFormatChange();
+            this.numSelectCnt.Value = 0;
         }
 
         private void btnQuery_Click(object sender, EventArgs e)
