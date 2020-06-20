@@ -17,5 +17,6 @@ namespace Sci.Production.Warehouse
         public decimal QTY { get; set; }
         public string Location { get; set; }
         public string TotalQTY { get; set; }
+        public string Remark { get; set; }
     }
 }

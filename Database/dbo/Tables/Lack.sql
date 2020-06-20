@@ -21,6 +21,7 @@
     [IssueLackDT]  DATETIME      NULL,
     [Status]       VARCHAR (15)  CONSTRAINT [DF_Lack_Status] DEFAULT ('') NULL,
     [SubconName] VARCHAR(8) NULL DEFAULT (''), 
+    [Dept] VARCHAR(15) NULL CONSTRAINT [DF_Lack_Dept] DEFAULT (''), 
     CONSTRAINT [PK_Lack] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -110,6 +111,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'發放時�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'狀態', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lack', @level2type = N'COLUMN', @level2name = N'Status';
 
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'部門', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lack', @level2type = N'COLUMN', @level2name = N'Dept';
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lack', @level2type = N'COLUMN', @level2name = N'MDivisionID';
