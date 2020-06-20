@@ -188,7 +188,8 @@ left join po on po.id = ed.PoID
 left join TPEPass1 TEPPOHandle on TEPPOHandle.id = po.POHandle
 left join TPEPass1 TEPPOSMR on TEPPOSMR.id = po.POSMR
 left join Fabric f with(nolock)on f.SCIRefno = psd.SCIRefno
-where 1 = 1 and ed.PoType = 'G' 
+where exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
+and ed.PoType = 'G' 
 
 ";
             if (!MyUtility.Check.Empty(KPIETA1))

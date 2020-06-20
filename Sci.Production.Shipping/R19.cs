@@ -10,6 +10,9 @@ using Sci.Win;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// R19
+    /// </summary>
     public partial class R19 : Sci.Win.Tems.PrintForm
     {
         private DataTable PrintTable;
@@ -21,12 +24,20 @@ namespace Sci.Production.Shipping
         private string consignee;
         private string shipMode;
 
+        /// <summary>
+        /// R19
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R19(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
         }
 
+        /// <summary>
+        /// ValidateInput
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
             if (!this.dateETA.HasValue1 || !this.dateETA.HasValue2)
@@ -46,13 +57,19 @@ namespace Sci.Production.Shipping
             return base.ValidateInput();
         }
 
+        /// <summary>
+        /// OnAsyncDataLoad
+        /// </summary>
+        /// <param name="e">e</param>
+        /// <returns>DualResult</returns>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             string sqlCmd = string.Empty;
 
             #region Where 條件
             List<SqlParameter> paras = new List<SqlParameter>();
-            string where = $"e.Eta between '{this.eta_s}'AND '{this.eta_e}' ";
+            string where = $@"e.Eta between '{this.eta_s}'AND '{this.eta_e}' 
+and exists (select 1 from Factory where e.FactoryID = id and IsProduceFty = 1) ";
 
             if (!MyUtility.Check.Empty(this.wk_s))
             {
@@ -153,6 +170,11 @@ ORDER BY e.FactoryID, e.ID
             return DBProxy.Current.Select(null, sqlCmd, paras, out this.PrintTable);
         }
 
+        /// <summary>
+        /// OnToExcel
+        /// </summary>
+        /// <param name="report">report</param>
+        /// <returns>bool</returns>
         protected override bool OnToExcel(ReportDefinition report)
         {
             this.SetCount(this.PrintTable.Rows.Count);
@@ -164,8 +186,8 @@ ORDER BY e.FactoryID, e.ID
 
             this.ShowWaitMessage("Excel processing...");
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Shipping_R19.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(this.PrintTable, "", "Shipping_R19.xltx", 1, false, null, objApp);// 將datatable copy to excel
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Shipping_R19.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.PrintTable, string.Empty, "Shipping_R19.xltx", 1, false, null, objApp); // 將datatable copy to excel
 
             #region Save & Show Excel
 

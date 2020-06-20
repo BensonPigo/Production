@@ -2,25 +2,46 @@
 -- Create date: 2020/03/20
 -- Description:	Execeudte all SP for PowerBI Report Job in Fty server
 -- =============================================
-CREATE PROCEDURE [dbo].[execAllPowerBISP]
+Create PROCEDURE [dbo].[execAllPowerBISP]
 	
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
+
 	SET NOCOUNT ON;
 
-DECLARE @desc nvarchar(1000)  = '';
-DECLARE @ErrorMessage NVARCHAR(1000) = '';
-DECLARE @ErrorStatus bit = 1;
-DECLARE @StartTime datetime = getdate();
-DECLARE @StartDate date
-DECLARE @EndDate date
--- ImportForecastLoadingBI
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
+/*判斷當前Server後, 指定帶入正式機Server名稱*/
+DECLARE @current_ServerName varchar(50) = (SELECT [Server Name] = @@SERVERNAME)
+--依不同Server來抓到對應的備機ServerName
+DECLARE @Region nvarchar(10) 
+= (
+	select [value] = 
+		CASE @current_ServerName WHEN 'PHL-NEWPMS-02' THEN 'PH1' -- PH1
+				WHEN 'VT1-PH2-PMS2B' THEN 'PH2' 				 -- PH2
+				WHEN 'SYSTEM2016BK' THEN 'ESP'					 -- ESP
+				WHEN 'SPT-176' THEN 'SPT' 						 -- SPT
+				WHEN 'SYSTEM2017BK' THEN 'SNP' 					 -- SNP
+				WHEN 'SPS-SQL2' THEN 'SPS' 						 -- SPS
+				WHEN 'SQLBK' THEN 'SPR' 						 -- SPR
+				WHEN 'NEWERP-BAK' THEN 'HZG' 					 -- HZG	
+				WHEN 'SQL' THEN 'HXG'							 -- HXG	
+		ELSE '' END
+)
+
+DECLARE @M nvarchar(10) 
+= (
+	select [value] = 
+		CASE @current_ServerName WHEN 'PHL-NEWPMS-02' THEN 'PH1' -- PH1
+				WHEN 'VT1-PH2-PMS2B' THEN 'PH2'					 -- PH2
+				WHEN 'SYSTEM2016BK' THEN 'VM2'					 -- ESP
+				WHEN 'SPT-176' THEN 'VM1'						 -- SPT
+				WHEN 'SYSTEM2017BK' THEN 'VM3'					 -- SNP
+				WHEN 'SPS-SQL2' THEN 'KM2'						 -- SPS
+				WHEN 'SQLBK' THEN 'KM1'							 -- SPR
+				WHEN 'NEWERP-BAK' THEN 'CM2'					 -- HZG		
+				WHEN 'SQL' THEN 'CM1'							 -- HXG				
+		ELSE '' END
+)
+
 
 DECLARE @desc nvarchar(1000)  = '';
 DECLARE @ErrorMessage NVARCHAR(1000) = '';
@@ -31,7 +52,7 @@ DECLARE @EndDate date
 -- ImportForecastLoadingBI
 BEGIN TRY
 	set @StartDate = '2019-01-08'
-	set @EndDate = DATEADD(m, DATEDIFF(m,0,DATEADD(yy,1,GETDATE())),6)
+	set @EndDate = DATEADD(m, DATEDIFF(m,0,DATEADD(MM,5,GETDATE())),6)
 	EXEC ImportForecastLoadingBI @StartDate,@EndDate
 END TRY
 
@@ -151,7 +172,7 @@ DECLARE @comboDesc nvarchar(4000);
 Please check below information.
 Transfer date: '+ (select convert(nvarchar(30), convert(date,getdate()))) +
 '
-M: ESP
+M: '+@Region+'
 ' + @desc
 
 
@@ -171,10 +192,8 @@ FROM Production.dbo.System
 --select @toAddress = ToAddress from Production.dbo.MailTo where id = '101'
 DECLARE @EndTime datetime = getdate()
 
-exec callJobLog_SP @mailserver,@eMailID,@eMailPwd,@sendFrom,@toAddress,'Import PowerBI Report Data',@comboDesc,0,@ErrorStatus,0,'Power BI','ESP','VM2',@StartTime,@EndTime
+exec callJobLog_SP @mailserver,@eMailID,@eMailPwd,@sendFrom,@toAddress,'Import PowerBI Report Data',@comboDesc,0,@ErrorStatus,0,'Power BI',@Region,@M,@StartTime,@EndTime
 
 END
 
-
-GO
 

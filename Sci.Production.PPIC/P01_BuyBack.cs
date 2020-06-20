@@ -198,7 +198,7 @@ and oq.SizeCode in ({sizeCodeStr})";
 
             this.Helper.Controls.Grid.Generator(this.grid1)
             .Text("ID", header: "SP#", width: Widths.AnsiChars(12), iseditingreadonly: true, settings: popupSPCell)
-            .ComboBox("BuyBackReason", header: "Buy Back Reason", width: Widths.AnsiChars(13), settings: buyBackReasonCell);
+            .ComboBox("BuyBackReason", header: "Buy Back Type", width: Widths.AnsiChars(13), settings: buyBackReasonCell);
 
             this.Helper.Controls.Grid.Generator(this.grid4)
             .Text("FromSP", header: "From SP#", width: Widths.AnsiChars(12), iseditingreadonly: true)

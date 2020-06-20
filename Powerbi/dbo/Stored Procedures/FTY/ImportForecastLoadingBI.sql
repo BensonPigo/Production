@@ -6,6 +6,7 @@
 -- 2020/04/27 [ISP20200709] Table[Factory_TMS],[Factory_WorkHour] use server name to call regular Production data
 -- 2020/05/18 [ISP20200840] Add Columns[Sew_Qty],[Shortage]
 -- 2020/05/29 [ISP20200920] Add Columns[Buyer Key],[Buyer HalfKey]
+-- 2020/06/18 [ISP20201059] Add Requirement Factory.IsProduceFty = 1
 CREATE PROCEDURE [dbo].[ImportForecastLoadingBI] 
 
 @StartDate date,
@@ -14,11 +15,11 @@ CREATE PROCEDURE [dbo].[ImportForecastLoadingBI]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	DECLARE @Date_S DATE = @StartDate--'2019-01-08'; --���8��
-	DECLARE @Date_E DATE = @EndDate--DATEADD(m, DATEDIFF(m,0,DATEADD(yy,1,GETDATE())),6);--�j�~7��
-	DECLARE @YearMonth_S date = '2019-01-01';--���
-	DECLARE @YearMonth_E date = dateadd(m, 11, getdate())--�������12�Ӥ�
-	--���s�إ�Power BI��Report Table
+	DECLARE @Date_S DATE = @StartDate--'2019-01-08';  --當月8號
+	DECLARE @Date_E DATE = @EndDate--DATEADD(m, DATEDIFF(m,0,DATEADD(yy,1,GETDATE())),6);--隔年7號
+	DECLARE @YearMonth_S date = '2019-01-01';--當月
+	DECLARE @YearMonth_E date = dateadd(m, 5, getdate())--往後推算12個月
+	--重新建立Power BI的Report Table
 	DECLARE @TableNameA VARCHAR(20);
 	DECLARE @TableNameB VARCHAR(20);
 
@@ -339,6 +340,7 @@ inner JOIN #atSource atSource on atSource.ID = Orders.ID
 WHERE orders.Category IN ('B', 'S')
 and Orders.SciDelivery between @Date_S and @Date_E
 and Orders.LocalOrder <> '1'
+and Factory.IsProduceFty = 1
 
 UNION ALL
 

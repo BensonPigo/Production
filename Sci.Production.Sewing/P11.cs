@@ -1227,36 +1227,43 @@ inner join SewingOutput so with(nolock) on so.id = t.id
         private bool CheckTransferQty()
         {
             // FromOrderID,FromComboType,Article,SizeCode組合判斷TransferQty(移轉數)不可大於FromSewingQty(來源數)
-            var list = this.DetailDatas.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted);
-            var list2 = list.GroupBy(s => new
-            {
-                FromOrderID = s["FromOrderID"].ToString(),
-                FromComboType = s["FromComboType"].ToString(),
-                Article = s["Article"].ToString(),
-                SizeCode = s["SizeCode"].ToString(),
-                PackingQty = MyUtility.Convert.GetInt(s["PackingQty"]),
-                DisplayFromSewingQty = MyUtility.Convert.GetInt(s["DisplayFromSewingQty"])
-            })
-            .Select(g => new
-            {
-                g.Key.FromOrderID,
-                g.Key.FromComboType,
-                g.Key.Article,
-                g.Key.SizeCode,
-                g.Key.PackingQty,
-                g.Key.DisplayFromSewingQty,
-                TransferQty = g.Sum(s => MyUtility.Convert.GetInt(s["TransferQty"]))
-            }).Where(w => w.TransferQty > w.DisplayFromSewingQty - w.PackingQty).ToList();
+            var listCheckDataBase = this.DetailDatas
+                                .Where(s => s.RowState != DataRowState.Deleted)
+                                .GroupBy(s => new
+                                {
+                                    FromOrderID = s["FromOrderID"].ToString(),
+                                    FromComboType = s["FromComboType"].ToString(),
+                                    Article = s["Article"].ToString(),
+                                    SizeCode = s["SizeCode"].ToString(),
+                                    PackingQty = MyUtility.Convert.GetInt(s["PackingQty"]),
+                                    DisplayFromSewingQty = MyUtility.Convert.GetInt(s["DisplayFromSewingQty"])
+                                })
+                                .Select(g => new
+                                {
+                                    g.Key.FromOrderID,
+                                    g.Key.FromComboType,
+                                    g.Key.Article,
+                                    g.Key.SizeCode,
+                                    g.Key.PackingQty,
+                                    g.Key.DisplayFromSewingQty,
+                                    TransferQty = g.Sum(s => MyUtility.Convert.GetInt(s["TransferQty"]))
+                                });
 
-            if (list2.Count > 0)
+            var listSewingQtyOver = listCheckDataBase.Where(w => w.TransferQty > w.DisplayFromSewingQty);
+            if (listSewingQtyOver.Any())
             {
-                string msg = "< Transfer Qty > can not more than < From SP# Sewing Output Qty >!";
-                foreach (var item in list2)
-                {
-                    msg += $"\r\nFrom SP#: {item.FromOrderID}, {item.FromComboType}, Article:{item.Article}, Size:{item.SizeCode}";
-                }
+                string errorMsg = "<Transfer Qty> can not more than <From SP# Sewing Output Qty>!" + Environment.NewLine +
+                                  listSewingQtyOver.Select(s => $"From SP#: {s.FromOrderID}, {s.FromComboType}, Article:{s.Article}, Size:{s.SizeCode}").JoinToString(Environment.NewLine);
+                MyUtility.Msg.WarningBox(errorMsg);
+                return false;
+            }
 
-                MyUtility.Msg.WarningBox(msg);
+            var listSewingPackQtyOver = listCheckDataBase.Where(w => w.TransferQty > (w.DisplayFromSewingQty - w.PackingQty));
+            if (listSewingPackQtyOver.Any())
+            {
+                string errorMsg = "<Transfer Qty> can not more than <From SP# Packing Qty>!" + Environment.NewLine +
+                                  listSewingPackQtyOver.Select(s => $"From SP#: {s.FromOrderID}, {s.FromComboType}, Article:{s.Article}, Size:{s.SizeCode}, Packing Qty:{s.PackingQty.ToString()}").JoinToString(Environment.NewLine);
+                MyUtility.Msg.WarningBox(errorMsg);
                 return false;
             }
 

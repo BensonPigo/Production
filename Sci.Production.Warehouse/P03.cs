@@ -512,7 +512,8 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'",out dru
 
         public void Query()
         {
-            DataTable dtData;
+            DataTable dtData = new DataTable();
+            listControlBindingSource1.DataSource = null;
             string junk_where1 = "", junk_where2 = "";
             string spno = txtSPNo.Text.TrimEnd() + "%";
             #region -- SQL Command --           
@@ -609,6 +610,7 @@ from #ArticleForThread_Detail a
 				    and cd.SEQ1=a.Seq1 and cd.seq2=a.Seq2) as ColorFastness
     where a.POID like @id 
 )
+
 select *
 from(
     select  ROW_NUMBER() over (partition by id,seq1,seq2 order by id,seq1,seq2,len_D) as ROW_NUMBER_D
@@ -1004,7 +1006,7 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
                  * 1. OrderIDList 是空的
                  * 2. 該筆是 Local 物料 P04
                  */
-                if (dr["OrderIdList"].ToString().Equals(string.Empty)
+                if (MyUtility.Check.Empty(dr["OrderIdList"])
                     || dr["From_Program"].ToString().Equals("P04"))
                 {
                     continue;
@@ -1012,13 +1014,13 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
 
                 List<string> strNewOrderList = new List<string>();
                 string[] arrayOrderList;
-                bool listHaveDiffOrderID = OrderByOrderList(dr["OrderIdList"].ToString().Split('/'), dr["id"].ToString(), out arrayOrderList);
 
                 // 搜尋的 OrderID
-                string strID = dr["id"].ToString();
+                string strID = MyUtility.Convert.GetString(dr["id"]);
 
                 // 比較的 OrderID
-                string strCompareID = dr["id"].ToString();
+                string strCompareID = MyUtility.Convert.GetString(dr["id"]);
+                bool listHaveDiffOrderID = OrderByOrderList(dr["OrderIdList"].ToString().Split('/'), strID, out arrayOrderList);
                 foreach (string item in arrayOrderList)
                 {
                     // 目前比較的 ID 不存在於 item

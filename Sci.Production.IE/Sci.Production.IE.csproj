@@ -40,6 +40,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>Sci.Production.IE.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\x86\Debug\Sci.Production.IE.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -314,6 +315,12 @@
     <Compile Include="P02_RepeatCheckList.Designer.cs">
       <DependentUpon>P02_RepeatCheckList.cs</DependentUpon>
     </Compile>
+    <Compile Include="R03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R03.Designer.cs">
+      <DependentUpon>R03.cs</DependentUpon>
+    </Compile>
     <Compile Include="R01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -437,6 +444,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P03_Print.resx">
       <DependentUpon>P03_Print.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R03.resx">
+      <DependentUpon>R03.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R01.resx">
       <DependentUpon>R01.cs</DependentUpon>
