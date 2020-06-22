@@ -61,6 +61,7 @@
     [PulloutTransportNo]  VARCHAR (10)    DEFAULT ('') NOT NULL,
     [MDScanDate] DATE NULL, 
     [MDFailQty] INT NOT NULL DEFAULT (0), 
+    [CFASelectInspDate] DATE NULL, 
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
