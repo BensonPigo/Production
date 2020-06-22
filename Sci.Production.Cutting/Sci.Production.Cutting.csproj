@@ -221,6 +221,12 @@
     <Compile Include="P02.Designer.cs">
       <DependentUpon>P02.cs</DependentUpon>
     </Compile>
+    <Compile Include="P02_AutoDistToSP.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_AutoDistToSP.Designer.cs">
+      <DependentUpon>P02_AutoDistToSP.cs</DependentUpon>
+    </Compile>
     <Compile Include="P02_BatchAssign.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -576,6 +582,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P02.resx">
       <DependentUpon>P02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_AutoDistToSP.resx">
+      <DependentUpon>P02_AutoDistToSP.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02_BatchAssign.resx">
       <DependentUpon>P02_BatchAssign.cs</DependentUpon>

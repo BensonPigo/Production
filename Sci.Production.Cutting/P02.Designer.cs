@@ -1175,7 +1175,7 @@
             this.btnDist.TabIndex = 50;
             this.btnDist.Text = "Dist.";
             this.btnDist.UseVisualStyleBackColor = true;
-            this.btnDist.Click += new System.EventHandler(this.btnDist_Click);
+            this.btnDist.Click += new System.EventHandler(this.BtnDist_Click);
             // 
             // P02
             // 
@@ -1193,8 +1193,8 @@
             this.KeyField1 = "id";
             this.Name = "P02";
             this.OnLineHelpID = "Sci.Win.Tems.Input8";
-            this.SubDetailKeyField1 = "ukey";
-            this.SubDetailKeyField2 = "WorkOrderUkey";
+            this.SubDetailKeyField1 = "id,ukey";
+            this.SubDetailKeyField2 = "id,WorkOrderUkey";
             this.SubGridAlias = "WorkOrder_PatternPanel";
             this.Text = "() () () ";
             this.WorkAlias = "Cutting";
