@@ -12,6 +12,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using Sci.Production.PublicPrg;
 using System.Threading.Tasks;
+using Sci.Win.Tools;
 
 namespace Sci.Production.Cutting
 {
@@ -26,6 +27,66 @@ namespace Sci.Production.Cutting
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            DataGridViewGeneratorTextColumnSettings dyelot = new DataGridViewGeneratorTextColumnSettings();
+            dyelot.EditingMouseDown += (s, e) =>
+            {
+                DataRow dr = gridImport.GetDataRow(e.RowIndex);
+                if (e.Button == MouseButtons.Right)
+                {
+                    string sql = $@"
+select
+    [Seq#] = concat(psd.SEQ1, ' ', psd.SEQ2),
+    [Bulk Location] = fid.location,
+    fi.Dyelot, fi.Roll, psd.StockUnit,
+    [Balance Qty] = isnull(fi.InQty,0) - isnull(fi.OutQty,0) + isnull(fi.AdjustQty,0)
+from PO_Supp_Detail psd with(nolock)
+inner join FtyInventory fi with(nolock) on fi.POID = psd.ID and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
+outer apply(
+	select location = Stuff ((
+            select ',' + MtlLocationID 
+            from dbo.FtyInventory_Detail WITH (NOLOCK) 
+            where ukey = fi.Ukey
+            for xml path('')
+        ), 1, 1, '')
+)fid
+where psd.Refno = '{dr["Ref#"]}' and psd.ColorID = '{dr["ColorID"]}' and psd.id = '{dr["CuttingID"]}'
+and isnull(fi.InQty,0) - isnull(fi.OutQty,0) + isnull(fi.AdjustQty,0) > 0
+";
+                    SelectItem selectItem = new SelectItem(sql, string.Empty, MyUtility.Convert.GetString(dr["Dyelot"]));
+                    DialogResult result = selectItem.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    dr["Dyelot"] = selectItem.GetSelecteds()[0]["Dyelot"];
+                    dr.EndEdit();
+                }
+            };
+
+            dyelot.CellValidating += (s, e) =>
+            {
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+
+                DataRow dr = gridImport.GetDataRow(e.RowIndex);
+                string sql = $@"
+select  1
+from PO_Supp_Detail psd with(nolock)
+inner join FtyInventory fi with(nolock) on fi.POID = psd.ID and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
+where psd.Refno = '{dr["Ref#"]}' and psd.ColorID = '{dr["ColorID"]}' and psd.id = '{dr["CuttingID"]}' and fi.Dyelot = '{e.FormattedValue}'
+and isnull(fi.InQty,0) - isnull(fi.OutQty,0) + isnull(fi.AdjustQty,0) > 0
+";
+                if (MyUtility.Check.Seek(sql))
+                {
+                    dr["Dyelot"] = e.FormattedValue;
+                    dr.EndEdit();
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox("Dyelot not found!");
+                    e.Cancel = true;
+                }
+            };
+
             this.gridImport.IsEditingReadOnly = false; //必設定
             Helper.Controls.Grid.Generator(this.gridImport)
             .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
@@ -42,9 +103,9 @@ namespace Sci.Production.Cutting
             .Numeric("ReleaseQty", header: "Release Qty", width: Widths.AnsiChars(8), integer_places: 5, decimal_places: 2)
             .Text("Seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
             .Text("Seq2", header: "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
-            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5))
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5), settings: dyelot)
             .Date("SCI Dlv", header: "SCI Dlv.", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Date("Buyer Dlv", header: "Buyer Dlv..", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Date("Buyer Dlv", header: "Buyer Dlv.", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Ref#", header: "Ref#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Color Desc", header: "Color Desc", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(10))

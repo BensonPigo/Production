@@ -1079,7 +1079,7 @@ where   poid = '{1}'
         public static IList<DataRow> AutoPickTape(DataRow materials, string cutplanid, bool isIssue = true, string stocktype = "B")
         {
             List<DataRow> items = new List<DataRow>();
-            String sqlcmd;
+            string sqlcmd;
             DataTable dt;
             decimal accu_issue = 0;
             // 此筆需求數 = 總需求數 - 已經issue總數
@@ -1090,7 +1090,7 @@ select ctd.Seq1, ctd.Seq2, ctd.Dyelot, sum(inqty-OutQty+AdjustQty) as GroupQty
 into #tmp
 from CutTapePlan_Detail ctd
 inner join FtyInventory a on a.POID = '{0}' and a.Seq1 = ctd.Seq1 and a.Seq2 = ctd.Seq2 and a.Dyelot = ctd.Dyelot
-where ctd.id = '{1}'and ctd.Seq1 = 'A1' and ctd.Seq2 ='01' and a.StockType = '{2}'
+where ctd.id = '{1}' and ctd.Seq1 between '01' and '99' and a.StockType = '{2}'
 group by ctd.Seq1, ctd.Seq2, ctd.Dyelot
 
 select  
@@ -1152,7 +1152,7 @@ drop table #tmp", materials["poid"], cutplanid, stocktype);
                 if (accu_issue < request && findrow != null)   // 累計發料數小於需求數時，再反向取得最後一塊料。
                 {
                     decimal balance = request - accu_issue;
-                    //dt.DefaultView.Sort = "Dyelot,location,Seq1,seq2,Qty asc";
+
                     for (int i = findrow.Rows.Count - 1; i >= 0; i--)
                     {
                         DataRow find = items.Find(item => item["ftyinventoryukey"].ToString() == findrow.Rows[i]["ftyinventoryukey"].ToString());
