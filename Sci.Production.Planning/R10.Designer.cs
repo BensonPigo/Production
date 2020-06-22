@@ -117,8 +117,6 @@
             // chkIncludeCancelOrder
             // 
             this.chkIncludeCancelOrder.AutoSize = true;
-            this.chkIncludeCancelOrder.Checked = true;
-            this.chkIncludeCancelOrder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkIncludeCancelOrder.Location = new System.Drawing.Point(150, 487);
             this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
