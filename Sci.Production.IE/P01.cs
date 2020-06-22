@@ -573,7 +573,6 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                             this.CurrentDetailData["Mold"] = string.Join(",", operationList.ToList());
                         }
 
-                        e.Cancel = true;
                         return;
                     }
 
