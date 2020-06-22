@@ -594,7 +594,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                     {
                         e.Cancel = true;
                         this.CurrentDetailData["Mold"] = string.Join(",", getMold.Except(existsOperation).ToList());
-                        MyUtility.Msg.WarningBox("Attachment : " + string.Join(",", existsOperation.ToList()) + "  not in Operation setting !!", "Data not in setting");
+                        MyUtility.Msg.WarningBox("Attachment : " + string.Join(",", existsOperation.ToList()) + "  need include in operation setting !!", "Data not in setting");
                         return;
                     }
 
