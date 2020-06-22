@@ -757,7 +757,7 @@ order by ld.No, ld.GroupKey", masterID);
                 return false;
             }
 
-            if (MyUtility.Convert.GetInt(MyUtility.Convert.GetString(this.CurrentMaintain["Workhour"])) == 0)
+            if (MyUtility.Convert.GetDecimal(MyUtility.Convert.GetString(this.CurrentMaintain["Workhour"])) == 0)
             {
                 MyUtility.Msg.WarningBox("<No .of Hours> cannot be 0!!");
                 this.numNoOfHours.Focus();
