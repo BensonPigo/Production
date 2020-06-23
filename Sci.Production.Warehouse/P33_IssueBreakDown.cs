@@ -144,10 +144,7 @@ order by [OrderID], [Article]", Master["orderid"], sbSizecode.ToString().Substri
             DtIssueBreakDown.Clear();
             foreach (DataRow dr in DtModifyIssueBDown.Rows)
             {
-                if ((bool)dr["Selected"])
-                {
-                    DtIssueBreakDown.ImportRow(dr);
-                }
+                DtIssueBreakDown.ImportRow(dr);
             }
             this.Dispose();
             return;
