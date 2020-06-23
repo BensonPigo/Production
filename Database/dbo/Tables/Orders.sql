@@ -166,14 +166,10 @@
     [IsBuyBack]            BIT            DEFAULT ((0)) NOT NULL,
     [KeepPanels]           BIT            DEFAULT ((0)) NULL,
     [BuyBackReason] varchar(20) NOT NULL CONSTRAINT [DF_Orders_BuyBackReason] DEFAULT (''),
+    [IsBuyBackCrossArticle] BIT NOT NULL CONSTRAINT [DF_Orders_IsBuyBackCrossArticle] DEFAULT (0), 
+    [IsBuyBackCrossSizeCode] BIT NOT NULL CONSTRAINT [DF_Orders_IsBuyBackCrossSizeCode] DEFAULT (0), 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
-
-
-
-
-
-
 
 GO
 
@@ -824,6 +820,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'預估單�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'PulloutComplete 最後的更新時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'PulloutCmplDate';
 
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'表示可以跨Article領用', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'IsBuyBackCrossArticle';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'表示可以跨Size領用', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'IsBuyBackCrossSizeCode';
 
 GO
 CREATE NONCLUSTERED INDEX [IDX_Orders_MES_EndlineR01]
