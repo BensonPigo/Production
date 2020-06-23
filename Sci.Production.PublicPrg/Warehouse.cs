@@ -1086,15 +1086,25 @@ where   poid = '{1}'
             decimal request = decimal.Parse(materials["requestqty"].ToString()) - decimal.Parse(materials["accu_issue"].ToString());
 
             sqlcmd = string.Format(@"
-select ctd.Seq1, ctd.Seq2, ctd.Dyelot, sum(inqty-OutQty+AdjustQty) as GroupQty
+select a.Seq1, a.Seq2, ctpd.Dyelot, sum(a.inqty-a.OutQty+a.AdjustQty) as GroupQty
 into #tmp
-from CutTapePlan_Detail ctd
-inner join FtyInventory a on a.POID = '{0}' and a.Seq1 = ctd.Seq1 and a.Seq2 = ctd.Seq2 and a.Dyelot = ctd.Dyelot
-where ctd.id = '{1}' and ctd.Seq1 between '01' and '99' and a.StockType = '{2}'
-group by ctd.Seq1, ctd.Seq2, ctd.Dyelot
+from  CutTapePlan_Detail ctpd
+inner join CutTapePlan ctp on ctp.ID = ctpd.ID
+inner join PO_Supp_Detail psd on psd.ColorID = ctpd.ColorID and psd.Refno = ctpd.RefNo and psd.ID = ctp.CuttingID
+inner join FtyInventory a on a.POID = '{0}' and a.Seq1 = psd.Seq1 and a.Seq2 = psd.Seq2 and a.Dyelot = ctpd.Dyelot
+where ctpd.id = '{1}' and a.Seq1 between '01' and '99' and a.StockType = '{2}'
+group by a.Seq1, a.Seq2, ctpd.Dyelot
 
-select  
-	FtyInventoryUkey = a.Ukey
+select
+	location = Stuff ((select ',' + t.mtllocationid 
+                           from (
+                                select MtlLocationID 
+                                from dbo.FtyInventory_Detail WITH (NOLOCK) 
+                                where ukey = a.Ukey
+                           )t 
+                           for xml path('')
+                          ), 1, 1, '')
+	, FtyInventoryUkey = a.Ukey
 	, a.POID
 	, a.seq1
 	, a.Seq2
