@@ -2500,6 +2500,7 @@
     <Build Include="dbo\Views\View_AirPP.sql" />
     <Build Include="dbo\Functions\getMinCompleteSewTransferQty.sql" />
     <Build Include="dbo\Functions\GetSewingQtybyRate.sql" />
+    <Build Include="dbo\Tables\ShadebandDocLocation.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
