@@ -7,6 +7,7 @@
 -- 2020/05/18 [ISP20200840] Add Columns[Sew_Qty],[Shortage]
 -- 2020/05/29 [ISP20200920] Add Columns[Buyer Key],[Buyer HalfKey]
 -- 2020/06/18 [ISP20201059] Add Requirement Factory.IsProduceFty = 1
+-- 2020/06/23 [ISP20201087] 增加欄位[Sew_Qty by Rate]
 CREATE PROCEDURE [dbo].[ImportForecastLoadingBI] 
 
 @StartDate date,
@@ -321,7 +322,8 @@ Select
 						  when day(Orders.BuyerDelivery) BETWEEN 1 and 7 then LEFT(CONVERT(varchar, dateadd(month, -1, Orders.BuyerDelivery),112),6) + '02'
 						  when day(Orders.BuyerDelivery) BETWEEN 8 and 22 then LEFT(CONVERT(varchar, Orders.BuyerDelivery, 112),6) + '01'
 						  when day(Orders.BuyerDelivery) BETWEEN 23 and 31 then LEFT(CONVERT(varchar, Orders.BuyerDelivery, 112),6) + '02'
-						  else ''	end
+						  else ''	end,
+	[Sew_Qty by Rate] = isnull(SewingQtybyRate.Val,0)
 
 From Production.dbo.Orders 
 LEFT JOIN Production.dbo.Factory ON Orders.FactoryID =Factory.ID 
@@ -336,6 +338,9 @@ outer apply(
 	from Production.dbo.Pullout_Detail_Detail
 	where OrderID=Orders.ID
 )GetPulloutData
+OUTER APPLY(
+	SELECT [Val]= Production.dbo.GetSewingQtybyRate(Orders.ID,null,null)
+)SewingQtybyRate
 inner JOIN #atSource atSource on atSource.ID = Orders.ID
 WHERE orders.Category IN ('B', 'S')
 and Orders.SciDelivery between @Date_S and @Date_E
@@ -422,7 +427,8 @@ Select
 						  when day(Forecast.BuyerDelivery) BETWEEN 1 and 7 then LEFT(CONVERT(varchar, dateadd(month, -1, Forecast.BuyerDelivery),112),6) + '02'
 						  when day(Forecast.BuyerDelivery) BETWEEN 8 and 22 then LEFT(CONVERT(varchar, Forecast.BuyerDelivery, 112),6) + '01'
 						  when day(Forecast.BuyerDelivery) BETWEEN 23 and 31 then LEFT(CONVERT(varchar, Forecast.BuyerDelivery, 112),6) + '02'
-						  else ''	end
+						  else ''	end,
+	[Sew_Qty by Rate] = 0
 
 From #tmp_Forecast  as Forecast
 LEFT JOIN Production.dbo.Style ON Forecast.BrandID=Style.BrandID and Forecast.StyleID =Style.ID and  Forecast.SeasonID = Style.SeasonID
@@ -518,7 +524,8 @@ Select
 						  when day(FactoryOrder.BuyerDelivery) BETWEEN 1 and 7 then LEFT(CONVERT(varchar, dateadd(month, -1, FactoryOrder.BuyerDelivery),112),6) + '02'
 						  when day(FactoryOrder.BuyerDelivery) BETWEEN 8 and 22 then LEFT(CONVERT(varchar, FactoryOrder.BuyerDelivery, 112),6) + '01'
 						  when day(FactoryOrder.BuyerDelivery) BETWEEN 23 and 31 then LEFT(CONVERT(varchar, FactoryOrder.BuyerDelivery, 112),6) + '02'
-						  else ''	end
+						  else ''	end,
+	[Sew_Qty by Rate] = isnull(SewingQtybyRate.Val,0)
 
 From #tmp_FactoryOrder FactoryOrder
 LEFT JOIN Production.dbo.Style ON FactoryOrder.BrandID=Style.BrandID and FactoryOrder.StyleID =Style.ID and  FactoryOrder.SeasonID = Style.SeasonID
@@ -528,6 +535,9 @@ LEFT JOIN Production.dbo.CDCode AS CDCode ON CDCode.ID = FactoryOrder.CdCodeID
 inner JOIN #atSource atSource on atSource.ID = FactoryOrder.ID
 outer apply (select 1 as CpuRate) as CPURate
 outer apply (select cast(0 as numeric(16,4)) Price) as Price
+OUTER APPLY(
+	SELECT [Val]= Production.dbo.GetSewingQtybyRate(FactoryOrder.ID,null,null)
+)SewingQtybyRate
 WHERE FactoryOrder.Junk = 0 
 and FactoryOrder.Qty > 0
 and FactoryOrder.SCIDelivery between @Date_S and @Date_E
