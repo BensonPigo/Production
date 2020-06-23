@@ -48,12 +48,15 @@ namespace Sci.Production.PPIC
         ////private List<ItemChangeCls> changeList = new List<ItemChangeCls>();
 
         /// <inheritdoc/>
-        public P01_BuyBack(bool canedit, string id, DataTable dtOrderQty = null)
+        public P01_BuyBack(bool canedit, DataRow mainDataRow, DataTable dtOrderQty = null)
         {
             this.InitializeComponent();
             this.canEdit = canedit;
             this.BtnEdit.Visible = canedit;
-            this.ID = id;
+            this.ID = mainDataRow["ID"].ToString();
+            this.displayBuyBackReason.Text = mainDataRow["BuyBackReason"].ToString();
+            this.chkIsBuyBackCrossArticle.Checked = MyUtility.Convert.GetBool(mainDataRow["IsBuyBackCrossArticle"]);
+            this.chkIsBuyBackCrossSizeCode.Checked = MyUtility.Convert.GetBool(mainDataRow["IsBuyBackCrossSizeCode"]);
             this.dtOrderQty = dtOrderQty;
         }
 
@@ -197,8 +200,7 @@ and oq.SizeCode in ({sizeCodeStr})";
             };
 
             this.Helper.Controls.Grid.Generator(this.grid1)
-            .Text("ID", header: "SP#", width: Widths.AnsiChars(12), iseditingreadonly: true, settings: popupSPCell)
-            .ComboBox("BuyBackReason", header: "Buy Back Type", width: Widths.AnsiChars(13), settings: buyBackReasonCell);
+            .Text("ID", header: "SP#", width: Widths.AnsiChars(12), iseditingreadonly: true, settings: popupSPCell);
 
             this.Helper.Controls.Grid.Generator(this.grid4)
             .Text("FromSP", header: "From SP#", width: Widths.AnsiChars(12), iseditingreadonly: true)
@@ -275,7 +277,7 @@ and oq.SizeCode in ({sizeCodeStr})";
         {
             this.dtList = new DataTable();
             DataTable tmp;
-            string cmd = $"select OrderIDFrom as ID, BuyBackReason from Order_BuyBack where id = '{this.ID}'";
+            string cmd = $"select OrderIDFrom as ID from Order_BuyBack where id = '{this.ID}'";
             DualResult res = DBProxy.Current.Select(null,cmd, out tmp);
             if (res == true)
             {
@@ -571,25 +573,11 @@ order by os.Seq, os.SizeCode, oa.Article";
             {
                 this.BtnEdit.Text = "Save";
                 this.BtnClose.Text = "Undo";
-                this.BtnAdd.Enabled = true;
-                this.BtnDelete.Enabled = true;
-
-                if (this.grid1.Columns.Count > 0)
-                {
-                    (this.grid1.Columns[1] as DataGridViewComboBoxColumn).IsEditingReadOnly = false;
-                }
             }
             else
             {
                 this.BtnEdit.Text = "Edit";
                 this.BtnClose.Text = "Close";
-                this.BtnAdd.Enabled = false;
-                this.BtnDelete.Enabled = false;
-
-                if (this.grid1.Columns.Count > 0)
-                {
-                    (this.grid1.Columns[1] as DataGridViewComboBoxColumn).IsEditingReadOnly = true;
-                }
             }
         }
 
