@@ -558,7 +558,7 @@
             this.btnCIPF.TabIndex = 29;
             this.btnCIPF.Text = "CIPF";
             this.btnCIPF.UseVisualStyleBackColor = true;
-            this.btnCIPF.Click += new System.EventHandler(this.BtnCIPF_Click);
+            this.btnCIPF.Click += new System.EventHandler(this.btnCIPF_Click);
             // 
             // ui_pnlBatchUpdate
             // 
