@@ -467,19 +467,19 @@
             this.txtStyle.Size = new System.Drawing.Size(130, 23);
             this.txtStyle.TabIndex = 0;
             this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStyle_PopUp);
-            this.txtStyle.Validated += new System.EventHandler(this.GenCD);
+            this.txtStyle.Validating += new System.ComponentModel.CancelEventHandler(this.TxtStyle_Validating);
             // 
             // txtBrand
             // 
-            this.txtBrand.BackColor = System.Drawing.Color.White;
+            this.txtBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtBrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
-            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtBrand.IsSupportEditMode = false;
             this.txtBrand.Location = new System.Drawing.Point(100, 62);
             this.txtBrand.Name = "txtBrand";
+            this.txtBrand.ReadOnly = true;
             this.txtBrand.Size = new System.Drawing.Size(80, 23);
             this.txtBrand.TabIndex = 3;
-            this.txtBrand.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtBrand_PopUp);
-            this.txtBrand.Validated += new System.EventHandler(this.GenCD);
             // 
             // btnStdGSDList
             // 
@@ -529,15 +529,16 @@
             // 
             // txtseason
             // 
-            this.txtseason.BackColor = System.Drawing.Color.White;
+            this.txtseason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtseason.BrandObjectName = null;
             this.txtseason.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SeasonID", true));
-            this.txtseason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtseason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtseason.IsSupportEditMode = false;
             this.txtseason.Location = new System.Drawing.Point(100, 33);
             this.txtseason.Name = "txtseason";
+            this.txtseason.ReadOnly = true;
             this.txtseason.Size = new System.Drawing.Size(80, 23);
             this.txtseason.TabIndex = 2;
-            this.txtseason.Validated += new System.EventHandler(this.GenCD);
             // 
             // labVersionWarning
             // 
@@ -558,7 +559,7 @@
             this.btnCIPF.TabIndex = 29;
             this.btnCIPF.Text = "CIPF";
             this.btnCIPF.UseVisualStyleBackColor = true;
-            this.btnCIPF.Click += new System.EventHandler(this.btnCIPF_Click);
+            this.btnCIPF.Click += new System.EventHandler(this.BtnCIPF_Click);
             // 
             // ui_pnlBatchUpdate
             // 
