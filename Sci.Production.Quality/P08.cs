@@ -44,6 +44,8 @@ namespace Sci.Production.Quality
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            this.dateTimePickerUpdateTime.CustomFormat = "yyyy/MM/dd HH:mm:ss";
+            this.dateTimePickerUpdateTime.Text = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
             this.GridSetup();
         }
 
@@ -95,21 +97,25 @@ namespace Sci.Production.Quality
 
             Helper.Controls.Grid.Generator(this.gridReceiving)
                  .CheckBox("select", header: "", trueValue: 1, falseValue: 0)
-                 .Text("ExportID", header: "WK#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                 .Numeric("Packages", header: "Packages", width: Widths.AnsiChars(5), decimal_places: 0, iseditingreadonly: true)
-                 .DateTime("ArriveDate", header: "Arrive W/H Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("ExportID", header: "WK#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                 .Numeric("Packages", header: "Packages", width: Widths.AnsiChars(3), decimal_places: 0, iseditingreadonly: true)
+                 .Date("ArriveDate", header: "Arrive W/H \r\n Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                 .Text("WeaveTypeID", header: "Weave Type", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .Text("WeaveTypeID", header: "Weave\r\nType", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(5), iseditingreadonly: true)
                  .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("ColorID", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 0, iseditingreadonly: true)
-                 .Date("CutTime", header: "Cut Shadeband Time", width: Widths.AnsiChars(10))
-                 .Date("PasteTime", header: "Paste Shadeband Time", width: Widths.AnsiChars(10))
-                 .Date("PassQATime", header: "Pass QA Time", width: Widths.AnsiChars(10))
+                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), decimal_places: 0, iseditingreadonly: true)
+                 .DateTime("CutTime", header: "Cut Shadeband Time", width: Widths.AnsiChars(20))
+                 .DateTime("PasteTime", header: "Paste Shadeband Time", width: Widths.AnsiChars(20))
+                 .DateTime("PassQATime", header: "Pass QA Time", width: Widths.AnsiChars(20))
                  .Text("ShadebandDocLocationID", header: "Shadeband Location", width: Widths.AnsiChars(10), settings: cellShadebandDocLocationID)
                  ;
+            this.gridReceiving.Columns["CutTime"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridReceiving.Columns["PasteTime"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridReceiving.Columns["PassQATime"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridReceiving.Columns["ShadebandDocLocationID"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         /// <summary>
@@ -376,8 +382,8 @@ inner join #tmp t on t.id = fs.ID and t.Roll = fs.Roll and t.Dyelot = fs.Dyelot
             var selectedListDataRow = dt.AsEnumerable().Where(s => MyUtility.Convert.GetBool(s["select"]));
             if (selectedListDataRow.Any())
             {
-                string updateTime = MyUtility.Convert.GetDate(this.dateBoxUpdateTime.Text).HasValue ?
-                        MyUtility.Convert.GetDate(this.dateBoxUpdateTime.Text).Value.ToString("yyyy/MM/dd") : 
+                string updateTime = MyUtility.Convert.GetDate(this.dateTimePickerUpdateTime.Text).HasValue ?
+                        MyUtility.Convert.GetDate(this.dateTimePickerUpdateTime.Text).Value.ToString("yyyy/MM/dd HH:mm:ss") : 
                         string.Empty;
                 string comboUpdateTime = this.comboBoxUpdateTime.SelectedValue.ToString();
                 foreach (DataRow dr in selectedListDataRow.ToList())

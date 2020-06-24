@@ -49,12 +49,12 @@
             this.lblWK = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
             this.gridReceiving = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.btnUpdate = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
-            this.dateBoxUpdateTime = new Sci.Win.UI.DateBox();
             this.comboBoxUpdateTime = new Sci.Win.UI.ComboBox();
             this.btnUpdateTime = new Sci.Win.UI.Button();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.dateTimePickerUpdateTime = new System.Windows.Forms.DateTimePicker();
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
@@ -290,20 +290,14 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
-            // dateBoxUpdateTime
-            // 
-            this.dateBoxUpdateTime.Location = new System.Drawing.Point(12, 444);
-            this.dateBoxUpdateTime.Name = "dateBoxUpdateTime";
-            this.dateBoxUpdateTime.Size = new System.Drawing.Size(130, 23);
-            this.dateBoxUpdateTime.TabIndex = 39;
-            // 
             // comboBoxUpdateTime
             // 
+            this.comboBoxUpdateTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.comboBoxUpdateTime.BackColor = System.Drawing.Color.White;
             this.comboBoxUpdateTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBoxUpdateTime.FormattingEnabled = true;
             this.comboBoxUpdateTime.IsSupportUnselect = true;
-            this.comboBoxUpdateTime.Location = new System.Drawing.Point(148, 443);
+            this.comboBoxUpdateTime.Location = new System.Drawing.Point(195, 445);
             this.comboBoxUpdateTime.Name = "comboBoxUpdateTime";
             this.comboBoxUpdateTime.OldText = "";
             this.comboBoxUpdateTime.Size = new System.Drawing.Size(160, 24);
@@ -311,8 +305,8 @@
             // 
             // btnUpdateTime
             // 
-            this.btnUpdateTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUpdateTime.Location = new System.Drawing.Point(314, 439);
+            this.btnUpdateTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnUpdateTime.Location = new System.Drawing.Point(361, 441);
             this.btnUpdateTime.Name = "btnUpdateTime";
             this.btnUpdateTime.Size = new System.Drawing.Size(117, 30);
             this.btnUpdateTime.TabIndex = 41;
@@ -320,14 +314,24 @@
             this.btnUpdateTime.UseVisualStyleBackColor = true;
             this.btnUpdateTime.Click += new System.EventHandler(this.BtnUpdateTime_Click);
             // 
+            // dateTimePickerUpdateTime
+            // 
+            this.dateTimePickerUpdateTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.dateTimePickerUpdateTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateTimePickerUpdateTime.Location = new System.Drawing.Point(12, 444);
+            this.dateTimePickerUpdateTime.Name = "dateTimePickerUpdateTime";
+            this.dateTimePickerUpdateTime.Size = new System.Drawing.Size(177, 23);
+            this.dateTimePickerUpdateTime.TabIndex = 42;
+            this.dateTimePickerUpdateTime.Value = new System.DateTime(2017, 6, 1, 14, 42, 7, 0);
+            // 
             // P08
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1142, 479);
+            this.Controls.Add(this.dateTimePickerUpdateTime);
             this.Controls.Add(this.btnUpdateTime);
             this.Controls.Add(this.comboBoxUpdateTime);
-            this.Controls.Add(this.dateBoxUpdateTime);
             this.Controls.Add(this.btnUpdate);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.gridReceiving);
@@ -373,9 +377,9 @@
             this.Controls.SetChildIndex(this.gridReceiving, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.btnUpdate, 0);
-            this.Controls.SetChildIndex(this.dateBoxUpdateTime, 0);
             this.Controls.SetChildIndex(this.comboBoxUpdateTime, 0);
             this.Controls.SetChildIndex(this.btnUpdateTime, 0);
+            this.Controls.SetChildIndex(this.dateTimePickerUpdateTime, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
@@ -406,9 +410,9 @@
         private Win.UI.Grid gridReceiving;
         private Win.UI.Button btnUpdate;
         private Win.UI.Button btnClose;
-        private Win.UI.DateBox dateBoxUpdateTime;
         private Win.UI.ComboBox comboBoxUpdateTime;
         private Win.UI.Button btnUpdateTime;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private System.Windows.Forms.DateTimePicker dateTimePickerUpdateTime;
     }
 }
