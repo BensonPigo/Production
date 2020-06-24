@@ -9,101 +9,60 @@ BEGIN
 
 	select @StyleUkey = StyleUkey,@StyleUnit = StyleUnit from Orders WITH (NOLOCK) where ID = @ToOrderid
 
-	IF @StyleUnit = 'PCS'
+	IF @article is null and @sizecode is null
+	BEGIN
+		select @minSeqQty = MIN(a.TransferQty)
+		from (
+			select ol.Location, TransferQty = isnull(sum(std.TransferQty),0)
+			from Order_Location ol WITH (NOLOCK)
+			outer apply(
+				select std.TransferQty
+				from SewingOutputTransfer_Detail std WITH (NOLOCK) 
+				inner join SewingOutputTransfer st WITH (NOLOCK) on std.ID = st.id
+				where std.FromOrderID = @fromOrderid and std.ToOrderID = ol.OrderID  and std.ToComboType = ol.Location
+				and st.status = 'Confirmed'
+			)std
+			where ol.OrderID = @ToOrderid
+			group by ol.Location
+		) a
+	END
+	ELSE
+		IF @sizecode is null
 		BEGIN
-		IF @article is null and @sizecode is null
-			BEGIN
-				select @minSeqQty = ToQty
-				from (
-					select sum(isnull(std.ToQty,0)) as ToQty
+			select @minSeqQty = MIN(a.TransferQty)
+			from (
+				select ol.Location, TransferQty = isnull(sum(std.TransferQty),0)
+				from Order_Location ol WITH (NOLOCK)
+				outer apply(
+					select std.TransferQty
 					from SewingOutputTransfer_Detail std WITH (NOLOCK) 
 					inner join SewingOutputTransfer st WITH (NOLOCK) on std.ID = st.id
-					where std.FromOrderID = @fromOrderid and std.ToOrderID = @ToOrderid
+					where std.FromOrderID = @fromOrderid and std.ToOrderID = ol.OrderID  and std.ToComboType = ol.Location
+					and std.Article = @article
 					and st.status = 'Confirmed'
-				)a 
-					
-			END
-		Else
-			IF @sizecode is null
-				BEGIN
-					select @minSeqQty = ToQty
-					from (
-						select sum(isnull(std.ToQty,0)) as ToQty
-						from SewingOutputTransfer_Detail std WITH (NOLOCK) 
-						inner join SewingOutputTransfer st WITH (NOLOCK) on std.ID = st.id
-						where std.FromOrderID = @fromOrderid and std.ToOrderID = @ToOrderid
-						and std.ToArticle = @article
-						and st.status = 'Confirmed'
-					)a  
-				END
-			ELSE
-				BEGIN
-					select @minSeqQty = ToQty
-					from (
-						select sum(isnull(std.ToQty,0)) as ToQty
-						from SewingOutputTransfer_Detail std WITH (NOLOCK) 
-						inner join SewingOutputTransfer st WITH (NOLOCK) on std.ID = st.id
-						where std.FromOrderID = @fromOrderid and std.ToOrderID = @ToOrderid
-						and std.ToArticle = @article
-						and std.ToSizeCode = @sizecode
-						and st.status = 'Confirmed'
-					)a  
-				END 
-		END	
-	ELSE
-		BEGIN
-		IF @article is null and @sizecode is null
-			BEGIN
-				select @minSeqQty = MIN(a.ToQty)
-				from (
-					select sl.Location, sum(isnull(std.ToQty,0)) as ToQty
-					from Order_Location sl WITH (NOLOCK)
-					outer apply(
-						select std.*
-						from SewingOutputTransfer_Detail std WITH (NOLOCK) 
-						inner join SewingOutputTransfer st WITH (NOLOCK) on std.ID = st.id
-						where std.FromOrderID = @fromOrderid and std.ToOrderID = @ToOrderid and std.ToComboType = sl.Location
-						and st.status = 'Confirmed'
-					)std
-					where sl.OrderID = @ToOrderid
-					group by sl.Location
-				) a
-			END
+				)std
+				where ol.OrderID = @ToOrderid
+				group by ol.Location
+			) a
+		END
 		ELSE
-			IF @sizecode is null
-				BEGIN
-					select @minSeqQty = MIN(a.ToQty)
-					from (
-						select sl.Location, sum(isnull(std.ToQty,0)) as ToQty
-						from Order_Location sl WITH (NOLOCK)
-						outer apply(
-							select std.*
-							from SewingOutputTransfer_Detail std WITH (NOLOCK) 
-							inner join SewingOutputTransfer st WITH (NOLOCK) on std.ID = st.id
-							where std.FromOrderID = @fromOrderid and std.ToOrderID = @ToOrderid and std.ToComboType = sl.Location
-							and st.status = 'Confirmed'
-						)std
-						where sl.OrderID = @ToOrderid
-						group by sl.Location
-					) a
-				END
-			ELSE
-				BEGIN
-					select @minSeqQty = MIN(a.ToQty)
-					from (
-						select sl.Location, sum(isnull(std.ToQty,0)) as ToQty
-						from Order_Location sl WITH (NOLOCK)
-						outer apply(
-							select std.*
-							from SewingOutputTransfer_Detail std WITH (NOLOCK) 
-							inner join SewingOutputTransfer st WITH (NOLOCK) on std.ID = st.id
-							where std.FromOrderID = @fromOrderid and std.ToOrderID = @ToOrderid and std.ToComboType = sl.Location
-							and st.status = 'Confirmed'
-						)std
-						where sl.OrderID = @ToOrderid
-						group by sl.Location
-					) a
-				END
+		BEGIN
+			select @minSeqQty = MIN(a.TransferQty)
+			from (
+				select ol.Location, TransferQty = isnull(sum(std.TransferQty),0)
+				from Order_Location ol WITH (NOLOCK)
+				outer apply(
+					select std.TransferQty
+					from SewingOutputTransfer_Detail std WITH (NOLOCK) 
+					inner join SewingOutputTransfer st WITH (NOLOCK) on std.ID = st.id
+					where std.FromOrderID = @fromOrderid and std.ToOrderID = ol.OrderID  and std.ToComboType = ol.Location
+					and std.Article = @article
+					and std.SizeCode = @sizecode
+					and st.status = 'Confirmed'
+				)std
+				where ol.OrderID = @ToOrderid
+				group by ol.Location
+			) a
 		END
 	RETURN @minSeqQty
 END
