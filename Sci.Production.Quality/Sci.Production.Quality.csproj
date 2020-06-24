@@ -115,6 +115,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="B11.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B11.Designer.cs">
+      <DependentUpon>B11.cs</DependentUpon>
+    </Compile>
     <Compile Include="B01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -326,6 +332,12 @@
     </Compile>
     <Compile Include="P07_Wash.Designer.cs">
       <DependentUpon>P07_Wash.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P08.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P08.Designer.cs">
+      <DependentUpon>P08.cs</DependentUpon>
     </Compile>
     <Compile Include="P10.cs">
       <SubType>Form</SubType>
@@ -606,6 +618,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="B11.resx">
+      <DependentUpon>B11.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="B01.resx">
       <DependentUpon>B01.cs</DependentUpon>
     </EmbeddedResource>
@@ -721,6 +736,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P07_Wash.resx">
       <DependentUpon>P07_Wash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P08.resx">
+      <DependentUpon>P08.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P10.resx">
       <DependentUpon>P10.cs</DependentUpon>
