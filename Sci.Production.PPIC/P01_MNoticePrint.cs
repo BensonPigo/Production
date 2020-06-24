@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 using System.Diagnostics;
 using Sci.Production.PublicPrg;
+using System.Linq;
 
 namespace Sci.Production.PPIC
 {
@@ -35,25 +36,25 @@ namespace Sci.Production.PPIC
         /// P01_MNoticePrint
         /// </summary>
         /// <param name="menuitem">ToolStripMenuItem</param>
-        /// <param name="args">string args</param>
-        public P01_MNoticePrint(ToolStripMenuItem menuitem, string args)
+        /// <param name="orderID">string orderID</param>
+        public P01_MNoticePrint(ToolStripMenuItem menuitem, string orderID)
             : base(menuitem)
         {
-            this.Constructor(args);
+            this.Constructor(orderID);
         }
 
         /// <summary>
         /// P01_MNoticePrint
         /// </summary>
-        /// <param name="args">string args</param>
-        public P01_MNoticePrint(string args)
+        /// <param name="orderID">string args</param>
+        public P01_MNoticePrint(string orderID)
         {
-            this.Constructor(args);
+            this.Constructor(orderID);
         }
 
-        private void Constructor(string args)
+        private void Constructor(string orderID)
         {
-            this._id = args;
+            this._id = orderID;
             this.InitializeComponent();
             this.EditMode = true;
 
@@ -179,6 +180,8 @@ order by ID"
                 }
 
                 sxr.CopySheet.Add(2, dt.Rows.Count - 1);
+
+                // 注意！其他##標籤的名字不能跟Sheet Name有任何文字排列組合相同，否則Sheet Name會被取代掉
                 sxr.VarToSheetName = sxr.VPrefix + "SP";
 
                 // 顯示筆數於PrintForm上Count欄位
@@ -204,6 +207,9 @@ order by ID"
                     sxr.DicDatas.Add(sxr.VPrefix + "ChangeMemoDate" + idxStr, dt.Rows[i]["ChangeMemoDate"] == DBNull.Value ? string.Empty : dt.Rows[i]["ChangeMemoDate"]);
                     sxr.DicDatas.Add(sxr.VPrefix + "coms1" + idxStr, dt.Rows[i]["Customize1"].ToString());
 
+                    string msg = this.GetSPNote(id);
+                    sxr.DicDatas.Add(sxr.VPrefix + "Note" + idxStr, msg);
+
                     sxrc.XltRptTable tbl1 = new sxrc.XltRptTable(dts[0], 1, 2, true);
                     sxrc.XltRptTable tbl2 = new sxrc.XltRptTable(dts[1], 1, 3);
                     sxrc.XltRptTable tbl3 = new sxrc.XltRptTable(dts[2], 1, 0);
@@ -217,6 +223,7 @@ order by ID"
                     sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl4" + idxStr, dts[3]); // COLOR list
                     sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl5" + idxStr, dts[4]); // Fabric list
                     sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl6" + idxStr, dts[5]); // Accessories list
+
                     if (dts[6].Rows.Count > 0)
                     {
                         sxr.DicDatas.Add(sxr.VPrefix + "S2SHIPINGMARK" + idxStr, new sxrc.XltLongString(dts[6].Rows[0]["shipingMark"].ToString()));
@@ -274,6 +281,7 @@ order by ID"
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
 
                 int ii = 0;
+                int maxRowheight = 0;
                 foreach (DataRow row in dtOrderCombo.Rows)
                 {
                     string idxStr = ii.ToString();
@@ -295,6 +303,14 @@ order by ID"
                         return failResult;
                     }
 
+                    string sPs = drvar["SPNO"].ToString();
+                    string msg = this.GetSPNotes(sPs);
+                    int sPNoteRowHeight = this.GetSPNoteRowHeight(sPs);
+
+                    // 這功能是先把每個sheet都處理完成再複製，因此每個複製出來的sheet列高都會一樣
+                    maxRowheight = maxRowheight < sPNoteRowHeight ? sPNoteRowHeight : maxRowheight;
+
+                    sxr.DicDatas.Add(sxr.VPrefix + "SheetOneNote" + idxStr, msg);
                     sxr.DicDatas.Add(sxr.VPrefix + "PO_NOW" + idxStr, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
                     sxr.DicDatas.Add(sxr.VPrefix + "PO_MAKER" + idxStr, drvar["MAKER"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "PO_STYLENO" + idxStr, drvar["sty"].ToString());
@@ -319,6 +335,10 @@ order by ID"
                         xltTbl.LisColumnInfo.Add(xcinfo);
                     }
 
+                    // 調整列高
+                    Microsoft.Office.Interop.Excel.Worksheet wks = wks = sxr.ExcelApp.Worksheets[1];
+                    wks.get_Range($"A4:A4").RowHeight = maxRowheight;
+
                     xltTbl.Separator1 = "'- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -";
                     xltTbl.Separator2 = "'= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =";
                     sxr.DicDatas.Add(sxr.VPrefix + "S1_Tbl1" + idxStr, xltTbl);
@@ -333,6 +353,7 @@ order by ID"
                     this.SetColumn1toText(tbl2);
                     this.SetColumn1toText(tbl3);
 
+                    sxr.DicDatas.Add(sxr.VPrefix + "SheetTwoNote" + idxStr, msg);
                     sxr.DicDatas.Add(sxr.VPrefix + "NOW" + idxStr, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
                     sxr.DicDatas.Add(sxr.VPrefix + "SP" + idxStr, drvar["SPNO"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "MAKER" + idxStr, drvar["MAKER"].ToString());
@@ -353,6 +374,11 @@ order by ID"
                     sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl6" + idxStr, dts[6]);
                     sxr.DicDatas.Add(sxr.VPrefix + "S2PACKING" + idxStr, new sxrc.XltLongString(dts[7].Rows[0]["Packing"].ToString()));
                     sxr.DicDatas.Add(sxr.VPrefix + "S2LH" + idxStr, new sxrc.XltLongString(dts[8].Rows[0]["Label"].ToString()));
+
+                    // 調整列高
+                    wks = sxr.ExcelApp.Worksheets[2];
+                    wks.get_Range($"A3:A3").RowHeight = maxRowheight;
+
                     if (dts[9].Rows[0].Field<bool?>("VasShas").GetValueOrDefault(false) == true)
                     {
                         sxr.DicDatas.Add(sxr.VPrefix + "S2VS" + idxStr, new sxrc.XltLongString(dts[9].Rows[0]["Packing2"].ToString()));
@@ -380,6 +406,9 @@ order by ID"
                         sxr.DicDatas.Add(sxr.VPrefix + "S3_DELIVERY" + idxStr + sxr.CRPrefix + sIdx, dr["BuyerDelivery"]);
                         sxr.DicDatas.Add(sxr.VPrefix + "S3_ChangeMemoDate" + idxStr + sxr.CRPrefix + sIdx, dr["ChangeMemoDate"] == DBNull.Value ? string.Empty : dr["ChangeMemoDate"]);
                         sxr.DicDatas.Add(sxr.VPrefix + "S3_Mark" + idxStr + sxr.CRPrefix + sIdx, new sxrc.XltLongString(dr["Mark"].ToString()));
+
+                        string noteMsg = this.GetSPNote(dr["ID"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "SheetThreeNote" + idxStr + sxr.CRPrefix + sIdx, noteMsg);
 
                         System.Data.DataTable[] dts2;
                         List<SqlParameter> lis2 = new List<SqlParameter>();
@@ -532,6 +561,191 @@ group by POID,b.spno,br.Customize2";
         {
             this.checkAdditionally.Visible = false;
             this.checkAdditionally.Visible = this.radioMNotice.Checked || this.radioByOrderCombo.Checked;
+        }
+
+        private string GetSPNote(string orderID)
+        {
+            string msg = string.Empty;
+
+            System.Data.DataTable sP_note;
+            DBProxy.Current.Select(null, $"SELECT  Junk,NeedProduction,KeepPanels,[BuyBack]=IIF(BuyBack = 1 ,'true','false') FROM Orders WITH(NOLOCK) WHERE ID='{orderID}'", out sP_note);
+
+            if (MyUtility.Convert.GetBool(sP_note.Rows[0]["Junk"]) && MyUtility.Convert.GetBool(sP_note.Rows[0]["NeedProduction"]))
+            {
+                msg = "Cancel still need to continue production";
+            }
+            else if (MyUtility.Convert.GetBool(sP_note.Rows[0]["Junk"]) && MyUtility.Convert.GetBool(sP_note.Rows[0]["KeepPanels"]))
+            {
+                msg = "Keep Panel without production";
+            }
+            else if (MyUtility.Convert.GetBool(sP_note.Rows[0]["BuyBack"]))
+            {
+                msg = "Buy Back";
+            }
+            else if (MyUtility.Convert.GetBool(sP_note.Rows[0]["Junk"]))
+            {
+                msg = "Cancel";
+            }
+            else
+            {
+                msg = string.Empty;
+            }
+
+            return msg;
+        }
+
+        private string GetSPNotes(string orderIDs)
+        {
+            string msg = string.Empty;
+
+            string oriSP = string.Empty;
+
+            List<string> spList = new List<string>();
+
+            // Cancel still need to continue Production
+            List<string> status1 = new List<string>();
+
+            // Keep Panel without production
+            List<string> status2 = new List<string>();
+
+            // Cancel
+            List<string> status3 = new List<string>();
+
+            // Buy Back
+            List<string> status4 = new List<string>();
+
+            int q = 0;
+            foreach (var sp in orderIDs.Split('/'))
+            {
+                if (q == 0)
+                {
+                    oriSP = sp;
+                    spList.Add(sp);
+                }
+                else
+                {
+                    spList.Add(oriSP + sp);
+                }
+
+                q++;
+            }
+
+            System.Data.DataTable sP_note;
+            DBProxy.Current.Select(null, $"SELECT ID,Junk,NeedProduction,KeepPanels,[BuyBack]=IIF(BuyBack = 1 ,'true','false') FROM Orders WITH(NOLOCK) WHERE ID IN ('{spList.JoinToString("','")}')", out sP_note);
+
+            foreach (DataRow dr in sP_note.Rows)
+            {
+                if (MyUtility.Convert.GetBool(dr["Junk"]) && MyUtility.Convert.GetBool(dr["NeedProduction"]))
+                {
+                    status1.Add(dr["ID"].ToString());
+                }
+                else if (MyUtility.Convert.GetBool(dr["Junk"]) && MyUtility.Convert.GetBool(dr["KeepPanels"]))
+                {
+                    status2.Add(dr["ID"].ToString());
+                }
+                else if (MyUtility.Convert.GetBool(dr["Junk"]))
+                {
+                    status3.Add(dr["ID"].ToString());
+                }
+                else if (MyUtility.Convert.GetBool(dr["BuyBack"]))
+                {
+                    status4.Add(dr["ID"].ToString());
+                }
+            }
+
+            string tmp1Msg = status1.Any() ? "Cancel still need to continue Production : "
+                + status1.FirstOrDefault()
+                + (status1.Where(o => o != status1.FirstOrDefault()).Any() ?
+                   ("/" + status1.Where(o => o != status1.FirstOrDefault()).JoinToString("/").Replace(oriSP, string.Empty)) : string.Empty)
+                    : string.Empty;
+            string tmp2Msg = status2.Any() ? "Keep Panel without production : "
+                + status2.FirstOrDefault()
+                + (status2.Where(o => o != status2.FirstOrDefault()).Any() ?
+                   ("/" + status2.Where(o => o != status2.FirstOrDefault()).JoinToString("/").Replace(oriSP, string.Empty)) : string.Empty)
+                    : string.Empty;
+
+            string tmp3Msg = status3.Any() ? "Cancel : "
+                + status3.FirstOrDefault()
+                + (status3.Where(o => o != status3.FirstOrDefault()).Any() ?
+                   ("/" + status3.Where(o => o != status3.FirstOrDefault()).JoinToString("/").Replace(oriSP, string.Empty)) : string.Empty)
+                    : string.Empty;
+            string tmp4Msg = status4.Any() ? "Buy Back : "
+                + status4.FirstOrDefault()
+                + (status4.Where(o => o != status4.FirstOrDefault()).Any() ?
+                   ("/" + status4.Where(o => o != status4.FirstOrDefault()).JoinToString("/").Replace(oriSP, string.Empty)) : string.Empty)
+                    : string.Empty;
+
+            msg = (MyUtility.Check.Empty(tmp1Msg) ? string.Empty : tmp1Msg + Environment.NewLine)
+                + (MyUtility.Check.Empty(tmp2Msg) ? string.Empty : tmp2Msg + Environment.NewLine)
+                + (MyUtility.Check.Empty(tmp3Msg) ? string.Empty : tmp3Msg + Environment.NewLine)
+                + (MyUtility.Check.Empty(tmp4Msg) ? string.Empty : tmp4Msg);
+
+            return msg;
+        }
+
+        private int GetSPNoteRowHeight(string orderIDs)
+        {
+            string msg = string.Empty;
+            int total = 0;
+
+            string oriSP = string.Empty;
+
+            List<string> spList = new List<string>();
+
+            // Cancel still need to continue Production
+            List<string> status1 = new List<string>();
+
+            // Keep Panel without production
+            List<string> status2 = new List<string>();
+
+            // Cancel
+            List<string> status3 = new List<string>();
+
+            // Buy Back
+            List<string> status4 = new List<string>();
+
+            int q = 0;
+            foreach (var sp in orderIDs.Split('/'))
+            {
+                if (q == 0)
+                {
+                    oriSP = sp;
+                    spList.Add(sp);
+                }
+                else
+                {
+                    spList.Add(oriSP + sp);
+                }
+
+                q++;
+            }
+
+            System.Data.DataTable sP_note;
+            DBProxy.Current.Select(null, $"SELECT ID,Junk,NeedProduction,KeepPanels,[BuyBack]=IIF(BuyBack = 1 ,'true','false') FROM Orders WITH(NOLOCK) WHERE ID IN ('{spList.JoinToString("','")}')", out sP_note);
+
+            foreach (DataRow dr in sP_note.Rows)
+            {
+                if (MyUtility.Convert.GetBool(dr["Junk"]) && MyUtility.Convert.GetBool(dr["NeedProduction"]))
+                {
+                    total += 1;
+                }
+                else if (MyUtility.Convert.GetBool(dr["Junk"]) && MyUtility.Convert.GetBool(dr["KeepPanels"]))
+                {
+                    total += 1;
+                }
+                else if (MyUtility.Convert.GetBool(dr["Junk"]))
+                {
+                    total += 1;
+                }
+                else if (MyUtility.Convert.GetBool(dr["BuyBack"]))
+                {
+                    total += 1;
+                }
+            }
+
+            int rowHeight = total * 20;
+
+            return rowHeight == 0 ? 20 : rowHeight;
         }
     }
 }
