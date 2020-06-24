@@ -573,10 +573,12 @@ From #tmpOrderList
 		--
 		Left join Production.dbo.Order_TmsCost tmsCost on tmsCost.Id = orders.ID
 		Left join Production.dbo.ArtworkType at on at.id = tmsCost.ArtworkTypeID
+		Left join Production.dbo.Factory on Orders.FactoryID =Factory.ID
 		Outer Apply (select CpuRate From Production.dbo.GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'O')) getCPURate
 
 		WHERE Orders.Category IN ('B', 'FC', 'S') and Orders.SciDelivery between @Date_S and @Date_E
 		and Orders.LocalOrder <> '1'
+		and Factory.IsProduceFty = 1
 
 	UNION
         --Forecast
