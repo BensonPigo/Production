@@ -1061,36 +1061,19 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
             return base.ClickPrint();
         }
 
-        // Style
+        // Style PopUp
         private void TxtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            // sql參數
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
-            {
-                ParameterName = "@brandid",
-                Value = MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"])
-            };
-
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
-            {
-                sp1
-            };
-
             string sqlCmd = "select ID,SeasonID,Description,BrandID,UKey from Style WITH (NOLOCK) where Junk = 0 order by ID";
-            if (!MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
-            {
-                sqlCmd = "select ID,SeasonID,Description,BrandID,UKey from Style WITH (NOLOCK) where Junk = 0 and BrandID = @brandid order by ID";
-            }
-
             DataTable styleData;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out styleData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out styleData);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("SQL Connection fail!!\r\n" + result.ToString());
                 return;
             }
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(styleData, "ID,SeasonID,Description,BrandID", "14,6,40,10", this.Text, headercaptions: "Style,Season,Description,Brand")
+            SelectItem item = new SelectItem(styleData, "ID,SeasonID,Description,BrandID", "14,6,40,10", this.Text, headercaptions: "Style,Season,Description,Brand")
             {
                 Width = 780
             };
@@ -1100,20 +1083,18 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
                 return;
             }
 
-            IList<DataRow> selectedData = item.GetSelecteds();
+            DataRow selectedData = item.GetSelecteds().FirstOrDefault();
             this.CurrentMaintain["StyleID"] = item.GetSelectedString();
-            this.CurrentMaintain["SeasonID"] = selectedData[0]["SeasonID"].ToString();
-            this.CurrentMaintain["BrandID"] = selectedData[0]["BrandID"].ToString();
+            this.CurrentMaintain["SeasonID"] = MyUtility.Convert.GetString(selectedData["SeasonID"]);
+            this.CurrentMaintain["BrandID"] = MyUtility.Convert.GetString(selectedData["BrandID"]);
 
-            sqlCmd = string.Format("select Location from Style_Location WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetInt(selectedData[0]["UKey"]).ToString());
+            sqlCmd = string.Format("select Location from Style_Location WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetInt(selectedData["UKey"]).ToString());
             DataTable locationData;
             result = DBProxy.Current.Select(null, sqlCmd, out locationData);
-            if (result)
+            if (result
+                && locationData.Rows.Count == 1)
             {
-                if (locationData.Rows.Count == 1)
-                {
-                    this.CurrentMaintain["ComboType"] = locationData.Rows[0]["Location"].ToString();
-                }
+                this.CurrentMaintain["ComboType"] = MyUtility.Convert.GetString(locationData.Rows[0]["Location"]);
             }
 
             this.GenCD(null, null);  // 撈CD Code
@@ -1591,37 +1572,24 @@ where ID = {0}",
         // 撈CD Code
         private void GenCD(object sender, EventArgs e)
         {
-            // sql參數
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
-            sp1.ParameterName = "@styleid";
-            sp1.Value = this.CurrentMaintain["StyleID"].ToString();
-            sp2.ParameterName = "@seasonid";
-            sp2.Value = this.CurrentMaintain["SeasonID"].ToString();
-            sp3.ParameterName = "@brandid";
-            sp3.Value = this.CurrentMaintain["BrandID"].ToString();
-
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+            IList<SqlParameter> cmds = new List<SqlParameter>()
             {
-                sp1,
-                sp2,
-                sp3
+                new SqlParameter() { ParameterName = "@styleid", Value = this.CurrentMaintain["StyleID"].ToString() },
+                new SqlParameter() { ParameterName = "@seasonid", Value = this.CurrentMaintain["SeasonID"].ToString() },
+                new SqlParameter() { ParameterName = "@brandid", Value = this.CurrentMaintain["BrandID"].ToString() }
             };
 
-            DataTable cdCode;
+            this.displayCD.Value = string.Empty;
+            DataTable dt;
             string sqlCmd = "select CdCodeID from Style WITH (NOLOCK) where ID = @styleid and SeasonID = @seasonid and BrandID = @brandid";
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out cdCode);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out dt);
             if (!result)
             {
-                this.displayCD.Value = string.Empty;
                 MyUtility.Msg.ErrorBox("Query CdCode data fail!\r\n" + result.ToString());
+                return;
             }
-            else
-            {
-                this.displayCD.Value = cdCode.Rows.Count > 0 ? cdCode.Rows[0]["CdCodeID"].ToString() : string.Empty;
-            }
+
+            this.displayCD.Value = dt.Rows.Count > 0 ? dt.Rows[0]["CdCodeID"].ToString() : string.Empty;
         }
 
         private void BtnDel_Click(object sender, EventArgs e)
