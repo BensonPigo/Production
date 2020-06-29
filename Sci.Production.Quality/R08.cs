@@ -109,6 +109,7 @@ SELECT [Inspected Date] = FP.InspDate
        ,[Arrived YDS] = RD.StockQty
        ,[Actual YDS] = FP.ActualYds
        ,[Shortage YDS] = isnull(isd.Qty, 0)
+	   ,[TransactionID] = FP.TransactionID
        ,[Full Width] = ww.width
        ,[Actual Width] = FP.ActualWidth
        ,[Speed] = IIF((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty) <= 0, 0,
