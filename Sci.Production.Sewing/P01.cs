@@ -36,6 +36,7 @@ namespace Sci.Production.Sewing
         private string loginFactory;
         private DateTime? dateYesterday;
         private DataTable rftDT;
+
         /// <summary>
         /// P01
         /// </summary>
@@ -326,7 +327,12 @@ inner join Orders o With (NoLock) on ss.OrderID = o.ID
 where   ss.FactoryID = '{0}' 
         and ss.SewingLineID = '{1}' 
         and ss.OrderFinished = 0
-		and o.Category != 'G'",
+		and o.Category != 'G'
+        and not exists (select 1 from Orders exludeOrder with (nolock) 
+                            where ((exludeOrder.junk = 1 and exludeOrder.NeedProduction = 0) or 
+                                  (exludeOrder.IsBuyBack = 1 and exludeOrder.BuyBackReason = 'Garment')) and
+                                  exludeOrder.ID = o.ID
+                        )",
                                 Sci.Env.User.Factory,
                                 MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]));
 
@@ -372,10 +378,10 @@ where   ss.FactoryID = '{0}'
                         }
 
                         // sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@factoryid", Sci.Env.User.Factory);
-                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@id", MyUtility.Convert.GetString(e.FormattedValue));
+                        SqlParameter sp1 = new SqlParameter("@factoryid", Sci.Env.User.Factory);
+                        SqlParameter sp2 = new SqlParameter("@id", MyUtility.Convert.GetString(e.FormattedValue));
 
-                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        IList<SqlParameter> cmds = new List<SqlParameter>();
                         cmds.Add(sp1);
                         cmds.Add(sp2);
 
@@ -393,7 +399,12 @@ inner join Factory f on o.FactoryID = f.ID
 where   o.FtyGroup = @factoryid 
         and o.ID = @id
 		and o.Category NOT IN ('G','A')
-        and f.IsProduceFty = 1";
+        and f.IsProduceFty = 1
+        and not exists (select 1 from Orders exludeOrder with (nolock) 
+                            where ((exludeOrder.junk = 1 and exludeOrder.NeedProduction = 0) or 
+                                  (exludeOrder.IsBuyBack = 1 and exludeOrder.BuyBackReason = 'Garment')) and
+                                  exludeOrder.ID = o.ID
+                        )";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out ordersData);
                         if (!result || ordersData.Rows.Count <= 0)
                         {
@@ -418,19 +429,6 @@ where   o.FtyGroup = @factoryid
                                 e.Cancel = true;
                                 MyUtility.Msg.WarningBox("SP# can't be PreOrder!!");
                                 return;
-                            }
-
-                            // 當該SP#已被Junk時，跳出確認訊息
-                            if (MyUtility.Check.Seek(string.Format("select ID from orders WITH (NOLOCK) where ID = '{0}' and junk=1", MyUtility.Convert.GetString(e.FormattedValue))))
-                            {
-                                // 問是否要繼續，確定才繼續往下做
-                                DialogResult buttonResult = MyUtility.Msg.WarningBox("This SP# has been canceled already,\r\n\r\nDo you want to continue?", "Warning", MessageBoxButtons.YesNo);
-                                if (buttonResult == System.Windows.Forms.DialogResult.No)
-                                {
-                                    dr["OrderID"] = string.Empty;
-                                    e.Cancel = true;
-                                    return;
-                                }
                             }
 
                             // 當該SP#+Line不屬於排程時，跳出確認訊息
@@ -660,10 +658,10 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                         }
 
                         // sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", MyUtility.Convert.GetString(dr["OrderID"]));
-                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@article", MyUtility.Convert.GetString(e.FormattedValue));
+                        SqlParameter sp1 = new SqlParameter("@id", MyUtility.Convert.GetString(dr["OrderID"]));
+                        SqlParameter sp2 = new SqlParameter("@article", MyUtility.Convert.GetString(e.FormattedValue));
 
-                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        IList<SqlParameter> cmds = new List<SqlParameter>();
                         cmds.Add(sp1);
                         cmds.Add(sp2);
 
@@ -1072,13 +1070,13 @@ and SunriseNid = 0
         private void GetRFT(DataRow dr)
         {
             // sql參數
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@orderid", MyUtility.Convert.GetString(dr["OrderID"]));
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@cdate", MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]));
-            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@sewinglineid", MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]));
-            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter("@shift", MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]));
-            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter("@team", MyUtility.Convert.GetString(this.CurrentMaintain["Team"]));
+            SqlParameter sp1 = new SqlParameter("@orderid", MyUtility.Convert.GetString(dr["OrderID"]));
+            SqlParameter sp2 = new SqlParameter("@cdate", MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]));
+            SqlParameter sp3 = new SqlParameter("@sewinglineid", MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]));
+            SqlParameter sp4 = new SqlParameter("@shift", MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]));
+            SqlParameter sp5 = new SqlParameter("@team", MyUtility.Convert.GetString(this.CurrentMaintain["Team"]));
 
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            IList<SqlParameter> cmds = new List<SqlParameter>();
             cmds.Add(sp1);
             cmds.Add(sp2);
             cmds.Add(sp3);
@@ -1131,12 +1129,12 @@ and Team = @team";
             }
 
             // sql參數
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@ukey", dr["UKey"]);
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@combotype", MyUtility.Convert.GetString(dr["ComboType"]));
-            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@orderid", MyUtility.Convert.GetString(dr["OrderID"]));
-            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter("@article", MyUtility.Convert.GetString(dr["Article"]));
+            SqlParameter sp1 = new SqlParameter("@ukey", dr["UKey"]);
+            SqlParameter sp2 = new SqlParameter("@combotype", MyUtility.Convert.GetString(dr["ComboType"]));
+            SqlParameter sp3 = new SqlParameter("@orderid", MyUtility.Convert.GetString(dr["OrderID"]));
+            SqlParameter sp4 = new SqlParameter("@article", MyUtility.Convert.GetString(dr["Article"]));
 
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            IList<SqlParameter> cmds = new List<SqlParameter>();
             cmds.Add(sp1);
             cmds.Add(sp2);
             cmds.Add(sp3);
@@ -1804,6 +1802,70 @@ sd.Combotype = '{dr["ComboType"]}'
                         }
                     }
                 }
+            }
+            #endregion
+
+            #region 若SP為(Orders.junk=1 and Orders.NeedProduction=1)需檢查"已報產出的數量"+"此次報的數量"+"已轉出的數量"是否超過原訂單數量
+            string checkOrderNeedProduction = $@"
+select
+t.OrderID,
+t.Article,
+t.SizeCode,
+t.Combotype,
+t.QAQty,
+[OrderQty] = oq.Qty,
+[OtherSewingOutputQty] = isnull(sum(isnull(sodd.QAQty, 0)), 0)  ,
+[TransOutQty] = isnull(sum(isnull(sotd.TransferQty, 0)), 0)
+into #checkResult
+from #tmp t
+inner join Order_Qty oq with (nolock) on oq.ID = t.OrderID and oq.Article = t.Article and oq.SizeCode = t.SizeCode
+left join SewingOutput_detail_detail sodd with (nolock) on   sodd.OrderID = t.OrderID and
+                                                                sodd.Article = t.Article and
+                                                                sodd.SizeCode = t.SizeCode and
+                                                                sodd.Combotype = t.Combotype and
+                                                                sodd.ID <> isnull(t.ID, '')
+left join SewingOutputTransfer_detail sotd with (nolock) on  sotd.FromOrderID = t.OrderID and
+                                                             sotd.Article = t.Article and
+                                                             sotd.SizeCode = t.SizeCode and
+                                                             sotd.FromComboType = t.Combotype
+where exists( select 1 from Orders o with (nolock) 
+                        where o.ID = t.OrderID and 
+                              o.junk = 1 and o.NeedProduction = 1)
+group by    t.OrderID,
+            t.Article,
+            t.SizeCode,
+            t.Combotype,
+            t.QAQty,
+            oq.Qty
+
+select  OrderID,
+        Article,
+        SizeCode,
+        Combotype,
+        [SewQty] = QAQty + OtherSewingOutputQty,
+        OrderQty,
+        TransOutQty
+from #checkResult 
+where   OrderQty < (QAQty + OtherSewingOutputQty + TransOutQty)
+
+";
+            DataTable dtNeedProductionOver;
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtSubDetail, string.Empty, checkOrderNeedProduction, out dtNeedProductionOver);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            if (dtNeedProductionOver.Rows.Count > 0)
+            {
+                string overDataMsg = "SewingOutput Qty + transfered qty can't more than order qty：" + Environment.NewLine +
+                    dtNeedProductionOver.AsEnumerable()
+                    .Select(s => $@"[SP#：{s["OrderID"].ToString()},ComboType：{s["Combotype"].ToString()}, Article：{s["Article"].ToString()},Size：{s["SizeCode"].ToString()} ]Order Qty {s["OrderQty"].ToString()} , Sew. Qty= {s["SewQty"].ToString()} ,Transfered Qty ={s["TransOutQty"].ToString()}].")
+                    .JoinToString(Environment.NewLine);
+
+                MyUtility.Msg.WarningBox(overDataMsg);
+                return false;
             }
             #endregion
 

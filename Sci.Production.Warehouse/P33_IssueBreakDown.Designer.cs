@@ -38,6 +38,8 @@
             this.btnSave = new Sci.Win.UI.Button();
             this.gridIssueBreakDownBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.gridQtyBreakDownBS = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.labe = new Sci.Win.UI.Label();
+            this.displayColor = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -123,6 +125,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.labe);
+            this.panel1.Controls.Add(this.displayColor);
             this.panel1.Controls.Add(this.btnCopyQTY);
             this.panel1.Controls.Add(this.btnCancel);
             this.panel1.Controls.Add(this.btnSave);
@@ -164,6 +168,28 @@
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
+            // labe
+            // 
+            this.labe.BackColor = System.Drawing.Color.Transparent;
+            this.labe.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.labe.Location = new System.Drawing.Point(147, 12);
+            this.labe.Name = "labe";
+            this.labe.Size = new System.Drawing.Size(294, 23);
+            this.labe.TabIndex = 49;
+            this.labe.Text = "Canceled(No Need to Produce)or BuyBack(Garment) Order";
+            this.labe.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
+            this.labe.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            // 
+            // displayColor
+            // 
+            this.displayColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayColor.Location = new System.Drawing.Point(124, 14);
+            this.displayColor.Name = "displayColor";
+            this.displayColor.Size = new System.Drawing.Size(20, 21);
+            this.displayColor.TabIndex = 48;
+            // 
             // P33_IssueBreakDown
             // 
             this.ClientSize = new System.Drawing.Size(784, 561);
@@ -179,6 +205,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.gridQtyBreakDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridIssueBreakDown)).EndInit();
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridIssueBreakDownBS)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridQtyBreakDownBS)).EndInit();
             this.ResumeLayout(false);
@@ -196,6 +223,7 @@
         private Win.UI.ListControlBindingSource gridIssueBreakDownBS;
         private Win.UI.ListControlBindingSource gridQtyBreakDownBS;
         private Win.UI.Button btnCopyQTY;
-
+        private Win.UI.Label labe;
+        private Win.UI.DisplayBox displayColor;
     }
 }

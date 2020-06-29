@@ -12,6 +12,7 @@ using Sci.Production.PublicPrg;
 using System.Runtime.InteropServices;
 using System.Data.SqlClient;
 using System.Transactions;
+using System.Linq;
 
 namespace Sci.Production.Packing
 {
@@ -21,7 +22,9 @@ namespace Sci.Production.Packing
     public partial class P02 : Sci.Win.Tems.Input6
     {
         private Ict.Win.UI.DataGridViewTextBoxColumn col_refno;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_refno_Balance;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_qtyperctn;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_shipqty;
         private string printPackMethod = string.Empty;
         private int orderQty = 0;
         private int ttlShipQty = 0;
@@ -60,9 +63,13 @@ select a.ID
 	   , a.NNW
 	   , c.Description
        , selected = cast(0 as bit)
+       , [Balance] = iif(isnull(a.QtyPerCTN,0) = 0, 0, a.ShipQty % a.QtyPerCTN)
+	   , a.RefNoForBalance
+       , [DescriptionforBalance] = c2.Description
 from PackingGuide_Detail a WITH (NOLOCK) 
 left join PackingGuide b WITH (NOLOCK) on a.Id = b.Id
 left join LocalItem c WITH (NOLOCK) on a.RefNo = c.RefNo
+left join LocalItem c2 WITH (NOLOCK) on a.RefNoForBalance = c2.RefNo
 left join Orders d WITH (NOLOCK) on b.OrderID = d.ID
 left join Order_Article e WITH (NOLOCK) on b.OrderID = e.Id 
 										   and a.Article = e.Article
@@ -170,25 +177,27 @@ order by e.Seq, f.Seq", masterID);
         {
             base.OnDetailGridSetup();
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .CheckBox("selected", header: "", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0)
+                .CheckBox("selected", header: string.Empty, width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0)
                 .CellCartonItem("RefNo", header: "Ref No.", width: Widths.AnsiChars(13)).Get(out this.col_refno)
                 .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Article", header: "ColorWay", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("QtyPerCTN", header: "Qty/Ctn").Get(out this.col_qtyperctn)
-                .Numeric("ShipQty", header: "ShipQty")
+                .Numeric("ShipQty", header: "ShipQty").Get(out this.col_shipqty)
                 .Numeric("NW", header: "N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
                 .Numeric("GW", header: "G.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
-                .Numeric("NNW", header: "N.N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0);
+                .Numeric("NNW", header: "N.N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
+                .Numeric("Balance", header: "Balance", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0, iseditingreadonly: true)
+                .CellCartonItem("RefNoForBalance", header: "Ref No. for Balance", width: Widths.AnsiChars(15)).Get(out this.col_refno_Balance)
+                .Text("DescriptionforBalance", header: "Description for Balance", width: Widths.AnsiChars(20), iseditingreadonly: true);
 
             this.detailgrid.CellValueChanged += (s, e) =>
             {
+                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                 #region 選完RefNo後，要自動帶出Description與G.W
                 if (this.detailgrid.Columns[e.ColumnIndex].DataPropertyName == this.col_refno.DataPropertyName)
                 {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-
                     if (MyUtility.Check.Empty(dr["RefNo"]))
                     {
                         dr["Description"] = string.Empty;
@@ -231,11 +240,9 @@ order by e.Seq, f.Seq", masterID);
                 }
                 #endregion
 
-                #region 輸入Qty/Ctn後要重算N.W.,G.W.,N.N.W.
+                #region 輸入Qty/Ctn後要重算N.W.,G.W.,N.N.W.,Balance
                 if (this.detailgrid.Columns[e.ColumnIndex].DataPropertyName == this.col_qtyperctn.DataPropertyName)
                 {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-
                     // sql參數
                     System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
                     System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
@@ -284,6 +291,50 @@ where o.ID = @orderid";
                         dr["NW"] = 0;
                         dr["GW"] = 0;
                         dr["NNW"] = 0;
+                    }
+
+                    dr["Balance"] = MyUtility.Convert.GetInt(dr["QtyPerCTN"]) == 0 ? 0 : MyUtility.Convert.GetInt(dr["ShipQty"]) % MyUtility.Convert.GetInt(dr["QtyPerCTN"]);
+                    dr.EndEdit();
+                }
+                #endregion
+
+                #region 輸入ShipQty後要重算Balance
+                if (this.detailgrid.Columns[e.ColumnIndex].DataPropertyName == this.col_shipqty.DataPropertyName)
+                {
+                    dr["Balance"] = MyUtility.Convert.GetInt(dr["QtyPerCTN"]) == 0 ? 0 : MyUtility.Convert.GetInt(dr["ShipQty"]) % MyUtility.Convert.GetInt(dr["QtyPerCTN"]);
+                    dr.EndEdit();
+                }
+                #endregion
+
+                #region 選完RefNoForBalance後，要自動帶出DescriptionforBalance
+                if (this.detailgrid.Columns[e.ColumnIndex].DataPropertyName == this.col_refno_Balance.DataPropertyName)
+                {
+                    dr["DescriptionforBalance"] = string.Empty;
+                    if (!MyUtility.Check.Empty(dr["RefNoForBalance"]))
+                    {
+                        // sql參數
+                        SqlParameter sp1 = new SqlParameter();
+                        sp1.ParameterName = "@RefNoForBalance";
+                        sp1.Value = dr["RefNoForBalance"].ToString();
+
+                        IList<SqlParameter> cmds = new List<SqlParameter>();
+                        cmds.Add(sp1);
+
+                        string sqlCmd = "select Description from LocalItem WITH (NOLOCK) where RefNo = @RefNoForBalance";
+                        DataTable localItemData;
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out localItemData);
+                        if (result)
+                        {
+                            if (localItemData.Rows.Count > 0)
+                            {
+                                dr["DescriptionforBalance"] = localItemData.Rows[0]["Description"].ToString();
+                            }
+                        }
+                        else
+                        {
+                            MyUtility.Msg.WarningBox("Sql fail!!\r\n" + result.ToString());
+                            return;
+                        }
                     }
 
                     dr.EndEdit();
@@ -380,19 +431,35 @@ where o.ID = @orderid";
                 }
             }
 
+            #region 單色混碼 RefNo 需相同
+            if (this.comboPackingMethod.SelectedIndex != -1 &&
+                   this.comboPackingMethod.SelectedValue.ToString().EqualString("2"))
+            {
+                List<string> listRefNo = ((DataTable)this.detailgridbs.DataSource)
+                         .AsEnumerable()
+                         .GroupBy(x => x.Field<string>("RefNoForBalance"))
+                         .Select(x => x.Key).ToList();
+                if (listRefNo.Count() > 1)
+                {
+                    MyUtility.Msg.WarningBox("Packing Method : SOLID COLOR/ASSORTED SIZE\r\nCTN Ref No. must be the same for balance.");
+                    return false;
+                }
+            }
+            #endregion
+
             #region 計算Total Cartons & CBM
 
             // Total Cartons: 單色混碼裝：min(無條件捨去(同一顏色不同Size的訂單件數/每箱件數)) + (1(若其中一個Size有餘數) or 0(完全整除沒有餘數))
             int ttlCTN = 0, ctns = 0;
             double ctn, ttlCBM = 0.0;
-            string cbm;
+            string cbm, cbmBalance;
             if (this.comboPackingMethod.SelectedIndex != -1)
             {
                 if (this.comboPackingMethod.SelectedValue.ToString().EqualString("2"))
                 {
                     DataTable groupData;
                     DualResult result;
-                    if (result = DBProxy.Current.Select(null, "select '' as Article, 10 as ctn, 0.0 as CBM, 0 as Remainder where 1=0", out groupData))
+                    if (result = DBProxy.Current.Select(null, "select '' as Article, 10 as ctn, 0.0 as CBM, 0 as Remainder, '' as RefNoForBalance where 1=0", out groupData))
                     {
                         string article = string.Empty;
                         int recordNo = -1;
@@ -418,6 +485,7 @@ where o.ID = @orderid";
                                 if ((MyUtility.Convert.GetInt(dr["ShipQty"].ToString()) % MyUtility.Convert.GetInt(dr["QtyPerCTN"].ToString())) != 0)
                                 {
                                     groupData.Rows[recordNo]["Remainder"] = 1;
+                                    groupData.Rows[recordNo]["RefNoForBalance"] = dr["RefNoForBalance"];
                                 }
                             }
 
@@ -437,7 +505,18 @@ where o.ID = @orderid";
                             }
 
                             ttlCTN = ttlCTN + MyUtility.Convert.GetInt(dr["ctn"].ToString()) + remainder;
-                            ttlCBM = ttlCBM + (MyUtility.Convert.GetDouble(dr["CBM"]) * (MyUtility.Convert.GetInt(dr["ctn"]) + remainder));
+
+                            // 有設定尾箱的料號
+                            if (!MyUtility.Check.Empty(dr["RefNoForBalance"]) && remainder == 1)
+                            {
+                                // 最後一箱CBM需另外抓取
+                                cbmBalance = MyUtility.GetValue.Lookup("CBM", dr["RefNoForBalance"].ToString(), "LocalItem", "RefNo");
+                                ttlCBM = ttlCBM + (MyUtility.Convert.GetDouble(dr["CBM"]) * MyUtility.Convert.GetInt(dr["ctn"])) + MyUtility.Convert.GetDouble(cbmBalance);
+                            }
+                            else
+                            {
+                                ttlCBM = ttlCBM + (MyUtility.Convert.GetDouble(dr["CBM"]) * (MyUtility.Convert.GetInt(dr["ctn"]) + remainder));
+                            }
                         }
                     }
                     else
@@ -463,7 +542,19 @@ where o.ID = @orderid";
                         ctns = (int)Math.Ceiling(ctn);
                         ttlCTN = ttlCTN + ctns;
                         cbm = MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo");
-                        ttlCBM = ttlCBM + (MyUtility.Convert.GetDouble(cbm) * ctns);
+
+                        // 有設定尾箱的料號
+                        if (!MyUtility.Check.Empty(dr["RefNoForBalance"]) &&
+                             MyUtility.Convert.GetDouble(dr["ShipQty"]) % MyUtility.Convert.GetDouble(dr["QtyPerCTN"]) > 0)
+                        {
+                            // 最後一箱CBM需另外抓取
+                            cbmBalance = MyUtility.GetValue.Lookup("CBM", dr["RefNoForBalance"].ToString(), "LocalItem", "RefNo");
+                            ttlCBM = ttlCBM + (MyUtility.Convert.GetDouble(cbm) * (ctns - 1)) + MyUtility.Convert.GetDouble(cbmBalance);
+                        }
+                        else
+                        {
+                            ttlCBM = ttlCBM + (MyUtility.Convert.GetDouble(cbm) * ctns);
+                        }
                     }
                 }
             }
@@ -760,6 +851,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(this.CurrentMaintain["Order
             int startIndex = 0;
             int endIndex = 0;
             int dataRow = 0;
+
             // Carton Dimension:
             StringBuilder ctnDimension = new StringBuilder();
             foreach (DataRow dr in ctnDim.Rows)
@@ -867,7 +959,6 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(this.CurrentMaintain["Order
             {
                 worksheet.Cells[row, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["SpecialInstruction"]);
             }
-
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P02");
@@ -1115,7 +1206,8 @@ where o.ID = '{0}'
 	   sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
 	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as NW,
 	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as GW,
-	   isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW 
+	   isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW,
+       [Balance] = iif(isnull(o.CTNQty, 0) = 0, 0, oqd.Qty % o.CTNQty)
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 left Join Orders o WITH (NOLOCK) on o.ID = oqd.Id
 left join View_OrderFAColor voc on voc.id = oqd.Id and voc.Article = oqd.Article
@@ -1142,7 +1234,8 @@ order by oa.Seq,os.Seq",
 	   sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
 	   isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as NW,
 	   isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as GW,
-	   isnull(sw.NNW, isnull(sw2.NNW, 0))*oqc.Qty as NNW 
+	   isnull(sw.NNW, isnull(sw2.NNW, 0))*oqc.Qty as NNW,
+       [Balance] = iif(isnull(oqc.Qty, 0) = 0, 0, oqd.Qty % oqc.Qty)
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 left Join Orders o WITH (NOLOCK) on o.ID = oqd.Id
 left Join Order_QtyCTN oqc WITH (NOLOCK) on oqc.id = oqd.Id and oqc.Article = oqd.Article and oqc.SizeCode = oqd.SizeCode
@@ -1163,7 +1256,8 @@ order by oa.Seq,os.Seq",
 	   sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
 	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as NW,
 	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as GW,
-	   isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW 
+	   isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW,
+       [Balance] = iif(isnull(o.CTNQty,0) = 0, 0, oqd.Qty % o.CTNQty)
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 left Join Orders o WITH (NOLOCK) on o.ID = oqd.Id
 left join View_OrderFAColor voc on voc.id = oqd.Id and voc.Article = oqd.Article
@@ -1318,7 +1412,8 @@ DECLARE @refno VARCHAR(21),
 		@nw NUMERIC(7,3),
 		@gw NUMERIC(7,3),
 		@nnw NUMERIC(7,3),
-        @BarCode varchar(30)
+        @BarCode varchar(30),
+		@RefNoForBalance VARCHAR(21)
 
 --宣告變數: 記錄程式中的資料
 DECLARE @currentqty INT, --目前數量
@@ -1334,6 +1429,8 @@ DECLARE @currentqty INT, --目前數量
 		@firstsize VARCHAR(8), --第一筆的SizeCode
 		@minctn INT, --最少箱數
 		@_i INT --計算迴圈用
+
+Declare @GwBalance NUMERIC(7,3) -- 尾箱重新撈取GW
 
 SET @recordctnno = @ctnstartno
 SET @remaindercount = 0
@@ -1352,7 +1449,7 @@ BEGIN
 
 	--撈出PackingGuide_Detail資料
 	DECLARE cursor_packingguide CURSOR FOR
-		SELECT a.RefNo,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW,c.Seq,isnull(cb.BarCode,'')
+		SELECT a.RefNo,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW,c.Seq,isnull(cb.BarCode,''), a.RefNoForBalance
 		FROM PackingGuide_Detail a WITH (NOLOCK) 
 		LEFT JOIN Orders b WITH (NOLOCK) ON b.ID = @orderid
 		LEFT JOIN Order_SizeCode c WITH (NOLOCK) ON c.Id = b.POID AND a.SizeCode = c.SizeCode
@@ -1361,7 +1458,7 @@ BEGIN
 		ORDER BY c.Seq
 
 	OPEN cursor_packingguide
-	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq,@BarCode
+	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance
 	SET @firstsize = @sizecode
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
@@ -1390,14 +1487,14 @@ BEGIN
 				END
 			END
 
-		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq,@BarCode
+		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance
 	END
 	CLOSE cursor_packingguide
 	
 	--整理餘箱資料
 	SET @firstsize = ''
 	OPEN cursor_packingguide
-	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq,@BarCode
+	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		SET @currentqty = @shipqty - (@qtyperctn * @minctn)
@@ -1410,19 +1507,29 @@ BEGIN
 						SET @firstsize = @sizecode
 					END
 
+				IF ISNULL(@RefNoForBalance,'') <> ''
+					BEGIN
+						SELECT @GwBalance = CtnWeight FROM LocalItem WHERE RefNo = @RefNoForBalance
+					END
+				ELSE
+					BEGIN
+						SET @RefNoForBalance = null
+						SET @GwBalance = null
+					END
+
+
 				IF @firstsize = @sizecode
 					BEGIN
-						
 						INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,SizeSeq,BarCode)
-							VALUES (@refno, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, @gw-@nw, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @remaindercount, @seq,@BarCode)
+							VALUES (ISNULL(@RefNoForBalance,@refno), 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ISNULL(@GwBalance,@gw-@nw), (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @remaindercount, @seq,@BarCode)
 					END
 				ELSE
 					BEGIN
 						INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,SizeSeq,BarCode)
-							VALUES (@refno, 0, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, 0, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @remaindercount, @seq,@BarCode)
+							VALUES (ISNULL(@RefNoForBalance,@refno), 0, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, 0, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @remaindercount, @seq,@BarCode)
 					END
 			END
-		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq,@BarCode
+		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance
 	END
 	CLOSE cursor_packingguide
 	DEALLOCATE cursor_packingguide
@@ -1435,7 +1542,7 @@ CLOSE cursor_groupbyarticle
 DEALLOCATE cursor_groupbyarticle
 
 --找出目前最大箱號
-SELECT @ctnno = MAX(CtnNo) FROM @tempPackingList
+SELECT @ctnno = isnull(MAX(CtnNo),0) FROM @tempPackingList
 --宣告變數
 DECLARE @ctnqty INT, --Carton數
 		@nwperpcs NUMERIC(5,3) --每件淨重
@@ -1625,7 +1732,7 @@ DECLARE @tempRemainder TABLE (
 
 --將PackingGuide_Detail資料存放至Cursor
 DECLARE cursor_packguide CURSOR FOR
-	SELECT a.RefNo,a.Article,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW ,isnull(cb.BarCode,'')
+	SELECT a.RefNo,a.Article,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW ,isnull(cb.BarCode,''), a.RefNoForBalance
 	FROM PackingGuide_Detail a WITH (NOLOCK) 
 	LEFT JOIN Orders b WITH (NOLOCK) ON b.ID = @orderid
 	LEFT JOIN Order_Article c WITH (NOLOCK) ON c.Id = @orderid AND a.Article = c.Article
@@ -1643,7 +1750,8 @@ DECLARE @refno VARCHAR(21),
 		@nw NUMERIC(7,3),
 		@gw NUMERIC(7,3),
 		@nnw NUMERIC(7,3),
-        @BarCode varchar(30)
+        @BarCode varchar(30),
+		@RefNoForBalance VARCHAR(21)
 
 --宣告變數: 記錄程式中的資料
 DECLARE @currentqty INT, --目前數量
@@ -1656,6 +1764,9 @@ DECLARE @currentqty INT, --目前數量
 		@ttlnw NUMERIC(9,3), --總淨重，寫入PackingList時使用
 		@ttlgw NUMERIC(9,3), --總毛重，寫入PackingList時使用
 		@ttlnnw NUMERIC(9,3) --總淨淨重，寫入PackingList時使用
+
+Declare @GwBalance NUMERIC(7,3) -- 尾箱重新撈取GW
+
 SET @ctnno = @ctnstartno
 SET @seqcount = 0
 SET @remaindercount = 0
@@ -1667,7 +1778,7 @@ SET @ttlnnw = 0
 --開始run cursor
 OPEN cursor_packguide
 --將第一筆資料填入變數
-FETCH NEXT FROM cursor_packguide INTO @refno, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw,@BarCode
+FETCH NEXT FROM cursor_packguide INTO @refno, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw,@BarCode, @RefNoForBalance
 WHILE @@FETCH_STATUS = 0
 BEGIN
 	IF @qtyperctn > 0
@@ -1691,8 +1802,18 @@ BEGIN
 				ELSE
 					BEGIN
 						SET @remaindercount = @remaindercount + 1
-						INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode)
-							VALUES (@refno, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ((@nw/@qtyperctn)*@currentqty)+(@gw-@nw), (@nnw/@qtyperctn)*@currentqty, (@nw/@qtyperctn), @remaindercount,@BarCode)
+						IF ISNULL(@RefNoForBalance,'') = ''
+						BEGIN
+							INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode)
+								VALUES (@refno, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ((@nw/@qtyperctn)*@currentqty)+(@gw-@nw), (@nnw/@qtyperctn)*@currentqty, (@nw/@qtyperctn), @remaindercount,@BarCode)
+						END
+						ELSE
+						BEGIN
+							SELECT @GwBalance = CtnWeight FROM LocalItem WHERE RefNo = @RefNoForBalance
+							-- 有設定尾箱的料號
+							INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode)
+								VALUES (@RefNoForBalance, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ((@nw/@qtyperctn)*@currentqty)+@GwBalance, (@nnw/@qtyperctn)*@currentqty, (@nw/@qtyperctn), @remaindercount,@BarCode)
+						END
 					END
 
 				SET @currentqty = @currentqty - @qtyperctn
@@ -1700,7 +1821,7 @@ BEGIN
 		END
 
 	--將下一筆資料填入變數
-	FETCH NEXT FROM cursor_packguide INTO @refno, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw,@BarCode
+	FETCH NEXT FROM cursor_packguide INTO @refno, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw,@BarCode, @RefNoForBalance
 END
 
 --關閉cursor與參數的關聯
@@ -1893,7 +2014,8 @@ DECLARE @refno VARCHAR(21),
 		@nw NUMERIC(7,3),
 		@gw NUMERIC(7,3),
 		@nnw NUMERIC(5,3),
-        @Barcode varchar(30)
+        @BarCode varchar(30),
+		@RefNoForBalance VARCHAR(21)
 
 --宣告變數: 記錄程式中的資料
 DECLARE @currentqty INT, --目前數量
@@ -1910,6 +2032,9 @@ DECLARE @currentqty INT, --目前數量
 		@firstsize VARCHAR(8), --第一筆的SizeCode
 		@minctn INT, --最少箱數
 		@_i INT --計算迴圈用
+
+Declare @GwBalance NUMERIC(7,3) -- 尾箱重新撈取GW
+
 DECLARE @articlecnt INT
 DECLARE @lastctn varchar(2)
 SET @recordctnno = @ctnstartno
@@ -1932,7 +2057,7 @@ BEGIN
 
 	--撈出PackingGuide_Detail資料
 	DECLARE cursor_packingguide CURSOR FOR
-		SELECT a.RefNo,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW,c.Seq,isnull(cb.BarCode,'')
+		SELECT a.RefNo,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW,c.Seq,isnull(cb.BarCode,''), a.RefNoForBalance
 		FROM PackingGuide_Detail a WITH (NOLOCK) 
 		LEFT JOIN Orders b WITH (NOLOCK) ON b.ID = @orderid
 		LEFT JOIN Order_SizeCode c WITH (NOLOCK) ON c.Id = b.POID AND a.SizeCode = c.SizeCode
@@ -1941,7 +2066,7 @@ BEGIN
 		ORDER BY c.Seq
 
 	OPEN cursor_packingguide
-	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq,@Barcode
+	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance
 	SET @firstsize = @sizecode
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
@@ -1970,15 +2095,15 @@ BEGIN
 				END
 			END
 
-		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode
+		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance
 	END
 	CLOSE cursor_packingguide
 	
 	--整理餘箱資料
-	SELECT @ctnno = MAX(CtnNo) FROM @tempPackingList where Article = @article
+	SELECT @ctnno = isnull(MAX(CtnNo),0) FROM @tempPackingList where Article = @article
 	SET @firstsize = ''
 	OPEN cursor_packingguide
-	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode
+	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		SET @currentqty = @shipqty - (@qtyperctn * @minctn)
@@ -1991,24 +2116,35 @@ BEGIN
 						SET @firstsize = @sizecode
 					END
 
+				IF ISNULL(@RefNoForBalance,'') <> ''
+					BEGIN
+						SELECT @GwBalance = CtnWeight FROM LocalItem WHERE RefNo = @RefNoForBalance
+					END
+				ELSE
+					BEGIN
+						SET @RefNoForBalance = null
+						SET @GwBalance = null
+					END
+
 				IF @firstsize = @sizecode
 					BEGIN
 						SET @ctnno = @ctnno + 1
+
 						INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,LastCntNo,ArticleSeq,Barcode)
-							VALUES (@refno, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, @gw-@nw, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @remaindercount, @ctnno,@lastctn,@articleSeq,@Barcode)
+							VALUES (ISNULL(@RefNoForBalance,@refno), 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ISNULL(@GwBalance,@gw-@nw), (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @ctnno, @seq, @lastctn, @articleSeq, @Barcode)
 					END
 				ELSE
 					BEGIN
 						INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,LastCntNo,ArticleSeq,Barcode)
-							VALUES (@refno, 0, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, 0, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @remaindercount, @ctnno,@lastctn,@articleSeq,@Barcode)
+							VALUES (ISNULL(@RefNoForBalance,@refno), 0, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, 0, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @ctnno, @seq, @lastctn, @articleSeq, @Barcode)
 					END
 			END
-		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode
+		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance
 	END
 	CLOSE cursor_packingguide
 	DEALLOCATE cursor_packingguide
 
-	FETCH NEXT FROM cursor_groupbyarticle INTO @article,  @articleSeq
+	FETCH NEXT FROM cursor_groupbyarticle INTO @article, @articleSeq
 END
 --關閉cursor與參數的關聯
 CLOSE cursor_groupbyarticle
@@ -2202,7 +2338,8 @@ DECLARE @refno VARCHAR(21),
 		@nw NUMERIC(7,3),
 		@gw NUMERIC(7,3),
 		@nnw NUMERIC(5,3),
-        @Barcode varchar(30)
+        @BarCode varchar(30),
+		@RefNoForBalance VARCHAR(21)
 
 --宣告變數: 記錄程式中的資料
 DECLARE @currentqty INT, --目前數量
@@ -2215,6 +2352,8 @@ DECLARE @currentqty INT, --目前數量
 		@ttlnw NUMERIC(9,3), --總淨重，寫入PackingList時使用
 		@ttlgw NUMERIC(9,3), --總毛重，寫入PackingList時使用
 		@ttlnnw NUMERIC(9,3) --總淨淨重，寫入PackingList時使用
+
+Declare @GwBalance NUMERIC(7,3) -- 尾箱重新撈取GW
 
 DECLARE @lastctn varchar(2)
 DECLARE @articlecnt INT
@@ -2235,15 +2374,15 @@ BEGIN
 	--開始run cursor
 	--將PackingGuide_Detail資料存放至Cursor
 	DECLARE cursor_packguide CURSOR FOR
-	SELECT a.RefNo,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW , isnull(cb.BarCode,'')
-	FROM PackingGuide_Detail a WITH (NOLOCK) 
-	LEFT JOIN Orders b WITH (NOLOCK) ON b.ID = @orderid
-	LEFT JOIN Order_SizeCode d WITH (NOLOCK) ON d.Id = b.POID AND a.SizeCode = d.SizeCode
-    LEFT JOIN CustBarCode cb WITH (NOLOCK) ON b.CustPoNo = cb.CustPoNo and b.StyleID = cb.StyleID and a.Article = cb.Article and a.SizeCode = cb.SizeCode
-	WHERE a.ID = @id and a.Article = @article ORDER BY d.Seq
+	    SELECT a.RefNo,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW , isnull(cb.BarCode,''), a.RefNoForBalance
+	    FROM PackingGuide_Detail a WITH (NOLOCK) 
+	    LEFT JOIN Orders b WITH (NOLOCK) ON b.ID = @orderid
+	    LEFT JOIN Order_SizeCode d WITH (NOLOCK) ON d.Id = b.POID AND a.SizeCode = d.SizeCode
+        LEFT JOIN CustBarCode cb WITH (NOLOCK) ON b.CustPoNo = cb.CustPoNo and b.StyleID = cb.StyleID and a.Article = cb.Article and a.SizeCode = cb.SizeCode
+	    WHERE a.ID = @id and a.Article = @article ORDER BY d.Seq
 	OPEN cursor_packguide
 	--將第一筆資料填入變數
-	FETCH NEXT FROM cursor_packguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @Barcode
+	FETCH NEXT FROM cursor_packguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @Barcode, @RefNoForBalance
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		IF @qtyperctn > 0
@@ -2267,15 +2406,25 @@ BEGIN
 				ELSE
 					BEGIN
 						SET @remaindercount = @remaindercount + 1
-						INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,Barcode)
-							VALUES (@refno, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ((@nw/@qtyperctn)*@currentqty)+(@gw-@nw), (@nnw/@qtyperctn)*@currentqty, (@nw/@qtyperctn), @remaindercount,@Barcode)
+						IF ISNULL(@RefNoForBalance,'') = ''
+						BEGIN
+							INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,Barcode)
+								VALUES (@refno, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ((@nw/@qtyperctn)*@currentqty)+(@gw-@nw), (@nnw/@qtyperctn)*@currentqty, (@nw/@qtyperctn), @remaindercount,@Barcode)
+						END
+						ELSE
+						BEGIN
+							SELECT @GwBalance = CtnWeight FROM LocalItem WHERE RefNo = @RefNoForBalance
+							-- 有設定尾箱的料號
+							INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode)
+								VALUES (@RefNoForBalance, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ((@nw/@qtyperctn)*@currentqty)+@GwBalance, (@nnw/@qtyperctn)*@currentqty, (@nw/@qtyperctn), @remaindercount,@Barcode)
+						END
 					END
 	
 				SET @currentqty = @currentqty - @qtyperctn
 			END
 		END
 		--將下一筆資料填入變數
-		FETCH NEXT FROM cursor_packguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw,@Barcode
+		FETCH NEXT FROM cursor_packguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw,@Barcode, @RefNoForBalance
 	END
 	--關閉cursor與參數的關聯
 	CLOSE cursor_packguide
@@ -2578,8 +2727,24 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select RefNo,Description,STR(CtnLength,8,4)+'*'+STR(CtnWidth,8,4)+'*'+STR(CtnHeight,8,4) as Dim from LocalItem where Category = 'CARTON' and Junk = 0 order by RefNo", "10,25,25", this.txtCartonRef.Text.Trim());
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.txtCartonRef.Text = item.GetSelectedString();
+        }
+
+        private void TxtCartonRefBalance_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select RefNo,Description,STR(CtnLength,8,4)+'*'+STR(CtnWidth,8,4)+'*'+STR(CtnHeight,8,4) as Dim from LocalItem where Category = 'CARTON' and Junk = 0 order by RefNo", "10,25,25", this.txtCartonRefBalance.Text.Trim());
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtCartonRefBalance.Text = item.GetSelectedString();
         }
 
         private void TxtCartonRef_Validating(object sender, CancelEventArgs e)
@@ -2607,6 +2772,31 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
             }
         }
 
+        private void TxtCartonRefBalance_Validating(object sender, CancelEventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.txtCartonRefBalance.Text))
+            {
+                this.txtCartonRefBalance.Text = string.Empty;
+                return;
+            }
+
+            List<SqlParameter> sqlpar = new List<SqlParameter>();
+            sqlpar.Add(new SqlParameter("@CartonRef", this.txtCartonRefBalance.Text));
+
+            string seekSql = "select RefNo,Description,CtnWeight from LocalItem where Category = 'CARTON' and Junk = 0 and RefNo = @CartonRef";
+            DataRow dr;
+            if (!MyUtility.Check.Seek(seekSql, sqlpar, out dr))
+            {
+                e.Cancel = true;
+                MyUtility.Msg.WarningBox(string.Format("< Ref No. : {0} > not found!!!", this.txtCartonRefBalance.Text));
+                return;
+            }
+            else
+            {
+                this.txtCartonRefBalance.Text = MyUtility.Convert.GetString(dr["RefNo"]);
+            }
+        }
+
         private void BtnUpdate_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
@@ -2616,6 +2806,19 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
                 if (MyUtility.Convert.GetBool(item.Cells[0].Value))
                 {
                     item.Cells[1].Value = this.txtCartonRef.Text; // Refno欄位
+                }
+            }
+        }
+
+        private void BtnUpdateBalance_Click(object sender, EventArgs e)
+        {
+            this.detailgrid.ValidateControl();
+            foreach (DataGridViewRow item in this.detailgrid.Rows)
+            {
+                // 判斷selected欄位
+                if (MyUtility.Convert.GetBool(item.Cells[0].Value))
+                {
+                    item.Cells[12].Value = this.txtCartonRefBalance.Text; // RefNoForBalance欄位
                 }
             }
         }

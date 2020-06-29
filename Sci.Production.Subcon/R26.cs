@@ -302,6 +302,8 @@ select DISTINCT c.FactoryID
             ,b.qty-b.InQty
 	        ,b.APQty
             ,a.id
+			,a.Status
+			,rec.IssueDate
             ,b.RequestID
 	        ,b.Remark
 from localpo a WITH (NOLOCK) 
@@ -311,6 +313,13 @@ left join localsupp d  WITH (NOLOCK) on  d.id =a.LocalSuppID
 left join ThreadColor on b.ThreadColorID = ThreadColor.ID
 left join LocalItem li WITH (NOLOCK) on li.RefNo=b.Refno
 outer apply(select KPIRate = dbo.getrate('KP','USD',a.CurrencyID ,a.IssueDate))x
+OUTER APPLY(
+	SELECT TOP 1 l.IssueDate
+	FROM LocalReceiving_Detail LD
+	INNER JOIN LocalReceiving L on L.Id=LD.Id 
+	WHERE LD.LocalPo_detailukey = b.Ukey
+	ORDER BY l.AddDate DESC
+)rec
 " + sqlWhere);
                 result = DBProxy.Current.Select("", sqlcd, lis, out dtt);
                 if (!result)

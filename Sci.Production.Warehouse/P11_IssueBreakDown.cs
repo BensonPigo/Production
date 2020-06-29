@@ -36,6 +36,8 @@ namespace Sci.Production.Warehouse
                 DtModifyIssueBDown.ImportRow(dr);
             }
             DtModifyIssueBDown.DefaultView.RowFilter = DtIssueBreakDown.DefaultView.RowFilter;
+
+            this.displayColor.BackColor = Color.LightGray;
         }
 
         protected override void OnFormLoaded()
@@ -94,6 +96,19 @@ order by [OrderID], [Article]", Master["orderid"], sbSizecode.ToString().Substri
             //設定Columns 位置
             DtModifyIssueBDown.Columns["Selected"].SetOrdinal(0);
 
+
+            DataTable ReadonlyDT;
+            DBProxy.Current.Select(null, "SELECT ID FROM Orders WITH(NOLOCK) WHERE (Junk=1 AND NeedProduction = 0) OR (IsBuyBack=1 AND BuyBackReason='Garment') ", out ReadonlyDT);
+            List<string> ReadonlyList = ReadonlyDT.AsEnumerable().Select(o => o["ID"].ToString()).Distinct().ToList();
+
+            foreach (DataRow item in DtModifyIssueBDown.Rows)
+            {
+                if (ReadonlyList.Where(o => o == item["OrderID"].ToString()).Any())
+                {
+                    item["Selected"] = false;
+                }
+            }
+
             gridIssueBreakDownBS.DataSource = DtModifyIssueBDown;
             gridIssueBreakDown.DataSource = gridIssueBreakDownBS;
             gridIssueBreakDown.IsEditingReadOnly = false;
@@ -111,6 +126,8 @@ order by [OrderID], [Article]", Master["orderid"], sbSizecode.ToString().Substri
 
             gridIssueBreakDown.Columns["Selected"].HeaderText = "";
             gridIssueBreakDown.Columns["Selected"].Width = 25;
+
+            this.Pink();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -139,16 +156,27 @@ order by [OrderID], [Article]", Master["orderid"], sbSizecode.ToString().Substri
         {
             if (DtModifyIssueBDown == null) return;
 
+            DataTable readonlyDt;
+            DBProxy.Current.Select(null, "SELECT ID FROM Orders WITH(NOLOCK) WHERE (Junk=1 AND NeedProduction = 0) OR (IsBuyBack=1 AND BuyBackReason='Garment') ", out readonlyDt);
+
+
             // 自動勾選Select
             if (MouseButtons.Left == e.Button && 0 == e.ColumnIndex)
             {
                 DataTable dt = (DataTable)gridIssueBreakDownBS.DataSource;
-                DataRow[] drCheck = dt.Select("Selected = 0 ");
-                if (drCheck.Length > 0)
+                DataRow[] drCheck = dt.Select("Selected = 1 ");
+                if (drCheck.Length == 0)
                 {
                     foreach (DataRow dr in dt.Rows)
                     {
-                        dr["Selected"] = 1;
+                        if (readonlyDt.Select($"ID = '{dr["OrderId"]}'").Length > 0)
+                        {
+                            dr["Selected"] = 0;
+                        }
+                        else
+                        {
+                            dr["Selected"] = 1;
+                        }
                     }
                 }
                 else
@@ -205,6 +233,55 @@ order by [OrderID], [Article]", Master["orderid"], sbSizecode.ToString().Substri
                 }
             }
             dt.DefaultView.Sort = "OrderID,Article";
+
+            this.Pink();
+        }
+
+        private void gridIssueBreakDown_Sorted(object sender, EventArgs e)
+        {
+            this.Pink();
+        }
+
+        private void Pink()
+        {
+            DataTable dt;
+            DBProxy.Current.Select(null, "SELECT ID FROM Orders WITH(NOLOCK) WHERE (Junk=1 AND NeedProduction = 0) OR (IsBuyBack=1 AND BuyBackReason='Garment')", out dt);
+
+
+            foreach (DataGridViewRow Row in gridIssueBreakDown.Rows)
+            {
+                string orderID = Row.Cells["OrderID"].Value.ToString();
+
+                DataRow[] s = dt.Select($"ID = '{orderID}'");
+
+                if (s.Length > 0)
+                {
+                    foreach (DataGridViewColumn Column in gridIssueBreakDown.Columns)
+                    {
+                        Row.Cells[Column.Name].Style.BackColor = Color.LightGray;
+                        Row.ReadOnly = true;
+                    }
+                    Row.Cells["Selected"].Value = false;
+                }
+
+            }
+
+            foreach (DataGridViewRow Row in gridQtyBreakDown.Rows)
+            {
+                string orderID = Row.Cells["OrderID"].Value.ToString();
+
+                DataRow[] s = dt.Select($"ID = '{orderID}'");
+
+                if (s.Length > 0)
+                {
+                    foreach (DataGridViewColumn Column in gridQtyBreakDown.Columns)
+                    {
+                        Row.Cells[Column.Name].Style.BackColor = Color.LightGray;
+                        Row.ReadOnly = true;
+                    }
+                }
+
+            }
         }
     }
 }
