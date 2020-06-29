@@ -377,6 +377,10 @@ where o. ID = @sp
 and o.FtyGroup = @FtyGroup
 and f.IsProduceFty = 1
 and o.Category in ('B','S')
+and not exists (select 1 from Orders exludeOrder with (nolock) 
+                            where (exludeOrder.junk = 1 and exludeOrder.NeedProduction = 0) and
+                                  exludeOrder.ID = o.ID
+                        )
 ";
                     try
                     {

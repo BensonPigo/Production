@@ -278,10 +278,15 @@ and s.FactoryID = @FactoryID
             lis.Add(new SqlParameter("@FtyGroup", Sci.Env.User.Factory));
             string sqlcmd = $@"
 select 1
-from Orders o with(nolock) inner join Factory f with(nolock) on o.FactoryID = f.ID 
+from Orders o with(nolock) 
+inner join Factory f with(nolock) on o.FactoryID = f.ID 
 where o.ID = @sp
 and o.FtyGroup = @FtyGroup
 and f.IsProduceFty = 1
+and not exists (select 1 from Orders exludeOrder with (nolock) 
+                            where (exludeOrder.junk = 1 and exludeOrder.NeedProduction = 0) and
+                                  exludeOrder.ID = o.ID
+                        )
 ";
             try
             {
