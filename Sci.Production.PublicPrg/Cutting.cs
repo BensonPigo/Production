@@ -1748,7 +1748,8 @@ and s.FactoryID = '{FactoryID}'
                     LeadTime o = new LeadTime()
                     {
                         OrderID = OrderID,
-                        LeadTimeDay = MyUtility.Check.Empty(AnnotationStr) ? 0 : Convert.ToInt32(LeadTime_dt.Rows[0]["LeadTime"]) //加工段為空，LeadTimeDay = 0
+                        LeadTimeDay = MyUtility.Check.Empty(AnnotationStr) ? 0 : Convert.ToInt32(LeadTime_dt.Rows[0]["LeadTime"]), //加工段為空，LeadTimeDay = 0
+                        Subprocess = AnnotationStr
                     };
                     LeadTimeList.Add(o);
                 }
@@ -1968,6 +1969,7 @@ DROP TABLE #beforeTmp
         {
             public string OrderID { get; set; }
             public int LeadTimeDay { get; set; }
+            public string Subprocess { get; set; }
         }
 
         public class InOffLineList
