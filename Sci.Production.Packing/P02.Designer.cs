@@ -61,6 +61,9 @@
             this.displayFactory = new Sci.Win.UI.DisplayBox();
             this.btnSwitchToPLByArticle = new Sci.Win.UI.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnUpdateBalance = new Sci.Win.UI.Button();
+            this.txtCartonRefBalance = new Sci.Win.UI.TextBox();
+            this.lbUpdateRefNoforBalance = new Sci.Win.UI.Label();
             this.btnUpdate = new Sci.Win.UI.Button();
             this.txtCartonRef = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
@@ -570,6 +573,9 @@
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.btnUpdateBalance);
+            this.panel1.Controls.Add(this.txtCartonRefBalance);
+            this.panel1.Controls.Add(this.lbUpdateRefNoforBalance);
             this.panel1.Controls.Add(this.btnUpdate);
             this.panel1.Controls.Add(this.txtCartonRef);
             this.panel1.Controls.Add(this.label1);
@@ -579,6 +585,36 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(912, 38);
             this.panel1.TabIndex = 30;
+            // 
+            // btnUpdateBalance
+            // 
+            this.btnUpdateBalance.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnUpdateBalance.Location = new System.Drawing.Point(744, 3);
+            this.btnUpdateBalance.Name = "btnUpdateBalance";
+            this.btnUpdateBalance.Size = new System.Drawing.Size(80, 30);
+            this.btnUpdateBalance.TabIndex = 36;
+            this.btnUpdateBalance.Text = "Update";
+            this.btnUpdateBalance.UseVisualStyleBackColor = true;
+            this.btnUpdateBalance.Click += new System.EventHandler(this.BtnUpdateBalance_Click);
+            // 
+            // txtCartonRefBalance
+            // 
+            this.txtCartonRefBalance.BackColor = System.Drawing.Color.White;
+            this.txtCartonRefBalance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCartonRefBalance.Location = new System.Drawing.Point(561, 7);
+            this.txtCartonRefBalance.Name = "txtCartonRefBalance";
+            this.txtCartonRefBalance.Size = new System.Drawing.Size(177, 23);
+            this.txtCartonRefBalance.TabIndex = 35;
+            this.txtCartonRefBalance.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtCartonRefBalance_PopUp);
+            this.txtCartonRefBalance.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCartonRefBalance_Validating);
+            // 
+            // lbUpdateRefNoforBalance
+            // 
+            this.lbUpdateRefNoforBalance.Location = new System.Drawing.Point(383, 7);
+            this.lbUpdateRefNoforBalance.Name = "lbUpdateRefNoforBalance";
+            this.lbUpdateRefNoforBalance.Size = new System.Drawing.Size(175, 23);
+            this.lbUpdateRefNoforBalance.TabIndex = 34;
+            this.lbUpdateRefNoforBalance.Text = "Update Ref No. for Balance";
             // 
             // btnUpdate
             // 
@@ -687,5 +723,8 @@
         private Win.UI.Button btnUpdate;
         private Win.UI.TextBox txtCartonRef;
         private Win.UI.Label label1;
+        private Win.UI.Button btnUpdateBalance;
+        private Win.UI.TextBox txtCartonRefBalance;
+        private Win.UI.Label lbUpdateRefNoforBalance;
     }
 }

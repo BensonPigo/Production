@@ -252,7 +252,7 @@ namespace Sci
                         string seekSql = string.Format("select RefNo from LocalItem where Category = 'CARTON' and Junk = 0 and RefNo = '{0}'", e.FormattedValue.ToString());
                         if (MyUtility.Check.Seek(seekSql) == false)
                         {
-                            dr["RefNo"] = "";
+                            dr[propertyname] = "";
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox(string.Format("< Ref No. : {0} > not found!!!", e.FormattedValue.ToString()));
                             return;
