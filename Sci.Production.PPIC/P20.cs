@@ -72,7 +72,7 @@ namespace Sci.Production.PPIC
             .Text("ShipmodeID", header: "Ship Mode", width: Widths.AnsiChars(10))
             .Date("BuyerDelivery", header: "Delivery", width: Widths.AnsiChars(10))
             .Date("FtyKPI", header: "Fty KPI Date", width: Widths.AnsiChars(10))
-            .Numeric("Qty", header: "Total Q'ty", width: Widths.AnsiChars(6))
+            .Numeric("NowQty", header: "Total Q'ty", width: Widths.AnsiChars(6))
             .Text("ReasonID", header: "Reason", width: Widths.AnsiChars(10))
             .Text("Name", header: "Reason Desc.", width: Widths.AnsiChars(10))
             .Text("Remark", header: "Reason Remark", width: Widths.AnsiChars(10))
@@ -320,16 +320,16 @@ with SortBy as (
 tmpData as (
       select oq.Article
              , oq.SizeCode
-             , oq.Qty
+             , oq.NowQty
              , sb.RowNo
-      from Order_Qty oq WITH (NOLOCK) 
+      from OrderChangeApplication_Detail oq WITH (NOLOCK) 
       inner join SortBy sb on oq.Article = sb.Article
-      where oq.ID = '{0}'
+      where oq.ID = '{2}'
 ),
 SubTotal as (
       select 'TTL' as Article
              , SizeCode
-             , SUM(Qty) as Qty
+             , SUM(NowQty) as NowQty
              , '9999' as RowNo
       from tmpData
       group by SizeCode
@@ -343,15 +343,16 @@ pivotData as (
       select *
       from UnionData
       pivot( 
-            sum(Qty) for SizeCode in ({1})
+            sum(NowQty) for SizeCode in ({1})
       ) a
 )
-select Total=(select sum(Qty) from UnionData where Article = p.Article)
+select Total=(select sum(NowQty) from UnionData where Article = p.Article)
 	,Article,{1}
 from pivotData p
 order by RowNo",
                 this.CurrentMaintain["Orderid"],
-                sizeCode);
+                sizeCode,
+                this.CurrentMaintain["ID"]);
             DataTable qtybrk;
             result = DBProxy.Current.Select(null, sqlCmd, out qtybrk);
             if (!result)
@@ -364,7 +365,8 @@ order by RowNo",
             #endregion
             #region tab 2
             sqlCmd = $@"
-select oq.*,r.Name,r.Remark
+select oq.*,r.Name,r.Remark,
+    NowQty = (select SUM(NowQty) from OrderChangeApplication_Detail ocad where ocad.ID = '{this.CurrentMaintain["ID"]}' and ocad.Seq = oq.Seq)
 from Order_QtyShip oq WITH (NOLOCK) 
 left join Reason r WITH (NOLOCK) on r.ReasonTypeID = '{this.reasonTypeID}'  and r.ID = oq.ReasonID
 where oq.ID = '{this.CurrentMaintain["Orderid"]}'
@@ -379,12 +381,12 @@ order by Seq";
 
             sqlCmd = string.Format(
 @"with tmpData as (
-    select oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty,oa.Seq as ASeq
-    from Order_QtyShip_Detail oqd WITH (NOLOCK) 
-    left join Order_Article oa WITH (NOLOCK) on oa.ID = oqd.ID and oa.Article = oqd.Article
-    where oqd.ID = '{0}'
+    select oqd.Seq,oqd.Article,oqd.SizeCode,oqd.NowQty,oa.Seq as ASeq
+    from OrderChangeApplication_Detail oqd WITH (NOLOCK) 
+    left join Order_Article oa WITH (NOLOCK) on oa.ID = '{0}' and oa.Article = oqd.Article
+    where oqd.ID = '{2}'
 ),SubTotal as (
-    select Seq,'TTL' as Article,SizeCode,SUM(Qty) as Qty, '9999' as ASeq
+    select Seq,'TTL' as Article,SizeCode,SUM(NowQty) as NowQty, '9999' as ASeq
     from tmpData
     group by Seq,SizeCode
 ),UnionData as (
@@ -394,16 +396,17 @@ order by Seq";
 ),pivotData as (
     select *
     from UnionData
-    pivot( sum(Qty)    for SizeCode in ({1})) a
+    pivot( sum(NowQty)    for SizeCode in ({1})) a
 )
 select 
-	Total=(select sum(Qty) from UnionData where Seq = p.Seq and Article = p.Article)
+	Total=(select sum(NowQty) from UnionData where Seq = p.Seq and Article = p.Article)
 	,Article,{1}
     ,Seq
 from pivotData p
 order by ASeq",
                 this.CurrentMaintain["Orderid"],
-                sizeCode);
+                sizeCode,
+                this.CurrentMaintain["ID"]);
             result = DBProxy.Current.Select(null, sqlCmd, out this.shipdata2);
             if (!result)
             {
