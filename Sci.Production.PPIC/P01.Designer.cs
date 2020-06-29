@@ -304,6 +304,7 @@
             this.btnQtyChangeList = new Sci.Win.UI.Button();
             this.BtnBuyBack = new Sci.Win.UI.Button();
             this.btnComboType = new Sci.Win.UI.Button();
+            this.displayBuyBackReason = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -320,6 +321,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.displayBuyBackReason);
             this.detailcont.Controls.Add(this.btnComboType);
             this.detailcont.Controls.Add(this.BtnBuyBack);
             this.detailcont.Controls.Add(this.btnQtyChangeList);
@@ -454,10 +456,10 @@
             this.detailcont.Controls.Add(this.txtpaytermar1);
             this.detailcont.Controls.Add(this.txtcurrency1);
             this.detailcont.Controls.Add(this.txtcountry1);
-            this.detailcont.Controls.Add(this.txtuser1);
             this.detailcont.Controls.Add(this.txtuser2);
-            this.detailcont.Controls.Add(this.txttpeuser1);
+            this.detailcont.Controls.Add(this.txtuser1);
             this.detailcont.Controls.Add(this.txttpeuser2);
+            this.detailcont.Controls.Add(this.txttpeuser1);
             this.detailcont.Size = new System.Drawing.Size(1000, 661);
             // 
             // detailbtm
@@ -3398,6 +3400,16 @@
             this.btnComboType.UseVisualStyleBackColor = true;
             this.btnComboType.Click += new System.EventHandler(this.BtnComboType_Click);
             // 
+            // displayBuyBackReason
+            // 
+            this.displayBuyBackReason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBuyBackReason.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyBackReason", true));
+            this.displayBuyBackReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBuyBackReason.Location = new System.Drawing.Point(181, 31);
+            this.displayBuyBackReason.Name = "displayBuyBackReason";
+            this.displayBuyBackReason.Size = new System.Drawing.Size(88, 21);
+            this.displayBuyBackReason.TabIndex = 239;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 722);
@@ -3705,5 +3717,6 @@
         private Win.UI.Button btnQtyChangeList;
         private Win.UI.Button BtnBuyBack;
         private Win.UI.Button btnComboType;
+        private Win.UI.DisplayBox displayBuyBackReason;
     }
 }
