@@ -25,6 +25,11 @@ BEGIN
   DROP TABLE SewingOutput_Detail_Detail
 END
 
+IF OBJECT_ID(N'Order_Location') IS NOT NULL
+BEGIN
+  DROP TABLE Order_Location
+END
+
 declare @DateStart date= (SELECT DATEADD(DAY,1,SewLock) FROM Production.dbo.System);
 declare @DateEnd date=CONVERT(date, GETDATE());
 declare @DateInfoName varchar(30) ='SewingOutput';
@@ -64,7 +69,10 @@ INTO SewingOutput_Detail_Detail
 FROM Pms_To_Trade.dbo.SewingOutput a ,Production.dbo.SewingOutput_Detail_Detail b
 where a.id=b.ID
 
-
+select ol.*
+into Order_Location
+from Production.dbo.Order_Location ol
+where exists(select 1 from Pms_To_Trade.dbo.SewingOutput_Detail where OrderId = ol.OrderId)
 END
 
 
