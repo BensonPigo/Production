@@ -392,6 +392,11 @@ order by ID"
                     sxr.DicDatas.Add(sxr.VPrefix + "CR" + idxStr, dts[10].Rows.Count);
 
                     int idx = 0;
+
+                    // Sheet3 每張SP的分隔線，只需要畫好一個，後面都是複製的
+                    wks = sxr.ExcelApp.Worksheets[3];
+                    wks.get_Range($"A3:S3").Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].Weight = 3;
+
                     foreach (DataRow dr in dts[10].Rows)
                     {
                         string sIdx = idx.ToString();
@@ -598,7 +603,7 @@ group by POID,b.spno,br.Customize2";
         {
             string msg = string.Empty;
 
-            string oriSP = string.Empty;
+            string firstSP = string.Empty;
 
             List<string> spList = new List<string>();
 
@@ -615,16 +620,21 @@ group by POID,b.spno,br.Customize2";
             List<string> status4 = new List<string>();
 
             int q = 0;
+
+            // 以20021103GG/20021103GG001舉例
             foreach (var sp in orderIDs.Split('/'))
             {
                 if (q == 0)
                 {
-                    oriSP = sp;
+                    // 第一個SP(20021103GG)直接塞進List即可
+                    firstSP = sp;
                     spList.Add(sp);
                 }
                 else
                 {
-                    spList.Add(oriSP + sp);
+                    // 第一個之後的，會是001、002...等等，因此需要抓第一個SP來取POID，加上001、002...組成正確SP#
+                    string poid = firstSP.Substring(0, 10);
+                    spList.Add(poid + sp);
                 }
 
                 q++;
@@ -657,7 +667,7 @@ group by POID,b.spno,br.Customize2";
             string tmp1Msg = status1.Any() ? "Cancel still need to continue Production : "
                 + status1.FirstOrDefault()
                 + (status1.Where(o => o != status1.FirstOrDefault()).Any() ?
-                   ("/" + status1.Where(o => o != status1.FirstOrDefault()).JoinToString("/").Replace(oriSP, string.Empty)) : string.Empty)
+                   ("/" + status1.Where(o => o != status1.FirstOrDefault()).JoinToString("/").Replace(firstSP, string.Empty)) : string.Empty)
                     : string.Empty;
 
             if (!MyUtility.Check.Empty(tmp1Msg))
@@ -668,7 +678,7 @@ group by POID,b.spno,br.Customize2";
             string tmp2Msg = status2.Any() ? "Keep Panel without production : "
                 + status2.FirstOrDefault()
                 + (status2.Where(o => o != status2.FirstOrDefault()).Any() ?
-                   ("/" + status2.Where(o => o != status2.FirstOrDefault()).JoinToString("/").Replace(oriSP, string.Empty)) : string.Empty)
+                   ("/" + status2.Where(o => o != status2.FirstOrDefault()).JoinToString("/").Replace(firstSP, string.Empty)) : string.Empty)
                     : string.Empty;
 
             if (!MyUtility.Check.Empty(tmp2Msg))
@@ -679,7 +689,7 @@ group by POID,b.spno,br.Customize2";
             string tmp3Msg = status3.Any() ? "Cancel : "
                 + status3.FirstOrDefault()
                 + (status3.Where(o => o != status3.FirstOrDefault()).Any() ?
-                   ("/" + status3.Where(o => o != status3.FirstOrDefault()).JoinToString("/").Replace(oriSP, string.Empty)) : string.Empty)
+                   ("/" + status3.Where(o => o != status3.FirstOrDefault()).JoinToString("/").Replace(firstSP, string.Empty)) : string.Empty)
                     : string.Empty;
 
             if (!MyUtility.Check.Empty(tmp3Msg))
@@ -690,7 +700,7 @@ group by POID,b.spno,br.Customize2";
             string tmp4Msg = status4.Any() ? "Buy Back : "
                 + status4.FirstOrDefault()
                 + (status4.Where(o => o != status4.FirstOrDefault()).Any() ?
-                   ("/" + status4.Where(o => o != status4.FirstOrDefault()).JoinToString("/").Replace(oriSP, string.Empty)) : string.Empty)
+                   ("/" + status4.Where(o => o != status4.FirstOrDefault()).JoinToString("/").Replace(firstSP, string.Empty)) : string.Empty)
                     : string.Empty;
 
             if (!MyUtility.Check.Empty(tmp4Msg))
