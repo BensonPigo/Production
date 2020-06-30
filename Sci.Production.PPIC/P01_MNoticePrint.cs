@@ -652,33 +652,53 @@ group by POID,b.spno,br.Customize2";
                     status4.Add(dr["ID"].ToString());
                 }
             }
+            List<string> mesgs = new List<string>();
 
             string tmp1Msg = status1.Any() ? "Cancel still need to continue Production : "
                 + status1.FirstOrDefault()
                 + (status1.Where(o => o != status1.FirstOrDefault()).Any() ?
                    ("/" + status1.Where(o => o != status1.FirstOrDefault()).JoinToString("/").Replace(oriSP, string.Empty)) : string.Empty)
                     : string.Empty;
+
+            if (!MyUtility.Check.Empty(tmp1Msg))
+            {
+                mesgs.Add(tmp1Msg);
+            }
+
             string tmp2Msg = status2.Any() ? "Keep Panel without production : "
                 + status2.FirstOrDefault()
                 + (status2.Where(o => o != status2.FirstOrDefault()).Any() ?
                    ("/" + status2.Where(o => o != status2.FirstOrDefault()).JoinToString("/").Replace(oriSP, string.Empty)) : string.Empty)
                     : string.Empty;
 
+            if (!MyUtility.Check.Empty(tmp2Msg))
+            {
+                mesgs.Add(tmp2Msg);
+            }
+
             string tmp3Msg = status3.Any() ? "Cancel : "
                 + status3.FirstOrDefault()
                 + (status3.Where(o => o != status3.FirstOrDefault()).Any() ?
                    ("/" + status3.Where(o => o != status3.FirstOrDefault()).JoinToString("/").Replace(oriSP, string.Empty)) : string.Empty)
                     : string.Empty;
+
+            if (!MyUtility.Check.Empty(tmp3Msg))
+            {
+                mesgs.Add(tmp3Msg);
+            }
+
             string tmp4Msg = status4.Any() ? "Buy Back : "
                 + status4.FirstOrDefault()
                 + (status4.Where(o => o != status4.FirstOrDefault()).Any() ?
                    ("/" + status4.Where(o => o != status4.FirstOrDefault()).JoinToString("/").Replace(oriSP, string.Empty)) : string.Empty)
                     : string.Empty;
 
-            msg = (MyUtility.Check.Empty(tmp1Msg) ? string.Empty : tmp1Msg + Environment.NewLine)
-                + (MyUtility.Check.Empty(tmp2Msg) ? string.Empty : tmp2Msg + Environment.NewLine)
-                + (MyUtility.Check.Empty(tmp3Msg) ? string.Empty : tmp3Msg + Environment.NewLine)
-                + (MyUtility.Check.Empty(tmp4Msg) ? string.Empty : tmp4Msg);
+            if (!MyUtility.Check.Empty(tmp4Msg))
+            {
+                mesgs.Add(tmp4Msg);
+            }
+
+            msg = mesgs.JoinToString(Environment.NewLine);
 
             return msg;
         }
