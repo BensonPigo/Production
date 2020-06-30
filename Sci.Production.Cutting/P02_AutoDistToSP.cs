@@ -88,6 +88,7 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
                 dr["Sel"] = e.FormattedValue;
                 dr.EndEdit();
                 ReWriteSeq();
+                this.CalTtlBal();
             };
 
             balQty.CellValidating += (s, e) =>
@@ -329,6 +330,7 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
             {
                 this.grid1.ValidateControl();
                 this.ReWriteSeq();
+                this.CalTtlBal();
             }
         }
     }
