@@ -16,3 +16,20 @@ GO
 
 ALTER TABLE [dbo].[OrderChangeApplication_Detail] ADD  CONSTRAINT [DF_OrderChangeApplication_Detail_NowQty]  DEFAULT ((0)) FOR [NowQty]
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'調整後的數量',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'OrderChangeApplication_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Qty'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'調整前的數量',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'OrderChangeApplication_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'NowQty'
