@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.radioGroup2 = new Sci.Win.UI.RadioGroup();
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.LbAdditional = new Sci.Win.UI.Label();
             this.chkByBrand = new Sci.Win.UI.CheckBox();
             this.chkByCPU = new Sci.Win.UI.CheckBox();
@@ -79,6 +80,7 @@
             // 
             // radioGroup2
             // 
+            this.radioGroup2.Controls.Add(this.chkIncludeCancelOrder);
             this.radioGroup2.Controls.Add(this.LbAdditional);
             this.radioGroup2.Controls.Add(this.chkByBrand);
             this.radioGroup2.Controls.Add(this.chkByCPU);
@@ -108,9 +110,20 @@
             this.radioGroup2.Controls.Add(this.rdMonth);
             this.radioGroup2.Location = new System.Drawing.Point(12, 14);
             this.radioGroup2.Name = "radioGroup2";
-            this.radioGroup2.Size = new System.Drawing.Size(381, 483);
+            this.radioGroup2.Size = new System.Drawing.Size(381, 516);
             this.radioGroup2.TabIndex = 0;
             this.radioGroup2.TabStop = false;
+            // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(150, 487);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(160, 21);
+            this.chkIncludeCancelOrder.TabIndex = 238;
+            this.chkIncludeCancelOrder.Text = "Include Cancel Order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
             // 
             // LbAdditional
             // 
@@ -429,7 +442,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(531, 527);
+            this.ClientSize = new System.Drawing.Size(531, 555);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.radioGroup2);
             this.DefaultControl = "numYear";
@@ -486,5 +499,6 @@
         private Win.UI.CheckBox chkByBrand;
         private Win.UI.CheckBox chkByCPU;
         private Win.UI.CheckBox chkHideFoundry;
+        private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }
