@@ -488,12 +488,10 @@ where WorkOrderUkey={0}", masterID);
 
             #region 取得 LeadTime 和 Subprocess
             var orders = distqtyTb.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["OrderID"])).Distinct().ToList();
-            var leadTimeList = Prgs.GetLeadTimeList(orders);
-            if (leadTimeList.Count > 0)
-            {
-                this.numLeadTime.Value = leadTimeList[0].LeadTimeDay;
-                this.dispSubprocess.Text = leadTimeList[0].Subprocess;
-            }
+            string annotationStr;
+            var leadTimeList = Prgs.GetLeadTimeList(orders, out annotationStr);
+            this.dispSubprocess.Text = annotationStr;
+            this.numLeadTime.Value = leadTimeList.Count > 0 ? leadTimeList[0].LeadTimeDay : 0;
             #endregion
 
             #region 檢查MarkerNo ,MarkerVersion ,MarkerDownloadID是否與Order_Eachcons不同
