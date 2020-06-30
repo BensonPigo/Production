@@ -13,6 +13,7 @@ CREATE PROCEDURE [dbo].[Planning_Report_R10]
 	,@Zone varchar(8) = ''
 	,@CalculateCPU bit = 0
 	,@CalculateByBrand bit = 0
+	,@IncludeCancelOrder bit = 0
 AS
 BEGIN
 	/*
@@ -108,6 +109,10 @@ BEGIN
 	AND @HasOrders = 1
 	And localorder = 0
 	and Factory.IsProduceFty = 1
+	and (
+		 (@IncludeCancelOrder = 0 and Orders.Junk = 0 AND (Orders.IsBuyBack = 0 OR (Orders.IsBuyBack = 1 AND Orders.BuyBackReason = 'KeepPanel')))
+	  or (@IncludeCancelOrder = 1 and (Orders.Junk = 0 OR (Orders.Junk = 1 AND Orders.NeedProduction = 1)) AND (Orders.IsBuyBack = 0 OR (Orders.IsBuyBack = 1 AND Orders.BuyBackReason = 'KeepPanel')))
+	  )
 	
 	Select Orders.ID
 	, rtrim(iif(Factory.FactorySort = '999', Factory.KpiCode, Factory.ID)) as FactoryID
@@ -165,6 +170,10 @@ BEGIN
 	AND Orders.LocalOrder = 1 -- PMS此處才加, 當地訂單在trade是記錄在Table:FactoryOrder
 	AND Orders.IsForecast = 0
 	and Factory.IsProduceFty = 1
+	and (
+		 (@IncludeCancelOrder = 0 and Orders.Junk = 0 AND (Orders.IsBuyBack = 0 OR (Orders.IsBuyBack = 1 AND Orders.BuyBackReason = 'KeepPanel')))
+	  or (@IncludeCancelOrder = 1 and (Orders.Junk = 0 OR (Orders.Junk = 1 AND Orders.NeedProduction = 1)) AND (Orders.IsBuyBack = 0 OR (Orders.IsBuyBack = 1 AND Orders.BuyBackReason = 'KeepPanel')))
+	  )
 
 	Select FactoryOrder.ID, rtrim(FactoryOrder.FactoryID) as FactoryID
 	, iif(Factory.Type = 'S', 'Sample', Factory.MDivisionID) as MDivisionID
@@ -249,6 +258,10 @@ BEGIN
 	AND Orders.IsForecast = 1 -- PMS此處才加, 預估單 在trade是記錄在Table:FactoryOrder
 	and Factory.IsProduceFty = 1
 	and (Orders.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or Orders.BuyerDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))
+	and (
+		 (@IncludeCancelOrder = 0 and Orders.Junk = 0 AND (Orders.IsBuyBack = 0 OR (Orders.IsBuyBack = 1 AND Orders.BuyBackReason = 'KeepPanel')))
+	  or (@IncludeCancelOrder = 1 and (Orders.Junk = 0 OR (Orders.Junk = 1 AND Orders.NeedProduction = 1)) AND (Orders.IsBuyBack = 0 OR (Orders.IsBuyBack = 1 AND Orders.BuyBackReason = 'KeepPanel')))
+	  )
 
 	---------------------------------------------------------------------------------------------------------------------------------
 	
