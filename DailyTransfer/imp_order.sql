@@ -538,12 +538,12 @@ BEGIN
 				t.ForecastCategory     = s.ForecastCategory,
 				t.OnSiteSample		   = s.OnSiteSample,
 				t.PulloutCmplDate	   = s.PulloutCmplDate,
-				t.NeedProduction	   = s.NeedProduction,
-				t.KeepPanels           = s.KeepPanels,
-				t.IsBuyBack	   = isnull (s.IsBuyBack, 0),
-				t.BuyBackReason           = s.BuyBackReason,
-				t.IsBuyBackCrossArticle           = s.IsBuyBackCrossArticle,
-				t.IsBuyBackCrossSizeCode           = s.IsBuyBackCrossSizeCode
+				t.NeedProduction	   = isnull (s.NeedProduction, 0),
+				t.KeepPanels           = isnull (s.KeepPanels, 0),
+				t.IsBuyBack			   = isnull (s.IsBuyBack, 0),
+				t.BuyBackReason           = isnull (s.BuyBackReason, ''),
+				t.IsBuyBackCrossArticle           = isnull (s.IsBuyBackCrossArticle, 0),
+				t.IsBuyBackCrossSizeCode           = isnull (s.IsBuyBackCrossSizeCode, 0)
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -603,8 +603,8 @@ BEGIN
 			, s.KPICmpq 			, s.KPIMNotice			, s.GFR					, s.SDPDate				, s.PulloutComplete		
 			, s.SewINLINE           , s.FTY_Group			, s.ForecastSampleGroup , s.DyeingLoss          , '0'
 			, s.LastProductionDate	, s.EstPODD				, s.AirFreightByBrand	, s.AllowanceComboID    , s.ChangeMemoDate
-			, s.ForecastCategory	, s.OnSiteSample		, s.PulloutCmplDate		, s.NeedProduction		, s.KeepPanels
-			, isnull (s.IsBuyBack, 0), s.BuyBackReason		, s.IsBuyBackCrossArticle , s.IsBuyBackCrossSizeCode
+			, s.ForecastCategory	, s.OnSiteSample		, s.PulloutCmplDate		, isnull (s.NeedProduction, 0)		, isnull (s.KeepPanels, 0)
+			, isnull (s.IsBuyBack, 0), isnull (s.BuyBackReason, '')		, isnull (s.IsBuyBackCrossArticle, 0) , isnull (s.IsBuyBackCrossSizeCode, 0)
 		)
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
