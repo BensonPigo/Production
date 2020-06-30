@@ -1662,6 +1662,8 @@ BEGIN
 	and t.OrderIDFrom = s.OrderIDFrom
 	and t.Article = s.Article
 	and t.SizeCode = s.SizeCode
+	and t.ArticleFrom = s.ArticleFrom
+	and t.SizeCodeFrom = s.SizeCodeFrom
 	when matched then
 		update set
 			t.Qty		= s.Qty,
@@ -1670,8 +1672,8 @@ BEGIN
 			t.EditName	= isnull(s.EditName,'') ,
 			t.EditDate	= s.EditDate 
 	when not matched by target then 
-		insert ([ID], [OrderIDFrom], [Article], [SizeCode], [Qty], [AddName], [AddDate], [EditName], [EditDate]) 
-		values (s.[ID], s.[OrderIDFrom], s.[Article], s.[SizeCode], s.[Qty], isnull(s.[AddName],''), s.[AddDate], isnull(s.[EditName],''), s.[EditDate]) 
+		insert ([ID], [OrderIDFrom], [Article], [SizeCode], [Qty], [AddName], [AddDate], [EditName], [EditDate], [ArticleFrom], [SizeCodeFrom]) 
+		values (s.[ID], s.[OrderIDFrom], s.[Article], s.[SizeCode], s.[Qty], isnull(s.[AddName],''), s.[AddDate], isnull(s.[EditName],''), s.[EditDate], s.[ArticleFrom], s.SizeCodeFrom) 
 	when not matched by source  AND T.ID IN (SELECT ID FROM #Torder) then 
 	delete;
 		

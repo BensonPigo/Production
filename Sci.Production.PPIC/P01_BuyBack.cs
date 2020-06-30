@@ -148,7 +148,7 @@ and oq.Article in ({articleStr})
 and oq.SizeCode in ({sizeCodeStr})";
 
                     DataTable data;
-                    DBProxy.Current.Select(null,cmd,out data)
+                    DBProxy.Current.Select(null, cmd, out data)
                     ;
                     //data.AsEnumerable().Where(rr => spList.Contains(rr["ID"].ToString())
                     //    && rr["ID"].ToString() != dr["ID"].ToString()).Delete();
@@ -203,9 +203,11 @@ and oq.SizeCode in ({sizeCodeStr})";
             .Text("ID", header: "SP#", width: Widths.AnsiChars(12), iseditingreadonly: true, settings: popupSPCell);
 
             this.Helper.Controls.Grid.Generator(this.grid4)
-            .Text("FromSP", header: "From SP#", width: Widths.AnsiChars(12), iseditingreadonly: true)
-            .Numeric("BalanceQty", header: "Qty" + StrBalance, width: Widths.AnsiChars(5), decimal_places: 0, minimum: 0, maximum: 99999999, iseditingreadonly: false)
-            .Numeric("AssignQty", header: "Qty", width: Widths.AnsiChars(5), decimal_places: 0, minimum: 0, maximum: 99999999, iseditingreadonly: false);
+                .Text("OrderIDFrom", header: "From SP#", width: Widths.AnsiChars(13), iseditable: true)
+                .Text("ArticleFrom", header: "From Article", width: Widths.AnsiChars(8), iseditable: true)
+                .Text("SizeCodeFrom", header: "From SizeCode", width: Widths.AnsiChars(8), iseditable: true)
+                .Numeric("BalanceQty", header: "Qty" + StrBalance, width: Widths.AnsiChars(4), decimal_places: 0, minimum: 0, maximum: 99999999, iseditable: false)
+                .Numeric("AssignQty", header: "Qty" + StrAssign, width: Widths.AnsiChars(4), decimal_places: 0, minimum: 0, maximum: 99999999, iseditingreadonly: false);
 
             this.Helper.Controls.Grid.Generator(this.grid2)
                 .Text("FromSP", header: "From SP#", width: Widths.AnsiChars(12), iseditingreadonly: true)
@@ -278,7 +280,7 @@ and oq.SizeCode in ({sizeCodeStr})";
             this.dtList = new DataTable();
             DataTable tmp;
             string cmd = $"select OrderIDFrom as ID from Order_BuyBack where id = '{this.ID}'";
-            DualResult res = DBProxy.Current.Select(null,cmd, out tmp);
+            DualResult res = DBProxy.Current.Select(null, cmd, out tmp);
             if (res == true)
             {
                 this.dtList = tmp;
@@ -313,7 +315,7 @@ where o.id = '{this.ID}'
 order by os.Seq, os.SizeCode, oa.Article";
 
             DataTable dt;
-            DualResult res = DBProxy.Current.Select(null,cmd, out dt);
+            DualResult res = DBProxy.Current.Select(null, cmd, out dt);
 
             if (res == false)
             {
@@ -513,6 +515,38 @@ order by os.Seq, os.SizeCode, oa.Article";
 
             this.LoadAssign();
 
+            string sqlBs4Data = $@"
+select  obq.ID,
+        obq.OrderIDFrom,
+        obq.Article,
+        obq.SizeCode,
+        obq.ArticleFrom,
+        obq.SizeCodeFrom,
+        [AssignQty] = obq.Qty,
+        [BalanceQty] = oq.Qty - AllAssignQty.val
+from    Order_BuyBack_Qty obq with (nolock)
+left join   Order_Qty oq with (nolock) on   oq.ID = obq.OrderIDFrom and 
+                                            oq.Article = obq.ArticleFrom and 
+                                            oq.SizeCode = obq.SizeCodeFrom
+outer apply (select val = isnull(sum(Qty),0)  from Order_BuyBack_Qty obq2 
+                                        where   oq.ID = obq2.OrderIDFrom and 
+                                                oq.Article = obq2.ArticleFrom and 
+                                                oq.SizeCode = obq2.SizeCodeFrom ) AllAssignQty
+where   obq.ID = '{this.ID}'
+";
+            DataTable dtBs4;
+
+            res = DBProxy.Current.Select(null, sqlBs4Data, out dtBs4);
+            if (res == false)
+            {
+                this.ShowErr(res);
+                return new DualResult(false);
+            }
+
+            this.grid4bs.DataSource = dtBs4;
+            this.SetGrid4Filter();
+            this.grid4.ColumnsAutoSize();
+
             return res;
         }
 
@@ -706,173 +740,6 @@ order by os.Seq, os.SizeCode, oa.Article";
             return true;
         }
 
-        /// <summary>
-        /// 1. Check Data
-        /// 2. 建立SQL Command
-        /// 3. Executes儲存資料
-        /// </summary>
-        /// <returns> Save Success or not </returns>
-        private DualResult Save()
-        {
-            //// Check Data***************************************
-            if (this.CheckData() == false)
-            {
-                return new DualResult(false, "Check fail");
-            }
-
-            //// 建立SQL Command***************************************
-            List<SqlCommandText> cmdList = new List<SqlCommandText>();
-            List<SqlParameter> plis = new List<SqlParameter>();
-            DateTime dateNow = DateTime.Now;
-            SqlCommandText sqlcmd;
-
-            foreach (DataRow row in this.dtList.Rows)
-            {
-                string cmd = string.Empty;
-
-                if (row.RowState == DataRowState.Deleted)
-                {
-                    string fromsp = row["ID", DataRowVersion.Original].ToString();
-                    cmd = @"
-                        delete from Order_BuyBack where ID = @ID and OrderIDFrom = @OrderIDFrom
-                        delete from Order_BuyBack_Qty where ID = @ID and OrderIDFrom = @OrderIDFrom";
-
-                    plis = new List<SqlParameter>();
-                    plis.Add(new SqlParameter("@ID", this.ID));
-                    plis.Add(new SqlParameter("@OrderIDFrom", fromsp));
-
-                    sqlcmd = new SqlCommandText(cmd, plis);
-                    cmdList.Add(sqlcmd);
-
-                    continue;
-                }
-
-                if (row.RowState == DataRowState.Unchanged)
-                {
-                    continue;
-                }
-
-                string fromSP = row["ID"].ToString();
-                string reason = row["BuyBackReason"].ToString();
-
-                plis = new List<SqlParameter>();
-                plis.Add(new SqlParameter("@ID", this.ID));
-                plis.Add(new SqlParameter("@OrderIDFrom", fromSP));
-                plis.Add(new SqlParameter("@BuyBackReason", reason));
-                plis.Add(new SqlParameter("@UserID", Env.User.UserID));
-                plis.Add(new SqlParameter("@date", dateNow));
-
-                if (row.RowState == DataRowState.Added)
-                {
-                    cmd = @"
-                    Insert into Order_BuyBack (ID, OrderIDFrom, BuyBackReason, AddName, AddDate) 
-                    values (@ID, @OrderIDFrom, @BuyBackReason, @UserID, @date)";
-                }
-
-                if (row.RowState == DataRowState.Modified)
-                {
-                    cmd = @"
-                    Update Order_BuyBack Set 
-                        BuyBackReason = @BuyBackReason
-                        , EditName = @UserID
-                        , EditDate = @date 
-                    where ID = @ID and OrderIDFrom = @OrderIDFrom";
-                }
-
-                sqlcmd = new SqlCommandText(cmd, plis);
-                cmdList.Add(sqlcmd);
-            }
-
-            //// Add, Modify*************
-            var dicAdd = this.GetTableCellAdd(this.dtMain, StrAssign);
-            var dicModify = this.GetTableCellModify(this.dtMain, StrAssign);
-
-            foreach (var item in dicAdd.Union(dicModify))
-            {
-                DataRow row = item.Key;
-                string fromSP = row["FromSP"].ToString();
-                string article = row["Article"].ToString();
-                string cmd = string.Empty;
-
-                foreach (var col in item.Value)
-                {
-                    string sizecode = col.Replace(StrAssign, string.Empty);
-                    int qty = MyUtility.Convert.GetInt(row[col]);
-
-                    //// Update Order_BuyBack_Qty
-                    cmd = @"
-if (@Qty = 0)
-BEGIN
-    Delete from Order_BuyBack_Qty where ID = @ID AND OrderIDFrom = @OrderIDFrom and Article = @Article and SizeCode = @SizeCode;
-END
-ELSE
-if Exists(select 1 from Order_BuyBack_Qty obq where obq.ID = @ID and obq.OrderIDFrom = @OrderIDFrom and obq.Article = @Article and obq.SizeCode = @SizeCode)
-BEGIN
-    Update Order_BuyBack_Qty Set
-        Qty = @Qty
-        , EditName = @UserID
-        , EditDate = @date 
-    where ID = @ID and OrderIDFrom = @OrderIDFrom and Article = @Article and SizeCode = @SizeCode
-END
-ELSE
-BEGIN
-    insert into Order_BuyBack_Qty (ID, OrderIDFrom, Article, SizeCode, Qty, AddName, AddDate)
-    values (@ID, @OrderIDFrom, @Article, @SizeCode, @Qty, @UserID, @date)
-END
-";
-
-                    plis = new List<SqlParameter>();
-                    plis.Add(new SqlParameter("@ID", this.ID));
-                    plis.Add(new SqlParameter("@OrderIDFrom", fromSP));
-                    plis.Add(new SqlParameter("@Article", article));
-                    plis.Add(new SqlParameter("@SizeCode", sizecode));
-                    plis.Add(new SqlParameter("@Qty", qty));
-                    plis.Add(new SqlParameter("@UserID", Env.User.UserID));
-                    plis.Add(new SqlParameter("@date", dateNow));
-
-                    sqlcmd = new SqlCommandText(cmd, plis);
-                    cmdList.Add(sqlcmd);
-                }
-            }
-
-            //// Executes
-            if (cmdList.Count > 0)
-            {
-                plis = new List<SqlParameter>();
-                plis.Add(new SqlParameter("@ID", this.ID));
-                plis.Add(new SqlParameter("@UserID", Env.User.UserID));
-                string cmd = @"
-declare @IsBuyBack table (OldValue bit, NewValue bit);
-
-update o set IsBuyBack = IIF(hasBuyBack.c > 0, 1, 0)
-output deleted.IsBuyBack, inserted.IsBuyBack into @IsBuyBack (OldValue, NewValue)
-from Orders o
-outer apply (select count(*) c from Order_BuyBack ob where ob.ID = o.ID) hasBuyBack
-where o.ID = @ID
-
-insert into TradeHIS_Order (TableName, HisType, SourceID, OldValue, NewValue, AddName, AddDate)
-select 'Orders', 'IsBuyBack', @ID, IIF(OldValue = 1, 'Y', ''), IIF(NewValue = 1, 'Y', ''), @UserID, getdate()
-from @IsBuyBack where OldValue != NewValue";
-                sqlcmd = new SqlCommandText(cmd, plis);
-                cmdList.Add(sqlcmd);
-
-                DualResult res = DBProxy.Current.Executes(string.Empty, cmdList);
-                if (res == false)
-                {
-                    MyUtility.Msg.ErrorBox(res.ToString());
-                    return res;
-                }
-
-                this.IsDataChange = true;
-            }
-            else
-            {
-                return new DualResult(true, "No datas modify.");
-            }
-
-            return new DualResult(true);
-        }
-
         private Dictionary<DataRow, List<string>> GetTableCellAdd(DataTable dtData, string columnKeyWord)
         {
             Dictionary<DataRow, List<string>> dic = new Dictionary<DataRow, List<string>>();
@@ -935,34 +802,6 @@ from @IsBuyBack where OldValue != NewValue";
             return dic;
         }
 
-        private void BtnEdit_Click(object sender, EventArgs e)
-        {
-            if (this.EditMode == true)
-            {
-                // Do Save
-                DualResult res = this.Save();
-
-                if (res == true)
-                {
-                    //// Save ok
-                    this.LoadList();
-                    this.LoadOriTableData();
-                    this.LoadData(false);
-
-                    this.EditMode = false;
-                }
-                else
-                {
-                    //// Save fail
-                }
-            }
-            else
-            {
-                // To Edit
-                this.EditMode = true;
-            }
-        }
-
         private void BtnClose_Click(object sender, EventArgs e)
         {
             if (this.EditMode == true)
@@ -999,33 +838,6 @@ from @IsBuyBack where OldValue != NewValue";
             }
         }
 
-        private void BtnDelete_Click(object sender, EventArgs e)
-        {
-            if (this.EditMode == true)
-            {
-                if (this.grid1.CurrentRow == null)
-                {
-                    return;
-                }
-
-                DataRow row = ((DataRowView)this.grid1.CurrentRow.DataBoundItem).Row;
-                string id = row["ID"].ToString();
-                row.Delete();
-
-                if (id != string.Empty)
-                {
-                    for (int i = this.dtMain.Rows.Count - 1; i >= 0; i--)
-                    {
-                        if (this.dtMain.Rows[i].RowState != DataRowState.Deleted
-                            && this.dtMain.Rows[i]["FromSP"].ToString() == id)
-                        {
-                            this.dtMain.Rows[i].Delete();
-                        }
-                    }
-                }
-            }
-        }
-
         private void Grid_CellFormatting(object sender, System.Windows.Forms.DataGridViewCellFormattingEventArgs e)
         {
             Sci.Win.UI.Grid thisGrid = (Sci.Win.UI.Grid)sender;
@@ -1055,7 +867,6 @@ from @IsBuyBack where OldValue != NewValue";
 
             string sizecode = this.grid2.Columns[e.ColumnIndex].DataPropertyName.Replace(StrAssign, string.Empty);
             this.LoadAssignBySizeCode(sizecode);
-            this.SetGrid3ValueToGrid4();
             ////this.Grid2_CellEnter(null, new DataGridViewCellEventArgs(e.ColumnIndex, e.RowIndex));
         }
 
@@ -1084,62 +895,44 @@ from @IsBuyBack where OldValue != NewValue";
                 return;
             }
 
-            this.SetGrid3ValueToGrid4();
+            this.SetGrid4Filter();
         }
 
-        private void SetGrid3ValueToGrid4()
+        private void SetGrid4Filter()
         {
-            if (this.grid3.CurrentCell == null)
+            if (this.grid3.CurrentRow == null)
             {
+                this.grid4bs.Filter = $"1 = 2";
                 return;
             }
 
-            int colIdx = this.grid3.CurrentCell.ColumnIndex;
+            DataRow grid3Row = (this.grid3.CurrentRow.DataBoundItem as DataRowView).Row;
 
-            string sizecode = this.grid3.Columns[colIdx].DataPropertyName.Replace(StrAssign, string.Empty).Replace(StrOriginal, string.Empty);
-            string article = (this.grid3.CurrentRow.DataBoundItem as DataRowView).Row["Article"].ToString();
-
-            DataTable dtTmp; // = this.dtMain.AsEnumerable().TryCopyToDataTable(this.dtMain);
-
-            if (this.dtMain.AsEnumerable().Any())
+            //// SizeCode 在第三欄位開始
+            if (this.grid3.CurrentCell.ColumnIndex < 1)
             {
-                dtTmp = this.dtMain.AsEnumerable().CopyToDataTable();
-            }
-            else
-            {
-                dtTmp = this.dtMain.Clone();
-            }
-
-            this.grid4bs.DataSource = dtTmp;
-            this.grid4.Columns[1].DataPropertyName = sizecode + StrBalance;
-            this.grid4.Columns[1].HeaderText = sizecode + StrBalance;
-            this.grid4.Columns[2].DataPropertyName = sizecode + StrAssign;
-            this.grid4.Columns[2].HeaderText = sizecode + StrAssign;
-            this.grid4bs.Filter = $"Article = '{article}'";
-        }
-
-        private void Grid4_CellEndEdit(object sender, DataGridViewCellEventArgs e)
-        {
-            //// Grid4 end edit update Grid2
-            if (this.grid4.Columns[e.ColumnIndex].DataPropertyName.Contains(StrAssign) == false)
-            {
+                this.grid4bs.Filter = $"1 = 2";
                 return;
             }
 
-            this.grid4.EndEdit();
+            string article = grid3Row["Article"].ToString();
+            string sizecode = this.grid3.Columns[this.grid3.CurrentCell.ColumnIndex].DataPropertyName.Replace(StrAssign, string.Empty).Replace(StrOriginal, string.Empty);
 
-            DataRow row = (this.grid4.CurrentRow.DataBoundItem as DataRowView).Row;
-            string fromsp = row["FromSP"].ToString();
-            string article = row["Article"].ToString();
-            string sizecode = this.grid4.Columns[2].DataPropertyName.Replace(StrAssign, string.Empty);
+            string filterStr = $@"OrderIDFrom <> '' and Article = '{article}' and SizeCode = '{sizecode}' 
+                                    and (not(AssignQty = 0 and BalanceQty = 0))";
 
-            DataRow[] rows = this.dtMain.Select($"FromSP = '{fromsp}' and Article = '{article}'");
-            if (rows.Length > 0)
+            if (this.chkIsBuyBackCrossArticle.Checked == false)
             {
-                rows[0][sizecode + StrAssign] = row[sizecode + StrAssign];
+                filterStr += $" and ArticleFrom = '{article}'";
             }
 
-            this.LoadAssignBySizeCode(sizecode);
+            if (this.chkIsBuyBackCrossSizeCode.Checked == false)
+            {
+                filterStr += $" and SizeCodeFrom = '{sizecode}'";
+            }
+
+            this.grid4bs.Filter = filterStr;
+            this.grid4.ColumnsAutoSize();
         }
 
         #region Set Combobox Filter
