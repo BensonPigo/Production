@@ -35,6 +35,8 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new Sci.Win.UI.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.displayBuyBackReason = new Sci.Win.UI.DisplayBox();
+            this.lblReason = new Sci.Win.UI.Label();
             this.grid1 = new Sci.Win.UI.Grid();
             this.grid1bs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.BtnRefresh = new Sci.Win.UI.Button();
@@ -46,6 +48,8 @@
             this.LbSP = new Sci.Win.UI.Label();
             this.grid2 = new Sci.Win.UI.Grid();
             this.grid2bs = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.chkIsBuyBackCrossSizeCode = new Sci.Win.UI.CheckBox();
+            this.chkIsBuyBackCrossArticle = new Sci.Win.UI.CheckBox();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.grid3 = new Sci.Win.UI.Grid();
             this.grid3bs = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -54,10 +58,6 @@
             this.BtnEdit = new Sci.Win.UI.Button();
             this.BtnClose = new Sci.Win.UI.Button();
             this.LbRemark = new System.Windows.Forms.Label();
-            this.lblReason = new Sci.Win.UI.Label();
-            this.displayBuyBackReason = new Sci.Win.UI.DisplayBox();
-            this.chkIsBuyBackCrossArticle = new Sci.Win.UI.CheckBox();
-            this.chkIsBuyBackCrossSizeCode = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -96,7 +96,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer1.Size = new System.Drawing.Size(955, 493);
+            this.splitContainer1.Size = new System.Drawing.Size(1008, 493);
             this.splitContainer1.SplitterDistance = 273;
             this.splitContainer1.TabIndex = 1;
             this.splitContainer1.TabStop = false;
@@ -125,9 +125,26 @@
             this.splitContainer2.Panel2.Controls.Add(this.grid2);
             this.splitContainer2.Panel2.Controls.Add(this.chkIsBuyBackCrossSizeCode);
             this.splitContainer2.Panel2.Controls.Add(this.chkIsBuyBackCrossArticle);
-            this.splitContainer2.Size = new System.Drawing.Size(955, 273);
-            this.splitContainer2.SplitterDistance = 228;
+            this.splitContainer2.Size = new System.Drawing.Size(1008, 273);
+            this.splitContainer2.SplitterDistance = 240;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // displayBuyBackReason
+            // 
+            this.displayBuyBackReason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBuyBackReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBuyBackReason.Location = new System.Drawing.Point(63, 8);
+            this.displayBuyBackReason.Name = "displayBuyBackReason";
+            this.displayBuyBackReason.Size = new System.Drawing.Size(162, 23);
+            this.displayBuyBackReason.TabIndex = 7;
+            // 
+            // lblReason
+            // 
+            this.lblReason.Location = new System.Drawing.Point(6, 8);
+            this.lblReason.Name = "lblReason";
+            this.lblReason.Size = new System.Drawing.Size(54, 23);
+            this.lblReason.TabIndex = 6;
+            this.lblReason.Text = "Reason";
             // 
             // grid1
             // 
@@ -160,13 +177,13 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(225, 235);
+            this.grid1.Size = new System.Drawing.Size(237, 235);
             this.grid1.TabIndex = 2;
             // 
             // BtnRefresh
             // 
             this.BtnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnRefresh.Location = new System.Drawing.Point(650, 3);
+            this.BtnRefresh.Location = new System.Drawing.Point(691, 3);
             this.BtnRefresh.Name = "BtnRefresh";
             this.BtnRefresh.Size = new System.Drawing.Size(70, 30);
             this.BtnRefresh.TabIndex = 10;
@@ -271,11 +288,35 @@
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid2.ShowCellToolTips = false;
-            this.grid2.Size = new System.Drawing.Size(720, 235);
+            this.grid2.Size = new System.Drawing.Size(761, 235);
             this.grid2.TabIndex = 3;
             this.grid2.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.Grid2_CellEndEdit);
             this.grid2.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.Grid2_CellEnter);
             this.grid2.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.Grid_CellFormatting);
+            // 
+            // chkIsBuyBackCrossSizeCode
+            // 
+            this.chkIsBuyBackCrossSizeCode.AutoSize = true;
+            this.chkIsBuyBackCrossSizeCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkIsBuyBackCrossSizeCode.Location = new System.Drawing.Point(4, 16);
+            this.chkIsBuyBackCrossSizeCode.Name = "chkIsBuyBackCrossSizeCode";
+            this.chkIsBuyBackCrossSizeCode.ReadOnly = true;
+            this.chkIsBuyBackCrossSizeCode.Size = new System.Drawing.Size(94, 21);
+            this.chkIsBuyBackCrossSizeCode.TabIndex = 12;
+            this.chkIsBuyBackCrossSizeCode.Text = "Cross Size";
+            this.chkIsBuyBackCrossSizeCode.UseVisualStyleBackColor = true;
+            // 
+            // chkIsBuyBackCrossArticle
+            // 
+            this.chkIsBuyBackCrossArticle.AutoSize = true;
+            this.chkIsBuyBackCrossArticle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkIsBuyBackCrossArticle.Location = new System.Drawing.Point(4, 0);
+            this.chkIsBuyBackCrossArticle.Name = "chkIsBuyBackCrossArticle";
+            this.chkIsBuyBackCrossArticle.ReadOnly = true;
+            this.chkIsBuyBackCrossArticle.Size = new System.Drawing.Size(106, 21);
+            this.chkIsBuyBackCrossArticle.TabIndex = 11;
+            this.chkIsBuyBackCrossArticle.Text = "Cross Article";
+            this.chkIsBuyBackCrossArticle.UseVisualStyleBackColor = true;
             // 
             // splitContainer3
             // 
@@ -290,8 +331,8 @@
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.grid4);
-            this.splitContainer3.Size = new System.Drawing.Size(955, 216);
-            this.splitContainer3.SplitterDistance = 658;
+            this.splitContainer3.Size = new System.Drawing.Size(1008, 216);
+            this.splitContainer3.SplitterDistance = 570;
             this.splitContainer3.TabIndex = 0;
             // 
             // grid3
@@ -323,7 +364,7 @@
             this.grid3.RowTemplate.Height = 24;
             this.grid3.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid3.ShowCellToolTips = false;
-            this.grid3.Size = new System.Drawing.Size(658, 216);
+            this.grid3.Size = new System.Drawing.Size(570, 216);
             this.grid3.TabIndex = 3;
             this.grid3.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.Grid3_CellEnter);
             // 
@@ -356,27 +397,25 @@
             this.grid4.RowTemplate.Height = 24;
             this.grid4.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid4.ShowCellToolTips = false;
-            this.grid4.Size = new System.Drawing.Size(293, 216);
+            this.grid4.Size = new System.Drawing.Size(434, 216);
             this.grid4.TabIndex = 3;
-            this.grid4.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.Grid4_CellEndEdit);
             this.grid4.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.Grid_CellFormatting);
             // 
             // BtnEdit
             // 
             this.BtnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnEdit.Location = new System.Drawing.Point(758, 499);
+            this.BtnEdit.Location = new System.Drawing.Point(811, 499);
             this.BtnEdit.Name = "BtnEdit";
             this.BtnEdit.Size = new System.Drawing.Size(80, 30);
             this.BtnEdit.TabIndex = 2;
             this.BtnEdit.Text = "Edit";
             this.BtnEdit.UseVisualStyleBackColor = true;
             this.BtnEdit.Visible = false;
-            this.BtnEdit.Click += new System.EventHandler(this.BtnEdit_Click);
             // 
             // BtnClose
             // 
             this.BtnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnClose.Location = new System.Drawing.Point(863, 499);
+            this.BtnClose.Location = new System.Drawing.Point(916, 499);
             this.BtnClose.Name = "BtnClose";
             this.BtnClose.Size = new System.Drawing.Size(80, 30);
             this.BtnClose.TabIndex = 3;
@@ -395,52 +434,11 @@
             this.LbRemark.TabIndex = 4;
             this.LbRemark.Text = "A : Assign     B : Balance     O : Orignal";
             // 
-            // lblReason
-            // 
-            this.lblReason.Location = new System.Drawing.Point(6, 8);
-            this.lblReason.Name = "lblReason";
-            this.lblReason.Size = new System.Drawing.Size(54, 23);
-            this.lblReason.TabIndex = 6;
-            this.lblReason.Text = "Reason";
-            // 
-            // displayBuyBackReason
-            // 
-            this.displayBuyBackReason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBuyBackReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBuyBackReason.Location = new System.Drawing.Point(63, 8);
-            this.displayBuyBackReason.Name = "displayBuyBackReason";
-            this.displayBuyBackReason.Size = new System.Drawing.Size(162, 23);
-            this.displayBuyBackReason.TabIndex = 7;
-            // 
-            // chkIsBuyBackCrossArticle
-            // 
-            this.chkIsBuyBackCrossArticle.AutoSize = true;
-            this.chkIsBuyBackCrossArticle.ForeColor = System.Drawing.Color.Black;
-            this.chkIsBuyBackCrossArticle.Location = new System.Drawing.Point(4, 0);
-            this.chkIsBuyBackCrossArticle.Name = "chkIsBuyBackCrossArticle";
-            this.chkIsBuyBackCrossArticle.ReadOnly = true;
-            this.chkIsBuyBackCrossArticle.Size = new System.Drawing.Size(106, 21);
-            this.chkIsBuyBackCrossArticle.TabIndex = 11;
-            this.chkIsBuyBackCrossArticle.Text = "Cross Article";
-            this.chkIsBuyBackCrossArticle.UseVisualStyleBackColor = true;
-            // 
-            // chkIsBuyBackCrossSizeCode
-            // 
-            this.chkIsBuyBackCrossSizeCode.AutoSize = true;
-            this.chkIsBuyBackCrossSizeCode.ForeColor = System.Drawing.Color.Black;
-            this.chkIsBuyBackCrossSizeCode.Location = new System.Drawing.Point(4, 16);
-            this.chkIsBuyBackCrossSizeCode.Name = "chkIsBuyBackCrossSizeCode";
-            this.chkIsBuyBackCrossSizeCode.ReadOnly = true;
-            this.chkIsBuyBackCrossSizeCode.Size = new System.Drawing.Size(94, 21);
-            this.chkIsBuyBackCrossSizeCode.TabIndex = 12;
-            this.chkIsBuyBackCrossSizeCode.Text = "Cross Size";
-            this.chkIsBuyBackCrossSizeCode.UseVisualStyleBackColor = true;
-            // 
             // P01_BuyBack
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(955, 541);
+            this.ClientSize = new System.Drawing.Size(1008, 541);
             this.Controls.Add(this.LbRemark);
             this.Controls.Add(this.BtnClose);
             this.Controls.Add(this.BtnEdit);
