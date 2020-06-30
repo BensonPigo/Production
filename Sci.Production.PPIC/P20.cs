@@ -75,7 +75,7 @@ namespace Sci.Production.PPIC
             .Numeric("NowQty", header: "Total Q'ty", width: Widths.AnsiChars(6))
             .Text("ReasonID", header: "Reason", width: Widths.AnsiChars(10))
             .Text("Name", header: "Reason Desc.", width: Widths.AnsiChars(10))
-            .Text("Remark", header: "Reason Remark", width: Widths.AnsiChars(10))
+            .Text("ReasonRemark", header: "Reason Remark", width: Widths.AnsiChars(10))
             .Text("AddName", header: "Create by", width: Widths.AnsiChars(10))
             .Text("EditName", header: "Edit by", width: Widths.AnsiChars(10))
             ;
@@ -310,21 +310,13 @@ select stuff((
 
             sqlCmd = string.Format(
                 @"
-with SortBy as (
-      select oq.Article  
-             , RowNo = ROW_NUMBER() over (order by oq.Article) 
-      from Order_Qty oq WITH (NOLOCK) 
-      where oq.ID = '{0}'
-      group by oq.Article
-),
-tmpData as (
-      select oq.Article
-             , oq.SizeCode
-             , oq.NowQty
-             , sb.RowNo
-      from OrderChangeApplication_Detail oq WITH (NOLOCK) 
-      inner join SortBy sb on oq.Article = sb.Article
-      where oq.ID = '{2}'
+with tmpData as (
+      select oad.Article
+             , oad.SizeCode
+             , oad.NowQty
+             , RowNo=1
+      from OrderChangeApplication_Detail oad WITH (NOLOCK) 
+      where oad.ID = '{2}'
 ),
 SubTotal as (
       select 'TTL' as Article
@@ -349,7 +341,7 @@ pivotData as (
 select Total=(select sum(NowQty) from UnionData where Article = p.Article)
 	,Article,{1}
 from pivotData p
-order by RowNo",
+order by RowNo,Article",
                 this.CurrentMaintain["Orderid"],
                 sizeCode,
                 this.CurrentMaintain["ID"]);
@@ -365,12 +357,14 @@ order by RowNo",
             #endregion
             #region tab 2
             sqlCmd = $@"
-select oq.*,r.Name,r.Remark,
-    NowQty = (select SUM(NowQty) from OrderChangeApplication_Detail ocad where ocad.ID = '{this.CurrentMaintain["ID"]}' and ocad.Seq = oq.Seq)
-from Order_QtyShip oq WITH (NOLOCK) 
-left join Reason r WITH (NOLOCK) on r.ReasonTypeID = '{this.reasonTypeID}'  and r.ID = oq.ReasonID
-where oq.ID = '{this.CurrentMaintain["Orderid"]}'
-order by Seq";
+select os.*,NowQty=isnull(x.NowQty,0),r.Name,o.AddName,o.EditName
+from OrderChangeApplication_Seq os
+inner join OrderChangeApplication o on o.id = os.ID
+left join Reason r WITH (NOLOCK) on r.ReasonTypeID = '{this.reasonTypeID}'  and r.ID = os.ReasonID
+outer apply(select NowQty=sum(NowQty) from OrderChangeApplication_Detail oq where  oq.Id  = os.id and oq.Seq = os.Seq)x
+where os.id = '{this.CurrentMaintain["ID"]}'
+and os.Seq in (select Seq from OrderChangeApplication_Detail where id = o.ID and NowQty != 0)
+order by os.Seq,Ukey";
 
             result = DBProxy.Current.Select(null, sqlCmd, out this.shipdata1);
             if (!result)
@@ -381,10 +375,10 @@ order by Seq";
 
             sqlCmd = string.Format(
 @"with tmpData as (
-    select oqd.Seq,oqd.Article,oqd.SizeCode,oqd.NowQty,oa.Seq as ASeq
-    from OrderChangeApplication_Detail oqd WITH (NOLOCK) 
-    left join Order_Article oa WITH (NOLOCK) on oa.ID = '{0}' and oa.Article = oqd.Article
-    where oqd.ID = '{2}'
+	select oqd.Seq,oqd.Article,oqd.SizeCode,oqd.NowQty,oa.Seq as ASeq
+	from OrderChangeApplication_Detail oqd WITH (NOLOCK) 
+	left join Order_Article oa WITH (NOLOCK) on oa.ID = oqd.ID and oa.Article = oqd.Article
+    where oqd.ID = '{0}'
 ),SubTotal as (
     select Seq,'TTL' as Article,SizeCode,SUM(NowQty) as NowQty, '9999' as ASeq
     from tmpData
@@ -404,9 +398,8 @@ select
     ,Seq
 from pivotData p
 order by ASeq",
-                this.CurrentMaintain["Orderid"],
-                sizeCode,
-                this.CurrentMaintain["ID"]);
+                this.CurrentMaintain["ID"],
+                sizeCode);
             result = DBProxy.Current.Select(null, sqlCmd, out this.shipdata2);
             if (!result)
             {
