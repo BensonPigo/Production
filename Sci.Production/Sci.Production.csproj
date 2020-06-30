@@ -1542,6 +1542,10 @@
     <None Include="Resources\001_jpg.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sci.Production.Automation\Sci.Production.Automation.csproj">
+      <Project>{cb61a07f-7d72-490e-aeb6-ba5080f8d652}</Project>
+      <Name>Sci.Production.Automation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sci.Production.Basic\Sci.Production.Basic.csproj">
       <Project>{da40e123-cd22-4656-8b3e-a27953ae7d34}</Project>
       <Name>Sci.Production.Basic</Name>
