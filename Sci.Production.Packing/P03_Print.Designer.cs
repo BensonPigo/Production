@@ -94,7 +94,7 @@
             this.radioQRcodePrint.TabStop = true;
             this.radioQRcodePrint.Text = "QR Code Print";
             this.radioQRcodePrint.UseVisualStyleBackColor = true;
-            this.radioQRcodePrint.CheckedChanged += new System.EventHandler(this.radioQRcodePrint_CheckedChanged);
+            this.radioQRcodePrint.CheckedChanged += new System.EventHandler(this.RadioQRcodePrint_CheckedChanged);
             // 
             // radioWeighingform
             // 
@@ -107,7 +107,7 @@
             this.radioWeighingform.TabStop = true;
             this.radioWeighingform.Text = "Carton Weighing Logsheet Form";
             this.radioWeighingform.UseVisualStyleBackColor = true;
-            this.radioWeighingform.CheckedChanged += new System.EventHandler(this.radioMDform_CheckedChanged);
+            this.radioWeighingform.CheckedChanged += new System.EventHandler(this.RadioMDform_CheckedChanged);
             // 
             // radioMDform
             // 
@@ -120,7 +120,7 @@
             this.radioMDform.TabStop = true;
             this.radioMDform.Text = "MD Form Report";
             this.radioMDform.UseVisualStyleBackColor = true;
-            this.radioMDform.CheckedChanged += new System.EventHandler(this.radioMDform_CheckedChanged);
+            this.radioMDform.CheckedChanged += new System.EventHandler(this.RadioMDform_CheckedChanged);
             // 
             // chkCartonNo
             // 
@@ -144,7 +144,7 @@
             this.rdbtnShippingMarkToUsaInd.TabStop = true;
             this.rdbtnShippingMarkToUsaInd.Text = "Packing Shipping Mark (To USA - Indianapolis)";
             this.rdbtnShippingMarkToUsaInd.UseVisualStyleBackColor = true;
-            this.rdbtnShippingMarkToUsaInd.CheckedChanged += new System.EventHandler(this.rdbtnShippingMarkToUsaInd_CheckedChanged);
+            this.rdbtnShippingMarkToUsaInd.CheckedChanged += new System.EventHandler(this.RdbtnShippingMarkToUsaInd_CheckedChanged);
             // 
             // rdbtnShippingMarkToChina
             // 
@@ -157,7 +157,7 @@
             this.rdbtnShippingMarkToChina.TabStop = true;
             this.rdbtnShippingMarkToChina.Text = "Packing Shipping Mark (To China)";
             this.rdbtnShippingMarkToChina.UseVisualStyleBackColor = true;
-            this.rdbtnShippingMarkToChina.CheckedChanged += new System.EventHandler(this.rdbtnShippingMarkToChina_CheckedChanged);
+            this.rdbtnShippingMarkToChina.CheckedChanged += new System.EventHandler(this.RdbtnShippingMarkToChina_CheckedChanged);
             // 
             // rdbtnShippingMark
             // 
@@ -303,7 +303,7 @@
             this.radioCustCTN.TabStop = true;
             this.radioCustCTN.Text = "Cust CTN# Barcode List Print";
             this.radioCustCTN.UseVisualStyleBackColor = true;
-            this.radioCustCTN.CheckedChanged += new System.EventHandler(this.radioCustCTN_CheckedChanged);
+            this.radioCustCTN.CheckedChanged += new System.EventHandler(this.RadioCustCTN_CheckedChanged);
             // 
             // P03_Print
             // 

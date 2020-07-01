@@ -881,12 +881,10 @@ Please check below packing list.
         /// <param name="Empty DataTable"></param>
         /// <param name="Empty DataTable"></param>
         /// <param name="Empty DataTable"></param>
-
         /// <param name="string"></param>
         /// <returns>DualResult</returns>
         public static DualResult QueryPackingListReportData(string PackingListID, string ReportType, out DataTable printData, out DataTable ctnDim, out DataTable qtyBDown)
         {
-            printData = null;
             ctnDim = null;
             qtyBDown = null;
             string sqlCmd = string.Format(@"
@@ -1046,11 +1044,11 @@ order by RefNo", PackingListID);
 		@dataseq VARCHAR(2),
 		@sizecount DECIMAL,
 		@poid VARCHAR(13),
-		@tmpdatalist VARCHAR(160),
+		@tmpdatalist VARCHAR(1024),
 		@datalen INT,
 		@tmpdata VARCHAR(9),
 		@reporttype INT,
-		@tmpdata2 VARCHAR(160),
+		@tmpdata2 VARCHAR(1024),
 		@qty INT,
 		@cbm FLOAT
 
@@ -1079,7 +1077,7 @@ DECLARE cursor_ArticleData CURSOR FOR
 
 --建立暫存PackingList_Detail資料
 DECLARE @tempQtyBDown TABLE (
-   DataList VARCHAR(160)
+   DataList VARCHAR(1024)
 )
 
 --填入Size Code
@@ -1574,7 +1572,6 @@ select * from @tempQtyBDown", PackingListID, ReportType);
         /// <returns>DualResult</returns>
         public static DualResult QueryPackingGuideReportData(string PackingListID, out DataTable printData, out DataTable ctnDim, out DataTable qtyCtn, out DataTable articleSizeTtlShipQty, out DataTable printGroupData, out DataTable clipData, out string specialInstruction)
         {
-            printData = null;
             ctnDim = null;
             qtyCtn = null;
             articleSizeTtlShipQty = null;
@@ -1854,8 +1851,7 @@ where   p.ID = '{0}'
             worksheet.Cells[5, 18] = OrderQty;
             worksheet.Cells[5, 20] = MyUtility.Convert.GetInt(PacklistData["ShipQty"]);
             worksheet.Cells[5, 21] = "=R5-T5";
-
-            int groupRec = PrintGroupData.Rows.Count, excelRow = 6, printRec = 1, printCtnCount = 0;
+            int groupRec = PrintGroupData.Rows.Count, excelRow = 6, printCtnCount = 0;
             int chk1 = excelRow + 257, chk2 = excelRow + 258;
             string seq = "000000", article = "XXXX0000", size = "XXXX0000";
             int qtyPerCTN = -1;
@@ -1894,8 +1890,7 @@ where   p.ID = '{0}'
                 }
                 else
                 {
-                    printRec = 1;
-
+                    int printRec = 1;
                     DataRow[] printList = PrintData.Select(string.Format("Article = '{0}' and SizeCode = '{1}' and Seq > '{2}' and QtyPerCTN = {3}", MyUtility.Convert.GetString(PrintGroupData.Rows[i]["Article"]), MyUtility.Convert.GetString(PrintGroupData.Rows[i]["SizeCode"]), seq, MyUtility.Convert.GetString(PrintGroupData.Rows[i]["QtyPerCTN"])), "Seq");
                     foreach (DataRow dr in printList)
                     {
@@ -2007,10 +2002,6 @@ where   p.ID = '{0}'
             //填Remarks
             excelRow = excelRow + 2;
             worksheet.Cells[excelRow, 2] = MyUtility.Convert.GetString(PacklistData["Remark"]);
-            //填Special Instruction
-            //先取得Special Instruction總共有幾行
-            int dataRow = 0;
-
             string tmp = MyUtility.Convert.GetString(SpecialInstruction);
 
             string[] tmpab = tmp.Split('\r');
@@ -2028,6 +2019,8 @@ where   p.ID = '{0}'
                 }
                 ctmpc += 1;
             }
+            //填Special Instruction
+            //先取得Special Instruction總共有幾行
             #region 舊寫法SpecialInstruction 有幾行資料,就多加幾行空白
             /*
              *原本寫法是SpecialInstruction 有幾行資料,就多加幾行空白
@@ -2052,7 +2045,7 @@ where   p.ID = '{0}'
             #endregion
 
             //調整寫法, 只需要多加兩行空白即可
-            dataRow = 2 + ctmpc;
+            int dataRow = 2 + ctmpc;
             excelRow++;
 
             if (dataRow > 2)
@@ -2124,7 +2117,6 @@ where   p.ID = '{0}'
         /// <returns>DualResult</returns>
         public static DualResult PackingBarcodePrint(string packingListID, string ctnStartNo, string ctnEndNo, out DataTable printBarcodeData)
         {
-            printBarcodeData = null;
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"
 select  pd.ID
