@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict;
-using Ict.Win;
 using Sci.Data;
 using System.Runtime.InteropServices;
-using System.IO;
-using System.Drawing.Imaging;
 using System.Linq;
 using Word = Microsoft.Office.Interop.Word;
 
@@ -120,11 +112,6 @@ namespace Sci.Production.Packing
             return base.ValidateInput();
         }
 
-        /// <summary>
-        /// OnAsyncDataLoad非同步取資料
-        /// </summary>
-        /// <param name="e">e</param>
-        /// <returns>DualResult</returns>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             if (this.reportType == "1" || this.reportType == "2")
@@ -284,7 +271,7 @@ select * from(
     outer apply	(
 		SELECT [CountryName]=c.NameEN FROM Factory f
 		INNER JOIN Country c On f.CountryID=c.ID
-		WHERE f.ID='{ Sci.Env.User.Factory}'
+		WHERE f.ID='{Sci.Env.User.Factory}'
 	)c
     where pd.id = '{this.masterData["ID"]}'
 		  and pd.CTNQty > 0
@@ -332,7 +319,7 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                 {
                     tables = table[i + 1];
 
-                    #region 
+                    #region
                     string customize1 = this.printData.Rows[i]["Customize1"].ToString();
                     string custPOno = this.printData.Rows[i]["CustPOno"].ToString();
                     string article = this.printData.Rows[i]["Article"].ToString();
@@ -355,9 +342,9 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                     tables.Cell(8, 1).Range.Text = "NET WEIGHT:" + nw;
                 }
                 #endregion
-                //關閉word保護模式
-                //winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
+                // 關閉word保護模式
+                // winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
                 #region Save & Show Word
                 winword.Visible = true;
                 Marshal.ReleaseComObject(winword);
@@ -428,7 +415,7 @@ select * from(
 	outer apply	(
 	SELECT [CountryName]=c.NameEN FROM Factory f
 	INNER JOIN Country c On f.CountryID=c.ID
-	WHERE f.ID='{ Sci.Env.User.Factory}'
+	WHERE f.ID='{Sci.Env.User.Factory}'
 	)d
 	OUTER APPLY(
 		SELECT DISTINCT GW
@@ -481,7 +468,7 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                     tables = table[i + 1];
 
                     #region 對應SQL選取的欄位
-                    string cARTON =this.chkCartonNo.Checked ? this.printData.Rows[i]["Carton_CTNQty"].ToString() : this.printData.Rows[i]["CTNQty"].ToString();
+                    string cARTON = this.chkCartonNo.Checked ? this.printData.Rows[i]["Carton_CTNQty"].ToString() : this.printData.Rows[i]["CTNQty"].ToString();
                     string custPOno = this.printData.Rows[i]["CustPOno"].ToString();
                     string article = this.printData.Rows[i]["Article"].ToString();
                     string sizeCode = this.printData.Rows[i]["SizeCode"].ToString();
@@ -502,9 +489,9 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                     tables.Cell(8, 2).Range.Text = weight;
                 }
                 #endregion
-                //關閉word保護模式
-                //winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
+                // 關閉word保護模式
+                // winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
                 #region Save & Show Word
                 winword.Visible = true;
                 Marshal.ReleaseComObject(winword);
@@ -569,7 +556,7 @@ select * from(
     outer apply	(
 	    SELECT [CountryName]=c.NameEN FROM Factory f
 	    INNER JOIN Country c On f.CountryID=c.ID
-	    WHERE f.ID='{ Sci.Env.User.Factory}'
+	    WHERE f.ID='{Sci.Env.User.Factory}'
 	)d
 	OUTER APPLY(
 		SELECT DISTINCT GW
@@ -621,12 +608,12 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                 {
                     tables = table[i + 1];
 
-                    #region 
+                    #region
                     string custPOno = this.printData.Rows[i]["CustPOno"].ToString();
                     string sizeCode = this.printData.Rows[i]["SizeCode"].ToString();
                     string qty = this.printData.Rows[i]["qty"].ToString();
                     string country = this.printData.Rows[i]["CountryName"].ToString();
-                    
+
                     string weight = this.printData.Rows[i]["Weight"].ToString();
                     #endregion
 
@@ -637,9 +624,9 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                     tables.Cell(5, 2).Range.Text = sizeCode;
                 }
                 #endregion
-                //關閉word保護模式
-                //winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
+                // 關閉word保護模式
+                // winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
                 #region Save & Show Word
                 winword.Visible = true;
                 Marshal.ReleaseComObject(winword);
@@ -666,35 +653,35 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
             #endregion
         }
 
-        private void rdbtnShippingMarkToChina_CheckedChanged(object sender, EventArgs e)
+        private void RdbtnShippingMarkToChina_CheckedChanged(object sender, EventArgs e)
         {
             this.ControlPrintFunction(((Sci.Win.UI.RadioButton)sender).Checked);
             this.checkBoxCountry.Enabled = this.radioNewBarcodePrint.Checked;
             this.checkBoxCountry.Checked = this.radioNewBarcodePrint.Checked;
         }
 
-        private void rdbtnShippingMarkToUsaInd_CheckedChanged(object sender, EventArgs e)
+        private void RdbtnShippingMarkToUsaInd_CheckedChanged(object sender, EventArgs e)
         {
             this.ControlPrintFunction(((Sci.Win.UI.RadioButton)sender).Checked);
             this.checkBoxCountry.Enabled = this.radioNewBarcodePrint.Checked;
             this.checkBoxCountry.Checked = this.radioNewBarcodePrint.Checked;
         }
 
-        private void radioMDform_CheckedChanged(object sender, EventArgs e)
+        private void RadioMDform_CheckedChanged(object sender, EventArgs e)
         {
             this.ControlPrintFunction(!((Sci.Win.UI.RadioButton)sender).Checked);
             this.checkBoxCountry.Enabled = !((Sci.Win.UI.RadioButton)sender).Checked;
             this.checkBoxCountry.Checked = !((Sci.Win.UI.RadioButton)sender).Checked;
         }
 
-        private void radioQRcodePrint_CheckedChanged(object sender, EventArgs e)
+        private void RadioQRcodePrint_CheckedChanged(object sender, EventArgs e)
         {
             this.ControlPrintFunction(((Sci.Win.UI.RadioButton)sender).Checked);
             this.checkBoxCountry.Enabled = this.radioNewBarcodePrint.Checked;
             this.checkBoxCountry.Checked = this.radioNewBarcodePrint.Checked;
         }
 
-        private void radioCustCTN_CheckedChanged(object sender, EventArgs e)
+        private void RadioCustCTN_CheckedChanged(object sender, EventArgs e)
         {
             this.ControlPrintFunction(((Sci.Win.UI.RadioButton)sender).Checked);
             this.checkBoxCountry.Enabled = !this.radioCustCTN.Checked;
