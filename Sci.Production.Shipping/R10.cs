@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -14,9 +10,7 @@ using System.Linq;
 
 namespace Sci.Production.Shipping
 {
-    /// <summary>
-    /// R10
-    /// </summary>
+    /// <inheritdoc/>
     public partial class R10 : Sci.Win.Tems.PrintForm
     {
         private DateTime? date1;
@@ -38,10 +32,7 @@ namespace Sci.Production.Shipping
         private DataTable printData;
         private DataTable accnoData;
 
-        /// <summary>
-        /// R10
-        /// </summary>
-        /// <param name="menuitem">menuitem</param>
+        /// <inheritdoc/>
         public R10(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -577,7 +568,7 @@ select distinct [type]
 	, id
 	, OnBoardDate
 	, shipper
-	, Foundry
+	, Foundry = isnull(f.Foundry,'')
 	, SisFtyAPID
 	, Brandid
 	, category
@@ -605,6 +596,7 @@ outer apply (
 			for xml path('')
 		),1,1,'')
 	)s
+outer apply(select top 1 Foundry from #temp1 d where d.id=a.id and Foundry = 'Y')f
 
 
 select [type]
@@ -686,7 +678,7 @@ select distinct [type]
     ,FactoryID
 	,MDivisionID
 	,KPICode
-	,Foundry
+	, Foundry = isnull(f.Foundry,'')
 	,SisFtyAPID
 	,Brandid
 	,category
@@ -717,6 +709,7 @@ outer apply (
 			for xml path('')
 		),1,1,'')
 	)s
+outer apply(select top 1 Foundry from #temp1 d where d.id=a.id and Foundry = 'Y')f
 
 --temp3 detail List by SP#
 select [type]
@@ -1449,7 +1442,8 @@ where s.Type = 'EXPORT'");
             {
                 return false;
             }
-            //excel.Visible = true;
+
+            // excel.Visible = true;
             DataTable tb_onBoardDate = new DataTable();
             DataTable tb_IncludeFoundry = new DataTable();
             DataTable tb_SisFtyAP = new DataTable();
@@ -1729,10 +1723,10 @@ where s.Type = 'EXPORT'");
 
                     int totalSumcolumn = allColumn + this.accnoData.Rows.Count;
 
-                    //if (this.reportContent == 2)
-                    //{
+                    // if (this.reportContent == 2)
+                    // {
                     //    totalSumcolumn += 1;
-                    //}
+                    // }
                     string sumStartColEng = this.reportType == 1 ? "R" : this.reportContent == 2 ? "V" : "Y";
                     objArray[0, totalSumcolumn] = string.Format("=SUM({2}{0}:{1}{0}) {3} {4}", intRowsStart, excelSumCol, sumStartColEng, sc1, sc2);
 
@@ -1844,7 +1838,8 @@ where s.Type = 'EXPORT'");
                 worksheet.Cells[1, 3] = "On Board Date";
                 range = worksheet.get_Range("C2", "C" + (this.printData.Rows.Count + 1));
                 range.EntireColumn.NumberFormat = "yyyy/MM/dd";
-                //Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM();
+
+                // Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM();
                 object[,] arrayValues = tb_onBoardDate.ToArray2D();
                 range.Value2 = arrayValues;
 
@@ -1863,7 +1858,6 @@ where s.Type = 'EXPORT'");
                     range = worksheet.get_Range("F2", "F" + (this.printData.Rows.Count + 1));
                     arrayValues = tb_SisFtyAP.ToArray2D();
                     range.Value2 = arrayValues;
-
                 }
 
                 if (this.reportType == 2 || this.reportType == 3)
