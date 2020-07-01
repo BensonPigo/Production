@@ -349,10 +349,24 @@ Begin
 
 	--05 ClogReturn / CompleteClogReturn
 	Begin
-		-- 找出 SCIUpate 為 0 的資料（代表 PMS 資料需要更新）
+		-- 找出 SCIUpate 為 0，且"確定"存在Clog的資料（代表 PMS 資料需要更新）
 		select * 
 		into #tmpCompleteClogReturn
-		from CompleteClogReturn where SCIUpdate=0
+		from CompleteClogReturn c where SCIUpdate=0
+		AND EXISTS( ----存在Clog的判斷，可參考Clog P03 P07的搜尋條件
+			SELECT 1
+			FROM Production.dbo.PackingList p WITH (NOLOCK)
+			INNER JOIN Production.dbo.PackingList_Detail pd WITH (NOLOCK) on p.id=pd.id
+			LEFT JOIN Production.dbo.Pullout po WITH (NOLOCK) on po.ID=p.PulloutID
+			WHERE 1=1
+			AND pd.SCICtnNo=c.SCICtnNo
+			AND pd.ReceiveDate IS NOT NULL
+			AND pd.TransferCFADate IS NULL
+			AND pd.CFAReturnClogDate IS NULL
+			AND pd.DisposeFromClog = 0
+			AND pd.CTNStartNo != ''
+			AND (po.Status = 'New' or po.Status is null)
+		)
 
 		-- 更新 PackingList_Detail 的資料
 		UPDATE pd
@@ -399,21 +413,35 @@ Begin
 
 	--06 TransferToCFA / CompleteTransferToCFA
 	Begin
-		-- 找出 SCIUpate 為 0 的資料（代表 PMS 資料需要更新）
+		-- 找出 SCIUpate 為 0 ，且"確定"存在Clog的資料（代表 PMS 資料需要更新）
 		select * 
 		into #tmpCompleteTransferToCFA
-		from CompleteTransferToCFA where SCIUpdate=0
+		from CompleteTransferToCFA c where SCIUpdate=0
+		AND EXISTS( ----存在Clog的判斷，可參考Clog P03 P07的搜尋條件
+			SELECT 1
+			FROM Production.dbo.PackingList p WITH (NOLOCK)
+			INNER JOIN Production.dbo.PackingList_Detail pd WITH (NOLOCK) on p.id=pd.id
+			LEFT JOIN Production.dbo.Pullout po WITH (NOLOCK) on po.ID=p.PulloutID
+			WHERE 1=1
+			AND pd.SCICtnNo=c.SCICtnNo
+			AND pd.ReceiveDate IS NOT NULL
+			AND pd.TransferCFADate IS NULL
+			AND pd.CFAReturnClogDate IS NULL
+			AND pd.DisposeFromClog = 0
+			AND pd.CTNStartNo != ''
+			AND (po.Status = 'New' or po.Status is null)
+		)
 		
 		-- 更新 PackingList_Detail 的資料
 		UPDATE pd
-		SET pd.CFALocationID = 'CFA' ,pd.CFAReceiveDate = cf.Time ,pd.ClogLocationId=''
+		SET pd.ClogLocationId = '2CFA' ,pd.TransferCFADate = cf.Time ,pd.ClogReceiveCFADate = NULL
 		FROM #tmpCompleteTransferToCFA cf
 		INNER JOIN Production.dbo.PackingList_Detail pd ON cf.SCICtnNo = pd.SCICtnNo
 		
-		-- 寫入交易紀錄 PMS.CFAReceive
-		INSERT INTO Production.dbo.CFAReceive
-		(ReceiveDate ,MDivisionID ,PackingListID ,OrderID ,CTNStartNo ,AddDate ,AddName ,SCICtnNo ,CFALocationID)
-		SELECT DISTINCT [ReturnDate]=cf.Time 
+		-- 寫入交易紀錄 PMS.TransferToCFA
+		INSERT INTO Production.dbo.TransferToCFA
+		(TransferDate ,MDivisionID ,PackingListID ,OrderID ,CTNStartNo ,AddDate ,AddName ,SCICtnNo )
+		SELECT DISTINCT [TransferDate]=cf.Time 
 			,p.MDivisionID 
 			,[PackingListID]=p.ID 
 			,pd.OrderID
@@ -421,7 +449,6 @@ Begin
 			,[AddDate]=cf.Time 
 			,[AddName]='SCIMIS' 
 			,cf.SCICtnNo
-			,[CFALocationID]='CFA'
 		FROM #tmpCompleteTransferToCFA cf
 		INNER JOIN Production.dbo.PackingList_Detail pd ON cf.SCICtnNo = pd.SCICtnNo
 		INNER JOIN Production.dbo.PackingList p ON p.ID =pd.ID
@@ -429,7 +456,7 @@ Begin
 		-- 加入@tmpOrder
 		insert into @tmpOrder
 		select distinct t.orderid
-		from Production.dbo.CFAReceive t
+		from Production.dbo.TransferToCFA t
 		inner join #tmpCompleteTransferToCFA s on t.SCICtnNo=s.SCICtnNo
 
 		-- CompleteTransferToCFA
