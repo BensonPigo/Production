@@ -1,8 +1,4 @@
-﻿-- =============================================
--- Author:		<JEFF S01952>
--- Create date: <2016/11/19>
--- Description:	<PMSUploadDataToAPS>
--- =============================================
+﻿
 CREATE PROCEDURE [dbo].[usp_PMSUploadDataToAPS]
 
 AS
@@ -98,6 +94,8 @@ Select
 ,[sCUSY] = isnull(MasterStyleID1.MasterStyleID,MasterStyleID2.MasterStyleID)
 ,[sCUSTOMERORDERNO] = o.orderTypeID
 ,o.NeedProduction
+,o.IsBuyBack
+,o.BuyBackReason
 into #tmp
 From [Production].dbo.Orders o
 inner join Factory on Factory.id = o.FactoryID and Factory.IsProduceFty = 1
@@ -144,22 +142,6 @@ outer apply(
 	)
 )REMK
 outer apply(
-	--select PRGM = (
-	--	Select IIF(d.Qty = '''',d.TMS, d.Qty + IIF(d.TMS = '''', '''', '',''+d.TMS)) 
-	--	from (
-	--		Select 
-	--			IIF(ot.Qty <> 0,a.Abbreviation+'':''+CONVERT(varchar,ot.Qty),'''') as Qty, 
-	--			IIF(ot.TMS <> 0 and a.Classify = ''O'' ,a.Abbreviation+'':''+CONVERT(varchar,ot.TMS),'''') as TMS 
-	--		from Order_TmsCost ot, ArtworkType a 
-	--		where ot.ID  = o.ID 
-	--		and a.ID = ot.ArtworkTypeID 
-	--		and (a.Classify = ''S'' or a.IsSubprocess = 1) 
-	--		and not (ot.Price = 0 and a.Classify <> ''O'')		
-	--	) d
-	--	Where d.Qty <> '''' and d.TMS <> ''''
-	--	for xml path('''')
-	--)
-
 	SELECT [PRGM]=FabricType
 	FROM Style s
 	WHERE s.Ukey = o.StyleUkey 
@@ -180,7 +162,7 @@ left join '+@SerDbDboTb+N' t on t.RCID collate Chinese_Taiwan_Stroke_CI_AS = s.s
 IF OBJECT_ID(''tempdb.dbo.#tmp'', ''U'') IS NOT NULL DROP TABLE #tmp
 
 update t set
-	[DELF] = iif(s.Junk = 0 OR s.NeedProduction = 1,''N'',''Y'')
+	[DELF] = iif(s.Junk = 0 OR s.NeedProduction = 1 OR (s.IsBuyBack = 1 and s.BuyBackReason <>''Garment''),''N'',''Y'')
 	,[SONO] = s.[sSONO]
 	,[LOT] = s.[sLOT]
 	,[CRNM] = s.[sCRNM]
