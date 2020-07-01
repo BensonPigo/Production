@@ -207,7 +207,6 @@ namespace Sci.Production.PPIC
                     break;
             }
 
-            this.chkBuyBack.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup(string.Format("select 'True' from Order_BuyBack where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))));
             this.displaySampleReason2.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Order_reMakeSample' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["SampleReason"])));
             this.displayUpdateDeliveryReason.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Order_BuyerDelivery' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["KPIChangeReason"])));
             this.displaySpecialMark.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Style_SpecialMark' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["SpecialMark"])));
@@ -949,11 +948,11 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             callNextForm.ShowDialog(this);
         }
 
-        //Po Rematk
+        // Po Rematk
         private void btnPoRemark_Click(object sender, EventArgs e)
         {
             System.Data.DataTable data;
-            //串接規則Orders.ID=PO.ID
+            // 串接規則Orders.ID=PO.ID
             string sqlCmd = string.Format("select PoRemark from PO WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"]);
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out data);
@@ -1046,7 +1045,6 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         // Artwork
         private void BtnArtwork_Click(object sender, EventArgs e)
         {
-
             Sci.Production.PPIC.P01_Artwork callNextForm = new Sci.Production.PPIC.P01_Artwork(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
         }
@@ -1167,8 +1165,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             ON c.ID=o.CustCDID AND c.BrandID=@BrandID
             WHERE o.ID=@OrderId ";
 
-            //主索引鍵：CustCD.ID+CustCD.BrandID
-
+            // 主索引鍵：CustCD.ID+CustCD.BrandID
             bool res = MyUtility.Check.Seek(cmd, new List<SqlParameter> { new SqlParameter("@OrderId", this.CurrentDataRow["ID"]), new SqlParameter("@BrandID", this.CurrentDataRow["BrandID"]) }, out tmp, null);
             if (res && tmp["Kit"] != null)
             {
@@ -1176,16 +1173,21 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
                 this.displayKit.Text = tmp["Kit"].ToString();
             }
             else
+            {
                 this.displayKit.Text = string.Empty;
+            }
         }
-    
+
         private void GetIsDevSample()
         {
             string result = MyUtility.GetValue.Lookup($"SELECT ot.IsDevSample FROM OrderType ot INNER JOIN Orders o ON o.BrandID=ot.BrandID AND  o.OrderTypeID=ot.ID WHERE o.ID='{this.displaySPNo.Text}'");
-            bool IsDevSample = false;
-            if (result!="" && result.ToUpper()=="TRUE")
-                IsDevSample = true;     
-            this.txtDevSample.Text = IsDevSample ? "Y" : "";
+            bool isDevSample = false;
+            if (result != string.Empty && result.ToUpper() == "TRUE")
+            {
+                isDevSample = true;
+            }
+
+            this.txtDevSample.Text = isDevSample ? "Y" : string.Empty;
         }
 
      private DataRow GetTitleDataByCustCD(string poid, string id, bool byCustCD = true)

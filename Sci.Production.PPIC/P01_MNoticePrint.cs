@@ -573,7 +573,7 @@ group by POID,b.spno,br.Customize2";
             string msg = string.Empty;
 
             System.Data.DataTable sP_note;
-            DBProxy.Current.Select(null, $"SELECT  Junk,NeedProduction,KeepPanels,[BuyBack]=IIF(BuyBack = 1 ,'true','false') FROM Orders WITH(NOLOCK) WHERE ID='{orderID}'", out sP_note);
+            DBProxy.Current.Select(null, $"SELECT  Junk,NeedProduction,KeepPanels,IsBuyBack  FROM Orders WITH(NOLOCK) WHERE ID='{orderID}'", out sP_note);
 
             if (MyUtility.Convert.GetBool(sP_note.Rows[0]["Junk"]) && MyUtility.Convert.GetBool(sP_note.Rows[0]["NeedProduction"]))
             {
@@ -583,7 +583,7 @@ group by POID,b.spno,br.Customize2";
             {
                 msg = "Keep Panel without production";
             }
-            else if (MyUtility.Convert.GetBool(sP_note.Rows[0]["BuyBack"]))
+            else if (MyUtility.Convert.GetBool(sP_note.Rows[0]["IsBuyBack"]))
             {
                 msg = "Buy Back";
             }
@@ -641,7 +641,7 @@ group by POID,b.spno,br.Customize2";
             }
 
             System.Data.DataTable sP_note;
-            DBProxy.Current.Select(null, $"SELECT ID,Junk,NeedProduction,KeepPanels,[BuyBack]=IIF(BuyBack = 1 ,'true','false') FROM Orders WITH(NOLOCK) WHERE ID IN ('{spList.JoinToString("','")}')", out sP_note);
+            DBProxy.Current.Select(null, $"SELECT ID,Junk,NeedProduction,KeepPanels,IsBuyBack FROM Orders WITH(NOLOCK) WHERE ID IN ('{spList.JoinToString("','")}')", out sP_note);
 
             foreach (DataRow dr in sP_note.Rows)
             {
@@ -657,12 +657,26 @@ group by POID,b.spno,br.Customize2";
                 {
                     status3.Add(dr["ID"].ToString());
                 }
-                else if (MyUtility.Convert.GetBool(dr["BuyBack"]))
+                else if (MyUtility.Convert.GetBool(dr["IsBuyBack"]))
                 {
                     status4.Add(dr["ID"].ToString());
                 }
             }
+
             List<string> mesgs = new List<string>();
+
+            if (status4.Count > 0)
+            {
+                foreach (var sp in spList)
+                {
+                    if (!status4.Contains(sp))
+                    {
+                        status4.Add(sp);
+                    }
+                }
+            }
+
+            status4 = status4.OrderBy(o => o).ToList();
 
             string tmp1Msg = status1.Any() ? "Cancel still need to continue Production : "
                 + status1.FirstOrDefault()
@@ -722,18 +736,6 @@ group by POID,b.spno,br.Customize2";
 
             List<string> spList = new List<string>();
 
-            // Cancel still need to continue Production
-            List<string> status1 = new List<string>();
-
-            // Keep Panel without production
-            List<string> status2 = new List<string>();
-
-            // Cancel
-            List<string> status3 = new List<string>();
-
-            // Buy Back
-            List<string> status4 = new List<string>();
-
             int q = 0;
             foreach (var sp in orderIDs.Split('/'))
             {
@@ -751,7 +753,7 @@ group by POID,b.spno,br.Customize2";
             }
 
             System.Data.DataTable sP_note;
-            DBProxy.Current.Select(null, $"SELECT ID,Junk,NeedProduction,KeepPanels,[BuyBack]=IIF(BuyBack = 1 ,'true','false') FROM Orders WITH(NOLOCK) WHERE ID IN ('{spList.JoinToString("','")}')", out sP_note);
+            DBProxy.Current.Select(null, $"SELECT ID,Junk,NeedProduction,KeepPanels,IsBuyBack FROM Orders WITH(NOLOCK) WHERE ID IN ('{spList.JoinToString("','")}')", out sP_note);
 
             foreach (DataRow dr in sP_note.Rows)
             {
@@ -767,7 +769,7 @@ group by POID,b.spno,br.Customize2";
                 {
                     total += 1;
                 }
-                else if (MyUtility.Convert.GetBool(dr["BuyBack"]))
+                else if (MyUtility.Convert.GetBool(dr["IsBuyBack"]))
                 {
                     total += 1;
                 }
