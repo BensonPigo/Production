@@ -709,7 +709,7 @@ outer apply (
 			for xml path('')
 		),1,1,'')
 	)s
-outer apply(select top 1 Foundry from #temp1 d where d.id=a.id and Foundry = 'Y')f
+outer apply(select top 1 Foundry from #temp1 d where d.id=a.id and Foundry = 'Y' and d.OrderID = a.OrderID)f
 
 --temp3 detail List by SP#
 select [type]
