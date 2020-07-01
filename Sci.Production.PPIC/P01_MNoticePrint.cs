@@ -604,6 +604,7 @@ group by POID,b.spno,br.Customize2";
             string msg = string.Empty;
 
             string firstSP = string.Empty;
+            string poid = string.Empty;
 
             List<string> spList = new List<string>();
 
@@ -628,12 +629,12 @@ group by POID,b.spno,br.Customize2";
                 {
                     // 第一個SP(20021103GG)直接塞進List即可
                     firstSP = sp;
+                    poid = sp.Substring(0, 10);
                     spList.Add(sp);
                 }
                 else
                 {
-                    // 第一個之後的，會是001、002...等等，因此需要抓第一個SP來取POID，加上001、002...組成正確SP#
-                    string poid = firstSP.Substring(0, 10);
+                    // 第一個之後的，會是001、002...等等，因此需要抓POID，加上001、002...組成正確SP#
                     spList.Add(poid + sp);
                 }
 
@@ -641,7 +642,9 @@ group by POID,b.spno,br.Customize2";
             }
 
             System.Data.DataTable sP_note;
+            System.Data.DataTable isBuyBackDt;
             DBProxy.Current.Select(null, $"SELECT ID,Junk,NeedProduction,KeepPanels,IsBuyBack FROM Orders WITH(NOLOCK) WHERE ID IN ('{spList.JoinToString("','")}')", out sP_note);
+            DBProxy.Current.Select(null, $"SELECT ID,Junk,NeedProduction,KeepPanels,IsBuyBack FROM Orders WITH(NOLOCK) WHERE POID ='{poid}' AND IsBuyBack = 1", out isBuyBackDt);
 
             foreach (DataRow dr in sP_note.Rows)
             {
@@ -657,26 +660,26 @@ group by POID,b.spno,br.Customize2";
                 {
                     status3.Add(dr["ID"].ToString());
                 }
-                else if (MyUtility.Convert.GetBool(dr["IsBuyBack"]))
+                else if (isBuyBackDt.Rows.Count > 0)
                 {
-                    status4.Add(dr["ID"].ToString());
+                    status4.Add(poid);
                 }
             }
 
             List<string> mesgs = new List<string>();
 
-            if (status4.Count > 0)
-            {
-                foreach (var sp in spList)
-                {
-                    if (!status4.Contains(sp))
-                    {
-                        status4.Add(sp);
-                    }
-                }
-            }
+            //if (status4.Count > 0)
+            //{
+            //    foreach (var sp in spList)
+            //    {
+            //        if (!status4.Contains(sp))
+            //        {
+            //            status4.Add(sp);
+            //        }
+            //    }
+            //}
 
-            status4 = status4.OrderBy(o => o).ToList();
+            //status4 = status4.OrderBy(o => o).ToList();
 
             string tmp1Msg = status1.Any() ? "Cancel still need to continue Production : "
                 + status1.FirstOrDefault()
@@ -711,11 +714,11 @@ group by POID,b.spno,br.Customize2";
                 mesgs.Add(tmp3Msg);
             }
 
-            string tmp4Msg = status4.Any() ? "Buy Back : "
+            string tmp4Msg = status4.Any() ? "Buy Back" : string.Empty; /*
                 + status4.FirstOrDefault()
                 + (status4.Where(o => o != status4.FirstOrDefault()).Any() ?
                    ("/" + status4.Where(o => o != status4.FirstOrDefault()).JoinToString("/").Replace(firstSP, string.Empty)) : string.Empty)
-                    : string.Empty;
+                    : string.Empty;*/
 
             if (!MyUtility.Check.Empty(tmp4Msg))
             {
@@ -730,6 +733,7 @@ group by POID,b.spno,br.Customize2";
         private int GetSPNoteRowHeight(string orderIDs)
         {
             string msg = string.Empty;
+            string poid = string.Empty;
             int total = 0;
 
             string oriSP = string.Empty;
@@ -742,6 +746,7 @@ group by POID,b.spno,br.Customize2";
                 if (q == 0)
                 {
                     oriSP = sp;
+                    poid = sp.Substring(0, 10);
                     spList.Add(sp);
                 }
                 else
@@ -753,7 +758,9 @@ group by POID,b.spno,br.Customize2";
             }
 
             System.Data.DataTable sP_note;
+            System.Data.DataTable isBuyBackDt;
             DBProxy.Current.Select(null, $"SELECT ID,Junk,NeedProduction,KeepPanels,IsBuyBack FROM Orders WITH(NOLOCK) WHERE ID IN ('{spList.JoinToString("','")}')", out sP_note);
+            DBProxy.Current.Select(null, $"SELECT ID,Junk,NeedProduction,KeepPanels,IsBuyBack FROM Orders WITH(NOLOCK) WHERE POID ='{poid}' AND IsBuyBack = 1", out isBuyBackDt);
 
             foreach (DataRow dr in sP_note.Rows)
             {
@@ -769,7 +776,7 @@ group by POID,b.spno,br.Customize2";
                 {
                     total += 1;
                 }
-                else if (MyUtility.Convert.GetBool(dr["IsBuyBack"]))
+                else if (MyUtility.Convert.GetBool(isBuyBackDt.Rows.Count > 0))
                 {
                     total += 1;
                 }
