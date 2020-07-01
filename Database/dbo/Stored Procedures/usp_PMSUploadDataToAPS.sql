@@ -218,7 +218,7 @@ and (
 	or isnull(SHIP,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sSHIP,'''')
 	or isnull(PRGM,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sPRGM,'''')
 	or isnull(REMK,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sREMK,'''')	
-	or isnull(DELF,'''') collate Chinese_Taiwan_Stroke_CI_AS != iif(s.Junk = 0 OR s.NeedProduction = 1,''N'',''Y'')
+	or isnull(DELF,'''') collate Chinese_Taiwan_Stroke_CI_AS != iif(s.Junk = 0 OR s.NeedProduction = 1 OR (s.IsBuyBack = 1 and s.BuyBackReason <>''Garment''),''N'',''Y'')
 	or isnull(CUSY,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sCUSY,'''')
 	or isnull(CUSTOMERORDERNO,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sCUSTOMERORDERNO,'''')
 )
@@ -229,7 +229,7 @@ insert into '+@SerDbDboTb+N'
 ,[UPUS],[UPNM],[SYCO],[MASTERMATERIALDATE],[MASTERMATERIALRECEIVEDDATE],[MATERIALDATE],[MATERIALRECEIVEDDATE]
 ,[PPRO],[PRGM],UPDT
 ,[CUSY],[CUSTOMERORDERNO])
-select [sRCID], iif(Junk = 0 OR NeedProduction = 1,''N'',''Y'') ,[sSONO],[sLOT],[sCRNM],[sPRIO],[sODST],[sNCTR],[sCSSE],[sCSNM],[sCUNM],[sCFTY],[sSYD1]
+select [sRCID], iif(Junk = 0 OR NeedProduction = 1 OR (IsBuyBack = 1 and BuyBackReason <>''Garment''),''N'',''Y'') ,[sSONO],[sLOT],[sCRNM],[sPRIO],[sODST],[sNCTR],[sCSSE],[sCSNM],[sCUNM],[sCFTY],[sSYD1]
 ,[sGTMH],[sOTDD],[sCOTD],[sOTTD],[sQTYN],[sFIRM],[sCOLR],[sSZE],[sSHIP],[sSMOD],[sPlcOrdDate],[sREMK],[sAOTT]
 ,[sUPUS],[sUPNM],[sSYCO],[sMASTERMATERIALDATE],[sMASTERMATERIALRECEIVEDDATE],[sMATERIALDATE],[sMATERIALRECEIVEDDATE]
 ,[sPPRO],[sPRGM],UPDT = format(GETDATE(),''yyyy-MM-dd'')
