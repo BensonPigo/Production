@@ -1214,7 +1214,6 @@
             // dispSubprocess
             // 
             this.dispSubprocess.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dispSubprocess.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
             this.dispSubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.dispSubprocess.Location = new System.Drawing.Point(710, 33);
             this.dispSubprocess.Name = "dispSubprocess";
