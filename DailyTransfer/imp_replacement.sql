@@ -34,7 +34,9 @@ BEGIN
 		t.TransferName = s.TransferName,
 		t.TransferDate = s.TransferDate,
 		t.TransferResponsible = s.TransferResponsible,
-		t.TransferNo = s.TransferNo
+		t.TransferNo = s.TransferNo,
+		t.CompleteName = isnull (s.CompleteName, ''),
+		t.isComplete = isnull (s.isComplete, 0)
 	output inserted.id into @tReplace;
 
 	--Merge Replace2
