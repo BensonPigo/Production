@@ -354,11 +354,13 @@ group by st2.Orderid, st2.Article, st2.Sizecode
 
 --2020/3/18↓效能調整,移除join Order_SizeCode,現在上方準備資料階段SizeCode已從Bundle來源改成Bundle_Detail和Order_Qty, 不需要再去串Order_SizeCode確認此SizeCode是否存在
 select    st0.Orderid
+        , bunIO.BundleNo
 		, SubprocessId=sub.id
 		, sub.InOutRule
 		, bunD.BundleGroup
 		, Size=st0.SizeCode
 		, st0.Article
+        , st0.SizeCode
 		, st0.PatternPanel
 		, bunD.FabricPanelCode
 		, st0.PatternCode
@@ -671,7 +673,7 @@ outer apply (
 ) IOQtyPerPcs
 where FinishedQty is not null
 
-drop table #QtyBySetPerCutpart{subprocessIDtmp}, #BundleInOutDetail{subprocessIDtmp}, #CutpartBySet{subprocessIDtmp}, #FinalQtyBySet{subprocessIDtmp}, #BundleInOutQty{subprocessIDtmp}
+drop table #QtyBySetPerCutpart{subprocessIDtmp}, #CutpartBySet{subprocessIDtmp}, #FinalQtyBySet{subprocessIDtmp}
 ";
                 if (bySP)
                 {
