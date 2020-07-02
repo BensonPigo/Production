@@ -197,7 +197,9 @@ left join MachineType m WITH (NOLOCK) on m.id =  a.MachineTypeID
 where a.ID = {0}
 order by iif(IsPPa=1,1,0) ,a.No
 ,a.MachineTypeID--iif(m.MachineGroupID = '','',a.MachineTypeID)
-,a.Attachment,a.Template,a.ThreadColor", MyUtility.Convert.GetString(this.masterData["ID"]), this.strLanguage);
+,a.Attachment,a.Template,a.ThreadColor",
+                MyUtility.Convert.GetString(this.masterData["ID"]),
+                this.strLanguage);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.operationCode);
             if (!result)
             {
@@ -220,7 +222,9 @@ left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 left join Operation o WITH (NOLOCK) on o.ID = ld.OperationID
 left join OperationDesc od on o.ID = od.ID
 where ld.ID = {0} and IsPPa = 1 
-order by ld.No,ld.GroupKey", MyUtility.Convert.GetString(this.masterData["ID"]), this.strLanguage);
+order by ld.No,ld.GroupKey",
+                MyUtility.Convert.GetString(this.masterData["ID"]),
+                this.strLanguage);
             result = DBProxy.Current.Select(null, sqlCmd, out this.noppa);
             if (!result)
             {
@@ -262,7 +266,9 @@ OUTER APPLY(
 )ActCycle
 where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
 GROUP BY NO ,ActCycle.Value
-order by no", MyUtility.Convert.GetString(this.masterData["ID"]), this.strLanguage);
+order by no",
+                    MyUtility.Convert.GetString(this.masterData["ID"]),
+                    this.strLanguage);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist);
                 if (!result)
                 {
@@ -321,8 +327,8 @@ order by no
 
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp
-                    , strLanguage);
+                    this.changp,
+                    this.strLanguage);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist);
                 if (!result)
                 {
@@ -411,7 +417,6 @@ order by no
                 return false;
             }
 
-            //excel.Visible = true;
             #region 第一頁
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             string factory = MyUtility.Convert.GetString(this.masterData["FactoryID"]);
@@ -562,7 +567,6 @@ order by no
             // only Machine Type
             worksheet.Cells[rownum, 27] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,3,0)),\"\",IF(VLOOKUP(D{rownum},Operation,3,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,3,0)),\"\",VLOOKUP(D{rownum - 1},Operation,3,0)),\"\",VLOOKUP(D{rownum},Operation,3,0)))";
             worksheet.Cells[rownum, 28] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,3,0)),\"\",IF(VLOOKUP(S{rownum},Operation,3,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,3,0)),\"\",VLOOKUP(S{rownum - 1},Operation,3,0)),\"\",VLOOKUP(S{rownum},Operation,3,0)))";
-
         }
 
         private void ExcelMainData(Microsoft.Office.Interop.Excel.Worksheet worksheet, Microsoft.Office.Interop.Excel.Worksheet cycleTimeSheet, Microsoft.Office.Interop.Excel.Worksheet gcTimeSheet, string factory, string style, DataTable nodist, decimal currentOperators)
@@ -1143,8 +1147,6 @@ order by no
                             leftDirection = true;
                         }
                     }
-
-                   
                 }
             }
             #endregion
