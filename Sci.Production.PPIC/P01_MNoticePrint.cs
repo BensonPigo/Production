@@ -187,6 +187,7 @@ order by ID"
                 // 顯示筆數於PrintForm上Count欄位
                 this.SetCount(dt.Rows.Count);
 
+                int maxRowheight = 0;
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
                     string id = dt.Rows[i]["ID"].ToString();
@@ -208,6 +209,12 @@ order by ID"
                     sxr.DicDatas.Add(sxr.VPrefix + "coms1" + idxStr, dt.Rows[i]["Customize1"].ToString());
 
                     string msg = this.GetSPNote(id);
+                    int sPNoteRowHeight = this.GetSPNoteRowHeight(id);
+
+                    maxRowheight = maxRowheight < sPNoteRowHeight ? sPNoteRowHeight : maxRowheight;
+                    Microsoft.Office.Interop.Excel.Worksheet wks = wks = sxr.ExcelApp.Worksheets[2];
+                    wks.get_Range($"A3:A3").RowHeight = maxRowheight;
+
                     sxr.DicDatas.Add(sxr.VPrefix + "Note" + idxStr, msg);
 
                     sxrc.XltRptTable tbl1 = new sxrc.XltRptTable(dts[0], 1, 2, true);
@@ -282,6 +289,7 @@ order by ID"
 
                 int ii = 0;
                 int maxRowheight = 0;
+                int maxRowheight2 = 0;
                 foreach (DataRow row in dtOrderCombo.Rows)
                 {
                     string idxStr = ii.ToString();
@@ -413,6 +421,11 @@ order by ID"
                         sxr.DicDatas.Add(sxr.VPrefix + "S3_Mark" + idxStr + sxr.CRPrefix + sIdx, new sxrc.XltLongString(dr["Mark"].ToString()));
 
                         string noteMsg = this.GetSPNote(dr["ID"].ToString());
+                        int sPNoteRowHeight2 = this.GetSPNoteRowHeight(dr["ID"].ToString());
+
+                        maxRowheight2 = maxRowheight2 < sPNoteRowHeight2 ? sPNoteRowHeight2 : maxRowheight2;
+                        wks.get_Range($"A4:A4").RowHeight = maxRowheight2;
+
                         sxr.DicDatas.Add(sxr.VPrefix + "SheetThreeNote" + idxStr + sxr.CRPrefix + sIdx, noteMsg);
 
                         System.Data.DataTable[] dts2;
@@ -572,29 +585,30 @@ group by POID,b.spno,br.Customize2";
         {
             string msg = string.Empty;
 
+            List<string> msgList = new List<string>();
+
             System.Data.DataTable sP_note;
             DBProxy.Current.Select(null, $"SELECT  Junk,NeedProduction,KeepPanels,IsBuyBack  FROM Orders WITH(NOLOCK) WHERE ID='{orderID}'", out sP_note);
 
             if (MyUtility.Convert.GetBool(sP_note.Rows[0]["Junk"]) && MyUtility.Convert.GetBool(sP_note.Rows[0]["NeedProduction"]))
             {
-                msg = "Cancel still need to continue production";
+                msgList.Add("Cancel still need to continue production");
             }
             else if (MyUtility.Convert.GetBool(sP_note.Rows[0]["Junk"]) && MyUtility.Convert.GetBool(sP_note.Rows[0]["KeepPanels"]))
             {
-                msg = "Keep Panel without production";
-            }
-            else if (MyUtility.Convert.GetBool(sP_note.Rows[0]["IsBuyBack"]))
-            {
-                msg = "Buy Back";
+                msgList.Add("Keep Panel without production");
             }
             else if (MyUtility.Convert.GetBool(sP_note.Rows[0]["Junk"]))
             {
-                msg = "Cancel";
+                msgList.Add("Cancel");
             }
-            else
+
+            if (MyUtility.Convert.GetBool(sP_note.Rows[0]["IsBuyBack"]))
             {
-                msg = string.Empty;
+                msgList.Add("Buy Back");
             }
+
+            msg = msgList.JoinToString(Environment.NewLine);
 
             return msg;
         }
@@ -660,7 +674,8 @@ group by POID,b.spno,br.Customize2";
                 {
                     status3.Add(dr["ID"].ToString());
                 }
-                else if (isBuyBackDt.Rows.Count > 0)
+
+                if (isBuyBackDt.Rows.Count > 0)
                 {
                     status4.Add(poid);
                 }
@@ -776,7 +791,8 @@ group by POID,b.spno,br.Customize2";
                 {
                     total += 1;
                 }
-                else if (MyUtility.Convert.GetBool(isBuyBackDt.Rows.Count > 0))
+
+                if (MyUtility.Convert.GetBool(isBuyBackDt.Rows.Count > 0))
                 {
                     total += 1;
                 }
