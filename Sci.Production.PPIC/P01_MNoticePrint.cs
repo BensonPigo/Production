@@ -209,7 +209,9 @@ order by ID"
                     sxr.DicDatas.Add(sxr.VPrefix + "coms1" + idxStr, dt.Rows[i]["Customize1"].ToString());
 
                     string msg = this.GetSPNote(id);
-                    int sPNoteRowHeight = this.GetSPNoteRowHeight(id);
+                    string[] stringSeparators = new string[] { "\r\n" };
+                    string[] msgs = msg.Split(stringSeparators, StringSplitOptions.None);
+                    int sPNoteRowHeight = msgs.Length == 0 ? 20 : msgs.Length * 20;
 
                     maxRowheight = maxRowheight < sPNoteRowHeight ? sPNoteRowHeight : maxRowheight;
                     Microsoft.Office.Interop.Excel.Worksheet wks = wks = sxr.ExcelApp.Worksheets[2];
@@ -313,7 +315,9 @@ order by ID"
 
                     string sPs = drvar["SPNO"].ToString();
                     string msg = this.GetSPNotes(sPs);
-                    int sPNoteRowHeight = this.GetSPNoteRowHeight(sPs);
+                    string[] stringSeparators = new string[] { "\r\n" };
+                    string[] msgs = msg.Split(stringSeparators, StringSplitOptions.None);
+                    int sPNoteRowHeight = msgs.Length == 0 ? 20 : msgs.Length * 20;
 
                     // 這功能是先把每個sheet都處理完成再複製，因此每個複製出來的sheet列高都會一樣
                     maxRowheight = maxRowheight < sPNoteRowHeight ? sPNoteRowHeight : maxRowheight;
@@ -421,7 +425,9 @@ order by ID"
                         sxr.DicDatas.Add(sxr.VPrefix + "S3_Mark" + idxStr + sxr.CRPrefix + sIdx, new sxrc.XltLongString(dr["Mark"].ToString()));
 
                         string noteMsg = this.GetSPNote(dr["ID"].ToString());
-                        int sPNoteRowHeight2 = this.GetSPNoteRowHeight(dr["ID"].ToString());
+                        stringSeparators = new string[] { "\r\n" };
+                        msgs = noteMsg.Split(stringSeparators, StringSplitOptions.None);
+                        int sPNoteRowHeight2 = msgs.Length == 0 ? 20 : msgs.Length * 20;
 
                         maxRowheight2 = maxRowheight2 < sPNoteRowHeight2 ? sPNoteRowHeight2 : maxRowheight2;
                         wks.get_Range($"A4:A4").RowHeight = maxRowheight2;
@@ -683,19 +689,6 @@ group by POID,b.spno,br.Customize2";
 
             List<string> mesgs = new List<string>();
 
-            //if (status4.Count > 0)
-            //{
-            //    foreach (var sp in spList)
-            //    {
-            //        if (!status4.Contains(sp))
-            //        {
-            //            status4.Add(sp);
-            //        }
-            //    }
-            //}
-
-            //status4 = status4.OrderBy(o => o).ToList();
-
             string tmp1Msg = status1.Any() ? "Cancel still need to continue Production : "
                 + status1.FirstOrDefault()
                 + (status1.Where(o => o != status1.FirstOrDefault()).Any() ?
@@ -729,11 +722,7 @@ group by POID,b.spno,br.Customize2";
                 mesgs.Add(tmp3Msg);
             }
 
-            string tmp4Msg = status4.Any() ? "Buy Back" : string.Empty; /*
-                + status4.FirstOrDefault()
-                + (status4.Where(o => o != status4.FirstOrDefault()).Any() ?
-                   ("/" + status4.Where(o => o != status4.FirstOrDefault()).JoinToString("/").Replace(firstSP, string.Empty)) : string.Empty)
-                    : string.Empty;*/
+            string tmp4Msg = status4.Any() ? "Buy Back" : string.Empty;
 
             if (!MyUtility.Check.Empty(tmp4Msg))
             {
@@ -743,64 +732,6 @@ group by POID,b.spno,br.Customize2";
             msg = mesgs.JoinToString(Environment.NewLine);
 
             return msg;
-        }
-
-        private int GetSPNoteRowHeight(string orderIDs)
-        {
-            string msg = string.Empty;
-            string poid = string.Empty;
-            int total = 0;
-
-            string oriSP = string.Empty;
-
-            List<string> spList = new List<string>();
-
-            int q = 0;
-            foreach (var sp in orderIDs.Split('/'))
-            {
-                if (q == 0)
-                {
-                    oriSP = sp;
-                    poid = sp.Substring(0, 10);
-                    spList.Add(sp);
-                }
-                else
-                {
-                    spList.Add(oriSP + sp);
-                }
-
-                q++;
-            }
-
-            System.Data.DataTable sP_note;
-            System.Data.DataTable isBuyBackDt;
-            DBProxy.Current.Select(null, $"SELECT ID,Junk,NeedProduction,KeepPanels,IsBuyBack FROM Orders WITH(NOLOCK) WHERE ID IN ('{spList.JoinToString("','")}')", out sP_note);
-            DBProxy.Current.Select(null, $"SELECT ID,Junk,NeedProduction,KeepPanels,IsBuyBack FROM Orders WITH(NOLOCK) WHERE POID ='{poid}' AND IsBuyBack = 1", out isBuyBackDt);
-
-            foreach (DataRow dr in sP_note.Rows)
-            {
-                if (MyUtility.Convert.GetBool(dr["Junk"]) && MyUtility.Convert.GetBool(dr["NeedProduction"]))
-                {
-                    total += 1;
-                }
-                else if (MyUtility.Convert.GetBool(dr["Junk"]) && MyUtility.Convert.GetBool(dr["KeepPanels"]))
-                {
-                    total += 1;
-                }
-                else if (MyUtility.Convert.GetBool(dr["Junk"]))
-                {
-                    total += 1;
-                }
-
-                if (MyUtility.Convert.GetBool(isBuyBackDt.Rows.Count > 0))
-                {
-                    total += 1;
-                }
-            }
-
-            int rowHeight = total * 20;
-
-            return rowHeight == 0 ? 20 : rowHeight;
         }
     }
 }
