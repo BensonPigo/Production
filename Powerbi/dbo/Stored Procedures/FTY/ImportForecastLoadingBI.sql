@@ -274,6 +274,10 @@ Select
 	[Qty]				= isnull(Orders.Qty,0),
 	[TTLCPU]			= (Orders.CPU * Orders.Qty * CPURate.CPURate),
     [Junk]              = IIF(Orders.Junk = 1, 'Y', ''), 
+	[Need Production]   = IIF(Orders.NeedProduction = 1, 'Y', ''), 
+	[Keep Panels]       = IIF(Orders.KeepPanels = 1, 'Y', ''), 
+	[Buy Back]          = IIF(Orders.IsBuyBack = 1, 'Y', ''), 
+	[Buy Back Reason]	= Orders.BuyBackReason,
 ----ArtworkType----
 	[TTL_AT (CPU)] = isnull([TTL_AT (CPU)],0),
 	[TTL_AT (HAND) (CPU)] = isnull([TTL_AT (HAND) (CPU)],0),
@@ -379,6 +383,10 @@ Select
 	[Qty]               = isnull(Forecast.Qty,0),
 	[TTLCPU]            = Forecast.Qty * IIF(Forecast.CheckStyle = 0, Forecast.CPU, Style.CPU) * CPURate.CPURate, 
     [Junk]              = '', 
+	[Need Production]   = '', 
+	[Keep Panels]       = '',
+	[Buy Back]          = '',
+	[Buy Back Reason]	= '',
 ----ArtworkType----
 	[TTL_AT (CPU)] = isnull([TTL_AT (CPU)],0),
 	[TTL_AT (HAND) (CPU)] = isnull([TTL_AT (HAND) (CPU)],0),
@@ -476,6 +484,10 @@ Select
 	[Qty]               = isnull(FactoryOrder.Qty,0) * iif(atSource.SubconInType = '-2', -1, 1),
 	[TTLCPU]            = FactoryOrder.Qty * iif(atSource.SubconInType = '-2', -1, 1) * FactoryOrder.CPU * CPURate.CPURate, 
     [Junk]              = '', 
+	[Need Production]   = '', 
+	[Keep Panels]       = '',
+	[Buy Back]          = '',
+	[Buy Back Reason]	= '',
 ----ArtworkType----
 	[TTL_AT (CPU)] = isnull([TTL_AT (CPU)],0),
 	[TTL_AT (HAND) (CPU)] = isnull([TTL_AT (HAND) (CPU)],0),
