@@ -13,7 +13,6 @@ using System.Linq;
 using System.Transactions;
 using Sci.Production.PublicPrg;
 using Sci.Win;
-using Sci.Utility.Excel;
 using System.Data.SqlClient;
 using System.Reflection;
 
@@ -114,8 +113,9 @@ namespace Sci.Production.Warehouse
             }
 
             string OrderID = this.CurrentMaintain["OrderID"].ToString();
-            this.displayPOID.Text = MyUtility.GetValue.Lookup($"SELECT POID FROm Orders WHERE ID='{OrderID}' ");
-            this.poid = this.displayPOID.Text;
+
+            this.RefreshOrderField(OrderID);
+
             this.displayLineNo.Text= MyUtility.GetValue.Lookup($@"
 SELECT t.sewline + ',' 
 FROM(SELECT DISTINCT o.sewline FROM dbo.issue_detail a WITH (nolock) 
@@ -132,6 +132,24 @@ WHERE o.id = '{OrderID}' AND o.sewline != '') t FOR xml path('')
             }
             #endregion
 
+        }
+
+        private void RefreshOrderField(string orderID)
+        {
+            DataRow drOrder;
+            string sqlGetOrder = $"SELECT POID,StyleID FROm Orders WHERE ID='{orderID}' ";
+            if (MyUtility.Check.Seek(sqlGetOrder, out drOrder))
+            {
+                this.displayPOID.Text = drOrder["POID"].ToString();
+                this.displayStyle.Text = drOrder["StyleID"].ToString();
+            }
+            else
+            {
+                this.displayPOID.Text = string.Empty;
+                this.displayStyle.Text = string.Empty;
+            }
+            
+            this.poid = this.displayPOID.Text;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -2274,6 +2292,7 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             string Line = this.displayLineNo.Text;
             string Remark = issue["Remark"].ToString();
             string poID = this.displayPOID.Text;
+            string style = this.displayStyle.Text;
 
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", ID));
@@ -2414,6 +2433,7 @@ DROP TABLE #tmp
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", ID));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("IssueDate", IssueDate));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("OrderID", OrderID));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Style", style));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Line", Line));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
             //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("poID", poID));
@@ -2470,7 +2490,8 @@ DROP TABLE #tmp
 
             if (MyUtility.Check.Empty(CurrentOrderID))
             {
-                this.displayPOID.Text = "";
+                this.displayPOID.Text = string.Empty;
+                this.displayStyle.Text = string.Empty;
                 this.poid = "";
                 return;
             }
@@ -2495,10 +2516,7 @@ DROP TABLE #tmp
             #endregion
 
             //取得POID
-            string POID = MyUtility.GetValue.Lookup($"SELECT POID FROM Orders WHERE ID ='{CurrentOrderID}' ");
-
-            this.displayPOID.Text = POID;
-            this.poid = POID;
+            this.RefreshOrderField(CurrentOrderID);
         }
 
 
