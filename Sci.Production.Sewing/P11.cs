@@ -857,7 +857,7 @@ select*from #tmpUp t order by t.OutputDate,t.ID,t.OrderId,t.ComboType,t.Article,
 
 --檢查OrderId在Order_Location是否有資料，沒資料就補 此處只檢查轉To SP，From SP是P01已有資料，P01存檔時檢查 ※Sewing_P01
 DECLARE CUR_SewingOutput_Detail CURSOR FOR 
-    Select distinct orderid = ToOrderID from #tmpUp t where t.WillTransferQty > 0 -- 只找此次有更新Qty的資料
+    Select distinct orderid = ToOrderID from #tmpUp t
 declare @orderid varchar(13) 
 OPEN CUR_SewingOutput_Detail   
 FETCH NEXT FROM CUR_SewingOutput_Detail INTO @orderid 
