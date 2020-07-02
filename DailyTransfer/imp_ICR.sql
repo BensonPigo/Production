@@ -283,6 +283,7 @@ where not exists(
 delete i
 from Production.dbo.ICR_ResponsibilityDept i
 where not exists (select 1 from Production.dbo.ICR where i.ID = ID)
+		and not exists (select 1 from Production.dbo.ReplacementReport where i.ID = ID)
 
 
 END
