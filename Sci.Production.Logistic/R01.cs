@@ -201,6 +201,21 @@ from PackingList_Detail pd WITH (NOLOCK)
 inner join (select distinct id,Seq from #tmp_Orders) o on pd.OrderID = o.ID and pd.OrderShipmodeSeq = o.Seq
 group by pd.OrderID,pd.OrderShipmodeSeq
 
+select pd.OrderID,pd.OrderShipmodeSeq,[Date]=MAX(t.AddDate)
+into #tmp_LastTransferToClog
+from PackingList_Detail pd WITH (NOLOCK) 
+inner join (select distinct id,Seq from #tmp_Orders) o on pd.OrderID = o.ID and pd.OrderShipmodeSeq = o.Seq
+inner join TransferToClog t  WITH (NOLOCK) on pd.ID = t.PackingListID and pd.OrderID = t.OrderID and pd.CTNStartNo = t.CTNStartNo
+group by pd.OrderID,pd.OrderShipmodeSeq
+
+select pd.OrderID,pd.OrderShipmodeSeq,[Date]=MAX(c.AddDate)
+into #tmp_LastCartonReceived
+from PackingList_Detail pd WITH (NOLOCK) 
+inner join (select distinct id,Seq from #tmp_Orders) o on pd.OrderID = o.ID and pd.OrderShipmodeSeq = o.Seq
+inner join ClogReceive c  WITH (NOLOCK) on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
+group by pd.OrderID,pd.OrderShipmodeSeq
+
+
 select pd.OrderID,sum(ShipQty) TtlPullGMTQty
 into #tmp_TtlPullGMTQty
 from Pullout p WITH (NOLOCK) 
@@ -258,6 +273,8 @@ select o.*,
 	,ClogGMTQty = isnull(clog.ClogGMTQty,0)
 	,PullGMTQty = isnull(pullG.PullGMTQty,0)
 	,sewQty=isnull(tlsq.sewQty,0)
+	,LastTransferToClog= a.Date
+	,LastCartonReceived= b.Date
 into #tmp 
 from #tmp_Orders o
 left join #tmp_CTNQty ctn on o.ID = ctn.OrderID and o.Seq = ctn.OrderShipmodeSeq
@@ -269,9 +286,11 @@ left join #tmp_TtlPullGMTQty ttlp on o.ID = ttlp.OrderID
 left join #tmp_ScanQtybyShipmode ttls on o.ID = ttls.OrderID and ttls.OrderShipmodeSeq = pull.OrderShipmodeSeq
 left join #tmp_PullGMTQty pullG on o.ID = pullG.OrderID and o.Seq = pullG.OrderShipmodeSeq 
 left join #tmp_sewQty tlsq on o.ID = tlsq.Orderid
+LEFT JOIN #tmp_LastTransferToClog a ON o.ID = a.OrderID and o.Seq  = a.OrderShipmodeSeq
+LEFT JOIN #tmp_LastCartonReceived b ON o.ID = b.OrderID and o.Seq  = b.OrderShipmodeSeq
 
 drop table #tmp_Orders,#tmp_ClogLocationId,#tmp_CTNQty,#tmp_ClogQty,#tmp_PullQty,#tmp_TtlGMTQty
-,#tmp_TtlClogGMTQty,#tmp_TtlPullGMTQty,#tmp_PullGMTQty,#tmp_ScanQtybyShipmode,#tmp_sewQty
+,#tmp_TtlClogGMTQty,#tmp_TtlPullGMTQty,#tmp_PullGMTQty,#tmp_ScanQtybyShipmode,#tmp_sewQty,#tmp_LastTransferToClog,#tmp_LastCartonReceived
 
 select t.ID,RetCtnBySP = count(cr.ID)
 into #tmp2
@@ -295,6 +314,8 @@ select
     ,t.BuyerDelivery
     ,t.ShipmodeID
     ,t.Location
+	,t.LastTransferToClog
+	,t.LastCartonReceived
 	,t.TotalCTN
 	,PackErrCTN = isnull(t.PackErrCTN,0)
 	,ClogCTN=isnull(t.ClogCTN,0)
@@ -410,7 +431,7 @@ drop table #tmp,#tmp2
             ////此欄位只有 Clog R01 擁有 Confirm 權限的使用者可以『看到』，其餘的則移除該欄位。
             if (!canConfrim)
             {
-                worksheet.get_Range("AB:AB").EntireColumn.Delete();
+                worksheet.get_Range("AD:AD").EntireColumn.Delete();
             }
 
             excel.Cells.EntireColumn.AutoFit();

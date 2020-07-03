@@ -16,7 +16,7 @@ BEGIN
 
 	select wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,wd.WorkOrderUkey,
 		cutqty= iif(sum(cod.Layer*ws.Qty)>wd.Qty,wd.Qty,sum(cod.Layer*ws.Qty)),
-		co.MDivisionid,
+		o.MDivisionid,
 		TotalCutQty=sum(cod.Layer*ws.qty)
 	into #CutQtytmp1
 	from WorkOrder_Distribute wd WITH (NOLOCK)
@@ -27,7 +27,7 @@ BEGIN
 	inner join orders o WITH (NOLOCK) on o.id = wd.OrderID
 	where ((co.cdate <= @Cdate and @type=0) or(co.cdate < @Cdate and @type=1))
 	and exists (select 1 from CuttingOutput_Detail WITH (NOLOCK) where CuttingOutput_Detail.ID = @ID and CuttingID = o.poid)
-	group by wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,co.MDivisionid,wd.Qty,wd.WorkOrderUkey
+	group by wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,o.MDivisionid,wd.Qty,wd.WorkOrderUkey
 	------------------
 	select * ,AccuCutQty=sum(cutqty) over(partition by WorkOrderUkey,patternpanel,sizecode order by WorkOrderUkey,orderid)
 		,Rowid=ROW_NUMBER() over(partition by WorkOrderUkey,patternpanel,sizecode order by WorkOrderUkey,orderid)

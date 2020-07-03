@@ -9,7 +9,6 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Linq;
-using Microsoft.Reporting.WinForms;
 //using System.Data.SqlClient;
 using Sci.Win;
 using Sci;

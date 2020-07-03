@@ -9,10 +9,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
 using Sci.DB;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.IO;
-using System.Configuration;
 
 namespace Sci.Production.Quality
 {
@@ -49,7 +45,7 @@ namespace Sci.Production.Quality
                 if (e.RowIndex == -1) return;
                 var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
-                if (MyUtility.Convert.GetBool(dr["Clima"]))
+                if (MyUtility.Convert.GetInt(dr["bitRefnoColor"]) == 1)
                 {
                     e.CellStyle.BackColor = Color.Yellow;
                 }
@@ -191,12 +187,12 @@ namespace Sci.Production.Quality
             #region Color
             this.grid2.Columns["FirstDyelot"].DefaultCellStyle.BackColor = Color.Pink;
             Change_Color();
-            this.grid2.RowEnter += this.grid2_RowEnter;
+            this.grid2.RowEnter += this.Grid2_RowEnter;
             #endregion Color
             #endregion tabPage2
         }
 
-        private void grid2_RowEnter(object sender, DataGridViewCellEventArgs e)
+        private void Grid2_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0)
             {
@@ -460,7 +456,8 @@ select distinct
 	ed.Ukey,
     o.BrandID,
     f.Clima,
-    sr.AWBNo
+    sr.AWBNo,
+    [bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, ps.SuppID, psd.Refno, psd.ColorID, Format(Export.CloseDate,'yyyyMM') order by Export.CloseDate) else 0 end
 from Export_Detail ed with(nolock)
 inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
 inner join orders o with(nolock) on o.id = ed.PoID
@@ -515,12 +512,12 @@ DROP TABLE #probablySeasonList
             this.listControlBindingSource1.DataSource = dt1;
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             this.Page1_Query();
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             this.grid1.ValidateControl();
             if (dt1 == null || dt1.Rows.Count == 0)
@@ -564,11 +561,11 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
                 return;
             }
             MyUtility.Msg.InfoBox("Success!");
-            Page1_Query();
+            this.Page1_Query();
         }
 
         TransferPms transferPMS = new TransferPms();
-        private void btnDownloadFile_Click(object sender, EventArgs e)
+        private void BtnDownloadFile_Click(object sender, EventArgs e)
         {
             DualResult result;
             IList<MyUtility.FTP.FtpFile> ftpDir = new List<MyUtility.FTP.FtpFile>();
@@ -656,12 +653,12 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
             //}
         }
 
-        private void inspectionReportToolStripMenuItem_Click(object sender, EventArgs e)
+        private void InspectionReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Savefile("-inspection");
         }
 
-        private void testReportToolStripMenuItem_Click(object sender, EventArgs e)
+        private void TestReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Savefile("-test");
         }
@@ -778,12 +775,12 @@ drop table #tmp
             this.grid2.AutoResizeColumns();
         }
 
-        private void btnQuery2_Click(object sender, EventArgs e)
+        private void BtnQuery2_Click(object sender, EventArgs e)
         {
             Page2_Query();
         }
 
-        private void btnSave2_Click(object sender, EventArgs e)
+        private void BtnSave2_Click(object sender, EventArgs e)
         {
             this.grid2.ValidateControl();
             if (dt2 == null || dt2.Rows.Count == 0)
@@ -825,7 +822,7 @@ on t.Refno = s.Refno and t.SuppID = s.SuppID and t.ColorID = s.ColorID and t.Tes
         }
         #endregion#Tab_Page2
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             DataRow drSystem;
             if (MyUtility.Check.Seek("select * from system", out drSystem))

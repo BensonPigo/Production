@@ -1500,7 +1500,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox34</rd:DefaultName>
           <Top>2.95438cm</Top>
-          <Left>9.60631cm</Left>
+          <Left>11.70181cm</Left>
           <Height>0.6cm</Height>
           <Width>1.15062cm</Width>
           <ZIndex>6</ZIndex>
@@ -1534,7 +1534,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox34</rd:DefaultName>
           <Top>2.95438cm</Top>
-          <Left>5.33387cm</Left>
+          <Left>3.87337cm</Left>
           <Height>0.6cm</Height>
           <Width>0.93895cm</Width>
           <ZIndex>7</ZIndex>
@@ -1570,7 +1570,7 @@
           <Top>2.95438cm</Top>
           <Left>1.16636cm</Left>
           <Height>0.6cm</Height>
-          <Width>3.99112cm</Width>
+          <Width>2.60118cm</Width>
           <ZIndex>8</ZIndex>
           <Style>
             <Border>
@@ -1601,7 +1601,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox34</rd:DefaultName>
-          <Top>4.00417cm</Top>
+          <Top>3.96785cm</Top>
           <Left>2.01126cm</Left>
           <Height>0.6cm</Height>
           <Width>25.96559cm</Width>
@@ -1636,9 +1636,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox34</rd:DefaultName>
           <Top>2.95438cm</Top>
-          <Left>6.4625cm</Left>
+          <Left>5.002cm</Left>
           <Height>0.6cm</Height>
-          <Width>3.0027cm</Width>
+          <Width>2.57818cm</Width>
           <ZIndex>10</ZIndex>
           <Style>
             <Border>
@@ -1670,9 +1670,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox34</rd:DefaultName>
           <Top>2.95438cm</Top>
-          <Left>10.86276cm</Left>
+          <Left>12.95826cm</Left>
           <Height>0.6cm</Height>
-          <Width>4.77542cm</Width>
+          <Width>2.60584cm</Width>
           <ZIndex>11</ZIndex>
           <Style>
             <Border>
@@ -1836,6 +1836,74 @@
           <Height>0.6cm</Height>
           <Width>5.17383cm</Width>
           <ZIndex>16</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox47">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>Style:</Value>
+                  <Style>
+                    <FontSize>9pt</FontSize>
+                  </Style>
+                </TextRun>
+              </TextRuns>
+              <Style>
+                <TextAlign>Left</TextAlign>
+              </Style>
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox34</rd:DefaultName>
+          <Top>2.95438cm</Top>
+          <Left>7.70895cm</Left>
+          <Height>0.6cm</Height>
+          <Width>1.07124cm</Width>
+          <ZIndex>17</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox51">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>=Parameters!Style.Value</Value>
+                  <Style>
+                    <FontSize>9pt</FontSize>
+                  </Style>
+                </TextRun>
+              </TextRuns>
+              <Style>
+                <TextAlign>Left</TextAlign>
+              </Style>
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox34</rd:DefaultName>
+          <Top>2.95438cm</Top>
+          <Left>8.83758cm</Left>
+          <Height>0.6cm</Height>
+          <Width>2.68784cm</Width>
+          <ZIndex>18</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>
@@ -2134,6 +2202,12 @@
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
     <ReportParameter Name="IssueDate">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Style">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>

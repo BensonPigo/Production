@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -1161,8 +1162,12 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
 
             #endregion
 
-
-            MyUtility.Msg.ShowMsgGrid_LockScreen(this.grid2, caption: caption,eventname:new string[] { "CellFormatting" });
+            MsgGridForm msgGridForm = new MsgGridForm(this.grid2, caption: caption, eventname: new string[] { "CellFormatting" });
+ 
+            msgGridForm.FormBorderStyle = FormBorderStyle.Sizable;
+            msgGridForm.grid1.RowHeadersVisible = true;
+            msgGridForm.ControlBox = true;
+            msgGridForm.ShowDialog();
         }
         
         private void grid2_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
