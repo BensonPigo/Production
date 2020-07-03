@@ -1667,7 +1667,7 @@ and p.Type in ('L', 'B')
 
         private void BtnBuyBack_Click(object sender, EventArgs e)
         {
-            P01_BuyBack frm = new P01_BuyBack(false, this.CurrentMaintain["ID"].ToString());
+            P01_BuyBack frm = new P01_BuyBack(false, this.CurrentMaintain);
             frm.ShowDialog();
 
             this.RenewData();

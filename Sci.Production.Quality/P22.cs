@@ -220,7 +220,7 @@ where a.CFANeedInsp <> b.CFANeedInsp and b.DisposeFromClog= 0", out selectData);
                 int CFANeedInsp = dr["CFANeedInsp"].ToString() == "True" ? 1 : 0;
                 updateSqlCmd = updateSqlCmd + $@"
 update PackingList_Detail 
-set CFANeedInsp ={CFANeedInsp}
+set CFANeedInsp ={CFANeedInsp} ,CFASelectInspDate = GETDATE()
 where id='{dr["id"]}'
 and DisposeFromClog= 0
 and CTNStartNo ='{dr["CTNStartNo"]}'

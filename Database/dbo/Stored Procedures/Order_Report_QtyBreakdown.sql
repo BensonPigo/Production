@@ -6,15 +6,15 @@ CREATE PROCEDURE [dbo].[Order_Report_QtyBreakdown]
 AS
 BEGIN
 
-declare @poid varchar(13) = (select POID from Orders where ID = @OrderID)
+declare @poid varchar(13) = (select POID from Orders with (nolock) where ID = @OrderID)
 declare @tbl table (seq bigint, id varchar(13), Article varchar(8))
 
 if(@ByType = 0)
-	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.Orders where id = @OrderID and Junk = 0)
+	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE with (nolock) WHERE ID in (select id from Production.dbo.Orders with (nolock) where id = @OrderID and Junk = 0)
 else if(@ByType = 1)
-	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.Orders where OrderComboID = @OrderID and Junk = 0)
+	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE with (nolock) WHERE ID in (select id from Production.dbo.Orders with (nolock) where OrderComboID = @OrderID and Junk = 0)
 else if(@ByType = 2)
-	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.Orders where OrderComboID = @OrderID and Junk = 0)
+	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE with (nolock) WHERE ID in (select id from Production.dbo.Orders with (nolock) where OrderComboID = @OrderID and Junk = 0)
 
 --主要資料
 SELECT c.seq, b.id,b.Article,SizeCode,b.Qty ,e.Kit

@@ -425,13 +425,13 @@ SELECT DISTINCT
     ,oq.Article
     ,oq.SizeCode
     ,occ.PatternPanel
-    ,cons.FabricPanelCode
-	,Order_EachCons_Article=(select Article from Order_EachCons_Article oea where oea.Order_EachConsUkey = cons.Ukey and oea.Article = oq.Article)
-FROM Orders o WITH (NOLOCK)
-INNER JOIN Order_qty oq ON o.ID=oq.ID
-INNER JOIN Order_ColorCombo occ ON o.poid = occ.id AND occ.Article = oq.Article
-INNER JOIN order_Eachcons cons ON occ.id = cons.id AND cons.FabricCombo = occ.PatternPanel AND cons.CuttingPiece='0' and cons.FabricPanelCode = occ.FabricPanelCode
-WHERE occ.FabricCode !='' AND occ.FabricCode IS NOT NULL
+    ,occ.FabricPanelCode
+from Orders o WITH (NOLOCK)
+inner join Order_Qty oq WITH (NOLOCK) on oq.id = o.id
+inner join Order_ColorCombo occ WITH (NOLOCK) on occ.id = o.POID and occ.Article = oq.Article and occ.FabricCode is not null and occ.FabricCode !=''
+inner join Order_EachCons oe WITH (NOLOCK) on oe.id = occ.id and oe.FabricCombo = occ.PatternPanel and oe.CuttingPiece = 0
+inner join Order_EachCons_Color oec WITH (NOLOCK) on oec.Order_EachConsUkey = oe.Ukey and oec.ColorID = occ.ColorID
+inner join Order_EachCons_Color_Article oeca WITH (NOLOCK) on oeca.Order_EachCons_ColorUkey = oec.Ukey and oeca.Article = oq.Article
 AND o.id IN ('{OrderIDs.JoinToString("','")}')
 AND (exists(select 1 from Order_EachCons_Article oea where  oea.Id = o.POID and oea.Article = oq.Article )
 	or not exists (select 1 from Order_EachCons_Article oea where  oea.Id = o.POID)
@@ -690,8 +690,11 @@ FROM Orders o WITH (NOLOCK)
 INNER JOIN Order_qty oq ON o.ID=oq.ID
 INNER JOIN Order_ColorCombo occ ON o.poid = occ.id AND occ.Article = oq.Article
 INNER JOIN order_Eachcons cons ON occ.id = cons.id AND cons.FabricCombo = occ.PatternPanel AND cons.CuttingPiece='0'
+inner join Order_EachCons_Color oec WITH (NOLOCK) on oec.Order_EachConsUkey = cons.Ukey and oec.ColorID = occ.ColorID
+inner join Order_EachCons_Color_Article oeca WITH (NOLOCK) on oeca.Order_EachCons_ColorUkey = oec.Ukey and oeca.Article = oq.Article
 WHERE occ.FabricCode !='' AND occ.FabricCode IS NOT NULL
 AND o.id IN ('{OrderIDs.JoinToString("','")}')
+order by o.ID,cons.FabricPanelCode
 ";
             #endregion
 

@@ -1308,7 +1308,7 @@ where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", textID.Text, dtGrid.Rows[row
 
 
                         excel.Cells[18 + (i * 8)+addline, 2] = dtcombo.Rows[0]["Result_c"].ToString();
-                        excel.Cells[18 + (i * 8)+addline, 3] = dtcombo.Rows[0]["Remark_c"].ToString();
+                        excel.Cells[18 + (i * 8)+addline, 3] = "'" + dtcombo.Rows[0]["Remark_c"].ToString();
                         excel.Cells[18 + (i * 8) + addline, 4] = dtcombo.Rows[0]["Name_c"].ToString();
 
                         excel.Cells[19 + (i * 8)+addline, 2] = dtcombo.Rows[0]["Result_s"].ToString();

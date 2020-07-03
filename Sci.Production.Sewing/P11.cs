@@ -75,7 +75,8 @@ select sotd.*,
 	DisplayToQty=isnull(a.DisplayToQty,0),
 	DisplayToSewingQty=isnull(b.DisplayToSewingQty,0),
 	BalanceQty=isnull(b.DisplayToSewingQty,0)-isnull(a.DisplayToQty,0),
-    OrderQtyUpperlimit=dbo.GetOrderQtyUpperlimit(sotd.ToOrderID,sotd.ToArticle,sotd.ToSizeCode)--實際上限可達數量
+    OrderQtyUpperlimit=dbo.GetOrderQtyUpperlimit(sotd.ToOrderID,sotd.ToArticle,sotd.ToSizeCode),--實際上限可達數量
+    styleUkey = (select styleUkey from orders o with(nolock) where o.id = sotd.ToOrderID) -- confrim 需要此欄位
 from SewingOutputTransfer_Detail sotd with(nolock)
 inner join SewingOutputTransfer sot with(nolock) on sotd.id = sot.id
 outer apply(
@@ -376,6 +377,10 @@ where o. ID = @sp
 and o.FtyGroup = @FtyGroup
 and f.IsProduceFty = 1
 and o.Category in ('B','S')
+and not exists (select 1 from Orders exludeOrder with (nolock) 
+                            where (exludeOrder.junk = 1 and exludeOrder.NeedProduction = 0) and
+                                  exludeOrder.ID = o.ID
+                        )
 ";
                     try
                     {
@@ -850,6 +855,20 @@ select*from #tmpByIDCanTransQty t order by t.OutputDate,t.ID,t.OrderId,t.ComboTy
 select*from #tmpFromToG t  order by t.FromOrderID,t.FromComboType,t.Article,t.SizeCode,t.ToOrderID,t.ToComboType,t.ToArticle,t.ToSizeCode
 select*from #tmpUp t order by t.OutputDate,t.ID,t.OrderId,t.ComboType,t.Article,t.SizeCode,t.ToOrderID,t.ToComboType,t.ToArticle,t.ToSizeCode
 
+--檢查OrderId在Order_Location是否有資料，沒資料就補 此處只檢查轉To SP，From SP是P01已有資料，P01存檔時檢查 ※Sewing_P01
+DECLARE CUR_SewingOutput_Detail CURSOR FOR 
+    Select distinct orderid = ToOrderID from #tmpUp t
+declare @orderid varchar(13) 
+OPEN CUR_SewingOutput_Detail   
+FETCH NEXT FROM CUR_SewingOutput_Detail INTO @orderid 
+WHILE @@FETCH_STATUS = 0 
+BEGIN
+    exec dbo.Ins_OrderLocation @orderid
+FETCH NEXT FROM CUR_SewingOutput_Detail INTO @orderid
+END
+CLOSE CUR_SewingOutput_Detail
+DEALLOCATE CUR_SewingOutput_Detail
+
 drop table #tmp,#tmpFromG,#tmpByIDCanTransQty,#tmpFromToG,#tmpUp
 ";
             DataTable[] dt;
@@ -906,32 +925,7 @@ drop table #tmp,#tmpFromG,#tmpByIDCanTransQty,#tmpFromToG,#tmpUp
             DataTable dto;
             #endregion
 
-            #region 檢查OrderId在Order_Location是否有資料，沒資料就補 此處只檢查轉移入，From SP是P01已有資料，P01存檔時檢查 ※Sewing_P01
-            sqlcmd = $@"
-DECLARE CUR_SewingOutput_Detail CURSOR FOR 
-    Select distinct orderid = ToOrderID from #tmp t where t.WillTransferQty > 0 -- 只找此次有更新Qty的資料
-
-declare @orderid varchar(13) 
-OPEN CUR_SewingOutput_Detail   
-FETCH NEXT FROM CUR_SewingOutput_Detail INTO @orderid 
-WHILE @@FETCH_STATUS = 0 
-BEGIN
-exec dbo.Ins_OrderLocation @orderid
-FETCH NEXT FROM CUR_SewingOutput_Detail INTO @orderid
-END
-CLOSE CUR_SewingOutput_Detail
-DEALLOCATE CUR_SewingOutput_Detail";
-
-            result = MyUtility.Tool.ProcessWithDatatable(toDt, string.Empty, sqlcmd, out dto);
-            if (!result)
-            {
-                scope.Dispose();
-                this.ShowErr(result);
-                return false;
-            }
-            #endregion
-
-            #region 更新/寫入SewingOutput第3層，第2層 (在補完Order_Location之後)
+            #region 更新/寫入SewingOutput第3層，第2層 在分配完數量後
 
             // 回找到Form SP 對應 sdd 更新 QAQty = QAQty - 轉走數。 PS:不是剩餘數(QAQty-G單數)
             sqlcmd = $@"
@@ -1076,30 +1070,11 @@ update so set
     so.ReDailyTransferDate = GetDate()    
 from SewingOutput so
 where so.id in(select distinct id from #tmp t where t.WillTransferQty > 0 )
-";
-            result = MyUtility.Tool.ProcessWithDatatable(toDt, string.Empty, sqlcmd, out dto);
-            if (!result)
-            {
-                scope.Dispose();
-                this.ShowErr(result);
-                return false;
-            }
-            #endregion
 
-            // 以上第3層更新寫入完成,才執行以下動作
-            #region 刪除為0的第3層
-            sqlcmd = $@"delete SewingOutput_Detail_Detail where QAQty=0 and id in(select distinct id from #tmp t where t.WillTransferQty > 0)";
-            result = MyUtility.Tool.ProcessWithDatatable(toDt, "ID,WillTransferQty", sqlcmd, out dto);
-            if (!result)
-            {
-                scope.Dispose();
-                this.ShowErr(result);
-                return false;
-            }
-            #endregion
+--刪除為0的第3層，等上面更新完再執行
+delete SewingOutput_Detail_Detail where QAQty=0 and id in(select distinct id from #tmp t where t.WillTransferQty > 0) -- 只找此次有更新Qty的資料
 
-            #region 重算第2層 QAQty ※Sewing_P01
-            sqlcmd = $@"
+--重算第2層 QAQty ※Sewing_P01
 update SD set SD.QAQty = SDD.SDD_Qty
 from  SewingOutput_Detail SD WITH (NOLOCK)
 outer apply 
@@ -1107,8 +1082,33 @@ outer apply
     select isnull(SUM(SDD.QAQty),0) as SDD_Qty from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.ID=SD.ID and SDD.SewingOutput_DetailUKey=SD.UKey 
 ) as SDD 
 where SD.QAQty <> SDD.SDD_Qty and SD.ID in (select distinct t.id from #tmp t where t.WillTransferQty > 0) -- 只找此次有更新Qty的資料
+
+--重算表頭TMS, Efficiency (在重算完 第2層 QAQty 之後) ※Sewing_P01
+select id, tms = cast(TMS as numeric(24,10)) * QAQty / sum(QAQty) over(partition by id), QAQty
+into #tmpdTms
+from SewingOutput_Detail sod with(nolock)
+where sod.AutoCreate <> 1
+and sod.id in (select distinct id from #tmp t where t.WillTransferQty > 0) -- 只找此次有更新Qty的資料
+
+select id,TMS = round(Sum(tms), 0), QAQty = sum(QAQty) into #tmp_upTms from #tmpdTms group by id
+--不更新表頭QAQty，因為正確狀況下總數不變動
+update so set
+    TMS = t.TMS,
+    Efficiency = iif(t.TMS * so.ManHour = 0, 0, cast(t.QAQty as numeric(24,10))/ (3600 / t.TMS * so.ManHour) * 100)
+from #tmp_upTms t
+inner join SewingOutput so with(nolock) on so.id = t.id
+
+--重算第2層 WorkHour 撈需要重算資料 (在重算完 第2層 QAQty 之後) ※Sewing_P01
+select ID,
+    sumQaqty = sum(isnull(QAQty,0) * isnull(TMS,0)),
+    RecCnt = count(1)
+from SewingOutput_Detail sod with(nolock)
+where sod.AutoCreate <> 1
+and sod.id in (select distinct id from #tmp t where t.WillTransferQty > 0) -- 只找此次有更新Qty的資料
+group by ID
 ";
-            result = MyUtility.Tool.ProcessWithDatatable(toDt, "ID,WillTransferQty", sqlcmd, out dto);
+            DataTable sumQaQty;
+            result = MyUtility.Tool.ProcessWithDatatable(toDt, string.Empty, sqlcmd, out sumQaQty);
             if (!result)
             {
                 scope.Dispose();
@@ -1118,27 +1118,8 @@ where SD.QAQty <> SDD.SDD_Qty and SD.ID in (select distinct t.id from #tmp t whe
             #endregion
 
             #region 重算第2層 WorkHour (在重算完 第2層 QAQty 之後) ※Sewing_P01
-            DataTable sumQaQty;
-            sqlcmd = @"
-select ID,
-    sumQaqty = sum(isnull(QAQty,0) * isnull(TMS,0)),
-    RecCnt = count(1)
-from SewingOutput_Detail sod with(nolock)
-where sod.AutoCreate <> 1
-and sod.id in (select distinct id from #tmp t where t.WillTransferQty > 0) -- 只找此次有更新Qty的資料
-group by ID
-";
-            result = MyUtility.Tool.ProcessWithDatatable(toDt, "ID,WillTransferQty", sqlcmd, out sumQaQty);
-            if (!result)
-            {
-                scope.Dispose();
-                this.ShowErr(result);
-                return false;
-            }
-
             foreach (DataRow item in sumQaQty.Rows)
             {
-                string id = MyUtility.Convert.GetString(item["id"]);
                 int recCnt = MyUtility.Convert.GetInt(item["RecCnt"]);
                 decimal ttlQaqty = MyUtility.Convert.GetDecimal(item["sumQaqty"]);
                 decimal subSum = 0;
@@ -1152,7 +1133,7 @@ group by ID
                     return false;
                 }
 
-                decimal workHour = MyUtility.Convert.GetDecimal(dtid.Rows[0]["WorkHour"]);
+                decimal workHour = MyUtility.Convert.GetDecimal(dtid.Rows[0]["WorkHour"]); // 取得表頭 WorkHour 總數
                 sqlcmd = $@"select * from SewingOutput_Detail sod with(nolock) where AutoCreate <> 1 and id = '{item["id"]}'";
                 result = DBProxy.Current.Select(null, sqlcmd, out dtid);
                 if (!result)
@@ -1191,33 +1172,6 @@ inner join #tmp t on t.[UKey] = sod.[UKey]
                     this.ShowErr(result);
                     return false;
                 }
-            }
-            #endregion
-
-            #region 重算表頭TMS, Efficiency (在重算完 第2層 QAQty 之後) ※Sewing_P01
-
-            // 不更新QAQty，因為正確狀況下總數不變動
-            sqlcmd = $@"
-select id, tms = cast(TMS as numeric(24,10)) * QAQty / sum(QAQty) over(partition by id), QAQty
-into #tmpdTms
-from SewingOutput_Detail sod with(nolock)
-where sod.AutoCreate <> 1
-and sod.id in (select distinct id from #tmp t where t.WillTransferQty > 0) -- 只找此次有更新Qty的資料
-
-select id,TMS = round(Sum(tms), 0), QAQty = sum(QAQty) into #tmp_upTms from #tmpdTms group by id
-
-update so set
-    TMS = t.TMS,
-    Efficiency = iif(t.TMS * so.ManHour = 0, 0, cast(t.QAQty as numeric(24,10))/ (3600 / t.TMS * so.ManHour) * 100)
-from #tmp_upTms t
-inner join SewingOutput so with(nolock) on so.id = t.id
-";
-            result = MyUtility.Tool.ProcessWithDatatable(toDt, "ID,WillTransferQty", sqlcmd, out dto);
-            if (!result)
-            {
-                scope.Dispose();
-                this.ShowErr(result);
-                return false;
             }
             #endregion
 
@@ -1311,31 +1265,12 @@ inner join SewingOutput so with(nolock) on so.id = t.id
 
         private bool UpdateMESInspection(TransactionScope scope)
         {
-            // 先準備to OrderID的styleUkey
-            string sqlcmd = $@"
-select 
-    t.FromOrderID,t.FromComboType,t.Article,t.SizeCode,
-    t.ToOrderID,t.ToComboType,t.ToArticle,t.ToSizeCode,o.styleUkey,
-    t.TransferQty,
-    t.ukey
-from #tmp t
-inner join orders o with(nolock) on o.id = t.ToOrderID
-";
-            DataTable dt;
-            DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, string.Empty, sqlcmd, out dt);
-            if (!result)
-            {
-                scope.Dispose();
-                this.ShowErr(result);
-                return false;
-            }
+            string sqlcmd = string.Empty;
 
-            // 跑表身迴圈
-            foreach (DataRow item in dt.Rows)
+            // 跑 P11 表身迴圈，在MES inspection一筆資料是一件，更新是用 Top (TransferQty) 數量。一筆轉移就只會有一段update
+            foreach (DataRow item in this.DetailDatas)
             {
-                // 在MES inspection一筆資料是一件
-                int qty = MyUtility.Convert.GetInt(item["TransferQty"]);
-                sqlcmd = $@"
+                sqlcmd += $@"
 update Inspection set 
 	OrderId = '{item["ToOrderID"]}',
 	Location = '{item["ToComboType"]}', 
@@ -1347,19 +1282,22 @@ from Inspection with(nolock)
 where Status in ('Pass','Fixed') and OrderId = '{item["FromOrderID"]}' and Location = '{item["FromComboType"]}'
 and Article='{item["Article"]}' and Size='{item["SizeCode"]}'
 and AddDate in (
-	select top {qty} AddDate
+	select top {item["TransferQty"]} AddDate
 	from Inspection with(nolock)
 	where Status in ('Pass','Fixed') and OrderId = '{item["FromOrderID"]}' and Location = '{item["FromComboType"]}'
     and Article='{item["Article"]}' and Size='{item["SizeCode"]}'
 	order by AddDate 
-)";
-                result = DBProxy.Current.Execute("ManufacturingExecution", sqlcmd);
-                if (!result)
-                {
-                    scope.Dispose();
-                    this.ShowErr(result);
-                    return false;
-                }
+)
+;
+";
+            }
+
+            DualResult result = DBProxy.Current.Execute("ManufacturingExecution", sqlcmd);
+            if (!result)
+            {
+                scope.Dispose();
+                this.ShowErr(result);
+                return false;
             }
 
             return true;

@@ -9,28 +9,44 @@ using Sci.Production.IE;
 
 namespace Sci.Production.IE
 {
+    /// <summary>
+    /// P03_CopyFromGSD_CIPF
+    /// </summary>
     public partial class P03_CopyFromGSD_CIPF : Sci.Win.Forms.Base
     {
+        /// <summary>
+        /// P03_CopyFromGSD_CIPF
+        /// </summary>
         public P03_CopyFromGSD_CIPF()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        /// <summary>
+        /// No Need
+        /// </summary>
+        /// <param name="sender">sender</param>
+        /// <param name="e">e</param>
+        private void Button2_Click(object sender, EventArgs e)
         {
-            P03CIPFinfo.cutting = false;
-            P03CIPFinfo.inspection = false;
-            P03CIPFinfo.pressing = false;
-            P03CIPFinfo.packing = false;
+            P03CIPFinfo.Cutting = false;
+            P03CIPFinfo.Inspection = false;
+            P03CIPFinfo.Pressing = false;
+            P03CIPFinfo.Packing = false;
             this.Close();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Comfirm
+        /// </summary>
+        /// <param name="sender">sender</param>
+        /// <param name="e">e</param>
+        private void Button1_Click(object sender, EventArgs e)
         {
-            P03CIPFinfo.cutting = chkCutting.Checked;
-            P03CIPFinfo.inspection = chkInspection.Checked;
-            P03CIPFinfo.pressing = chkPressing.Checked;
-            P03CIPFinfo.packing = chkPacking.Checked;
+            P03CIPFinfo.Cutting = this.chkCutting.Checked;
+            P03CIPFinfo.Inspection = this.chkInspection.Checked;
+            P03CIPFinfo.Pressing = this.chkPressing.Checked;
+            P03CIPFinfo.Packing = this.chkPacking.Checked;
             this.Close();
         }
     }

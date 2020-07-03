@@ -732,11 +732,11 @@ order by no
 
             #region 預設站數為2站，當超過2站就要新增
             decimal no_count = MyUtility.Convert.GetDecimal(nodist.Rows.Count);
-            int j = 2; // 資料組數，預設為1
+            int ttlLineRowCnt = MyUtility.Convert.GetInt(Math.Ceiling(no_count / 2));
             if (no_count > 2)
             {
                 rngToCopy = worksheet.get_Range("A17:A21").EntireRow; // 選取要被複製的資料
-                for (j = 2; j <= MyUtility.Convert.GetInt(Math.Ceiling(no_count / 2)); j++)
+                for (int j = 1; j < ttlLineRowCnt; j++)
                 {
                     Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A17", Type.Missing).EntireRow; // 選擇要被貼上的位置
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing)); // 貼上
@@ -744,7 +744,7 @@ order by no
             }
             #endregion
 
-            int norow = 17 + ((j - 2) * 5); // No格子上的位置Excel Y軸
+            int norow = 17 + (ttlLineRowCnt * 5) - 5; // No格子上的位置Excel Y軸
             int nocolumn = 9;
 
             // 計錄各站點公式放入GCtime sheet資料來源
@@ -759,7 +759,7 @@ order by no
                 int addct = 0;
                 bool flag = true;
                 decimal dd = Math.Ceiling((decimal)di / 2);
-                List<int> max_ct = new List<int>();
+                List<int> listMax_ct = new List<int>();
                 for (int i = 0; i < dd; i++)
                 {
                     int a = MyUtility.Convert.GetInt(nodist.Rows[i]["ct"]);
@@ -782,7 +782,7 @@ order by no
 
                     maxct = a > d ? a : d;
                     maxct = maxct > 3 ? maxct : 3;
-                    max_ct.Add(maxct);
+                    listMax_ct.Add(maxct);
                     Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(norow + 3)), Type.Missing).EntireRow;
                     for (int k = 3; k < maxct; k++)
                     {
@@ -790,10 +790,7 @@ order by no
                         worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
                         worksheet.get_Range(string.Format("T{0}:V{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
 
-                        if (i > 0)
-                        {
-                            addct++;
-                        }
+                        addct++;
                     }
 
                     // 將公式填入對應的格子中
@@ -807,10 +804,9 @@ order by no
                 }
 
                 bool leftDirection = true;
-                norow = 17 + ((j - 2) * 5) + addct;
 
                 // excel 範圍別名宣告 公式使用 for MACHINE INVENTORY計算用
-                string endRow = (norow + 5).ToString();
+                string endRow = (16 + (ttlLineRowCnt * 5) + addct).ToString();
                 worksheet.Names.Add("MachineINV1", worksheet.Range["AA17", "AA" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineINV2", worksheet.Range["AB17", "AB" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["AC19", "AD" + endRow], Type.Missing);
@@ -820,6 +816,7 @@ order by no
                 worksheet.Names.Add("MaxTMS", $"=Max('{worksheet.Name}'!$B$17:$B${endRow},'{worksheet.Name}'!$X$17:$X${endRow})", Type.Missing);
                 int m = 0;
 
+                norow = MyUtility.Convert.GetInt(endRow) - (listMax_ct[0] + 1);
                 foreach (DataRow nodr in nodist.Rows)
                 {
                     list_GCTimeChartData.Add(new GCTimeChartData()
@@ -862,7 +859,7 @@ order by no
                             continue;
                         }
 
-                        norow = norow - 5 - (max_ct[m] - 3);
+                        norow = norow - 5 - (listMax_ct[m] - 3);
                     }
                     else
                     {
@@ -881,12 +878,13 @@ order by no
                             ridx++;
                         }
 
-                        norow = norow + 5 + (max_ct[m] - 3);
+                        norow = norow + 5 + (listMax_ct[m] - 3);
                         m--;
                     }
                 }
             }
             #endregion
+
             #region U_Right字型列印
             if (this.display == "U_Right")
             {
@@ -895,7 +893,7 @@ order by no
                 int addct = 0;
                 bool flag = true;
                 decimal dd = Math.Ceiling((decimal)di / 2);
-                List<int> max_ct = new List<int>();
+                List<int> listMax_ct = new List<int>();
                 for (int i = 0; i < dd; i++)
                 {
                     int a = MyUtility.Convert.GetInt(nodist.Rows[i]["ct"]);
@@ -918,18 +916,14 @@ order by no
 
                     maxct = a > d ? a : d;
                     maxct = maxct > 3 ? maxct : 3;
-                    max_ct.Add(maxct);
+                    listMax_ct.Add(maxct);
                     Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(norow + 3)), Type.Missing).EntireRow;
                     for (int k = 3; k < maxct; k++)
                     {
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                         worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
                         worksheet.get_Range(string.Format("T{0}:V{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
-
-                        if (i > 0)
-                        {
-                            addct++;
-                        }
+                        addct++;
                     }
 
                     // 將公式填入對應的格子中
@@ -943,10 +937,9 @@ order by no
                 }
 
                 bool rightDirection = true;
-                norow = 17 + ((j - 2) * 5) + addct;
 
                 // excel 範圍別名宣告 公式使用 for MACHINE INVENTORY計算用
-                string endRow = (norow + 5).ToString();
+                string endRow = (16 + (ttlLineRowCnt * 5) + addct).ToString();
                 worksheet.Names.Add("MachineINV1", worksheet.Range["AA17", "AA" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineINV2", worksheet.Range["AB17", "AB" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["AC19", "AD" + endRow], Type.Missing);
@@ -956,6 +949,7 @@ order by no
                 worksheet.Names.Add("MaxTMS", $"=Max('{worksheet.Name}'!$B$17:$B${endRow},'{worksheet.Name}'!$X$17:$X${endRow})", Type.Missing);
                 int m = 0;
 
+                norow = MyUtility.Convert.GetInt(endRow) - (listMax_ct[0] + 1);
                 foreach (DataRow nodr in nodist.Rows)
                 {
                     list_GCTimeChartData.Add(new GCTimeChartData()
@@ -998,7 +992,7 @@ order by no
                             continue;
                         }
 
-                        norow = norow - 5 - (max_ct[m] - 3);
+                        norow = norow - 5 - (listMax_ct[m] - 3);
                     }
                     else
                     {
@@ -1017,7 +1011,7 @@ order by no
                             ridx++;
                         }
 
-                        norow = norow + 5 + (max_ct[m] - 3);
+                        norow = norow + 5 + (listMax_ct[m] - 3);
                         m--;
                     }
                 }
@@ -1030,6 +1024,7 @@ order by no
                 int ct = 0;
                 int addct = 0;
                 int indx = 1;
+                List<int> listMax_ct = new List<int>();
                 for (int l = 0; l < nodist.Rows.Count + 1; l++)
                 {
                     if (l < nodist.Rows.Count)
@@ -1040,6 +1035,7 @@ order by no
                     ct++;
                     if (ct == 2)
                     {
+                        listMax_ct.Add(maxct);
                         Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(norow + 3)), Type.Missing).EntireRow;
                         for (int i = 3; i < maxct; i++)
                         {
@@ -1047,10 +1043,7 @@ order by no
                             worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
                             worksheet.get_Range(string.Format("T{0}:V{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
 
-                            if (indx > 2)
-                            {
-                                addct++;
-                            }
+                            addct++;
                         }
 
                         // 將公式填入對應的格子中
@@ -1063,17 +1056,10 @@ order by no
                         ct = 0;
                         maxct = 3;
                     }
-
-                    if (l < nodist.Rows.Count)
-                    {
-                        indx++;
-                    }
                 }
 
-                norow = 17 + ((j - 2) * 5) + addct;
-
                 // excel 範圍別名宣告 公式使用 for MACHINE INVENTORY計算用
-                string endRow = (norow + 5).ToString();
+                string endRow = (16 + (ttlLineRowCnt * 5) + addct).ToString();
                 worksheet.Names.Add("MachineINV1", worksheet.Range["AA17", "AA" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineINV2", worksheet.Range["AB17", "AB" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["AC19", "AD" + endRow], Type.Missing);
@@ -1084,9 +1070,16 @@ order by no
 
                 int leftright_count = 2;
                 bool leftDirection = true;
-                indx = 2;
+                indx = 0;
+                norow = MyUtility.Convert.GetInt(endRow) + 1;
                 foreach (DataRow nodr in nodist.Rows)
                 {
+                    if (leftright_count == 2)
+                    {
+                        norow = norow - (listMax_ct[indx] + 2);
+                        indx++;
+                    }
+
                     list_GCTimeChartData.Add(new GCTimeChartData()
                     {
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
@@ -1151,18 +1144,7 @@ order by no
                         }
                     }
 
-                    if (nodist.Rows.Count > indx)
-                    {
-                        maxct = MyUtility.Convert.GetInt(nodist.Rows[indx]["ct"]) > maxct ? MyUtility.Convert.GetInt(nodist.Rows[indx]["ct"]) : maxct;
-                    }
-
-                    if (leftright_count == 2)
-                    {
-                        norow = norow - 5 - (maxct - 3);
-                        maxct = 3;
-                    }
-
-                    indx++;
+                   
                 }
             }
             #endregion

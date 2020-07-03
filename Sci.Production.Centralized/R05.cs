@@ -28,8 +28,8 @@ namespace Sci.Production.Centralized
 
             MyUtility.Tool.SetupCombox(this.cmbDate, 2, 1, "1,SCI Delivery Date,2,Buyer Delivery Date");
             this.cmbDate.SelectedValue = "1";
-
-            this.comboFtyZone.setDataSource();
+            this.comboFtyZone.IsIncludeSampleRoom = false;
+            this.comboFtyZone.setDataSourceAllFty();
         }
 
         private int Year;
@@ -84,6 +84,7 @@ namespace Sci.Production.Centralized
             this.dtAllData = null;
             this.Summarydt = new List<DataTable>();
             this.listFtyZone = new List<string>();
+            string smmmaryDateCol = this.radioMonthly.Checked ? "SUBSTRING(Date,1,4)+'/'+SUBSTRING(Date,5,6)" : "DateByHalfMonth";
             #region where
             string where = string.Empty;
             string whereFty = string.Empty;
@@ -173,7 +174,8 @@ from (
 
 select
     o.ID,
-    [Date]=format(iif('{this.Date}'='1',dateadd(day,-7,o.SciDelivery),o.BuyerDelivery),'yyyyMM'),
+    [Date]= format(KeyDate.val, 'yyyyMM'),
+    [DateByHalfMonth] = iif(cast(format(KeyDate.val, 'dd')  as int) between 1 and 15, format(KeyDate.val, 'yyyyMM01'), format(KeyDate.val, 'yyyyMM02')),
     [OutputDate] = FORMAT(s.OutputDate,'yyyyMM'),
     [OrderCPU] = o.Qty * gcRate.CpuRate * o.CPU,
     [OrderShortageCPU] = iif(o.GMTComplete = 'S' ,(o.Qty - GetPulloutData.Qty)  * gcRate.CpuRate * o.CPU ,0),
@@ -190,7 +192,8 @@ select
     f.IsProduceFty,
     f.FtyZone,
     o.ProgramID,
-    tbs.TransFtyZone
+    tbs.TransFtyZone,
+    [IsCancelNeedProduction] = iif(o.Junk = 1 and o.NeedProduction = 1, 'Y' , 'N')
 into #tmpBase
 from #tmpBaseStep1 tbs
 inner join Orders o with(nolock) on o.ID = tbs.ID
@@ -204,13 +207,14 @@ outer apply (select [CpuRate] = case when o.IsForecast = 1 then (select CpuRate 
                                      else (select CpuRate from GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'O')) end
                      ) gcRate
 outer apply (select Qty=sum(shipQty) from Pullout_Detail where orderid = o.id) GetPulloutData
+outer apply (select [val] = iif('{this.Date}'='1',dateadd(day,-7,o.SciDelivery),o.BuyerDelivery)) KeyDate
 group by o.ID,
-o.SciDelivery,
-o.BuyerDelivery,
+KeyDate.val,
 FORMAT(s.OutputDate,'yyyyMM'), 
 o.CPU, 
 o.Qty,
 o.Junk,
+o.NeedProduction,
 o.Qty,
 o.Category,
 o.SubconInType,
@@ -230,6 +234,7 @@ select  ID,
         FactoryID,
         FtyGroup,
         Date,
+        DateByHalfMonth,
         OutputDate,
         OrderCPU,
         OrderShortageCPU,
@@ -244,7 +249,8 @@ select  ID,
                                         (LocalOrder = 1 )),1,0),
         FtyZone,
         ProgramID,
-        TransFtyZone
+        TransFtyZone,
+        IsCancelNeedProduction
 into #tmpBaseBySource
 from #tmpBase
 where   {whereSource} or TransFtyZone <> ''
@@ -252,15 +258,17 @@ where   {whereSource} or TransFtyZone <> ''
 select
     ID,
     Date,
+    DateByHalfMonth,
     OrderCPU,
     OrderShortageCPU,
     [SewingOutput] = SUM(SewingOutput),
     [SewingOutputCPU] = SUM(SewingOutputCPU),
     FtyZone,
-    TransFtyZone
+    TransFtyZone,
+    IsCancelNeedProduction
 into #tmpBaseByOrderID
 from #tmpBaseBySource
-group by ID,Date,OrderCPU,OrderShortageCPU,FtyZone,TransFtyZone
+group by ID,Date,DateByHalfMonth,OrderCPU,OrderShortageCPU,FtyZone,TransFtyZone,IsCancelNeedProduction
 
 select  oq.ID, [LastBuyerDelivery] = Max(oq.BuyerDelivery), [PartialShipment] = iif(count(1) > 1, 'Y', '')
 into #tmpOrder_QtyShip
@@ -281,12 +289,14 @@ select
 	o.BuyerDelivery,
 	o.SciDelivery,
 	tb.Date,
+    tb.DateByHalfMonth,
 	o.ID,
 	Category =case when o.Category='B' then 'Bulk'
 				when o.Category='S' then 'Sample'
 				when o.Category='' then 'Forecast'
 				end,
 	Cancelled=iif(o.Junk=1,'Y',''),
+    tb.IsCancelNeedProduction,
     toq.PartialShipment,
     toq.LastBuyerDelivery,
 	o.StyleID,
@@ -298,10 +308,12 @@ select
 	o.FOCQty,
     tpd.PulloutQty,
     tb.OrderShortageCPU,
-	tb.OrderCPU,
+	[TotalCPU] = TotalCPU.val,
 	tb.SewingOutput,
-	BalanceQty=isnull(o.Qty,0)-isnull(tb.SewingOutput,0),
-	BalanceCPU= isnull(tb.OrderCPU,0) - isnull(tb.SewingOutputCPU,0),
+    tb.SewingOutputCPU,
+	BalanceQty = isnull(o.Qty,0)-isnull(tb.SewingOutput,0),
+	[BalanceCPU] = iif(BalanceCPU.val >= 0, BalanceCPU.val, null),
+    BalanceCPUIrregular = iif(BalanceCPU.val >= 0, null, BalanceCPU.val),
 	o.SewLine,
 	o.Dest,
 	o.OrderTypeID,
@@ -309,19 +321,24 @@ select
 	o.CdCodeID,
 	CDCode.ProductionFamilyID,
     o.FtyGroup,
+    [PulloutComplete] = iif(o.PulloutComplete = 1, 'OK', ''),
+    o.SewInLine,
+    o.SewOffLine,
     tb.TransFtyZone
 from #tmpBaseByOrderID tb with(nolock)
 inner join Orders o with(nolock) on o.id = tb.ID
 left join #tmpOrder_QtyShip toq on toq.ID = tb.ID
 left join #tmpPullout_Detail tpd on tpd.OrderID = tb.ID
 left join CDCode with(nolock) on CDCode.ID = o.CdCodeID
+outer apply (select [val] = iif(tb.IsCancelNeedProduction = 'N' and o.Junk = 1, 0, isnull(tb.OrderCPU, 0))) TotalCPU
+outer apply (select [val] =  TotalCPU.val - isnull(tb.SewingOutputCPU, 0) - isnull(tb.OrderShortageCPU, 0)) BalanceCPU
 
 select  FtyGroup,
-		[Date] = SUBSTRING(Date,1,4)+'/'+SUBSTRING(Date,5,6),
+		[Date] = {smmmaryDateCol},
 		ID,
 		OutputDate,
-		[OrderCPU] = iif(isNormalOrderCanceled = 1,0, OrderCPU - OrderShortageCPU),
-		[CanceledCPU] = iif(isNormalOrderCanceled = 1,OrderCPU, 0),
+		[OrderCPU] = iif(IsCancelNeedProduction = 'N' and isNormalOrderCanceled = 1,0 ,OrderCPU - OrderShortageCPU),
+		[CanceledCPU] = iif(IsCancelNeedProduction = 'Y',OrderCPU, 0),
 		OrderShortageCPU,
 		SewingOutput,
 		SewingOutputCPU,
@@ -331,7 +348,7 @@ from #tmpBaseBySource
 
 select  FtyGroup,OutputDate,[SewingOutputCPU] = sum(SewingOutputCPU) * -1,FtyZone
 from    #tmpBase
-where   Junk=1 and OutputDate is not null 
+where   Junk=1 and IsCancelNeedProduction = 'N' and OutputDate is not null 
 group by FtyGroup,OutputDate,FtyZone
 
 drop table #tmpBaseOrderID,#tmpBaseByOrderID,#tmpBaseTransOrderID,#tmpBaseStep1,#tmpBase,#tmpBaseBySource,#tmpOrder_QtyShip,#tmpPullout_Detail
@@ -417,7 +434,8 @@ group by Date,ID,OrderCPU,CanceledCPU,OrderShortageCPU, TransFtyZone
 select  Date
     , OrderCPU=sum(iif(TransFtyZone = '{ftyZone}', -OrderCPU, OrderCPU))
     , CanceledCPU = sum(CanceledCPU)
-    , BalanceCPU = sum(BalanceCPU)
+    , BalanceCPU = sum(iif(BalanceCPU >= 0, BalanceCPU, 0))
+    , BalanceIrregularCPU = sum(iif(BalanceCPU >= 0, 0, BalanceCPU))
     , [OrderShortageCPU] = sum(OrderShortageCPU)
     , [SubconOutCPU] = sum(iif(TransFtyZone = '{ftyZone}', OrderCPU, 0))
 into #tmp2
@@ -451,10 +469,11 @@ for xml path('')
 declare @sql nvarchar(max)=N'
 select t2.Date
     ,[Loading] = t2.OrderCPU
-    ,[Shortage] = t2.OrderShortageCPU
     ,[Canceled] = t2.CanceledCPU
+    ,[Shortage] = t2.OrderShortageCPU
     ,[SubconOut] = t2.SubconOutCPU
-    ,[Balance] = t2.BalanceCPU,
+    ,[Balance] = t2.BalanceCPU
+    ,[BalanceIrregular] = t2.BalanceIrregularCPU,
 	'+@col+N'
 into #tmp3
 from #tmp2 t2
@@ -473,15 +492,15 @@ inner join
 )xxx on t2.Date=xxx.Date
 order by t2.Date
 
-select*from #tmp3
+select * from #tmp3
 union all
-select ''Total'' ,sum(Loading),sum(Shortage), sum(Canceled), sum(SubconOut), sum(Balance),'+@col2+' from #tmp3
+select ''Total'' ,sum(Loading), sum(Canceled),sum(Shortage), sum(SubconOut), sum(Balance), sum(BalanceIrregular),'+@col2+' from #tmp3
 '
 exec (@sql)
 
 if @sql is null
 begin
-	select Date='',Loading=null,Shortage = null, Canceled = null,SubconOut=null,Balance=null,[ ]=''
+	select Date='',Loading=null,Canceled = null,Shortage = null, SubconOut=null,Balance=null, BalanceIrregular=null,[ ]=''
 end
 
 drop table #tmp,#tmp2_0,#tmp2
@@ -596,35 +615,42 @@ drop table #tmp
             worksheet.Columns.AutoFit();
 
             worksheet.Columns[1].ColumnWidth = 5.5;
-            worksheet.Columns[2].ColumnWidth = 8;
+            worksheet.Columns[2].ColumnWidth = 5.5;
             worksheet.Columns[3].ColumnWidth = 11.13;
             worksheet.Columns[4].ColumnWidth = 11.88;
             worksheet.Columns[5].ColumnWidth = 11.88;
             worksheet.Columns[6].ColumnWidth = 7.88;
-            worksheet.Columns[7].ColumnWidth = 17.75;
-            worksheet.Columns[8].ColumnWidth = 12.75;
-            worksheet.Columns[9].ColumnWidth = 14;
+            worksheet.Columns[7].ColumnWidth = 10;
+            worksheet.Columns[8].ColumnWidth = 17.75;
+            worksheet.Columns[9].ColumnWidth = 12.75;
             worksheet.Columns[10].ColumnWidth = 14;
-            worksheet.Columns[11].ColumnWidth = 15;
-            worksheet.Columns[12].ColumnWidth = 25;
-            worksheet.Columns[13].ColumnWidth = 11.13;
-            worksheet.Columns[14].ColumnWidth = 25.25;
-            worksheet.Columns[15].ColumnWidth = 20;
-            worksheet.Columns[16].ColumnWidth = 7.63;
-            worksheet.Columns[17].ColumnWidth = 13.38;
-            worksheet.Columns[18].ColumnWidth = 11.88;
-            worksheet.Columns[19].ColumnWidth = 15.25;
-            worksheet.Columns[20].ColumnWidth = 15.25;
+            worksheet.Columns[11].ColumnWidth = 14;
+            worksheet.Columns[12].ColumnWidth = 14;
+            worksheet.Columns[13].ColumnWidth = 15;
+            worksheet.Columns[14].ColumnWidth = 25;
+            worksheet.Columns[15].ColumnWidth = 11.13;
+            worksheet.Columns[16].ColumnWidth = 25.25;
+            worksheet.Columns[17].ColumnWidth = 20;
+            worksheet.Columns[18].ColumnWidth = 7.63;
+            worksheet.Columns[19].ColumnWidth = 13.38;
+            worksheet.Columns[20].ColumnWidth = 11.88;
             worksheet.Columns[21].ColumnWidth = 15.25;
-            worksheet.Columns[22].ColumnWidth = 25.75;
-            worksheet.Columns[23].ColumnWidth = 16.38;
-            worksheet.Columns[24].ColumnWidth = 17.5;
-            worksheet.Columns[25].ColumnWidth = 18.13;
-            worksheet.Columns[26].ColumnWidth = 8;
-            worksheet.Columns[27].ColumnWidth = 22;
-            worksheet.Columns[28].ColumnWidth = 16.38;
-            worksheet.Columns[29].ColumnWidth = 6.5;
-            worksheet.Columns[30].ColumnWidth = 19.88;
+            worksheet.Columns[22].ColumnWidth = 15.25;
+            worksheet.Columns[23].ColumnWidth = 15.25;
+            worksheet.Columns[24].ColumnWidth = 25.75;
+            worksheet.Columns[25].ColumnWidth = 16.38;
+            worksheet.Columns[26].ColumnWidth = 17.5;
+            worksheet.Columns[27].ColumnWidth = 17.5;
+            worksheet.Columns[28].ColumnWidth = 17.5;
+            worksheet.Columns[29].ColumnWidth = 18.13;
+            worksheet.Columns[30].ColumnWidth = 8;
+            worksheet.Columns[31].ColumnWidth = 22;
+            worksheet.Columns[32].ColumnWidth = 16.38;
+            worksheet.Columns[33].ColumnWidth = 6.5;
+            worksheet.Columns[34].ColumnWidth = 19.88;
+            worksheet.Columns[35].ColumnWidth = 16.38;
+            worksheet.Columns[36].ColumnWidth = 16.38;
+            worksheet.Columns[37].ColumnWidth = 16.38;
             #endregion
 
             for (int j = 1; j <= this.listFtyZone.Count; j++)
@@ -637,7 +663,7 @@ drop table #tmp
                 int i = 1;
                 foreach (DataColumn col in this.Summarydt[j - 1].Columns)
                 {
-                    if (i > 6)
+                    if (i > 7)
                     {
                         worksheet.Cells[4, i] = col.ColumnName;
                     }
@@ -646,7 +672,7 @@ drop table #tmp
                 }
 
                 i--;
-                worksheet.get_Range((Excel.Range)worksheet.Cells[3, 7], (Excel.Range)worksheet.Cells[3, i]).Merge(false);
+                worksheet.get_Range((Excel.Range)worksheet.Cells[3, 8], (Excel.Range)worksheet.Cells[3, i]).Merge(false);
                 worksheet.get_Range((Excel.Range)worksheet.Cells[3, 1], (Excel.Range)worksheet.Cells[this.Summarydt[j - 1].Rows.Count + 4, i]).Borders.Weight = 3; // 設定全框線
                 worksheet.Columns.AutoFit();
             }

@@ -35,8 +35,8 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new Sci.Win.UI.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.BtnDelete = new Sci.Win.UI.Button();
-            this.BtnAdd = new Sci.Win.UI.Button();
+            this.displayBuyBackReason = new Sci.Win.UI.DisplayBox();
+            this.lblReason = new Sci.Win.UI.Label();
             this.grid1 = new Sci.Win.UI.Grid();
             this.grid1bs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.BtnRefresh = new Sci.Win.UI.Button();
@@ -48,6 +48,8 @@
             this.LbSP = new Sci.Win.UI.Label();
             this.grid2 = new Sci.Win.UI.Grid();
             this.grid2bs = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.chkIsBuyBackCrossSizeCode = new Sci.Win.UI.CheckBox();
+            this.chkIsBuyBackCrossArticle = new Sci.Win.UI.CheckBox();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.grid3 = new Sci.Win.UI.Grid();
             this.grid3bs = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -94,7 +96,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer1.Size = new System.Drawing.Size(870, 493);
+            this.splitContainer1.Size = new System.Drawing.Size(1008, 493);
             this.splitContainer1.SplitterDistance = 273;
             this.splitContainer1.TabIndex = 1;
             this.splitContainer1.TabStop = false;
@@ -107,8 +109,8 @@
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.BtnDelete);
-            this.splitContainer2.Panel1.Controls.Add(this.BtnAdd);
+            this.splitContainer2.Panel1.Controls.Add(this.displayBuyBackReason);
+            this.splitContainer2.Panel1.Controls.Add(this.lblReason);
             this.splitContainer2.Panel1.Controls.Add(this.grid1);
             // 
             // splitContainer2.Panel2
@@ -121,35 +123,28 @@
             this.splitContainer2.Panel2.Controls.Add(this.CboSP);
             this.splitContainer2.Panel2.Controls.Add(this.LbSP);
             this.splitContainer2.Panel2.Controls.Add(this.grid2);
-            this.splitContainer2.Size = new System.Drawing.Size(870, 273);
-            this.splitContainer2.SplitterDistance = 208;
+            this.splitContainer2.Panel2.Controls.Add(this.chkIsBuyBackCrossSizeCode);
+            this.splitContainer2.Panel2.Controls.Add(this.chkIsBuyBackCrossArticle);
+            this.splitContainer2.Size = new System.Drawing.Size(1008, 273);
+            this.splitContainer2.SplitterDistance = 240;
             this.splitContainer2.TabIndex = 0;
             // 
-            // BtnDelete
+            // displayBuyBackReason
             // 
-            this.BtnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnDelete.Enabled = false;
-            this.BtnDelete.Location = new System.Drawing.Point(125, 239);
-            this.BtnDelete.Name = "BtnDelete";
-            this.BtnDelete.Size = new System.Drawing.Size(80, 30);
-            this.BtnDelete.TabIndex = 5;
-            this.BtnDelete.Text = "Delete";
-            this.BtnDelete.UseVisualStyleBackColor = true;
-            this.BtnDelete.Visible = false;
-            this.BtnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
+            this.displayBuyBackReason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBuyBackReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBuyBackReason.Location = new System.Drawing.Point(63, 8);
+            this.displayBuyBackReason.Name = "displayBuyBackReason";
+            this.displayBuyBackReason.Size = new System.Drawing.Size(162, 23);
+            this.displayBuyBackReason.TabIndex = 7;
             // 
-            // BtnAdd
+            // lblReason
             // 
-            this.BtnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.BtnAdd.Enabled = false;
-            this.BtnAdd.Location = new System.Drawing.Point(3, 239);
-            this.BtnAdd.Name = "BtnAdd";
-            this.BtnAdd.Size = new System.Drawing.Size(80, 30);
-            this.BtnAdd.TabIndex = 4;
-            this.BtnAdd.Text = "Add";
-            this.BtnAdd.UseVisualStyleBackColor = true;
-            this.BtnAdd.Visible = false;
-            this.BtnAdd.Click += new System.EventHandler(this.BtnAdd_Click);
+            this.lblReason.Location = new System.Drawing.Point(6, 8);
+            this.lblReason.Name = "lblReason";
+            this.lblReason.Size = new System.Drawing.Size(54, 23);
+            this.lblReason.TabIndex = 6;
+            this.lblReason.Text = "Reason";
             // 
             // grid1
             // 
@@ -167,7 +162,7 @@
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 7);
+            this.grid1.Location = new System.Drawing.Point(0, 34);
             this.grid1.Name = "grid1";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -182,13 +177,13 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(205, 226);
+            this.grid1.Size = new System.Drawing.Size(237, 235);
             this.grid1.TabIndex = 2;
             // 
             // BtnRefresh
             // 
             this.BtnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnRefresh.Location = new System.Drawing.Point(585, 3);
+            this.BtnRefresh.Location = new System.Drawing.Point(691, 3);
             this.BtnRefresh.Name = "BtnRefresh";
             this.BtnRefresh.Size = new System.Drawing.Size(70, 30);
             this.BtnRefresh.TabIndex = 10;
@@ -203,7 +198,7 @@
             this.CboSizeGroup.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.CboSizeGroup.FormattingEnabled = true;
             this.CboSizeGroup.IsSupportUnselect = true;
-            this.CboSizeGroup.Location = new System.Drawing.Point(496, 6);
+            this.CboSizeGroup.Location = new System.Drawing.Point(585, 6);
             this.CboSizeGroup.Name = "CboSizeGroup";
             this.CboSizeGroup.OldText = "";
             this.CboSizeGroup.Size = new System.Drawing.Size(59, 24);
@@ -212,7 +207,7 @@
             // 
             // LbSizeGroup
             // 
-            this.LbSizeGroup.Location = new System.Drawing.Point(418, 7);
+            this.LbSizeGroup.Location = new System.Drawing.Point(507, 7);
             this.LbSizeGroup.Name = "LbSizeGroup";
             this.LbSizeGroup.Size = new System.Drawing.Size(75, 23);
             this.LbSizeGroup.TabIndex = 8;
@@ -225,7 +220,7 @@
             this.CboArticle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.CboArticle.FormattingEnabled = true;
             this.CboArticle.IsSupportUnselect = true;
-            this.CboArticle.Location = new System.Drawing.Point(306, 6);
+            this.CboArticle.Location = new System.Drawing.Point(404, 6);
             this.CboArticle.Name = "CboArticle";
             this.CboArticle.OldText = "";
             this.CboArticle.Size = new System.Drawing.Size(94, 24);
@@ -234,7 +229,7 @@
             // 
             // LbArticle
             // 
-            this.LbArticle.Location = new System.Drawing.Point(228, 7);
+            this.LbArticle.Location = new System.Drawing.Point(326, 7);
             this.LbArticle.Name = "LbArticle";
             this.LbArticle.Size = new System.Drawing.Size(75, 23);
             this.LbArticle.TabIndex = 6;
@@ -247,7 +242,7 @@
             this.CboSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.CboSP.FormattingEnabled = true;
             this.CboSP.IsSupportUnselect = true;
-            this.CboSP.Location = new System.Drawing.Point(65, 7);
+            this.CboSP.Location = new System.Drawing.Point(172, 7);
             this.CboSP.Name = "CboSP";
             this.CboSP.OldText = "";
             this.CboSP.Size = new System.Drawing.Size(145, 24);
@@ -256,7 +251,7 @@
             // 
             // LbSP
             // 
-            this.LbSP.Location = new System.Drawing.Point(3, 8);
+            this.LbSP.Location = new System.Drawing.Point(110, 8);
             this.LbSP.Name = "LbSP";
             this.LbSP.Size = new System.Drawing.Size(59, 23);
             this.LbSP.TabIndex = 4;
@@ -293,11 +288,35 @@
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid2.ShowCellToolTips = false;
-            this.grid2.Size = new System.Drawing.Size(655, 235);
+            this.grid2.Size = new System.Drawing.Size(761, 235);
             this.grid2.TabIndex = 3;
             this.grid2.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.Grid2_CellEndEdit);
             this.grid2.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.Grid2_CellEnter);
             this.grid2.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.Grid_CellFormatting);
+            // 
+            // chkIsBuyBackCrossSizeCode
+            // 
+            this.chkIsBuyBackCrossSizeCode.AutoSize = true;
+            this.chkIsBuyBackCrossSizeCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkIsBuyBackCrossSizeCode.Location = new System.Drawing.Point(4, 16);
+            this.chkIsBuyBackCrossSizeCode.Name = "chkIsBuyBackCrossSizeCode";
+            this.chkIsBuyBackCrossSizeCode.ReadOnly = true;
+            this.chkIsBuyBackCrossSizeCode.Size = new System.Drawing.Size(94, 21);
+            this.chkIsBuyBackCrossSizeCode.TabIndex = 12;
+            this.chkIsBuyBackCrossSizeCode.Text = "Cross Size";
+            this.chkIsBuyBackCrossSizeCode.UseVisualStyleBackColor = true;
+            // 
+            // chkIsBuyBackCrossArticle
+            // 
+            this.chkIsBuyBackCrossArticle.AutoSize = true;
+            this.chkIsBuyBackCrossArticle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkIsBuyBackCrossArticle.Location = new System.Drawing.Point(4, 0);
+            this.chkIsBuyBackCrossArticle.Name = "chkIsBuyBackCrossArticle";
+            this.chkIsBuyBackCrossArticle.ReadOnly = true;
+            this.chkIsBuyBackCrossArticle.Size = new System.Drawing.Size(106, 21);
+            this.chkIsBuyBackCrossArticle.TabIndex = 11;
+            this.chkIsBuyBackCrossArticle.Text = "Cross Article";
+            this.chkIsBuyBackCrossArticle.UseVisualStyleBackColor = true;
             // 
             // splitContainer3
             // 
@@ -312,8 +331,8 @@
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.grid4);
-            this.splitContainer3.Size = new System.Drawing.Size(870, 216);
-            this.splitContainer3.SplitterDistance = 600;
+            this.splitContainer3.Size = new System.Drawing.Size(1008, 216);
+            this.splitContainer3.SplitterDistance = 570;
             this.splitContainer3.TabIndex = 0;
             // 
             // grid3
@@ -345,7 +364,7 @@
             this.grid3.RowTemplate.Height = 24;
             this.grid3.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid3.ShowCellToolTips = false;
-            this.grid3.Size = new System.Drawing.Size(600, 216);
+            this.grid3.Size = new System.Drawing.Size(570, 216);
             this.grid3.TabIndex = 3;
             this.grid3.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.Grid3_CellEnter);
             // 
@@ -378,27 +397,25 @@
             this.grid4.RowTemplate.Height = 24;
             this.grid4.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid4.ShowCellToolTips = false;
-            this.grid4.Size = new System.Drawing.Size(266, 216);
+            this.grid4.Size = new System.Drawing.Size(434, 216);
             this.grid4.TabIndex = 3;
-            this.grid4.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.Grid4_CellEndEdit);
             this.grid4.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.Grid_CellFormatting);
             // 
             // BtnEdit
             // 
             this.BtnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnEdit.Location = new System.Drawing.Point(673, 499);
+            this.BtnEdit.Location = new System.Drawing.Point(811, 499);
             this.BtnEdit.Name = "BtnEdit";
             this.BtnEdit.Size = new System.Drawing.Size(80, 30);
             this.BtnEdit.TabIndex = 2;
             this.BtnEdit.Text = "Edit";
             this.BtnEdit.UseVisualStyleBackColor = true;
             this.BtnEdit.Visible = false;
-            this.BtnEdit.Click += new System.EventHandler(this.BtnEdit_Click);
             // 
             // BtnClose
             // 
             this.BtnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnClose.Location = new System.Drawing.Point(778, 499);
+            this.BtnClose.Location = new System.Drawing.Point(916, 499);
             this.BtnClose.Name = "BtnClose";
             this.BtnClose.Size = new System.Drawing.Size(80, 30);
             this.BtnClose.TabIndex = 3;
@@ -421,7 +438,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(870, 541);
+            this.ClientSize = new System.Drawing.Size(1008, 541);
             this.Controls.Add(this.LbRemark);
             this.Controls.Add(this.BtnClose);
             this.Controls.Add(this.BtnEdit);
@@ -434,7 +451,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
+            this.splitContainer2.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
@@ -458,8 +477,6 @@
 
         private Win.UI.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private Win.UI.Button BtnDelete;
-        private Win.UI.Button BtnAdd;
         private Win.UI.Grid grid1;
         private Win.UI.ComboBox CboArticle;
         private Win.UI.Label LbArticle;
@@ -479,5 +496,9 @@
         private Win.UI.ListControlBindingSource grid1bs;
         private Win.UI.ListControlBindingSource grid3bs;
         private Win.UI.ListControlBindingSource grid4bs;
+        private Win.UI.DisplayBox displayBuyBackReason;
+        private Win.UI.Label lblReason;
+        private Win.UI.CheckBox chkIsBuyBackCrossSizeCode;
+        private Win.UI.CheckBox chkIsBuyBackCrossArticle;
     }
 }

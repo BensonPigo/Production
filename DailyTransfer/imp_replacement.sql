@@ -25,16 +25,18 @@ BEGIN
 		t.TPEEditName=s.EditName,
 		t.TPEEditDate=s.EditDate,
 		t.Status = s.Status,
-		t.RMtlAmt = iif(s.LockDate is not null,t.RMtlAmt, s.RMtlAmt),
-		t.ActFreight = iif(s.LockDate is not null, t.ActFreight,s.ActFreight),
-		t.EstFreight = iif(s.LockDate is not null, t.EstFreight,s.EstFreight),
-		t.SurchargeAmt = iif(s.LockDate is not null, t.SurchargeAmt,s.SurchargeAmt),
+		t.RMtlAmt = iif(t.LockDate is not null,t.RMtlAmt, s.RMtlAmt),
+		t.ActFreight = iif(t.LockDate is not null, t.ActFreight,s.ActFreight),
+		t.EstFreight = iif(t.LockDate is not null, t.EstFreight,s.EstFreight),
+		t.SurchargeAmt = iif(t.LockDate is not null, t.SurchargeAmt,s.SurchargeAmt),
 		t.LockDate = s.LockDate,
 		t.CompleteDate = s.CompleteDate,
 		t.TransferName = s.TransferName,
 		t.TransferDate = s.TransferDate,
 		t.TransferResponsible = s.TransferResponsible,
-		t.TransferNo = s.TransferNo
+		t.TransferNo = s.TransferNo,
+		t.CompleteName = isnull (s.CompleteName, ''),
+		t.isComplete = isnull (s.isComplete, 0)
 	output inserted.id into @tReplace;
 
 	--Merge Replace2

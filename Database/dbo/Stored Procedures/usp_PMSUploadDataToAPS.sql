@@ -337,15 +337,14 @@ from
 	,[XSize] = sdd.SizeCode
 	,[Qty] = sdd.QAQty
 	,[Workers] = s.Manpower
-	,[Hours] = round( (cast(sdd.QAQty as float) / cast(sd.QAQty as float)) * sd.WorkHour , 3)
+	,[Hours] = iif(cast(sd.QAQty as float) * sd.WorkHour = 0, 0, round( (cast(sdd.QAQty as float) / cast(sd.QAQty as float)) * sd.WorkHour , 3))
 	from SewingOutput s
 	inner join SewingOutput_Detail sd on s.ID = sd.ID
 	inner join SewingOutput_Detail_Detail sdd on sdd.SewingOutput_DetailUKey = sd.UKey 
 	where sdd.OrderID in (Select distinct sd.OrderID 
 						  from SewingOutput s, SewingOutput_Detail sd
-						  where (s.LockDate is null or s.LockDate >= DATEADD(DAY, -7, CONVERT(date,GETDATE())))
+						  where (s.LockDate is null or s.LockDate >= DATEADD(DAY, -7, CONVERT(date,GETDATE())) or s.ReDailyTransferDate  >= DATEADD(DAY, -7, CONVERT(date,GETDATE())))
 						  and s.ID = sd.ID)
-		  and sd.QAQty > 0
 )l
 group by [POCode],[Process],[Facility],[PDate],[Color],[XSize]
 '

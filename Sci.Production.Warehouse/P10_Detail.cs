@@ -68,26 +68,32 @@ select t.poid
 from #tmp t
 Left join dbo.FtyInventory FTY WITH (NOLOCK) on t.FtyInventoryUkey=FTY.Ukey
 left join dbo.Issue_Summary isum with (nolock) on t.Issue_SummaryUkey = isum.Ukey
-outer apply (select fp.Result
+outer apply (select  TOP 1 fp.Result
             from dbo.FIR f with (nolock) 
 	        inner join dbo.FIR_Physical fp with (nolock) on f.ID = fp.ID and fp.Roll = t.Roll and fp.Dyelot = t.Dyelot
-	        where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno) Physical
-outer apply (select fw.Result
+	        where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno
+			order by ISNULL(fp.EditDate,fp.AddDate) DESC ) Physical
+outer apply (select TOP 1 fw.Result
             from dbo.FIR f with (nolock) 
 	        inner join dbo.FIR_Weight fw with (nolock) on f.ID = fw.ID and fw.Roll = t.Roll and fw.Dyelot = t.Dyelot
-	        where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno) Weight
-outer apply (select fs.Result
+	        where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno
+			order by ISNULL(fw.EditDate,fw.AddDate) DESC ) Weight
+outer apply (select TOP 1 fs.Result
             from dbo.FIR f with (nolock) 
 	        inner join dbo.FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = t.Roll and fs.Dyelot = t.Dyelot
-	        where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno) Shadebone
-outer apply (select fc.Result
+	        where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno
+			order by ISNULL(fs.EditDate,fs.AddDate) DESC 
+			) Shadebone
+outer apply (select  TOP 1 fc.Result
             from dbo.FIR f with (nolock) 
 	        inner join dbo.FIR_Continuity fc with (nolock) on f.ID = fc.ID and fc.Roll = t.Roll and fc.Dyelot = t.Dyelot
-	        where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno) Continuity
-outer apply (select fc.Result
+	        where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno
+			order by ISNULL(fc.EditDate,fc.AddDate) DESC ) Continuity
+outer apply (select  TOP 1 fc.Result
             from dbo.FIR f with (nolock) 
 	        inner join dbo.FIR_Odor fc with (nolock) on f.ID = fc.ID and fc.Roll = t.Roll and fc.Dyelot = t.Dyelot
-	        where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno) Odor
+	        where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno
+			order by ISNULL(fc.EditDate,fc.AddDate) DESC ) Odor
 order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp")))
                 {
                     MyUtility.Msg.WarningBox(result.ToString());

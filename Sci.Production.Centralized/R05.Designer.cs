@@ -46,6 +46,8 @@
             this.comboCentralizedM1 = new Sci.Production.Class.comboCentralizedM(this.components);
             this.txtbrand1 = new Sci.Production.Class.txtbrand();
             this.comboFtyZone = new Sci.Production.Class.comboFtyZone(this.components);
+            this.radioMonthly = new Sci.Win.UI.RadioButton();
+            this.radioSemiMonthly = new Sci.Win.UI.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).BeginInit();
             this.SuspendLayout();
             // 
@@ -81,7 +83,7 @@
             // 
             this.numYear.BackColor = System.Drawing.Color.White;
             this.numYear.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numYear.Location = new System.Drawing.Point(123, 12);
+            this.numYear.Location = new System.Drawing.Point(123, 54);
             this.numYear.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -108,7 +110,7 @@
             this.cmbDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cmbDate.FormattingEnabled = true;
             this.cmbDate.IsSupportUnselect = true;
-            this.cmbDate.Location = new System.Drawing.Point(123, 160);
+            this.cmbDate.Location = new System.Drawing.Point(123, 202);
             this.cmbDate.Name = "cmbDate";
             this.cmbDate.OldText = "";
             this.cmbDate.Size = new System.Drawing.Size(267, 24);
@@ -120,7 +122,7 @@
             this.chkOrder.Checked = true;
             this.chkOrder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkOrder.Location = new System.Drawing.Point(123, 190);
+            this.chkOrder.Location = new System.Drawing.Point(123, 232);
             this.chkOrder.Name = "chkOrder";
             this.chkOrder.Size = new System.Drawing.Size(68, 21);
             this.chkOrder.TabIndex = 103;
@@ -133,7 +135,7 @@
             this.chkForecast.Checked = true;
             this.chkForecast.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkForecast.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkForecast.Location = new System.Drawing.Point(123, 217);
+            this.chkForecast.Location = new System.Drawing.Point(123, 259);
             this.chkForecast.Name = "chkForecast";
             this.chkForecast.Size = new System.Drawing.Size(86, 21);
             this.chkForecast.TabIndex = 104;
@@ -146,7 +148,7 @@
             this.chkFtyLocalOrder.Checked = true;
             this.chkFtyLocalOrder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkFtyLocalOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkFtyLocalOrder.Location = new System.Drawing.Point(123, 244);
+            this.chkFtyLocalOrder.Location = new System.Drawing.Point(123, 286);
             this.chkFtyLocalOrder.Name = "chkFtyLocalOrder";
             this.chkFtyLocalOrder.Size = new System.Drawing.Size(125, 21);
             this.chkFtyLocalOrder.TabIndex = 105;
@@ -159,7 +161,7 @@
             this.chkExcludeSampleFactory.Checked = true;
             this.chkExcludeSampleFactory.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkExcludeSampleFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkExcludeSampleFactory.Location = new System.Drawing.Point(12, 279);
+            this.chkExcludeSampleFactory.Location = new System.Drawing.Point(12, 321);
             this.chkExcludeSampleFactory.Name = "chkExcludeSampleFactory";
             this.chkExcludeSampleFactory.Size = new System.Drawing.Size(178, 21);
             this.chkExcludeSampleFactory.TabIndex = 106;
@@ -168,7 +170,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(9, 12);
+            this.label1.Location = new System.Drawing.Point(9, 54);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(111, 23);
             this.label1.TabIndex = 107;
@@ -176,7 +178,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(9, 41);
+            this.label2.Location = new System.Drawing.Point(9, 83);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(111, 23);
             this.label2.TabIndex = 108;
@@ -184,7 +186,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(9, 70);
+            this.label3.Location = new System.Drawing.Point(9, 112);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(111, 23);
             this.label3.TabIndex = 109;
@@ -192,7 +194,7 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(9, 100);
+            this.label4.Location = new System.Drawing.Point(9, 142);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(111, 23);
             this.label4.TabIndex = 110;
@@ -200,7 +202,7 @@
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(9, 131);
+            this.label5.Location = new System.Drawing.Point(9, 173);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(111, 23);
             this.label5.TabIndex = 111;
@@ -208,7 +210,7 @@
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(9, 161);
+            this.label6.Location = new System.Drawing.Point(9, 203);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(111, 23);
             this.label6.TabIndex = 112;
@@ -216,7 +218,7 @@
             // 
             // label7
             // 
-            this.label7.Location = new System.Drawing.Point(9, 190);
+            this.label7.Location = new System.Drawing.Point(9, 232);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(111, 23);
             this.label7.TabIndex = 113;
@@ -228,7 +230,7 @@
             this.comboCentralizedFactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCentralizedFactory1.FormattingEnabled = true;
             this.comboCentralizedFactory1.IsSupportUnselect = true;
-            this.comboCentralizedFactory1.Location = new System.Drawing.Point(123, 130);
+            this.comboCentralizedFactory1.Location = new System.Drawing.Point(123, 172);
             this.comboCentralizedFactory1.Name = "comboCentralizedFactory1";
             this.comboCentralizedFactory1.OldText = "";
             this.comboCentralizedFactory1.Size = new System.Drawing.Size(80, 24);
@@ -240,7 +242,7 @@
             this.comboCentralizedM1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCentralizedM1.FormattingEnabled = true;
             this.comboCentralizedM1.IsSupportUnselect = true;
-            this.comboCentralizedM1.Location = new System.Drawing.Point(123, 70);
+            this.comboCentralizedM1.Location = new System.Drawing.Point(123, 112);
             this.comboCentralizedM1.Name = "comboCentralizedM1";
             this.comboCentralizedM1.OldText = "";
             this.comboCentralizedM1.Size = new System.Drawing.Size(80, 24);
@@ -250,7 +252,7 @@
             // 
             this.txtbrand1.BackColor = System.Drawing.Color.White;
             this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(123, 41);
+            this.txtbrand1.Location = new System.Drawing.Point(123, 83);
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(80, 23);
             this.txtbrand1.TabIndex = 98;
@@ -263,18 +265,45 @@
             this.comboFtyZone.FormattingEnabled = true;
             this.comboFtyZone.IssupportJunk = false;
             this.comboFtyZone.IsSupportUnselect = true;
-            this.comboFtyZone.Location = new System.Drawing.Point(123, 99);
+            this.comboFtyZone.Location = new System.Drawing.Point(123, 141);
             this.comboFtyZone.Name = "comboFtyZone";
             this.comboFtyZone.OldText = "";
             this.comboFtyZone.SelectTable = "Factory";
             this.comboFtyZone.Size = new System.Drawing.Size(80, 24);
             this.comboFtyZone.TabIndex = 114;
             // 
+            // radioMonthly
+            // 
+            this.radioMonthly.AutoSize = true;
+            this.radioMonthly.Checked = true;
+            this.radioMonthly.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioMonthly.Location = new System.Drawing.Point(9, 2);
+            this.radioMonthly.Name = "radioMonthly";
+            this.radioMonthly.Size = new System.Drawing.Size(122, 21);
+            this.radioMonthly.TabIndex = 115;
+            this.radioMonthly.TabStop = true;
+            this.radioMonthly.Text = "Monthly Report";
+            this.radioMonthly.UseVisualStyleBackColor = true;
+            // 
+            // radioSemiMonthly
+            // 
+            this.radioSemiMonthly.AutoSize = true;
+            this.radioSemiMonthly.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioSemiMonthly.Location = new System.Drawing.Point(9, 27);
+            this.radioSemiMonthly.Name = "radioSemiMonthly";
+            this.radioSemiMonthly.Size = new System.Drawing.Size(158, 21);
+            this.radioSemiMonthly.TabIndex = 116;
+            this.radioSemiMonthly.TabStop = true;
+            this.radioSemiMonthly.Text = "Semi-monthly Report";
+            this.radioSemiMonthly.UseVisualStyleBackColor = true;
+            // 
             // R05
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(591, 336);
+            this.ClientSize = new System.Drawing.Size(591, 376);
+            this.Controls.Add(this.radioSemiMonthly);
+            this.Controls.Add(this.radioMonthly);
             this.Controls.Add(this.comboFtyZone);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
@@ -318,6 +347,8 @@
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.label7, 0);
             this.Controls.SetChildIndex(this.comboFtyZone, 0);
+            this.Controls.SetChildIndex(this.radioMonthly, 0);
+            this.Controls.SetChildIndex(this.radioSemiMonthly, 0);
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -343,5 +374,7 @@
         private Win.UI.Label label6;
         private Win.UI.Label label7;
         private Class.comboFtyZone comboFtyZone;
+        private Win.UI.RadioButton radioMonthly;
+        private Win.UI.RadioButton radioSemiMonthly;
     }
 }

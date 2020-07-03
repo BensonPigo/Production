@@ -61,6 +61,11 @@
 	[TTL_SUBLIMATION ROLLER (CPU)] [numeric](38, 6) NULL,
 	[TTL_ULTRASONIC MACHINE (CPU)] [numeric](38, 6) NULL,
 	[TTL_VELCRO MACHINE (CPU)] [numeric](38, 6) NULL,
-	[TTL_ZIG ZAG (CPU)] [numeric](38, 6) NULL
+	[TTL_ZIG ZAG (CPU)] [numeric](38, 6) NULL, 
+    [Sew_Qty] NUMERIC(6) NULL, 
+    [Shortage] NUMERIC(6) NULL, 
+    [Buyer Key] VARCHAR(6) NULL, 
+    [Buyer HalfKey] VARCHAR(8) NULL, 
+    [Sew_Qty by Rate] NUMERIC(10, 4) NULL
 ) ON [PRIMARY]
 GO

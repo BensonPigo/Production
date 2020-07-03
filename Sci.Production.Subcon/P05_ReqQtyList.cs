@@ -34,7 +34,9 @@ select a.Status
 from ArtworkReq_Detail AD, ArtworkReq A
 where AD.ID = A.ID 
 and ad.OrderID ='{dr["orderID"]}'
+and ad.ArtworkID = '{dr["ArtworkID"]}'
 and ad.PatternCode = '{dr["PatternCode"]}'
+and ad.PatternDesc = '{dr["PatternDesc"]}'
 and a.ID != '{dr["id"]}'
 and a.status != 'Closed'
 union 
