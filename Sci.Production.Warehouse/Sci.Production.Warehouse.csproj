@@ -5,7 +5,7 @@
     <ProjectReference>
       <Private>False</Private>
     </ProjectReference>
-  </ItemDefinitionGroup>  
+  </ItemDefinitionGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -1201,6 +1201,12 @@
     <Compile Include="Report\R24.Designer.cs">
       <DependentUpon>R24.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R33.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R33.Designer.cs">
+      <DependentUpon>R33.cs</DependentUpon>
+    </Compile>
     <Compile Include="Report\R37.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1858,6 +1864,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Report\R24.resx">
       <DependentUpon>R24.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\R33.resx">
+      <DependentUpon>R33.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Report\R37.resx">
       <DependentUpon>R37.cs</DependentUpon>
