@@ -174,8 +174,11 @@ from (
 
 select
     o.ID,
-    [Date]= format(KeyDate.val, 'yyyyMM'),
-    [DateByHalfMonth] = iif(cast(format(KeyDate.val, 'dd')  as int) between 1 and 15, format(KeyDate.val, 'yyyyMM01'), format(KeyDate.val, 'yyyyMM02')),
+    [Date]= format(iif('{this.Date}' = '1', KeyDate.SCI, KeyDate.Buyer), 'yyyyMM'),
+    [SCIKey] = format(KeyDate.SCI, 'yyyyMM'),
+    [SCIKeyHalf] = iif(cast(format(KeyDate.SCI, 'dd') as int) between 1 and 15, format(KeyDate.SCI, 'yyyyMM01'), format(KeyDate.SCI, 'yyyyMM02')),
+    [BuyerKey] = format(KeyDate.Buyer, 'yyyyMM'),
+    [BuyerKeyHalf] = iif(cast(format(KeyDate.Buyer, 'dd') as int) between 1 and 15, format(KeyDate.Buyer, 'yyyyMM01'), format(KeyDate.Buyer, 'yyyyMM02')),
     [OutputDate] = FORMAT(s.OutputDate,'yyyyMM'),
     [OrderCPU] = o.Qty * gcRate.CpuRate * o.CPU,
     [OrderShortageCPU] = iif(o.GMTComplete = 'S' ,(o.Qty - GetPulloutData.Qty)  * gcRate.CpuRate * o.CPU ,0),
@@ -207,9 +210,11 @@ outer apply (select [CpuRate] = case when o.IsForecast = 1 then (select CpuRate 
                                      else (select CpuRate from GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'O')) end
                      ) gcRate
 outer apply (select Qty=sum(shipQty) from Pullout_Detail where orderid = o.id) GetPulloutData
-outer apply (select [val] = iif('{this.Date}'='1',dateadd(day,-7,o.SciDelivery),o.BuyerDelivery)) KeyDate
+outer apply (select [SCI] = dateadd(day,-7,o.SciDelivery),
+                    [Buyer] = o.BuyerDelivery) KeyDate
 group by o.ID,
-KeyDate.val,
+KeyDate.SCI,
+KeyDate.Buyer,
 FORMAT(s.OutputDate,'yyyyMM'), 
 o.CPU, 
 o.Qty,
@@ -234,7 +239,10 @@ select  ID,
         FactoryID,
         FtyGroup,
         Date,
-        DateByHalfMonth,
+        SCIKey,
+        SCIKeyHalf,
+        BuyerKey,
+        BuyerKeyHalf,
         OutputDate,
         OrderCPU,
         OrderShortageCPU,
@@ -258,17 +266,20 @@ where   {whereSource} or TransFtyZone <> ''
 select
     ID,
     Date,
-    DateByHalfMonth,
     OrderCPU,
     OrderShortageCPU,
     [SewingOutput] = SUM(SewingOutput),
     [SewingOutputCPU] = SUM(SewingOutputCPU),
     FtyZone,
     TransFtyZone,
-    IsCancelNeedProduction
+    IsCancelNeedProduction,
+    SCIKey,
+    SCIKeyHalf,
+    BuyerKey,
+    BuyerKeyHalf
 into #tmpBaseByOrderID
 from #tmpBaseBySource
-group by ID,Date,DateByHalfMonth,OrderCPU,OrderShortageCPU,FtyZone,TransFtyZone,IsCancelNeedProduction
+group by ID,Date,OrderCPU,OrderShortageCPU,FtyZone,TransFtyZone,IsCancelNeedProduction,SCIKey,SCIKeyHalf,BuyerKey,BuyerKeyHalf
 
 select  oq.ID, [LastBuyerDelivery] = Max(oq.BuyerDelivery), [PartialShipment] = iif(count(1) > 1, 'Y', '')
 into #tmpOrder_QtyShip
@@ -288,8 +299,10 @@ select
 	o.FactoryID,
 	o.BuyerDelivery,
 	o.SciDelivery,
-	tb.Date,
-    tb.DateByHalfMonth,
+    tb.SCIKey,
+    tb.SCIKeyHalf,
+    tb.BuyerKey,
+    tb.BuyerKeyHalf,
 	o.ID,
 	Category =case when o.Category='B' then 'Bulk'
 				when o.Category='S' then 'Sample'
@@ -621,36 +634,38 @@ drop table #tmp
             worksheet.Columns[5].ColumnWidth = 11.88;
             worksheet.Columns[6].ColumnWidth = 7.88;
             worksheet.Columns[7].ColumnWidth = 10;
-            worksheet.Columns[8].ColumnWidth = 17.75;
-            worksheet.Columns[9].ColumnWidth = 12.75;
-            worksheet.Columns[10].ColumnWidth = 14;
-            worksheet.Columns[11].ColumnWidth = 14;
+            worksheet.Columns[8].ColumnWidth = 7.88;
+            worksheet.Columns[9].ColumnWidth = 10;
+            worksheet.Columns[10].ColumnWidth = 17.75;
+            worksheet.Columns[11].ColumnWidth = 12.75;
             worksheet.Columns[12].ColumnWidth = 14;
-            worksheet.Columns[13].ColumnWidth = 15;
-            worksheet.Columns[14].ColumnWidth = 25;
-            worksheet.Columns[15].ColumnWidth = 11.13;
-            worksheet.Columns[16].ColumnWidth = 25.25;
-            worksheet.Columns[17].ColumnWidth = 20;
-            worksheet.Columns[18].ColumnWidth = 7.63;
-            worksheet.Columns[19].ColumnWidth = 13.38;
-            worksheet.Columns[20].ColumnWidth = 11.88;
-            worksheet.Columns[21].ColumnWidth = 15.25;
-            worksheet.Columns[22].ColumnWidth = 15.25;
+            worksheet.Columns[13].ColumnWidth = 14;
+            worksheet.Columns[14].ColumnWidth = 14;
+            worksheet.Columns[15].ColumnWidth = 15;
+            worksheet.Columns[16].ColumnWidth = 25;
+            worksheet.Columns[17].ColumnWidth = 11.13;
+            worksheet.Columns[18].ColumnWidth = 25.25;
+            worksheet.Columns[19].ColumnWidth = 20;
+            worksheet.Columns[20].ColumnWidth = 7.63;
+            worksheet.Columns[21].ColumnWidth = 13.38;
+            worksheet.Columns[22].ColumnWidth = 11.88;
             worksheet.Columns[23].ColumnWidth = 15.25;
-            worksheet.Columns[24].ColumnWidth = 25.75;
-            worksheet.Columns[25].ColumnWidth = 16.38;
-            worksheet.Columns[26].ColumnWidth = 17.5;
-            worksheet.Columns[27].ColumnWidth = 17.5;
+            worksheet.Columns[24].ColumnWidth = 15.25;
+            worksheet.Columns[25].ColumnWidth = 15.25;
+            worksheet.Columns[26].ColumnWidth = 25.75;
+            worksheet.Columns[27].ColumnWidth = 16.38;
             worksheet.Columns[28].ColumnWidth = 17.5;
-            worksheet.Columns[29].ColumnWidth = 18.13;
-            worksheet.Columns[30].ColumnWidth = 8;
-            worksheet.Columns[31].ColumnWidth = 22;
-            worksheet.Columns[32].ColumnWidth = 16.38;
-            worksheet.Columns[33].ColumnWidth = 6.5;
-            worksheet.Columns[34].ColumnWidth = 19.88;
-            worksheet.Columns[35].ColumnWidth = 16.38;
-            worksheet.Columns[36].ColumnWidth = 16.38;
+            worksheet.Columns[29].ColumnWidth = 17.5;
+            worksheet.Columns[30].ColumnWidth = 17.5;
+            worksheet.Columns[31].ColumnWidth = 18.13;
+            worksheet.Columns[32].ColumnWidth = 8;
+            worksheet.Columns[33].ColumnWidth = 22;
+            worksheet.Columns[34].ColumnWidth = 16.38;
+            worksheet.Columns[35].ColumnWidth = 6.5;
+            worksheet.Columns[36].ColumnWidth = 19.88;
             worksheet.Columns[37].ColumnWidth = 16.38;
+            worksheet.Columns[38].ColumnWidth = 16.38;
+            worksheet.Columns[39].ColumnWidth = 16.38;
             #endregion
 
             for (int j = 1; j <= this.listFtyZone.Count; j++)
