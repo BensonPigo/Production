@@ -48,6 +48,8 @@
             this.gridIssueBreakDownBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.checkByCombo = new Sci.Win.UI.CheckBox();
             this.labelConfirmed = new Sci.Win.UI.Label();
+            this.displayStyle = new Sci.Win.UI.DisplayBox();
+            this.lblStyle = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -67,6 +69,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.displayStyle);
+            this.masterpanel.Controls.Add(this.lblStyle);
             this.masterpanel.Controls.Add(this.labelConfirmed);
             this.masterpanel.Controls.Add(this.checkByCombo);
             this.masterpanel.Controls.Add(this.txtOrderID);
@@ -83,7 +87,7 @@
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 131);
+            this.masterpanel.Size = new System.Drawing.Size(999, 131);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -101,16 +105,18 @@
             this.masterpanel.Controls.SetChildIndex(this.txtOrderID, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkByCombo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelConfirmed, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lblStyle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayStyle, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 131);
-            this.detailpanel.Size = new System.Drawing.Size(892, 82);
+            this.detailpanel.Size = new System.Drawing.Size(999, 248);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(2853, 111);
+            this.gridicon.Location = new System.Drawing.Point(3067, 111);
             // 
             // refresh
             // 
@@ -121,17 +127,21 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 82);
+            this.detailgridcont.Size = new System.Drawing.Size(999, 248);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(999, 553);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 213);
+            this.detailcont.Size = new System.Drawing.Size(999, 379);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.gridIssueBreakDown);
-            this.detailbtm.Location = new System.Drawing.Point(0, 213);
-            this.detailbtm.Size = new System.Drawing.Size(892, 174);
+            this.detailbtm.Location = new System.Drawing.Point(0, 379);
+            this.detailbtm.Size = new System.Drawing.Size(999, 174);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -223,7 +233,7 @@
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtRemark.Location = new System.Drawing.Point(87, 99);
             this.txtRemark.Name = "txtRemark";
-            this.txtRemark.Size = new System.Drawing.Size(418, 23);
+            this.txtRemark.Size = new System.Drawing.Size(549, 23);
             this.txtRemark.TabIndex = 4;
             // 
             // labelRemark
@@ -238,7 +248,7 @@
             // 
             this.btnAutoPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAutoPick.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnAutoPick.Location = new System.Drawing.Point(804, 31);
+            this.btnAutoPick.Location = new System.Drawing.Point(911, 31);
             this.btnAutoPick.Name = "btnAutoPick";
             this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
             this.btnAutoPick.TabIndex = 8;
@@ -251,7 +261,7 @@
             this.btnBreakDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBreakDown.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnBreakDown.Enabled = false;
-            this.btnBreakDown.Location = new System.Drawing.Point(769, 63);
+            this.btnBreakDown.Location = new System.Drawing.Point(876, 63);
             this.btnBreakDown.Name = "btnBreakDown";
             this.btnBreakDown.Size = new System.Drawing.Size(120, 30);
             this.btnBreakDown.TabIndex = 9;
@@ -317,7 +327,7 @@
             this.gridIssueBreakDown.RowTemplate.Height = 24;
             this.gridIssueBreakDown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridIssueBreakDown.ShowCellToolTips = false;
-            this.gridIssueBreakDown.Size = new System.Drawing.Size(889, 129);
+            this.gridIssueBreakDown.Size = new System.Drawing.Size(996, 129);
             this.gridIssueBreakDown.TabIndex = 3;
             this.gridIssueBreakDown.TabStop = false;
             // 
@@ -328,7 +338,7 @@
             this.checkByCombo.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkByCombo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Combo", true));
             this.checkByCombo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkByCombo.Location = new System.Drawing.Point(414, 43);
+            this.checkByCombo.Location = new System.Drawing.Point(301, 72);
             this.checkByCombo.Name = "checkByCombo";
             this.checkByCombo.Size = new System.Drawing.Size(91, 21);
             this.checkByCombo.TabIndex = 7;
@@ -348,6 +358,23 @@
             this.labelConfirmed.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;
             this.labelConfirmed.TextStyle.BorderColor = System.Drawing.Color.Red;
             this.labelConfirmed.TextStyle.Color = System.Drawing.Color.Red;
+            // 
+            // displayStyle
+            // 
+            this.displayStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayStyle.Location = new System.Drawing.Point(529, 41);
+            this.displayStyle.Name = "displayStyle";
+            this.displayStyle.Size = new System.Drawing.Size(107, 23);
+            this.displayStyle.TabIndex = 60;
+            // 
+            // lblStyle
+            // 
+            this.lblStyle.Location = new System.Drawing.Point(451, 41);
+            this.lblStyle.Name = "lblStyle";
+            this.lblStyle.Size = new System.Drawing.Size(75, 23);
+            this.lblStyle.TabIndex = 61;
+            this.lblStyle.Text = "Style";
             // 
             // P33
             // 
@@ -415,5 +442,7 @@
         private Win.UI.ListControlBindingSource gridIssueBreakDownBS;
         private Win.UI.CheckBox checkByCombo;
         private Win.UI.Label labelConfirmed;
+        private Win.UI.DisplayBox displayStyle;
+        private Win.UI.Label lblStyle;
     }
 }
