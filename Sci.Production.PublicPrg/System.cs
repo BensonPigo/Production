@@ -270,6 +270,10 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             foreach (var row in rows)
                 row.Delete();
         }
-    }
-    
+
+        public static void TryRemoveColumn(string columns, DataTable dt)
+        {
+            if (columns.Contains(columns)) dt.Columns.Remove(columns);
+        }
+    }    
 }
