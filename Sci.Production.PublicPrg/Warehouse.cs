@@ -1076,6 +1076,147 @@ where   poid = '{1}'
             return items;
         }
 
+        public static IList<DataRow> AutoPickTape(DataRow materials, string cutplanid, bool isIssue = true, string stocktype = "B")
+        {
+            List<DataRow> items = new List<DataRow>();
+            string sqlcmd;
+            DataTable dt;
+            decimal accu_issue = 0;
+            // 此筆需求數 = 總需求數 - 已經issue總數
+            decimal request = decimal.Parse(materials["requestqty"].ToString()) - decimal.Parse(materials["accu_issue"].ToString());
+
+            sqlcmd = string.Format(@"
+select a.Seq1, a.Seq2, ctpd.Dyelot, sum(a.inqty-a.OutQty+a.AdjustQty) as GroupQty
+into #tmp
+from  CutTapePlan_Detail ctpd
+inner join CutTapePlan ctp on ctp.ID = ctpd.ID
+inner join PO_Supp_Detail psd on psd.ColorID = ctpd.ColorID and psd.Refno = ctpd.RefNo and psd.ID = ctp.CuttingID
+inner join FtyInventory a on a.POID = '{0}' and a.Seq1 = psd.Seq1 and a.Seq2 = psd.Seq2 and a.Dyelot = ctpd.Dyelot
+where ctpd.id = '{1}' and a.Seq1 between '01' and '99' and a.StockType = '{2}'
+group by a.Seq1, a.Seq2, ctpd.Dyelot
+
+select
+	location = Stuff ((select ',' + t.mtllocationid 
+                           from (
+                                select MtlLocationID 
+                                from dbo.FtyInventory_Detail WITH (NOLOCK) 
+                                where ukey = a.Ukey
+                           )t 
+                           for xml path('')
+                          ), 1, 1, '')
+	, FtyInventoryUkey = a.Ukey
+	, a.POID
+	, a.seq1
+	, a.Seq2
+	, roll = RTRIM(LTRIM(roll))
+	, stocktype
+	, Dyelot = RTRIM(LTRIM(a.Dyelot))
+	, inqty - OutQty + AdjustQty qty
+	, inqty
+	, outqty
+	, adjustqty
+	, inqty - OutQty + AdjustQty balanceqty
+    , running_total = sum(inqty-OutQty+AdjustQty) over (order by t.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty desc
+                                                        rows between unbounded preceding and current row)
+from #tmp t
+inner join FtyInventory a on a.POID = '{0}' and a.Seq1 = t.Seq1 and a.Seq2 = t.Seq2 and a.Dyelot = t.Dyelot and a.StockType = '{2}'
+
+drop table #tmp", materials["poid"], cutplanid, stocktype);
+
+            DualResult result = DBProxy.Current.Select("", sqlcmd, out dt);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox(sqlcmd, "Sql Error");
+                return null;
+            }
+
+            DataTable findrow = null;
+            if (dt.Rows.Count == 0 || dt.Select("balanceqty<>0").Length == 0)
+            {
+                return null;
+            }
+
+            dt = dt.Select("balanceqty<>0").CopyToDataTable();
+            if (dt.AsEnumerable().Any(n => ((decimal)n["qty"]).EqualDecimal(request)))
+            {
+                items.Add(dt.AsEnumerable().Where(n => ((decimal)n["qty"]).EqualDecimal(request)).CopyToDataTable().Rows[0]);
+            }
+            else
+            {
+                #region AutoPick
+                foreach (DataRow dr2 in dt.Rows)
+                {
+                    if ((decimal)dr2["running_total"] < request)
+                    {
+                        items.Add(dr2);
+                        accu_issue = decimal.Parse(dr2["running_total"].ToString());
+                    }
+                    else
+                    {
+                        //依照最後一塊料的Dyelot來找到對應的Group來取得最後一塊料
+                        findrow = dt.AsEnumerable().Where(row => row["Dyelot"].EqualString(dr2["Dyelot"].ToString())).CopyToDataTable();
+                        break;
+                    }
+                }
+
+                if (accu_issue < request && findrow != null)   // 累計發料數小於需求數時，再反向取得最後一塊料。
+                {
+                    decimal balance = request - accu_issue;
+
+                    for (int i = findrow.Rows.Count - 1; i >= 0; i--)
+                    {
+                        DataRow find = items.Find(item => item["ftyinventoryukey"].ToString() == findrow.Rows[i]["ftyinventoryukey"].ToString());
+                        if (MyUtility.Check.Empty(find))// if overlape
+                        {
+                            if (balance > 0m)
+                            {
+                                if (balance >= (decimal)findrow.Rows[i]["qty"])
+                                {
+                                    items.Add(findrow.Rows[i]);
+                                    balance -= (decimal)findrow.Rows[i]["qty"];
+                                }
+                                else//最後裁切
+                                {
+                                    //P10最後裁切若有小數點需無條件進位
+                                    if (isIssue)
+                                    {
+                                        if (balance >= (decimal)findrow.Rows[i]["qty"])
+                                        {
+                                            items.Add(findrow.Rows[i]);
+                                            balance = 0m;
+                                        }
+                                        else
+                                        {
+                                            findrow.Rows[i]["qty"] = balance;
+                                            items.Add(findrow.Rows[i]);
+                                            balance = 0m;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        findrow.Rows[i]["qty"] = balance;
+                                        items.Add(findrow.Rows[i]);
+                                        balance = 0m;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+                #endregion
+            }
+
+            return items;
+        }
+
         /// <summary>
         /// 目的：自動產生可以寫入Issue_Detail的DataRow
         /// </summary>
