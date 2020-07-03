@@ -55,7 +55,7 @@
             // 
             // lblIssueDate
             // 
-            this.lblIssueDate.BackColor = System.Drawing.Color.LightBlue;
+            this.lblIssueDate.BackColor = System.Drawing.Color.SkyBlue;
             this.lblIssueDate.Location = new System.Drawing.Point(18, 12);
             this.lblIssueDate.Name = "lblIssueDate";
             this.lblIssueDate.Size = new System.Drawing.Size(75, 23);
@@ -65,7 +65,7 @@
             // 
             // lblSP
             // 
-            this.lblSP.BackColor = System.Drawing.Color.LightBlue;
+            this.lblSP.BackColor = System.Drawing.Color.SkyBlue;
             this.lblSP.Location = new System.Drawing.Point(18, 48);
             this.lblSP.Name = "lblSP";
             this.lblSP.Size = new System.Drawing.Size(75, 23);

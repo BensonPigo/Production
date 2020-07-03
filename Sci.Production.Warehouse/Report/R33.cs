@@ -96,7 +96,7 @@ Left join po_supp_detail PD with (nolock) on    ID.POID = PD.ID and
                                                 ID.seq1 = PD.seq1 and 
                                                 ID.seq2 =PD.seq2
 Left join Unit U with (nolock) on PD.StockUnit = U.id
-where I.type= 'B' and I.Status = 'Confirmed'
+where I.type= 'E' and I.Status = 'Confirmed'
 {sqlWhere}
 
 
