@@ -418,13 +418,13 @@ order by o.SewInLine
             DualResult result;
 
             //取得該訂單的組成
-            #region 取得該訂單的組成
+            #region 取得by SP, Size 應該完成的 FabricPanelCode
             string tmpCmd = $@"
 SELECT DISTINCT 
     [OrderID]=o.ID
     ,oq.Article
     ,oq.SizeCode
-    ,occ.PatternPanel
+    ,FabricCombo = occ.PatternPanel
     ,occ.FabricPanelCode
 from Orders o WITH (NOLOCK)
 inner join Order_Qty oq WITH (NOLOCK) on oq.id = o.id
@@ -440,21 +440,27 @@ AND (exists(select 1 from Order_EachCons_Article oea where  oea.Id = o.POID and 
 ";
 
             result = DBProxy.Current.Select(null, tmpCmd, out HeadDt);
-
+            var headList = HeadDt.AsEnumerable()
+                .Select(s => new
+                {
+                    OrderID =  MyUtility.Convert.GetString(s["OrderID"]),
+                    Article = MyUtility.Convert.GetString(s["Article"]),
+                    SizeCode = MyUtility.Convert.GetString(s["SizeCode"]),
+                    FabricCombo = MyUtility.Convert.GetString(s["FabricCombo"]),
+                    FabricPanelCode = MyUtility.Convert.GetString(s["FabricPanelCode"]),
+                }).ToList();
             #endregion
 
-            // 取得所有部位Cutting 數量
-            #region SQL
-
+            #region 取得所有部位(有) EstCutDate 的 Cutting 數量
             tmpCmd = $@"
-
-SELECT  WOD.OrderID
-,WOD.Article 
-,WOD.SizeCode
-,wo.FabricCombo
-,wo.FabricPanelCode
-,[Qty]=SUM(WOD.Qty)
-,[EstCutDate]=Cast(EstCutDate.EstCutDate as Date)
+SELECT
+     WOD.OrderID
+    ,WOD.Article 
+    ,WOD.SizeCode
+    ,wo.FabricCombo
+    ,wo.FabricPanelCode
+    ,[Qty]=SUM(WOD.Qty)
+    ,[EstCutDate]=Cast(EstCutDate.EstCutDate as Date)
 FROM WorkOrder_Distribute WOD WITH(NOLOCK)
 INNER JOIN WorkOrder WO WITH(NOLOCK) ON WO.Ukey = WOD.WorkOrderUkey
 INNER JOIN Cutplan_Detail CD WITH(NOLOCK) ON CD.WorkorderUkey = WO.Ukey
@@ -473,199 +479,82 @@ GROUP BY WOD.OrderID
 		,EstCutDate.EstCutDate
 ORDER BY WOD.OrderID
 ";
-            #endregion
-
             result = DBProxy.Current.Select(null, tmpCmd, out tmpDt);
 
-            // 取出Cutting資料的Key：OrderID + SizeCode + EstCutDate
-            var keys = tmpDt.AsEnumerable().Select(o => new { OrderID = o["OrderID"].ToString(), SizeCode = o["SizeCode"].ToString(), EstCutDate = Convert.ToDateTime(o["EstCutDate"]) }).Distinct();
+            var cutList = tmpDt.AsEnumerable()
+                .Select(s => new
+                {
+                    OrderID = MyUtility.Convert.GetString(s["OrderID"]),
+                    Article = MyUtility.Convert.GetString(s["Article"]),
+                    SizeCode = MyUtility.Convert.GetString(s["SizeCode"]),
+                    FabricCombo = MyUtility.Convert.GetString(s["FabricCombo"]),
+                    FabricPanelCode = MyUtility.Convert.GetString(s["FabricPanelCode"]),
+                    Qty = MyUtility.Convert.GetInt(s["Qty"]),
+                    EstCutDate = Convert.ToDateTime(s["EstCutDate"]),
+                }).ToList();
+            #endregion
 
-            List<GarmentQty_Detail> GarmentQty_Details = new List<GarmentQty_Detail>();
+            // 取出Cutting資料的Key：OrderID + EstCutDate | 回傳的資料 OrderID, EstCutDate, Qty(累計成衣件數)
+            var keys = cutList.Select(o => new { o.OrderID, o.EstCutDate }).Distinct().OrderBy(o => o.OrderID).ThenBy(o => o.EstCutDate).ToList();
 
-            // 把DataTable轉成GarmentQty_Detail物件集合
+            List<GarmentQty> GarmentQtys = new List<GarmentQty>();
+
+            // 組成 by OrderID, EstCutDate
             foreach (var key in keys)
             {
                 if (key.OrderID == "20050116GG001")
                 {
-
                 }
 
-                string OrderID = key.OrderID;
-                string SizeCode = key.SizeCode;
-                DateTime EstCutDate = key.EstCutDate;
+                // 取得此日期以前資料
+                var ppreEstCutDate = cutList.Where(w => w.OrderID == key.OrderID && w.EstCutDate < key.EstCutDate).ToList();
+                var preEstCutDate = cutList.Where(w => w.OrderID == key.OrderID && w.EstCutDate <= key.EstCutDate).ToList();
 
-                //var Head = HeadDt.AsEnumerable()
-                //    .Where(o => o["OrderID"].ToString() == OrderID && o["SizeCode"].ToString() == SizeCode)
-                //    .Select(o => new
-                //    {
-                //        PatternPanel = o["PatternPanel"].ToString(),
-                //        FabricPanelCode = o["FabricPanelCode"].ToString()
-                //    }).Distinct().ToList();
+                // 處理已有Size
+                var sizeList = preEstCutDate.Select(s => s.SizeCode).Distinct().ToList();
+                int Qty = 0;
 
-                var datas = tmpDt.AsEnumerable().Where(o => o["OrderID"].ToString() == OrderID && o["SizeCode"].ToString() == SizeCode && Convert.ToDateTime(o["EstCutDate"]) == EstCutDate).ToList();
-
-                foreach (DataRow item in datas)
+                foreach (var sizeCode in sizeList)
                 {
-                    GarmentQty_Detail gd = new GarmentQty_Detail()
+                    var ppreEstCutDatebySize = ppreEstCutDate.Where(w => w.SizeCode == sizeCode).ToList();
+                    var preEstCutDatebySize = preEstCutDate.Where(w => w.SizeCode == sizeCode).ToList();
+
+                    // 應有全部位
+                    var dueFabricPanelCode = headList.Where(w => w.OrderID == key.OrderID && w.SizeCode == sizeCode)
+                        .Select(s => s.FabricPanelCode).ToList();
+
+                    // 已有部位
+                    var p_nowFabricPanelCode = ppreEstCutDatebySize.Select(s => s.FabricPanelCode).Distinct().ToList();
+                    var nowFabricPanelCode = preEstCutDatebySize.Select(s => s.FabricPanelCode).Distinct().ToList();
+                    int p_minSizeQty = 0;
+
+                    // 部位完全相同, 部位到齊
+                    if (p_nowFabricPanelCode.Count() == dueFabricPanelCode.Count() && p_nowFabricPanelCode.All(dueFabricPanelCode.Contains))
                     {
-                        EstCutDate = EstCutDate,
-                        OrderID = OrderID,
-                        SizeCode = SizeCode,
-                        Article = item["Article"].ToString(),
-                        FabricCombo = item["FabricCombo"].ToString(),
-                        FabricPanelCode = item["FabricPanelCode"].ToString(),
-                        Qty = Convert.ToInt32(item["Qty"]),
-                    };
-                    GarmentQty_Details.Add(gd);
-                }
-            }
+                        // 先前完成的成衣件數
+                        p_minSizeQty = preEstCutDatebySize.GroupBy(g => new { g.FabricPanelCode })
+                            .Select(s => new { s.Key.FabricPanelCode, sumQty = s.Sum(sum => sum.Qty) }).Min(m => m.sumQty); ;
+                    }
 
-            List<GarmentQty> GarmentQtys = new List<GarmentQty>();
-
-            // 用於紀錄各部位剩餘數量
-            List<LostInfo> LostInfos = new List<LostInfo>();
-
-            // 開始計算 Cut Plan Qty   
-            // Cut Plan Qty  定義為：「今天」所裁的裁片，會造成多少成套的衣服。因此必須記錄每一天，每個部位不成套的裁片剩餘數量
-            foreach (var item in GarmentQty_Details.Select(o => new { o.OrderID, o.EstCutDate }).Distinct().OrderBy(o => o.EstCutDate))
-            {
-                GarmentQty g = new GarmentQty();
-                g.OrderID = item.OrderID;
-                g.EstCutDate = item.EstCutDate;
-
-                int CutPlanQty = 0;
-                if (item.OrderID == "20032468LL004")
-                {
-
-                }
-                // 如果這個OrderID第一天，則直接抓當天成套數，不管前面累積多少裁片
-                if (!GarmentQtys.Where(o => o.OrderID == item.OrderID).Any())
-                {
-                    // 今天的資料
-                    var finds_Details = GarmentQty_Details.Where(o => o.OrderID == item.OrderID && o.EstCutDate == item.EstCutDate);
-
-                    // 一個Size一個Size計算數量
-                    foreach (var SizeCode in finds_Details.Select(o => o.SizeCode).Distinct())
+                    if (nowFabricPanelCode.Count() == dueFabricPanelCode.Count() && nowFabricPanelCode.All(dueFabricPanelCode.Contains))
                     {
-                        // 比對是否每個部位都有，有的才是成套
-                        var key3 = HeadDt.AsEnumerable().Where(o => o["OrderID"].ToString() == item.OrderID && o["SizeCode"].ToString() == SizeCode)
-                            .Select(o => new { PatternPanel = o["PatternPanel"].ToString(), FabricPanelCode = o["FabricPanelCode"].ToString() }).Distinct();
+                        // 先依據部位加總, 再取最小值, 即此 EstCutDate以前 & 此 Size 可組成的成衣件數
+                        int minSizeQty = preEstCutDatebySize.GroupBy(g => new { g.FabricPanelCode })
+                            .Select(s => new { s.Key.FabricPanelCode, sumQty = s.Sum(sum => sum.Qty) }).Min(m => m.sumQty); ;
 
-                        var detailctn = finds_Details.Where(o => o.SizeCode == SizeCode);
-
-                        // 是否成套
-                        bool IsSusccess = false;
-                        int minQty = detailctn.Min(o => o.Qty);
-                        if (key3.Count() == detailctn.Select(o => new { o.FabricCombo, o.FabricPanelCode }).Distinct().Count())
-                        {
-                            CutPlanQty += minQty;
-                            IsSusccess = true;
-                        }
-
-                        // 各部位剩餘數量
-                        foreach (var detail in detailctn)
-                        {
-                            LostInfo f = new LostInfo();
-                            f.OrderID = detail.OrderID;
-                            f.Article = detail.Article;
-                            f.SizeCode = SizeCode;
-                            f.FabricCombo = detail.FabricCombo;
-                            f.FabricPanelCode = detail.FabricPanelCode;
-                            int lost = IsSusccess ? detail.Qty - minQty : detail.Qty;
-                            f.LostQty = lost;
-                            LostInfos.Add(f);
-                        }
-
+                        // 到此日期的成衣數 - 先前數, 所有 Size 加總
+                        Qty += minSizeQty - p_minSizeQty;
                     }
                 }
-                // 如果這個OrderID不是第一天，必須考慮剩餘數量
-                else
+
+                if (Qty > 0)
                 {
-                    // 今天的資料
-                    var finds_Details = GarmentQty_Details.Where(o => o.OrderID == item.OrderID && o.EstCutDate == item.EstCutDate)
-                        .Select(o => new {/* o.EstCutDate,*/ o.OrderID, o.Article, o.SizeCode, o.FabricCombo, o.FabricPanelCode, o.Qty });
-
-                    // 剩餘的裁片數量
-                    var finds_Details_Lost = LostInfos.Where(o => o.OrderID == item.OrderID)
-                        .Select(o => new { o.OrderID, o.Article, o.SizeCode, o.FabricCombo, o.FabricPanelCode, Qty = o.LostQty });
-
-                    // 把兩個資料串在一起，再比對是否成套
-                    var final = finds_Details.Union(finds_Details_Lost)
-                        .GroupBy(o => new { o.OrderID, o.Article, o.SizeCode, o.FabricCombo, o.FabricPanelCode })
-                        .Select(x => new
-                        {
-                            x.Key.OrderID,
-                            x.Key.Article,
-                            x.Key.SizeCode,
-                            x.Key.FabricCombo,
-                            x.Key.FabricPanelCode,
-                            Qty = x.Sum(o => o.Qty)
-                        });
-
-                    // 開始加總每個Size的件數
-                    foreach (var SizeCode in final.Select(o => o.SizeCode).Distinct())
-                    {
-                        // 比對是否每個部位都有，有的才是成套
-                        var key3 = HeadDt.AsEnumerable().Where(o => o["OrderID"].ToString() == item.OrderID && o["SizeCode"].ToString() == SizeCode)
-                            .Select(o => new { PatternPanel = o["PatternPanel"].ToString(), FabricPanelCode = o["FabricPanelCode"].ToString() }).Distinct();
-
-                        var detailctn = final.Where(o => o.SizeCode == SizeCode);
-
-                        int minQty = detailctn.GroupBy(o => new { o.FabricCombo, o.FabricPanelCode }).Select(x => new
-                        {
-                            x.Key.FabricCombo,
-                            x.Key.FabricPanelCode,
-                            Qty = x.Sum(o => o.Qty)
-                        }).Min(o => o.Qty);
-
-                        // 是否成套
-                        bool IsSusccess = false;
-
-                        // 判斷是否成套，成套才把數量算進去
-                        if (key3.Count() == detailctn.Select(o => new { o.FabricCombo, o.FabricPanelCode }).Distinct().Count())
-                        {
-                            CutPlanQty += minQty;
-                            IsSusccess = true;
-                        }
-
-                        // 剩餘數量紀錄
-                        foreach (var detail in detailctn)
-                        {
-                            var lostData = LostInfos.Where(o => o.OrderID == detail.OrderID &&
-                                                 o.Article == detail.Article &&
-                                                 o.SizeCode == detail.SizeCode &&
-                                                 o.FabricCombo == detail.FabricCombo &&
-                                                 o.FabricPanelCode == detail.FabricPanelCode);
-                            // 今天之前的剩餘數 - 今天成套的件數 = 今天剩餘數
-                            if (lostData.Any())
-                            {
-                                if (IsSusccess)
-                                {
-                                    int lost = detail.Qty - minQty;
-                                    lostData.FirstOrDefault().LostQty = lost;
-                                }
-                                else
-                                {
-                                    lostData.FirstOrDefault().LostQty = detail.Qty;
-                                }
-                            }
-                            else
-                            {
-                                LostInfo f = new LostInfo();
-                                f.OrderID = detail.OrderID;
-                                f.Article = detail.Article;
-                                f.SizeCode = SizeCode;
-                                f.FabricCombo = detail.FabricCombo;
-                                f.FabricPanelCode = detail.FabricPanelCode;
-                                int lost = detail.Qty - minQty;
-                                f.LostQty = lost;
-                                LostInfos.Add(f);
-                            }
-                        }
-                    }
+                    GarmentQty gar = new GarmentQty();
+                    gar.OrderID = key.OrderID;
+                    gar.EstCutDate = key.EstCutDate;
+                    gar.Qty = Qty;
+                    GarmentQtys.Add(gar);
                 }
-                g.Qty = CutPlanQty;
-                GarmentQtys.Add(g);
             }
 
             return GarmentQtys;
