@@ -446,6 +446,7 @@ where (FtyZone = '{ftyZone}' or TransFtyZone = '{ftyZone}')
 group by Date,ID,OrderCPU,CanceledCPU,OrderShortageCPU, TransFtyZone
 
 select  Date
+    , [SeqDate] = Cast(isnull(Replace(Date, '/', ''),'0') as int)
     , OrderCPU=sum(iif(TransFtyZone = '{ftyZone}', -OrderCPU, OrderCPU))
     , CanceledCPU = sum(CanceledCPU)
     , BalanceCPU = sum(iif(BalanceCPU >= 0, BalanceCPU, 0))
@@ -504,7 +505,7 @@ inner join
 	)x
 	pivot(sum(SewingOutputCPU) for OutputDate in('+@col+N'))xx
 )xxx on t2.Date=xxx.Date
-order by t2.Date
+order by t2.SeqDate
 
 select * from #tmp3
 union all
