@@ -677,7 +677,8 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             List<string> allOrder = dt_SewingSchedule.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct().ToList();
 
             #region LeadTimeList
-            List<LeadTime> LeadTimeList = GetLeadTimeList(allOrder);
+            string annotationStr;
+            List<LeadTime> LeadTimeList = GetLeadTimeList(allOrder, out annotationStr);
             if (LeadTimeList == null)
             {                
                 return null; // 表示Lead Time有缺
@@ -863,7 +864,8 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             List<string> allOrder = dt_SewingSchedule.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct().ToList();
 
             #region LeadTimeList
-            List<LeadTime> LeadTimeList = GetLeadTimeList(allOrder);
+            string annotationStr;
+            List<LeadTime> LeadTimeList = GetLeadTimeList(allOrder, out annotationStr);
             if (LeadTimeList == null)
             {
                 return null; // 表示Lead Time有缺
@@ -1686,7 +1688,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             return resultList;
         }
 
-        public static List<LeadTime> GetLeadTimeList(List<string> OrderIDs)
+        public static List<LeadTime> GetLeadTimeList(List<string> OrderIDs, out string annotationStr)
         {
             List<LeadTime> LeadTimeList = new List<LeadTime>();
 
@@ -1694,7 +1696,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             DataTable GarmentTb;
             DataTable LeadTime_dt;
             DualResult result;
-
+            annotationStr = string.Empty;
 
             string cmd = $@"
 SELECT  DISTINCT OrderID, s.MDivisionID, s.FactoryID
@@ -1755,6 +1757,7 @@ drop table #OrderList
                 }
 
                 string AnnotationStr = AnnotationList_Final.OrderBy(o => o.ToString()).JoinToString("+");
+                annotationStr = AnnotationStr;
 
                 string chk_LeadTime = $@"
 SELECT DISTINCT SD.ID
@@ -1793,12 +1796,12 @@ and s.FactoryID = '{FactoryID}'
                     LeadTime o = new LeadTime()
                     {
                         OrderID = OrderID,
-                        LeadTimeDay = MyUtility.Check.Empty(AnnotationStr) ? 0 : Convert.ToInt32(LeadTime_dt.Rows[0]["LeadTime"]) //加工段為空，LeadTimeDay = 0
+                        LeadTimeDay = MyUtility.Check.Empty(AnnotationStr) ? 0 : Convert.ToInt32(LeadTime_dt.Rows[0]["LeadTime"]), //加工段為空，LeadTimeDay = 0
+                        Subprocess = AnnotationStr
                     };
                     LeadTimeList.Add(o);
                 }
             }
-
             return LeadTimeList;
         }
 
@@ -2013,6 +2016,7 @@ DROP TABLE #beforeTmp
         {
             public string OrderID { get; set; }
             public int LeadTimeDay { get; set; }
+            public string Subprocess { get; set; }
         }
 
         public class InOffLineList

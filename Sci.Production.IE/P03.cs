@@ -1337,7 +1337,7 @@ select
 	,MachineTypeID = ''
     ,Attachment = null
     ,Template = null
-	,OperationID = 'SIOCIPF00001'
+	,OperationID = 'PROCIPF00001'
 	,MoldID = null
 	,GroupKey = 0
 	,New = 0
@@ -1396,7 +1396,7 @@ select
 	,MachineTypeID = 'M'
     ,Attachment = null
     ,Template = null
-	,OperationID = 'SIOCIPF00002'
+	,OperationID = 'PROCIPF00002'
 	,MoldID = null
 	,GroupKey = 0
 	,New = 0
@@ -1427,7 +1427,7 @@ select
 	,MachineTypeID = 'MM2'
     ,Attachment = null
     ,Template = null
-	,OperationID = 'SIOCIPF00004'
+	,OperationID = 'PROCIPF00004'
 	,MoldID = null
 	,GroupKey = 0
 	,New = 0
@@ -1458,7 +1458,7 @@ select
 	,MachineTypeID = 'MM2'
     ,Attachment = null
     ,Template = null
-	,OperationID = 'SIOCIPF00003'
+	,OperationID = 'PROCIPF00003'
 	,MoldID = null
 	,GroupKey = 0
 	,New = 0
@@ -1485,7 +1485,7 @@ from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and Artwo
             {
                 if (P03CIPFinfo.Cutting)
                 {
-                    if (timeStudy_Detail.Select("OperationID = 'SIOCIPF00001'").Length == 0)
+                    if (timeStudy_Detail.Select("OperationID = 'PROCIPF00001'").Length == 0)
                     {
                         chkdata += "Cutting,";
                     }
@@ -1493,7 +1493,7 @@ from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and Artwo
 
                 if (P03CIPFinfo.Inspection)
                 {
-                    if (timeStudy_Detail.Select("OperationID = 'SIOCIPF00002'").Length == 0)
+                    if (timeStudy_Detail.Select("OperationID = 'PROCIPF00002'").Length == 0)
                     {
                         chkdata += "Inspection,";
                     }
@@ -1501,7 +1501,7 @@ from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and Artwo
 
                 if (P03CIPFinfo.Packing)
                 {
-                    if (timeStudy_Detail.Select("OperationID = 'SIOCIPF00003'").Length == 0)
+                    if (timeStudy_Detail.Select("OperationID = 'PROCIPF00003'").Length == 0)
                     {
                         chkdata += "Packing,";
                     }
@@ -1509,7 +1509,7 @@ from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and Artwo
 
                 if (P03CIPFinfo.Pressing)
                 {
-                    if (timeStudy_Detail.Select("OperationID = 'SIOCIPF00004'").Length == 0)
+                    if (timeStudy_Detail.Select("OperationID = 'PROCIPF00004'").Length == 0)
                     {
                         chkdata += "Pressing,";
                     }

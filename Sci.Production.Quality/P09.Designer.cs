@@ -174,7 +174,7 @@
             this.btnClose.TabIndex = 9;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // btnSave
             // 
@@ -185,7 +185,7 @@
             this.btnSave.TabIndex = 8;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // btnDownloadFile
             // 
@@ -196,7 +196,7 @@
             this.btnDownloadFile.TabIndex = 7;
             this.btnDownloadFile.Text = "Download File";
             this.btnDownloadFile.UseVisualStyleBackColor = true;
-            this.btnDownloadFile.Click += new System.EventHandler(this.btnDownloadFile_Click);
+            this.btnDownloadFile.Click += new System.EventHandler(this.BtnDownloadFile_Click);
             // 
             // grid1
             // 
@@ -241,7 +241,7 @@
             this.btnQuery.TabIndex = 6;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // txtpo
             // 
@@ -369,7 +369,7 @@
             this.btnQuery2.TabIndex = 13;
             this.btnQuery2.Text = "Query";
             this.btnQuery2.UseVisualStyleBackColor = true;
-            this.btnQuery2.Click += new System.EventHandler(this.btnQuery2_Click);
+            this.btnQuery2.Click += new System.EventHandler(this.BtnQuery2_Click);
             // 
             // button1
             // 
@@ -380,7 +380,7 @@
             this.button1.TabIndex = 15;
             this.button1.Text = "Close";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.btnClose_Click);
+            this.button1.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // btnSave2
             // 
@@ -391,7 +391,7 @@
             this.btnSave2.TabIndex = 14;
             this.btnSave2.Text = "Save";
             this.btnSave2.UseVisualStyleBackColor = true;
-            this.btnSave2.Click += new System.EventHandler(this.btnSave2_Click);
+            this.btnSave2.Click += new System.EventHandler(this.BtnSave2_Click);
             // 
             // grid2
             // 
@@ -491,14 +491,14 @@
             this.inspectionReportToolStripMenuItem.Name = "inspectionReportToolStripMenuItem";
             this.inspectionReportToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
             this.inspectionReportToolStripMenuItem.Text = "Inspection Report";
-            this.inspectionReportToolStripMenuItem.Click += new System.EventHandler(this.inspectionReportToolStripMenuItem_Click);
+            this.inspectionReportToolStripMenuItem.Click += new System.EventHandler(this.InspectionReportToolStripMenuItem_Click);
             // 
             // testReportToolStripMenuItem
             // 
             this.testReportToolStripMenuItem.Name = "testReportToolStripMenuItem";
             this.testReportToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
             this.testReportToolStripMenuItem.Text = "Test Report";
-            this.testReportToolStripMenuItem.Click += new System.EventHandler(this.testReportToolStripMenuItem_Click);
+            this.testReportToolStripMenuItem.Click += new System.EventHandler(this.TestReportToolStripMenuItem_Click);
             // 
             // P09
             // 

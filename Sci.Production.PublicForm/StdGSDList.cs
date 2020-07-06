@@ -299,7 +299,7 @@ select
 from[IETMS_Summary] where location = '' and[IETMSUkey] = {ietmsUKEY} and ArtworkTypeID = 'Cutting'
 union all
 select
-    seq = '0', Type = null, OperationID = 'SIOCIPF00001', MachineDesc = 'CUT', Mold = null, OperationDescEN = '**Cutting', Annotation = null,
+    seq = '0', Type = null, OperationID = 'PROCIPF00001', MachineDesc = 'CUT', Mold = null, OperationDescEN = '**Cutting', Annotation = null,
     Frequency = round(ProTMS, 4), MtlFactorID = 'ENL', SMV = round(ProTMS, 4), newSMV = round(ProTMS, 4),
     SeamLength = null, ttlSeamLength = null
 from[IETMS_Summary] where location = '' and[IETMSUkey] = {ietmsUKEY} and ArtworkTypeID = 'Cutting'
@@ -316,19 +316,19 @@ select
 from [IETMS_Summary] where location = '' and [IETMSUkey] = {ietmsUKEY} and ArtworkTypeID <> 'Cutting'
 union all
 select 
-	seq = '9970',Type = null,OperationID = 'SIOCIPF00002',MachineDesc='M',Mold=null,OperationDescEN='**Inspection',Annotation=null,
+	seq = '9970',Type = null,OperationID = 'PROCIPF00002',MachineDesc='M',Mold=null,OperationDescEN='**Inspection',Annotation=null,
 	Frequency = round(ProTMS,4),	MtlFactorID='ENL',	SMV = round(ProTMS,4),	newSMV = round(ProTMS,4),
 	SeamLength = null,	ttlSeamLength = null
 from [IETMS_Summary] where location = '' and [IETMSUkey] = {ietmsUKEY} and ArtworkTypeID = 'Inspection'
 union all
 select 
-	seq = '9980',Type = null,OperationID = 'SIOCIPF00004',MachineDesc='MM2',Mold=null,OperationDescEN='**Pressing',Annotation=null,
+	seq = '9980',Type = null,OperationID = 'PROCIPF00004',MachineDesc='MM2',Mold=null,OperationDescEN='**Pressing',Annotation=null,
 	Frequency = round(ProTMS,4),	MtlFactorID='ENL',	SMV = round(ProTMS,4),	newSMV = round(ProTMS,4),
 	SeamLength = null,	ttlSeamLength = null
 from [IETMS_Summary] where location = '' and [IETMSUkey] = {ietmsUKEY} and ArtworkTypeID = 'Pressing'
 union all
 select 
-	seq = '9990',Type = null,OperationID = 'SIOCIPF00003',MachineDesc='MM2',Mold=null,OperationDescEN='**Packing',Annotation=null,
+	seq = '9990',Type = null,OperationID = 'PROCIPF00003',MachineDesc='MM2',Mold=null,OperationDescEN='**Packing',Annotation=null,
 	Frequency = round(ProTMS,4),	MtlFactorID='ENL',	SMV = round(ProTMS,4),	newSMV = round(ProTMS,4),
 	SeamLength = null,	ttlSeamLength = null
 from [IETMS_Summary] where location = '' and [IETMSUkey] = {ietmsUKEY} and ArtworkTypeID = 'Packing'

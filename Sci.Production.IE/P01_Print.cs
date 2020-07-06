@@ -109,7 +109,7 @@ from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and Artwo
 union all
 select 
     seq = '0',
-	OperationID = 'SIOCIPF00001',	
+	OperationID = 'PROCIPF00001',	
 	MachineTypeID = 'CUT',
 	Mold = null,
 	Frequency = round(ProTMS, 4),
@@ -139,12 +139,11 @@ left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join OperationDesc od on o.ID = od.ID
 {0}
 where td.ID = {1}{2}
-", MyUtility.Check.Empty(this.artworktype) ? string.Empty : @"
-LEFT JOIN MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID 
-LEFT JOIN Artworktype_Detail ATD WITH(NOLOCK) ON m.ID = ATD.MachineTypeID",
+",
+                MyUtility.Check.Empty(this.artworktype) ? string.Empty : "LEFT JOIN MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID " + Environment.NewLine + "LEFT JOIN Artworktype_Detail ATD WITH(NOLOCK) ON m.ID = ATD.MachineTypeID",
                 MyUtility.Convert.GetString(this.masterData["ID"]),
-                MyUtility.Check.Empty(this.artworktype) ? string.Empty : string.Format(" and ATD.ArtworkTypeID = '{0}'", this.artworktype)
-                , this.strLanguage);
+                MyUtility.Check.Empty(this.artworktype) ? string.Empty : string.Format(" and ATD.ArtworkTypeID = '{0}'", this.artworktype),
+                this.strLanguage);
             sqlCmd += $@"
 union all
 select 
@@ -167,7 +166,7 @@ from [IETMS_Summary] where location = '' and [IETMSUkey] = '{ietmsUKEY}' and Art
 union all
 select
     seq = '9970',
-	OperationID = 'SIOCIPF00002',	
+	OperationID = 'PROCIPF00002',	
 	MachineTypeID = 'M',
 	Mold = null,
 	Frequency = round(ProTMS, 4),
@@ -184,7 +183,7 @@ from [IETMS_Summary] where location = '' and [IETMSUkey] = '{ietmsUKEY}' and Art
 union all
 select 
     seq = '9980',
-	OperationID = 'SIOCIPF00004',	
+	OperationID = 'PROCIPF00004',	
 	MachineTypeID = 'MM2',
 	Mold = null,
 	Frequency = round(ProTMS, 4),
@@ -201,7 +200,7 @@ from [IETMS_Summary] where location = '' and [IETMSUkey] = '{ietmsUKEY}' and Art
 union all
 select 	
     seq = '9990',
-	OperationID = 'SIOCIPF00003',	
+	OperationID = 'PROCIPF00003',	
 	MachineTypeID = 'MM2',
 	Mold = null,
 	Frequency = round(ProTMS, 4),
@@ -254,7 +253,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
             {
                 if (this.chkCutting.Checked)
                 {
-                    if (this.printData.Select("OperationID = 'SIOCIPF00001'").Length == 0)
+                    if (this.printData.Select("OperationID = 'PROCIPF00001'").Length == 0)
                     {
                         chkdata += "Cutting,";
                     }
@@ -262,7 +261,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
 
                 if (this.chkInspection.Checked)
                 {
-                    if (this.printData.Select("OperationID = 'SIOCIPF00002'").Length == 0)
+                    if (this.printData.Select("OperationID = 'PROCIPF00002'").Length == 0)
                     {
                         chkdata += "Inspection,";
                     }
@@ -270,7 +269,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
 
                 if (this.chkPacking.Checked)
                 {
-                    if (this.printData.Select("OperationID = 'SIOCIPF00003'").Length == 0)
+                    if (this.printData.Select("OperationID = 'PROCIPF00003'").Length == 0)
                     {
                         chkdata += "Packing,";
                     }
@@ -278,7 +277,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
 
                 if (this.chkPressing.Checked)
                 {
-                    if (this.printData.Select("OperationID = 'SIOCIPF00004'").Length == 0)
+                    if (this.printData.Select("OperationID = 'PROCIPF00004'").Length == 0)
                     {
                         chkdata += "Pressing,";
                     }
@@ -315,6 +314,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
             worksheet.Cells[3, 11] = Convert.ToDateTime(DateTime.Today).ToString("d");
             worksheet.Cells[4, 13] = MyUtility.Convert.GetString(this.efficiency) + "%";
             worksheet.Columns[3].ColumnWidth = 18.4;
+
             // 填內容值
             int intRowsStart = 5;
             object[,] objArray = new object[1, 13];
@@ -372,37 +372,37 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
                 decimal ttl = 0;
                 if (this.chkCutting.Checked)
                 {
-                    if (this.printData.Select("OperationID = 'SIOCIPF00001'").Length>0)
+                    if (this.printData.Select("OperationID = 'PROCIPF00001'").Length > 0)
                     {
                         chk += "Cutting,";
-                        ttl += MyUtility.Convert.GetDecimal(this.printData.Select("OperationID = 'SIOCIPF00001'")[0]["SMV"]);
+                        ttl += MyUtility.Convert.GetDecimal(this.printData.Select("OperationID = 'PROCIPF00001'")[0]["SMV"]);
                     }
                 }
 
                 if (this.chkInspection.Checked)
                 {
-                    if (this.printData.Select("OperationID = 'SIOCIPF00002'").Length > 0)
+                    if (this.printData.Select("OperationID = 'PROCIPF00002'").Length > 0)
                     {
                         chk += "Inspection,";
-                        ttl += MyUtility.Convert.GetDecimal(this.printData.Select("OperationID = 'SIOCIPF00002'")[0]["SMV"]);
+                        ttl += MyUtility.Convert.GetDecimal(this.printData.Select("OperationID = 'PROCIPF00002'")[0]["SMV"]);
                     }
                 }
 
                 if (this.chkPacking.Checked)
                 {
-                    if (this.printData.Select("OperationID = 'SIOCIPF00003'").Length > 0)
+                    if (this.printData.Select("OperationID = 'PROCIPF00003'").Length > 0)
                     {
                         chk += "Packing,";
-                        ttl += MyUtility.Convert.GetDecimal(this.printData.Select("OperationID = 'SIOCIPF00003'")[0]["SMV"]);
+                        ttl += MyUtility.Convert.GetDecimal(this.printData.Select("OperationID = 'PROCIPF00003'")[0]["SMV"]);
                     }
                 }
 
                 if (this.chkPressing.Checked)
                 {
-                    if (this.printData.Select("OperationID = 'SIOCIPF00004'").Length > 0)
+                    if (this.printData.Select("OperationID = 'PROCIPF00004'").Length > 0)
                     {
                         chk += "Pressing";
-                        ttl += MyUtility.Convert.GetDecimal(this.printData.Select("OperationID = 'SIOCIPF00004'")[0]["SMV"]);
+                        ttl += MyUtility.Convert.GetDecimal(this.printData.Select("OperationID = 'PROCIPF00004'")[0]["SMV"]);
                     }
                 }
 

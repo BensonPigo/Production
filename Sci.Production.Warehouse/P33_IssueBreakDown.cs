@@ -98,14 +98,24 @@ order by [OrderID], [Article]", Master["orderid"], sbSizecode.ToString().Substri
             DtModifyIssueBDown.Columns["Selected"].SetOrdinal(0);
 
             DataTable ReadonlyDT;
-            DBProxy.Current.Select(null, "SELECT ID FROM Orders WITH(NOLOCK) WHERE (Junk=1 AND NeedProduction = 0) OR (IsBuyBack=1 AND BuyBackReason='Garment') ", out ReadonlyDT);
-            List<string> ReadonlyList = ReadonlyDT.AsEnumerable().Select(o => o["ID"].ToString()).Distinct().ToList();
+            result = DBProxy.Current.Select(null, "SELECT ID FROM Orders WITH(NOLOCK) WHERE (Junk=1 AND NeedProduction = 0) OR (IsBuyBack=1 AND BuyBackReason='Garment') ", out ReadonlyDT);
 
-            foreach (DataRow item in DtModifyIssueBDown.Rows)
+            if (!result)
             {
-                if (ReadonlyList.Where(o => o == item["OrderID"].ToString()).Any())
+                this.ShowErr(result);
+                return;
+            }
+            
+            if (ReadonlyDT.Rows.Count > 0)
+            {
+                List<string> ReadonlyList = ReadonlyDT.AsEnumerable().Select(o => o["ID"].ToString()).Distinct().ToList();
+
+                foreach (DataRow item in DtModifyIssueBDown.Rows)
                 {
-                    item["Selected"] = false;
+                    if (ReadonlyList.Where(o => o == item["OrderID"].ToString()).Any())
+                    {
+                        item["Selected"] = false;
+                    }
                 }
             }
 
