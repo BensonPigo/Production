@@ -3330,6 +3330,7 @@
             // chkBuyBack
             // 
             this.chkBuyBack.AutoSize = true;
+            this.chkBuyBack.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsBuyBack", true));
             this.chkBuyBack.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkBuyBack.IsSupportEditMode = false;
             this.chkBuyBack.Location = new System.Drawing.Point(181, 4);
