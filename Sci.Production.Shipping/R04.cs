@@ -146,10 +146,10 @@ namespace Sci.Production.Shipping
 		,cbm.CTNQty
 		,oq.ShipmodeID
         ,[Loading Type] = gbCYCFS.CYCFS
-        ,OSReason = oq.OutstandingReason + ' - ' + isnull((select Name 
+        ,OSReason = o.OutstandingReason + ' - ' + isnull((select Name 
 														   from Reason WITH (NOLOCK) 
-														   where ReasonTypeID = 'Delivery_OutStand' and Id = oq.OutstandingReason), '') 
-		,oq.OutstandingRemark
+														   where ReasonTypeID = 'Delivery_OutStand' and Id = o.OutstandingReason), '') 
+		,o.OutstandingRemark
         ,o.EstPODD
 		,SMP = IIF(o.ScanAndPack = 1,'Y','')
 		,VasShas = IIF(o.VasShas = 1,'Y','') 
