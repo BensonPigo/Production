@@ -3591,6 +3591,148 @@ FROM Production.dbo.FIR_Grade a
 LEFT JOIN Trade_To_Pms.dbo.FIR_Grade b ON a.WeaveTypeID=b.WeaveTypeID AND a.Percentage=b.Percentage AND a.BrandID=b.BrandID 
 WHERE b.Grade is null
 
+
+-----FtyStdRate_PRT-----
+update tar set
+ tar.Length    = S.Length    
+,tar.Width	   = S.Width	   
+,tar.Surcharge = S.Surcharge 
+,tar.Price	   = S.Price	   
+,tar.Ratio	   = S.Ratio	   
+,tar.SEQ	   = S.SEQ	   
+,tar.AddName   = S.AddName   
+,tar.AddDate   = S.AddDate   
+,tar.EditName  = S.EditName  
+,tar.EditDate  = S.EditDate  
+from Trade_To_Pms.dbo.FtyStdRate_PRT S
+inner join Production.dbo.FtyStdRate_PRT tar 
+	on tar.Region = S.Region
+	and tar.SeasonID = S.SeasonID
+	and tar.InkType = S.InkType
+	and tar.Colors = S.Colors
+	and tar.Area = S.Area
+
+INSERT INTO FtyStdRate_PRT(
+	Region
+	,SeasonID
+	,InkType
+	,Colors
+	,Area
+	,Length
+	,Width
+	,Surcharge
+	,Price
+	,Ratio
+	,SEQ
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+)
+SELECT 
+	Region
+	,SeasonID
+	,InkType
+	,Colors
+	,Area
+	,Length
+	,Width
+	,Surcharge
+	,Price
+	,Ratio
+	,SEQ
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+from Trade_To_Pms.dbo.FtyStdRate_PRT S
+where not exists(
+	select 1
+	from Production.dbo.FtyStdRate_PRT tar
+	where tar.Region = S.Region
+	and tar.SeasonID = S.SeasonID
+	and tar.InkType = S.InkType
+	and tar.Colors = S.Colors
+	and tar.Area = S.Area)
+
+DELETE S
+from Production.dbo.FtyStdRate_PRT S
+where not exists(
+	select 1
+	from Trade_To_Pms.dbo.FtyStdRate_PRT tar
+	where tar.Region = S.Region
+	and tar.SeasonID = S.SeasonID
+	and tar.InkType = S.InkType
+	and tar.Colors = S.Colors
+	and tar.Area = S.Area)
+
+-----FtyStdRate_EMB-----
+update tar set
+ tar.EndRange      = S.EndRange
+,tar.BasedStitches = S.BasedStitches
+,tar.BasedPay	   = S.BasedPay
+,tar.AddedStitches = S.AddedStitches
+,tar.AddedPay	   = S.AddedPay
+,tar.ThreadRatio   = S.ThreadRatio
+,tar.Ratio		   = S.Ratio
+,tar.AddName	   = S.AddName
+,tar.AddDate	   = S.AddDate
+,tar.EditName	   = S.EditName
+,tar.EditDate	   = S.EditDate
+from Trade_To_Pms.dbo.FtyStdRate_EMB S
+inner join Production.dbo.FtyStdRate_EMB tar 
+	on tar.Region = S.Region
+	and tar.SeasonID = S.SeasonID
+	and tar.StartRange = S.StartRange
+
+INSERT INTO FtyStdRate_EMB(
+	 Region
+	,SeasonID
+	,StartRange
+	,EndRange
+	,BasedStitches
+	,BasedPay
+	,AddedStitches
+	,AddedPay
+	,ThreadRatio
+	,Ratio
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+)
+SELECT 
+	 Region
+	,SeasonID
+	,StartRange
+	,EndRange
+	,BasedStitches
+	,BasedPay
+	,AddedStitches
+	,AddedPay
+	,ThreadRatio
+	,Ratio
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+from Trade_To_Pms.dbo.FtyStdRate_EMB S
+where not exists(
+	select 1
+	from Production.dbo.FtyStdRate_EMB tar
+	where tar.Region = S.Region
+	and tar.SeasonID = S.SeasonID
+	and tar.StartRange = S.StartRange)
+
+DELETE S
+from Production.dbo.FtyStdRate_EMB S
+where not exists(
+	select 1
+	from Trade_To_Pms.dbo.FtyStdRate_EMB tar
+	where tar.Region = S.Region
+	and tar.SeasonID = S.SeasonID
+	and tar.StartRange = S.StartRange)
+
 END
 
 
