@@ -2501,6 +2501,10 @@
     <Build Include="dbo\Functions\getMinCompleteSewTransferQty.sql" />
     <Build Include="dbo\Functions\GetSewingQtybyRate.sql" />
     <Build Include="dbo\Tables\ShadebandDocLocation.sql" />
+    <Build Include="dbo\Tables\FtyStdRate_PRT.sql" />
+    <Build Include="dbo\Tables\FtyStdRate_EMB.sql" />
+    <Build Include="dbo\Functions\GetEmboideryCost.sql" />
+    <Build Include="dbo\Functions\GetPrintingCost.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

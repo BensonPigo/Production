@@ -352,8 +352,11 @@ SET
 ,a.SMNoticeID = b.SMNoticeID
 ,a.PatternVersion = b.PatternVersion
 ,a.PPU = b.PPU
---,a.TradeUkey	= b.Ukey
-
+,a.InkType = b.InkType
+,a.Colors = b.Colors
+,a.Length = b.Length
+,a.Width = b.Width
+,a.AntiMigration = isnull(b.AntiMigration,0)
 from Production.dbo.Style_Artwork as a 
 inner join Trade_To_Pms.dbo.Style_Artwork as b ON a.TradeUkey=b.Ukey
 -------------------------- INSERT INTO 抓
@@ -380,6 +383,11 @@ INSERT INTO Production.dbo.Style_Artwork(
 ,SMNoticeID
 ,PatternVersion
 ,PPU
+,InkType
+,Colors
+,Length
+,Width
+,AntiMigration
 )
 select 
  b.StyleUkey
@@ -403,6 +411,11 @@ select
 ,b.SMNoticeID
 ,b.PatternVersion
 ,b.PPU
+,b.InkType
+,b.Colors
+,b.Length
+,b.Width
+,isnull(b.AntiMigration,0)
 from Trade_To_Pms.dbo.Style_Artwork as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_Artwork as a WITH (NOLOCK) where a.TradeUkey = b.Ukey)
 

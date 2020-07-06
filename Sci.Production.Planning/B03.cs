@@ -147,7 +147,6 @@ namespace Sci.Production.Planning
                     Sci.Win.Tools.SelectItem item;
                     string sqlcmd;
 
-                    //sqlcmd = "select id,abb,currencyid from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 0 order by ID";
                     sqlcmd = @"
 select l.id ,l.abb ,l.currencyid 
 from LocalSupp l WITH (NOLOCK) 
@@ -260,10 +259,48 @@ order by ID
 INNER JOIN LocalSupp S WITH (NOLOCK) ON S.ID = A.LocalSuppId Where a.styleUkey = {0}
 ORDER BY UKEY
 ", masterID);
-
-            string sqlcmd = string.Format(
-                @"select t.*,B.ArtworkUnit AS unit from style_artwork t WITH (NOLOCK)
-LEFT JOIN ArtworkType B WITH (NOLOCK) ON t.ArtworkTypeID=B.ID where styleukey={0}", masterID);
+            string countryID = MyUtility.GetValue.Lookup($@"select CountryID from MDivision where id = '{Sci.Env.User.Keyword}'");
+            string sqlcmd = $@"
+select
+	 sa.[StyleUkey]
+	,sa.[ArtworkTypeID]
+	,sa.[Article]
+	,sa.[PatternCode]
+	,sa.[PatternDesc]
+	,sa.[ArtworkID]
+	,sa.[ArtworkName]
+	,sa.[Qty]
+	,sa.[Price]
+	,[Cost] =Case when [ArtworkTypeID] = 'Printing' then PrintingCost.Cost
+	              when [ArtworkTypeID] = 'EMBROIDERY' then [dbo].[GetEmboideryCost]('{countryID}',Season.SeasonSCIID, sa.Qty, 0)
+				  else sa.Cost
+				  end
+	,sa.[Remark]
+	,sa.[Ukey]
+	,sa.[AddName]
+	,sa.[AddDate]
+	,sa.[EditName]
+	,sa.[EditDate]
+	,sa.[TMS]
+	,sa.[TradeUkey]
+	,sa.[SMNoticeID]
+	,sa.[PatternVersion]
+	,sa.[ActStitch]
+	,sa.[PPU]
+	,unit = B.ArtworkUnit
+from style_artwork sa WITH (NOLOCK)
+LEFT JOIN ArtworkType B WITH (NOLOCK) ON sa.ArtworkTypeID=B.ID
+Left join Style on Style.Ukey =sa.StyleUkey
+left join Season on Season.ID = Style.SeasonID
+Outer Apply (	
+    Select Top 1 Cost = Isnull(CostWithRatio, 0) * sa.Qty
+	From dbo.GetPrintingCost(IsNull('{countryID}', ''), Isnull(Season.SeasonSCIID, '')
+							, IsNull(sa.InkType, ''), IsNull(sa.Colors, '')
+							, ISNull(sa.Length, 0), IsNull(sa.Width, 0), IsNull(sa.AntiMigration, 0)
+							)
+) as PrintingCost
+ where sa.styleukey={masterID}
+";
             DBProxy.Current.Select(null, sqlcmd, out this.style_artwork);
 
             return base.OnDetailSelectCommandPrepare(e);
