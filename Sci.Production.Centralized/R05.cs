@@ -258,7 +258,8 @@ select  ID,
         FtyZone,
         ProgramID,
         TransFtyZone,
-        IsCancelNeedProduction
+        IsCancelNeedProduction,
+        [DateByHalfMonth] = iif('{this.Date}' = '1', SCIKeyHalf, BuyerKeyHalf)
 into #tmpBaseBySource
 from #tmpBase
 where   {whereSource} or TransFtyZone <> ''
