@@ -363,6 +363,10 @@ namespace Sci.Production.Cutting
                 this.gridGarment.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
             #endregion
+
+            // 凍結欄位
+            this.gridGarment.Columns[0].Frozen = true;
+            this.gridGarment.Columns[0].HeaderCell.Style.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Bold);
         }
         private void AfterQuery2()
         {
@@ -434,6 +438,12 @@ namespace Sci.Production.Cutting
                 this.gridFabric_Panel_Code.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
             #endregion
+
+            // 凍結欄位
+            this.gridFabric_Panel_Code.Columns[0].Frozen = true;
+            this.gridFabric_Panel_Code.Columns[1].Frozen = true;
+            this.gridFabric_Panel_Code.Columns[0].HeaderCell.Style.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Bold);
+            this.gridFabric_Panel_Code.Columns[1].HeaderCell.Style.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Bold);
             return;
         }
 
