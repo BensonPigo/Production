@@ -755,6 +755,7 @@
             this.txtVoucher.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtVoucher.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "VoucherID", true));
             this.txtVoucher.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtVoucher.IsSupportEditMode = false;
             this.txtVoucher.Location = new System.Drawing.Point(704, 247);
             this.txtVoucher.Name = "txtVoucher";
             this.txtVoucher.ReadOnly = true;
