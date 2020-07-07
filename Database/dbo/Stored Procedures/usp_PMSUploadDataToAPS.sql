@@ -96,8 +96,8 @@ Select
 ,o.NeedProduction
 ,o.IsBuyBack
 ,o.BuyBackReason
-,[sDELF] = case when s.Junk = 1 and s.NeedProduction = 0 then ''Y''
-				  when s.Junk = 0 and s.IsBuyBack = 1 and s.BuyBackReason = ''Garment'' then ''Y''
+,[sDELF] = case when o.Junk = 1 and o.NeedProduction = 0 then ''Y''
+				  when o.Junk = 0 and o.IsBuyBack = 1 and o.BuyBackReason = ''Garment'' then ''Y''
 				  else ''N''
 				  end
 into #tmp
