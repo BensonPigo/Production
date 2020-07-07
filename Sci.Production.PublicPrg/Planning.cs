@@ -354,7 +354,7 @@ group by st2.Orderid, st2.Article, st2.Sizecode
 
 --2020/3/18↓效能調整,移除join Order_SizeCode,現在上方準備資料階段SizeCode已從Bundle來源改成Bundle_Detail和Order_Qty, 不需要再去串Order_SizeCode確認此SizeCode是否存在
 select    st0.Orderid
-        , bunIO.BundleNo
+        , bund.BundleNo
 		, SubprocessId=sub.id
 		, sub.InOutRule
 		, bunD.BundleGroup
