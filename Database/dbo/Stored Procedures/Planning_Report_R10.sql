@@ -105,14 +105,12 @@ BEGIN
 	Where ((@isSCIDelivery = 0 and Orders.BuyerDelivery between @date_s_by and @date_e_by)
 	or (@isSCIDelivery = 1 and Orders.SciDelivery between @date_s and @date_e))
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
-	And Orders.Junk = 0 and Orders.Qty > 0  And Orders.Category in ('B','S') 
+	And (Orders.Junk = 0 OR (@IncludeCancelOrder = 1 AND (Orders.Junk = 1 AND Orders.NeedProduction = 1))) 
+	AND (Orders.IsBuyBack = 0 OR (Orders.IsBuyBack = 1 AND Orders.BuyBackReason = 'KeepPanel'))
+	and Orders.Qty > 0  And Orders.Category in ('B','S') 
 	AND @HasOrders = 1
 	And localorder = 0
 	and Factory.IsProduceFty = 1
-	and (
-		 (@IncludeCancelOrder = 0 and Orders.Junk = 0 AND (Orders.IsBuyBack = 0 OR (Orders.IsBuyBack = 1 AND Orders.BuyBackReason = 'KeepPanel')))
-	  or (@IncludeCancelOrder = 1 and (Orders.Junk = 0 OR (Orders.Junk = 1 AND Orders.NeedProduction = 1)) AND (Orders.IsBuyBack = 0 OR (Orders.IsBuyBack = 1 AND Orders.BuyBackReason = 'KeepPanel')))
-	  )
 	
 	Select Orders.ID
 	, rtrim(iif(Factory.FactorySort = '999', Factory.KpiCode, Factory.ID)) as FactoryID
@@ -170,10 +168,6 @@ BEGIN
 	AND Orders.LocalOrder = 1 -- PMS此處才加, 當地訂單在trade是記錄在Table:FactoryOrder
 	AND Orders.IsForecast = 0
 	and Factory.IsProduceFty = 1
-	and (
-		 (@IncludeCancelOrder = 0 and Orders.Junk = 0 AND (Orders.IsBuyBack = 0 OR (Orders.IsBuyBack = 1 AND Orders.BuyBackReason = 'KeepPanel')))
-	  or (@IncludeCancelOrder = 1 and (Orders.Junk = 0 OR (Orders.Junk = 1 AND Orders.NeedProduction = 1)) AND (Orders.IsBuyBack = 0 OR (Orders.IsBuyBack = 1 AND Orders.BuyBackReason = 'KeepPanel')))
-	  )
 
 	Select FactoryOrder.ID, rtrim(FactoryOrder.FactoryID) as FactoryID
 	, iif(Factory.Type = 'S', 'Sample', Factory.MDivisionID) as MDivisionID
@@ -258,10 +252,6 @@ BEGIN
 	AND Orders.IsForecast = 1 -- PMS此處才加, 預估單 在trade是記錄在Table:FactoryOrder
 	and Factory.IsProduceFty = 1
 	and (Orders.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or Orders.BuyerDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))
-	and (
-		 (@IncludeCancelOrder = 0 and Orders.Junk = 0 AND (Orders.IsBuyBack = 0 OR (Orders.IsBuyBack = 1 AND Orders.BuyBackReason = 'KeepPanel')))
-	  or (@IncludeCancelOrder = 1 and (Orders.Junk = 0 OR (Orders.Junk = 1 AND Orders.NeedProduction = 1)) AND (Orders.IsBuyBack = 0 OR (Orders.IsBuyBack = 1 AND Orders.BuyBackReason = 'KeepPanel')))
-	  )
 
 	---------------------------------------------------------------------------------------------------------------------------------
 	
