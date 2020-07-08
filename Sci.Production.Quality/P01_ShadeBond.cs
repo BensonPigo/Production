@@ -790,8 +790,18 @@ select Roll,Dyelot,TicketYds,Scale,Result
             dt.Columns.Add(new DataColumn("Supp",typeof(string)));
             dt.Columns.Add(new DataColumn("Invo",typeof(string)));
             dt.Columns.Add(new DataColumn("ETA",typeof(string)));
+            dt.Columns.Add(new DataColumn("Refno", typeof(string)));
+            dt.Columns.Add(new DataColumn("Packages", typeof(string)));
 
-            dr=dt.NewRow();
+            int packages =MyUtility.Convert.GetInt( MyUtility.GetValue.Lookup($@"
+SELECT SUM(ISNULL(e.Packages,0))
+FROM FIR f
+LEFT JOIN Receiving r ON r.ID = f.ReceivingID
+LEFT JOIN Export e ON e.ID = r.ExportId
+WHERE f.POID='{maindr["POID"]}' AND f.Seq1='{maindr["Seq1"]}'AND f.Seq2='{maindr["Seq2"]}'
+"));
+
+            dr =dt.NewRow();
             dr["Poid"]=displaySP.Text;
             dr["FactoryID"] = Sci.Env.User.Factory;
             dr["Style"] = displayStyle.Text;
@@ -800,6 +810,8 @@ select Roll,Dyelot,TicketYds,Scale,Result
             dr["Supp"] = suppid;
             dr["Invo"] = Invno;
             dr["ETA"] = dt_Exp.Rows.Count == 0 ? "" : DateTime.Parse(dt_Exp.Rows[0]["ETA"].ToString()).ToString("yyyy-MM-dd").ToString();
+            dr["Refno"] = MyUtility.GetValue.Lookup($"SELECT Refno FROM PO_Supp_Detail WHERE ID='{maindr["POID"]}' AND Seq1='{maindr["Seq1"]}' AND Seq2='{maindr["Seq2"]}'");
+            dr["Packages"] = packages.ToString();
             dt.Rows.Add(dr);
 
            
@@ -814,8 +826,10 @@ select Roll,Dyelot,TicketYds,Scale,Result
                 DESC = row1["DESC"].ToString().Trim(),
                 Supp = row1["Supp"].ToString().Trim(),
                 Invo = row1["Invo"].ToString().Trim(),
-                ETA = row1["ETA"].ToString()=="" ? "": DateTime.Parse(row1["ETA"].ToString()).ToString("yyyy-MM-dd").ToString().Trim()
-            }).ToList();
+                ETA = row1["ETA"].ToString()=="" ? "": DateTime.Parse(row1["ETA"].ToString()).ToString("yyyy-MM-dd").ToString().Trim(),
+                Refno = row1["Refno"].ToString().Trim(),
+                Packages = row1["Packages"].ToString().Trim()
+                }).ToList();
 
             report.ReportDataSource = data;
 

@@ -16,5 +16,7 @@ namespace Sci.Production.Quality
         public string Supp { get; set; }
         public string Invo { get; set; }
         public string ETA { get; set; }
+        public string Refno { get; set; }
+        public string Packages { get; set; }
     }
 }
