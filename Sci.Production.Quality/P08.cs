@@ -101,12 +101,13 @@ namespace Sci.Production.Quality
                  .Numeric("Packages", header: "Packages", width: Widths.AnsiChars(3), decimal_places: 0, iseditingreadonly: true)
                  .Date("ArriveDate", header: "Arrive W/H \r\n Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                 .Text("SEQ", header: "SEQ", width: Widths.AnsiChars(8), iseditingreadonly: true)                 
                  .Text("WeaveTypeID", header: "Weave\r\nType", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Roll", header: "Roll#", width: Widths.AnsiChars(5), iseditingreadonly: true)
                  .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                 .Text("ColorID", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), decimal_places: 0, iseditingreadonly: true)
+                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                 .Text("ColorID", header: "Color \r\nName", width: Widths.AnsiChars(6), iseditingreadonly: true)                 
                  .DateTime("CutTime", header: "Cut Shadeband Time", width: Widths.AnsiChars(20))
                  .DateTime("PasteTime", header: "Paste Shadeband Time", width: Widths.AnsiChars(20))
                  .DateTime("PassQATime", header: "Pass QA Time", width: Widths.AnsiChars(20))
@@ -155,8 +156,8 @@ namespace Sci.Production.Quality
         /// </summary>
         private void Query()
         {
-            string sqlWhere = "where 1 = 1" + Environment.NewLine;
-            string sqlWhere2 = "where 1 = 1" + Environment.NewLine;
+            string sqlWhere = "where fb.WeaveTypeID in ('KNIT','WOVEN') " + Environment.NewLine;
+            string sqlWhere2 = "where fb.WeaveTypeID in ('KNIT','WOVEN') " + Environment.NewLine;
 
             if (!MyUtility.Check.Empty(this.txtRecivingID.Text))
             {
@@ -223,6 +224,12 @@ namespace Sci.Production.Quality
                 sqlWhere2 += $" and td.dyelot like '%{this.txtDyelot.Text}%'" + Environment.NewLine;
             }
 
+            if (!MyUtility.Check.Empty(this.txtPackage.Text))
+            {
+                sqlWhere += $" and e.Packages = '{this.txtPackage.Text}'" + Environment.NewLine;
+                sqlWhere2 += $" and 1=0" + Environment.NewLine;
+            }
+
             string sqlCmd = $@"
 select 
 	[select] = cast(0 as bit)
@@ -230,6 +237,7 @@ select
 	, e.Packages
 	, [ArriveDate] = r.WhseArrival
 	, f.POID
+    , [SEQ] = CONCAT(f.SEQ1, ' ', f.SEQ2)
 	, fb.WeaveTypeID
 	, fs.Roll
 	, fs.Dyelot
@@ -256,6 +264,7 @@ select
 	, [Packages] = 0
 	, [ArriveDate] = t.IssueDate
 	, f.POID
+    , [SEQ] = CONCAT(f.SEQ1, ' ', f.SEQ2)
 	, fb.WeaveTypeID
 	, fs.Roll
 	, fs.Dyelot
