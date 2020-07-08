@@ -530,6 +530,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                     }
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
+                    SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
@@ -541,56 +542,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-
-            // AutoWHFabric WebAPI for Gensong
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
-            {
-                DataTable dtDetail = new DataTable();
-                string sqlGetData = string.Empty;
-                sqlGetData = $@"
-select distinct 
- [Id] = i2.Id 
-,[Type] = 'D'
-,[CutPlanID] = ''
-,[EstCutdate] = null
-,[SpreadingNoID] = ''
-,[PoId] = i2.POID
-,[Seq1] = i2.Seq1
-,[Seq2] = i2.Seq2
-,[Roll] = i2.Roll
-,[Dyelot] = i2.Dyelot
-,[Barcode] = fty.Barcode
-,[Qty] = i2.Qty
-,[Ukey] = i2.ukey
-,CmdTime = GetDate()
-from Production.dbo.Issue_Detail i2
-inner join Production.dbo.Issue i on i2.Id=i.Id
-left join Production.dbo.Cutplan c on c.ID = i.CutplanID
-outer apply(
-	select Barcode
-	from Production.dbo.FtyInventory
-	where POID = i2.POID and Seq1=i2.Seq1
-	and Seq2=i2.Seq2 and Roll=i2.Roll and Dyelot=i2.Dyelot
-)fty
-where i.Type = 'D'
-and exists(
-		select 1 from Production.dbo.PO_Supp_Detail 
-		where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
-		and FabricType='F'
-	)
-and i.Status='Confirmed'
-and i.id = '{CurrentMaintain["ID"]}'
-
-";
-
-                DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
-                if (!drResult)
-                {
-                    ShowErr(drResult);
-                }
-                Task.Run(() => new Gensong_AutoWHFabric().SentIssue_DetailToGensongAutoWHFabric(dtDetail))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-            }
         }
 
         //Unconfirm
@@ -745,6 +696,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
+                    SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -756,7 +708,59 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-           
+        }
+
+        private void SentToGensong_AutoWHFabric()
+        {
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                DataTable dtDetail = new DataTable();
+                string sqlGetData = string.Empty;
+                sqlGetData = $@"
+select distinct 
+ [Id] = i2.Id 
+,[Type] = 'D'
+,[CutPlanID] = ''
+,[EstCutdate] = null
+,[SpreadingNoID] = ''
+,[PoId] = i2.POID
+,[Seq1] = i2.Seq1
+,[Seq2] = i2.Seq2
+,[Roll] = i2.Roll
+,[Dyelot] = i2.Dyelot
+,[Barcode] = fty.Barcode
+,[Qty] = i2.Qty
+,[Ukey] = i2.ukey
+,[Junk] = case when i.Status = 'Confirmed' then convert(bit, 0) else convert(bit, 1) end
+,CmdTime = GetDate()
+from Production.dbo.Issue_Detail i2
+inner join Production.dbo.Issue i on i2.Id=i.Id
+left join Production.dbo.Cutplan c on c.ID = i.CutplanID
+outer apply(
+	select Barcode
+	from Production.dbo.FtyInventory
+	where POID = i2.POID and Seq1=i2.Seq1
+	and Seq2=i2.Seq2 and Roll=i2.Roll and Dyelot=i2.Dyelot
+)fty
+where i.Type = 'D'
+and exists(
+		select 1 from Production.dbo.PO_Supp_Detail 
+		where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
+		and FabricType='F'
+	)
+and i.id = '{CurrentMaintain["ID"]}'
+
+";
+
+                DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
+                if (!drResult)
+                {
+                    ShowErr(drResult);
+                }
+                Task.Run(() => new Gensong_AutoWHFabric().SentIssue_DetailToGensongAutoWHFabric(dtDetail))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
         }
 
         //寫明細撈出的sql command

@@ -469,6 +469,7 @@ where dbo.Lack_Detail.id = '{1}'
                     }
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
+                    SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
@@ -479,52 +480,7 @@ where dbo.Lack_Detail.id = '{1}'
                 }
             }
 
-            // AutoWHFabric WebAPI for Gensong
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
-            {
-                DataTable dtDetail = new DataTable();
-                string sqlGetData = string.Empty;
-                sqlGetData = $@"
-select distinct 
-[Id] = ik2.Id
-,[Type] = 'R' 
-,[CutPlanID] = ''
-,[EstCutdate] = null
-,[SpreadingNoID] = ''
-,[PoId] = ik2.POID
-,[Seq1] = ik2.Seq1
-,[Seq2] = ik2.Seq2
-,[Roll] = ik2.Roll
-,[Dyelot] = ik2.Dyelot
-,[Barcode] = fty.Barcode
-,[Qty] = ik2.Qty
-,[Ukey] = ik2.Ukey
-,CmdTime = GetDate()
-from Production.dbo.IssueLack_Detail ik2
-inner join Production.dbo.IssueLack ik on ik2.Id=ik.Id
-outer apply(
-	select Barcode
-	from Production.dbo.FtyInventory
-	where POID = ik2.POID and Seq1=ik2.Seq1
-	and Seq2=ik2.Seq2 and Roll=ik2.Roll and Dyelot=ik2.Dyelot
-)fty
-where ik.Status='Confirmed'
-and exists(
-		select 1 from Production.dbo.PO_Supp_Detail 
-		where id = ik2.Poid and seq1=ik2.seq1 and seq2=ik2.seq2 
-		and FabricType='F'
-)
-and ik.id = '{CurrentMaintain["ID"]}'
-";
-
-                DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
-                if (!drResult)
-                {
-                    ShowErr(drResult);
-                }
-                Task.Run(() => new Gensong_AutoWHFabric().SentIssue_DetailToGensongAutoWHFabric(dtDetail))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-            }
+            
         }
 
         //Unconfirm
@@ -686,6 +642,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
+                    SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -695,8 +652,58 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     return;
                 }
             }
-          
         }
+
+        private void SentToGensong_AutoWHFabric()
+        {
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                DataTable dtDetail = new DataTable();
+                string sqlGetData = string.Empty;
+                sqlGetData = $@"
+select distinct 
+[Id] = ik2.Id
+,[Type] = 'R' 
+,[CutPlanID] = ''
+,[EstCutdate] = null
+,[SpreadingNoID] = ''
+,[PoId] = ik2.POID
+,[Seq1] = ik2.Seq1
+,[Seq2] = ik2.Seq2
+,[Roll] = ik2.Roll
+,[Dyelot] = ik2.Dyelot
+,[Barcode] = fty.Barcode
+,[Qty] = ik2.Qty
+,[Ukey] = ik2.Ukey
+,[Junk] = case when i.Status = 'Confirmed' then convert(bit, 0) else convert(bit, 1) end
+,CmdTime = GetDate()
+from Production.dbo.IssueLack_Detail ik2
+inner join Production.dbo.IssueLack ik on ik2.Id=ik.Id
+outer apply(
+	select Barcode
+	from Production.dbo.FtyInventory
+	where POID = ik2.POID and Seq1=ik2.Seq1
+	and Seq2=ik2.Seq2 and Roll=ik2.Roll and Dyelot=ik2.Dyelot
+)fty
+and exists(
+		select 1 from Production.dbo.PO_Supp_Detail 
+		where id = ik2.Poid and seq1=ik2.seq1 and seq2=ik2.seq2 
+		and FabricType='F'
+)
+and ik.id = '{CurrentMaintain["ID"]}'
+";
+
+                DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
+                if (!drResult)
+                {
+                    ShowErr(drResult);
+                }
+                Task.Run(() => new Gensong_AutoWHFabric().SentIssue_DetailToGensongAutoWHFabric(dtDetail))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+        }
+
         protected override void ClickClose()
         {
             base.ClickClose();
@@ -728,7 +735,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 return;
             }
         }
-
 
         //寫明細撈出的sql command
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)

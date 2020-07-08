@@ -102,6 +102,7 @@ namespace Sci.Production.Automation
                     Barcode = dr["Barcode"].ToString(),
                     Qty = (decimal)dr["Qty"],
                     Ukey = (long)dr["Ukey"],
+                    Junk = (bool)dr["Junk"],
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
                 });
 
@@ -161,7 +162,9 @@ select distinct
 ,s.Type
 ,sd.FromPOID,sd.FromSeq1,sd.FromSeq2,sd.FromRoll,sd.FromDyelot,sd.FromStockType
 ,sd.ToPOID,sd.ToSeq1,sd.ToSeq2,sd.ToRoll,sd.ToDyelot,sd.ToStockType
-,fty.Barcode,sd.Ukey
+,fty.Barcode
+,[Junk] = case when s.Status = 'Confirmed' then convert(bit, 0) else convert(bit, 1) end
+,sd.Ukey
 ,CmdTime = GetDate()
 from Production.dbo.SubTransfer_Detail sd
 inner join #tmp s on sd.ID=s.Id
@@ -206,6 +209,7 @@ and s.Type in ('A','B','D')
                     ToStockType = dr["ToStockType"].ToString(),
                     Barcode = dr["Barcode"].ToString(),
                     Ukey = (long)dr["Ukey"],
+                    Junk = (bool)dr["Junk"],
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
                 });
 
@@ -306,6 +310,7 @@ select distinct
     ,[Colorid] = cp2.Colorid
     ,[SizeCode] = SizeCode.value
     ,cp2.WorkorderUkey
+    ,[Junk] = case when s.Status = 'Confirmed' then convert(bit, 0) else convert(bit, 1) end
 	,[CmdTime] = GETDATE()
     from  Production.dbo.Cutplan_Detail cp2
     inner join Production.dbo.Cutplan cp1 on cp2.id = cp1.id
@@ -362,10 +367,82 @@ select distinct
                     ColorID = s["ColorID"].ToString(),
                     SizeCode = s["SizeCode"].ToString(),
                     WorkorderUkey = (long)s["WorkorderUkey"],
+                    Junk = (bool)s["Junk"],
                     CmdTime = DateTime.Now
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Cutplan_Detail", bodyObject));
+            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
+        public void SentReturnReceiptToGensongAutoWHFabric(DataTable dtMaster)
+        {
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            string apiThread = "SentReturnReceiptToGensong";
+            string suppAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag";
+            this.automationErrMsg.apiThread = apiThread;
+            this.automationErrMsg.suppAPIThread = suppAPIThread;
+
+            string sqlcmd = @"
+select rrd.Id
+,rrd.POID
+,rrd.Seq1
+,rrd.Seq2
+,rrd.Roll
+,rrd.Dyelot
+,rrd.Qty
+,rrd.StockType
+,rrd.Ukey
+,f.Barcode
+,[CmdTime] = GETDATE()
+,[Junk] = case when rr.Status = 'Confirmed' then convert(bit, 0) else convert(bit, 1) end
+from ReturnReceipt_Detail rrd
+inner join #tmp rr on rrd.Id=rr.Id
+inner join FtyInventory f on rrd.FtyInventoryUkey = f.ukey
+where 1=1
+and exists(
+	select 1 
+	from PO_Supp_Detail psd
+	where psd.ID= rrd.POID and psd.SEQ1 = rrd.Seq1
+	and psd.SEQ2 = rrd.Seq2 and psd.FabricType='F'
+)
+";
+            DataTable dt = new DataTable();
+            DualResult result;
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, null, sqlcmd, out dt)))
+            {
+                return;
+            }
+
+            //MyUtility.Tool.ProcessWithDatatable(dtMaster, null, sqlcmd, out dt);
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            dynamic bodyObject = new ExpandoObject();
+            bodyObject = dt.AsEnumerable()
+                .Select(s => new
+                {
+                    ID = s["ID"].ToString(),
+                    POID = s["POID"].ToString(),
+                    Seq1 = s["Seq1"].ToString(),
+                    Seq2 = s["Seq2"].ToString(),
+                    Roll = s["Roll"].ToString(),
+                    Dyelot = s["Dyelot"].ToString(),
+                    Qty = (decimal)s["Qty"],
+                    StockType = s["StockType"].ToString(),
+                    Ukey = (long)s["Ukey"],
+                    Barcode = s["Barcode"].ToString(),
+                    Junk = (bool)s["Junk"],
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
+                });
+
+            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("ReturnReceipt", bodyObject));
             SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
