@@ -9,7 +9,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P05_AirPrePaidList
     /// </summary>
-    public partial class P05_AirPrePaidList : Sci.Win.Subs.Base
+    public partial class P05_AirPrePaidList : Win.Subs.Base
     {
         private string gmtBookingID;
         private DualResult result;

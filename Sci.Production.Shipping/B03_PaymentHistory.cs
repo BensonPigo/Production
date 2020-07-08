@@ -8,7 +8,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B03_PaymentHistory
     /// </summary>
-    public partial class B03_PaymentHistory : Sci.Win.Subs.Base
+    public partial class B03_PaymentHistory : Win.Subs.Base
     {
         private DataRow motherData;
 

@@ -5,7 +5,7 @@ namespace Sci.Production.Thread
     /// <summary>
     /// B03
     /// </summary>
-    public partial class B03 : Sci.Win.Tems.Input1
+    public partial class B03 : Win.Tems.Input1
     {
         /// <summary>
         /// B03

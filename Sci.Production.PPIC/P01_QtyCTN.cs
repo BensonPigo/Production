@@ -9,7 +9,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_QtyCTN
     /// </summary>
-    public partial class P01_QtyCTN : Sci.Win.Subs.Base
+    public partial class P01_QtyCTN : Win.Subs.Base
     {
         private DataRow masterData;
 

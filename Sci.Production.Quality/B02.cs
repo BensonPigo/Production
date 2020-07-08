@@ -2,7 +2,7 @@
 
 namespace Sci.Production.Quality
 {
-    public partial class B02 : Sci.Win.Tems.Input1
+    public partial class B02 : Win.Tems.Input1
     {
         public B02(ToolStripMenuItem menuitem)
             : base(menuitem)

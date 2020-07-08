@@ -8,7 +8,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// WH_B04
     /// </summary>
-    public partial class WH_B04 : Sci.Win.Tems.Input1
+    public partial class WH_B04 : Win.Tems.Input1
     {
         /// <summary>
         /// WH_B04

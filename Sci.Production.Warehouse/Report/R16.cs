@@ -8,13 +8,14 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R16 : Sci.Win.Tems.PrintForm
+    public partial class R16 : Win.Tems.PrintForm
     {
         string mdivision;
         string factory;
         string request1;
         string request2;
-        DateTime? issueDate1, issueDate2;
+        DateTime? issueDate1;
+        DateTime? issueDate2;
         DataTable printData;
 
         public R16(ToolStripMenuItem menuitem)
@@ -44,7 +45,7 @@ namespace Sci.Production.Warehouse
         }
 
         // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region where
             string where = string.Empty;

@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class P22 : Sci.Win.Tems.QueryForm
+    public partial class P22 : Win.Tems.QueryForm
     {
         private DataTable dtDBSource;
         private string excelFile;

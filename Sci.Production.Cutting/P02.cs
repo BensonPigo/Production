@@ -19,7 +19,7 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P02 : Sci.Win.Tems.Input8
+    public partial class P02 : Win.Tems.Input8
     {
         #region
         private string loginID = Sci.Env.User.UserID;
@@ -37,7 +37,7 @@ namespace Sci.Production.Cutting
         private DataTable chksize;
         private DataRow drTEMP;  // 紀錄目前表身選擇的資料，避免按列印時模組會重LOAD資料，導致永遠只能印到第一筆資料
         private string Poid;
-        private Sci.Win.UI.BindingSource2 bindingSource2 = new Win.UI.BindingSource2();
+        private Win.UI.BindingSource2 bindingSource2 = new Win.UI.BindingSource2();
 
         Ict.Win.UI.DataGridViewTextBoxColumn col_Markername;
         Ict.Win.UI.DataGridViewTextBoxColumn col_sp;
@@ -82,25 +82,25 @@ namespace Sci.Production.Cutting
             /*
              *設定Binding Source for Text
             */
-            this.displayMarkerName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource2, "MarkerName", true));
-            this.displayColor.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource2, "colorid", true));
-            this.numUnitCons.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.bindingSource2, "Conspc", true));
-            this.txtCutCell.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource2, "CutCellid", true));
-            this.numCons.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.bindingSource2, "Cons", true));
-            this.txtFabricCombo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource2, "FabricCombo", true));
-            this.txtFabricPanelCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource2, "FabricPanelCode", true));
-            this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource2, "Description", true));
-            this.displayFabricType_Refno.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource2, "MtlTypeID_SCIRefno", true));
+            this.displayMarkerName.DataBindings.Add(new Binding("Text", this.bindingSource2, "MarkerName", true));
+            this.displayColor.DataBindings.Add(new Binding("Text", this.bindingSource2, "colorid", true));
+            this.numUnitCons.DataBindings.Add(new Binding("Value", this.bindingSource2, "Conspc", true));
+            this.txtCutCell.DataBindings.Add(new Binding("Text", this.bindingSource2, "CutCellid", true));
+            this.numCons.DataBindings.Add(new Binding("Value", this.bindingSource2, "Cons", true));
+            this.txtFabricCombo.DataBindings.Add(new Binding("Text", this.bindingSource2, "FabricCombo", true));
+            this.txtFabricPanelCode.DataBindings.Add(new Binding("Text", this.bindingSource2, "FabricPanelCode", true));
+            this.editDescription.DataBindings.Add(new Binding("Text", this.bindingSource2, "Description", true));
+            this.displayFabricType_Refno.DataBindings.Add(new Binding("Text", this.bindingSource2, "MtlTypeID_SCIRefno", true));
 
-            this.displayCutplanNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource2, "Cutplanid", true));
-            this.displayTotalCutQty.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource2, "CutQty", true));
-            this.displayTime.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource2, "SandCTime", true));
-            this.numMarkerLengthY.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource2, "MarkerLengthY", true));
-            this.txtMarkerLengthE.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource2, "MarkerLengthE", true));
-            this.txtMarkerLength.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource2, "MarkerLength", true));
-            this.txtPatternPanel.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource2, "PatternPanel", true));
-            this.lbshc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource2, "shc", true));
-            this.txtBoxMarkerNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource2, "MarkerNo", true));
+            this.displayCutplanNo.DataBindings.Add(new Binding("Text", this.bindingSource2, "Cutplanid", true));
+            this.displayTotalCutQty.DataBindings.Add(new Binding("Text", this.bindingSource2, "CutQty", true));
+            this.displayTime.DataBindings.Add(new Binding("Text", this.bindingSource2, "SandCTime", true));
+            this.numMarkerLengthY.DataBindings.Add(new Binding("Text", this.bindingSource2, "MarkerLengthY", true));
+            this.txtMarkerLengthE.DataBindings.Add(new Binding("Text", this.bindingSource2, "MarkerLengthE", true));
+            this.txtMarkerLength.DataBindings.Add(new Binding("Text", this.bindingSource2, "MarkerLength", true));
+            this.txtPatternPanel.DataBindings.Add(new Binding("Text", this.bindingSource2, "PatternPanel", true));
+            this.lbshc.DataBindings.Add(new Binding("Text", this.bindingSource2, "shc", true));
+            this.txtBoxMarkerNo.DataBindings.Add(new Binding("Text", this.bindingSource2, "MarkerNo", true));
 
             this.sizeratioMenuStrip.Enabled = this.EditMode;
             this.distributeMenuStrip.Enabled = this.EditMode;
@@ -572,7 +572,7 @@ where WorkOrderUkey={0}", masterID);
 
                 if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                    DataRow dr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
                     if (e.FormattedValue.ToString() == dr["estcutdate"].ToString())
                     {
                         return;
@@ -617,7 +617,7 @@ where WorkOrderUkey={0}", masterID);
             {
                 this.GridValid();
                 this.detailgrid.ValidateControl();
-                Sci.Production.Cutting.P01_Cutpartchecksummary callNextForm = new Sci.Production.Cutting.P01_Cutpartchecksummary(this.CurrentMaintain["ID"].ToString());
+                P01_Cutpartchecksummary callNextForm = new P01_Cutpartchecksummary(this.CurrentMaintain["ID"].ToString());
                 callNextForm.ShowDialog(this);
             };
 
@@ -2675,7 +2675,7 @@ END";
                 return;
             }
 
-            var frm = new Sci.Production.Cutting.P02_PackingMethod(false, this.CurrentMaintain["id"].ToString(), null, null);
+            var frm = new P02_PackingMethod(false, this.CurrentMaintain["id"].ToString(), null, null);
             frm.ShowDialog(this);
             this.RenewData();
             this.Sorting(this.comboBox1.Text);  // 避免順序亂掉
@@ -2686,7 +2686,7 @@ END";
         {
             this.GridValid();
             this.detailgrid.ValidateControl();
-            var frm = new Sci.Production.Cutting.P02_BatchAssign((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), this.distqtyTb);
+            var frm = new P02_BatchAssign((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), this.distqtyTb);
             frm.ShowDialog(this);
         }
 
@@ -3566,7 +3566,7 @@ and ID ='{dr["ID", DataRowVersion.Original]}'; ";
 
         protected override bool ClickPrint()
         {
-            Sci.Production.Cutting.P02_Print callNextForm;
+            P02_Print callNextForm;
             if (this.drTEMP != null)
             {
                 callNextForm = new P02_Print(this.drTEMP, this.CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetInt(this.CurrentMaintain["WorkType"]));
@@ -3612,7 +3612,7 @@ select distinct a.MarkerNo from Order_EachCons a
 inner join orders b on a.id = b.ID
 where b.poid = '{0}'
 ", this.CurrentMaintain["ID"]);
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20", this.txtBoxMarkerNo.Text);
+                SelectItem item = new SelectItem(sqlCmd, "20", this.txtBoxMarkerNo.Text);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)
                 {
@@ -3688,7 +3688,7 @@ where b.poid = '{0}'
                 return;
             }
 
-            var frm = new Sci.Production.Cutting.P02_OriginalData(this.CurrentDetailData);
+            var frm = new P02_OriginalData(this.CurrentDetailData);
             frm.ShowDialog(this);
         }
 
@@ -3729,7 +3729,7 @@ where b.poid = '{0}'
         {
             DataRow dr;
             MyUtility.Check.Seek(string.Format("select isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList from Orders o WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"]), out dr);
-            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), dr["PoList"].ToString());
+            PPIC.P01_Qty callNextForm = new PPIC.P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), dr["PoList"].ToString());
             callNextForm.ShowDialog(this);
         }
 
@@ -3835,16 +3835,16 @@ where   id = '{0}'
             this.Sorting(this.comboBox1.Text);
         }
 
-        Sci.Production.Cutting.P07 callP07 = null;
+        P07 callP07 = null;
 
         private void P07FormOpen()
         {
             foreach (Form form in Application.OpenForms)
             {
-                if (form is Sci.Production.Cutting.P07)
+                if (form is P07)
                 {
                     form.Activate();
-                    Sci.Production.Cutting.P07 activateForm = (Sci.Production.Cutting.P07)form;
+                    P07 activateForm = (P07)form;
                     activateForm.setTxtSPNo(this.CurrentMaintain["ID"].ToString());
                     activateForm.Queryable();
                     return;
@@ -3858,7 +3858,7 @@ where   id = '{0}'
                 {
                     foreach (var subMenuItem in toolMenuItem.DropDown.Items)
                     {
-                        if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                        if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
                         {
                             if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P07. Query for Change Est. Cut Date Record"))
                             {

@@ -7,7 +7,7 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P41 : Sci.Win.Tems.QueryForm
+    public partial class P41 : Win.Tems.QueryForm
     {
         public P41(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -239,7 +239,7 @@ AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", S
                 return;
             }
 
-            Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
+            Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
             sdExcel.Save(Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P41"));
         }
 

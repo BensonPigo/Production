@@ -11,7 +11,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_BuyerDeliveryHistory
     /// </summary>
-    public partial class P01_BuyerDeliveryHistory : Sci.Win.Tems.QueryForm
+    public partial class P01_BuyerDeliveryHistory : Win.Tems.QueryForm
     {
         private string _ModuleName;
         private string _TableName;

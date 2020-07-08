@@ -13,7 +13,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P15
     /// </summary>
-    public partial class P15 : Sci.Win.Tems.QueryForm
+    public partial class P15 : Win.Tems.QueryForm
     {
         private Color red = Color.FromArgb(255, 179, 179);
         private Color yelow = Color.FromArgb(255, 255, 184);
@@ -51,7 +51,7 @@ namespace Sci.Production.PPIC
             this.displayBoxFinish.BackColor = this.gray;
 
             #region NO. 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts_id = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts_id = new DataGridViewGeneratorTextColumnSettings();
             ts_id.CellMouseDoubleClick += (s, e) =>
             {
                 if (this.checkBoxRotate.Checked)
@@ -82,7 +82,7 @@ namespace Sci.Production.PPIC
             #endregion
 
             #region issueLackID開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts_issueid = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts_issueid = new DataGridViewGeneratorTextColumnSettings();
             ts_issueid.CellMouseDoubleClick += (s, e) =>
             {
                 if (this.checkBoxRotate.Checked)

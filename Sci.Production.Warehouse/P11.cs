@@ -19,12 +19,13 @@ using System.Reflection;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P11 : Sci.Win.Tems.Input8
+    public partial class P11 : Win.Tems.Input8
     {
         StringBuilder sbSizecode;
         StringBuilder sbSizecode2;
         StringBuilder strsbIssueBreakDown;
-        DataTable dtSizeCode = null, dtIssueBreakDown = null;
+        DataTable dtSizeCode = null;
+        DataTable dtIssueBreakDown = null;
         DataRow dr;
         string poid = string.Empty;
         bool Ismatrix_Reload = true; // 是否需要重新抓取資料庫資料
@@ -35,7 +36,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.gridicon.Location = new System.Drawing.Point(this.btnBreakDown.Location.X + 20, 128); // 此gridcon位置會跑掉，需強制設定gridcon位置
+            this.gridicon.Location = new Point(this.btnBreakDown.Location.X + 20, 128); // 此gridcon位置會跑掉，需強制設定gridcon位置
             this.gridicon.Anchor = AnchorStyles.Right;
 
             this.DefaultFilter = string.Format("Type='B' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
@@ -76,7 +77,7 @@ namespace Sci.Production.Warehouse
         protected override void OnDetailGridSetup()
         {
             #region -- outqty 開窗 --
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.CellMouseDoubleClick += (s, e) =>
             {
                 #region DoSubForm & subform 參數設定
@@ -167,7 +168,7 @@ namespace Sci.Production.Warehouse
             // DoSubForm
             #region -- Seq 右鍵開窗 --
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
@@ -221,7 +222,7 @@ order by b.ID, b.seq1, b.seq2", this.CurrentDetailData["poid"]);
                         return;
                     }
 
-                    Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(
+                    Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(
                         bulkItems,
                         "FabricType,SCIRefno,MtlTypeID,IssueType,Poid,Seq1,Seq2,inqty,outqty,adjustqty",
                         "4,14,10,10,13,4,3,6,6,6,10",
@@ -677,7 +678,7 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
                 }
             }
 
-            var frm = new Sci.Production.Warehouse.P11_AutoPick(this.CurrentMaintain["id"].ToString(), this.poid, this.CurrentMaintain["cutplanid"].ToString(), this.txtOrderID.Text.ToString(), this.dtIssueBreakDown, this.sbSizecode, this.checkByCombo.Checked);
+            var frm = new P11_AutoPick(this.CurrentMaintain["id"].ToString(), this.poid, this.CurrentMaintain["cutplanid"].ToString(), this.txtOrderID.Text.ToString(), this.dtIssueBreakDown, this.sbSizecode, this.checkByCombo.Checked);
             DialogResult result = frm.ShowDialog(this);
             if (result == DialogResult.OK)
             {
@@ -1361,7 +1362,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
         private void btnBOA_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P11_BOA(this.CurrentMaintain["id"].ToString(), this.poid, this.CurrentMaintain["cutplanid"].ToString(), this.txtOrderID.Text.ToString());
+            var frm = new P11_BOA(this.CurrentMaintain["id"].ToString(), this.poid, this.CurrentMaintain["cutplanid"].ToString(), this.txtOrderID.Text.ToString());
             frm.ShowDialog(this);
         }
 
@@ -1386,7 +1387,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 return;
             }
 
-            var frm = new Sci.Production.Warehouse.P11_IssueBreakDown(this.CurrentMaintain, this.dtIssueBreakDown, this.dtSizeCode);
+            var frm = new P11_IssueBreakDown(this.CurrentMaintain, this.dtIssueBreakDown, this.dtSizeCode);
             frm.ShowDialog(this);
             this.OnDetailEntered();
         }
@@ -1686,7 +1687,7 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
                 report.ReportResource = reportresource;
 
                 // 開啟 report view
-                var frm = new Sci.Win.Subs.ReportView(report);
+                var frm = new Win.Subs.ReportView(report);
                 frm.MdiParent = this.MdiParent;
                 frm.Show();
                 #endregion
@@ -1758,7 +1759,7 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
 
             sb.Append(")");
 
-            System.Data.SqlClient.SqlConnection conn;
+            SqlConnection conn;
             DBProxy.Current.OpenConnection(null, out conn);
 
             try
@@ -1770,7 +1771,7 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
                     return;
                 }
 
-                using (System.Data.SqlClient.SqlBulkCopy bulkcopy = new System.Data.SqlClient.SqlBulkCopy(conn))
+                using (SqlBulkCopy bulkcopy = new SqlBulkCopy(conn))
                 {
                     bulkcopy.BulkCopyTimeout = 60;
                     if (temptablename.TrimStart().StartsWith("#"))

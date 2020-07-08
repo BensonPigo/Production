@@ -11,7 +11,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P11
     /// </summary>
-    public partial class P11 : Sci.Win.Tems.Input6
+    public partial class P11 : Win.Tems.Input6
     {
         /// <summary>
         /// P11
@@ -248,7 +248,7 @@ and InvSerial like '{this.CurrentMaintain["InvSerial"]}%'
 
         private void BtnBatchApprove(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P11_BatchApprove callNextForm = new P11_BatchApprove(this.Reload);
+            P11_BatchApprove callNextForm = new P11_BatchApprove(this.Reload);
             callNextForm.ShowDialog(this);
         }
 

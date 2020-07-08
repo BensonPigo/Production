@@ -8,12 +8,12 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P11_AutoPick_Detail : Sci.Win.Subs.Base
+    public partial class P11_AutoPick_Detail : Win.Subs.Base
     {
         DataTable dt_detail;
 
-        Sci.Production.Warehouse.P11_AutoPick P11Autopick = null;
-        Sci.Win.MatrixHelper _matrix;
+        P11_AutoPick P11Autopick = null;
+        Win.MatrixHelper _matrix;
         bool combo;
         string poid;
         string orderid;
@@ -21,11 +21,11 @@ namespace Sci.Production.Warehouse
         int DataRowIndex;
         int DataColumIndex;
         public Dictionary<DataRow, DataTable> dictionaryDatas = new Dictionary<DataRow, DataTable>();
-        protected Sci.Win.UI.ListControlBindingSource gridbs = new Win.UI.ListControlBindingSource();
+        protected Win.UI.ListControlBindingSource gridbs = new Win.UI.ListControlBindingSource();
 
         protected DataTable dtArtwork;
 
-        public P11_AutoPick_Detail(bool _combo, string _poid, string _orderid, DataTable _dt, int _DataRowIndex, int _DataColumIndex, Sci.Production.Warehouse.P11_AutoPick _P11Autopick)
+        public P11_AutoPick_Detail(bool _combo, string _poid, string _orderid, DataTable _dt, int _DataRowIndex, int _DataColumIndex, P11_AutoPick _P11Autopick)
         {
             this.combo = _combo; // 上面GRID使用
             this.poid = _poid; // 上面GRID使用
@@ -99,7 +99,7 @@ where id='{0}' and seq1='{1}' and seq2='{2}'",
         {
             #region -- matrix breakdown setting
             this.gridBreakDown.DataSource = this.listControlBindingSource1;
-            this._matrix = new Sci.Win.MatrixHelper(this, this.gridBreakDown, this.listControlBindingSource1); // 建立 Matrix 物件
+            this._matrix = new Win.MatrixHelper(this, this.gridBreakDown, this.listControlBindingSource1); // 建立 Matrix 物件
             this._matrix.XMap.Name = "sizecode";  // 對應到第三表格的 X 欄位名稱
             this._matrix.XOrder = "seq";
             this._matrix.YMap.Name = "article";  // 對應到第三表格的 Y 欄位名稱

@@ -7,7 +7,7 @@ using Sci.Production.Prg;
 
 namespace Sci.Production.Cutting
 {
-    public partial class B02 : Sci.Win.Tems.Input1
+    public partial class B02 : Win.Tems.Input1
     {
         private string keyWord = Sci.Env.User.Keyword;
 

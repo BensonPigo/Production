@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Quality
 {
-    public partial class R07 : Sci.Win.Tems.PrintForm
+    public partial class R07 : Win.Tems.PrintForm
     {
         DateTime? DateArrStart;
         DateTime? DateArrEnd;
@@ -283,7 +283,7 @@ namespace Sci.Production.Quality
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
             res = DBProxy.Current.Select(string.Empty, this.cmd, this.lis, out this.dt);

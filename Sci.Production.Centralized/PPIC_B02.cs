@@ -5,7 +5,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// PPIC_B02
     /// </summary>
-    public partial class PPIC_B02 : Sci.Win.Tems.Input1
+    public partial class PPIC_B02 : Win.Tems.Input1
     {
         /// <summary>
         /// PPIC_B02

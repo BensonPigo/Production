@@ -9,7 +9,7 @@ using Ict;
 
 namespace Sci.Production.Class
 {
-    public partial class txtCFALocation : Sci.Win.UI.TextBox
+    public partial class txtCFALocation : Win.UI.TextBox
     {
         public txtCFALocation()
         {
@@ -43,7 +43,7 @@ namespace Sci.Production.Class
                 return;
             }
 
-            Sci.Win.Tems.Base myform = (Sci.Win.Tems.Base)this.FindForm();
+            Win.Tems.Base myform = (Win.Tems.Base)this.FindForm();
             if (myform.EditMode)
             {
                 string sql = "select ID,Description from CFALocation WITH (NOLOCK) order by ID";
@@ -59,7 +59,7 @@ namespace Sci.Production.Class
 
                 DataTable tbCFALocation;
                 DBProxy.Current.Select("Production", sql, out tbCFALocation);
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbCFALocation, "ID,Description", "10,40,10", this.Text, "ID,Description");
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(tbCFALocation, "ID,Description", "10,40,10", this.Text, "ID,Description");
 
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel)
@@ -138,7 +138,7 @@ namespace Sci.Production.Class
                         DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
                         // Parent form 若是非編輯狀態就 return
-                        if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                        if (!((Win.Forms.Base)grid.FindForm()).EditMode)
                         {
                             return;
                         }
@@ -147,7 +147,7 @@ namespace Sci.Production.Class
                         DataTable tbCFALocation;
                         string sql = $@"select ID,Description from CFALocation WITH (NOLOCK) where MDivisionID = '{mdivisionID.ToString().Trim()}' and junk=0 order by ID ";
                         DBProxy.Current.Select("Production", sql, out tbCFALocation);
-                        Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbCFALocation, "ID,Description", "10,40", row["CFALocationID"].ToString(), "ID,Description,M");
+                        Win.Tools.SelectItem item = new Win.Tools.SelectItem(tbCFALocation, "ID,Description", "10,40", row["CFALocationID"].ToString(), "ID,Description,M");
                         DialogResult result = item.ShowDialog();
                         if (result == DialogResult.Cancel)
                         {
@@ -165,7 +165,7 @@ namespace Sci.Production.Class
                     DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
                     // Parent form 若是非編輯狀態就 return
-                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                    if (!((Win.Forms.Base)grid.FindForm()).EditMode)
                     {
                         return;
                     }

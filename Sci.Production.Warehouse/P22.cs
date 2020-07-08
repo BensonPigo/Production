@@ -17,7 +17,7 @@ using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P22 : Sci.Win.Tems.Input6
+    public partial class P22 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
@@ -180,15 +180,15 @@ namespace Sci.Production.Warehouse
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.IsSupportNegative = true;
             #region -- To Location 右鍵開窗 --
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation(this.CurrentDetailData["tostocktype"].ToString(), this.CurrentDetailData["tolocation"].ToString());
+                    Win.Tools.SelectItem2 item = Prgs.SelectLocation(this.CurrentDetailData["tostocktype"].ToString(), this.CurrentDetailData["tolocation"].ToString());
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -570,7 +570,7 @@ Where a.id = '{0}'", masterID);
         // Import
         private void btnImport_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P22_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P22_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }
@@ -578,7 +578,7 @@ Where a.id = '{0}'", masterID);
         // Accumulated
         private void btnAccumulatedQty_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P22_AccumulatedQty(this.CurrentMaintain);
+            var frm = new P22_AccumulatedQty(this.CurrentMaintain);
             frm.P22 = this;
             frm.ShowDialog(this);
         }
@@ -636,10 +636,10 @@ Where a.id = '{0}'", masterID);
 
             string RptTitle = dt.Rows[0]["NameEN"].ToString();
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+            report.ReportParameters.Add(new ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new ReportParameter("ID", id));
+            report.ReportParameters.Add(new ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new ReportParameter("issuedate", issuedate));
             #endregion
 
             #region  抓表身資料
@@ -714,7 +714,7 @@ where a.id= @ID", pars, out dd);
             #endregion
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
 

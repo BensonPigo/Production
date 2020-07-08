@@ -16,7 +16,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P05
     /// </summary>
-    public partial class P05 : Sci.Win.Tems.Input6
+    public partial class P05 : Win.Tems.Input6
     {
         private string masterID;
         private Ict.Win.DataGridViewGeneratorTextColumnSettings orderid = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
@@ -114,7 +114,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             this.masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = Prgs.QueryPackingListSQLCmd(this.masterID);
@@ -145,11 +145,11 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                     if (e.FormattedValue.ToString() != this.dr["OrderID"].ToString())
                     {
                         // sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@orderid", e.FormattedValue.ToString());
-                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@brandid", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]));
-                        System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
+                        SqlParameter sp1 = new SqlParameter("@orderid", e.FormattedValue.ToString());
+                        SqlParameter sp2 = new SqlParameter("@brandid", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]));
+                        SqlParameter sp3 = new SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
 
-                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        IList<SqlParameter> cmds = new List<SqlParameter>();
                         cmds.Add(sp1);
                         cmds.Add(sp2);
                         cmds.Add(sp3);
@@ -227,7 +227,7 @@ select 1 from Orders o WITH (NOLOCK) where o.ID = @orderid and o.category in ('B
                                     else
                                     {
                                         sqlCmd = string.Format("select Seq,BuyerDelivery,ShipmodeID,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", this.dr["OrderID"].ToString());
-                                        Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
+                                        Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
                                         DialogResult returnResult = item.ShowDialog();
                                         if (returnResult == DialogResult.Cancel)
                                         {
@@ -258,7 +258,7 @@ select 1 from Orders o WITH (NOLOCK) where o.ID = @orderid and o.category in ('B
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             this.sqlCmd = string.Format("select Seq, BuyerDelivery,ShipmodeID,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", dr["OrderID"].ToString());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(this.sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -297,7 +297,7 @@ select 1 from Orders o WITH (NOLOCK) where o.ID = @orderid and o.category in ('B
                                 @"select distinct a.Article " + this.FOCQueryCmd() +
                                 @"where a.Price = 0 ", dr["OrderID"].ToString(),
                                 dr["OrderShipmodeSeq"].ToString());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(this.sqlCmd, "8", dr["Article"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.sqlCmd, "8", dr["Article"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -400,7 +400,7 @@ order by os.Seq", dr["OrderID"].ToString(),
                                 dr["OrderShipmodeSeq"].ToString(),
                                 dr["Article"].ToString());
                             this.result = DBProxy.Current.Select(null, this.sqlCmd, out this.queryData);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(this.queryData, "Size", "8", dr["SizeCode"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.queryData, "Size", "8", dr["SizeCode"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -1046,7 +1046,7 @@ where oqd.Id = '{0}'
                 return;
             }
 
-            Sci.Production.Packing.P05_BatchImport callNextForm = new Sci.Production.Packing.P05_BatchImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            P05_BatchImport callNextForm = new P05_BatchImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             callNextForm.ShowDialog(this);
             this.ComputeOrderQty();
         }

@@ -15,7 +15,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P30 : Sci.Win.Tems.QueryForm
+    public partial class P30 : Win.Tems.QueryForm
     {
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk2 = new Ict.Win.UI.DataGridViewCheckBoxColumn();
@@ -90,7 +90,7 @@ namespace Sci.Production.Warehouse
               this.gridComplete.ValidateControl();
           };
             #region -- transfer qty valid --
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.IsSupportNegative = true;
             ns.CellValidating += (s, e) =>
             {
@@ -121,7 +121,7 @@ namespace Sci.Production.Warehouse
                 }
             };
             #endregion
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = Production.Class.cellMtlLocation.GetGridCell("O");
+            DataGridViewGeneratorTextColumnSettings ts2 = Production.Class.cellMtlLocation.GetGridCell("O");
             this.gridRel.CellValueChanged += (s, e) =>
 {
     if (MyUtility.Check.Empty(this.listControlBindingSource1.DataSource) || MyUtility.Check.Empty(this.listControlBindingSource2.DataSource))

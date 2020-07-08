@@ -15,7 +15,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_P02
     /// </summary>
-    public partial class P02 : Sci.Win.Tems.QueryForm
+    public partial class P02 : Win.Tems.QueryForm
     {
         private DataTable selectDataTable = new DataTable();
 
@@ -45,7 +45,7 @@ namespace Sci.Production.Logistic
             a.Text = Sci.Env.User.Keyword;
             this.txtcloglocationLocationNo.MDivisionObjectName = a;
 
-            Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings col_chk = new Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings col_chk = new DataGridViewGeneratorCheckBoxColumnSettings();
             col_chk.CellValidating += (s, e) =>
             {
                 DataRow dr = this.gridImport.GetDataRow<DataRow>(e.RowIndex);

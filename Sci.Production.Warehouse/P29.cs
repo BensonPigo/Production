@@ -17,7 +17,7 @@ using Sci.Production.PublicForm;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P29 : Sci.Win.Tems.QueryForm
+    public partial class P29 : Win.Tems.QueryForm
     {
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk2 = new Ict.Win.UI.DataGridViewCheckBoxColumn();
@@ -88,7 +88,7 @@ namespace Sci.Production.Warehouse
             Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
             Ict.Win.UI.DataGridViewTextBoxColumn col_tolocation;
             #region -- transfer qty valid --
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.IsSupportNegative = true;
             ns.CellValidating += (s, e) =>
             {
@@ -115,13 +115,13 @@ namespace Sci.Production.Warehouse
             };
             #endregion
             #region -- To Location 右鍵開窗 --
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.gridRel.GetDataRow(this.gridRel.GetSelectedRowIndex());
-                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation(dr["tostocktype"].ToString(), dr["tolocation"].ToString());
+                    Win.Tools.SelectItem2 item = Prgs.SelectLocation(dr["tostocktype"].ToString(), dr["tolocation"].ToString());
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -167,8 +167,8 @@ WHERE   StockType='{0}'
 
                     if (!selectId)
                     {
-                       e.Cancel = true;
-                       MyUtility.Msg.WarningBox("Location : " + string.Join(",", errLocation.ToArray()) + "  Data not found !!", "Data not found");
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", errLocation.ToArray()) + "  Data not found !!", "Data not found");
                     }
 
                     trueLocation.Sort();
@@ -422,8 +422,7 @@ WHERE 1=1
             StringBuilder sqlcmd = new StringBuilder();
             #region -- sql command --
             sqlcmd.Append($@"
-
-{(!string.IsNullOrEmpty(InvCfmDate_s) && !string.IsNullOrEmpty(InvCfmDate_e) ? sqlcmdInv + InvCfmDate_Where : string .Empty)}
+{(!string.IsNullOrEmpty(InvCfmDate_s) && !string.IsNullOrEmpty(InvCfmDate_e) ? sqlcmdInv + InvCfmDate_Where : string.Empty)}
 
 ;with cte as (
     select  convert(bit,0) as selected

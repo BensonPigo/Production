@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P10_BatchDelete : Sci.Win.Subs.Base
+    public partial class P10_BatchDelete : Win.Subs.Base
     {
         private DataTable dtQuery;
 
@@ -92,7 +92,7 @@ where 1=1
       {sqlwhere}
 ";
             this.ShowWaitMessage("Data Loading....");
-            Ict.DualResult result;
+            DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out this.dtQuery))
             {
                 if (this.dtQuery.Rows.Count == 0)

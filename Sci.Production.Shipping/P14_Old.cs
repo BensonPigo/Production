@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P14_Old : Sci.Win.Tems.QueryForm
+    public partial class P14_Old : Win.Tems.QueryForm
     {
        private DataTable dtCertOfOrigin;
        private DataTable dtExport;

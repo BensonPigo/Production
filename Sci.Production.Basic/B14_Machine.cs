@@ -8,7 +8,7 @@ namespace Sci.Production.Basic
     /// <summary>
     /// B14_Machine
     /// </summary>
-    public partial class B14_Machine : Sci.Win.Subs.Base
+    public partial class B14_Machine : Win.Subs.Base
     {
         private DataRow motherData;
 

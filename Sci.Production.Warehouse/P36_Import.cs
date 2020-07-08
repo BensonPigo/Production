@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P36_Import : Sci.Win.Subs.Base
+    public partial class P36_Import : Win.Subs.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
@@ -124,7 +124,7 @@ Where  1=1
                 }
 
                 this.ShowWaitMessage("Data Loading....");
-                Ict.DualResult result;
+                DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), cmds, out this.dtScrap))
                 {
                     if (this.dtScrap.Rows.Count == 0)
@@ -152,7 +152,7 @@ Where  1=1
         {
             base.OnFormLoaded();
             #region -- Transfer Qty Valid --
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
                 {
                     if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
@@ -164,12 +164,12 @@ Where  1=1
             #endregion
             #region -- toLocation 右鍵開窗 --
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation(
+                    Win.Tools.SelectItem2 item = Prgs.SelectLocation(
                         this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["tostocktype"].ToString(),
                         this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["tolocation"].ToString());
                     DialogResult result = item.ShowDialog();
@@ -348,7 +348,7 @@ WHERE   StockType='{0}'
 
             if (this.EditMode && e.Button == MouseButtons.Right)
             {
-                Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation("I", this.displayLocation.Text);
+                Win.Tools.SelectItem2 item = Prgs.SelectLocation("I", this.displayLocation.Text);
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel)
                 {

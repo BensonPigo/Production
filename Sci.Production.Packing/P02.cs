@@ -19,7 +19,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P02
     /// </summary>
-    public partial class P02 : Sci.Win.Tems.Input6
+    public partial class P02 : Win.Tems.Input6
     {
         private Ict.Win.UI.DataGridViewTextBoxColumn col_refno;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_refno_Balance;
@@ -206,11 +206,11 @@ order by e.Seq, f.Seq", masterID);
                     else
                     {
                         // sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+                        SqlParameter sp1 = new SqlParameter();
                         sp1.ParameterName = "@refno";
                         sp1.Value = dr["RefNo"].ToString();
 
-                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        IList<SqlParameter> cmds = new List<SqlParameter>();
                         cmds.Add(sp1);
 
                         string sqlCmd = "select Description,CtnWeight from LocalItem WITH (NOLOCK) where RefNo = @refno";
@@ -244,10 +244,10 @@ order by e.Seq, f.Seq", masterID);
                 if (this.detailgrid.Columns[e.ColumnIndex].DataPropertyName == this.col_qtyperctn.DataPropertyName)
                 {
                     // sql參數
-                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-                    System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-                    System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-                    System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+                    SqlParameter sp1 = new SqlParameter();
+                    SqlParameter sp2 = new SqlParameter();
+                    SqlParameter sp3 = new SqlParameter();
+                    SqlParameter sp4 = new SqlParameter();
                     sp1.ParameterName = "@article";
                     sp1.Value = dr["Article"].ToString();
                     sp2.ParameterName = "@sizecode";
@@ -257,7 +257,7 @@ order by e.Seq, f.Seq", masterID);
                     sp4.ParameterName = "@orderid";
                     sp4.Value = this.CurrentMaintain["OrderID"].ToString();
 
-                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                    IList<SqlParameter> cmds = new List<SqlParameter>();
                     cmds.Add(sp1);
                     cmds.Add(sp2);
                     cmds.Add(sp3);
@@ -1160,7 +1160,7 @@ where o.ID = '{0}'
                         {
                             IList<DataRow> orderQtyShipData;
                             sqlCmd = string.Format("select Seq,BuyerDelivery,ShipmodeID,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", orderID);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -1295,7 +1295,7 @@ order by oa.Seq,os.Seq",
         {
             IList<DataRow> orderQtyShipData;
             string sqlCmd = string.Format("select Seq, BuyerDelivery,ShipmodeID,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["OrderID"].ToString());
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -1318,14 +1318,14 @@ order by oa.Seq,os.Seq",
         // Special Instruction
         private void BtnSpecialInstruction_Click(object sender, EventArgs e)
         {
-            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(this.CurrentMaintain["SpecialInstruction"].ToString(), "Special Instruction", false, null);
+            Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(this.CurrentMaintain["SpecialInstruction"].ToString(), "Special Instruction", false, null);
             callNextForm.ShowDialog(this);
         }
 
         // Carton Dimension
         private void BtnCartonDimension_Click(object sender, EventArgs e)
         {
-            Sci.Production.Packing.P02_CartonSummary callNextForm = new Sci.Production.Packing.P02_CartonSummary(this.CurrentMaintain["OrderID"].ToString());
+            P02_CartonSummary callNextForm = new P02_CartonSummary(this.CurrentMaintain["OrderID"].ToString());
             callNextForm.ShowDialog(this);
         }
 
@@ -2725,7 +2725,7 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
 
         private void TxtCartonRef_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select RefNo,Description,STR(CtnLength,8,4)+'*'+STR(CtnWidth,8,4)+'*'+STR(CtnHeight,8,4) as Dim from LocalItem where Category = 'CARTON' and Junk = 0 order by RefNo", "10,25,25", this.txtCartonRef.Text.Trim());
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select RefNo,Description,STR(CtnLength,8,4)+'*'+STR(CtnWidth,8,4)+'*'+STR(CtnHeight,8,4) as Dim from LocalItem where Category = 'CARTON' and Junk = 0 order by RefNo", "10,25,25", this.txtCartonRef.Text.Trim());
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -2737,7 +2737,7 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
 
         private void TxtCartonRefBalance_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select RefNo,Description,STR(CtnLength,8,4)+'*'+STR(CtnWidth,8,4)+'*'+STR(CtnHeight,8,4) as Dim from LocalItem where Category = 'CARTON' and Junk = 0 order by RefNo", "10,25,25", this.txtCartonRefBalance.Text.Trim());
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select RefNo,Description,STR(CtnLength,8,4)+'*'+STR(CtnWidth,8,4)+'*'+STR(CtnHeight,8,4) as Dim from LocalItem where Category = 'CARTON' and Junk = 0 order by RefNo", "10,25,25", this.txtCartonRefBalance.Text.Trim());
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

@@ -13,7 +13,7 @@ using System.Diagnostics;
 
 namespace Sci.Production.Quality
 {
-    public partial class P06_Detail : Sci.Win.Subs.Input4
+    public partial class P06_Detail : Win.Subs.Input4
     {
         private string loginID = Sci.Env.User.UserID;
         private DataRow maindr;
@@ -91,7 +91,7 @@ namespace Sci.Production.Quality
             }
         }
 
-        protected override Ict.DualResult OnRequery(out System.Data.DataTable datas)
+        protected override DualResult OnRequery(out DataTable datas)
         {
             Dictionary<string, string> Result_RowSource = new Dictionary<string, string>();
             Result_RowSource.Add("Pass", "Pass");
@@ -102,7 +102,7 @@ namespace Sci.Production.Quality
             this.comboResult.DisplayMember = "Value";
 
             #region 表頭設定
-            Ict.DualResult dResult;
+            DualResult dResult;
             string cmd = "select * from ColorFastness WITH (NOLOCK) where id=@id";
 
             List<SqlParameter> sqm = new List<SqlParameter>();
@@ -156,7 +156,7 @@ namespace Sci.Production.Quality
         }
 
         // 重組grid view
-        protected override void OnRequeryPost(System.Data.DataTable datas)
+        protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
             DataTable dtpo, dtsupp;
@@ -258,7 +258,7 @@ namespace Sci.Production.Quality
             #endregion
 
             #region -- seqMskCell
-            Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings seqMskCell = new DataGridViewGeneratorMaskedTextColumnSettings();
+            DataGridViewGeneratorMaskedTextColumnSettings seqMskCell = new DataGridViewGeneratorMaskedTextColumnSettings();
 
             seqMskCell.CellMouseClick += (s, e) =>
             {
@@ -884,7 +884,7 @@ namespace Sci.Production.Quality
             return base.OnSaveBefore();
         }
 
-        protected override Ict.DualResult OnSave()
+        protected override DualResult OnSave()
         {
             DualResult upResult;
             string update_cmd = string.Empty;

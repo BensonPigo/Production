@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R03 : Sci.Win.Tems.PrintForm
+    public partial class R03 : Win.Tems.PrintForm
     {
         string season;
         string mdivision;
@@ -113,7 +113,7 @@ namespace Sci.Production.Warehouse
         }
 
         // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlSeparateByWK = string.Empty;
 
@@ -545,7 +545,7 @@ where 1=1
 
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R03.xltx"); // 預先開啟excel app
             this.ShowWaitMessage("Excel Processing...");
-            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R03.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R03.xltx", objApp);
 
             // com.TransferArray_Limit = 200000;
             com.ColumnsAutoFit = true;

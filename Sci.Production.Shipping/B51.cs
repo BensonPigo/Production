@@ -11,7 +11,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B51
     /// </summary>
-    public partial class B51 : Sci.Win.Tems.Input6
+    public partial class B51 : Win.Tems.Input6
     {
         private DataTable WrongUnitID;
 

@@ -8,7 +8,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P02_BatchPrint
     /// </summary>
-    public partial class P02_BatchPrint : Sci.Win.Tems.PrintForm
+    public partial class P02_BatchPrint : Win.Tems.PrintForm
     {
         private string receiver;
         private string incharge;
@@ -32,7 +32,7 @@ namespace Sci.Production.Shipping
         private void TxtReceiver_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = string.Format("select distinct Receiver from Express_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["ID"]));
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20", this.txtReceiver.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "20", this.txtReceiver.Text, false, ",");
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)

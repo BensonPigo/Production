@@ -8,7 +8,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Shipping
 {
-    public partial class R18 : Sci.Win.Tems.PrintForm
+    public partial class R18 : Win.Tems.PrintForm
     {
         private DataTable PrintTable;
         private string ShippingExpenseID_s_Where;
@@ -25,7 +25,7 @@ namespace Sci.Production.Shipping
         private void TxtShippingExpenseID_s_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = "select ID from ShipExpense";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20", string.Empty, "ID");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "20", string.Empty, "ID");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -38,7 +38,7 @@ namespace Sci.Production.Shipping
         private void TxtShippingExpenseID_e_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = "select ID from ShipExpense";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20", string.Empty, "ID");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "20", string.Empty, "ID");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

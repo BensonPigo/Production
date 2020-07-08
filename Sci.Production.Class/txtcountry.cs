@@ -7,19 +7,19 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtcountry : Sci.Win.UI._UserControl
+    public partial class txtcountry : _UserControl
     {
         public txtcountry()
         {
             this.InitializeComponent();
         }
 
-        public Sci.Win.UI.TextBox TextBox1
+        public Win.UI.TextBox TextBox1
         {
             get { return this.textBox1; }
         }
 
-        public Sci.Win.UI.DisplayBox DisplayBox1
+        public DisplayBox DisplayBox1
         {
             get { return this.displayBox1; }
         }
@@ -64,7 +64,7 @@ namespace Sci.Production.Class
 
         private void textBox1_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Alias from Country WITH (NOLOCK) where Junk = 0 order by ID", "4,30", this.textBox1.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Alias from Country WITH (NOLOCK) where Junk = 0 order by ID", "4,30", this.textBox1.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

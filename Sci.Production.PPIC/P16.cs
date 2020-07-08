@@ -10,7 +10,7 @@ using System.Reflection;
 
 namespace Sci.Production.PPIC
 {
-    public partial class P16 : Sci.Win.Tems.QueryForm
+    public partial class P16 : Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_balance;
 
@@ -35,15 +35,15 @@ namespace Sci.Production.PPIC
                 this.calEstUsageAndBalance();
             };
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
             qty.CellMouseDoubleClick += (s, e) =>
             {
                 DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                Sci.Production.PPIC.P01_QtyShip callNextForm = new Sci.Production.PPIC.P01_QtyShip(MyUtility.Convert.GetString(dr["ID"]), this.txtSPNo.Text);
+                P01_QtyShip callNextForm = new P01_QtyShip(MyUtility.Convert.GetString(dr["ID"]), this.txtSPNo.Text);
                 callNextForm.ShowDialog(this);
             };
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings qty2 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings qty2 = new DataGridViewGeneratorNumericColumnSettings();
             qty2.CellMouseDoubleClick += (s, e) =>
             {
                 DataRow dr = this.grid2.GetDataRow<DataRow>(e.RowIndex);

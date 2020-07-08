@@ -10,7 +10,7 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P01_Import : Sci.Win.Subs.Base
+    public partial class P01_Import : Win.Subs.Base
     {
         DataRow dr_artworkpo;
         DataTable dt_artworkpoDetail;
@@ -115,7 +115,7 @@ namespace Sci.Production.Subcon
                 strSQLCmd = this.QuoteFromTmsCost();
             }
 
-            Ict.DualResult result;
+            DualResult result;
             if (result = DBProxy.Current.Select(null, strSQLCmd, out this.dtArtwork))
             {
                 DualResult resultGetSpecialRecordData = this.GetSpecialRecordData();
@@ -149,7 +149,7 @@ namespace Sci.Production.Subcon
         {
             base.OnFormLoaded();
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
                 DataRow ddr = this.gridBatchImport.GetDataRow<DataRow>(e.RowIndex);
@@ -159,7 +159,7 @@ namespace Sci.Production.Subcon
                 ddr.EndEdit();
             };
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.CellValidating += (s, e) =>
             {
                 DataRow ddr = this.gridBatchImport.GetDataRow<DataRow>(e.RowIndex);
@@ -168,7 +168,7 @@ namespace Sci.Production.Subcon
                 ddr.EndEdit();
             };
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings col_ReqQtyIssueQty = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings col_ReqQtyIssueQty = new DataGridViewGeneratorNumericColumnSettings();
 
             col_ReqQtyIssueQty.CellMouseDoubleClick += (s, e) =>
             {
@@ -178,7 +178,7 @@ namespace Sci.Production.Subcon
                     return;
                 }
 
-                var frm = new Sci.Production.Subcon.P01_AccuPoQtyList(dr);
+                var frm = new P01_AccuPoQtyList(dr);
                 frm.ShowDialog();
             };
 

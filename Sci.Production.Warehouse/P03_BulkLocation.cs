@@ -6,7 +6,7 @@ using Ict;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P03_BulkLocation : Sci.Win.Subs.Base
+    public partial class P03_BulkLocation : Win.Subs.Base
     {
         DataRow dr;
         string stocktype;

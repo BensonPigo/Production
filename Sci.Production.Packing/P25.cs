@@ -11,7 +11,7 @@ using System.Data.SqlClient;
 namespace Sci.Production.Packing
 {
     /// <inheritdoc/>
-    public partial class P25 : Sci.Win.Tems.QueryForm
+    public partial class P25 : Win.Tems.QueryForm
     {
         private DataTable gridData;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;

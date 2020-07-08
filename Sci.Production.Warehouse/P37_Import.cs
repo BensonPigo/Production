@@ -9,7 +9,7 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P37_Import : Sci.Win.Subs.Base
+    public partial class P37_Import : Win.Subs.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
@@ -157,7 +157,7 @@ where   f.InQty - f.OutQty + f.AdjustQty > 0
                 }
 
                 this.ShowWaitMessage("Data Loading....");
-                Ict.DualResult result;
+                DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), cmds, out this.dtScrap))
                 {
                     if (this.dtScrap.Rows.Count == 0)
@@ -189,7 +189,7 @@ where   f.InQty - f.OutQty + f.AdjustQty > 0
             base.OnFormLoaded();
 
             #region -- Transfer Qty Valid --
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.IsSupportNegative = true;
             ns.CellValidating += (s, e) =>
                 {
@@ -201,7 +201,7 @@ where   f.InQty - f.OutQty + f.AdjustQty > 0
                 };
             #endregion
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ns2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ns2 = new DataGridViewGeneratorTextColumnSettings();
             ns2.CellFormatting = (s, e) =>
             {
                 DataRow dr = this.gridImport.GetDataRow(e.RowIndex);

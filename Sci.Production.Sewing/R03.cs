@@ -11,7 +11,7 @@ namespace Sci.Production.Sewing
     /// <summary>
     /// R03
     /// </summary>
-    public partial class R03 : Sci.Win.Tems.PrintForm
+    public partial class R03 : Win.Tems.PrintForm
     {
         private DateTime? output1;
         private DateTime? output2;
@@ -77,7 +77,7 @@ namespace Sci.Production.Sewing
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             #region 組撈基礎資料的SQL

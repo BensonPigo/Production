@@ -9,7 +9,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R18 : Sci.Win.Tems.PrintForm
+    public partial class R18 : Win.Tems.PrintForm
     {
         DataTable dt;
 

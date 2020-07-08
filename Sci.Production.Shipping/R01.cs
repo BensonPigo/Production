@@ -12,7 +12,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R01
     /// </summary>
-    public partial class R01 : Sci.Win.Tems.PrintForm
+    public partial class R01 : Win.Tems.PrintForm
     {
         private string shipper;
         private string brand;
@@ -90,7 +90,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             StringBuilder sqlCmd_where = new StringBuilder();

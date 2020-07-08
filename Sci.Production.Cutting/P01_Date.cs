@@ -6,7 +6,7 @@ using System.Transactions;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P01_Date : Sci.Win.Subs.Base
+    public partial class P01_Date : Win.Subs.Base
     {
         public bool cancel = false;
 

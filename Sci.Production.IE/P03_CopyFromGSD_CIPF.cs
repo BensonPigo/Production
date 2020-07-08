@@ -5,7 +5,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// P03_CopyFromGSD_CIPF
     /// </summary>
-    public partial class P03_CopyFromGSD_CIPF : Sci.Win.Forms.Base
+    public partial class P03_CopyFromGSD_CIPF : Win.Forms.Base
     {
         /// <summary>
         /// P03_CopyFromGSD_CIPF

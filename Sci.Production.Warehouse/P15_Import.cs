@@ -9,9 +9,9 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P15_Import : Sci.Win.Subs.Base
+    public partial class P15_Import : Win.Subs.Base
     {
-        public Sci.Win.Tems.Base P15;
+        public Win.Tems.Base P15;
         DataRow dr_master;
         DataTable dt_detail;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
@@ -137,7 +137,7 @@ and c.lock = 0 ", this.dr_master["requestid"]));
                 }
             };
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
                 if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))

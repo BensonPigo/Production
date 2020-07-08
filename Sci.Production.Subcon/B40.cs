@@ -9,7 +9,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Subcon
 {
-    public partial class B40 : Sci.Win.Tems.Input1
+    public partial class B40 : Win.Tems.Input1
     {
         IList<DataRow> Subprocesslist;
         DataTable DT_RFIDReader_Panel;
@@ -102,7 +102,7 @@ where rp.RFIDReaderID ='{this.CurrentMaintain["ID"]}'
             if (this.Subprocesslist != null)
             {
                 DataTable sourceDt = this.Subprocesslist.CopyToDataTable();
-                System.Data.DataColumn newColumn = new System.Data.DataColumn("RFIDReaderID", typeof(string));
+                DataColumn newColumn = new DataColumn("RFIDReaderID", typeof(string));
                 newColumn.DefaultValue = this.CurrentMaintain["ID"];
                 sourceDt.Columns.Add(newColumn);
                 string in_update = $@"
@@ -188,7 +188,7 @@ delete RFIDReader_SubProcess where RFIDReaderID =  '{this.CurrentMaintain["ID"]}
 
             string sql = "Select Distinct ID From SewingLine WITH (NOLOCK) WHERE Junk != 1  AND FactoryID = @FactoryID ";
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, listSQLParameter, "3", line, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, listSQLParameter, "3", line, false, ",");
             item.Width = 300;
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
@@ -234,7 +234,7 @@ delete RFIDReader_SubProcess where RFIDReaderID =  '{this.CurrentMaintain["ID"]}
         private void txtSubprocess_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "select ID from Subprocess WITH (NOLOCK) where Junk = '0'";
-            Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlWhere, headercaptions: "Subprocess ID", columnwidths: "30", defaults: this.txtSubprocess.Text, defaultValueColumn: "ID");
+            Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlWhere, headercaptions: "Subprocess ID", columnwidths: "30", defaults: this.txtSubprocess.Text, defaultValueColumn: "ID");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

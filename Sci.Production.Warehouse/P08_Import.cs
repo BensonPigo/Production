@@ -12,7 +12,7 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P08_Import : Sci.Win.Subs.Base
+    public partial class P08_Import : Win.Subs.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
@@ -32,14 +32,14 @@ namespace Sci.Production.Warehouse
 
             #region Location 右鍵開窗
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings Location_Setting = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings Location_Setting = new DataGridViewGeneratorTextColumnSettings();
             Location_Setting.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataRow currentRow = this.grid.GetDataRow<DataRow>(e.RowIndex);
                     string currentLocation = currentRow["Location"].ToString();
-                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation("B", currentLocation);
+                    Win.Tools.SelectItem2 item = Prgs.SelectLocation("B", currentLocation);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {

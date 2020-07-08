@@ -9,7 +9,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P10_P11_Import
     /// </summary>
-    public partial class P10_P11_Import : Sci.Win.Forms.Base
+    public partial class P10_P11_Import : Win.Forms.Base
     {
         private DataRow dr_master;
         private DataTable dt_detail;
@@ -94,7 +94,7 @@ namespace Sci.Production.PPIC
         {
             base.OnFormLoaded();
             DataTable dt;
-            Ict.DualResult result;
+            DualResult result;
             string typeSql = (this.FormCode == "Fabric") ? " and FabricType = 'F'" : " and FabricType = 'A'";
             string sqlcmd = string.Format(Prgs.selePoItemSqlCmd(), this.Dr_master["POID"].ToString()) + typeSql;
             if (result = DBProxy.Current.Select(null, sqlcmd, out dt))

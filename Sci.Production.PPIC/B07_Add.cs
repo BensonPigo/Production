@@ -10,7 +10,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// B07_Add
     /// </summary>
-    public partial class B07_Add : Sci.Win.Subs.Base
+    public partial class B07_Add : Win.Subs.Base
     {
         /// <summary>
         /// B07_Add

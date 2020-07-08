@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P19_Import : Sci.Win.Subs.Base
+    public partial class P19_Import : Win.Subs.Base
     {
         DataRow dr_master;  // 抓主頁的表頭資料用
         DataTable dt_detail;    // 將匯入資料寫入主頁的明細用
@@ -135,7 +135,7 @@ and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
                 sbSQLCmd.Append($" AND PSD.FabricType= '{this.comboFabric.SelectedValue.ToString()}' ");
             }
 
-            Ict.DualResult result;
+            DualResult result;
             this.ShowWaitMessage("Data Loading....");
             if (result = DBProxy.Current.Select(null, sbSQLCmd.ToString(), cmds, out this.dtImportData))
             {
@@ -172,7 +172,7 @@ and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
             MyUtility.Tool.SetupCombox(this.comboStockType, 2, 1, "B,Bulk,I,Inventory");
             this.comboStockType.SelectedIndex = 0;
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
                 if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))

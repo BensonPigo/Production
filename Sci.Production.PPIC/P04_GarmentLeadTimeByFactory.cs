@@ -7,7 +7,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P04_GarmentLeadTimeByFactory
     /// </summary>
-    public partial class P04_GarmentLeadTimeByFactory : Sci.Win.Subs.Input4
+    public partial class P04_GarmentLeadTimeByFactory : Win.Subs.Input4
     {
         /// <summary>
         /// P04_GarmentLeadTimeByFactory

@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P05_IrregularQtyReason : Sci.Win.Subs.Base
+    public partial class P05_IrregularQtyReason : Win.Subs.Base
     {
         DataRow _masterData;
         DataTable _detailDatas;

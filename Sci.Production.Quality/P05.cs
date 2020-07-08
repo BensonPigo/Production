@@ -10,7 +10,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Quality
 {
-    public partial class P05 : Sci.Win.Tems.Input6
+    public partial class P05 : Win.Tems.Input6
     {
         // 宣告Context Menu Item
         ToolStripMenuItem add;
@@ -149,7 +149,7 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
+                var frm = new P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -162,7 +162,7 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
+                var frm = new P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -175,7 +175,7 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
+                var frm = new P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -188,7 +188,7 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
+                var frm = new P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -201,7 +201,7 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
+                var frm = new P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -236,7 +236,7 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
 
             // int ID = MyUtility.Convert.GetInt(dt.Rows[0]["id"]);
             //    ID = ID + 1;
-            Sci.Production.Quality.P05_Detail callNewDetailForm = new P05_Detail(this.IsSupportEdit, "0", null, null, null, this.displaySP.Text);
+            P05_Detail callNewDetailForm = new P05_Detail(this.IsSupportEdit, "0", null, null, null, this.displaySP.Text);
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
             this.RenewData();
@@ -255,7 +255,7 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
             }
 
             string id = this.CurrentDetailData["ID"].ToString();
-            var frm = new Sci.Production.Quality.P05_Detail(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
+            var frm = new P05_Detail(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
             frm.ShowDialog(this);
             frm.Dispose();
             this.contextMenuStrip();

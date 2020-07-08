@@ -6,7 +6,7 @@ using System.Collections;       // file使用Hashtable時，必須引入這個�
 
 namespace Sci.Production.Quality
 {
-    public partial class B07 : Sci.Win.Tems.Input1
+    public partial class B07 : Win.Tems.Input1
     {
         Hashtable ht = new Hashtable();
 

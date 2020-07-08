@@ -6,7 +6,7 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P01_FarmInList : Sci.Win.Subs.Base
+    public partial class P01_FarmInList : Win.Subs.Base
     {
         protected DataRow dr;
 

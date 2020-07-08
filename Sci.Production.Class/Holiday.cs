@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Sci.Production.Class
 {
-    public partial class Holiday : Sci.Win.UI._UserControl
+    public partial class Holiday : Win.UI._UserControl
     {
         public DateTime Today;
 

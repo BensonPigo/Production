@@ -5,7 +5,7 @@ using Ict;
 
 namespace Sci.Production.Quality
 {
-    public partial class B08 : Sci.Win.Tems.Input1
+    public partial class B08 : Win.Tems.Input1
     {
         public B08(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -58,7 +58,7 @@ namespace Sci.Production.Quality
 
         private void txtRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                 @"SELECT DISTINCT RefNo
 FROM Fabric WHERE junk=0 AND TYPE='F' ORDER BY RefNo", "25", "Refno");
             DialogResult returnResult = item.ShowDialog();

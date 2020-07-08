@@ -15,7 +15,7 @@ using System.Linq;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P01 : Sci.Win.Tems.Input6
+    public partial class P01 : Win.Tems.Input6
     {
         string artworkunit;
         bool isNeedPlanningB03Quote = false;
@@ -145,7 +145,7 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
             // !EMPTY(APVName) OR !EMPTY(Closed)，只能編輯remark欄。
             if (this.CurrentMaintain["Status"].ToString() != "New")
             {
-                var frm = new Sci.Production.PublicForm.EditRemark("artworkpo", "remark", this.CurrentMaintain);
+                var frm = new PublicForm.EditRemark("artworkpo", "remark", this.CurrentMaintain);
                 frm.ShowDialog(this);
                 this.RenewData();
                 return false;
@@ -520,7 +520,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                 }
             }
 
-            var frm = new Sci.Production.Subcon.P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, detailDatas);
+            var frm = new P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, detailDatas);
 
             // 取得價格異常DataTable，如果有，則存在 P30的_Irregular_Price_Table，  開啟P30_IrregularPriceReason時後直接丟進去，避免再做一次查詢
             this.ShowWaitMessage("Data Loading...");
@@ -541,7 +541,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
         protected override void OnDetailGridSetup()
         {
             #region farm out qty 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.CellMouseDoubleClick += (s, e) =>
             {
                 if (!this.EditMode)
@@ -552,14 +552,14 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                         return;
                     }
 
-                    var frm = new Sci.Production.Subcon.P01_FarmOutList(dr);
+                    var frm = new P01_FarmOutList(dr);
                     frm.ShowDialog(this);
                     this.RenewData();
                 }
             };
             #endregion
             #region Farm In qty 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.CellMouseDoubleClick += (s, e) =>
             {
                 if (!this.EditMode)
@@ -570,14 +570,14 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                         return;
                     }
 
-                    var frm = new Sci.Production.Subcon.P01_FarmInList(dr);
+                    var frm = new P01_FarmInList(dr);
                     frm.ShowDialog(this);
                     this.RenewData();
                 }
             };
             #endregion
             #region AP qty 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts3 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts3 = new DataGridViewGeneratorTextColumnSettings();
             ts3.CellMouseDoubleClick += (s, e) =>
             {
                 if (!this.EditMode)
@@ -588,14 +588,14 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                         return;
                     }
 
-                    var frm = new Sci.Production.Subcon.P01_Ap(dr);
+                    var frm = new P01_Ap(dr);
                     frm.ShowDialog(this);
                     this.RenewData();
                 }
             };
             #endregion
             #region Unit Price Valid
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
@@ -611,7 +611,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             #endregion
 
             #region qtygarment Valid
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
@@ -832,7 +832,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                 return;
             }
 
-            var frm = new Sci.Production.Subcon.P01_Import(dr, (DataTable)this.detailgridbs.DataSource, "P01", this.isNeedPlanningB03Quote);
+            var frm = new P01_Import(dr, (DataTable)this.detailgridbs.DataSource, "P01", this.isNeedPlanningB03Quote);
             frm.ShowDialog(this);
 
             DataTable dg = (DataTable)this.detailgridbs.DataSource;
@@ -889,7 +889,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                 return;
             }
 
-            var frm = new Sci.Production.Subcon.P01_BatchCreate("P01");
+            var frm = new P01_BatchCreate("P01");
             frm.ShowDialog(this);
             this.ReloadDatas();
         }
@@ -898,15 +898,15 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
         protected override bool ClickPrint()
         {
             // 跳轉至PrintForm
-            Sci.Production.Subcon.P01_Print callPrintForm = new Sci.Production.Subcon.P01_Print(this.CurrentMaintain, this.numTotal.Text, this.numTotalPOQty.Text);
+            P01_Print callPrintForm = new P01_Print(this.CurrentMaintain, this.numTotal.Text, this.numTotalPOQty.Text);
             callPrintForm.ShowDialog(this);
             return true;
         }
 
         private void txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
         {
-            Production.Class.txtartworktype_fty o;
-            o = (Production.Class.txtartworktype_fty)sender;
+            Class.txtartworktype_fty o;
+            o = (Class.txtartworktype_fty)sender;
 
             if ((o.Text != o.OldValue) && this.EditMode)
             {
@@ -1007,7 +1007,7 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
                 }
             }
 
-            var frm = new Sci.Production.Subcon.P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, detailDatas);
+            var frm = new P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, detailDatas);
             frm.ShowDialog(this);
 
             // 畫面關掉後，再檢查一次有無價格異常
@@ -1041,7 +1041,7 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
             {
                 if (this.batchapprove == null || this.batchapprove.IsDisposed)
                 {
-                    this.batchapprove = new Sci.Production.Subcon.P01_BatchApprove(this.reload);
+                    this.batchapprove = new P01_BatchApprove(this.reload);
                     this.batchapprove.Show();
                 }
                 else
@@ -1156,7 +1156,7 @@ where id = '{spNo}' and Category = 'S'
                 }
             }
 
-            var IrregularPriceReason = new Sci.Production.Subcon.P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, detailDatas);
+            var IrregularPriceReason = new P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, detailDatas);
 
             P01.tmp_ModifyTable = null;
 

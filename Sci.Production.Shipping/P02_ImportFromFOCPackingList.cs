@@ -15,7 +15,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P02_ImportFromFOCPackingList
     /// </summary>
-    public partial class P02_ImportFromFOCPackingList : Sci.Win.Subs.Base
+    public partial class P02_ImportFromFOCPackingList : Win.Subs.Base
     {
         private DataRow masterData;
         private string chkPackingListID = string.Empty;
@@ -34,8 +34,8 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ctnno = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings receiver = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ctnno = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings receiver = new DataGridViewGeneratorTextColumnSettings();
 
             // CTNNo要Trim掉空白字元
             ctnno.CellValidating += (s, e) =>
@@ -153,9 +153,9 @@ where pd.ID = '{0}'
         private bool CheckPLNo(string pLNo)
         {
             // sql參數
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", pLNo);
+            SqlParameter sp1 = new SqlParameter("@id", pLNo);
 
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            IList<SqlParameter> cmds = new List<SqlParameter>();
             cmds.Add(sp1);
 
             DataTable packListData;

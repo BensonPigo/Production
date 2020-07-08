@@ -51,7 +51,7 @@ namespace Sci.Production.Class.Commons
         /// <param name="queryfors">ComboBox</param>
         /// <param name="showErr"><![CDATA[Func<Ict.DualResult, bool>]]></param>
         /// <param name="reloadDatas"><![CDATA[Func<Ict.DualResult>]]></param>
-        public static void SetupQueryFors_SMNoticeStatus(SMNoticeCategoryEnum sMNoticeCategory, Sci.Win.Tems.Input1 form, Win.UI.ComboBox queryfors, Func<Ict.DualResult, bool> showErr, Func<Ict.DualResult> reloadDatas)
+        public static void SetupQueryFors_SMNoticeStatus(SMNoticeCategoryEnum sMNoticeCategory, Win.Tems.Input1 form, ComboBox queryfors, Func<DualResult, bool> showErr, Func<DualResult> reloadDatas)
         {
             var resetDefaultWhere = new Action(() =>
             {
@@ -135,7 +135,7 @@ Exists (
         /// <param name="queryfors">ComboBox</param>
         /// <param name="showErr"><![CDATA[Func<Ict.DualResult, bool>]]></param>
         /// <param name="reloadDatas"><![CDATA[Func<Ict.DualResult>]]></param>
-        public static void SetupQueryFors_Pattern(Sci.Win.Tems.Input1 form, Win.UI.ComboBox queryfors, Func<Ict.DualResult, bool> showErr, Func<Ict.DualResult> reloadDatas)
+        public static void SetupQueryFors_Pattern(Win.Tems.Input1 form, ComboBox queryfors, Func<DualResult, bool> showErr, Func<DualResult> reloadDatas)
         {
             var resetDefaultWhere = new Action(() =>
             {
@@ -183,7 +183,7 @@ Exists (
         /// <param name="queryfors">ComboBox</param>
         /// <param name="showErr"><![CDATA[Func<Ict.DualResult, bool>]]></param>
         /// <param name="reloadDatas"><![CDATA[Func<Ict.DualResult>]]></param>
-        public static void SetupQueryFors_Marker(Sci.Win.Tems.Input1 form, Win.UI.ComboBox queryfors, Func<Ict.DualResult, bool> showErr, Func<Ict.DualResult> reloadDatas)
+        public static void SetupQueryFors_Marker(Win.Tems.Input1 form, ComboBox queryfors, Func<DualResult, bool> showErr, Func<DualResult> reloadDatas)
         {
             var resetDefaultWhere = new Action(() =>
             {
@@ -232,7 +232,7 @@ Exists (
         /// <param name="showErr"><![CDATA[Func<Ict.DualResult, bool>]]></param>
         /// <param name="reloadDatas"><![CDATA[Func<Ict.DualResult>]]></param>
         /// <param name="resetDefaultWhere">Action</param>
-        private static void SharedQueryForsSetup(string dropdownType, Win.UI.ComboBox queryfors, Func<Ict.DualResult, bool> showErr, Func<Ict.DualResult> reloadDatas, Action resetDefaultWhere)
+        private static void SharedQueryForsSetup(string dropdownType, ComboBox queryfors, Func<DualResult, bool> showErr, Func<DualResult> reloadDatas, Action resetDefaultWhere)
         {
             using (var drQueryFor = DBProxy.Current.SelectEx("SELECT ID, Name FROM DropDownList Where Type = '" + dropdownType + "' ORDER BY ID"))
             {
@@ -530,7 +530,7 @@ Exists (
 #if DEBUG
                 app.Visible = true;
 #endif
-                var mainSheet = book.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
+                var mainSheet = book.Worksheets[1] as MsExcel.Worksheet;
 
                 var pageHBreakList = new List<int>(); // 換頁符號的水平插入點，基本上P2的時候換一次，之後的TrimCard每頁換一次
 
@@ -577,7 +577,7 @@ Exists (
 
                 #region Save & Show Excel
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_Pattern-P01_PrintSMnotice");
-                Microsoft.Office.Interop.Excel.Workbook workbook = app.ActiveWorkbook;
+                MsExcel.Workbook workbook = app.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
                 app.Quit();
@@ -2250,7 +2250,7 @@ Where o.ID = @ID
 #if DEBUG
                 app.Visible = true;
 #endif
-                var mainSheet = book.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
+                var mainSheet = book.Worksheets[1] as MsExcel.Worksheet;
                 int rowPosition = 1; // 各責任區域輪流使用
                 if (PrintSMNoticeDevTrimCardBlock1(mainSheet, smID, ref rowPosition) == false)
                 {
@@ -2491,7 +2491,7 @@ order by x.tp, x.PNO
 #if DEBUG
                 app.Visible = true;
 #endif
-                mainSheet = book.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
+                mainSheet = book.Worksheets[1] as MsExcel.Worksheet;
 
                 int rowPosition = 1; // 各責任區域輪流使用
                 PrintGarmentListBlock1(mainSheet, uKey, ref rowPosition); // Block1: Header - Pattern
@@ -2629,9 +2629,9 @@ Where p.UKey = @UKey";
 
                 // line6
                 var sizeRoundText = string.Format("Size Round#: {0}", row.Field<string>("SizeRound"));
-                using (var img = new System.Drawing.Bitmap(1000, 1000))
+                using (var img = new Bitmap(1000, 1000))
                 using (var gra = System.Drawing.Graphics.FromImage(img))
-                using (var fnt = new System.Drawing.Font("Arial", 10f))
+                using (var fnt = new Font("Arial", 10f))
                 {
                     sheet.GetRange("A6").WrapText = true;
                     sheet.GetRange("A6").SetValue(sizeRoundText);
@@ -2851,9 +2851,9 @@ Order by (
                     // 關於第三區塊的WorkSheet
                     var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("B3") as MsExcel.Worksheet;
                     var articleCellWidth = Convert.ToInt32(Math.Floor((double)thisSheet.GetRange(3, 2, 9, 2).Width * 1.3333));
-                    using (var img = new System.Drawing.Bitmap(1000, 1000))
+                    using (var img = new Bitmap(1000, 1000))
                     using (var gra = System.Drawing.Graphics.FromImage(img))
-                    using (var fnt = new System.Drawing.Font("Arial", 10f))
+                    using (var fnt = new Font("Arial", 10f))
                     {
                         try
                         {
@@ -2986,9 +2986,9 @@ Where p.UKey = @UKey
                 try
                 {
                     var remarkCellWidth = Convert.ToInt32((double)thisSheet.GetRange(1, 2, 9, 2).Width * 1.2);
-                    using (var img = new System.Drawing.Bitmap(1000, 1000))
+                    using (var img = new Bitmap(1000, 1000))
                     using (var gra = System.Drawing.Graphics.FromImage(img))
-                    using (var fnt = new System.Drawing.Font("Arial", 10f))
+                    using (var fnt = new Font("Arial", 10f))
                     {
                         thisSheet.GetRange("A2").Value = row.Field<string>("HisRemark");
                         var heightOfRemark = gra.MeasureString(row.Field<string>("HisRemark") ?? string.Empty, fnt, remarkCellWidth).Height / 1.2;

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P14 : Sci.Win.Tems.Input6
+    public partial class P14 : Win.Tems.Input6
     {
         private string gridExportInvKey;
         private bool canEdit = false;

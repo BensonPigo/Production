@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P20_Import_RFID : Sci.Win.Forms.Base
+    public partial class P20_Import_RFID : Win.Forms.Base
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
@@ -95,7 +95,7 @@ namespace Sci.Production.Cutting
         {
             base.OnFormLoaded();
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings Layer = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings Layer = new DataGridViewGeneratorNumericColumnSettings();
             Layer.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)

@@ -8,7 +8,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_B05_ThreadRatio
     /// </summary>
-    public partial class B05_ThreadRatio : Sci.Win.Subs.Base
+    public partial class B05_ThreadRatio : Win.Subs.Base
     {
         private string id;
 

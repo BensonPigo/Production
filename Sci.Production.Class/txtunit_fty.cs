@@ -4,13 +4,13 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtunit_fty : Sci.Win.UI.TextBox
+    public partial class txtunit_fty : Win.UI.TextBox
     {
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from Unit WITH (NOLOCK) order by ID", "10,40", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Description from Unit WITH (NOLOCK) order by ID", "10,40", this.Text, false, ",");
             item.Width = 580;
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)

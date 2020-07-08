@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
 {
-    public partial class R12 : Sci.Win.Tems.PrintForm
+    public partial class R12 : Win.Tems.PrintForm
     {
         private DataTable[] printData;
         private DateTime? InspectionDate1;
@@ -44,7 +44,7 @@ namespace Sci.Production.Sewing
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlCmd = string.Empty;
             string sqlWhere = string.Empty;

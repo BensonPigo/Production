@@ -11,7 +11,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R33 : Sci.Win.Tems.PrintForm
+    public partial class R33 : Win.Tems.PrintForm
     {
         private DataTable dtResult;
 
@@ -113,7 +113,7 @@ where I.type= 'E' and I.Status = 'Confirmed'
             }
 
             Excel.Application objApp = new Excel.Application();
-            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R33.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R33.xltx", objApp);
             com.UseInnerFormating = false;
             com.WriteTable(this.dtResult, 3);
 

@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class B11 : Sci.Win.Tems.Input1
+    public partial class B11 : Win.Tems.Input1
     {
         public B11(ToolStripMenuItem menuitem)
             : base(menuitem)

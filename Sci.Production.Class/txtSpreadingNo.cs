@@ -4,7 +4,7 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtSpreadingNo : Sci.Win.UI.TextBox
+    public partial class txtSpreadingNo : Win.UI.TextBox
     {
         // private string Where = "";   //" Where junk = 0";
         private string Where = "WHERE 1=1";
@@ -43,7 +43,7 @@ namespace Sci.Production.Class
             }
 
             sql = "select distinct id,CutCell= CutCellID from SpreadingNo WITH (NOLOCK) " + this.Where;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, string.Empty, this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, string.Empty, this.Text, false, ",");
             item.Width = 300;
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)

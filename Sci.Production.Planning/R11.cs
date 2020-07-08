@@ -12,7 +12,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// R11
     /// </summary>
-    public partial class R11 : Sci.Win.Tems.PrintForm
+    public partial class R11 : Win.Tems.PrintForm
     {
         private decimal months;
         private string factory;
@@ -99,7 +99,7 @@ namespace Sci.Production.Planning
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sql parameters declare --
 

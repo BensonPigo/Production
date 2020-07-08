@@ -9,7 +9,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_P03_CopyFromOtherStyle
     /// </summary>
-    public partial class P03_CopyFromOtherStyle : Sci.Win.Subs.Base
+    public partial class P03_CopyFromOtherStyle : Win.Subs.Base
     {
         private DataRow _P03CopyLineMapping;
 

@@ -3,8 +3,10 @@ using Ict;
 
 namespace Sci.Win
 {
-    public partial class SUBBASE : Sci.Win.Subs.Base
+    public partial class SUBBASE : Subs.Base
     {
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SUBBASE"/> class.
         /// </summary>
@@ -49,7 +51,5 @@ namespace Sci.Win
                 this.gridbs.DataSource = datas;
             }
         }
-
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
     }
 }

@@ -8,7 +8,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// ToolStripMenuItem
     /// </summary>
-    public partial class P01_MTLImport : Sci.Win.Subs.Base
+    public partial class P01_MTLImport : Win.Subs.Base
     {
         private DataRow masterData;
 

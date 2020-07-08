@@ -9,7 +9,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P40_Detail
     /// </summary>
-    public partial class P40_Detail : Sci.Win.Subs.Base
+    public partial class P40_Detail : Win.Subs.Base
     {
         private DataRow masterData;
         private string nlCode;

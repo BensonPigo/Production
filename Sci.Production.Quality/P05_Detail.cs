@@ -14,7 +14,7 @@ using System.Diagnostics;
 
 namespace Sci.Production.Quality
 {
-    public partial class P05_Detail : Sci.Win.Subs.Input4
+    public partial class P05_Detail : Win.Subs.Input4
     {
         private string loginID = Sci.Env.User.UserID;
         private string aa = Sci.Env.User.Keyword;
@@ -93,7 +93,7 @@ namespace Sci.Production.Quality
             }
         }
 
-        protected override Ict.DualResult OnRequery(out System.Data.DataTable datas)
+        protected override DualResult OnRequery(out DataTable datas)
         {
             Dictionary<string, string> Result_RowSource = new Dictionary<string, string>();
             Result_RowSource.Add("Pass", "Pass");
@@ -103,7 +103,7 @@ namespace Sci.Production.Quality
             this.comboResult.DisplayMember = "Value";
             #region 表頭設定
 
-            Ict.DualResult dResult;
+            DualResult dResult;
             string cmd = "select * from oven WITH (NOLOCK) where id=@id";
 
             List<SqlParameter> sqm = new List<SqlParameter>();
@@ -152,7 +152,7 @@ namespace Sci.Production.Quality
         }
 
         // 重組grid view
-        protected override void OnRequeryPost(System.Data.DataTable datas)
+        protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
             DataTable dtpo, dtsupp;
@@ -233,7 +233,7 @@ and a.seq1=@seq1";
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings groupCell = new DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings seqMskCell = new DataGridViewGeneratorMaskedTextColumnSettings();
+            DataGridViewGeneratorMaskedTextColumnSettings seqMskCell = new DataGridViewGeneratorMaskedTextColumnSettings();
             seqMskCell.TextMaskFormat = MaskFormat.ExcludePromptAndLiterals;
             DataGridViewGeneratorTextColumnSettings rollCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings chgCell = new DataGridViewGeneratorTextColumnSettings();
@@ -896,7 +896,7 @@ and a.seq1=@seq1";
             return base.OnSaveBefore();
         }
 
-        protected override Ict.DualResult OnSave()
+        protected override DualResult OnSave()
         {
             DualResult upResult = new DualResult(true);
             string update_cmd = string.Empty;

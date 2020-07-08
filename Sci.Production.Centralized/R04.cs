@@ -16,7 +16,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// R04
     /// </summary>
-    public partial class R04 : Sci.Win.Tems.PrintForm
+    public partial class R04 : Win.Tems.PrintForm
     {
         private DataTable printData;
         private DataTable dtAllData;
@@ -76,7 +76,7 @@ namespace Sci.Production.Centralized
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
             this.dtAllData = null;

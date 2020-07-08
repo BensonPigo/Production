@@ -10,7 +10,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R41
     /// </summary>
-    public partial class R41 : Sci.Win.Tems.PrintForm
+    public partial class R41 : Win.Tems.PrintForm
     {
         private DataTable printImport;
         private DataTable printExport;
@@ -51,7 +51,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCondition = new StringBuilder();
             if (!MyUtility.Check.Empty(this.date1))
@@ -238,7 +238,7 @@ namespace Sci.Production.Shipping
         }
 
         // 查詢Import資料
-        private Ict.DualResult QueryImport(string sqlCondition)
+        private DualResult QueryImport(string sqlCondition)
         {
             string sqlCmd = string.Format(
                 @"select v.ID,v.CDate,v.VNContractID,v.DeclareNo,IIF(v.BLNo='',v.WKNo,v.BLNo) as BLWK,vd.NLCode,vd.HSCode,vd.Qty,vd.UnitID,vd.Remark
@@ -251,7 +251,7 @@ order by v.ID", sqlCondition);
         }
 
         // 查詢Export資料
-        private Ict.DualResult QueryExport(string sqlCondition)
+        private DualResult QueryExport(string sqlCondition)
         {
             string sqlCmd = string.Format(
                 @"select v.ID,v.CDate,v.VNContractID,v.DeclareNo,v.InvNo,ed.StyleID,ed.SeasonID,ed.BrandID,ed.ExportQty,
@@ -271,7 +271,7 @@ order by v.ID", sqlCondition);
         }
 
         // 查詢Adjust資料
-        private Ict.DualResult QueryAdjust(string sqlCondition)
+        private DualResult QueryAdjust(string sqlCondition)
         {
             string sqlCmd = string.Format(
                 @"select v.CDate,v.VNContractID,v.DeclareNo,vd.NLCode,isnull(cd.HSCode,'') as HSCode,vd.Qty,isnull(cd.UnitID,'') as UnitID,v.Remark
@@ -285,7 +285,7 @@ order by v.CDate", sqlCondition);
         }
 
         // 查詢ImportDetail資料
-        private Ict.DualResult QueryImportDetail(string sqlCondition)
+        private DualResult QueryImportDetail(string sqlCondition)
         {
             string sqlCmd = string.Format(
                 @"
@@ -306,7 +306,7 @@ order by v.ID", sqlCondition);
         }
 
         // 查詢ExportDetail資料
-        private Ict.DualResult QueryExportDetail(string sqlCondition)
+        private DualResult QueryExportDetail(string sqlCondition)
         {
             string sqlCmd = string.Format(
                 @"
@@ -331,7 +331,7 @@ order by v.ID", sqlCondition);
         }
 
         // 查詢AdjustDetail資料
-        private Ict.DualResult QueryAdjustDetail(string sqlCondition)
+        private DualResult QueryAdjustDetail(string sqlCondition)
         {
             string sqlCmd = string.Format(
                 @"
@@ -352,7 +352,7 @@ order by v.CDate", sqlCondition);
 
         private void TxtContractNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"select id,startdate,EndDate from [Production].[dbo].[VNContract]", "20,10,10", this.Text, false, ",", headercaptions: "Contract No, Start Date, End Date");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"select id,startdate,EndDate from [Production].[dbo].[VNContract]", "20,10,10", this.Text, false, ",", headercaptions: "Contract No, Start Date, End Date");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

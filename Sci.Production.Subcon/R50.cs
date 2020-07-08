@@ -10,7 +10,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R50 : Sci.Win.Tems.PrintForm
+    public partial class R50 : Win.Tems.PrintForm
     {
         public R50(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -36,7 +36,7 @@ namespace Sci.Production.Subcon
         }
 
         // 非同步讀取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             return Result.True;
         }
@@ -109,7 +109,7 @@ Where sub.sub like '%PRT%'
             sql.Append(" order by o.FtyGroup,o.FactoryID,BD.BundleNo,bd.BundleGroup,o.StyleID,o.SeasonID,o.brandid");
 
             // 預先開啟excel app
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R50.xltx");
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R50.xltx");
 
             DataRow dr;
             MyUtility.Check.Seek(sql2.ToString(), out dr, null);
@@ -124,8 +124,8 @@ Where sub.sub like '%PRT%'
             int Cpage = ct / num;
             for (int i = 0; i < Cpage; i++)
             {
-                Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1];
-                Microsoft.Office.Interop.Excel.Worksheet worksheetn = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1];
+                Excel.Worksheet worksheet1 = (Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1];
+                Excel.Worksheet worksheetn = (Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1];
                 worksheet1.Copy(worksheetn);
                 Marshal.ReleaseComObject(worksheet1);
                 Marshal.ReleaseComObject(worksheetn);
@@ -138,7 +138,7 @@ Where sub.sub like '%PRT%'
             using (var cm = cn.CreateCommand())
             {
                 cm.CommandText = sql.ToString();
-                var adp = new System.Data.SqlClient.SqlDataAdapter(cm);
+                var adp = new SqlDataAdapter(cm);
                 var cnt = 0;
                 var start = 0;
                 using (var ds = new DataSet())
@@ -149,7 +149,7 @@ Where sub.sub like '%PRT%'
                         start += num;
 
                         // do some jobs
-                        Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[c];
+                        Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[c];
                         MyUtility.Excel.CopyToXls(ds.Tables[0], string.Empty, "Subcon_R50.xltx", 2, false, null, objApp, wSheet: objSheets);
                         Excel.Worksheet worksheet = objApp.Sheets[c];
                         if (!MyUtility.Check.Empty(this.Date1))

@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Class
 {
-    public partial class txtwhseRefundAction : Sci.Win.UI._UserControl
+    public partial class txtwhseRefundAction : Win.UI._UserControl
     {
         public txtwhseRefundAction()
         {
@@ -23,12 +23,12 @@ namespace Sci.Production.Class
             set { this.whseReason = value; }
         }
 
-        public Sci.Win.UI.TextBox TextBox1
+        public Win.UI.TextBox TextBox1
         {
             get { return this.textBox1; }
         }
 
-        public Sci.Win.UI.DisplayBox DisplayBox1
+        public Win.UI.DisplayBox DisplayBox1
         {
             get { return this.displayBox1; }
         }
@@ -94,8 +94,8 @@ namespace Sci.Production.Class
                 return;
             }
 
-            Sci.Win.Tools.SelectItem item =
-                new Sci.Win.Tools.SelectItem(
+            Win.Tools.SelectItem item =
+                new Win.Tools.SelectItem(
                     "select Id, Description from WhseReason WITH (NOLOCK) where type ='RA' " +
                 string.Format(" and id in ({0})", actionCode), "10,30", this.textBox1.Text);
             DialogResult result = item.ShowDialog();

@@ -13,7 +13,7 @@ using Sci.Utility.Excel;
 
 namespace Sci.Production.Thread
 {
-    public partial class R22 : Sci.Win.Tems.PrintForm
+    public partial class R22 : Win.Tems.PrintForm
     {
         private DateTime? Date_s;
         private DateTime? Date_e;
@@ -261,8 +261,8 @@ drop table #tmp
             // 等待訊息
             this.ShowWaitMessage("Excel Processing...");
 
-            Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Thread_R22.xltx");
-            Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(this.printData);
+            SaveXltReportCls x1 = new SaveXltReportCls("Thread_R22.xltx");
+            SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(this.printData);
 
             // Header範本有了，因此不用
 

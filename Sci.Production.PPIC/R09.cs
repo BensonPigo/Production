@@ -12,7 +12,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// R09
     /// </summary>
-    public partial class R09 : Sci.Win.Tems.PrintForm
+    public partial class R09 : Win.Tems.PrintForm
     {
         private string startUpdate;
         private string endUpdate;
@@ -75,7 +75,7 @@ where   MDivisionID = '{0}'
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             List<SqlParameter> listSqlParameter = new List<SqlParameter>();
             List<string> listFilte = new List<string>();
@@ -170,7 +170,7 @@ order by FactoryID, OrderId",
                 return result;
             }
             #endregion
-            return new Ict.DualResult(true);
+            return new DualResult(true);
         }
 
         /// <inheritdoc/>

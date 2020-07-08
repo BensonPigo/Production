@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
-    public partial class R05 : Sci.Win.Tems.PrintForm
+    public partial class R05 : Win.Tems.PrintForm
     {
         DataTable printData;
         string WorkOrder;
@@ -48,7 +48,7 @@ namespace Sci.Production.Cutting
         }
 
         // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"

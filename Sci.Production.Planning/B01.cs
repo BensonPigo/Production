@@ -8,7 +8,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// B01
     /// </summary>
-    public partial class B01 : Sci.Win.Tems.Input1
+    public partial class B01 : Win.Tems.Input1
     {
         /// <summary>
         /// B01
@@ -159,7 +159,7 @@ namespace Sci.Production.Planning
 
         private void RadioPanel1_Validated(object sender, EventArgs e)
         {
-            Sci.Win.UI.RadioPanel rdoG = (RadioPanel)sender;
+            RadioPanel rdoG = (RadioPanel)sender;
             if (rdoG.Value == "2" && !MyUtility.Check.Empty(this.CurrentMaintain["issuedate"]))
             {
                 int yy = DateTime.Parse(this.CurrentMaintain["issuedate"].ToString()).Year;

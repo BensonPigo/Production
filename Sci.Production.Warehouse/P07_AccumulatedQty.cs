@@ -7,9 +7,9 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P07_AccumulatedQty : Sci.Win.Subs.Base
+    public partial class P07_AccumulatedQty : Win.Subs.Base
     {
-        public Sci.Win.Tems.Base P07;
+        public Win.Tems.Base P07;
         protected DataRow dr;
 
         public P07_AccumulatedQty(DataRow data)

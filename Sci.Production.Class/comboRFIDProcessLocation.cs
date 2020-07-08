@@ -4,7 +4,7 @@ using Sci.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class comboRFIDProcessLocation : Sci.Win.UI.ComboBox
+    public partial class comboRFIDProcessLocation : Win.UI.ComboBox
     {
         private bool includeJunk = false;
 

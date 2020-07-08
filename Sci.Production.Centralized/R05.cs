@@ -12,7 +12,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Centralized
 {
-    public partial class R05 : Sci.Win.Tems.PrintForm
+    public partial class R05 : Win.Tems.PrintForm
     {
         public R05(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -74,7 +74,7 @@ namespace Sci.Production.Centralized
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
             this.dtAllData = null;
@@ -595,10 +595,10 @@ drop table #tmp
 
             this.ShowWaitMessage("Starting EXCEL...");
             string excelFile = "Centralized_R05.xltx";
-            Microsoft.Office.Interop.Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + excelFile); // 開excelapp
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + excelFile); // 開excelapp
 
             // excelApp.Visible = true;
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
+            Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
             if (this.Date == "1")
             {
                 worksheet.Cells[3, 1] = "SCI delivery";

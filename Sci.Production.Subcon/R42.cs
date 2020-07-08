@@ -86,7 +86,7 @@ namespace Sci.Production.Subcon
         }
 
         // 非同步讀取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.sqlCmd = new StringBuilder();
 

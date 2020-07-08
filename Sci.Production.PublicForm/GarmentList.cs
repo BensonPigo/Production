@@ -7,7 +7,7 @@ using Sci.Data;
 
 namespace Sci.Production.PublicForm
 {
-    public partial class GarmentList : Sci.Win.Subs.Base
+    public partial class GarmentList : Win.Subs.Base
     {
         private string Styleyukey;
         private string id;
@@ -139,8 +139,8 @@ namespace Sci.Production.PublicForm
         {
             int idx = this.gridGarment.GetSelectedRowIndex();
 
-            Sci.Production.PublicForm.GarmentList_ColorArticle callNextForm =
-new Sci.Production.PublicForm.GarmentList_ColorArticle(this.patternukey, this.Styleyukey, this.id, ((DataTable)this.gridGarment.DataSource).Rows[idx][11].ToString());
+            GarmentList_ColorArticle callNextForm =
+new GarmentList_ColorArticle(this.patternukey, this.Styleyukey, this.id, ((DataTable)this.gridGarment.DataSource).Rows[idx][11].ToString());
             callNextForm.ShowDialog(this);
         }
     }

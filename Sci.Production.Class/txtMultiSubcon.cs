@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Class
 {
-    public partial class txtMultiSubcon : Sci.Win.UI.TextBox
+    public partial class txtMultiSubcon : Win.UI.TextBox
     {
         [Category("Custom Properties")]
         [Description("串sql條件值使用，會將值用單引號先包起來。例：'G001','G002','G003'")]
@@ -30,7 +30,7 @@ from dbo.LocalSupp l WITH (NOLOCK)
 WHERE l.Junk=0
 ");
 
-                Sci.Win.Tools.SelectItem2 selectSubcons = new Win.Tools.SelectItem2(
+                Win.Tools.SelectItem2 selectSubcons = new Win.Tools.SelectItem2(
                     sqlcmd,
                     "Supp ID,Supp Abb", "10,15", this.Text, null, null, null);
                 selectSubcons.Width = 410;

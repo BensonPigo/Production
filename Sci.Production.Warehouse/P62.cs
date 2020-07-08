@@ -16,7 +16,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P62 : Sci.Win.Tems.Input8
+    public partial class P62 : Win.Tems.Input8
     {
         public P62(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -31,7 +31,7 @@ namespace Sci.Production.Warehouse
         {
             Color backDefaultColor = this.detailgrid.DefaultCellStyle.BackColor;
             #region qty 開窗
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellMouseDoubleClick += (s, e) =>
             {
                 this.DoSubForm = new P10_Detail(1, MyUtility.Convert.GetString(this.CurrentMaintain["CutplanID"]));

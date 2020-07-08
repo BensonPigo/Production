@@ -11,7 +11,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B42_BatchCreate_Consumption
     /// </summary>
-    public partial class B42_BatchCreate_Consumption : Sci.Win.Subs.Base
+    public partial class B42_BatchCreate_Consumption : Win.Subs.Base
     {
         private DataTable middetaildata;
         private DataTable detaildata;
@@ -19,8 +19,8 @@ namespace Sci.Production.Shipping
         private string sizeCode;
         private string article;
         private string contract;
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings nlcode = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings nlcode = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
 
         /// <summary>
         /// B42_BatchCreate_Consumption
@@ -88,7 +88,7 @@ namespace Sci.Production.Shipping
                     if (e.RowIndex != -1)
                     {
                         DataRow dr = this.gridConsumption.GetDataRow<DataRow>(e.RowIndex);
-                        Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select distinct NLCode,HSCode,UnitID,Waste from VNContract_Detail WITH (NOLOCK) where ID = '{0}'", this.contract), "5,8,8,5", MyUtility.Convert.GetString(dr["NLCode"]), headercaptions: "Customs Code,HS Code,Unit, Waste", columndecimals: "0,0,0,3");
+                        Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select distinct NLCode,HSCode,UnitID,Waste from VNContract_Detail WITH (NOLOCK) where ID = '{0}'", this.contract), "5,8,8,5", MyUtility.Convert.GetString(dr["NLCode"]), headercaptions: "Customs Code,HS Code,Unit, Waste", columndecimals: "0,0,0,3");
                         DialogResult returnResult = item.ShowDialog();
                         if (returnResult == DialogResult.Cancel)
                         {
@@ -217,7 +217,7 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"]));
                             }
                         }
 
-                        Sci.Production.Shipping.B42_Detail callNextForm = new Sci.Production.Shipping.B42_Detail(detail2s);
+                        B42_Detail callNextForm = new B42_Detail(detail2s);
                         DialogResult result2 = callNextForm.ShowDialog(this);
                         callNextForm.Dispose();
                     }

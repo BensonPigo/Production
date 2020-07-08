@@ -11,13 +11,17 @@ using System.Text;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P33_AutoPick : Sci.Win.Subs.Base
+    public partial class P33_AutoPick : Win.Subs.Base
     {
         StringBuilder sbSizecode;
         string poid;
         string issueid;
         string orderid;
-        public DataTable BOA, BOA_Orderlist, BOA_PO, BOA_PO_Size, dtIssueBreakDown;
+        public DataTable BOA;
+        public DataTable BOA_Orderlist;
+        public DataTable BOA_PO;
+        public DataTable BOA_PO_Size;
+        public DataTable dtIssueBreakDown;
         public DataRow[] importRows;
         public List<IssueQtyBreakdown> _IssueQtyBreakdownList = new List<IssueQtyBreakdown>();
         bool combo;
@@ -334,7 +338,7 @@ DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final,#final2,#tmp,#tmp_s
 
             this.gridAutoPick.AutoResizeColumns();
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings Qty = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings Qty = new DataGridViewGeneratorNumericColumnSettings();
 
             Qty.CellMouseDoubleClick += (s, e) =>
             {
@@ -503,7 +507,7 @@ GROUP BY Article
 
             sb.Append(")");
 
-            System.Data.SqlClient.SqlConnection conn;
+            SqlConnection conn;
             DBProxy.Current.OpenConnection(null, out conn);
 
             try
@@ -515,7 +519,7 @@ GROUP BY Article
                     return;
                 }
 
-                using (System.Data.SqlClient.SqlBulkCopy bulkcopy = new System.Data.SqlClient.SqlBulkCopy(conn))
+                using (SqlBulkCopy bulkcopy = new SqlBulkCopy(conn))
                 {
                     bulkcopy.BulkCopyTimeout = 60;
                     if (temptablename.TrimStart().StartsWith("#"))

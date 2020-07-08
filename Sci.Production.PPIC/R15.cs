@@ -11,7 +11,7 @@ using Sci.Utility.Excel;
 namespace Sci.Production.PPIC
 {
     /// <inheritdoc/>
-    public partial class R15 : Sci.Win.Tems.PrintForm
+    public partial class R15 : Win.Tems.PrintForm
     {
         private SaveXltReportCls sxc;
         private DataTable dtPrint;

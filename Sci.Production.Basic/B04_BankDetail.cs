@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Sci.Production.Basic
 {
-    public partial class B04_BankDetail : Sci.Win.Tems.Input6
+    public partial class B04_BankDetail : Win.Tems.Input6
     {
         private bool _canconfirm;
         private bool _canedit;
@@ -277,17 +277,17 @@ WHERE lb.ID='{ID}' AND lb.PKey='{PKey}'
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings CountryID = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings AccountNo = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings SWIFTCode = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings AccountName = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings BankName = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings BranchCode = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings BranchName = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings City = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings MidSWIFTCode = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings MidBankName = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings Default = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorTextColumnSettings CountryID = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings AccountNo = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings SWIFTCode = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings AccountName = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings BankName = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings BranchCode = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings BranchName = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings City = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings MidSWIFTCode = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings MidBankName = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings Default = new DataGridViewGeneratorCheckBoxColumnSettings();
 
             CountryID.MaxLength = 2;
             AccountNo.MaxLength = 30;
@@ -331,7 +331,7 @@ WHERE lb.ID='{ID}' AND lb.PKey='{PKey}'
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                 if (e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem item;
+                    Win.Tools.SelectItem item;
                     string sqlcmd;
                     sqlcmd = @"
 SELECT ID,Alias
@@ -339,7 +339,7 @@ FROM Country
 order by ID
 ";
 
-                    item = new Sci.Win.Tools.SelectItem(sqlcmd, "5,10", null);
+                    item = new Win.Tools.SelectItem(sqlcmd, "5,10", null);
 
                     item.Size = new System.Drawing.Size(400, 600);
                     DialogResult result = item.ShowDialog();
@@ -364,7 +364,7 @@ order by ID
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                 if (e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem item;
+                    Win.Tools.SelectItem item;
                     string sqlcmd;
                     sqlcmd = @"
 SELECT ID,Alias
@@ -372,7 +372,7 @@ FROM Country
 order by ID
 ";
 
-                    item = new Sci.Win.Tools.SelectItem(sqlcmd, "5,10", null);
+                    item = new Win.Tools.SelectItem(sqlcmd, "5,10", null);
 
                     item.Size = new System.Drawing.Size(400, 600);
                     DialogResult result = item.ShowDialog();

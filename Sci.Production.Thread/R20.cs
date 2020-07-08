@@ -13,7 +13,7 @@ namespace Sci.Production.Thread
     /// <summary>
     /// R20
     /// </summary>
-    public partial class R20 : Sci.Win.Tems.PrintForm
+    public partial class R20 : Win.Tems.PrintForm
     {
         private string sp1;
         private string sp2;
@@ -213,7 +213,7 @@ outer apply(
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
             res = DBProxy.Current.Select(string.Empty, this.cmd, this.lis, out this.dt);

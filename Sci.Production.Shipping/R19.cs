@@ -13,7 +13,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R19
     /// </summary>
-    public partial class R19 : Sci.Win.Tems.PrintForm
+    public partial class R19 : Win.Tems.PrintForm
     {
         private DataTable PrintTable;
         private string eta_s;

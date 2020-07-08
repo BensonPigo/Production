@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P21_QueryRevised : Sci.Win.Forms.Base
+    public partial class P21_QueryRevised : Win.Forms.Base
     {
         public P21_QueryRevised()
         {

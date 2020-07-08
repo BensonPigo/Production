@@ -15,7 +15,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P14_Print_OrderList
     /// </summary>
-    public partial class P14_Print_OrderList : Sci.Win.Tems.QueryForm
+    public partial class P14_Print_OrderList : Win.Tems.QueryForm
     {
         private DataTable dt;
         private string date1;
@@ -355,7 +355,7 @@ outer apply(
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
         }
@@ -401,7 +401,7 @@ outer apply(
                 {
                     if (i > 0)
                     {
-                        Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1];
+                        Excel.Worksheet worksheet1 = (Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1];
                         Excel.Worksheet worksheetn = (Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1];
                         worksheet1.Copy(worksheetn);
                     }
@@ -449,7 +449,7 @@ outer apply(
                 strExcelProcessName = "Packing_P14_TransferSlip";
                 #region Save & Show Excel
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(strExcelProcessName);
-                Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
                 objApp.Quit();
@@ -503,7 +503,7 @@ outer apply(
                 objSheets.Rows.AutoFit();
                 #region Save & Show Excel
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(strExcelProcessName);
-                Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
                 objApp.Quit();

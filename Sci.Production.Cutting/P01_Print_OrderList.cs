@@ -13,7 +13,7 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P01_Print_OrderList : Sci.Win.Tems.QueryForm
+    public partial class P01_Print_OrderList : Win.Tems.QueryForm
     {
         string _id;
         int _finished;
@@ -32,7 +32,7 @@ namespace Sci.Production.Cutting
             if (this.radioCuttingWorkOrder.Checked)
             {
                 #region rdCheck_CuttingWorkOrder
-                System.Data.DataTable[] dts;
+                DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01_print_CuttingWorkOrder", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out dts);
 
                 if (!res)
@@ -222,7 +222,7 @@ select [SP] =
             if (this.radioCuttingschedule.Checked)
             {
                 #region rdCheck_CuttingSchedule
-                System.Data.DataTable[] dts;
+                DataTable[] dts;
                 List<SqlParameter> lsp = new List<SqlParameter>();
                 lsp.Add(new SqlParameter("@M", Sci.Env.User.Keyword));
                 lsp.Add(new SqlParameter("@Finished", this._finished));
@@ -277,7 +277,7 @@ select [SP] =
             if (this.radioEachConsumption.Checked)
             {
                 #region Each Consumption (Cutting Combo)
-                System.Data.DataTable[] dts;
+                DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01print_EachConsumption",
                     new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out dts);
 
@@ -364,7 +364,7 @@ select [SP] =
             if (this.radioTTLConsumption.Checked)
             {
                 #region TTL consumption (PO Combo)
-                System.Data.DataTable[] dts;
+                DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01print_TTLconsumption", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out dts);
 
                 if (!res)
@@ -442,7 +442,7 @@ select [SP] =
             if (this.radioColorQtyBDown.Checked)
             {
                 #region Color & Q'ty B'Down (PO Combo)
-                System.Data.DataTable rpt3;
+                DataTable rpt3;
                 DualResult res = DBProxy.Current.Select(string.Empty, "select b.POComboList,Style=StyleID+'-'+SeasonID from dbo.Orders a WITH (NOLOCK) inner join Order_POComboList b WITH (NOLOCK) on a.id = b.ID where a.ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", this._id) }, out rpt3);
                 if (rpt3.Rows.Count <= 0)
                 {
@@ -460,7 +460,7 @@ select [SP] =
                 sxr.DicDatas.Add(sxr.VPrefix + "Style", sty);
                 sxr.DicDatas.Add(sxr.VPrefix + "Now", DateTime.Now);
 
-                System.Data.DataTable[] dts;
+                DataTable[] dts;
                 res = DBProxy.Current.SelectSP(string.Empty, "Cutting_Color_P01_OrderQtyDown_POCombo", new List<SqlParameter> { new SqlParameter("@OrderID", this._id), new SqlParameter("@ByType", "2") }, out dts);
 
                 if (!res)
@@ -494,7 +494,7 @@ select [SP] =
             if (this.radioQtyBreakdown_PoCombbySPList.Checked)
             {
                 #region rdcheck_QtyBreakdown_PoCombbySPList
-                System.Data.DataTable[] dts;
+                DataTable[] dts;
                 DualResult result;
                 DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01_QtyBreakdown_PoCombbySPList", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out dts);
 
@@ -992,7 +992,7 @@ select distinct sizecode,Seq
             if (this.radioEachConsVSOrderQtyBDown.Checked)
             {
                 #region Each cons. vs Order Q'ty B'Down (PO Combo)
-                System.Data.DataTable[] dts;
+                DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01print_Eachcons_vs_OrderQtyDown_POCombo", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out dts);
 
                 if (!res)
@@ -1215,7 +1215,7 @@ select distinct sizecode,Seq
             if (this.radioMarkerList.Checked)
             {
                 #region Marker List
-                System.Data.DataTable[] dts;
+                DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP(string.Empty, "cutting_P01_MarkerList", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out dts);
 
                 if (!res)
@@ -1304,7 +1304,7 @@ select distinct sizecode,Seq
             if (this.radioConsumptionCalculateByMarkerListConsPerPC.Checked)
             {
                 #region Consumption Calculate by Marker List Cons/Per pc
-                System.Data.DataTable[] dts;
+                DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out dts);
 
                 if (!res)
@@ -1323,7 +1323,7 @@ select distinct sizecode,Seq
                 this.extra_P01_ConsumptionCalculatebyMarkerListConsPerpc(dts[1]);
 
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc.xltx");
-                SaveXltReportCls sxr = new SaveXltReportCls(xltPath, true);
+                sxrc sxr = new sxrc(xltPath, true);
                 sxr.AllowRangeTransferToString = false;
                 string Cuttingfactory = MyUtility.GetValue.Lookup("FactoryID", this._id, "Cutting", "ID");
                 sxr.DicDatas.Add(sxr.VPrefix + "Title", MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID"));
@@ -1331,7 +1331,7 @@ select distinct sizecode,Seq
                 sxr.DicDatas.Add(sxr.VPrefix + "STYLENO", dr["STYLENO"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "QTY", MyUtility.Convert.GetString(dr["QTY"]));
                 sxr.DicDatas.Add(sxr.VPrefix + "FTY", dr["FACTORY"]);
-                SaveXltReportCls.XltRptTable dt = new SaveXltReportCls.XltRptTable(dts[1]);
+                sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[1]);
                 dt.ShowHeader = false;
 
                 // 欄位水平對齊
@@ -1343,7 +1343,7 @@ select distinct sizecode,Seq
                         xha = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
                     }
 
-                    SaveXltReportCls.XlsColumnInfo citbl = new SaveXltReportCls.XlsColumnInfo(i, true, 0, xha);
+                    sxrc.XlsColumnInfo citbl = new sxrc.XlsColumnInfo(i, true, 0, xha);
                     if (i == 6 | i == 9 | i == 11 | i == 13)
                     {
                         citbl.PointCnt = 2; // 小數點兩位
@@ -1723,7 +1723,7 @@ select distinct sizecode,Seq
             this.RemoveRepeat(dt, new int[] { 0, 1, 2 });
         }
 
-        private bool ChangeColumnDataType(System.Data.DataTable table, string columnname, Type newtype)
+        private bool ChangeColumnDataType(DataTable table, string columnname, Type newtype)
         {
             if (table.Columns.Contains(columnname) == false)
             {

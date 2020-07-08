@@ -8,7 +8,7 @@ using Ict;
 
 namespace Sci.Production.Class
 {
-    public partial class txtcutReason : Sci.Win.UI._UserControl
+    public partial class txtcutReason : Win.UI._UserControl
     {
         public txtcutReason()
         {
@@ -19,12 +19,12 @@ namespace Sci.Production.Class
         [Description("填入Reason Type。例如：RC")]
         public string Type { get; set; }
 
-        public Sci.Win.UI.TextBox TextBox1
+        public Win.UI.TextBox TextBox1
         {
             get { return this.textBox1; }
         }
 
-        public Sci.Win.UI.DisplayBox DisplayBox1
+        public Win.UI.DisplayBox DisplayBox1
         {
             get { return this.displayBox1; }
         }
@@ -66,7 +66,7 @@ namespace Sci.Production.Class
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+            SelectItem item = new SelectItem(
                 string.Format("Select Id, Description from CutReason WITH (NOLOCK) where type='{0}' order by id", this.Type), "10,40", this.textBox1.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
@@ -93,7 +93,7 @@ namespace Sci.Production.Class
                     DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
                     // Parent form 若是非編輯狀態就 return
-                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                    if (!((Win.Forms.Base)grid.FindForm()).EditMode)
                     {
                         return;
                     }
@@ -116,7 +116,7 @@ namespace Sci.Production.Class
                 DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
                 // Parent form 若是非編輯狀態就 return
-                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                if (!((Win.Forms.Base)grid.FindForm()).EditMode)
                 {
                     return;
                 }

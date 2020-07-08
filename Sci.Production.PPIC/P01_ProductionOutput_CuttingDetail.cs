@@ -8,7 +8,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_ProductionOutput_CuttingDetail
     /// </summary>
-    public partial class P01_ProductionOutput_CuttingDetail : Sci.Win.Subs.Base
+    public partial class P01_ProductionOutput_CuttingDetail : Win.Subs.Base
     {
         private string workType;
         private string id;

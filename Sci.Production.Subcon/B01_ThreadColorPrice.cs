@@ -6,11 +6,12 @@ using Ict;
 
 namespace Sci.Production.Subcon
 {
-    public partial class B01_ThreadColorPrice : Sci.Win.Subs.Input4
+    public partial class B01_ThreadColorPrice : Win.Subs.Input4
     {
         private string _refno;
 
-        public B01_ThreadColorPrice(bool canedit, string Refno, string keyvalue2, string keyvalue3) : base(canedit, Refno, keyvalue2, keyvalue3)
+        public B01_ThreadColorPrice(bool canedit, string Refno, string keyvalue2, string keyvalue3)
+            : base(canedit, Refno, keyvalue2, keyvalue3)
         {
             this.InitializeComponent();
             this.WorkAlias = "LocalItem_ThreadBuyerColorGroupPrice";
@@ -26,8 +27,8 @@ namespace Sci.Production.Subcon
         protected override bool OnGridSetup()
         {
             #region Grid事件
-            Ict.Win.DataGridViewGeneratorTextColumnSettings col_threadColor = new DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings col_Buyer = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings col_threadColor = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings col_Buyer = new DataGridViewGeneratorTextColumnSettings();
 
             col_threadColor.EditingMouseDown += (s, e) =>
             {
@@ -44,9 +45,9 @@ namespace Sci.Production.Subcon
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                         @"Select ID,description  from ThreadColorGroup WITH (NOLOCK) where JUNK=0 order by ID", "10,45", null);
-                    item.Size = new System.Drawing.Size(630, 535);
+                    item.Size = new Size(630, 535);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -106,9 +107,9 @@ namespace Sci.Production.Subcon
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                         @"Select ID,NameEN  from Buyer WITH (NOLOCK) where JUNK=0 order by ID", "10,45", null);
-                    item.Size = new System.Drawing.Size(630, 535);
+                    item.Size = new Size(630, 535);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {

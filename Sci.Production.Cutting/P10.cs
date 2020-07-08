@@ -1,22 +1,22 @@
-﻿using Ict.Win;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Windows.Forms;
-using Sci.Data;
-using Sci.Win.UI;
-using Ict;
 using System.Linq;
-using System.Transactions;
-using static Sci.Production.Automation.Guozi_AGV;
 using System.Threading.Tasks;
+using System.Transactions;
+using System.Windows.Forms;
+using Ict;
+using Ict.Win;
+using Sci.Data;
 using Sci.Production.Automation;
 using Sci.Production.Prg;
+using Sci.Win.UI;
+using static Sci.Production.Automation.Guozi_AGV;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P10 : Sci.Win.Tems.Input6
+    public partial class P10 : Win.Tems.Input6
     {
         string keyword = Sci.Env.User.Keyword;
         string LoginId = Sci.Env.User.UserID;
@@ -100,7 +100,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             return base.OnGridSetup();
         }
 
-        protected override Ict.DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             #region 主 Detail
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
@@ -830,7 +830,7 @@ Where a.cutref='{0}' and a.mDivisionid = '{1}' and a.orderid = b.id",
                 return;
             }
 
-            Sci.Win.Tools.SelectItem item;
+            Win.Tools.SelectItem item;
             string cuttingid = MyUtility.GetValue.Lookup("Cuttingsp", this.CurrentMaintain["POID"].ToString(), "Orders", "ID");
 
             // string selectCommand = string.Format("select b.orderid from workorder a, workorder_distribute b where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey and a.id = b.id and b.id = '{1}'", CurrentMaintain["Cutref"], cuttingid);
@@ -840,7 +840,7 @@ select distinct b.orderid
 from workorder a WITH (NOLOCK) , workorder_distribute b WITH (NOLOCK) 
 where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
                 this.CurrentMaintain["Cutref"], cuttingid);
-            item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
+            item = new Win.Tools.SelectItem(selectCommand, "20", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -971,8 +971,8 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
             string ukey = MyUtility.GetValue.Lookup("Styleukey", this.CurrentMaintain["poid"].ToString(), "Orders", "ID");
             var Sizelist = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
 
-            Sci.Production.PublicForm.GarmentList callNextForm =
-    new Sci.Production.PublicForm.GarmentList(ukey, this.CurrentMaintain["poid"].ToString(), this.txtCutRef.Text, Sizelist);
+            PublicForm.GarmentList callNextForm =
+    new PublicForm.GarmentList(ukey, this.CurrentMaintain["poid"].ToString(), this.txtCutRef.Text, Sizelist);
             callNextForm.ShowDialog(this);
             this.OnDetailEntered();
         }
@@ -1056,7 +1056,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
 
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             this.detailgrid.ValidateControl();
-            var frm = new Sci.Production.Cutting.P10_Generate(this.CurrentMaintain, dt, this.bundle_Detail_allpart_Tb, this.bundle_Detail_Art_Tb, this.bundle_Detail_Qty_Tb);
+            var frm = new P10_Generate(this.CurrentMaintain, dt, this.bundle_Detail_allpart_Tb, this.bundle_Detail_Art_Tb, this.bundle_Detail_Qty_Tb);
             frm.ShowDialog(this);
             dt.DefaultView.Sort = "BundleGroup";
         }
@@ -1080,7 +1080,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
         private void txtArticle_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
             string selectCommand, sqlwhere = string.Empty;
-            Sci.Win.Tools.SelectItem item;
+            Win.Tools.SelectItem item;
             if (!this.EditMode)
             {
                 return;
@@ -1100,7 +1100,7 @@ from workorder w WITH (NOLOCK)
 inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
 where Article!='' and w.cutref='{0}' and w.mDivisionid = '{1}' {2}",
                     this.CurrentMaintain["cutref"].ToString(), this.keyword, sqlwhere);
-                item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
+                item = new Win.Tools.SelectItem(selectCommand, "20", this.Text);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)
                 {
@@ -1145,7 +1145,7 @@ ORDER BY Seq",
                             this.CurrentMaintain["Orderid"].ToString());
                     }
 
-                    item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
+                    item = new Win.Tools.SelectItem(selectCommand, "20", this.Text);
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {
@@ -1239,7 +1239,7 @@ where Article!='' and WorkorderUkey in ({0}) and Article='{1}'",
             string sql = string.Format(
                 @"Select ID,FactoryID,Description  From SewingLine WITH (NOLOCK) 
                                         where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{0}')", Sci.Env.User.Keyword);
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2,8,16", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "2,8,16", this.Text, false, ",");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

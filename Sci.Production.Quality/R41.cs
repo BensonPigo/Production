@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class R41 : Sci.Win.Tems.PrintForm
+    public partial class R41 : Win.Tems.PrintForm
     {
         public R41(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -91,7 +91,7 @@ order by M desc";
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             List<SqlParameter> lis = new List<SqlParameter>();
             string sqlWhere = string.Empty;
@@ -985,8 +985,8 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
 
         void CopySheet(Worksheet mySheet, int rowNo, int columnNo)
         {
-            Microsoft.Office.Interop.Excel._Application myExcel = null;
-            Microsoft.Office.Interop.Excel._Workbook myBook = null;
+            _Application myExcel = null;
+            _Workbook myBook = null;
             myExcel = mySheet.Application;
             myBook = myExcel.ActiveWorkbook;
 
@@ -1132,11 +1132,11 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
             firstRow.Interior.Color = Color.SkyBlue;
             firstRow.Borders.LineStyle = XlLineStyle.xlContinuous;
 
-            Microsoft.Office.Interop.Excel.Range usedRange = mySheet.UsedRange;
-            Microsoft.Office.Interop.Excel.Range rows = usedRange.Rows;
+            Range usedRange = mySheet.UsedRange;
+            Range rows = usedRange.Rows;
             int count = 0;
 
-            foreach (Microsoft.Office.Interop.Excel.Range row in rows)
+            foreach (Range row in rows)
             {
                 if (count > 0 && count < rows.Count - 2)
                 {

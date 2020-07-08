@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace Sci.Production.Quality
 {
-    public partial class P03_Heat : Sci.Win.Subs.Input4
+    public partial class P03_Heat : Win.Subs.Input4
     {
         private string loginID = Sci.Env.User.UserID;
         private DataRow maindr;

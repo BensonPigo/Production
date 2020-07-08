@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P52_Print : Sci.Win.Tems.PrintForm
+    public partial class P52_Print : Win.Tems.PrintForm
     {
         DataRow drP52Title;
         List<P52_PrintData> printData;
@@ -54,7 +54,7 @@ namespace Sci.Production.Warehouse
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string strTitle = string.Empty;
             if (this.radioButtonBookQty.Checked)

@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
-    public partial class R16 : Sci.Win.Tems.PrintForm
+    public partial class R16 : Win.Tems.PrintForm
     {
         private DataTable printData;
         private string BrandID;
@@ -65,7 +65,7 @@ namespace Sci.Production.PPIC
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlcmd = new StringBuilder();
             StringBuilder sqlWhere = new StringBuilder();

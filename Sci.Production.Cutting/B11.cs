@@ -11,7 +11,7 @@ namespace Sci.Production.Cutting
     /// <summary>
     /// B11
     /// </summary>
-    public partial class B11 : Sci.Win.Tems.Input1
+    public partial class B11 : Win.Tems.Input1
     {
         /// <summary>
         /// B11

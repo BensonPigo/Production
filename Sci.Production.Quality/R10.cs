@@ -11,7 +11,7 @@ using Sci.Win.Tools;
 
 namespace Sci.Production.Quality
 {
-    public partial class R10 : Sci.Win.Tems.PrintForm
+    public partial class R10 : Win.Tems.PrintForm
     {
         private string Type;
         private string Style;

@@ -18,7 +18,7 @@ using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P16 : Sci.Win.Tems.Input6
+    public partial class P16 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
@@ -68,10 +68,10 @@ namespace Sci.Production.Warehouse
         {
             foreach (Form form in Application.OpenForms)
             {
-                if (form is Sci.Production.Warehouse.P16)
+                if (form is P16)
                 {
                     form.Activate();
-                    Sci.Production.Warehouse.P16 activateForm = (Sci.Production.Warehouse.P16)form;
+                    P16 activateForm = (P16)form;
                     return;
                 }
             }
@@ -83,13 +83,13 @@ namespace Sci.Production.Warehouse
                 {
                     foreach (var subMenuItem in toolMenuItem.DropDown.Items)
                     {
-                        if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                        if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
                         {
                             if (((ToolStripMenuItem)subMenuItem).Text.EqualString("Issue Transaction"))
                             {
                                 foreach (var endMenuItem in ((ToolStripMenuItem)subMenuItem).DropDown.Items)
                                 {
-                                    if (endMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                                    if (endMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
                                     {
                                         if (((ToolStripMenuItem)endMenuItem).Text.EqualString("P16. Issue Fabric Lacking  && Replacement"))
                                         {
@@ -113,7 +113,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             #region 新增Batch Shipment Finished按鈕
-            Sci.Win.UI.Button btnUnFinish = new Sci.Win.UI.Button();
+            Win.UI.Button btnUnFinish = new Win.UI.Button();
             btnUnFinish.Text = "UnFinish";
             btnUnFinish.Click += new EventHandler(this.unfinish);
             this.browsetop.Controls.Add(btnUnFinish);
@@ -774,7 +774,7 @@ Where a.id = '{0}'", masterID);
                 return;
             }
 
-            var frm = new Sci.Production.Warehouse.P16_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.comboBox1.Text, "P16_Import");
+            var frm = new P16_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.comboBox1.Text, "P16_Import");
             frm.P16 = this;
             frm.ShowDialog(this);
             this.RenewData();
@@ -783,7 +783,7 @@ Where a.id = '{0}'", masterID);
         // Accumulated Qty
         private void btnAccumulatedQty_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P16_AccumulatedQty(this.CurrentMaintain);
+            var frm = new P16_AccumulatedQty(this.CurrentMaintain);
             frm.P16 = this;
             frm.ShowDialog(this);
         }
@@ -791,7 +791,7 @@ Where a.id = '{0}'", masterID);
         // Unfinish
         private void unfinish(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P15_Unfinish(P15_Unfinish.TypeFabric, "P16_Unfinish");
+            var frm = new P15_Unfinish(P15_Unfinish.TypeFabric, "P16_Unfinish");
             frm.ShowDialog(this);
         }
 
@@ -884,12 +884,12 @@ where id = @MDivision", pars, out dt);
 
             string RptTitle = dt.Rows[0]["NameEN"].ToString();
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Request", Requestno));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Dept", this.displayDept.Text));
+            report.ReportParameters.Add(new ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new ReportParameter("ID", id));
+            report.ReportParameters.Add(new ReportParameter("Request", Requestno));
+            report.ReportParameters.Add(new ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new ReportParameter("issuedate", issuedate));
+            report.ReportParameters.Add(new ReportParameter("Dept", this.displayDept.Text));
 
             DataTable dtApv;
             DualResult ApvResult = DBProxy.Current.Select(
@@ -913,7 +913,7 @@ where id = @MDivision", pars, out dt);
             }
 
             string ApvDate = MyUtility.Check.Empty(dtApv.Rows[0]["ApvDate"]) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(dtApv.Rows[0]["ApvDate"])).ToString("yyyy/MM/dd HH:mm:ss");
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ApvDate", ApvDate));
+            report.ReportParameters.Add(new ReportParameter("ApvDate", ApvDate));
 
             #endregion
 
@@ -984,7 +984,7 @@ where a.id= @ID", pars, out dtDetail);
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
 

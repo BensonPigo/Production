@@ -285,7 +285,7 @@ where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType
                     if (e.RowIndex != -1)
                     {
                         DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                        Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(dr["Description"]), "Description", false, null);
+                        Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(dr["Description"]), "Description", false, null);
                         callNextForm.ShowDialog(this);
                     }
                 }
@@ -322,7 +322,7 @@ where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select ID,Description from PPICReason WITH (NOLOCK) where Type = 'AL' and Junk = 0 and TypeForUse = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["Type"])), "5,40", MyUtility.Convert.GetString(dr["PPICReasonID"]));
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select ID,Description from PPICReason WITH (NOLOCK) where Type = 'AL' and Junk = 0 and TypeForUse = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["Type"])), "5,40", MyUtility.Convert.GetString(dr["PPICReasonID"]));
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -863,7 +863,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
 
         private void BtnImport_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.PPIC.P10_P11_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, "Accessory");
+            var frm = new P10_P11_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, "Accessory");
             frm.ShowDialog(this);
             this.RenewData();
         }

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P43 : Sci.Win.Tems.Input6
+    public partial class P43 : Win.Tems.Input6
     {
         public P43(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -228,7 +228,7 @@ where AD2.Id='{0}' ", masterID);
 
             #endregion
             #region -- Reason ID 右鍵開窗 --
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
@@ -245,7 +245,7 @@ where AD2.Id='{0}' ", masterID);
                         return;
                     }
 
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                         poitems,
                         "ID,Name",
                         "5,150",

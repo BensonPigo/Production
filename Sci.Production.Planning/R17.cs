@@ -16,7 +16,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// R17
     /// </summary>
-    public partial class R17 : Sci.Win.Tems.PrintForm
+    public partial class R17 : Win.Tems.PrintForm
     {
         private DataTable gdtOrderDetail;
         private DataTable gdtPullOut;
@@ -51,7 +51,7 @@ namespace Sci.Production.Planning
         /// </summary>
         /// <param name="report">report</param>
         /// <returns>bool</returns>
-        protected override bool OnToExcel(Win.ReportDefinition report)
+        protected override bool OnToExcel(ReportDefinition report)
         {
             return true;
         }
@@ -518,7 +518,7 @@ WHERE 1 = 0 ";
                 #endregion Fail Order List by SP
 
                 #region get Order_QtyShip Data
-                System.Data.DataTable dtOrder_QtyShip;
+                DataTable dtOrder_QtyShip;
                 strSQL = @"
 Select Order_QS.ID
 , Convert(varchar, Order_QS.ShipmodeID) + '-' + Convert(varchar, Order_QS.Qty) + '(' +  convert(varchar(10),Order_QS.BuyerDelivery,111) + ')' as strData
@@ -566,7 +566,7 @@ Where Order_QS.ID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.
                 #endregion get Order_QtyShip Data
 
                 #region Get TradeHis_Order Data
-                System.Data.DataTable dtTradeHis_Order;
+                DataTable dtTradeHis_Order;
                 strSQL = @"Select o.ID
 , TH_Order.ReasonID 
 , r.Name
@@ -786,10 +786,10 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 temfile = Sci.Env.Cfg.XltPathDir + "\\Planning_R17.xltx";
             }
 
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(temfile);
+            Excel.Application excel = MyUtility.Excel.ConnectExcel(temfile);
             try
             {
-                Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+                Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
                 // order by M
                 this.gdtSDP = this.gdtSDP.AsEnumerable().OrderBy(s => s["MDivisionID"]).CopyToDataTable();
@@ -1199,7 +1199,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
 
                 #region Save & Show Excel
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R17");
-                Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+                Excel.Workbook workbook = excel.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
                 excel.Quit();

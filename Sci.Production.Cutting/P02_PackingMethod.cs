@@ -6,7 +6,7 @@ using Ict.Win;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P02_PackingMethod : Sci.Win.Subs.Input4
+    public partial class P02_PackingMethod : Win.Subs.Input4
     {
         private string cuttingid;
 
@@ -55,7 +55,7 @@ Where cuttingsp = '{0}'",
 
         private void btnBreakdown_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_QtyCTN callNextForm = new Sci.Production.PPIC.P01_QtyCTN(this.ODT.Rows[0]);
+            PPIC.P01_QtyCTN callNextForm = new PPIC.P01_QtyCTN(this.ODT.Rows[0]);
             callNextForm.ShowDialog(this);
         }
 

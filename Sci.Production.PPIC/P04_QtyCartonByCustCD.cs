@@ -9,7 +9,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P04_QtyCartonByCustCD
     /// </summary>
-    public partial class P04_QtyCartonByCustCD : Sci.Win.Subs.Base
+    public partial class P04_QtyCartonByCustCD : Win.Subs.Base
     {
         private string styleUkey;
 

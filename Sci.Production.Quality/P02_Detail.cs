@@ -10,7 +10,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Quality
 {
-    public partial class P02_Detail : Sci.Win.Subs.Input6A
+    public partial class P02_Detail : Win.Subs.Input6A
     {
         #region 改版原因事項
         /*

@@ -9,7 +9,7 @@ using System.Transactions;
 
 namespace Sci.Production.Quality
 {
-    public partial class P02 : Sci.Win.Tems.Input6
+    public partial class P02 : Win.Tems.Input6
     {
         // 宣告Context Menu Item
         ToolStripMenuItem edit;
@@ -20,7 +20,8 @@ namespace Sci.Production.Quality
         int index;
         DataRow[] find_dr;
 
-        public P02(ToolStripMenuItem menuitem) : base(menuitem)
+        public P02(ToolStripMenuItem menuitem)
+            : base(menuitem)
         {
             this.InitializeComponent();
             this.detailgrid.ContextMenuStrip = this.detailgridmenus;
@@ -38,7 +39,7 @@ namespace Sci.Production.Quality
         }
 
         // 表身額外的資料來源
-        protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             this.find_dr = null;
             this.find = string.Empty;

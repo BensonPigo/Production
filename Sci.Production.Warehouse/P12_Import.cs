@@ -7,7 +7,7 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P12_Import : Sci.Win.Subs.Base
+    public partial class P12_Import : Win.Subs.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
@@ -69,7 +69,7 @@ Where a.id = '{0}'
       and Orders.category != 'A'
 ", sp_b, Sci.Env.User.Keyword);
 
-                Ict.DualResult result;
+                DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd, out this.dtArtwork))
                 {
                     if (this.dtArtwork.Rows.Count == 0)
@@ -90,7 +90,7 @@ Where a.id = '{0}'
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating = (s, e) =>
             {
                 if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))

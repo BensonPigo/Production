@@ -10,7 +10,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R06 : Sci.Win.Tems.PrintForm
+    public partial class R06 : Win.Tems.PrintForm
     {
         // string reason, factory, stocktype, fabrictype, mdivisionid, shift;
         // int ordertypeindex;
@@ -91,7 +91,7 @@ namespace Sci.Production.Warehouse
         }
 
         // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sql parameters declare --
 

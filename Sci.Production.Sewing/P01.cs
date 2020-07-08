@@ -20,15 +20,15 @@ namespace Sci.Production.Sewing
     /// <summary>
     /// P01
     /// </summary>
-    public partial class P01 : Sci.Win.Tems.Input8
+    public partial class P01 : Win.Tems.Input8
     {
         private ITableSchema sub_Schema;
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings qaoutput = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings orderid = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings combotype = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings inlineqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings SewingReasonID = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings qaoutput = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings orderid = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings combotype = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings article = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings inlineqty = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings SewingReasonID = new DataGridViewGeneratorTextColumnSettings();
         private Ict.Win.UI.DataGridViewTextBoxColumn textOrderIDSetting;
         private decimal? oldttlqaqty;
         private decimal? oldManHour;
@@ -335,7 +335,7 @@ where   ss.FactoryID = '{0}'
                                 Sci.Env.User.Factory,
                                 MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]));
 
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20", dr["OrderID"].ToString());
+                            SelectItem item = new SelectItem(sqlCmd, "20", dr["OrderID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -503,7 +503,7 @@ where StyleUkey = {0}",
                                 }
                                 else
                                 {
-                                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(orderLocation, "Location", "3", MyUtility.Convert.GetString(dr["ComboType"]), headercaptions: "*");
+                                    SelectItem item = new SelectItem(orderLocation, "Location", "3", MyUtility.Convert.GetString(dr["ComboType"]), headercaptions: "*");
                                     DialogResult returnResult = item.ShowDialog();
                                     if (returnResult != DialogResult.Cancel)
                                     {
@@ -563,7 +563,7 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
 
                             DataTable locationData;
                             DualResult result = DBProxy.Current.Select(null, sqlCmd, out locationData);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(locationData, "Location", "10", MyUtility.Convert.GetString(dr["ComboType"]), headercaptions: "*");
+                            SelectItem item = new SelectItem(locationData, "Location", "10", MyUtility.Convert.GetString(dr["ComboType"]), headercaptions: "*");
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -607,7 +607,7 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = string.Format("select Article,ColorID from View_OrderFAColor where Id = '{0}'", MyUtility.Convert.GetString(dr["OrderID"]));
 
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,8", MyUtility.Convert.GetString(dr["Article"]), headercaptions: "Article,Color");
+                            SelectItem item = new SelectItem(sqlCmd, "8,8", MyUtility.Convert.GetString(dr["Article"]), headercaptions: "Article,Color");
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -740,7 +740,7 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                         result = DBProxy.Current.Select(null, sqlCmd, out reasonDatas);
 
                         // 寬度可以用逗號區隔開來
-                        Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,40", MyUtility.Convert.GetString(dr["SewingReasonID"]), headercaptions: "ID,Description");
+                        SelectItem item = new SelectItem(sqlCmd, "10,40", MyUtility.Convert.GetString(dr["SewingReasonID"]), headercaptions: "ID,Description");
                         DialogResult returnResult = item.ShowDialog();
                         if (returnResult == DialogResult.Cancel)
                         {
@@ -2455,7 +2455,7 @@ where Convert (bit, AutoCreate) != 1";
         // Revised History
         private void BtnRevisedHistory_Click(object sender, EventArgs e)
         {
-            Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("SewingOutput_History", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "Status", reasonType: "Sewing_RVS", caption: "Revised History");
+            Win.UI.ShowHistory callNextForm = new Win.UI.ShowHistory("SewingOutput_History", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "Status", reasonType: "Sewing_RVS", caption: "Revised History");
             callNextForm.ShowDialog(this);
         }
 
@@ -2463,7 +2463,7 @@ where Convert (bit, AutoCreate) != 1";
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
-            Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("Sewing_RVS", true);
+            Win.UI.SelectReason callReason = new Win.UI.SelectReason("Sewing_RVS", true);
             DialogResult dResult = callReason.ShowDialog(this);
             if (dResult == System.Windows.Forms.DialogResult.OK)
             {
@@ -2757,7 +2757,7 @@ WHERE sewqty < (packqty + adjQty)",
 
         private void BtnRequestUnlock_Click(object sender, EventArgs e)
         {
-            Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("Sewing_RVS");
+            Win.UI.SelectReason callReason = new Win.UI.SelectReason("Sewing_RVS");
             DialogResult dResult = callReason.ShowDialog(this);
             if (dResult == System.Windows.Forms.DialogResult.OK)
             {
@@ -3939,7 +3939,7 @@ Hi all,
                         attachFiles.Add(excelFileR04);
 
                         string subject = drMail["Subject"].ToString() + $@"{Convert.ToDateTime(dateMaxOutputDate).ToString("d")} ({Sci.Env.User.Factory})";
-                        Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(dr["SendFrom"].ToString(), drMail["ToAddress"].ToString(), drMail["ccAddress"].ToString(), subject, desc, attachFiles, true, true);
+                        MailTo mail = new MailTo(dr["SendFrom"].ToString(), drMail["ToAddress"].ToString(), drMail["ccAddress"].ToString(), subject, desc, attachFiles, true, true);
                         mail.ShowDialog();
                     }
                 }

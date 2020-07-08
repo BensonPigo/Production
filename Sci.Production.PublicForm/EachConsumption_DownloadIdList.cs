@@ -5,7 +5,7 @@ using Sci.Data;
 
 namespace Sci.Production.PublicForm
 {
-    public partial class EachConsumption_DownloadIdList : Sci.Win.Subs.Input4
+    public partial class EachConsumption_DownloadIdList : Win.Subs.Input4
     {
         public EachConsumption_DownloadIdList()
         {
@@ -18,7 +18,7 @@ namespace Sci.Production.PublicForm
             this.InitializeComponent();
         }
 
-        protected override Ict.DualResult OnRequery(out DataTable datas)
+        protected override DualResult OnRequery(out DataTable datas)
         {
             datas = null;
             string sqlCmd = string.Format(

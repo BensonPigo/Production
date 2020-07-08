@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P47 : Sci.Win.Tems.Input6
+    public partial class P47 : Win.Tems.Input6
     {
         public P47(ToolStripMenuItem menuitem)
             : base(menuitem)

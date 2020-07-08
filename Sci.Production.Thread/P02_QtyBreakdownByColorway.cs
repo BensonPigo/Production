@@ -9,7 +9,7 @@ namespace Sci.Production.Thread
     /// <summary>
     /// P02_QtyBreakdownByColorway
     /// </summary>
-    public partial class P02_QtyBreakdownByColorway : Sci.Win.Subs.Base
+    public partial class P02_QtyBreakdownByColorway : Win.Subs.Base
     {
         private DataRow P02CurrentMaintain = null;
 

@@ -16,7 +16,7 @@ using System.Diagnostics;
 
 namespace Sci.Production.Quality
 {
-    public partial class P01_Weight : Sci.Win.Subs.Input4
+    public partial class P01_Weight : Win.Subs.Input4
     {
         private DataRow maindr;
         private string loginID = Sci.Env.User.UserID;
@@ -625,10 +625,10 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 }
             }
             #endregion
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P01_Weight_Report.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P01_Weight_Report.xltx"); // 預先開啟excel app
             objApp.Visible = false;
             MyUtility.Excel.CopyToXls(dt, string.Empty, "Quality_P01_Weight_Report.xltx", 5, false, null, objApp);      // 將datatable copy to excel
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[2, 2] = this.displaySP.Text.ToString();
             objSheets.Cells[2, 4] = this.displaySEQ.Text.ToString();
             objSheets.Cells[2, 6] = this.displayColor.Text.ToString();

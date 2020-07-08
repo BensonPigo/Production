@@ -12,7 +12,7 @@ using static Sci.Production.PublicPrg.Prgs;
 
 namespace Sci.Production.Cutting
 {
-    public partial class R01 : Sci.Win.Tems.PrintForm
+    public partial class R01 : Win.Tems.PrintForm
     {
         public R01(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -24,7 +24,8 @@ namespace Sci.Production.Cutting
         string FactoryID;
         DataTable detailData;
         DataTable summaryData;
-        DateTime? SewingDate_s, SewingDate_e;
+        DateTime? SewingDate_s;
+        DateTime? SewingDate_e;
         List<string> FtyFroup = new List<string>();
         List<InOffLineList> AllDataTmp = new List<InOffLineList>();
         List<InOffLineList> AllData = new List<InOffLineList>();

@@ -16,7 +16,7 @@ using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P36 : Sci.Win.Tems.Input6
+    public partial class P36 : Win.Tems.Input6
     {
         public P36(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -175,12 +175,12 @@ namespace Sci.Production.Warehouse
         {
             #region -- Location 右鍵開窗 --
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation(
+                    Win.Tools.SelectItem2 item = Prgs.SelectLocation(
                         this.CurrentDetailData["tostocktype"].ToString(),
                         this.CurrentDetailData["tolocation"].ToString());
                     DialogResult result = item.ShowDialog();
@@ -825,7 +825,7 @@ Where a.id = '{0}'", masterID);
         // Import
         private void btnImport_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P36_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P36_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }
@@ -833,7 +833,7 @@ Where a.id = '{0}'", masterID);
         // Accumulated
         private void btnAccumulatedQty_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P36_AccumulatedQty(this.CurrentMaintain);
+            var frm = new P36_AccumulatedQty(this.CurrentMaintain);
             frm.P36 = this;
             frm.ShowDialog(this);
         }
@@ -966,7 +966,7 @@ Where a.id = '{0}'", masterID);
             #endregion
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
 

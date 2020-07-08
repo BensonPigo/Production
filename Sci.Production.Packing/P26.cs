@@ -21,7 +21,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
-    public partial class P26 : Sci.Win.Tems.Base
+    public partial class P26 : Win.Tems.Base
     {
         private DataTable GridDt = new DataTable();
         private Dictionary<string, List<ZPL>> File_Name_Object = new Dictionary<string, List<ZPL>>();
@@ -626,7 +626,7 @@ namespace Sci.Production.Packing
                     // 開啟新視窗 New Form
                     if (isUserSlect && this.NewFormModels.Count > 0)
                     {
-                        Sci.Production.Packing.P26_AssignPackingList form = new P26_AssignPackingList(this.NewFormModels, (DataTable)this.listControlBindingSource1.DataSource, this.currentFileType.ToString(), this.wattingForConvert, this.File_Name_PDF, this.wattingForConvert_contentsOfZPL);
+                        P26_AssignPackingList form = new P26_AssignPackingList(this.NewFormModels, (DataTable)this.listControlBindingSource1.DataSource, this.currentFileType.ToString(), this.wattingForConvert, this.File_Name_PDF, this.wattingForConvert_contentsOfZPL);
                         form.Width = 800;
                         form.ShowDialog();
                         this.canConvert = form.canConvert;
@@ -2657,7 +2657,7 @@ WHERE sd.FileName=@FileName
                 cmd += " AND s.Side=@Side " + Environment.NewLine;
             }
 
-            List <SqlParameter> para = new List<SqlParameter>();
+            List<SqlParameter> para = new List<SqlParameter>();
             para.Add(new SqlParameter("@FileName", fileName));
             para.Add(new SqlParameter("@Seq", seq));
             para.Add(new SqlParameter("@Side", side));

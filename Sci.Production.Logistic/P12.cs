@@ -11,7 +11,7 @@ using System.Windows.Forms;
 namespace Sci.Production.Logistic
 {
     /// <inheritdoc/>
-    public partial class P12 : Sci.Win.Tems.QueryForm
+    public partial class P12 : Win.Tems.QueryForm
     {
         /// <inheritdoc/>
         public P12(ToolStripMenuItem menuitem)
@@ -24,7 +24,7 @@ namespace Sci.Production.Logistic
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings col_chk = new Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings col_chk = new DataGridViewGeneratorCheckBoxColumnSettings();
             col_chk.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);

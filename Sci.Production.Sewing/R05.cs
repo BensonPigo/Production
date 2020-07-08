@@ -10,7 +10,7 @@ namespace Sci.Production.Sewing
     /// <summary>
     /// R05
     /// </summary>
-    public partial class R05 : Sci.Win.Tems.PrintForm
+    public partial class R05 : Win.Tems.PrintForm
     {
         private DataTable printData;
         private DateTime? date1;
@@ -49,7 +49,7 @@ namespace Sci.Production.Sewing
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"

@@ -7,7 +7,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// B06
     /// </summary>
-    public partial class B06 : Sci.Win.Tems.Input1
+    public partial class B06 : Win.Tems.Input1
     {
         private string useAPS;
 

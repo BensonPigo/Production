@@ -7,7 +7,7 @@ using System.Data;
 namespace Sci.Production.PPIC
 {
     /// <inheritdoc/>
-    public partial class P01_ComboType : Sci.Win.Tems.QueryForm
+    public partial class P01_ComboType : Win.Tems.QueryForm
     {
         private string OrderID;
 

@@ -11,7 +11,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P04_ExcelImport
     /// </summary>
-    public partial class P04_ExcelImport : Sci.Win.Subs.Base
+    public partial class P04_ExcelImport : Win.Subs.Base
     {
         private DataTable grid2Data = new DataTable();
         private DataTable detailData;

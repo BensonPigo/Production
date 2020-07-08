@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P23_ImportBarcode : Sci.Win.Subs.Base
+    public partial class P23_ImportBarcode : Win.Subs.Base
     {
         public P23_ImportBarcode()
         {
@@ -120,12 +120,12 @@ order by Abb";
             #endregion
 
             #region 刪除檔案
-            System.IO.FileInfo fi = new System.IO.FileInfo(tmpFile);
+            FileInfo fi = new FileInfo(tmpFile);
             try
             {
                 fi.Delete();
             }
-            catch (System.IO.IOException ex)
+            catch (IOException ex)
             {
                 MyUtility.Msg.ErrorBox(ex.Message);
             }

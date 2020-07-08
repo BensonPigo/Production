@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
-    public partial class B01_BatchApprove : Sci.Win.Forms.Base
+    public partial class B01_BatchApprove : Win.Forms.Base
     {
         Action aa;
 

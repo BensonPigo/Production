@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P01 : Sci.Win.Tems.Input1
+    public partial class P01 : Win.Tems.Input1
     {
         string StyleUkey;
         private string keyWord = Sci.Env.User.Keyword;
@@ -275,7 +275,7 @@ where CuttingSp = '{0}'",
                 return;
             }
 
-            var frm = new Sci.Production.Cutting.P01_MarkerList(false, this.CurrentMaintain["ID"].ToString(), null, null, "Order_Markerlist", this.CurrentMaintain);
+            var frm = new P01_MarkerList(false, this.CurrentMaintain["ID"].ToString(), null, null, "Order_Markerlist", this.CurrentMaintain);
             frm.ShowDialog(this);
         }
 
@@ -287,7 +287,7 @@ where CuttingSp = '{0}'",
                 return;
             }
 
-            var frm = new Sci.Production.PublicForm.EachConsumption(false, this.CurrentMaintain["id"].ToString(), null, null, false, true, true);
+            var frm = new PublicForm.EachConsumption(false, this.CurrentMaintain["id"].ToString(), null, null, false, true, true);
             frm.ShowDialog(this);
             this.RenewData();
             this.OnDetailEntered();
@@ -301,7 +301,7 @@ where CuttingSp = '{0}'",
                 return;
             }
 
-            var frm = new Sci.Production.Cutting.P01_BundleCard(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["MDivisionID"].ToString());
+            var frm = new P01_BundleCard(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["MDivisionID"].ToString());
             frm.ShowDialog(this);
         }
 
@@ -313,7 +313,7 @@ where CuttingSp = '{0}'",
                 return;
             }
 
-            var frm = new Sci.Production.Cutting.P01_Cutpartcheck(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["WorkType"].ToString());
+            var frm = new P01_Cutpartcheck(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["WorkType"].ToString());
             frm.ShowDialog(this);
         }
 
@@ -325,7 +325,7 @@ where CuttingSp = '{0}'",
                 return;
             }
 
-            var frm = new Sci.Production.Cutting.P01_Cutpartchecksummary(this.CurrentMaintain["ID"].ToString());
+            var frm = new P01_Cutpartchecksummary(this.CurrentMaintain["ID"].ToString());
             frm.ShowDialog(this);
         }
 
@@ -337,7 +337,7 @@ where CuttingSp = '{0}'",
                 return;
             }
 
-            var frm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.editPOCombo.Text);
+            var frm = new PPIC.P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.editPOCombo.Text);
             frm.ShowDialog(this);
         }
 
@@ -350,7 +350,7 @@ where CuttingSp = '{0}'",
             }
 
             string ukey = MyUtility.GetValue.Lookup("Styleukey", this.CurrentMaintain["ID"].ToString(), "Orders", "ID");
-            var frm = new Sci.Production.PublicForm.ColorCombination(this.CurrentMaintain["ID"].ToString(), ukey);
+            var frm = new PublicForm.ColorCombination(this.CurrentMaintain["ID"].ToString(), ukey);
             frm.ShowDialog(this);
         }
 
@@ -362,7 +362,7 @@ where CuttingSp = '{0}'",
                 return;
             }
 
-            var frm = new Sci.Production.PPIC.P01_ProductionKit(false, this.StyleUkey, null, null, null);
+            var frm = new PPIC.P01_ProductionKit(false, this.StyleUkey, null, null, null);
             frm.ShowDialog(this);
             this.OnDetailEntered();
         }
@@ -376,7 +376,7 @@ where CuttingSp = '{0}'",
             }
 
             string ukey = MyUtility.GetValue.Lookup("Styleukey", this.CurrentMaintain["ID"].ToString(), "Orders", "ID");
-            var frm = new Sci.Production.PublicForm.GarmentList(ukey, this.CurrentMaintain["ID"].ToString(), null);
+            var frm = new PublicForm.GarmentList(ukey, this.CurrentMaintain["ID"].ToString(), null);
             frm.ShowDialog(this);
         }
 

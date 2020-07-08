@@ -9,7 +9,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P05_Print
     /// </summary>
-    public partial class P05_Print : Sci.Win.Tems.PrintForm
+    public partial class P05_Print : Win.Tems.PrintForm
     {
         private DataTable gridData;
         private string readyDate1;
@@ -39,7 +39,7 @@ namespace Sci.Production.PPIC
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.printData = this.gridData.Select(string.Format("{0}{1}", MyUtility.Check.Empty(this.readyDate1) ? "1 = 1" : "ReadyDate >= '" + this.readyDate1 + "'", MyUtility.Check.Empty(this.readyDate2) ? string.Empty : " and ReadyDate <= '" + this.readyDate2 + "'"));
             return Result.True;
@@ -55,13 +55,13 @@ namespace Sci.Production.PPIC
             }
 
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_P05_Print.xltx";
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             int intRowsStart = 2;
             #region Header
             string factoryName = MyUtility.GetValue.Lookup(string.Format(
@@ -109,7 +109,7 @@ where ID = '{0}'", Sci.Env.User.Factory));
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P05_Print");
-            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             excel.Quit();

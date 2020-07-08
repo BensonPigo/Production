@@ -5,7 +5,7 @@ using System.Data;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P05_FoundryList : Sci.Win.Subs.Base
+    public partial class P05_FoundryList : Win.Subs.Base
     {
         private string GMTBookingID;
         private string ShipModeID;

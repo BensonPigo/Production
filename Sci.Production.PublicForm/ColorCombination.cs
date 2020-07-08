@@ -7,7 +7,7 @@ using Sci.Data;
 
 namespace Sci.Production.PublicForm
 {
-    public partial class ColorCombination : Sci.Win.Subs.Base
+    public partial class ColorCombination : Win.Subs.Base
     {
         private string cutid;
         private string Styleukey;

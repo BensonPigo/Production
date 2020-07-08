@@ -8,7 +8,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P01_AirPPList
     /// </summary>
-    public partial class P01_AirPPList : Sci.Win.Subs.Base
+    public partial class P01_AirPPList : Win.Subs.Base
     {
         private string orderID;
 

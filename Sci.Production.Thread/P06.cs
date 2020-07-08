@@ -14,7 +14,7 @@ namespace Sci.Production.Thread
     /// <summary>
     /// P06
     /// </summary>
-    public partial class P06 : Sci.Win.Tems.Input6
+    public partial class P06 : Win.Tems.Input6
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
@@ -30,7 +30,7 @@ namespace Sci.Production.Thread
         }
 
         /// <inheritdoc/>
-        protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(
@@ -442,7 +442,7 @@ namespace Sci.Production.Thread
         private void Button3_Click(object sender, EventArgs e)
         {
             DataTable detTable = (DataTable)this.detailgridbs.DataSource;
-            Form p06_import = new Sci.Production.Thread.P06_Import(detTable);
+            Form p06_import = new P06_Import(detTable);
             p06_import.ShowDialog();
         }
 

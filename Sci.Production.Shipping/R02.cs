@@ -11,7 +11,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R02
     /// </summary>
-    public partial class R02 : Sci.Win.Tems.PrintForm
+    public partial class R02 : Win.Tems.PrintForm
     {
         private DateTime? pulloutDate1;
         private DateTime? pulloutDate2;
@@ -60,7 +60,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"select p.MDivisionID,pd.OrderID,isnull(o.BrandID,'') as BrandID,

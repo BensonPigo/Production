@@ -7,7 +7,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P07
     /// </summary>
-    public partial class P07 : Sci.Win.Tems.Input6
+    public partial class P07 : Win.Tems.Input6
     {
         /// <summary>
         /// P07

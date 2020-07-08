@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P20 : Sci.Win.Tems.Input8
+    public partial class P20 : Win.Tems.Input8
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
@@ -57,7 +57,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             };
         }
 
-        protected override Ict.DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
             string cmdsql = string.Format(
@@ -91,7 +91,7 @@ ORDER BY CutRef
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        protected override DualResult OnSubDetailSelectCommandPrepare(Win.Tems.Input8.PrepareSubDetailSelectCommandEventArgs e)
+        protected override DualResult OnSubDetailSelectCommandPrepare(PrepareSubDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Detail == null) ? string.Empty : e.Detail["Ukey"].ToString();
 
@@ -272,7 +272,7 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
 
                         e.Cancel = true;
 
-                        var m = new Sci.Win.UI.MsgGridForm(
+                        var m = new Win.UI.MsgGridForm(
                             dt,
                             "this <Cut Ref#(" + e.FormattedValue + ")> already output finished \r\nPlease refer to the following information",
                             "Warning",
@@ -346,7 +346,7 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
             };
             #endregion
             #region Cutting Layer
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings Layer = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings Layer = new DataGridViewGeneratorNumericColumnSettings();
             Layer.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
@@ -715,7 +715,7 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
         {
             this.detailgrid.ValidateControl();
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
-            var frm = new Sci.Production.Cutting.P20_Import_Workorder(this.CurrentMaintain, dt);
+            var frm = new P20_Import_Workorder(this.CurrentMaintain, dt);
             frm.ShowDialog(this);
         }
 

@@ -12,7 +12,7 @@ using Microsoft.Reporting.WinForms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P51 : Sci.Win.Tems.Input6
+    public partial class P51 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
@@ -193,7 +193,7 @@ namespace Sci.Production.Warehouse
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_fabrictype;
             #region Seq 右鍵開窗
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
@@ -201,7 +201,7 @@ namespace Sci.Production.Warehouse
                     // string sqlcmd = "";
                     IList<DataRow> x;
 
-                    Sci.Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(this.CurrentDetailData["poid"].ToString(), this.CurrentDetailData["seq"].ToString(), "f.MDivisionID = '{1}'");
+                    Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(this.CurrentDetailData["poid"].ToString(), this.CurrentDetailData["seq"].ToString(), "f.MDivisionID = '{1}'");
                     DialogResult result = selepoitem.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -298,7 +298,7 @@ namespace Sci.Production.Warehouse
             #endregion Seq 右鍵開窗
 
             #region roll# 右鍵開窗 & valid
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right
@@ -322,7 +322,7 @@ namespace Sci.Production.Warehouse
                         this.CurrentDetailData["seq2"],
                         this.CurrentDetailData["stocktype"]);
                     IList<DataRow> x;
-                    Sci.Win.Tools.SelectItem selepoitem2 = new Win.Tools.SelectItem(
+                    Win.Tools.SelectItem selepoitem2 = new Win.Tools.SelectItem(
                         sqlcmd,
                         "Ukey,Roll,Dyelot,Balance,Location", this.CurrentDetailData["roll"].ToString());
 

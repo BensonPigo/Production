@@ -10,7 +10,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// B07
     /// </summary>
-    public partial class B07 : Sci.Win.Tems.Input1
+    public partial class B07 : Win.Tems.Input1
     {
         /// <summary>
         /// B07
@@ -64,7 +64,7 @@ namespace Sci.Production.PPIC
         /// <inheritdoc/>
         protected override bool ClickNewBefore()
         {
-            Sci.Production.PPIC.B07_Add callNextForm = new Sci.Production.PPIC.B07_Add();
+            B07_Add callNextForm = new B07_Add();
             DialogResult result = callNextForm.ShowDialog(this);
             if (result == System.Windows.Forms.DialogResult.OK)
             {
@@ -90,15 +90,15 @@ namespace Sci.Production.PPIC
 
         private void BtnBatchEdit_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.B07_BatchAdd callNextForm = new Sci.Production.PPIC.B07_BatchAdd(this.CurrentMaintain);
+            B07_BatchAdd callNextForm = new B07_BatchAdd(this.CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
             if (result == System.Windows.Forms.DialogResult.OK)
             {
                 // 紀錄目前畫面資料，Reload Data後，資料要保留在Reload前的那一筆
                 DataRow currentData = this.CurrentMaintain;
                 this.ReloadDatas();
-                IList<DataRow> list = this.DataRows.ToList<DataRow>();
-                DataRow dr = list.FirstOrDefault<DataRow>(x => x["FactoryID"].ToString() == currentData["FactoryID"].ToString() && Convert.ToDateTime(x["Date"]).ToString("d") == Convert.ToDateTime(currentData["Date"]).ToString("d") && x["SewingLineID"].ToString() == currentData["SewingLineID"].ToString());
+                IList<DataRow> list = this.DataRows.ToList();
+                DataRow dr = list.FirstOrDefault(x => x["FactoryID"].ToString() == currentData["FactoryID"].ToString() && Convert.ToDateTime(x["Date"]).ToString("d") == Convert.ToDateTime(currentData["Date"]).ToString("d") && x["SewingLineID"].ToString() == currentData["SewingLineID"].ToString());
                 if (dr != null)
                 {
                     int pos = list.IndexOf(dr);

@@ -8,7 +8,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Quality
 {
-    public partial class R09 : Sci.Win.Tems.PrintForm
+    public partial class R09 : Win.Tems.PrintForm
     {
         DateTime? DateInspDateStart; DateTime? DateInspDateEnd;
         DateTime? DateArrStart; DateTime? DateArrEnd;

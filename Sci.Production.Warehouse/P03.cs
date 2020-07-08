@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P03 : Sci.Win.Tems.QueryForm
+    public partial class P03 : Win.Tems.QueryForm
     {
         string userCountry = string.Empty;
         string SpNo = string.Empty;
@@ -77,10 +77,10 @@ namespace Sci.Production.Warehouse
         {
             foreach (Form form in Application.OpenForms)
             {
-                if (form is Sci.Production.Warehouse.P03)
+                if (form is P03)
                 {
                     form.Activate();
-                    Sci.Production.Warehouse.P03 activateForm = (Sci.Production.Warehouse.P03)form;
+                    P03 activateForm = (P03)form;
                     activateForm.setTxtSPNo(P01SPNo);
                     activateForm.Query();
                     return;
@@ -94,7 +94,7 @@ namespace Sci.Production.Warehouse
                 {
                     foreach (var subMenuItem in toolMenuItem.DropDown.Items)
                     {
-                        if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                        if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
                         {
                             if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P03. Material Status"))
                             {
@@ -126,10 +126,10 @@ namespace Sci.Production.Warehouse
         {
             foreach (Form form in Application.OpenForms)
             {
-                if (form is Sci.Production.Warehouse.P03)
+                if (form is P03)
                 {
                     form.Activate();
-                    Sci.Production.Warehouse.P03 activateForm = (Sci.Production.Warehouse.P03)form;
+                    P03 activateForm = (P03)form;
                     activateForm.setTxtSPNo(PPIC_SPNo);
                     activateForm.Query();
                     return;
@@ -143,7 +143,7 @@ namespace Sci.Production.Warehouse
                 {
                     foreach (var subMenuItem in toolMenuItem.DropDown.Items)
                     {
-                        if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                        if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
                         {
                             if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P03. Material Status"))
                             {
@@ -184,7 +184,7 @@ namespace Sci.Production.Warehouse
             this.comboSortBy.SelectedIndex = 0;
 
             #region Supp 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
             ts1.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
@@ -193,13 +193,13 @@ namespace Sci.Production.Warehouse
                     return;
                 }
 
-                var frm = new Sci.Production.Warehouse.P03_Supplier(dr);
+                var frm = new P03_Supplier(dr);
                 frm.ShowDialog(this);
             };
             #endregion
 
             #region refno 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
@@ -210,27 +210,27 @@ namespace Sci.Production.Warehouse
 
                 if (dr["From_Program"].Equals("P03"))
                 {
-                    var frm = new Sci.Production.Warehouse.P03_Refno(dr);
+                    var frm = new P03_Refno(dr);
                     frm.ShowDialog(this);
                 }
             };
             #endregion
 
             #region OrderList 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings OrderList = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings OrderList = new DataGridViewGeneratorTextColumnSettings();
             OrderList.CellMouseDoubleClick += (s, e) =>
             {
                 if (e.RowIndex >= 0)
                 {
                     DataRow dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
-                    var frm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(dr["OrderIdList"]), "Order List", false, null);
+                    var frm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(dr["OrderIdList"]), "Order List", false, null);
                     frm.ShowDialog(this);
                 }
             };
             #endregion
 
             #region Ship qty 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts3 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts3 = new DataGridViewGeneratorTextColumnSettings();
             ts3.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
@@ -241,13 +241,13 @@ namespace Sci.Production.Warehouse
 
                 if (dr["From_Program"].Equals("P03"))
                 {
-                    var frm = new Sci.Production.Warehouse.P03_Wkno(dr);
+                    var frm = new P03_Wkno(dr);
                     frm.ShowDialog(this);
                 }
             };
             #endregion
             #region Taipei Stock Qty 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
             ts4.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
@@ -258,13 +258,13 @@ namespace Sci.Production.Warehouse
 
                 if (dr["From_Program"].Equals("P03"))
                 {
-                    var frm = new Sci.Production.Warehouse.P03_TaipeiInventory(dr);
+                    var frm = new P03_TaipeiInventory(dr);
                     frm.ShowDialog(this);
                 }
             };
             #endregion
             #region Released Qty 開窗
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ts5 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ts5 = new DataGridViewGeneratorNumericColumnSettings();
             ts5.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
@@ -275,13 +275,13 @@ namespace Sci.Production.Warehouse
 
                 if (dr["From_Program"].Equals("P03"))
                 {
-                    var frm = new Sci.Production.Warehouse.P03_RollTransaction(dr);
+                    var frm = new P03_RollTransaction(dr);
                     frm.ShowDialog(this);
                 }
             };
             #endregion
             #region Balance Qty 開窗
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ts6 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ts6 = new DataGridViewGeneratorNumericColumnSettings();
             ts6.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
@@ -292,7 +292,7 @@ namespace Sci.Production.Warehouse
 
                 if (dr["From_Program"].Equals("P03"))
                 {
-                    var frm = new Sci.Production.Warehouse.P03_Transaction(dr);
+                    var frm = new P03_Transaction(dr);
                     frm.ShowDialog(this);
                     if (MyUtility.Check.Empty(dr["ukey"]))
                     {
@@ -308,13 +308,13 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
                 }
                 else if (dr["From_Program"].Equals("P04"))
                 {
-                    var form = new Sci.Production.Warehouse.P04_LocalTransaction(dr, "P03");
+                    var form = new P04_LocalTransaction(dr, "P03");
                     form.Show(this);
                 }
             };
             #endregion
             #region Inventory Qty 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts7 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts7 = new DataGridViewGeneratorTextColumnSettings();
             ts7.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
@@ -325,13 +325,13 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
 
                 if (dr["From_Program"].Equals("P03"))
                 {
-                    var frm = new Sci.Production.Warehouse.P03_InventoryStatus(dr);
+                    var frm = new P03_InventoryStatus(dr);
                     frm.ShowDialog(this);
                 }
             };
             #endregion
             #region Scrap Qty 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts8 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts8 = new DataGridViewGeneratorTextColumnSettings();
             ts8.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
@@ -342,18 +342,18 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
 
                 if (dr["From_Program"].Equals("P03"))
                 {
-                    var frm = new Sci.Production.Warehouse.P03_Scrap(dr);
+                    var frm = new P03_Scrap(dr);
                     frm.ShowDialog(this);
                 }
                 else if (dr["From_Program"].Equals("P04"))
                 {
-                    var frm = new Sci.Production.Warehouse.P04_ScrapQty(dr["ID"].ToString(), dr["refno"].ToString(), dr["ColorID"].ToString());
+                    var frm = new P04_ScrapQty(dr["ID"].ToString(), dr["refno"].ToString(), dr["ColorID"].ToString());
                     frm.ShowDialog(this);
                 }
             };
             #endregion
             #region Bulk Location 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts9 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts9 = new DataGridViewGeneratorTextColumnSettings();
             ts9.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
@@ -364,13 +364,13 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
 
                 if (dr["From_Program"].Equals("P03"))
                 {
-                    var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr, "B");
+                    var frm = new P03_BulkLocation(dr, "B");
                     frm.ShowDialog(this);
                 }
             };
             #endregion
             #region Stock Location 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts11 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts11 = new DataGridViewGeneratorTextColumnSettings();
             ts11.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
@@ -381,14 +381,14 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
 
                 if (dr["From_Program"].Equals("P03"))
                 {
-                    var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr, "I");
+                    var frm = new P03_BulkLocation(dr, "I");
                     frm.ShowDialog(this);
                 }
             };
             #endregion
 
             #region Scrap Location 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts12 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts12 = new DataGridViewGeneratorTextColumnSettings();
             ts12.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
@@ -399,13 +399,13 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
 
                 if (dr["From_Program"].Equals("P03"))
                 {
-                    var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr, "O");
+                    var frm = new P03_BulkLocation(dr, "O");
                     frm.ShowDialog(this);
                 }
             };
             #endregion
             #region FIR 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts10 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts10 = new DataGridViewGeneratorTextColumnSettings();
             ts10.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
@@ -416,7 +416,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
 
                 if (dr["From_Program"].Equals("P03"))
                 {
-                    var frm = new Sci.Production.Warehouse.P03_InspectionList(dr);
+                    var frm = new P03_InspectionList(dr);
                     frm.ShowDialog(this);
                 }
             };
@@ -475,7 +475,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             this.gridMaterialStatus.Columns["ShipFOC"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.gridMaterialStatus.Columns["InputQty"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.gridMaterialStatus.Columns["seq1"].Width = 40;
-            this.gridMaterialStatus.DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.gridMaterialStatus.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 8F);
 
             this.displayUseStock.BackColor = Color.FromArgb(255, 255, 128);
             this.displayFtySupp.BackColor = Color.FromArgb(220, 140, 255);
@@ -1002,16 +1002,16 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
             ";
             #endregion
             #region -- 準備sql參數資料 --
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+            SqlParameter sp1 = new SqlParameter();
             sp1.ParameterName = "@sp1";
             sp1.Value = spno;
 
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            IList<SqlParameter> cmds = new List<SqlParameter>();
             cmds.Add(sp1);
             #endregion
             this.ShowWaitMessage("Data Loading....");
 
-            Ict.DualResult result;
+            DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, cmds, out dtData))
             {
                 if (dtData.Rows.Count == 0 && !this.ButtonOpen)

@@ -4,7 +4,7 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtCuttingMachineID : Sci.Win.UI.TextBox
+    public partial class txtCuttingMachineID : Win.UI.TextBox
     {
         private string mdivision = string.Empty;
         private string where = string.Empty;   // " Where junk = 0";
@@ -15,7 +15,7 @@ namespace Sci.Production.Class
             string sql;
 
             sql = "select distinct id from CuttingMachine WITH (NOLOCK) where junk = 0";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "15", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "15", this.Text, false, ",");
             item.Width = 300;
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)

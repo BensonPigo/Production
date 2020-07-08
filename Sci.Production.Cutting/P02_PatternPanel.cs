@@ -2,7 +2,7 @@
 
 namespace Sci.Production.Cutting
 {
-    public partial class P02_PatternPanel : Sci.Win.Subs.Input8A
+    public partial class P02_PatternPanel : Win.Subs.Input8A
     {
         public P02_PatternPanel()
         {

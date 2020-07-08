@@ -13,7 +13,7 @@ using System.Linq;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P03 : Sci.Win.Tems.QueryForm
+    public partial class P03 : Win.Tems.QueryForm
     {
         DataTable detailTb;
         Ict.Win.UI.DataGridViewDateBoxColumn col_estcutdate;
@@ -468,7 +468,7 @@ Values                                       ({dr["Ukey"]}    ,'{orgEstCutDate}'
             }
 
             var distnct_id = saveDataTable.AsEnumerable().
-                Where(w => w.Field<int>("Sel") == 1 && w.Field<object>("EstCutDate") != w.Field<object>("NewEstCutDate") && !MyUtility.Check.Empty(w.Field < object >("NewEstCutDate"))).
+                Where(w => w.Field<int>("Sel") == 1 && w.Field<object>("EstCutDate") != w.Field<object>("NewEstCutDate") && !MyUtility.Check.Empty(w.Field<object>("NewEstCutDate"))).
                 Select(row => row.Field<string>("ID")).Distinct();
             foreach (string tmp_id in distnct_id)
             {

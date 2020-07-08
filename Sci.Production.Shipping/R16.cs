@@ -286,7 +286,7 @@ and f.IsProduceFty = 1
 
         private void TxtShipper_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                 @" 
 select distinct ShipperID 
 from FtyShipper_Detail", "15", this.txtShipper.Text, headercaptions: "Shipper");

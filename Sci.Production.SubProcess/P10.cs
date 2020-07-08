@@ -16,7 +16,7 @@ namespace Sci.Production.SubProcess
     /// <summary>
     /// P10
     /// </summary>
-    public partial class P10 : Sci.Win.Tems.QueryForm
+    public partial class P10 : Win.Tems.QueryForm
     {
         private int intRightColumnHeaderCount = 3;
         private object objStartDate;
@@ -1256,7 +1256,7 @@ order by Feature";
             DataTable dtSelectItems;
             DualResult result = DBProxy.Current.Select(null, strGetFeatureSQL, listSQLParameter, out dtSelectItems);
 
-            Sci.Win.Tools.SelectItem2 items = new Win.Tools.SelectItem2(dtSelectItems, "Feature,SMV,Remark", "Feature,SMV,Remark", "10,6,20", dr["Feature"].ToString());
+            Win.Tools.SelectItem2 items = new Win.Tools.SelectItem2(dtSelectItems, "Feature,SMV,Remark", "Feature,SMV,Remark", "10,6,20", dr["Feature"].ToString());
             DialogResult diaResult = items.ShowDialog();
 
             if (diaResult != DialogResult.Cancel)
@@ -1399,7 +1399,7 @@ from SubProcessLearnCurve
 where Type = 'PPA'
 	  and Junk = 0
 order by ID";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(strGetLearnCurveSQL, "10,20", strOldSubProcessLearnCurveID);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(strGetLearnCurveSQL, "10,20", strOldSubProcessLearnCurveID);
 
             DialogResult result = item.ShowDialog();
             if (result != DialogResult.Cancel)
@@ -1495,7 +1495,7 @@ where Type = 'PPA'
 	  and Junk = 0 and MDivisionID ='{Sci.Env.User.Keyword}'
 order by GroupID";
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(strGetListSQL, "15,15", strGroup);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(strGetListSQL, "15,15", strGroup);
 
             DialogResult result = item.ShowDialog();
             if (result != DialogResult.Cancel)

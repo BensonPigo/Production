@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class P23 : Sci.Win.Tems.QueryForm
+    public partial class P23 : Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private string selectDataTable_DefaultView_Sort = string.Empty;

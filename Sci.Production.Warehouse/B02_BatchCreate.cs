@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class B02_BatchCreate : Sci.Win.Tems.Base
+    public partial class B02_BatchCreate : Win.Tems.Base
     {
         public B02_BatchCreate()
         {

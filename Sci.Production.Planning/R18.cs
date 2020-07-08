@@ -13,7 +13,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// R18
     /// </summary>
-    public partial class R18 : Sci.Win.Tems.PrintForm
+    public partial class R18 : Win.Tems.PrintForm
     {
         private int selectindex = 0;
         private string factory;
@@ -93,7 +93,7 @@ namespace Sci.Production.Planning
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sql parameters declare --
 
@@ -303,7 +303,7 @@ pivot
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R18");
-            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             objApp.Quit();

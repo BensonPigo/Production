@@ -6,7 +6,7 @@ using Ict;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P01_Ap : Sci.Win.Subs.Base
+    public partial class P01_Ap : Win.Subs.Base
     {
         DataRow dr;
 

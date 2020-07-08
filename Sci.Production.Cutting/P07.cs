@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P07 : Sci.Win.Tems.QueryForm
+    public partial class P07 : Win.Tems.QueryForm
     {
         public P07(ToolStripMenuItem menuitem)
             : base(menuitem)

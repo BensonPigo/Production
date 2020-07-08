@@ -13,7 +13,7 @@ using System.Linq;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P05 : Sci.Win.Tems.Input6
+    public partial class P05 : Win.Tems.Input6
     {
         string artworkunit;
         Form batchapprove;
@@ -189,7 +189,7 @@ ORDER BY ap.OrderID   ", masterID);
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings col_ReqQty = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings col_ReqQty = new DataGridViewGeneratorNumericColumnSettings();
             col_ReqQty.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
@@ -433,7 +433,7 @@ group by ReqQty.value,PoQty.value";
             this.UpdateExceedStatus();
 
             // 判斷irregular Reason沒寫不能存檔
-            var IrregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var IrregularQtyReason = new P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
 
             DataTable dtIrregular = IrregularQtyReason.Check_Irregular_Qty();
             if (dtIrregular != null)
@@ -479,7 +479,7 @@ group by ReqQty.value,PoQty.value";
             }
 
             // 判斷irregular Reason沒寫不能存檔
-            var IrregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var IrregularQtyReason = new P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
 
             DataTable dtIrregular = IrregularQtyReason.Check_Irregular_Qty();
             if (dtIrregular != null)
@@ -670,7 +670,7 @@ where id = '{this.CurrentMaintain["id"]}'";
             #endregion
 
             // 跳轉至PrintForm
-            Sci.Production.Subcon.P05_Print callPrintForm = new Sci.Production.Subcon.P05_Print(this.CurrentMaintain, totalReqQty.ToString());
+            P05_Print callPrintForm = new P05_Print(this.CurrentMaintain, totalReqQty.ToString());
             callPrintForm.ShowDialog(this);
             return true;
         }
@@ -698,7 +698,7 @@ where id = '{this.CurrentMaintain["id"]}'";
                 return;
             }
 
-            var frm = new Sci.Production.Subcon.P05_Import(dr, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P05_Import(dr, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
 
             DataTable dg = (DataTable)this.detailgridbs.DataSource;
@@ -754,15 +754,15 @@ where id = '{this.CurrentMaintain["id"]}'";
                 return;
             }
 
-            var frm = new Sci.Production.Subcon.P05_BatchCreate();
+            var frm = new P05_BatchCreate();
             frm.ShowDialog(this);
             this.ReloadDatas();
         }
 
         private void txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
         {
-            Production.Class.txtartworktype_fty o;
-            o = (Production.Class.txtartworktype_fty)sender;
+            Class.txtartworktype_fty o;
+            o = (Class.txtartworktype_fty)sender;
 
             if ((o.Text != o.OldValue) && this.EditMode)
             {
@@ -801,7 +801,7 @@ where id = '{this.CurrentMaintain["id"]}'";
                 }
             }
 
-            var frm = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, detailDatas);
+            var frm = new P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, detailDatas);
             frm.ShowDialog(this);
 
             // 畫面關掉後，再檢查一次有無價格異常
@@ -815,7 +815,7 @@ where id = '{this.CurrentMaintain["id"]}'";
             {
                 if (this.batchapprove == null || this.batchapprove.IsDisposed)
                 {
-                    this.batchapprove = new Sci.Production.Subcon.P05_BatchApprove(this.reload);
+                    this.batchapprove = new P05_BatchApprove(this.reload);
                     this.batchapprove.Show();
                 }
                 else
@@ -898,7 +898,7 @@ where id = '{this.CurrentMaintain["id"]}'";
             }
 
             this.btnIrrQtyReason.ForeColor = Color.Black;
-            var IrregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, detailDatas);
+            var IrregularQtyReason = new P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, detailDatas);
 
             DataTable dtIrregular = IrregularQtyReason.Check_Irregular_Qty();
             this.HideWaitMessage();
@@ -952,7 +952,7 @@ where id = '{this.CurrentMaintain["id"]}'";
                 return;
             }
 
-            var frm = new Sci.Production.Subcon.P05_SpecialRecord(dr, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P05_SpecialRecord(dr, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
             this.detailgridbs.EndEdit();

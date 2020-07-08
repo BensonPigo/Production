@@ -9,7 +9,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// R01_LastAPSdownloadTime
     /// </summary>
-    public partial class R01_LastAPSdownloadTime : Sci.Win.Forms.Base
+    public partial class R01_LastAPSdownloadTime : Win.Forms.Base
     {
         /// <summary>
         /// R01_LastAPSdownloadTime

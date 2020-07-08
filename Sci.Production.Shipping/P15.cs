@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P15 : Sci.Win.Tems.Input6
+    public partial class P15 : Win.Tems.Input6
     {
         public P15(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -226,7 +226,7 @@ order by e.ID
 
         protected override void OnDetailGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorTextColumnSettings colContainers = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings colContainers = new DataGridViewGeneratorTextColumnSettings();
             colContainers.CellMouseDoubleClick += (s, e) =>
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)

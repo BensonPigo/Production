@@ -9,7 +9,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Quality
 {
-    public partial class P06 : Sci.Win.Tems.Input6
+    public partial class P06 : Win.Tems.Input6
     {
         // 宣告Context Menu Item
         ToolStripMenuItem add;
@@ -118,7 +118,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P06_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
+                var frm = new P06_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -132,7 +132,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P06_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
+                var frm = new P06_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -145,7 +145,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P06_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
+                var frm = new P06_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -158,7 +158,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P06_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
+                var frm = new P06_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -171,7 +171,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P06_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
+                var frm = new P06_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -193,7 +193,7 @@ namespace Sci.Production.Quality
             this.grid_CellMouseClick(e.Button, e.RowIndex);
         }
 
-        public void grid_CellMouseClick(System.Windows.Forms.MouseButtons eButton, int eRowIndex)
+        public void grid_CellMouseClick(MouseButtons eButton, int eRowIndex)
         {
             if (eButton == System.Windows.Forms.MouseButtons.Right)
             {
@@ -241,7 +241,7 @@ namespace Sci.Production.Quality
         {
             // string ID = MyUtility.GetValue.GetID("CF", "ColorFastness", DateTime.Today, 2, "ID", null);
             // string ID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "CF", "ColorFastness", DateTime.Today, 2, "ID", null);
-            Sci.Production.Quality.P06_Detail callNewDetailForm = new P06_Detail(this.IsSupportEdit, "New", null, null, null, this.displaySP.Text);
+            P06_Detail callNewDetailForm = new P06_Detail(this.IsSupportEdit, "New", null, null, null, this.displaySP.Text);
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
             this.RenewData();
@@ -259,7 +259,7 @@ namespace Sci.Production.Quality
                 return;
             }
 
-            var frm = new Sci.Production.Quality.P06_Detail(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
+            var frm = new P06_Detail(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
             frm.ShowDialog(this);
             frm.Dispose();
 

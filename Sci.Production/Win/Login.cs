@@ -26,7 +26,7 @@ namespace Sci.Production.Win
         /// Initializes a new instance of the <see cref="Login"/> class.
         /// </summary>
         /// <param name="app">app</param>
-        public Login(Sci.Production.Main app)
+        public Login(Main app)
         {
             this.app = app;
             this.InitializeComponent();
@@ -187,7 +187,7 @@ namespace Sci.Production.Win
                 return new DualResult(false, "Mdivision does not exist!");
             }
 
-            Sci.Production.SCHEMAS.PASS1Row data;
+            SCHEMAS.PASS1Row data;
             if (!(result = Sci.Production.Win.ProjUtils.GetPass1(userid, pwd, out data)))
             {
                 return result;

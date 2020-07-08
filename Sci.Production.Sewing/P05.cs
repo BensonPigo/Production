@@ -9,7 +9,7 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Sewing
 {
-    public partial class P05 : Sci.Win.Tems.Input6
+    public partial class P05 : Win.Tems.Input6
     {
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -599,7 +599,7 @@ where o.id = '{this.CurrentDetailData["OrderId"]}'";
             }
             else if (checkLocation.Rows.Count > 1)
             {
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(checkLocation, "Location,Rate", "10,15", null, null);
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(checkLocation, "Location,Rate", "10,15", null, null);
                 DialogResult dialogResult = item.ShowDialog();
                 if (dialogResult == DialogResult.Cancel)
                 {
@@ -622,7 +622,7 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
 		and o.Category NOT IN ( 'G' ,'A')
         and f.IsProduceFty = 1 and o.Junk = 0 order by o.AddDate desc
 ";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(orderChkSql, "18,15,12,8", null, null);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(orderChkSql, "18,15,12,8", null, null);
             DialogResult dialogResult = item.ShowDialog();
             if (dialogResult != DialogResult.Cancel)
             {
@@ -733,7 +733,7 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
             }
 
             string chkArticleSql = $@"select Article,[Order Qty] = isnull(sum(Qty),0) from Order_Qty with (nolock) where id = '{this.CurrentDetailData["OrderID"]}' group by Article";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(chkArticleSql, "10,15", null, null);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(chkArticleSql, "10,15", null, null);
             DialogResult dialogResult = item.ShowDialog();
             if (dialogResult == DialogResult.Cancel)
             {

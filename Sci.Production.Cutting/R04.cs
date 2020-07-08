@@ -8,14 +8,15 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
-    public partial class R04 : Sci.Win.Tems.PrintForm
+    public partial class R04 : Win.Tems.PrintForm
     {
         DataTable printData;
         string MDivision;
         string Factory;
         string CutCell1;
         string CutCell2;
-        DateTime? Est_CutDate1, Est_CutDate2;
+        DateTime? Est_CutDate1;
+        DateTime? Est_CutDate2;
         StringBuilder condition_Est_CutDate = new StringBuilder();
 
         public R04(ToolStripMenuItem menuitem)
@@ -130,7 +131,7 @@ namespace Sci.Production.Cutting
         }
 
         // 非同步讀取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(

@@ -13,7 +13,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// R08
     /// </summary>
-    public partial class R08 : Sci.Win.Tems.PrintForm
+    public partial class R08 : Win.Tems.PrintForm
     {
         private DataTable[] _printData;
         private DateTime? Cdate1;
@@ -29,7 +29,7 @@ namespace Sci.Production.PPIC
         private string T;
         private string Status;
         private string Sharedept;
-        private string ReportType;
+        private string reportType;
 
         /// <summary>
         /// R08
@@ -70,12 +70,12 @@ namespace Sci.Production.PPIC
             this.T = MyUtility.Convert.GetString(this.comboType.SelectedValue);
             this.Status = this.cmbStatus.Text;
             this.Sharedept = this.txtSharedept.Text;
-            this.ReportType = this.cmbReportType.Text;
+            this.reportType = this.cmbReportType.Text;
             return base.ValidateInput();
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region SqlParameter
             List<SqlParameter> sqlpar = new List<SqlParameter>();
@@ -164,7 +164,7 @@ namespace Sci.Production.PPIC
 
             #region sqlcmd 主table
             string sqlcmd = string.Empty;
-            if (this.ReportType == "Detail List")
+            if (this.reportType == "Detail List")
             {
                 sqlcmd = $@"
 select
@@ -401,7 +401,7 @@ where 1=1
             }
 
             string filename = string.Empty;
-            if (this.ReportType == "Detail List")
+            if (this.reportType == "Detail List")
             {
                 filename = "PPIC_R08_DetailList";
             }
@@ -440,7 +440,7 @@ where 1=1
         private void TxtSharedept_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sql = "select ID,Name from FinanceEN.dbo.Department";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "12,15", this.txtSharedept.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "12,15", this.txtSharedept.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

@@ -7,7 +7,7 @@ namespace Sci.Production.Basic
     /// <summary>
     /// B11
     /// </summary>
-    public partial class B11 : Sci.Win.Tems.Input1
+    public partial class B11 : Win.Tems.Input1
     {
         /// <summary>
         /// B11
@@ -56,7 +56,7 @@ namespace Sci.Production.Basic
 
         private void BtnShippingMark_Click(object sender, EventArgs e)
         {
-            Sci.Production.Basic.B11_ShippingMark callNextForm = new Sci.Production.Basic.B11_ShippingMark(false, this.CurrentMaintain);
+            B11_ShippingMark callNextForm = new B11_ShippingMark(false, this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
     }

@@ -16,7 +16,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P12 : Sci.Win.Tems.Input6
+    public partial class P12 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
@@ -197,7 +197,7 @@ namespace Sci.Production.Warehouse
         {
             Color backDefaultColor = this.detailgrid.DefaultCellStyle.BackColor;
             #region SP# Vaild 判斷
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
 
             ts4.CellValidating += (s, e) =>
             {
@@ -221,14 +221,14 @@ namespace Sci.Production.Warehouse
 
             #region Seq 右鍵開窗
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     IList<DataRow> x;
 
-                    Sci.Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(this.CurrentDetailData["poid"].ToString(), this.CurrentDetailData["seq"].ToString(), "f.MDivisionID = '{1}' and fabrictype !='F' and ProductionType = 'Packing'");
+                    Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(this.CurrentDetailData["poid"].ToString(), this.CurrentDetailData["seq"].ToString(), "f.MDivisionID = '{1}' and fabrictype !='F' and ProductionType = 'Packing'");
                     DialogResult result = selepoitem.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -318,12 +318,12 @@ namespace Sci.Production.Warehouse
 
             #region Location 右鍵開窗
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation("B", this.CurrentDetailData["location"].ToString());
+                    Win.Tools.SelectItem2 item = Prgs.SelectLocation("B", this.CurrentDetailData["location"].ToString());
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -740,7 +740,7 @@ Where a.id = '{0}'", masterID);
         // Import
         private void btnImport_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P12_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P12_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }
@@ -856,7 +856,7 @@ where a.id= @ID", pars, out dtt);
             #endregion
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
 

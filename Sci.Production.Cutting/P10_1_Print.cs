@@ -14,7 +14,7 @@ using System.IO;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P10_1_Print : Sci.Win.Tems.PrintForm
+    public partial class P10_1_Print : Win.Tems.PrintForm
     {
         DualResult result;
         DataRow CurrentDataRow;
@@ -42,7 +42,7 @@ namespace Sci.Production.Cutting
         DataTable dtt;
         DataTable dt;
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             if (this.radioBundleCard.Checked == true)
             {
@@ -441,7 +441,7 @@ order by x.[Bundle]");
             return this.result;
         }
 
-        protected override bool OnToExcel(Win.ReportDefinition report)
+        protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.dtt == null || this.dtt.Rows.Count == 0)
             {
@@ -627,7 +627,7 @@ order by x.[Bundle]");
                 report.ReportResource = reportresource;
 
                 // 開啟 report view
-                var frm = new Sci.Win.Subs.ReportView(report);
+                var frm = new Win.Subs.ReportView(report);
                 frm.MdiParent = this.MdiParent;
                 frm.DirectPrint = true;
                 frm.ShowDialog();

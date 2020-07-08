@@ -4,7 +4,7 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtCell : Sci.Win.UI.TextBox
+    public partial class txtCell : Win.UI.TextBox
     {
         private string mdivision = string.Empty;
         private string where = string.Empty;   // " Where junk = 0";
@@ -26,7 +26,7 @@ namespace Sci.Production.Class
             }
 
             sql = "select distinct id from Production.dbo.CutCell WITH (NOLOCK) " + this.where;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "2", this.Text, false, ",");
             item.Width = 300;
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)

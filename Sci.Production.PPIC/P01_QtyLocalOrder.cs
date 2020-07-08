@@ -14,7 +14,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_QtyLocalOrder
     /// </summary>
-    public partial class P01_QtyLocalOrder : Sci.Win.Subs.Base
+    public partial class P01_QtyLocalOrder : Win.Subs.Base
     {
         private DataTable SizeCode;
         private DataTable Article;

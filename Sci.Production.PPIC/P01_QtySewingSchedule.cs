@@ -8,7 +8,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_QtySewingSchedule
     /// </summary>
-    public partial class P01_QtySewingSchedule : Sci.Win.Subs.Base
+    public partial class P01_QtySewingSchedule : Win.Subs.Base
     {
         private string orderID;
         private string styleUkey;

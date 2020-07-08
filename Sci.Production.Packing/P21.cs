@@ -10,7 +10,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// P21
     /// </summary>
-    public partial class P21 : Sci.Win.Tems.QueryForm
+    public partial class P21 : Win.Tems.QueryForm
     {
         /// <summary>
         /// P21

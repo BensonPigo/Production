@@ -12,7 +12,7 @@ namespace Sci.Production.Basic
     /// <summary>
     /// B04
     /// </summary>
-    public partial class B04 : Sci.Win.Tems.Input1
+    public partial class B04 : Win.Tems.Input1
     {
         /// <summary>
         /// B04
@@ -151,7 +151,7 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
         /// <param name="e">e</param>
         private void BtnAccountingChartNo_Click(object sender, EventArgs e)
         {
-            Sci.Production.Basic.B04_AccountNo callNextForm = new Sci.Production.Basic.B04_AccountNo(this.IsSupportEdit, this.CurrentMaintain["ID"].ToString(), null, null);
+            B04_AccountNo callNextForm = new B04_AccountNo(this.IsSupportEdit, this.CurrentMaintain["ID"].ToString(), null, null);
             callNextForm.ShowDialog(this);
             this.OnDetailEntered();
         }
@@ -163,7 +163,7 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
         /// <param name="e">e</param>
         private void BtnBankDetail_Click(object sender, EventArgs e)
         {
-            Sci.Production.Basic.B04_BankDetail callNextForm = new Sci.Production.Basic.B04_BankDetail(Prgs.GetAuthority(Sci.Env.User.UserID, "B04. Supplier/Sub Con (Local)", "CanEdit"), this.CurrentMaintain["ID"].ToString(), null, null, this.Perm.Confirm, null);
+            B04_BankDetail callNextForm = new B04_BankDetail(Prgs.GetAuthority(Sci.Env.User.UserID, "B04. Supplier/Sub Con (Local)", "CanEdit"), this.CurrentMaintain["ID"].ToString(), null, null, this.Perm.Confirm, null);
 
             // Sci.Production.Basic.B04_BankDetail callNextForm = new Sci.Production.Basic.B04_BankDetail(new ToolStripMenuItem(), this.CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
@@ -238,7 +238,7 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
 
             if (this.batchapprove == null || this.batchapprove.IsDisposed)
             {
-                this.batchapprove = new Sci.Production.Basic.B04_BatchApprove(this.reload);
+                this.batchapprove = new B04_BatchApprove(this.reload);
                 this.batchapprove.Show();
             }
             else

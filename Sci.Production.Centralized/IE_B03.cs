@@ -8,7 +8,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// IE_B03
     /// </summary>
-    public partial class IE_B03 : Sci.Win.Tems.Input1
+    public partial class IE_B03 : Win.Tems.Input1
     {
         /// <summary>
         /// IE_B03

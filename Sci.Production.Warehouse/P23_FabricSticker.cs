@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P23_FabricSticker : Sci.Win.Subs.Base
+    public partial class P23_FabricSticker : Win.Subs.Base
     {
         private object strSubTransferID;
 
@@ -148,7 +148,7 @@ order by NewRowNo";
                 report.ReportResource = reportresource;
 
                 // 開啟 report view
-                var frm = new Sci.Win.Subs.ReportView(report);
+                var frm = new Win.Subs.ReportView(report);
                 frm.MdiParent = this.MdiParent;
                 frm.Show();
                 #endregion

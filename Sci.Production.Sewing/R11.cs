@@ -12,7 +12,7 @@ namespace Sci.Production.Sewing
     /// <summary>
     /// R11
     /// </summary>
-    public partial class R11 : Sci.Win.Tems.PrintForm
+    public partial class R11 : Win.Tems.PrintForm
     {
         private string factory;
         private string mDivision;
@@ -65,7 +65,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             StringBuilder sqlWhere = new StringBuilder();
@@ -159,7 +159,7 @@ where 1=1
             this.ShowWaitMessage("Starting EXCEL...");
             string excelFile = "Sewing_R11";
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\" + excelFile + ".xltx";
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
                 return false;
@@ -170,7 +170,7 @@ where 1=1
 
             #region Save Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(excelFile);
-            Microsoft.Office.Interop.Excel.Workbook workbook = excelApp.ActiveWorkbook;
+            Excel.Workbook workbook = excelApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             excelApp.Quit();

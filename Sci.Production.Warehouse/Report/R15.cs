@@ -8,7 +8,7 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R15 : Sci.Win.Tems.PrintForm
+    public partial class R15 : Win.Tems.PrintForm
     {
         string reason;
         string mdivision;
@@ -16,7 +16,8 @@ namespace Sci.Production.Warehouse
         string stocktype = string.Empty;
         string spno1;
         string spno2;
-        DateTime? issueDate1, issueDate2;
+        DateTime? issueDate1;
+        DateTime? issueDate2;
         DataTable printData;
 
         public R15(ToolStripMenuItem menuitem)
@@ -47,7 +48,7 @@ namespace Sci.Production.Warehouse
         }
 
         // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sql parameters declare --
 

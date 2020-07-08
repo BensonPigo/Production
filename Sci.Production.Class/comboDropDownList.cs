@@ -12,14 +12,17 @@ using Sci.Win.Tools;
 
 namespace Sci.Production.Class
 {
-    public partial class comboDropDownList : Sci.Win.UI.ComboBox
+    public partial class comboDropDownList : Win.UI.ComboBox
     {
         private string type;
 
         [Category("Custom Properties")]
         public string Type
         {
-            get { return this.type; }
+            get
+            {
+                return this.type;
+            }
 
             set
             {
@@ -33,7 +36,7 @@ select ID
 from DropDownList WITH (NOLOCK) 
 where Type = '{0}' 
 order by Seq", this.Type);
-                    Ict.DualResult returnResult;
+                    DualResult returnResult;
                     DataTable dropDownListTable = new DataTable();
                     if (returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable))
                     {
@@ -72,7 +75,7 @@ select ID
 from DropDownList WITH (NOLOCK) 
 where Type = '{0}' 
 order by Seq", Type);
-                Ict.DualResult returnResult;
+                DualResult returnResult;
                 DataTable dropDownListTable = new DataTable();
                 Dictionary<string, string> di_dropdown = new Dictionary<string, string>();
                 if (returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable))
@@ -87,7 +90,7 @@ order by Seq", Type);
         }
     }
 
-    public partial class txtDropDownList : Sci.Win.UI.TextBox
+    public partial class txtDropDownList : Win.UI.TextBox
     {
         private string type;
 
@@ -95,11 +98,7 @@ order by Seq", Type);
         public string Type
         {
             get { return this.type; }
-
-            set
-            {
-                this.type = value;
-            }
+            set { this.type = value; }
         }
 
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
@@ -114,7 +113,7 @@ from DropDownList WITH (NOLOCK)
 where Type = '{this.type}' 
 order by Seq";
             #endregion
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "ID,Name", this.Text, false, null);
+            SelectItem item = new SelectItem(sqlcmd, "ID,Name", this.Text, false, null);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -162,10 +161,10 @@ order by Seq";
             {
                 if (e.Button == MouseButtons.Right)
                 {
-                    System.Windows.Forms.DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                    DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
                     // Parent form 若是非編輯狀態就 return
-                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                    if (!((Win.Forms.Base)grid.FindForm()).EditMode)
                     {
                         return;
                     }
@@ -201,10 +200,10 @@ order by Seq";
             // 正確性檢查
             ts.CellValidating += (s, e) =>
             {
-                System.Windows.Forms.DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
                 // Parent form 若是非編輯狀態就 return
-                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                if (!((Win.Forms.Base)grid.FindForm()).EditMode)
                 {
                     return;
                 }

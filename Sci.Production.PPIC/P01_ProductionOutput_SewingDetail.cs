@@ -8,7 +8,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_ProductionOutput_SewingDetail
     /// </summary>
-    public partial class P01_ProductionOutput_SewingDetail : Sci.Win.Subs.Base
+    public partial class P01_ProductionOutput_SewingDetail : Win.Subs.Base
     {
         private string orderID;
         private string type;

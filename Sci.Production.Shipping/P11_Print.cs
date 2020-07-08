@@ -11,7 +11,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P11_Print : Sci.Win.Tems.PrintForm
+    public partial class P11_Print : Win.Tems.PrintForm
     {
         private IList<DataRow> DetailDatas;
         private DataRow CurrentMaintain;
@@ -226,7 +226,7 @@ drop table #tmpBIRInvoice,#tmpPackOrder,#tmpOrderStdFtyCMP,#PackCMP
             }
 
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P11_BIRSalesReport.xltx";
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
                 this.HideWaitMessage();
@@ -323,14 +323,14 @@ group by o.CustPONo,o.StyleID,s.Description,o.PoPrice,o.id,o.CPU,o.CurrencyID,st
             #endregion
 
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P11.xltx";
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
                 this.HideWaitMessage();
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             #region 產生頁首頁尾資料
 

@@ -6,7 +6,7 @@ using System.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P30_Qty : Sci.Win.Tems.QueryForm
+    public partial class P30_Qty : Win.Tems.QueryForm
     {
         private DataRow DataRow;
 

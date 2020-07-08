@@ -7,13 +7,13 @@ namespace Sci.Production.Subcon
     public class DllInvoke
     {
         [DllImport("Kernel32.dll")]
-        private extern static IntPtr LoadLibrary(string path);
+        private static extern IntPtr LoadLibrary(string path);
 
         [DllImport("Kernel32.dll")]
-        private extern static IntPtr GetProcAddress(IntPtr lib, string funcName);
+        private static extern IntPtr GetProcAddress(IntPtr lib, string funcName);
 
         [DllImport("Kernel32.dll")]
-        private extern static bool FreeLibrary(IntPtr lib);
+        private static extern bool FreeLibrary(IntPtr lib);
 
         private IntPtr hLib;
 

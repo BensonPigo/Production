@@ -19,7 +19,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_P09
     /// </summary>
-    public partial class P08 : Sci.Win.Tems.QueryForm
+    public partial class P08 : Win.Tems.QueryForm
     {
         private string selectDataTable_DefaultView_Sort = string.Empty;
         private DataTable selectDataTable;

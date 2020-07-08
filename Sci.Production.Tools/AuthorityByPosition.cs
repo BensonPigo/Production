@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Tools
 {
-    public partial class AuthorityByPosition : Sci.Win.Tems.Input6
+    public partial class AuthorityByPosition : Win.Tems.Input6
     {
         private string sqlCmd = string.Empty;
         private DualResult result = null;
@@ -40,12 +40,13 @@ namespace Sci.Production.Tools
         Ict.Win.UI.DataGridViewCheckBoxColumn ckJunk = null;
         Ict.Win.UI.DataGridViewCheckBoxColumn ckUnJunk = null;
 
-        public AuthorityByPosition(ToolStripMenuItem menuitem) : base(menuitem)
+        public AuthorityByPosition(ToolStripMenuItem menuitem)
+            : base(menuitem)
         {
             this.InitializeComponent();
 
             // 新增Update function List按鈕
-            Sci.Win.UI.Button btn = new Sci.Win.UI.Button();
+            Win.UI.Button btn = new Win.UI.Button();
             btn.Text = "Update Function List";
             btn.Click += new EventHandler(this.BtnUpdate_Click);
             this.browsetop.Controls.Add(btn);
@@ -110,7 +111,7 @@ namespace Sci.Production.Tools
         {
             base.OnDetailGridSetup();
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings tsPosition = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings tsPosition = new DataGridViewGeneratorTextColumnSettings();
             tsPosition.CellMouseDoubleClick += (s, e) =>
                 {
                     if (!this.EditMode)
@@ -121,7 +122,7 @@ namespace Sci.Production.Tools
                             return;
                         }
 
-                        Sci.Production.Tools.AuthorityByPosition_Setting frm = new Sci.Production.Tools.AuthorityByPosition_Setting((Int64)this.CurrentMaintain["PKey"], dr);
+                        AuthorityByPosition_Setting frm = new AuthorityByPosition_Setting((Int64)this.CurrentMaintain["PKey"], dr);
                         frm.ShowDialog(this);
                         if (frm.DialogResult == DialogResult.OK)
                         {
@@ -130,7 +131,7 @@ namespace Sci.Production.Tools
                     }
                 };
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings tsUsed = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings tsUsed = new DataGridViewGeneratorTextColumnSettings();
             tsUsed.CellMouseClick += (s, e) =>
             {
                 if (this.EditMode)
@@ -240,7 +241,7 @@ namespace Sci.Production.Tools
             }
 
             // 修改紀錄
-            Sci.Win.UI.ChangeMemo frm = new Sci.Win.UI.ChangeMemo();
+            Win.UI.ChangeMemo frm = new Win.UI.ChangeMemo();
             frm.ShowDialog(this);
             this.strChangeMemo = frm.returnString;
 
@@ -589,7 +590,7 @@ namespace Sci.Production.Tools
                 return;
             }
 
-            Sci.Production.Tools.AuthorityByPosition_History frm = new Sci.Production.Tools.AuthorityByPosition_History(true, this.CurrentMaintain["ID"].ToString(), null, null);
+            AuthorityByPosition_History frm = new AuthorityByPosition_History(true, this.CurrentMaintain["ID"].ToString(), null, null);
             frm.Show(this);
         }
 

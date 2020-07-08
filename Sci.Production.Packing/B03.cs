@@ -13,7 +13,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// B03
     /// </summary>
-    public partial class B03 : Sci.Win.Tems.Input1
+    public partial class B03 : Win.Tems.Input1
     {
         private Hashtable ht = new Hashtable();
         private DataTable sizes;
@@ -92,7 +92,7 @@ FROM StickerSize WITH (NOLOCK)
 
         private void TxtCTNRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select RefNo  from LocalItem WITH (NOLOCK) where Junk = 0 and Category='CARTON' ", null, this.txtCTNRefno.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("Select RefNo  from LocalItem WITH (NOLOCK) where Junk = 0 and Category='CARTON' ", null, this.txtCTNRefno.Text);
 
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)

@@ -11,7 +11,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P08_ShareExpense_ImportGarment
     /// </summary>
-    public partial class P08_ShareExpense_ImportGarment : Sci.Win.Subs.Base
+    public partial class P08_ShareExpense_ImportGarment : Win.Subs.Base
     {
         private DataTable detailData;
         private DataTable gridData;

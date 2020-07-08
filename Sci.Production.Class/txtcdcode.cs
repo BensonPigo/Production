@@ -4,7 +4,7 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtcdcode : Sci.Win.UI.TextBox
+    public partial class txtcdcode : Win.UI.TextBox
     {
         public txtcdcode()
         {
@@ -32,7 +32,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select ID, convert(nvarchar(5),Cpu) Cpu, Description from CDCode WITH (NOLOCK) where Junk = 0 order by ID", "7,6,45", this.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("Select ID, convert(nvarchar(5),Cpu) Cpu, Description from CDCode WITH (NOLOCK) where Junk = 0 order by ID", "7,6,45", this.Text);
 
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)

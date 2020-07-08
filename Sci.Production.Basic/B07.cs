@@ -5,7 +5,7 @@ namespace Sci.Production.Basic
     /// <summary>
     /// B07
     /// </summary>
-    public partial class B07 : Sci.Win.Tems.Input1
+    public partial class B07 : Win.Tems.Input1
     {
         /// <summary>
         /// B07

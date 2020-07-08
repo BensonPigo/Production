@@ -4,14 +4,17 @@ using Sci.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class txtReason : Sci.Win.UI.ComboBox
+    public partial class txtReason : Win.UI.ComboBox
     {
         private string type;
 
         [Category("Custom Properties")]
         public string ReasonTypeID
         {
-            get { return this.type; }
+            get
+            {
+                return this.type;
+            }
 
             set
             {

@@ -11,7 +11,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R43
     /// </summary>
-    public partial class R43 : Sci.Win.Tems.PrintForm
+    public partial class R43 : Win.Tems.PrintForm
     {
         private DataTable printData;
         private DateTime? dateOnBoardDate1;
@@ -40,7 +40,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             string sqlwhere_GMTBooking = string.Empty;

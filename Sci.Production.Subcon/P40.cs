@@ -14,7 +14,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P40 : Sci.Win.Tems.QueryForm
+    public partial class P40 : Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewTextBoxColumn col_StatusColor;
         List<string> sqlWhere = new List<string>();
@@ -484,7 +484,7 @@ drop table #BasBundleInfo
             }
 
             Excel.Application objApp = new Excel.Application();
-            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Subcon_P40.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Subcon_P40.xltx", objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
 
             com.WriteTable(this.dtExcel, 2);

@@ -11,7 +11,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P31_FTYRegularSendingSchedule
     /// </summary>
-    internal partial class P02_FTYRegularSendingSchedule : Sci.Win.Subs.Base
+    internal partial class P02_FTYRegularSendingSchedule : Win.Subs.Base
     {
         /// <summary>
         /// P31_FTYRegularSendingSchedule

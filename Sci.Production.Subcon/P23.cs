@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P23 : Sci.Win.Tems.Input6
+    public partial class P23 : Win.Tems.Input6
     {
         public P23(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -43,7 +43,7 @@ namespace Sci.Production.Subcon
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
 
             // DataRow dr;
             ts1.CellValidating += (s, e) =>
@@ -53,7 +53,7 @@ namespace Sci.Production.Subcon
                     return;
                 }
 
-                DataRow drr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                DataRow drr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
                 if (e.FormattedValue.ToString() == drr["orderid"].ToString())
                 {
                     return;
@@ -122,7 +122,7 @@ where BundleNo='{0}'",
                 .Text("PatternDesc", header: "PTN Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true);
         }
 
-        protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(
@@ -150,7 +150,7 @@ WHERE BTD.ID = '{0}'", masterID);
 
         protected override bool ClickNew()
         {
-            var frm = new Sci.Production.Subcon.P23_ImportBarcode();
+            var frm = new P23_ImportBarcode();
             frm.ShowDialog(this);
             this.ReloadDatas();
             return true;

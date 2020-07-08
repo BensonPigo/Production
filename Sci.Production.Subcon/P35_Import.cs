@@ -8,7 +8,7 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P35_Import : Sci.Win.Subs.Base
+    public partial class P35_Import : Win.Subs.Base
     {
         DataRow dr_localAp;
         DataTable dt_localApDetail;
@@ -179,7 +179,7 @@ and a.localsuppid = '{this.dr_localAp["localsuppid"]}' and a.mdivisionid = '{Env
                 cmds.Add(sp4);
                 #endregion
 
-                Ict.DualResult result;
+                DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd, cmds, out this.dtlocal))
                 {
                     if (this.dtlocal.Rows.Count == 0)
@@ -201,7 +201,7 @@ and a.localsuppid = '{this.dr_localAp["localsuppid"]}' and a.mdivisionid = '{Env
         {
             base.OnFormLoaded();
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)

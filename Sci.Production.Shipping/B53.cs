@@ -10,7 +10,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B53
     /// </summary>
-    public partial class B53 : Sci.Win.Tems.Input1
+    public partial class B53 : Win.Tems.Input1
     {
         private string editName;
         private DateTime? editDate;
@@ -80,7 +80,7 @@ namespace Sci.Production.Shipping
         {
             if (this.EditMode)
             {
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                     @"select g.GoodsDescription, g.Category, isnull(cd.UnitID,'') as UnitID, g.NLCode
 from KHGoodsHSCode g WITH (NOLOCK) 
 left join KHContract_Detail cd WITH (NOLOCK) on g.NLCode = cd.NLCode

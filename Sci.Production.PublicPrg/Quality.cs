@@ -186,7 +186,7 @@ namespace Sci.Production.PublicPrg
                     }
 
                     DataGridView grid = ((DataGridViewColumn)s).DataGridView;
-                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                    if (!((Win.Forms.Base)grid.FindForm()).EditMode)
                     {
                         return;
                     }

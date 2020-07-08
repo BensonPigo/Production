@@ -10,7 +10,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B40
     /// </summary>
-    public partial class B40 : Sci.Win.Tems.Input1
+    public partial class B40 : Win.Tems.Input1
     {
         private string editName;
         private DateTime? editDate;
@@ -74,7 +74,7 @@ namespace Sci.Production.Shipping
         // NL Code
         private void TxtNLCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                 @"
 select NLCode,HSCode,UnitID
 from VNContract_Detail WITH (NOLOCK) 

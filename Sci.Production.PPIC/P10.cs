@@ -142,7 +142,7 @@ order by ld.Seq1,ld.Seq2";
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = Prgs.SelePoItem(MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), MyUtility.Convert.GetString(dr["Seq"]), "FabricType = 'F'");
+                            SelectItem item = Prgs.SelePoItem(MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), MyUtility.Convert.GetString(dr["Seq"]), "FabricType = 'F'");
                             DialogResult result = item.ShowDialog();
                             if (result == DialogResult.Cancel)
                             {
@@ -293,7 +293,7 @@ OUTER APPLY(
                     if (e.RowIndex != -1)
                     {
                         DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                        Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(dr["Description"]), "Description", false, null);
+                        EditMemo callNextForm = new EditMemo(MyUtility.Convert.GetString(dr["Description"]), "Description", false, null);
                         callNextForm.ShowDialog(this);
                     }
                 }
@@ -310,7 +310,7 @@ OUTER APPLY(
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select ID,Description from PPICReason WITH (NOLOCK) where Type = 'FL' and Junk = 0 and TypeForUse = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["Type"])), "5,40", MyUtility.Convert.GetString(dr["PPICReasonID"]));
+                            SelectItem item = new SelectItem(string.Format("select ID,Description from PPICReason WITH (NOLOCK) where Type = 'FL' and Junk = 0 and TypeForUse = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["Type"])), "5,40", MyUtility.Convert.GetString(dr["PPICReasonID"]));
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -901,7 +901,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
 
         private void BtnImport_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.PPIC.P10_P11_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, "Fabric");
+            var frm = new P10_P11_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, "Fabric");
             frm.ShowDialog(this);
             this.RenewData();
         }

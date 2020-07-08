@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Centralized
 {
-    public partial class SubCon_B04 : Sci.Win.Tems.Input1
+    public partial class SubCon_B04 : Win.Tems.Input1
     {
         public SubCon_B04(ToolStripMenuItem menuitem)
             : base(menuitem)

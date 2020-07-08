@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P42_SubProcessStatus : Sci.Win.Tems.QueryForm
+    public partial class P42_SubProcessStatus : Win.Tems.QueryForm
     {
         DataRow DataRow;
         int SummarType;

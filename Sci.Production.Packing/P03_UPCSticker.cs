@@ -10,7 +10,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// P03_UPCSticker
     /// </summary>
-    public partial class P03_UPCSticker : Sci.Win.Forms.Base
+    public partial class P03_UPCSticker : Win.Forms.Base
     {
         private string ID;
         private DataTable dt;

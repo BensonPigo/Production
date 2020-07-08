@@ -11,7 +11,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P08_InputData
     /// </summary>
-    public partial class P08_InputData : Sci.Win.Subs.Input6A
+    public partial class P08_InputData : Win.Subs.Input6A
     {
         private DataRow masterData;
 
@@ -207,7 +207,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
                             else
                             {
                                 IList<DataRow> selectedReceiveData;
-                                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(receiveData, "INVNo", "25", string.Empty, "Invoice No");
+                                Win.Tools.SelectItem item = new Win.Tools.SelectItem(receiveData, "INVNo", "25", string.Empty, "Invoice No");
                                 DialogResult returnResult = item.ShowDialog();
                                 if (returnResult == DialogResult.Cancel)
                                 {
@@ -266,7 +266,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
                 if (result)
                 {
                     IList<DataRow> selectedReceiveData;
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(receiveData, "INVNo", "25", string.Empty, "Invoice No");
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(receiveData, "INVNo", "25", string.Empty, "Invoice No");
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult != DialogResult.Cancel)
                     {
@@ -345,7 +345,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
             if (this.EditMode)
             {
                 IList<DataRow> selectedReasonData;
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Damage Reason' and Junk = 0", "5,50", MyUtility.Convert.GetString(this.CurrentData["Other"]));
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Damage Reason' and Junk = 0", "5,50", MyUtility.Convert.GetString(this.CurrentData["Other"]));
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult != DialogResult.Cancel)
                 {
@@ -362,7 +362,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
             if (this.EditMode)
             {
                 IList<DataRow> selectedReasonData;
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Damage Reason' and Junk = 0", "5,50", MyUtility.Convert.GetString(this.CurrentData["AfterCutting"]));
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Damage Reason' and Junk = 0", "5,50", MyUtility.Convert.GetString(this.CurrentData["AfterCutting"]));
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult != DialogResult.Cancel)
                 {

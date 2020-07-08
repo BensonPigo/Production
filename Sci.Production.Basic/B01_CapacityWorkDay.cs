@@ -10,7 +10,7 @@ namespace Sci.Production.Basic
     /// <summary>
     /// B01_CapacityWorkDay
     /// </summary>
-    public partial class B01_CapacityWorkDay : Sci.Win.Subs.Base
+    public partial class B01_CapacityWorkDay : Win.Subs.Base
     {
         private DataRow motherData;
 
@@ -61,7 +61,7 @@ namespace Sci.Production.Basic
             // comboBox1
             string selectCommand = "select distinct Year from Factory_TMS WITH (NOLOCK) where ID = @id";
 
-            Ict.DualResult returnResult;
+            DualResult returnResult;
             DataTable yearTable = new DataTable();
             if (returnResult = DBProxy.Current.Select(null, selectCommand, cmds, out yearTable))
             {

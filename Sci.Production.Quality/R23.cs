@@ -12,7 +12,7 @@ using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 
 namespace Sci.Production.Quality
 {
-    public partial class R23 : Sci.Win.Tems.PrintForm
+    public partial class R23 : Win.Tems.PrintForm
     {
         private string F;
         private string M;
@@ -411,7 +411,7 @@ drop table  #tmp,#CalendarData,#Calendar,#tmpPacking
                 return result;
             }
             #endregion
-            return new Ict.DualResult(true);
+            return new DualResult(true);
         }
 
         protected override bool OnToExcel(ReportDefinition report)

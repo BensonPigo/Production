@@ -12,7 +12,7 @@ namespace Sci.Production.SubProcess
     /// <summary>
     /// SubProcess.B02
     /// </summary>
-    public partial class B02 : Sci.Win.Tems.Input6
+    public partial class B02 : Win.Tems.Input6
     {
         private string user = Sci.Env.User.UserID;
         private DataTable dtSMV = new DataTable();
@@ -57,17 +57,17 @@ where styleUkey = '{0}'",
         /// </summary>
         protected override void OnDetailGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorTextColumnSettings gridType = new DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings gridFeature = new DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings gridRemark = new DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings gridSMV = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorTextColumnSettings gridType = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings gridFeature = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings gridRemark = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings gridSMV = new DataGridViewGeneratorNumericColumnSettings();
 
             #region gridType
             gridType.EditingMouseDown += (s, e) =>
              {
                  if (this.EditMode && e.Button == MouseButtons.Right)
                  {
-                    Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"select  Id,ArtworkTypeId  from  subprocess  where isselection=1 and Junk=0  order by Id", "10,20", null);
+                     Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"select  Id,ArtworkTypeId  from  subprocess  where isselection=1 and Junk=0  order by Id", "10,20", null);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                      {
@@ -109,7 +109,7 @@ where styleUkey = '{0}'",
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format(@"Select  Feature,Remark  from  SubProcessFeature where Type='{0}' and Junk=0  order by Feature", this.CurrentDetailData["Type"].ToString()), "30,20", null);
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format(@"Select  Feature,Remark  from  SubProcessFeature where Type='{0}' and Junk=0  order by Feature", this.CurrentDetailData["Type"].ToString()), "30,20", null);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -162,7 +162,7 @@ Left join Operation o on o.id=SFS.OperationID
 Where StyleFeatureUkey={featueUkey}
 Order by Seq
 ";
-                        Sci.Win.Tools.SelectItem item1 = new Win.Tools.SelectItem(sqlcmd, "6,15,30,10,10,10,10", null, "Seq,Operation code,Operation Description,Annotation,M/C,Attachment,Std. SMV", columndecimals: "0,0,0,0,0,0,4");
+                        Win.Tools.SelectItem item1 = new Win.Tools.SelectItem(sqlcmd, "6,15,30,10,10,10,10", null, "Seq,Operation code,Operation Description,Annotation,M/C,Attachment,Std. SMV", columndecimals: "0,0,0,0,0,0,4");
                         item1.Width = 1000;
                         DialogResult returnResult = item1.ShowDialog();
                         if (returnResult == DialogResult.Cancel)
@@ -208,7 +208,7 @@ left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 where td.ID = '{id}'
 order by td.Seq ";
 
-                        Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "Seq,Operation code,Operation Description,Annotation,M/C,Attachment,Std. SMV", string.Empty, string.Empty, columndecimals: "0,0,0,0,0,0,4", defaultValueColumn: "IETMSSMV");
+                        Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "Seq,Operation code,Operation Description,Annotation,M/C,Attachment,Std. SMV", string.Empty, string.Empty, columndecimals: "0,0,0,0,0,0,4", defaultValueColumn: "IETMSSMV");
                         DialogResult dresult = item.ShowDialog();
                         if (dresult == DialogResult.Cancel)
                         {
@@ -256,7 +256,7 @@ order by td.Seq ";
                     }
                     else
                     {
-                        Sci.Win.Tools.SelectItem item1 = new Win.Tools.SelectItem($@"select COMBOTYPE from timestudy where brandid='{brand}'and styleid= '{style}' and seasonid = '{season}'", null, null);
+                        Win.Tools.SelectItem item1 = new Win.Tools.SelectItem($@"select COMBOTYPE from timestudy where brandid='{brand}'and styleid= '{style}' and seasonid = '{season}'", null, null);
                         DialogResult returnResult = item1.ShowDialog();
                         if (returnResult == DialogResult.Cancel)
                         {
@@ -279,7 +279,7 @@ left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 where COMBOTYPE = '{combo}' and t.brandid='{brand}'and t.styleid= '{style}' and t.seasonid = '{season}'
 order by td.Seq";
 
-                        Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "Seq,Operation code,Operation Description,Annotation,M/C,Attachment,Std. SMV", string.Empty, string.Empty, columndecimals: "0,0,0,0,0,0,4", defaultValueColumn: "IETMSSMV");
+                        Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "Seq,Operation code,Operation Description,Annotation,M/C,Attachment,Std. SMV", string.Empty, string.Empty, columndecimals: "0,0,0,0,0,0,4", defaultValueColumn: "IETMSSMV");
                         DialogResult dresult = item.ShowDialog();
                         if (dresult == DialogResult.Cancel)
                         {

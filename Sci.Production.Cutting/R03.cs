@@ -9,7 +9,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
 {
-    public partial class R03 : Sci.Win.Tems.PrintForm
+    public partial class R03 : Win.Tems.PrintForm
     {
         DataTable[] printData;
         string WorkOrder;
@@ -94,7 +94,7 @@ namespace Sci.Production.Cutting
         }
 
         // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"
@@ -504,9 +504,9 @@ drop table #tmp,#tmpL");
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R03_CuttingScheduleListReport.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R03_CuttingScheduleListReport.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printData[0], string.Empty, "Cutting_R03_CuttingScheduleListReport.xltx", 2, false, null, objApp); // 將datatable copy to excel
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             // Perimeter(Decimal)
             int PerimeterCol = this.printData[0].Columns.Count - 3;
@@ -540,7 +540,7 @@ drop table #tmp,#tmpL");
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R03_CuttingScheduleListReport");
-            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             objApp.Quit();

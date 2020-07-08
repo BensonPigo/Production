@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P34 : Sci.Win.Tems.Input6
+    public partial class P34 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
@@ -179,7 +179,7 @@ namespace Sci.Production.Warehouse
         {
             #region -- Current Qty Vaild 判斷 --
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
 
             ns.CellValidating += (s, e) =>
             {
@@ -192,7 +192,7 @@ namespace Sci.Production.Warehouse
 
             #endregion
             #region -- Reason ID 右鍵開窗 --
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
@@ -209,7 +209,7 @@ namespace Sci.Production.Warehouse
                         return;
                     }
 
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                         poitems,
                         "ID,Name",
                         "5,150",
@@ -692,7 +692,7 @@ Where a.id = '{0}' ", masterID);
         // Import
         private void btnImport_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P34_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P34_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }

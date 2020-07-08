@@ -11,7 +11,7 @@ using Microsoft.Reporting.WinForms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P39 : Sci.Win.Tems.Input6
+    public partial class P39 : Win.Tems.Input6
     {
         public P39(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -58,7 +58,7 @@ Where ALD.id = '{0}'", masterID);
         protected override void OnDetailGridSetup()
         {
             #region --Vaild Current Qty 不可等於Original qty 且 Adjust Qty = Current Qty -Original Qty
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
@@ -92,7 +92,7 @@ Where ALD.id = '{0}'", masterID);
             #endregion
 
             #region -- Reason ID 右鍵開窗 --
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.EditingMouseDown += (s, e) =>
             {
                 if (!this.EditMode)
@@ -116,7 +116,7 @@ Where ALD.id = '{0}'", masterID);
                         return;
                     }
 
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(poitems, "ID,Name", "5,150", this.CurrentDetailData["reasonid"].ToString(), "ID,Name");
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(poitems, "ID,Name", "5,150", this.CurrentDetailData["reasonid"].ToString(), "ID,Name");
                     DialogResult result2 = item.ShowDialog();
                     if (result2 == DialogResult.Cancel)
                     {
@@ -417,7 +417,7 @@ update AdjustLocal set status='New' where id = '{0}'",
         // Import
         private void btnImport_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P39_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P39_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }

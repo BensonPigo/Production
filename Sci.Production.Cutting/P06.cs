@@ -9,7 +9,7 @@ using Sci.Data;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P06 : Sci.Win.Tems.Input6
+    public partial class P06 : Win.Tems.Input6
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
@@ -52,7 +52,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             };
         }
 
-        protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
             string cmdsql = string.Format(

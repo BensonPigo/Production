@@ -12,7 +12,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P10_UpdatePulloutDate
     /// </summary>
-    public partial class P10_UpdatePulloutDate : Sci.Win.Subs.Base
+    public partial class P10_UpdatePulloutDate : Win.Subs.Base
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private Ict.Win.UI.DataGridViewDateBoxColumn col_pulldate;

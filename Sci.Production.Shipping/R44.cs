@@ -11,7 +11,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R44
     /// </summary>
-    public partial class R44 : Sci.Win.Tems.PrintForm
+    public partial class R44 : Win.Tems.PrintForm
     {
         private DataTable printData;
         private DateTime? dateOnBoardDate1;
@@ -40,7 +40,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string whereP03 = string.Empty;
             string whereP04 = string.Empty;

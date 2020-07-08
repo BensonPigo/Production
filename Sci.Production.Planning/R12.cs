@@ -14,7 +14,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// R12
     /// </summary>
-    public partial class R12 : Sci.Win.Tems.PrintForm
+    public partial class R12 : Win.Tems.PrintForm
     {
         private DataTable dtPrint = null;
         private DataTable dtData;
@@ -73,7 +73,7 @@ namespace Sci.Production.Planning
         /// </summary>
         /// <param name="report">report</param>
         /// <returns>bool</returns>
-        protected override bool OnToExcel(Win.ReportDefinition report)
+        protected override bool OnToExcel(ReportDefinition report)
         {
             return true;
         }
@@ -83,7 +83,7 @@ namespace Sci.Production.Planning
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             DualResult result = Result.True;
             if (this.dtPrint != null)

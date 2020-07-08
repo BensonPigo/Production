@@ -4,7 +4,7 @@ using Ict;
 
 namespace Sci.Production.Centralized
 {
-    public partial class Sewing_B01 : Sci.Win.Tems.Input1
+    public partial class Sewing_B01 : Win.Tems.Input1
     {
         public Sewing_B01(ToolStripMenuItem menuitem)
             : base(menuitem)

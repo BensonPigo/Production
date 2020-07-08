@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Sci.Production.Cutting
 {
-    public partial class B11_Batch_Create : Sci.Win.Tems.QueryForm
+    public partial class B11_Batch_Create : Win.Tems.QueryForm
     {
         public B11_Batch_Create()
         {

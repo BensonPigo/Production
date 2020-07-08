@@ -132,7 +132,7 @@ where isd.Id >= '{this.issueIdFrom}' and isd.Id <= '{this.issueIdTo}'";
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
 
             // frm.DirectPrint = true;

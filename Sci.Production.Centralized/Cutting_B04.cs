@@ -8,7 +8,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// Cutting_B04
     /// </summary>
-    public partial class Cutting_B04 : Sci.Win.Tems.Input1
+    public partial class Cutting_B04 : Win.Tems.Input1
     {
         /// <summary>
         /// Cutting_B04

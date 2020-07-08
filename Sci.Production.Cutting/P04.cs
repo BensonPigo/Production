@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P04 : Sci.Win.Tems.Input6
+    public partial class P04 : Win.Tems.Input6
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
@@ -57,7 +57,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             };
         }
 
-        protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
             string cmdsql = string.Format(
@@ -346,7 +346,7 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
         protected override bool ClickNew()
         {
             this.detailgrid.ValidateControl();
-            var frm = new Sci.Production.Cutting.P04_Import();
+            var frm = new P04_Import();
             DialogResult dr = frm.ShowDialog(this);
 
             // dr == System.Windows.Forms.DialogResult.
@@ -376,7 +376,7 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
         private void btnimport_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
-            var frm = new Sci.Production.Cutting.P04_Import();
+            var frm = new P04_Import();
             frm.ShowDialog(this);
         }
 
@@ -565,7 +565,7 @@ where cd.id = '{0}'", this.CurrentDetailData["ID"]);
         private void btnFabricIssueList_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
-            var frm = new Sci.Production.Cutting.P04_FabricIssueList(this.CurrentMaintain["ID"].ToString().Trim());
+            var frm = new P04_FabricIssueList(this.CurrentMaintain["ID"].ToString().Trim());
             frm.ShowDialog(this);
         }
     }

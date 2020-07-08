@@ -10,7 +10,7 @@ namespace Sci.Production.Sewing
     /// <summary>
     /// P01_BatchRecall
     /// </summary>
-    public partial class P01_BatchRecall : Sci.Win.Tems.QueryForm
+    public partial class P01_BatchRecall : Win.Tems.QueryForm
     {
         /// <inheritdoc/>
         public P01_BatchRecall()

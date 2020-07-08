@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R25 : Sci.Win.Tems.PrintForm
+    public partial class R25 : Win.Tems.PrintForm
     {
         private string KPIETA1;
         private string KPIETA2;
@@ -38,7 +38,7 @@ namespace Sci.Production.Warehouse
         private void txtfactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "select distinct ID from Factory WITH (NOLOCK) order by ID";
-            Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlWhere, "Factory", "10", this.txtfactory.Text, null, null, null);
+            Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlWhere, "Factory", "10", this.txtfactory.Text, null, null, null);
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
@@ -142,7 +142,7 @@ namespace Sci.Production.Warehouse
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region Set SQL Command & SQLParameter
             string strSql = @"

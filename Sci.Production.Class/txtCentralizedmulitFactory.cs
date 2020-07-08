@@ -12,7 +12,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Class
 {
-    public partial class txtCentralizedmulitFactory : Sci.Win.UI.TextBox
+    public partial class txtCentralizedmulitFactory : Win.UI.TextBox
     {
         public txtCentralizedmulitFactory()
         {
@@ -84,7 +84,7 @@ namespace Sci.Production.Class
                 }
             }
 
-            Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(FactoryData, "Factory", "Factory", "5", this.Text);
+            Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(FactoryData, "Factory", "Factory", "5", this.Text);
             DialogResult dialogResult = item.ShowDialog();
             if (dialogResult == DialogResult.Cancel)
             {

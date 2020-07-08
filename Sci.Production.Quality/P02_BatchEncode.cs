@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class P02_BatchEncode : Sci.Win.Tems.QueryForm
+    public partial class P02_BatchEncode : Win.Tems.QueryForm
     {
         private string masterID;
 

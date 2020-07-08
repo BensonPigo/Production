@@ -7,7 +7,7 @@ using Ict;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R19 : Sci.Win.Tems.PrintForm
+    public partial class R19 : Win.Tems.PrintForm
     {
         DataTable dt;
 

@@ -13,14 +13,14 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P40
     /// </summary>
-    public partial class P40 : Sci.Win.Tems.Input6
+    public partial class P40 : Win.Tems.Input6
     {
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings nlcode = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings brand = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings refno = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings usageUnit = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings fabricType = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings nlcode = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings brand = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings refno = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings usageUnit = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings fabricType = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
         private Ict.Win.UI.DataGridViewTextBoxColumn col_nlcode;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_qty;
         private bool localPurchase = false;
@@ -257,7 +257,7 @@ order by TRY_CONVERT(int, SUBSTRING(vdd.NLCode, 3, LEN(vdd.NLCode))), vdd.NLCode
                         if (e.Button == System.Windows.Forms.MouseButtons.Left)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Production.Shipping.P40_Detail callNextForm = new Sci.Production.Shipping.P40_Detail(this.CurrentMaintain, MyUtility.Convert.GetString(dr["NLCode"]));
+                            P40_Detail callNextForm = new P40_Detail(this.CurrentMaintain, MyUtility.Convert.GetString(dr["NLCode"]));
                             DialogResult result = callNextForm.ShowDialog(this);
                             callNextForm.Dispose();
                         }
@@ -527,7 +527,7 @@ when not matched by source and t.id in(select id from #tmps) then
                 return false;
             }
 
-            Sci.Production.Shipping.P40_Print callPurchaseForm = new Sci.Production.Shipping.P40_Print(this.CurrentMaintain);
+            P40_Print callPurchaseForm = new P40_Print(this.CurrentMaintain);
             callPurchaseForm.ShowDialog(this);
             return base.ClickPrint();
         }
@@ -624,7 +624,7 @@ where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{dr["NLCode"]}
         private void TxtContractNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = string.Format("select ID from VNContract WITH (NOLOCK) where StartDate <= {0} and EndDate >= {0} and Status = 'Confirmed'", MyUtility.Check.Empty(this.CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(this.CurrentMaintain["CDate"]).ToString("d") + "'");
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "8", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -735,7 +735,7 @@ where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{dr["NLCode"]}
 
                 if (this.NoNLCode.Rows.Count > 0 || this.NotInPO.Rows.Count > 0)
                 {
-                    Sci.Production.Shipping.P40_AssignNLCode callNextForm = new Sci.Production.Shipping.P40_AssignNLCode(this.NoNLCode, this.NotInPO, this.UnitNotFound, this.CurrentMaintain);
+                    P40_AssignNLCode callNextForm = new P40_AssignNLCode(this.NoNLCode, this.NotInPO, this.UnitNotFound, this.CurrentMaintain);
                     DialogResult result = callNextForm.ShowDialog(this);
                     if (result == System.Windows.Forms.DialogResult.OK)
                     {
@@ -878,7 +878,7 @@ where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{dr["NLCode"]}
 
                     if (this.NoNLCode.Rows.Count > 0 || this.NotInPO.Rows.Count > 0)
                     {
-                        Sci.Production.Shipping.P40_AssignNLCode callNextForm = new Sci.Production.Shipping.P40_AssignNLCode(this.NoNLCode, this.NotInPO, this.UnitNotFound, this.CurrentMaintain);
+                        P40_AssignNLCode callNextForm = new P40_AssignNLCode(this.NoNLCode, this.NotInPO, this.UnitNotFound, this.CurrentMaintain);
                         DialogResult result = callNextForm.ShowDialog(this);
                         if (result == System.Windows.Forms.DialogResult.OK)
                         {
@@ -905,7 +905,7 @@ where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{dr["NLCode"]}
 
                     if (this.NoNLCode.Rows.Count > 0 || this.NotInPO.Rows.Count > 0)
                     {
-                        Sci.Production.Shipping.P40_AssignNLCode callNextForm = new Sci.Production.Shipping.P40_AssignNLCode(this.NoNLCode, this.NotInPO, this.UnitNotFound, this.CurrentMaintain);
+                        P40_AssignNLCode callNextForm = new P40_AssignNLCode(this.NoNLCode, this.NotInPO, this.UnitNotFound, this.CurrentMaintain);
                         DialogResult result = callNextForm.ShowDialog(this);
                         if (result == System.Windows.Forms.DialogResult.OK)
                         {

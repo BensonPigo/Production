@@ -8,7 +8,7 @@ using System.IO;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P26_ImportBarcode : Sci.Win.Subs.Base
+    public partial class P26_ImportBarcode : Win.Subs.Base
     {
         public P26_ImportBarcode()
         {
@@ -100,12 +100,12 @@ namespace Sci.Production.Subcon
             #endregion
 
             #region 刪除檔案
-            System.IO.FileInfo fi = new System.IO.FileInfo(tmpFile);
+            FileInfo fi = new FileInfo(tmpFile);
             try
             {
                 fi.Delete();
             }
-            catch (System.IO.IOException ex)
+            catch (IOException ex)
             {
                 MyUtility.Msg.ErrorBox(ex.Message);
             }

@@ -88,7 +88,7 @@ namespace Sci.Production.Class
         /// </summary>
         /// <param name="grid">Grid</param>
         /// <param name="withAlternateRowStyle">bool</param>
-        public static void SetGrid_HeaderBorderStyle(Sci.Win.UI.Grid grid, bool withAlternateRowStyle = true)
+        public static void SetGrid_HeaderBorderStyle(Win.UI.Grid grid, bool withAlternateRowStyle = true)
         {
             grid.BorderStyle = BorderStyle.FixedSingle;
             grid.CellBorderStyle = DataGridViewCellBorderStyle.Sunken;
@@ -97,10 +97,10 @@ namespace Sci.Production.Class
             grid.RowHeadersWidth = 20;
             grid.RowTemplate.Height = 19; // 小於19 的話會導致 checkBox column 不見
 
-            System.Windows.Forms.DataGridViewCellStyle headerStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            DataGridViewCellStyle headerStyle = new DataGridViewCellStyle();
             headerStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             headerStyle.BackColor = System.Drawing.Color.DimGray;
-            headerStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
+            headerStyle.Font = new Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
             headerStyle.ForeColor = System.Drawing.Color.WhiteSmoke;
             headerStyle.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             headerStyle.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
@@ -178,7 +178,7 @@ namespace Sci.Production.Class
         ///  請在 form 的Constructor執行 , 放置在 InitializeComponent() 之後跑
         /// </summary>
         /// <param name="inputForm">Input1</param>
-        public static void SetDefaultFilter_OnBrandID_ByUser(Sci.Win.Tems.Input1 inputForm)
+        public static void SetDefaultFilter_OnBrandID_ByUser(Win.Tems.Input1 inputForm)
         {
             bool getAll = AuthPrg.HasSpecialAuth("CUST ");
             if (getAll)

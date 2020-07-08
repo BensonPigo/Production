@@ -12,7 +12,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P09
     /// </summary>
-    public partial class P09 : Sci.Win.Tems.QueryForm
+    public partial class P09 : Win.Tems.QueryForm
     {
         private bool canUnConfirm;
         private DataTable PackID;
@@ -341,7 +341,7 @@ order by ID,Seq", this.txtSP.Text);
             P09_IDX_CTRL iDX = new P09_IDX_CTRL();
             if (iDX.IdxCall(1, "8:?", 4))
             {
-                Sci.Production.Packing.P09_StartToScan callNextForm = new Sci.Production.Packing.P09_StartToScan(dr, iDX);
+                P09_StartToScan callNextForm = new P09_StartToScan(dr, iDX);
                 DialogResult result = callNextForm.ShowDialog(this);
                 if (result == System.Windows.Forms.DialogResult.OK)
                 {

@@ -16,7 +16,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P07 : Sci.Win.Tems.Input6
+    public partial class P07 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
@@ -562,7 +562,7 @@ where   #tmp.poid = dbo.po_supp.id
         {
             Color backDefaultColor = this.detailgrid.DefaultCellStyle.BackColor;
             #region SP# Vaild 判斷此sp#存在po中。
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
             ts4.CellValidating += (s, e) =>
             {
                 if (this.CurrentDetailData == null)
@@ -623,7 +623,7 @@ where   #tmp.poid = dbo.po_supp.id
 
             #region Seq 右鍵開窗
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.EditingMouseDown += (s, e) =>
             {
                 if (this.CurrentDetailData == null)
@@ -638,7 +638,7 @@ where   #tmp.poid = dbo.po_supp.id
                     IList<DataRow> x;
                     if (MyUtility.Check.Empty(this.CurrentMaintain["exportid"]))
                     {
-                        Sci.Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(this.CurrentDetailData["poid"].ToString(), this.CurrentDetailData["seq"].ToString(), "left(p.seq1,1) !='7'");
+                        Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(this.CurrentDetailData["poid"].ToString(), this.CurrentDetailData["seq"].ToString(), "left(p.seq1,1) !='7'");
                         DialogResult result = selepoitem.ShowDialog();
                         if (result == DialogResult.Cancel)
                         {
@@ -681,7 +681,7 @@ Order By e.Seq1, e.Seq2, e.Refno", this.CurrentDetailData["poid"], this.CurrentM
 
                         DBProxy.Current.Select(null, sqlcmd, out poitems);
 
-                        Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                        Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                             poitems,
                             "Seq,refno,description,colorid,eta,inqty,stockunit,outqty,adjustqty,BalanceQty,linvqty",
                             "6,15,25,8,10,6,6,6,6,6,6", this.CurrentDetailData["seq"].ToString(), "Seq,Ref#,Description,Color,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty");
@@ -804,7 +804,7 @@ select  StockUnit = dbo.GetStockUnitBySPSeq ('{0}', '{1}', '{2}')",
 
             #region Location 右鍵開窗
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
             {
                 if (this.CurrentDetailData == null)
@@ -814,7 +814,7 @@ select  StockUnit = dbo.GetStockUnitBySPSeq ('{0}', '{1}', '{2}')",
 
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation(this.CurrentDetailData["stocktype"].ToString(), this.CurrentDetailData["location"].ToString());
+                    Win.Tools.SelectItem2 item = Prgs.SelectLocation(this.CurrentDetailData["stocktype"].ToString(), this.CurrentDetailData["location"].ToString());
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -885,7 +885,7 @@ WHERE   StockType='{0}'
 
             #region Ship Qty Valid
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
                 string oldvalue = MyUtility.Convert.GetString(this.CurrentDetailData["shipqty"]);
@@ -902,7 +902,7 @@ WHERE   StockType='{0}'
 
             #region In Qty Valid
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.CellValidating += (s, e) =>
             {
                 if (this.CurrentDetailData == null)
@@ -1788,7 +1788,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
         // Accumulated Qty
         private void btAccumulated_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P07_AccumulatedQty(this.CurrentMaintain);
+            var frm = new P07_AccumulatedQty(this.CurrentMaintain);
             frm.P07 = this;
             frm.ShowDialog(this);
         }
@@ -1827,7 +1827,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                 return;
             }
 
-            var frm = new Sci.Production.Warehouse.P07_ModifyRollDyelot(dt, this.CurrentMaintain["id"].ToString());
+            var frm = new P07_ModifyRollDyelot(dt, this.CurrentMaintain["id"].ToString());
             frm.ShowDialog(this);
             this.RenewData();
         }
@@ -1877,7 +1877,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
             }
             else
             {
-                Sci.Production.Warehouse.P07_ExcelImport callNextForm = new Sci.Production.Warehouse.P07_ExcelImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+                P07_ExcelImport callNextForm = new P07_ExcelImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
                 callNextForm.ShowDialog(this);
             }
         }
@@ -2112,7 +2112,7 @@ The Deylot of
                 return;
             }
 
-            var frm = new Sci.Production.Warehouse.P07_UpdateWeight(this.detailgridbs.DataSource, this.CurrentMaintain["id"].ToString());
+            var frm = new P07_UpdateWeight(this.detailgridbs.DataSource, this.CurrentMaintain["id"].ToString());
             frm.ShowDialog(this);
             this.RenewData();
         }

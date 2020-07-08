@@ -13,9 +13,9 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P41
     /// </summary>
-    public partial class P41 : Sci.Win.Tems.Input6
+    public partial class P41 : Win.Tems.Input6
     {
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings customsp = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings customsp = new DataGridViewGeneratorTextColumnSettings();
 
         /// <summary>
         /// /P41
@@ -65,7 +65,7 @@ order by c.CustomSP",
                                     MyUtility.Convert.GetString(dr["Article"]),
                                     MyUtility.Convert.GetString(dr["SizeCode"]));
 
-                                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,10", dr["CustomSP"].ToString().Trim());
+                                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "10,10", dr["CustomSP"].ToString().Trim());
                                 DialogResult returnResult = item.ShowDialog();
                                 if (returnResult == DialogResult.Cancel)
                                 {
@@ -313,7 +313,7 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'",
         /// <inheritdoc/>
         protected override bool ClickPrint()
         {
-            Sci.Production.Shipping.P41_Print callPurchaseForm = new Sci.Production.Shipping.P41_Print();
+            P41_Print callPurchaseForm = new P41_Print();
             callPurchaseForm.ShowDialog(this);
             return base.ClickPrint();
         }
@@ -504,7 +504,7 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
         private void TxtContractNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = string.Format("select ID from VNContract WITH (NOLOCK) where StartDate <= {0} and EndDate >= {0} and Status = 'Confirmed'", MyUtility.Check.Empty(this.CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(this.CurrentMaintain["CDate"]).ToString("d") + "'");
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "8", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -542,7 +542,7 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
         // Port of Export
         private void TxtPortofExport_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from VNExportPort WITH (NOLOCK) where Junk = 0", "10,50", this.Text, false, ",", headercaptions: "Code,Name");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Name from VNExportPort WITH (NOLOCK) where Junk = 0", "10,50", this.Text, false, ",", headercaptions: "Code,Name");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

@@ -9,7 +9,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P61_Import : Sci.Win.Subs.Base
+    public partial class P61_Import : Win.Subs.Base
     {
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         DataRow P61;
@@ -45,7 +45,7 @@ namespace Sci.Production.Warehouse
             };
             #endregion
             #region IssueQty != 0
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings setQty = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings setQty = new DataGridViewGeneratorNumericColumnSettings();
             setQty.IsSupportNegative = true;
             setQty.CellValidating = (s, e) =>
             {
@@ -101,7 +101,7 @@ order by s.Refno, s.ThreadColorID, s.StockQty, s.[Desc]
             listPar.Add(new SqlParameter("@M", Sci.Env.User.Keyword));
             #endregion
             #region SQL Data Loading...
-            Ict.DualResult result;
+            DualResult result;
             DataTable dataTable;
 
             if (result = DBProxy.Current.Select(null, strSql, listPar, out dataTable))

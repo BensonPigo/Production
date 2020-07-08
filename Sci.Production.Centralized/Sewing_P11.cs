@@ -13,7 +13,7 @@ using System.Xml.Linq;
 
 namespace Sci.Production.Centralized
 {
-    public partial class Sewing_P11 : Sci.Win.Tems.QueryForm
+    public partial class Sewing_P11 : Win.Tems.QueryForm
     {
         private string Type;
 

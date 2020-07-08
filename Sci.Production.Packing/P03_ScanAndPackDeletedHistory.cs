@@ -5,7 +5,7 @@ using System.Data;
 
 namespace Sci.Production.Packing
 {
-    public partial class P03_ScanAndPackDeletedHistory : Sci.Win.Tems.Base
+    public partial class P03_ScanAndPackDeletedHistory : Win.Tems.Base
     {
         private string PackingListID = string.Empty;
 

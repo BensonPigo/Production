@@ -4,13 +4,13 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtbuyer : Sci.Win.UI.TextBox
+    public partial class txtbuyer : Win.UI.TextBox
     {
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID, NameEN from Buyer WITH (NOLOCK) where Junk = 0 order by ID", "10,50", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID, NameEN from Buyer WITH (NOLOCK) where Junk = 0 order by ID", "10,50", this.Text, false, ",");
 
             // select id, NameEN from buyer where junk = 0
             DialogResult result = item.ShowDialog();

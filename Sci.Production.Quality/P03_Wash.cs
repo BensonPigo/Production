@@ -15,7 +15,7 @@ using System.Collections;       // file使用Hashtable時，必須引入這個�
 
 namespace Sci.Production.Quality
 {
-    public partial class P03_Wash : Sci.Win.Subs.Input4
+    public partial class P03_Wash : Win.Subs.Input4
     {
         private string loginID = Sci.Env.User.UserID;
         private DataRow maindr;

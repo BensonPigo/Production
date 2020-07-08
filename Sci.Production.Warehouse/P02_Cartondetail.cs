@@ -6,7 +6,7 @@ using System.Data;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P02_Cartondetail : Sci.Win.Forms.Base
+    public partial class P02_Cartondetail : Win.Forms.Base
     {
         string Export_DetailUkey;
 

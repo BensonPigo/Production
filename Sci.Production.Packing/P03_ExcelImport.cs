@@ -10,7 +10,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P03_ExcelImport
     /// </summary>
-    public partial class P03_ExcelImport : Sci.Win.Subs.Base
+    public partial class P03_ExcelImport : Win.Subs.Base
     {
         private DataRow P03_CurrentMaintain;
         private DataTable grid2Data = new DataTable();

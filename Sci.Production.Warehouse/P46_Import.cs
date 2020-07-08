@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P46_Import : Sci.Win.Forms.Base
+    public partial class P46_Import : Win.Forms.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
@@ -92,7 +92,7 @@ where 1=1 and Linv.LobQty>0 ");
                 }
 
                 this.ShowWaitMessage("Data Loading....");
-                Ict.DualResult result;
+                DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out this.dtInventory))
                 {
                     if (this.dtInventory.Rows.Count == 0)
@@ -121,7 +121,7 @@ where 1=1 and Linv.LobQty>0 ");
             base.OnFormLoaded();
             #region -- Reason Combox --
             string selectCommand = @"select Name idname,id from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Remove' AND junk = 0";
-            Ict.DualResult returnResult;
+            DualResult returnResult;
             DataTable dropDownListTable = new DataTable();
             if (returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable))
             {
@@ -131,7 +131,7 @@ where 1=1 and Linv.LobQty>0 ");
             }
             #endregion
             #region -- Current Qty Valid --
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
                 decimal CurrentQty = MyUtility.Convert.GetDecimal(e.FormattedValue);
@@ -151,7 +151,7 @@ where 1=1 and Linv.LobQty>0 ");
             };
             #endregion
             #region -- Reason ID 右鍵開窗 --
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
@@ -168,7 +168,7 @@ where 1=1 and Linv.LobQty>0 ");
                         return;
                     }
 
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                         poitems,
                         "ID,Name",
                         "5,150",
@@ -251,7 +251,7 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
                 return;
             }
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                 string.Format(@"
 select  id
         , [Description] 

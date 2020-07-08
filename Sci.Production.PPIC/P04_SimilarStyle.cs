@@ -9,7 +9,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P04_SimilarStyle
     /// </summary>
-    public partial class P04_SimilarStyle : Sci.Win.Subs.Base
+    public partial class P04_SimilarStyle : Win.Subs.Base
     {
         private string styleUkey;
 

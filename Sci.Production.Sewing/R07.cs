@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Sewing
 {
-    public partial class R07 : Sci.Win.Tems.PrintForm
+    public partial class R07 : Win.Tems.PrintForm
     {
         private string Factory;
         private string M;

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class P40 : Sci.Win.Tems.Input6
+    public partial class P40 : Win.Tems.Input6
     {
         protected DataRow lastADIDASComplain;
         protected DataTable lastADIDASComplain_Detail;

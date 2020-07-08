@@ -6,7 +6,7 @@ using Ict;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P02 : Sci.Win.Tems.Input2
+    public partial class P02 : Win.Tems.Input2
     {
         private string _wkNo;
         private string _spNo;
@@ -190,7 +190,7 @@ where ed.ID = '{0}'", masterID);
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.CellMouseDoubleClick += (s, e) =>
             {
                 if (e.RowIndex == -1)
@@ -204,7 +204,7 @@ where ed.ID = '{0}'", masterID);
                     return;
                 }
 
-                var frm = new Sci.Production.Warehouse.P02_Cartondetail(MyUtility.Convert.GetString(dr["Ukey"]));
+                var frm = new P02_Cartondetail(MyUtility.Convert.GetString(dr["Ukey"]));
                 frm.ShowDialog(this);
             };
 
@@ -277,7 +277,7 @@ where ed.ID = '{0}'", masterID);
 
         protected override bool ClickPrint()
         {
-            Sci.Production.Shipping.P03_Print callNextForm = new Sci.Production.Shipping.P03_Print(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            Shipping.P03_Print callNextForm = new Shipping.P03_Print(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             callNextForm.ShowDialog(this);
             return base.ClickPrint();
         }
@@ -323,7 +323,7 @@ where ed.ID = '{0}'", masterID);
         // Shipping Mark
         private void btnShippingMark_Click(object sender, EventArgs e)
         {
-            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["ShipMarkDesc"]), "Shipping Mark", false, null);
+            Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["ShipMarkDesc"]), "Shipping Mark", false, null);
             callNextForm.ShowDialog(this);
         }
     }

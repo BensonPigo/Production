@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class R02 : Sci.Win.Tems.PrintForm
+    public partial class R02 : Win.Tems.PrintForm
     {
         DateTime? DateArrStart; DateTime? DateArrEnd;
         DateTime? DateSCIStart; DateTime? DateSCIEnd;
@@ -228,7 +228,7 @@ OUTER APPLY(select [OvenEncode]='Y' from dbo.AIR_Laboratory AL WITH (NOLOCK) whe
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
             res = DBProxy.Current.Select(string.Empty, this.cmd, this.lis, out this.dt);
@@ -258,7 +258,7 @@ OUTER APPLY(select [OvenEncode]='Y' from dbo.AIR_Laboratory AL WITH (NOLOCK) whe
             // {
             //    return false;
             // }
-            Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R02.xltx", keepApp: true);
+            Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R02.xltx", keepApp: true);
 
             string d1 = MyUtility.Check.Empty(this.DateArrStart) ? string.Empty : Convert.ToDateTime(this.DateArrStart).ToString("yyyy/MM/dd");
             string d2 = MyUtility.Check.Empty(this.DateArrEnd) ? string.Empty : Convert.ToDateTime(this.DateArrEnd).ToString("yyyy/MM/dd");

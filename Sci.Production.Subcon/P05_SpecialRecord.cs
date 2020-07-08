@@ -7,7 +7,7 @@ using Ict.Win;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P05_SpecialRecord : Sci.Win.Subs.Base
+    public partial class P05_SpecialRecord : Win.Subs.Base
     {
         DataTable dt_artworkpo_detail;
         DataRow dr;
@@ -211,18 +211,18 @@ where (o.Junk=0 or o.Junk=1 and o.NeedProduction=1) and o.Qty > 0 and
 
         private void val(object sender, CancelEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(((Sci.Win.UI.TextBox)sender).Text))
+            if (string.IsNullOrWhiteSpace(((Win.UI.TextBox)sender).Text))
             {
                 return;
             }
 
-            if (!MyUtility.Check.Seek(string.Format("select POID from orders WITH (NOLOCK) where id='{0}'", ((Sci.Win.UI.TextBox)sender).Text), null))
+            if (!MyUtility.Check.Seek(string.Format("select POID from orders WITH (NOLOCK) where id='{0}'", ((Win.UI.TextBox)sender).Text), null))
             {
-                MyUtility.Msg.WarningBox(string.Format("SP# ({0}) is not found!", ((Sci.Win.UI.TextBox)sender).Text));
+                MyUtility.Msg.WarningBox(string.Format("SP# ({0}) is not found!", ((Win.UI.TextBox)sender).Text));
                 return;
             }
 
-            string category = MyUtility.GetValue.Lookup(string.Format("select category from orders WITH (NOLOCK) where ID = '{0}' ", ((Sci.Win.UI.TextBox)sender).Text), null);
+            string category = MyUtility.GetValue.Lookup(string.Format("select category from orders WITH (NOLOCK) where ID = '{0}' ", ((Win.UI.TextBox)sender).Text), null);
             string sqlCheckArtwork = string.Empty;
             sqlCheckArtwork = $@"select id from artworktype WITH (NOLOCK) 
                                         where id = '{this.dr["artworktypeid"]}'
@@ -232,7 +232,7 @@ where (o.Junk=0 or o.Junk=1 and o.NeedProduction=1) and o.Qty > 0 and
             bool isArtworkCheckNG = MyUtility.Check.Seek(sqlCheckArtwork);
             if (category != "S" && isArtworkCheckNG)
             {
-                ((Sci.Win.UI.TextBox)sender).Text = string.Empty;
+                ((Win.UI.TextBox)sender).Text = string.Empty;
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox("Bulk orders only allow Artwork which like RECOAT Garment ....!!", "Warning");
 

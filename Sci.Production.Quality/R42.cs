@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class R42 : Sci.Win.Tems.PrintForm
+    public partial class R42 : Win.Tems.PrintForm
     {
         string Brand;
         string Year;
@@ -83,7 +83,7 @@ order by M desc";
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.dt = null;
             this.dt_All = null;
@@ -177,7 +177,7 @@ order by M desc";
             string month_Columns = string.Empty;
             string Qty_SumColumns = string.Empty;
             string Complaint_SumColumns = string.Empty;
-            var total_Rows = new List<System.Data.DataRow>();
+            var total_Rows = new List<DataRow>();
             if (this.alldt[0].Rows.Count <= 0)
             {
                 return new DualResult(false, "Data not found! ");
@@ -495,7 +495,7 @@ from
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
-            Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R42.xltx", keepApp: true);
+            SaveXltReportCls xl = new SaveXltReportCls("Quality_R42.xltx", keepApp: true);
             SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(this.dt_All);
 
             Dictionary<string, string> dic = new Dictionary<string, string>();
@@ -561,7 +561,7 @@ from
             xl.DicDatas.Add("##addfilter", d);
 
             xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Quality_R42"));
-            ((Microsoft.Office.Interop.Excel.Worksheet)xl.ExcelApp.ActiveSheet).Columns.AutoFit();
+            ((Worksheet)xl.ExcelApp.ActiveSheet).Columns.AutoFit();
             xl.FinishSave();
             return true;
         }
@@ -571,15 +571,15 @@ from
             mySheet.get_Range("A2", "AY2").Interior.Color = Color.SkyBlue;
             mySheet.get_Range("A2", "AY2").Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
 
-            Microsoft.Office.Interop.Excel.Range usedRange = mySheet.UsedRange;
-            Microsoft.Office.Interop.Excel.Range rows = usedRange.Rows;
+            Range usedRange = mySheet.UsedRange;
+            Range rows = usedRange.Rows;
             int count = 0;
 
-            foreach (Microsoft.Office.Interop.Excel.Range row in rows)
+            foreach (Range row in rows)
             {
                 if (count > 0)
                 {
-                    Microsoft.Office.Interop.Excel.Range firstCell = row.Cells[1];
+                    Range firstCell = row.Cells[1];
 
                     string firstCellValue = firstCell.Value as string;
                     if (firstCellValue == null)
@@ -628,8 +628,8 @@ from
 
         void CopySheet(Worksheet mySheet, int rowNo, int columnNo)
         {
-            Microsoft.Office.Interop.Excel._Application myExcel = null;
-            Microsoft.Office.Interop.Excel._Workbook myBook = null;
+            _Application myExcel = null;
+            _Workbook myBook = null;
             myExcel = mySheet.Application;
             myBook = myExcel.ActiveWorkbook;
 

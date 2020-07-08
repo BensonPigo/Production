@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Logistic
 {
-    public partial class P11_ExcelImport : Sci.Win.Subs.Base
+    public partial class P11_ExcelImport : Win.Subs.Base
     {
         private DataTable detailData;
         private DataRow master;

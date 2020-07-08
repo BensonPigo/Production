@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P22_Import : Sci.Win.Subs.Base
+    public partial class P22_Import : Win.Subs.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
@@ -215,7 +215,7 @@ drop table #tmp", Sci.Env.User.Keyword, this.dr_master["id"], where));
             Ict.Win.UI.DataGridViewTextBoxColumn col_tolocation;
 
             #region -- transfer qty valid --
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.IsSupportNegative = true;
             ns.CellValidating += (s, e) =>
             {
@@ -228,13 +228,13 @@ drop table #tmp", Sci.Env.User.Keyword, this.dr_master["id"], where));
             };
             #endregion
             #region -- Location 右鍵開窗 --
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataRow currentrow = this.grid_ftyDetail.GetDataRow(e.RowIndex);
-                    Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation(currentrow["ToStocktype"].ToString(), currentrow["ToLocation"].ToString());
+                    Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation(currentrow["ToStocktype"].ToString(), currentrow["ToLocation"].ToString());
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -404,7 +404,7 @@ WHERE   StockType='{dr["tostocktype"]}'
 
         private void txtLocation_MouseDown(object sender, MouseEventArgs e)
         {
-            Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("I", string.Empty);
+            Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("I", string.Empty);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

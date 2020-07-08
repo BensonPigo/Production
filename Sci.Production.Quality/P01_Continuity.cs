@@ -14,7 +14,7 @@ using System.Reflection;
 
 namespace Sci.Production.Quality
 {
-    public partial class P01_Continuity : Sci.Win.Subs.Input4
+    public partial class P01_Continuity : Win.Subs.Input4
     {
         private DataRow maindr;
         private string loginID = Sci.Env.User.UserID;
@@ -678,7 +678,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             #endregion
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
         }

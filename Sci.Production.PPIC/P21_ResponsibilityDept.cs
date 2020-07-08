@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
-    public partial class P21_ResponsibilityDept : Sci.Win.Subs.Input4
+    public partial class P21_ResponsibilityDept : Win.Subs.Input4
     {
         private string ID;
         private string FormType;

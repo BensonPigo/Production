@@ -11,7 +11,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// P01_BatchApprove
     /// </summary>
-    public partial class P01_BatchApprove : Sci.Win.Subs.Base
+    public partial class P01_BatchApprove : Win.Subs.Base
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
@@ -357,7 +357,7 @@ and ods.qty > 0 and (ot.qty > 0 or ot.tms > 0) ",
 
                 DataTable dtOT;
 
-                Ict.DualResult result;
+                DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd, cmds, out dtOT))
                 {
                     if (dtOT.Rows.Count == 0 && ap)

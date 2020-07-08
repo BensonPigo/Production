@@ -11,7 +11,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B42_Print
     /// </summary>
-    public partial class B42_Print : Sci.Win.Tems.PrintForm
+    public partial class B42_Print : Win.Tems.PrintForm
     {
         private string reportType;
         private string customSP1;
@@ -72,7 +72,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             DualResult result;

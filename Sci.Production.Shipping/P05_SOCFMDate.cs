@@ -7,7 +7,7 @@ using System.Transactions;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P05_SOCFMDate : Sci.Win.Subs.Base
+    public partial class P05_SOCFMDate : Win.Subs.Base
     {
         private DataRow dr;
 

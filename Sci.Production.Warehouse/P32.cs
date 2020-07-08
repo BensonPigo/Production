@@ -18,7 +18,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P32 : Sci.Win.Tems.Input6
+    public partial class P32 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
@@ -137,11 +137,11 @@ namespace Sci.Production.Warehouse
 
             string RptTitle = dt1.Rows[0]["nameEN"].ToString();
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Factory", M));
+            report.ReportParameters.Add(new ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new ReportParameter("ID", id));
+            report.ReportParameters.Add(new ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new ReportParameter("issuedate", issuedate));
+            report.ReportParameters.Add(new ReportParameter("Factory", M));
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             #endregion
@@ -223,7 +223,7 @@ where t.id= @ID";
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
             return true;
@@ -1124,14 +1124,14 @@ Where a.id = '{0}'", masterID);
                 return;
             }
 
-            var frm = new Sci.Production.Warehouse.P32_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P32_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }
 
         private void btnAccumulatedQty_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P32_AccumulatedQty(this.CurrentMaintain);
+            var frm = new P32_AccumulatedQty(this.CurrentMaintain);
             frm.P32 = this;
             frm.ShowDialog(this);
         }

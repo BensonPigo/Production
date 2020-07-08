@@ -17,7 +17,7 @@ using System.Linq;
 
 namespace Sci.Production.Quality
 {
-    public partial class P01_ShadeBond : Sci.Win.Subs.Input4
+    public partial class P01_ShadeBond : Win.Subs.Input4
     {
         private DataRow maindr;
         private string loginID = Sci.Env.User.UserID;
@@ -197,7 +197,7 @@ namespace Sci.Production.Quality
                 {
                     // Parent form 若是非編輯狀態就 return
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from Scale where junk = 0 order by ID", "10,40", dr["Scale"].ToString().Trim());
+                    SelectItem item = new SelectItem("select ID from Scale where junk = 0 order by ID", "10,40", dr["Scale"].ToString().Trim());
 
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -879,7 +879,7 @@ select Roll,Dyelot,TicketYds,Scale,Result
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
         }

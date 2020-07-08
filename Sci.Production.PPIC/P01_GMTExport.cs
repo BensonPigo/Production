@@ -9,7 +9,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_GMTExport
     /// </summary>
-    public partial class P01_GMTExport : Sci.Win.Subs.Base
+    public partial class P01_GMTExport : Win.Subs.Base
     {
         private string orderID;
 

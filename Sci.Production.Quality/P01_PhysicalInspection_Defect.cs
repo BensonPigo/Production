@@ -6,7 +6,7 @@ using Sci.Data;
 
 namespace Sci.Production.Quality
 {
-    public partial class P01_PhysicalInspection_Defect : Sci.Win.Subs.Input6A
+    public partial class P01_PhysicalInspection_Defect : Win.Subs.Input6A
     {
         DataTable DefectTb;
         DataTable DefectFilterTb;
@@ -127,7 +127,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P01_PhysicalInspection_PointRecord(dr, "1", this.editm);
+                var frm = new P01_PhysicalInspection_PointRecord(dr, "1", this.editm);
                 frm.ShowDialog(this);
             };
             DefectsCell2.CellMouseDoubleClick += (s, e) =>
@@ -143,7 +143,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P01_PhysicalInspection_PointRecord(dr, "2", this.editm);
+                var frm = new P01_PhysicalInspection_PointRecord(dr, "2", this.editm);
                 frm.ShowDialog(this);
             };
             DefectsCell3.CellMouseDoubleClick += (s, e) =>
@@ -159,7 +159,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P01_PhysicalInspection_PointRecord(dr, "3", this.editm);
+                var frm = new P01_PhysicalInspection_PointRecord(dr, "3", this.editm);
                 frm.ShowDialog(this);
             };
             this.Helper.Controls.Grid.Generator(this.gridFabricInspection)

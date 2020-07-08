@@ -9,7 +9,7 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P05_Import : Sci.Win.Subs.Base
+    public partial class P05_Import : Win.Subs.Base
     {
         DataRow dr_artworkReq;
         DataTable dt_artworkReqDetail;
@@ -132,7 +132,7 @@ namespace Sci.Production.Subcon
                 strSQLCmd = this.QuoteFromTmsCost(sqlwhere);
             }
 
-            Ict.DualResult result;
+            DualResult result;
 
             // if (result = DBProxy.Current.Select(null, strSQLCmd, out dtArtwork))
             if (result = MyUtility.Tool.ProcessWithDatatable(this.dt_artworkReqDetail, string.Empty, strSQLCmd, out this.dtArtwork))
@@ -208,7 +208,7 @@ namespace Sci.Production.Subcon
         {
             base.OnFormLoaded();
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings col_ReqQty = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings col_ReqQty = new DataGridViewGeneratorNumericColumnSettings();
 
             col_ReqQty.CellMouseDoubleClick += (s, e) =>
              {
@@ -218,7 +218,7 @@ namespace Sci.Production.Subcon
                      return;
                  }
 
-                 var frm = new Sci.Production.Subcon.P05_ReqQtyList(dr);
+                 var frm = new P05_ReqQtyList(dr);
                  frm.ShowDialog();
              };
 

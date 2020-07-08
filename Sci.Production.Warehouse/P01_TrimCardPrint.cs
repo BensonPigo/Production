@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P01_TrimCardPrint : Sci.Win.Tems.PrintForm
+    public partial class P01_TrimCardPrint : Win.Tems.PrintForm
     {
         DataTable dtPrint_Content;
         DataTable dtPrint_LeftColumn;
@@ -50,7 +50,7 @@ namespace Sci.Production.Warehouse
             return true;
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult result = Result.True;
             if (this.dtPrint_Content != null)
@@ -620,14 +620,14 @@ ORDER BY ThreadColorID ASC
             }
 
             this.ShowWaitMessage(temfile.ToString());
-            Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
+            Word._Application winword = new Word.Application();
             winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
 
             // Set status for word application is to be visible or not.
             winword.Visible = false;
 
             // Create a new document
-            Microsoft.Office.Interop.Word._Document document = winword.Documents.Add(ref temfile);
+            Word._Document document = winword.Documents.Add(ref temfile);
 
             Word.Table tables = null;
 

@@ -8,7 +8,7 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R01 : Sci.Win.Tems.PrintForm
+    public partial class R01 : Win.Tems.PrintForm
     {
         string artworktype;
         string factory;
@@ -18,7 +18,8 @@ namespace Sci.Production.Subcon
         string orderby;
         string mdivision;
         string brandID;
-        DateTime? issuedate1, issuedate2;
+        DateTime? issuedate1;
+        DateTime? issuedate2;
         DataTable printData;
 
         public R01(ToolStripMenuItem menuitem)
@@ -65,7 +66,7 @@ namespace Sci.Production.Subcon
         }
 
         // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
 

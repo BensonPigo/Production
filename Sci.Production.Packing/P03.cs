@@ -16,7 +16,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P03
     /// </summary>
-    public partial class P03 : Sci.Win.Tems.Input6
+    public partial class P03 : Win.Tems.Input6
     {
         private const int DescSort = 0;
         private const int ASCSort = 1;
@@ -33,10 +33,10 @@ namespace Sci.Production.Packing
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_gw;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_nnw;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_nwpcs;
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings orderid = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings seq = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings size = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings orderid = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings seq = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings article = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings size = new DataGridViewGeneratorTextColumnSettings();
         private IList<string> comboBox1_RowSource = new List<string>();
         private BindingSource comboxbs1;
         private MessageBoxButtons buttons = MessageBoxButtons.YesNo;
@@ -192,7 +192,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
         // BatchConfirm
         private void BtnBatchConf_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Packing.P03_BatchConfirm();
+            var frm = new P03_BatchConfirm();
             this.ShowWaitMessage("Data Loading....");
             this.HideWaitMessage();
             frm.ShowDialog(this);
@@ -499,7 +499,7 @@ where oq.ID = '{0}' and ShipmodeID = '{1}' and o.MDivisionID = '{2}'",
                                         dr["OrderID"].ToString(),
                                         this.CurrentMaintain["ShipModeID"].ToString(),
                                         Sci.Env.User.Keyword);
-                                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
+                                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
                                     DialogResult returnResult = item.ShowDialog();
                                     if (returnResult == DialogResult.Cancel)
                                     {
@@ -560,7 +560,7 @@ where   oq.ID = '{0}'
                                 dr["OrderID"].ToString(),
                                 this.CurrentMaintain["ShipModeID"].ToString(),
                                 Sci.Env.User.Keyword);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -648,7 +648,7 @@ where   oq.ID = '{0}'
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = string.Format("Select Distinct Article from Order_QtyShip_Detail WITH (NOLOCK) where ID = '{0}' and Seq = '{1}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", dr["Article"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "8", dr["Article"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -731,7 +731,7 @@ order by os.Seq",
                                 dr["OrderID"].ToString(),
                                 dr["OrderShipmodeSeq"].ToString(),
                                 dr["Article"].ToString());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", dr["SizeCode"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "8", dr["SizeCode"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -1231,7 +1231,7 @@ WHERE ID =  '{this.CurrentMaintain["ID"]}'";
                 @"select isnull(oq.Qty ,0) as Qty
 from (select distinct OrderID,OrderShipmodeSeq from PackingList_Detail WITH (NOLOCK) where ID = '{0}') a
 left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.OrderShipmodeSeq", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))));
-            Sci.Production.Packing.P03_Print callNextForm = new Sci.Production.Packing.P03_Print(this.CurrentMaintain, orderQty);
+            P03_Print callNextForm = new P03_Print(this.CurrentMaintain, orderQty);
             callNextForm.ShowDialog(this);
             return base.ClickPrint();
         }
@@ -1401,48 +1401,48 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                     this.labelLocateforTransferClog.Text = "Locate for Transfer Clog:";
                     this.labelLocateforTransferClog.Width = 156;
                     this.dateLocateforTransferClog.Visible = true;
-                    this.dateLocateforTransferClog.Location = new System.Drawing.Point(538, 284);
-                    this.btnFindNow.Location = new System.Drawing.Point(675, 279);
+                    this.dateLocateforTransferClog.Location = new Point(538, 284);
+                    this.btnFindNow.Location = new Point(675, 279);
                     ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "TransferDate,Seq";
                     break;
                 case "Clog Cfm":
                     this.labelLocateforTransferClog.Text = "Locate for Clog Cfm:";
                     this.labelLocateforTransferClog.Width = 129;
                     this.dateLocateforTransferClog.Visible = true;
-                    this.dateLocateforTransferClog.Location = new System.Drawing.Point(511, 284);
-                    this.btnFindNow.Location = new System.Drawing.Point(650, 279);
+                    this.dateLocateforTransferClog.Location = new Point(511, 284);
+                    this.btnFindNow.Location = new Point(650, 279);
                     ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "ReceiveDate,Seq";
                     break;
                 case "Location No":
                     this.labelLocateforTransferClog.Text = "Locate for Location No:";
                     this.labelLocateforTransferClog.Width = 147;
                     this.txtLocateforTransferClog.Visible = true;
-                    this.txtLocateforTransferClog.Location = new System.Drawing.Point(525, 284);
-                    this.btnFindNow.Location = new System.Drawing.Point(615, 279);
+                    this.txtLocateforTransferClog.Location = new Point(525, 284);
+                    this.btnFindNow.Location = new Point(615, 279);
                     ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "ClogLocationId,Seq";
                     break;
                 case "ColorWay":
                     this.labelLocateforTransferClog.Text = "Locate for ColorWay:";
                     this.labelLocateforTransferClog.Width = 135;
                     this.txtLocateforTransferClog.Visible = true;
-                    this.txtLocateforTransferClog.Location = new System.Drawing.Point(513, 284);
-                    this.btnFindNow.Location = new System.Drawing.Point(603, 279);
+                    this.txtLocateforTransferClog.Location = new Point(513, 284);
+                    this.btnFindNow.Location = new Point(603, 279);
                     ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "Article,Seq";
                     break;
                 case "Color":
                     this.labelLocateforTransferClog.Text = "Locate for Color:";
                     this.labelLocateforTransferClog.Width = 106;
                     this.txtLocateforTransferClog.Visible = true;
-                    this.txtLocateforTransferClog.Location = new System.Drawing.Point(483, 284);
-                    this.btnFindNow.Location = new System.Drawing.Point(573, 279);
+                    this.txtLocateforTransferClog.Location = new Point(483, 284);
+                    this.btnFindNow.Location = new Point(573, 279);
                     ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "Color,Seq";
                     break;
                 case "Size":
                     this.labelLocateforTransferClog.Text = "Locate for Size:";
                     this.labelLocateforTransferClog.Width = 100;
                     this.txtLocateforTransferClog.Visible = true;
-                    this.txtLocateforTransferClog.Location = new System.Drawing.Point(477, 284);
-                    this.btnFindNow.Location = new System.Drawing.Point(567, 279);
+                    this.txtLocateforTransferClog.Location = new Point(477, 284);
+                    this.btnFindNow.Location = new Point(567, 279);
                     ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "SizeCode,Seq";
                     break;
                 default:
@@ -1461,7 +1461,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         // Carton Summary
         private void BtnCartonSummary_Click(object sender, EventArgs e)
         {
-            Sci.Production.Packing.P03_CartonSummary callNextForm = new Sci.Production.Packing.P03_CartonSummary(this.CurrentMaintain["ID"].ToString());
+            P03_CartonSummary callNextForm = new P03_CartonSummary(this.CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
         }
 
@@ -1470,7 +1470,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         {
             // Bug fix:0000276: PACKING_P03_Packing List Weight & Summary(Bulk)，1.點選[Unconfirm history]會出現錯誤訊息。
             // Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("PackingList_History", CurrentMaintain["ID"].ToString(), "Status", caption: "UnConfirm History", haveRemark: true, customerGridFormatTable: "HisType", moduleName: "PackingList");
-            Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("PackingList_History", this.CurrentMaintain["ID"].ToString(), "Status", caption: "UnConfirm History", haveRemark: true, customerGridFormatTable: "HisType", moduleName: "Packing");
+            Win.UI.ShowHistory callNextForm = new Win.UI.ShowHistory("PackingList_History", this.CurrentMaintain["ID"].ToString(), "Status", caption: "UnConfirm History", haveRemark: true, customerGridFormatTable: "HisType", moduleName: "Packing");
             callNextForm.ShowDialog(this);
         }
 
@@ -1576,7 +1576,7 @@ Pullout No. < {0} > ", dtt.Rows[0]["PulloutId"].ToString()));
 
         private void SelectReason()
         {
-            Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason();
+            Win.UI.SelectReason callReason = new Win.UI.SelectReason();
             DialogResult dResult = callReason.ShowDialog(this);
             if (dResult == System.Windows.Forms.DialogResult.OK)
             {
@@ -1773,7 +1773,7 @@ where pd.id = '{this.CurrentMaintain["ID"]}'";
                         }
                         else
                         {
-                            var m = new Sci.Win.UI.MsgGridForm(custbarcode_result, "Updated as follows barcode", "Update successful", null, MessageBoxButtons.OK);
+                            var m = new Win.UI.MsgGridForm(custbarcode_result, "Updated as follows barcode", "Update successful", null, MessageBoxButtons.OK);
 
                             m.Width = 600;
                             m.grid1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -1803,7 +1803,7 @@ where pd.id = '{this.CurrentMaintain["ID"]}'";
 
         private void BtnUPCSticker_Click(object sender, EventArgs e)
         {
-            Sci.Production.Packing.P03_UPCSticker callNextForm = new Sci.Production.Packing.P03_UPCSticker(this.CurrentMaintain["ID"].ToString());
+            P03_UPCSticker callNextForm = new P03_UPCSticker(this.CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
             this.RenewData();
             this.OnDetailEntered();
@@ -2027,7 +2027,7 @@ update PackingList set  EditName = '{Sci.Env.User.UserID}', EditDate = GETDATE()
 
         private void btnPackScanHistory_Click(object sender, EventArgs e)
         {
-            Sci.Production.Packing.P03_ScanAndPackDeletedHistory form = new P03_ScanAndPackDeletedHistory(this.CurrentMaintain["ID"].ToString());
+            P03_ScanAndPackDeletedHistory form = new P03_ScanAndPackDeletedHistory(this.CurrentMaintain["ID"].ToString());
             form.ShowDialog(this);
         }
     }

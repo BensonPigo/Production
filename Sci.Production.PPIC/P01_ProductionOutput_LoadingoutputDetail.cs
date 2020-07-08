@@ -8,7 +8,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_ProductionOutput_LoadingoutputDetail
     /// </summary>
-    public partial class P01_ProductionOutput_LoadingoutputDetail : Sci.Win.Subs.Base
+    public partial class P01_ProductionOutput_LoadingoutputDetail : Win.Subs.Base
     {
         private string orderID;
         private string type;

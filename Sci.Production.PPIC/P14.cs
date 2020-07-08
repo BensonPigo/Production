@@ -11,7 +11,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// PPIC_P14
     /// </summary>
-    public partial class P14 : Sci.Win.Tems.Input1
+    public partial class P14 : Win.Tems.Input1
     {
         private string M = Sci.Env.User.Keyword;
         private DualResult result;

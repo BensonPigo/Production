@@ -8,9 +8,9 @@ namespace Sci.Production.Sewing
     /// <summary>
     /// P01_QAOutput
     /// </summary>
-    public partial class P01_QAOutput : Sci.Win.Subs.Input8A
+    public partial class P01_QAOutput : Win.Subs.Input8A
     {
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings qaqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings qaqty = new DataGridViewGeneratorNumericColumnSettings();
 
         /// <summary>
         /// P01_QAOutput

@@ -11,7 +11,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Quality
 {
-    public partial class P03 : Sci.Win.Tems.Input6
+    public partial class P03 : Win.Tems.Input6
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
@@ -38,7 +38,7 @@ namespace Sci.Production.Quality
             this.InsertDetailGridOnDoubleClick = false;
         }
 
-        override protected DetailGridContextMenuMode CurrentDetailGridContextMenuMode()
+        protected override DetailGridContextMenuMode CurrentDetailGridContextMenuMode()
         {
             // 非編輯狀態不顯示
             if (!this.EditMode)
@@ -162,7 +162,7 @@ where POID='{0}'
         }
 
         // 表身額外的資料來源
-        protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
             string cmd = string.Format(
@@ -221,7 +221,7 @@ masterID);
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P03_Crocking(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+                var frm = new P03_Crocking(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -240,7 +240,7 @@ masterID);
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P03_Crocking(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+                var frm = new P03_Crocking(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -259,7 +259,7 @@ masterID);
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P03_Wash(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+                var frm = new P03_Wash(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -277,7 +277,7 @@ masterID);
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P03_Wash(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+                var frm = new P03_Wash(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -296,7 +296,7 @@ masterID);
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P03_Heat(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+                var frm = new P03_Heat(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -315,7 +315,7 @@ masterID);
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P03_Heat(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+                var frm = new P03_Heat(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -603,7 +603,7 @@ masterID);
 
             string currentID = this.CurrentDetailData["ID"].ToString();
             var dr = this.CurrentDetailData;
-            var frm = new Sci.Production.Quality.P03_Crocking(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+            var frm = new P03_Crocking(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
@@ -634,7 +634,7 @@ masterID);
 
             string currentID = this.CurrentDetailData["ID"].ToString();
             var dr = this.CurrentDetailData;
-            var frm = new Sci.Production.Quality.P03_Heat(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+            var frm = new P03_Heat(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
@@ -665,7 +665,7 @@ masterID);
 
             string currentID = this.CurrentDetailData["ID"].ToString();
             var dr = this.CurrentDetailData;
-            var frm = new Sci.Production.Quality.P03_Wash(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+            var frm = new P03_Wash(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();

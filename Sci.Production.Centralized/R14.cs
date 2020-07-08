@@ -16,7 +16,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// R14
     /// </summary>
-    internal partial class R14 : Sci.Win.Tems.PrintForm
+    internal partial class R14 : Win.Tems.PrintForm
     {
         private DataTable dt_All;
         private DataTable dt_Tmp;
@@ -260,7 +260,7 @@ order by ID,OrderID";
         #endregion
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.dt_All = null;
             this.dt_Tmp = null;
@@ -631,7 +631,7 @@ order by FactorySort
             #endregion
 
             #region --匯出Excel
-            Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Centralized_R14_Transportation_Cost_Air_Freight.xltx");
+            SaveXltReportCls xl = new SaveXltReportCls("Centralized_R14_Transportation_Cost_Air_Freight.xltx");
             xl.BoOpenFile = true;
             SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(this.dt_All);
             xdt_All.ShowHeader = true;

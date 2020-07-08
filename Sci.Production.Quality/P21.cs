@@ -11,7 +11,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Quality
 {
-    public partial class P21 : Sci.Win.Tems.Input6
+    public partial class P21 : Win.Tems.Input6
     {
         private string loginID = Sci.Env.User.UserID;
         string tmpId;

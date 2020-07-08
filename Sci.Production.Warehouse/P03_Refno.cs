@@ -7,11 +7,11 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P03_Refno : Sci.Win.Subs.Base
+    public partial class P03_Refno : Win.Subs.Base
     {
         DataRow dr;
         DataTable selectDataTable1;
-        protected Sci.Win.UI.ContextMenuStrip myCMS = new Win.UI.ContextMenuStrip();
+        protected Win.UI.ContextMenuStrip myCMS = new Win.UI.ContextMenuStrip();
 
         public P03_Refno(DataRow data)
         {

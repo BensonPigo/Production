@@ -13,7 +13,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P08
     /// </summary>
-    public partial class P08 : Sci.Win.Tems.QueryForm
+    public partial class P08 : Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private DataTable gridData;

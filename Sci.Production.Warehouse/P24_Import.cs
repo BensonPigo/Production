@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P24_Import : Sci.Win.Subs.Base
+    public partial class P24_Import : Win.Subs.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
@@ -139,7 +139,7 @@ Where   1=1
                 }
 
                 this.ShowWaitMessage("Data Loading....");
-                Ict.DualResult result;
+                DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), cmds, out this.dtScrap))
                 {
                     if (this.dtScrap.Rows.Count == 0)
@@ -168,7 +168,7 @@ Where   1=1
             base.OnFormLoaded();
 
             #region -- Transfer Qty Valid --
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
                 {
                     if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
@@ -222,13 +222,13 @@ WHERE   StockType='{dr["toStocktype"]}'
                 }
             };
             #region -- Location 右鍵開窗 --
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataRow currentrow = this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex());
-                    Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation(currentrow["ToStocktype"].ToString(), currentrow["ToLocation"].ToString());
+                    Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation(currentrow["ToStocktype"].ToString(), currentrow["ToLocation"].ToString());
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -373,7 +373,7 @@ WHERE   StockType='{0}'
 
         private void txtLocation_MouseDown(object sender, MouseEventArgs e)
         {
-            Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("O", string.Empty);
+            Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("O", string.Empty);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

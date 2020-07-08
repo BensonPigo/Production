@@ -6,7 +6,7 @@ using System.Data;
 
 namespace Sci.Production.PPIC
 {
-    public partial class P08_FreightList : Sci.Win.Tems.QueryForm
+    public partial class P08_FreightList : Win.Tems.QueryForm
     {
         private DataRow Master;
 

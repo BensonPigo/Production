@@ -6,7 +6,7 @@ using Sci.Data;
 
 namespace Sci.Production.Quality
 {
-    public partial class P01_PhysicalInspection_PointRecord : Sci.Win.Subs.Base
+    public partial class P01_PhysicalInspection_PointRecord : Win.Subs.Base
     {
         private DataTable defRecord;
         private string def_num;

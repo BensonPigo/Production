@@ -9,7 +9,7 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P05_BatchApprove : Sci.Win.Subs.Base
+    public partial class P05_BatchApprove : Win.Subs.Base
     {
         Action delegateAct;
         private bool boolDeptApv;
@@ -184,7 +184,7 @@ where 1=1
                 {
                     // 判斷irregular Reason沒寫不能存檔
                     DataTable dtDetail = dt2.AsEnumerable().Where(x => x["ID"].EqualString(dr["id"].ToString())).CopyToDataTable();
-                    var IrregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(dr["ID"].ToString(), dr, dtDetail);
+                    var IrregularQtyReason = new P05_IrregularQtyReason(dr["ID"].ToString(), dr, dtDetail);
 
                     DataTable dtIrregular = IrregularQtyReason.Check_Irregular_Qty();
                     if (dtIrregular != null)

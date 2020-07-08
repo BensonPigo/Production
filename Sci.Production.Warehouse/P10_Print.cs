@@ -13,7 +13,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P10_Print : Sci.Win.Tems.PrintForm
+    public partial class P10_Print : Win.Tems.PrintForm
     {
         private DataRow drPrint;
         private string strCutNo;
@@ -352,7 +352,7 @@ where t.id= @ID";
                 #endregion
 
                 // 開啟 report view
-                var frm = new Sci.Win.Subs.ReportView(report);
+                var frm = new Win.Subs.ReportView(report);
                 frm.MdiParent = this.MdiParent;
                 frm.Show();
             }

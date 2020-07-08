@@ -16,7 +16,7 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Quality
 {
-    public partial class P12_Detail : Sci.Win.Subs.Input4
+    public partial class P12_Detail : Win.Subs.Input4
     {
         private DataRow masterDr;
         private DataRow Detaildr;
@@ -156,7 +156,7 @@ namespace Sci.Production.Quality
         {
             DataGridViewGeneratorTextColumnSettings ResulCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
             #region Artwork event
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts_artwork = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts_artwork = new DataGridViewGeneratorTextColumnSettings();
             ts_artwork.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1)
@@ -202,7 +202,7 @@ namespace Sci.Production.Quality
             };
             #endregion
             #region Artwork Color event
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts_artworkColor = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts_artworkColor = new DataGridViewGeneratorTextColumnSettings();
             ts_artworkColor.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1)
@@ -284,7 +284,7 @@ namespace Sci.Production.Quality
             #endregion
 
             #region Fabric Color event
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts_fabricColor = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts_fabricColor = new DataGridViewGeneratorTextColumnSettings();
             ts_fabricColor.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1)

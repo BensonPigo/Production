@@ -6,7 +6,7 @@ using System.Data;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P15_Containers : Sci.Win.Tems.Base
+    public partial class P15_Containers : Win.Tems.Base
     {
         private string _ExportId;
 

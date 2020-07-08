@@ -8,7 +8,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_B09
     /// </summary>
-    public partial class B09 : Sci.Win.Tems.Input1
+    public partial class B09 : Win.Tems.Input1
     {
         private Stream fileOpened = null;
         private DialogResult deleteResult1;
@@ -127,7 +127,7 @@ namespace Sci.Production.IE
                             return;
                         }
                     }
-                    catch (System.IO.IOException exception)
+                    catch (IOException exception)
                     {
                         MyUtility.Msg.ErrorBox("Error: Delete file fail. Original error: " + exception.Message);
                     }
@@ -201,7 +201,7 @@ namespace Sci.Production.IE
                             return;
                         }
                     }
-                    catch (System.IO.IOException exception)
+                    catch (IOException exception)
                     {
                         MyUtility.Msg.ErrorBox("Error: Delete file fail. Original error: " + exception.Message);
                     }

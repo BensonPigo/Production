@@ -9,7 +9,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P02_CTNDimensionAndWeight
     /// </summary>
-    public partial class P02_CTNDimensionAndWeight : Sci.Win.Subs.Input4
+    public partial class P02_CTNDimensionAndWeight : Win.Subs.Input4
     {
         /// <summary>
         /// P02_CTNDimensionAndWeight

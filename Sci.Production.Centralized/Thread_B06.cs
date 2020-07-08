@@ -13,7 +13,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// Thread_B06
     /// </summary>
-    public partial class Thread_B06 : Sci.Win.Tems.QueryForm
+    public partial class Thread_B06 : Win.Tems.QueryForm
     {
         /// <summary>
         /// Thread_B06

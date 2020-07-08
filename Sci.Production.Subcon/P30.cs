@@ -17,7 +17,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P30 : Sci.Win.Tems.Input6
+    public partial class P30 : Win.Tems.Input6
     {
         public static DataTable dtPadBoardInfo;
         private bool boolNeedReaload = false;
@@ -87,11 +87,11 @@ namespace Sci.Production.Subcon
                 return false;
             }
 
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+            SqlParameter sp1 = new SqlParameter();
             sp1.ParameterName = "@id";
             sp1.Value = this.CurrentMaintain["id"].ToString();
 
-            IList<System.Data.SqlClient.SqlParameter> paras = new List<System.Data.SqlClient.SqlParameter>();
+            IList<SqlParameter> paras = new List<SqlParameter>();
             paras.Add(sp1);
 
             string sqlcmd;
@@ -128,7 +128,7 @@ namespace Sci.Production.Subcon
 
             if (IsOnlyRemark)
             {
-                var frm = new Sci.Production.PublicForm.EditRemark("Localpo", "remark", this.CurrentMaintain);
+                var frm = new PublicForm.EditRemark("Localpo", "remark", this.CurrentMaintain);
                 frm.ShowDialog(this);
 
                 this.RenewData();
@@ -278,7 +278,7 @@ where a.RequestID <> '' and lpd.qty-lld.qty-a.Qty<0";
                 // 有重複資料
                 if (resulttb.Rows.Count > 0)
                 {
-                    var m = new Sci.Win.UI.MsgGridForm(resulttb, "The following SP#,Refno,RequestID has been imported:", "Warning", null, MessageBoxButtons.OK);
+                    var m = new Win.UI.MsgGridForm(resulttb, "The following SP#,Refno,RequestID has been imported:", "Warning", null, MessageBoxButtons.OK);
 
                     m.Width = 600;
                     m.grid1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -325,7 +325,7 @@ where a.RequestID <> '' and lpd.qty-lld.qty-a.Qty<0";
 
             #region 檢查異常價格
 
-            var frm = new Sci.Production.Subcon.P30_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), (DataTable)this.detailgridbs.DataSource);
+            var frm = new P30_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), (DataTable)this.detailgridbs.DataSource);
 
             bool Has_Irregular_Price = frm.Check_Irregular_Price(false);
 
@@ -821,7 +821,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
 
             this.btnIrrPriceReason.ForeColor = Color.Black;
 
-            var frm = new Sci.Production.Subcon.P30_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), (DataTable)this.detailgridbs.DataSource);
+            var frm = new P30_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), (DataTable)this.detailgridbs.DataSource);
 
             // 取得價格異常DataTable，如果有，則存在 P30的_Irregular_Price_Table，  開啟P30_IrregularPriceReason時後直接丟進去，避免再做一次查詢
             this.ShowWaitMessage("Data Loading...");
@@ -877,7 +877,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
         protected override void OnDetailGridSetup()
         {
             #region SP# Vaild 判斷此sp#的cateogry存在 order_tmscost
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
             DataRow dr;
             ts4.CellValidating += (s, e) =>
             {
@@ -886,7 +886,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                     return;
                 }
 
-                DataRow drr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                DataRow drr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
                     this.CurrentDetailData["orderid"] = string.Empty;
@@ -997,7 +997,7 @@ and orders.PulloutComplete = 0
             #endregion
 
             #region Refno 右鍵開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
@@ -1007,7 +1007,7 @@ and orders.PulloutComplete = 0
                         return;
                     }
 
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                         string.Format(
                              @"
 Select  refno
@@ -1026,7 +1026,7 @@ order by refno",
                         string.Empty,
                         null,
                         "0,0,0,0,4");
-                    item.Size = new System.Drawing.Size(795, 535);
+                    item.Size = new Size(795, 535);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -1084,7 +1084,7 @@ where refno = '{0}'
             #endregion
 
             #region Color shase 右鍵開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
@@ -1096,9 +1096,9 @@ where refno = '{0}'
                         return;
                     }
 
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                         @"Select ID,description from threadcolor WITH (NOLOCK) where JUNK=0 order by ID", "10,45", null);
-                    item.Size = new System.Drawing.Size(630, 535);
+                    item.Size = new Size(630, 535);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -1142,12 +1142,12 @@ where refno = '{0}'
             #endregion
 
             #region Qty Valid
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellMouseDoubleClick += (s, e) =>
             {
                 if (e.Button == MouseButtons.Left && MyUtility.Convert.GetString(this.CurrentMaintain["category"]) == "CARTON")
                 {
-                    Sci.Production.Subcon.P30_Qty callNextForm = new Sci.Production.Subcon.P30_Qty(this.CurrentDetailData);
+                    P30_Qty callNextForm = new P30_Qty(this.CurrentDetailData);
                     callNextForm.ShowDialog(this);
                 }
             };
@@ -1162,10 +1162,10 @@ where refno = '{0}'
             };
             #endregion
 
-            Ict.Win.DataGridViewGeneratorDateColumnSettings ds = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorDateColumnSettings ds = new DataGridViewGeneratorDateColumnSettings();
             ds.CellValidating += (s, e) =>
             {
-                DataRow currentRow = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                DataRow currentRow = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
                 if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
                     if (Convert.ToDateTime(e.FormattedValue) < DateTime.Now.Date)
@@ -1175,7 +1175,7 @@ where refno = '{0}'
                     }
                 }
             };
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.EditingMouseDoubleClick += (s, e) =>
             {
                 if (this.EditMode)
@@ -1183,11 +1183,11 @@ where refno = '{0}'
                     return;
                 }
 
-                var frm = new Sci.Production.Subcon.P30_InComingList(this.CurrentDetailData["Ukey"].ToString());
+                var frm = new P30_InComingList(this.CurrentDetailData["Ukey"].ToString());
                 DialogResult result = frm.ShowDialog(this);
             };
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns3 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns3 = new DataGridViewGeneratorNumericColumnSettings();
             ns3.EditingMouseDoubleClick += (s, e) =>
             {
                 if (this.EditMode)
@@ -1195,12 +1195,12 @@ where refno = '{0}'
                     return;
                 }
 
-                var frm = new Sci.Production.Subcon.P30_AccountPayble(this.CurrentDetailData["Ukey"].ToString());
+                var frm = new P30_AccountPayble(this.CurrentDetailData["Ukey"].ToString());
                 DialogResult result = frm.ShowDialog(this);
             };
 
             #region ReasonID 欄位事件
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ReasonIDSetting = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ReasonIDSetting = new DataGridViewGeneratorTextColumnSettings();
 
             ReasonIDSetting.CellValidating += (s, e) =>
             {
@@ -1209,7 +1209,7 @@ where refno = '{0}'
                     return;
                 }
 
-                DataRow drr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                DataRow drr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
 
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
@@ -1239,9 +1239,9 @@ where refno = '{0}'
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                         @"SELECT ID ,Reason FROM SubconReason  WITH (NOLOCK) where JUNK=0 AND Type = 'WR' order by ID", "10,45", null);
-                    item.Size = new System.Drawing.Size(630, 535);
+                    item.Size = new Size(630, 535);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -1474,7 +1474,7 @@ where refno = '{0}'
                 dg.Columns.Add("std_price", typeof(decimal));
             }
 
-            var frm = new Sci.Production.Subcon.P30_Import(dr, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P30_Import(dr, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
 
@@ -1886,9 +1886,9 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
 
         private void txtBuyer_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                    @"Select ID,NameEN  from Buyer WITH (NOLOCK) where JUNK=0 order by ID", "10,45", null);
-            item.Size = new System.Drawing.Size(630, 535);
+            item.Size = new Size(630, 535);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -1910,7 +1910,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
         private void btnIrrPriceReason_Click(object sender, EventArgs e)
         {
             // 進入Deatail畫面時，會取得_Irregular_Price_Table，直接丟進去開啟
-            var frm = new Sci.Production.Subcon.P30_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), (DataTable)this.detailgridbs.DataSource);
+            var frm = new P30_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), (DataTable)this.detailgridbs.DataSource);
 
             this.ShowWaitMessage("Data Loading...");
             frm.ShowDialog(this);
@@ -1998,8 +1998,8 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
 
         private void txtLocalPurchaseItem_Validated(object sender, EventArgs e)
         {
-            Production.Class.txtLocalPurchaseItem o;
-            o = (Production.Class.txtLocalPurchaseItem)sender;
+            Class.txtLocalPurchaseItem o;
+            o = (Class.txtLocalPurchaseItem)sender;
 
             if ((o.Text != o.OldValue) && this.EditMode)
             {

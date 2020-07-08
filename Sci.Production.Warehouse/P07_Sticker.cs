@@ -12,7 +12,7 @@ using System.Reflection;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P07_Sticker : Sci.Win.Tems.QueryForm
+    public partial class P07_Sticker : Win.Tems.QueryForm
     {
         public DataRow CurrentDataRow { get; set; }
 
@@ -125,7 +125,7 @@ namespace Sci.Production.Warehouse
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
             return;

@@ -93,7 +93,7 @@ namespace Sci.Production.Prg
         {
             public delegate object CellFormatter(DataRow data);
 
-            public static DualResult CreateExcel(string templatefile, out EXCEL.Application excel)
+            public static DualResult CreateExcel(string templatefile, out Application excel)
             {
                 excel = null;
 
@@ -102,10 +102,10 @@ namespace Sci.Production.Prg
                     return new DualResult(false, "'{0}' excel template file not exists.".InvariantFormat(templatefile));
                 }
 
-                EXCEL.Application exc;
+                Application exc;
                 try
                 {
-                    exc = new EXCEL.Application();
+                    exc = new Application();
                 }
                 catch (Exception ex)
                 {
@@ -155,7 +155,7 @@ namespace Sci.Production.Prg
             public static void Unblock(string file)
             {
                 strMsg = string.Empty;
-                System.IO.FileInfo oFI = new System.IO.FileInfo(file);
+                FileInfo oFI = new FileInfo(file);
 
                 // 刪除方式1 -可刪除保護檢視 , 但 exc.Workbooks.Add(templatefile); 有此Error : 未發送 AddJob呼叫
                 if (oFI.Exists)
@@ -188,7 +188,7 @@ namespace Sci.Production.Prg
             }
 
             // Excel存檔畫面
-            public static DualResult SaveExcel(string templatefile, EXCEL.Application excel, string mode = "N")
+            public static DualResult SaveExcel(string templatefile, Application excel, string mode = "N")
             {
                 string file_name = string.Empty;
                 try
@@ -297,7 +297,7 @@ namespace Sci.Production.Prg
             {
                 // Excel欄位Focus
                 sheet.Select();
-                Microsoft.Office.Interop.Excel.Range formatRange = sheet.get_Range(string.Format("A{0}", rowix_begin));
+                EXCEL.Range formatRange = sheet.get_Range(string.Format("A{0}", rowix_begin));
                 formatRange.Select();
             }
 
@@ -346,7 +346,7 @@ namespace Sci.Production.Prg
                 System.Diagnostics.Debug.WriteLine(type);
             }
 
-            public static DualResult writeExcelErr(Microsoft.Office.Interop.Excel.Worksheet wsSheet, object[,] objArray, int rownum, int mm, int intColumns, Exception ex)
+            public static DualResult writeExcelErr(EXCEL.Worksheet wsSheet, object[,] objArray, int rownum, int mm, int intColumns, Exception ex)
             {
                 try
                 {
@@ -450,7 +450,7 @@ namespace Sci.Production.Prg
                 return cd;
             }
 
-            private static object[,] ToArray(System.Data.DataRow data, object[] cols_or_formatters)
+            private static object[,] ToArray(DataRow data, object[] cols_or_formatters)
             {
                 var array = new object[1, cols_or_formatters.Length];
                 for (int i = 0; i < cols_or_formatters.Length; ++i)
@@ -461,9 +461,9 @@ namespace Sci.Production.Prg
                         continue;
                     }
 
-                    if (o is System.Data.DataColumn)
+                    if (o is DataColumn)
                     {
-                        var v = data[(System.Data.DataColumn)o];
+                        var v = data[(DataColumn)o];
                         array[0, i] = ParseValue(v);
                     }
                     else if (o is string)

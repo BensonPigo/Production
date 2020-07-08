@@ -11,7 +11,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R26 : Sci.Win.Tems.PrintForm
+    public partial class R26 : Win.Tems.PrintForm
     {
         DataTable dt;
         DateTime? ConfirmedDate1;
@@ -163,7 +163,7 @@ where L.status='Confirmed'
             }
 
             Excel.Application objApp = new Excel.Application();
-            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R26.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R26.xltx", objApp);
             com.UseInnerFormating = false;
             com.WriteTable(this.dt, 2);
 

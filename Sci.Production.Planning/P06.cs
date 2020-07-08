@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Planning
 {
-    public partial class P06 : Sci.Win.Tems.QueryForm
+    public partial class P06 : Win.Tems.QueryForm
     {
         private DataTable QuertData;
 

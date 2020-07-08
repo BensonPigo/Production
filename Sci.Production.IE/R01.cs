@@ -11,7 +11,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_R01
     /// </summary>
-    public partial class R01 : Sci.Win.Tems.PrintForm
+    public partial class R01 : Win.Tems.PrintForm
     {
         private string factory;
         private string style;
@@ -37,7 +37,7 @@ namespace Sci.Production.IE
         {
             string sqlCmd = "select distinct FTYGroup from Factory WITH (NOLOCK) where Junk = 0 AND FTYGroup!=''";
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", this.txtFactory.Text, "Factory");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "8", this.txtFactory.Text, "Factory");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -52,7 +52,7 @@ namespace Sci.Production.IE
         {
             string sqlCmd = "select distinct ID,BrandID,Description from Style WITH (NOLOCK) where Junk = 0 order by ID";
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "16,10,50", this.txtStyle.Text, "Style#,Brand,Description");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "16,10,50", this.txtStyle.Text, "Style#,Brand,Description");
             item.Width = 800;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
@@ -67,7 +67,7 @@ namespace Sci.Production.IE
         private void TxtSeason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = "select distinct ID from Season WITH (NOLOCK) where Junk = 0 ORDER BY ID DESC";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10", this.txtSeason.Text, "Season");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "10", this.txtSeason.Text, "Season");
             item.Width = 300;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
@@ -99,7 +99,7 @@ namespace Sci.Production.IE
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"

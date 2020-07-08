@@ -10,7 +10,7 @@ using System.Transactions;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P04_Import : Sci.Win.Subs.Base
+    public partial class P04_Import : Win.Subs.Base
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;

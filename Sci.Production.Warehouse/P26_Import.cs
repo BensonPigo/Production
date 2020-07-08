@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P26_Import : Sci.Win.Subs.Base
+    public partial class P26_Import : Win.Subs.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
@@ -361,7 +361,7 @@ where
 ) a order by Receiving_Detail_ukey,StockType"); // Poid,seq1,seq2
 
             this.ShowWaitMessage("Data Loading....");
-            Ict.DualResult result;
+            DualResult result;
             if (!(result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out this.dtArtwork)))
             {
                 this.ShowErr(strSQLCmd.ToString(), result);
@@ -401,13 +401,13 @@ where
             base.OnFormLoaded();
             this.txtSPNo.Focus();
             #region Location 右鍵開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataRow currentrow = this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex());
-                    Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation(currentrow["Stocktype"].ToString(), currentrow["ToLocation"].ToString());
+                    Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation(currentrow["Stocktype"].ToString(), currentrow["ToLocation"].ToString());
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -469,7 +469,7 @@ WHERE   StockType='{0}'
             };
             #endregion Location 右鍵開窗
             #region stocktype validating
-            Ict.Win.DataGridViewGeneratorComboBoxColumnSettings stocktypeSet = new DataGridViewGeneratorComboBoxColumnSettings();
+            DataGridViewGeneratorComboBoxColumnSettings stocktypeSet = new DataGridViewGeneratorComboBoxColumnSettings();
 
             stocktypeSet.CellValidating += (s, e) =>
             {
@@ -598,7 +598,7 @@ stocktype = '{e.FormattedValue}'
 
         private void txtLocation2_MouseDown(object sender, MouseEventArgs e)
         {
-            Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation(string.Empty, string.Empty);
+            Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation(string.Empty, string.Empty);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

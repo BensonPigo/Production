@@ -11,7 +11,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_R02
     /// </summary>
-    public partial class R02 : Sci.Win.Tems.PrintForm
+    public partial class R02 : Win.Tems.PrintForm
     {
         private string po1;
         private string po2;
@@ -64,7 +64,7 @@ namespace Sci.Production.Logistic
         /// </summary>
         /// <param name="e">ReportEventArgs</param>
         /// <returns>Result</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlWHERE = new StringBuilder();
             StringBuilder sqlcmd = new StringBuilder();

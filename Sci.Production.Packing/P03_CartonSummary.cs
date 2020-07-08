@@ -8,7 +8,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P03_CartonSummary
     /// </summary>
-    public partial class P03_CartonSummary : Sci.Win.Subs.Base
+    public partial class P03_CartonSummary : Win.Subs.Base
     {
         private string packingListID;
 

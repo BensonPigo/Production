@@ -18,12 +18,13 @@ using System.Reflection;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P33 : Sci.Win.Tems.Input8
+    public partial class P33 : Win.Tems.Input8
     {
         StringBuilder sbSizecode;
         StringBuilder sbSizecode2;
         StringBuilder strsbIssueBreakDown;
-        DataTable dtSizeCode = null, dtIssueBreakDown = null;
+        DataTable dtSizeCode = null;
+        DataTable dtIssueBreakDown = null;
         bool Ismatrix_Reload = true; // 是否需要重新抓取資料庫資料
         string poid = string.Empty;
 
@@ -34,7 +35,7 @@ namespace Sci.Production.Warehouse
         {
             this.InitializeComponent();
 
-            this.gridicon.Location = new System.Drawing.Point(this.btnBreakDown.Location.X + 20, 95); // 此gridcon位置會跑掉，需強制設定gridcon位置
+            this.gridicon.Location = new Point(this.btnBreakDown.Location.X + 20, 95); // 此gridcon位置會跑掉，需強制設定gridcon位置
             this.DefaultFilter = $"MDivisionID='{Sci.Env.User.Keyword}' AND Type='E' ";
 
             this.WorkAlias = "Issue";                        // PK: ID
@@ -354,7 +355,7 @@ OUTER APPLY(
         protected override void OnDetailGridSetup()
         {
             #region Refno事件
-            Ict.Win.DataGridViewGeneratorTextColumnSettings RefnoSet = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings RefnoSet = new DataGridViewGeneratorTextColumnSettings();
             RefnoSet.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
@@ -485,7 +486,7 @@ DROP TABLE #tmp
                         return;
                     }
 
-                    Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(
+                    Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(
                         bulkItems,
                         "SCIRefno,Refno,ColorID,SuppColor,MtlType,Desc,Stock Unit,UnitDesc,BulkQty,InventoryQty",
                         "25,15,5,10,45,5,15,10,10", this.CurrentDetailData["Refno"].ToString(),
@@ -1004,7 +1005,7 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
             #endregion
 
             #region Color事件
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ColorSet = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ColorSet = new DataGridViewGeneratorTextColumnSettings();
             ColorSet.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
@@ -1137,7 +1138,7 @@ DROP TABLE #tmp
                         return;
                     }
 
-                    Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(
+                    Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(
                         bulkItems,
                         "SCIRefno,Refno,ColorID,SuppColor,MtlType,Desc,Stock Unit,UnitDesc,BulkQty,InventoryQty",
                         "25,15,5,10,45,5,15,10,10",
@@ -1655,7 +1656,7 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
             #endregion
 
             #region 單件用量欄位事件
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings Qty = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings Qty = new DataGridViewGeneratorNumericColumnSettings();
 
             Qty.CellMouseDoubleClick += (s, e) =>
             {
@@ -1731,7 +1732,7 @@ GROUP BY Article
             #endregion
 
             #region issue Qty 開窗
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings issueQty = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings issueQty = new DataGridViewGeneratorNumericColumnSettings();
             issueQty.CellMouseDoubleClick += (s, e) =>
             {
                 if (this.dtIssueBreakDown == null)
@@ -2506,7 +2507,7 @@ DROP TABLE #tmp
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
             #endregion
@@ -2607,7 +2608,7 @@ WHERE o.id = '{CurrentOrderID}'  AND o.sewline != '') t FOR xml path('')
                 return;
             }
 
-            var frm = new Sci.Production.Warehouse.P33_IssueBreakDown(this.CurrentMaintain, this.dtIssueBreakDown, this.dtSizeCode);
+            var frm = new P33_IssueBreakDown(this.CurrentMaintain, this.dtIssueBreakDown, this.dtSizeCode);
             frm.ShowDialog(this);
             this.OnDetailEntered();
         }
@@ -2679,7 +2680,7 @@ WHERE o.id = '{CurrentOrderID}'  AND o.sewline != '') t FOR xml path('')
                     modelList.Add(m);
             }
 
-            var frm = new Sci.Production.Warehouse.P33_AutoPick(this.CurrentMaintain["id"].ToString(), this.poid, this.txtOrderID.Text.ToString(), this.dtIssueBreakDown, this.sbSizecode, this.checkByCombo.Checked, modelList);
+            var frm = new P33_AutoPick(this.CurrentMaintain["id"].ToString(), this.poid, this.txtOrderID.Text.ToString(), this.dtIssueBreakDown, this.sbSizecode, this.checkByCombo.Checked, modelList);
             DialogResult result = frm.ShowDialog(this);
 
             if (result == DialogResult.OK)
@@ -3276,7 +3277,7 @@ order by [OrderID],[Article]
 
             sb.Append(")");
 
-            System.Data.SqlClient.SqlConnection conn;
+            SqlConnection conn;
             DBProxy.Current.OpenConnection(null, out conn);
 
             try
@@ -3288,7 +3289,7 @@ order by [OrderID],[Article]
                     return;
                 }
 
-                using (System.Data.SqlClient.SqlBulkCopy bulkcopy = new System.Data.SqlClient.SqlBulkCopy(conn))
+                using (SqlBulkCopy bulkcopy = new SqlBulkCopy(conn))
                 {
                     bulkcopy.BulkCopyTimeout = 60;
                     if (temptablename.TrimStart().StartsWith("#"))

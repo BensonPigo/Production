@@ -14,7 +14,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// P11
     /// </summary>
-    public partial class P11 : Sci.Win.Tems.Input6
+    public partial class P11 : Win.Tems.Input6
     {
         /// <summary>
         /// P11
@@ -316,7 +316,7 @@ where exists (select 1 from ClogGarmentDispose_Detail t where t.ID = '{this.Curr
 
         private void btnExcelImport_Click(object sender, EventArgs e)
         {
-            Sci.Production.Logistic.P11_ExcelImport callNextForm = new Sci.Production.Logistic.P11_ExcelImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            P11_ExcelImport callNextForm = new P11_ExcelImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             callNextForm.ShowDialog(this);
         }
 

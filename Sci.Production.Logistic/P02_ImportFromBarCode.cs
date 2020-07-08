@@ -14,7 +14,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_P02_ImportFromBarCode
     /// </summary>
-    public partial class P02_ImportFromBarCode : Sci.Win.Subs.Base
+    public partial class P02_ImportFromBarCode : Win.Subs.Base
     {
         private IList<P02_FileInfo> filelists = new List<P02_FileInfo>();
         private DataTable grid2Data;
@@ -319,7 +319,7 @@ namespace Sci.Production.Logistic
             }
 
             string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
+            DirectoryInfo dir = new DirectoryInfo(Application.StartupPath);
             SaveFileDialog dlg = new SaveFileDialog();
             dlg.RestoreDirectory = true;
             dlg.InitialDirectory = myDocumentsPath;     // 指定"我的文件"路徑

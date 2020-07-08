@@ -9,7 +9,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P06_Print
     /// </summary>
-    public partial class P06_Print : Sci.Win.Tems.PrintForm
+    public partial class P06_Print : Win.Tems.PrintForm
     {
         private DataTable gridData;
         private string delDate1;
@@ -47,7 +47,7 @@ namespace Sci.Production.PPIC
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder filter = new StringBuilder();
 

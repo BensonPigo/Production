@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P21 : Sci.Win.Tems.QueryForm
+    public partial class P21 : Win.Tems.QueryForm
     {
         DataTable dtReceiving = new DataTable();
 
@@ -35,7 +35,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings cellActWeight = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings cellActWeight = new DataGridViewGeneratorNumericColumnSettings();
             cellActWeight.CellValidating += (s, e) =>
             {
                 DataRow curDr = this.gridReceiving.GetDataRow(e.RowIndex);
@@ -53,7 +53,7 @@ namespace Sci.Production.Warehouse
                 this.gridReceiving.RefreshEdit();
             };
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings cellLocation = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings cellLocation = new DataGridViewGeneratorTextColumnSettings();
             cellLocation.CellMouseDoubleClick += (s, e) =>
             {
                 this.GridLocationCellPop(e.RowIndex);
@@ -97,7 +97,7 @@ namespace Sci.Production.Warehouse
                 this.gridReceiving.RefreshEdit();
             };
 
-            Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings col_Select = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings col_Select = new DataGridViewGeneratorCheckBoxColumnSettings();
             col_Select.CellValidating += (s, e) =>
             {
                 DataRow dr = this.gridReceiving.GetDataRow(e.RowIndex);

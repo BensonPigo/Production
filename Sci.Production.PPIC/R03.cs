@@ -13,7 +13,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// R03
     /// </summary>
-    public partial class R03 : Sci.Win.Tems.PrintForm
+    public partial class R03 : Win.Tems.PrintForm
     {
         private string style;
         private string Article;
@@ -1151,7 +1151,7 @@ drop table #tmpListPoCombo,#tmp_PFRemark,#tmp_StyleUkey,#tmp_MTLDelay,#tmp_Packi
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd;
 

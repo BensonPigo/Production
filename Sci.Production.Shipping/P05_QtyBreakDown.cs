@@ -8,7 +8,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P05_QtyBreakDown
     /// </summary>
-    public partial class P05_QtyBreakDown : Sci.Win.Subs.Input6A
+    public partial class P05_QtyBreakDown : Win.Subs.Input6A
     {
         /// <summary>
         /// P05_QtyBreakDown

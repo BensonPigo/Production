@@ -6,7 +6,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B42_Detail
     /// </summary>
-    public partial class B42_Detail : Sci.Win.Subs.Base
+    public partial class B42_Detail : Win.Subs.Base
     {
         private DataTable gridData;
 

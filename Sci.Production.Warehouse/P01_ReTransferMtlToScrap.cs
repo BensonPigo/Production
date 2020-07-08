@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P01_ReTransferMtlToScrap : Sci.Win.Tems.QueryForm
+    public partial class P01_ReTransferMtlToScrap : Win.Tems.QueryForm
     {
         private string poID;
         private DataTable dtScrapHistory;

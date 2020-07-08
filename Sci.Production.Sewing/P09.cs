@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
 {
-    public partial class P09 : Sci.Win.Tems.QueryForm
+    public partial class P09 : Win.Tems.QueryForm
     {
         public P09(ToolStripMenuItem menuitem)
             : base(menuitem)

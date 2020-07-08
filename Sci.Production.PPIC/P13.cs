@@ -15,13 +15,13 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P13
     /// </summary>
-    public partial class P13 : Sci.Win.Tems.QueryForm
+    public partial class P13 : Win.Tems.QueryForm
     {
         private DataTable gridData;
-        private DataGridViewGeneratorTextColumnSettings sewLine = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private DataGridViewGeneratorDateColumnSettings sewInLine = new Ict.Win.DataGridViewGeneratorDateColumnSettings();
-        private DataGridViewGeneratorDateColumnSettings sewOffLine = new Ict.Win.DataGridViewGeneratorDateColumnSettings();
-        private DataGridViewGeneratorDateColumnSettings cutReadyDate = new Ict.Win.DataGridViewGeneratorDateColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings sewLine = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorDateColumnSettings sewInLine = new DataGridViewGeneratorDateColumnSettings();
+        private DataGridViewGeneratorDateColumnSettings sewOffLine = new DataGridViewGeneratorDateColumnSettings();
+        private DataGridViewGeneratorDateColumnSettings cutReadyDate = new DataGridViewGeneratorDateColumnSettings();
 
         /// <summary>
         /// P13
@@ -101,7 +101,7 @@ namespace Sci.Production.PPIC
                     if (e.RowIndex != -1)
                     {
                         DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                        Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("Select ID,Description From SewingLine WITH (NOLOCK) Where FactoryId = '{0}'", Sci.Env.User.Factory), "2,16", MyUtility.Convert.GetString(dr["SewLine"]));
+                        Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("Select ID,Description From SewingLine WITH (NOLOCK) Where FactoryId = '{0}'", Sci.Env.User.Factory), "2,16", MyUtility.Convert.GetString(dr["SewLine"]));
                         DialogResult returnResult = item.ShowDialog();
                         if (returnResult == DialogResult.Cancel)
                         {
@@ -198,7 +198,7 @@ namespace Sci.Production.PPIC
 
         private string PopUpTPEUser(string userID)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) ", "10,23,5", userID);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) ", "10,23,5", userID);
             item.Width = 510;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)

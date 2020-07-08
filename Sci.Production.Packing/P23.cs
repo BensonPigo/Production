@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
-    public partial class P23 : Sci.Win.Tems.QueryForm
+    public partial class P23 : Win.Tems.QueryForm
     {
         private DataTable dtDBSource;
 
@@ -580,7 +580,7 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
                 }
             }
 
-            Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Packing_P23.xltx");
+            Utility.Excel.SaveXltReportCls x1 = new Utility.Excel.SaveXltReportCls("Packing_P23.xltx");
 
             // 幾個OrderId就Copy幾次Sheet
             x1.CopySheet.Add(1, orderidList.Count - 1);
@@ -640,7 +640,7 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
 
                 finalData.Rows.Add(nRow);
 
-                Sci.Utility.Excel.SaveXltReportCls.XltRptTable xDt = new Sci.Utility.Excel.SaveXltReportCls.XltRptTable(finalData);
+                Utility.Excel.SaveXltReportCls.XltRptTable xDt = new Utility.Excel.SaveXltReportCls.XltRptTable(finalData);
                 xDt.ShowHeader = false;
 
                 x1.DicDatas.Add("##ControlNo" + indexStr, finalData.Rows[0]["ControlNo"]);

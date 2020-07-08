@@ -9,7 +9,7 @@ using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 
 namespace Sci.Production.Quality
 {
-    public partial class R05 : Sci.Win.Tems.PrintForm
+    public partial class R05 : Win.Tems.PrintForm
     {
         DateTime? DateSCIStart; DateTime? DateSCIEnd;
         List<SqlParameter> lis;
@@ -21,7 +21,7 @@ namespace Sci.Production.Quality
         private string cmdAccessoryDetail;
         private string str_Category;
         private string str_Material;
-        private string ReportType;
+        private string reportType;
         private string cmdFabricSummary;
         private string cmdAccessorySummary;
         private string MaterialType = string.Empty;
@@ -88,12 +88,12 @@ namespace Sci.Production.Quality
             this.DateSCIEnd = this.dateSCIDelivery.Value2;
             this.str_Category = this.comboCategory.Text;
             this.str_Material = this.comboMaterialType.Text;
-            this.ReportType = this.radioPanel.Value.ToString();
+            this.reportType = this.radioPanel.Value.ToString();
 
             this.lis = new List<SqlParameter>();
             string sqlWhere = string.Empty;
             string sqlOrdersWhere = string.Empty;
-            string CATEGORY = string.Empty;
+            string cATEGORY = string.Empty;
             List<string> sqlWheres = new List<string>();
             List<string> sqlOrderWheres = new List<string>();
             #region --組WHERE--
@@ -111,7 +111,7 @@ namespace Sci.Production.Quality
 
             if (!this.comboCategory.SelectedItem.ToString().Empty())
             {
-                CATEGORY = $"({this.comboCategory.SelectedValue})";
+                cATEGORY = $"({this.comboCategory.SelectedValue})";
                 sqlOrderWheres.Add($"Category in ({this.comboCategory.SelectedValue})");
             }
 
@@ -169,7 +169,7 @@ namespace Sci.Production.Quality
                 ,f.Physical
                 ,va.WhseArrival
                 ,o.scidelivery
-                ,iif('B' in " + CATEGORY + @",iif(DATEDIFF(day, va.WhseArrival,o.scidelivery)<25,'Y','')
+                ,iif('B' in " + cATEGORY + @",iif(DATEDIFF(day, va.WhseArrival,o.scidelivery)<25,'Y','')
 		        ,iif(DATEDIFF(day, va.WhseArrival,o.scidelivery )<15,'Y','')
 		                ) [Delay]
                 ,psd.ID
@@ -209,7 +209,7 @@ namespace Sci.Production.Quality
                ,AR.Result
                 ,va.WhseArrival
                 ,o.scidelivery
-                ,iif(  'B' in " + CATEGORY + @",iif(DATEDIFF(day, va.WhseArrival,o.scidelivery)<25,'Y','')
+                ,iif(  'B' in " + cATEGORY + @",iif(DATEDIFF(day, va.WhseArrival,o.scidelivery)<25,'Y','')
 		        ,iif(DATEDIFF(day, va.WhseArrival,o.scidelivery)<15,'Y','')
 		                ) [Delay]
                 ,AR.POID
@@ -391,7 +391,7 @@ drop table #tmp");
             inner join dbo.Supp as s WITH (NOLOCK) on s.ID = ps.SuppID
             inner join dbo.View_AllReceivingDetail as n WITH (NOLOCK) on n.Id = ai.ReceivingID and n.PoId = psd.ID and n.seq1 = psd.seq1 and n.seq2 = psd.SEQ2
             left join dbo.View_AllReceiving va with (nolock) on va.ID = ai.ReceivingID
-            OUTER APPLY (SELECT iif('B' in " + CATEGORY + @",iif(DATEDIFF(day, va.WhseArrival, (select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
+            OUTER APPLY (SELECT iif('B' in " + cATEGORY + @",iif(DATEDIFF(day, va.WhseArrival, (select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
                                                      ,iif(DATEDIFF(day, va.WhseArrival, (select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID) )<15,'Y',''))  
                                                        TF)DelayItemsRef
             WHERE " + sqlWhere + @" AND psd.SEQ1 NOT BETWEEN '50'AND'79' AND Ai.Result<>''
@@ -436,7 +436,7 @@ and ai.Status='Confirmed'
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res = new DualResult(false);
 

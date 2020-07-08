@@ -16,7 +16,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class P24 : Sci.Win.Tems.QueryForm
+    public partial class P24 : Win.Tems.QueryForm
     {
         private DataTable selectDataTable;
 

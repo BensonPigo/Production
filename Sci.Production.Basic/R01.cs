@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Basic
 {
-    public partial class R01 : Sci.Win.Tems.PrintForm
+    public partial class R01 : Win.Tems.PrintForm
     {
         private DataTable printData;
         private StringBuilder sqlWhere = new StringBuilder();
@@ -34,7 +34,7 @@ namespace Sci.Production.Basic
 
         private void txtCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item;
+            Win.Tools.SelectItem item;
             string sqlcmd;
             sqlcmd = @"
 select l.id ,l.abb ,l.currencyid 
@@ -43,7 +43,7 @@ WHERE l.Junk=0 AND l.IsFactory = 0
 order by ID
 ";
 
-            item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,15,5", null);
+            item = new Win.Tools.SelectItem(sqlcmd, "10,15,5", null);
             item.Size = new System.Drawing.Size(480, 500);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)

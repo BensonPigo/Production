@@ -9,7 +9,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_P01_Sketch
     /// </summary>
-    public partial class P01_Sketch : Sci.Win.Subs.Base
+    public partial class P01_Sketch : Win.Subs.Base
     {
         private DataRow masterData;
 

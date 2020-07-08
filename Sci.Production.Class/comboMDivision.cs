@@ -4,7 +4,7 @@ using System.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class comboMDivision : Sci.Win.UI.ComboBox
+    public partial class comboMDivision : Win.UI.ComboBox
     {
         public comboMDivision()
         {

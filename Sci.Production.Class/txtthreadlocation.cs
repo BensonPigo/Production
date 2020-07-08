@@ -6,7 +6,7 @@ using Sci.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class txtthreadlocation : Sci.Win.UI.TextBox
+    public partial class txtthreadlocation : Win.UI.TextBox
     {
         public txtthreadlocation()
         {
@@ -26,7 +26,7 @@ namespace Sci.Production.Class
             string sql = "select ID,Description from ThreadLocation WITH (NOLOCK) order by ID";
             DataTable tbthLocation;
             DBProxy.Current.Select("Production", sql, out tbthLocation);
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbthLocation, "ID,Description", "10,40", this.Text, "ID,Description");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(tbthLocation, "ID,Description", "10,40", this.Text, "ID,Description");
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)

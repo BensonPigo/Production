@@ -10,7 +10,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R12 : Sci.Win.Tems.PrintForm
+    public partial class R12 : Win.Tems.PrintForm
     {
         string sqlCmd = string.Empty;
         List<SqlParameter> listSqlPar = new List<SqlParameter>();
@@ -126,7 +126,7 @@ order by il.IssueDate,il.Id,ild.POID,ild.Seq1,ild.Seq2,ild.Roll,ild.Dyelot
 
             this.ShowWaitMessage("Excel Processing...");
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R12.xltx"); // 預先開啟excel app
-            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R12.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R12.xltx", objApp);
             com.WriteTable(this.dtResult, 2);
 
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R12");

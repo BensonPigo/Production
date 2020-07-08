@@ -13,7 +13,7 @@ namespace Sci.Production.Thread
     /// <summary>
     /// P03
     /// </summary>
-    public partial class P03 : Sci.Win.Tems.Input6
+    public partial class P03 : Win.Tems.Input6
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
@@ -29,7 +29,7 @@ namespace Sci.Production.Thread
         }
 
         /// <inheritdoc/>
-        protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(

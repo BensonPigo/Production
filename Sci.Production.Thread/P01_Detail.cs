@@ -15,7 +15,7 @@ namespace Sci.Production.Thread
     /// <summary>
     /// P01_Detail
     /// </summary>
-    public partial class P01_Detail : Sci.Win.Subs.Base
+    public partial class P01_Detail : Win.Subs.Base
     {
         private DataRow detail;
         private DataRow master;

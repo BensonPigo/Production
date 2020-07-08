@@ -7,7 +7,7 @@ using Sci.Data;
 
 namespace Sci.Production.Quality
 {
-    public partial class P13 : Sci.Win.Tems.Input6
+    public partial class P13 : Win.Tems.Input6
     {
         // 宣告Context Menu Item
         ToolStripMenuItem add;
@@ -65,7 +65,7 @@ masterID);
         // Context Menu選擇Create New test
         private void CreateNewTest()
         {
-            Sci.Production.Quality.P13_Detail callNewDetailForm = new P13_Detail(true, this.CurrentMaintain["ID"].ToString(), string.Empty, null, "New");
+            P13_Detail callNewDetailForm = new P13_Detail(true, this.CurrentMaintain["ID"].ToString(), string.Empty, null, "New");
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
             this.RenewData();
@@ -80,7 +80,7 @@ masterID);
                 return;
             }
 
-            Sci.Production.Quality.P13_Detail callNewDetailForm = new P13_Detail(true, this.CurrentMaintain["ID"].ToString(), this.CurrentDetailData["ReportNo"].ToString(), null, "Edit");
+            P13_Detail callNewDetailForm = new P13_Detail(true, this.CurrentMaintain["ID"].ToString(), this.CurrentDetailData["ReportNo"].ToString(), null, "Edit");
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
             this.RenewData();
@@ -129,7 +129,7 @@ masterID);
                     return;
                 }
 
-                Sci.Production.Quality.P13_Detail callNewDetailForm = new P13_Detail(false, this.CurrentMaintain["ID"].ToString(), this.CurrentDetailData["ReportNo"].ToString(), null, "Query");
+                P13_Detail callNewDetailForm = new P13_Detail(false, this.CurrentMaintain["ID"].ToString(), this.CurrentDetailData["ReportNo"].ToString(), null, "Query");
                 callNewDetailForm.ShowDialog(this);
                 callNewDetailForm.Dispose();
             };
@@ -159,10 +159,10 @@ masterID);
                 return;
             }
 
-            Sci.Win.Tools.SelectItem item;
+            Win.Tools.SelectItem item;
             string selectCommand = $"select Article,ArticleName from Style_Article WITH (NOLOCK) where StyleUkey = {styleUkey}";
 
-            item = new Sci.Win.Tools.SelectItem(selectCommand, "11,33", this.Text);
+            item = new Win.Tools.SelectItem(selectCommand, "11,33", this.Text);
             item.Width = 520;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)

@@ -16,12 +16,12 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// P01
     /// </summary>
-    public partial class P01 : Sci.Win.Tems.QueryForm
+    public partial class P01 : Win.Tems.QueryForm
     {
         private DataTable detailDt;
         private DataTable byMDt;
         private DataTable byBrandDt;
-        private Sci.Win.MatrixHelper _matrix;
+        private Win.MatrixHelper _matrix;
 
         /// <summary>
         /// P01
@@ -499,7 +499,7 @@ from (
             }
 
             this.grid1.DataSource = this.listControlBindingSource1;
-            this._matrix = new Sci.Win.MatrixHelper(this, this.grid1, this.listControlBindingSource1);
+            this._matrix = new Win.MatrixHelper(this, this.grid1, this.listControlBindingSource1);
             this._matrix.XMap.Name = "BuyerDelivery";
             this._matrix.YMap.Name = displayBy;
             this._matrix

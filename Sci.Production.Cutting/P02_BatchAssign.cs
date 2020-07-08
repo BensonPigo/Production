@@ -14,7 +14,7 @@ using static Sci.Production.PublicPrg.Prgs;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P02_BatchAssign : Sci.Win.Subs.Base
+    public partial class P02_BatchAssign : Win.Subs.Base
     {
         private DataTable curTb;
         private DataTable detailTb;
@@ -259,7 +259,7 @@ namespace Sci.Production.Cutting
             {
                 if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                    DataRow dr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
                     if (e.FormattedValue.ToString() == dr["estcutdate"].ToString())
                     {
                         return;
@@ -370,7 +370,7 @@ namespace Sci.Production.Cutting
             #region WKETA
             WKETA.EditingMouseDown += (s, e) =>
             {
-                DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                DataRow dr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
                 if (e.Button == MouseButtons.Right)
                 {
                     P02_WKETA item = new P02_WKETA(dr);
@@ -438,7 +438,7 @@ namespace Sci.Production.Cutting
                     return;
                 }
 
-                DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                DataRow dr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode)
                 {
                     ((Ict.Win.UI.DateBox)e.Control).ReadOnly = true;
@@ -457,7 +457,7 @@ namespace Sci.Production.Cutting
                     return;
                 }
 
-                DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                DataRow dr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
                 if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !this.EditMode)
                 {
                     e.CellStyle.BackColor = Color.White;

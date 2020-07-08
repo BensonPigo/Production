@@ -10,7 +10,7 @@ using System.Globalization;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P50_Import : Sci.Win.Subs.Base
+    public partial class P50_Import : Win.Subs.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
@@ -164,7 +164,7 @@ and f.MDivisionID='{0}' ", Sci.Env.User.Keyword, this.dr_master["stocktype"]));
 
             this.ShowWaitMessage("Data Loading....");
 
-            Ict.DualResult result;
+            DualResult result;
             if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out this.dtFtyinventory))
             {
                 if (this.dtFtyinventory.Rows.Count == 0)
@@ -279,7 +279,7 @@ and f.MDivisionID='{0}' ", Sci.Env.User.Keyword, this.dr_master["stocktype"]));
 
         private void txtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+            Win.Forms.Base myForm = (Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || this.txtLocation.ReadOnly == true)
             {
                 return;
@@ -292,7 +292,7 @@ select  id
 from    mtllocation WITH (NOLOCK) 
 where   junk != '1'
         and stocktype='{0}'", this.dr_master["stocktype"]);
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "10,20", this.txtLocation.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "10,20", this.txtLocation.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

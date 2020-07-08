@@ -6,7 +6,7 @@ using System.Data;
 
 namespace Sci.Production.PPIC
 {
-    public partial class P01_Artwork : Sci.Win.Subs.Base
+    public partial class P01_Artwork : Win.Subs.Base
     {
         private string Order_ArtworkId;
 

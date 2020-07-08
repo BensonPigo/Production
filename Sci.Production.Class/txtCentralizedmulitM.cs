@@ -11,7 +11,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Class
 {
-    public partial class txtCentralizedmulitM : Sci.Win.UI.TextBox
+    public partial class txtCentralizedmulitM : Win.UI.TextBox
     {
         public txtCentralizedmulitM()
         {
@@ -67,7 +67,7 @@ namespace Sci.Production.Class
                 }
             }
 
-            Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(FactoryData, "M", "M", "5", this.Text);
+            Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(FactoryData, "M", "M", "5", this.Text);
             DialogResult dialogResult = item.ShowDialog();
             if (dialogResult == DialogResult.Cancel)
             {

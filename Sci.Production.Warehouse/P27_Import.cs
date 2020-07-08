@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P27_Import : Sci.Win.Subs.Base
+    public partial class P27_Import : Win.Subs.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
@@ -90,7 +90,7 @@ where (case when '{0}' = 'B'then LI.InQty-LI.OutQty+LI.AdjustQty
 
             #region Execute
             this.ShowWaitMessage("Data Loading....");
-            Ict.DualResult result;
+            DualResult result;
             if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out this.dtInventory))
             {
                 if (this.dtInventory.Rows.Count == 0)
@@ -115,7 +115,7 @@ where (case when '{0}' = 'B'then LI.InQty-LI.OutQty+LI.AdjustQty
             base.OnFormLoaded();
 
             #region -- ToLocation 右鍵開窗 --
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
@@ -127,7 +127,7 @@ from   dbo.MtlLocation WITH (NOLOCK)
 where  StockType='O' and junk != '1'");
 
                     DataRow dr = this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex());
-                    Sci.Win.Tools.SelectItem2 selectSubcons = new Win.Tools.SelectItem2(sqlcmd, "ID,Desc", "13,30", dr["ToLocation"].ToString(), null, null, null);
+                    Win.Tools.SelectItem2 selectSubcons = new Win.Tools.SelectItem2(sqlcmd, "ID,Desc", "13,30", dr["ToLocation"].ToString(), null, null, null);
 
                     DialogResult result = selectSubcons.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -242,7 +242,7 @@ where exists(
                 return;
             }
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                 string.Format(@"
 select  id
         , [Description] 
@@ -271,7 +271,7 @@ select id
 from   dbo.MtlLocation WITH (NOLOCK) 
 where  StockType='B' and junk != '1'");
 
-            Sci.Win.Tools.SelectItem2 selectSubcons = new Win.Tools.SelectItem2(sqlcmd, "ID,Desc", "13,30", this.txtToLocation.Text, null, null, null);
+            Win.Tools.SelectItem2 selectSubcons = new Win.Tools.SelectItem2(sqlcmd, "ID,Desc", "13,30", this.txtToLocation.Text, null, null, null);
 
             DialogResult result = selectSubcons.ShowDialog();
             if (result == DialogResult.Cancel)

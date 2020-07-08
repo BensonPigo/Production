@@ -9,7 +9,7 @@ using Sci.Data;
 
 namespace Sci.Production.Quality
 {
-    public partial class P07_Oven : Sci.Win.Subs.Input2A
+    public partial class P07_Oven : Win.Subs.Input2A
     {
         private DataRow maindr;
         private string ID;
@@ -119,13 +119,13 @@ namespace Sci.Production.Quality
 
         private void txtScale_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+            Win.Forms.Base myForm = (Win.Forms.Base)this.FindForm();
             if (!this.EDIT)
             {
                 return;
             }
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select id from Scale WITH (NOLOCK) where junk=0", "10", this.txtScale.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("Select id from Scale WITH (NOLOCK) where junk=0", "10", this.txtScale.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

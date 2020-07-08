@@ -8,7 +8,7 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R10 : Sci.Win.Tems.PrintForm
+    public partial class R10 : Win.Tems.PrintForm
     {
         // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
         string mdivision;
@@ -73,7 +73,7 @@ namespace Sci.Production.Warehouse
         }
 
         // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sql parameters declare --
             System.Data.SqlClient.SqlParameter sp_spno1 = new System.Data.SqlClient.SqlParameter();

@@ -9,7 +9,7 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P01_BatchCloseRowMaterial : Sci.Win.Subs.Base
+    public partial class P01_BatchCloseRowMaterial : Win.Subs.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
@@ -180,7 +180,7 @@ Drop table #cte_temp;", Sci.Env.User.Keyword, categorySql));
 
             this.ShowWaitMessage("Data Loading....");
 
-            Ict.DualResult result;
+            DualResult result;
             if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out this.dtBatch))
             {
                 if (this.dtBatch[1].Rows.Count == 0)
@@ -301,7 +301,7 @@ from #tmp";
             if (this.dtBatch != null && this.dtBatch[1].Rows.Count > 0)
             {
                 MyUtility.Tool.ProcessWithDatatable(this.dtBatch[1], string.Empty, cmd, out printDatatable, "#Tmp");
-                Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(printDatatable);
+                Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(printDatatable);
                 sdExcel.Save(Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P01_BatchCloseRowMaterial"));
             }
         }

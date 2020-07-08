@@ -12,7 +12,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P09
     /// </summary>
-    public partial class P09 : Sci.Win.Tems.QueryForm
+    public partial class P09 : Win.Tems.QueryForm
     {
         private DataTable MDivision;
 

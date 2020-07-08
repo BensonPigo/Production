@@ -131,7 +131,7 @@ namespace Sci.Production.Report
             /// <param name="templatefile">templatefile</param>
             /// <param name="excel">excel</param>
             /// <returns>DualResult</returns>
-            public static DualResult CreateExcel(string templatefile, out EXCEL.Application excel)
+            public static DualResult CreateExcel(string templatefile, out Application excel)
             {
                 excel = null;
 
@@ -140,10 +140,10 @@ namespace Sci.Production.Report
                     return new DualResult(false, "'{0}' excel template file not exists.".InvariantFormat(templatefile));
                 }
 
-                EXCEL.Application exc;
+                Application exc;
                 try
                 {
-                    exc = new EXCEL.Application();
+                    exc = new Application();
                 }
                 catch (Exception ex)
                 {
@@ -185,7 +185,7 @@ namespace Sci.Production.Report
             /// <param name="templatefile">templatefile</param>
             /// <param name="excel">excel</param>
             /// <returns>DualResult</returns>
-            public static DualResult SaveExcel(string templatefile, EXCEL.Application excel)
+            public static DualResult SaveExcel(string templatefile, Application excel)
             {
                 string file_name = string.Empty;
                 try
@@ -283,7 +283,7 @@ namespace Sci.Production.Report
                 return cd;
             }
 
-            private static object[,] ToArray(System.Data.DataRow data, object[] cols_or_formatters)
+            private static object[,] ToArray(DataRow data, object[] cols_or_formatters)
             {
                 var array = new object[1, cols_or_formatters.Length];
                 for (int i = 0; i < cols_or_formatters.Length; ++i)
@@ -296,7 +296,7 @@ namespace Sci.Production.Report
 
                     if (o is DataColumn)
                     {
-                        var v = data[(System.Data.DataColumn)o];
+                        var v = data[(DataColumn)o];
                         array[0, i] = ParseValue(v);
                     }
                     else if (o is string)

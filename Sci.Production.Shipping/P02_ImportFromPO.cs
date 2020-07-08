@@ -15,7 +15,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P02_ImportFromPO
     /// </summary>
-    public partial class P02_ImportFromPO : Sci.Win.Subs.Base
+    public partial class P02_ImportFromPO : Win.Subs.Base
     {
         private DataRow masterData;
 
@@ -34,8 +34,8 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ctnno = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings receiver = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ctnno = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings receiver = new DataGridViewGeneratorTextColumnSettings();
             Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
             // CTNNo要Trim掉空白字元

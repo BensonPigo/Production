@@ -17,7 +17,7 @@ using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P31 : Sci.Win.Tems.Input6
+    public partial class P31 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
@@ -136,12 +136,12 @@ namespace Sci.Production.Warehouse
 
             string RptTitle = dtt.Rows[0]["nameEN"].ToString();
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Estbackdate", Estbackdate));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("mdivisionid", mdivisionid));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+            report.ReportParameters.Add(new ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new ReportParameter("ID", id));
+            report.ReportParameters.Add(new ReportParameter("Estbackdate", Estbackdate));
+            report.ReportParameters.Add(new ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new ReportParameter("mdivisionid", mdivisionid));
+            report.ReportParameters.Add(new ReportParameter("issuedate", issuedate));
             #endregion
 
             #region  抓表身資料
@@ -223,7 +223,7 @@ where a.id= @ID", pars, out dd);
             #endregion
 
             // 開啟 report view
-            var frm1 = new Sci.Win.Subs.ReportView(report);
+            var frm1 = new Win.Subs.ReportView(report);
             frm1.MdiParent = this.MdiParent;
             frm1.Show();
 
@@ -1076,14 +1076,14 @@ Where a.id = '{0}'", masterID);
         // Import
         private void btnImport_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P31_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P31_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }
 
         private void btnAccumulatedQty_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P31_AccumulatedQty(this.CurrentMaintain);
+            var frm = new P31_AccumulatedQty(this.CurrentMaintain);
             frm.P31 = this;
             frm.ShowDialog(this);
         }

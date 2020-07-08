@@ -6,7 +6,7 @@ using Sci.Data;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P02_OriginalData : Sci.Win.Tems.QueryForm
+    public partial class P02_OriginalData : Win.Tems.QueryForm
     {
         DataRow CurrDataRow;
 

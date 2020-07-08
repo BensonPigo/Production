@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 // using Ict.Win.Tools;
 namespace Sci.Production.Subcon
 {
-    public partial class R26 : Sci.Win.Tems.PrintForm
+    public partial class R26 : Win.Tems.PrintForm
     {
         public R26(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -258,7 +258,7 @@ drop table #temp";
             return true;
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             if (this.Report_Type == "PO List")
             {
@@ -524,7 +524,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R26_Local_PO_List.xltx"); // 預先開啟excel app
 
                 // MyUtility.Excel.CopyToXls(dtt, "", "Subcon_R26_Local_PO_List.xltx", 2, excelApp: objApp, showExcel: false, showSaveMsg: false);      // 將datatable copy to excel
-                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Subcon_R26_Local_PO_List.xltx", objApp);
+                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Subcon_R26_Local_PO_List.xltx", objApp);
                 com.ColumnsAutoFit = false;
                 com.WriteTable(this.dtt, 3);
 
@@ -552,7 +552,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
             else if ("PO Order".EqualString(this.comboReportType.Text))
             {
                 var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
-                Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R26_Local_PO_Order.xltx");
+                Utility.Excel.SaveXltReportCls x1 = new Utility.Excel.SaveXltReportCls("Subcon_R26_Local_PO_Order.xltx");
 
                 List<string> lis = new List<string>();
                 List<string> listt = new List<string>();
@@ -588,7 +588,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
                     x1.DicDatas.Add("##Factory" + idxstr, this.Factory1);
                     x1.DicDatas.Add("##theorderid" + idxstr, TheOrderID);
                     x1.DicDatas.Add("##date" + idxstr, this.date);
-                    Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt = new Sci.Utility.Excel.SaveXltReportCls.XltRptTable(finalda);
+                    Utility.Excel.SaveXltReportCls.XltRptTable dt = new Utility.Excel.SaveXltReportCls.XltRptTable(finalda);
                     dt.BoAutoFitColumn = true;
                     x1.DicDatas.Add("##SP" + idxstr, dt);
 
@@ -604,7 +604,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
             if (this.checkShippingMark.Checked == true)
             {
                 var saveDialog1 = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
-                Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R26_Shipping_Mark.xltx");
+                Utility.Excel.SaveXltReportCls x1 = new Utility.Excel.SaveXltReportCls("Subcon_R26_Shipping_Mark.xltx");
 
                 // copy sheet by TheOrderID count.
                 x1.CopySheet.Add(1, this.shm.Rows.Count - 1);

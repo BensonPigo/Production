@@ -12,7 +12,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// P01
     /// </summary>
-    public partial class P01 : Sci.Win.Tems.Input6
+    public partial class P01 : Win.Tems.Input6
     {
         private bool firstTime = true;
         private bool data_overload = false;
@@ -221,7 +221,7 @@ and qu.localsuppid = '{2}'  ",
         /// </summary>
         protected override void OnDetailGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
             #region Supplier 右鍵開窗 & 按下subcon欄位自動帶值
             ts4.CellMouseClick += (s, e) =>
             {
@@ -269,7 +269,7 @@ and qu.localsuppid = '{2}'  ",
 
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem item;
+                    Win.Tools.SelectItem item;
                     string sqlcmd;
                     if (this.CurrentDetailData["InhouseOSP"].ToString() == "O")
                     {
@@ -304,7 +304,7 @@ end;",
                         DualResult resule = DBProxy.Current.Select(string.Empty, sqlcmd, out dtSelectSupp);
                         if (resule == true)
                         {
-                            item = new Sci.Win.Tools.SelectItem(dtSelectSupp, "LocalSuppID,Abb,MockUp", "10,15,12", null, null, null);
+                            item = new Win.Tools.SelectItem(dtSelectSupp, "LocalSuppID,Abb,MockUp", "10,15,12", null, null, null);
                             DialogResult result = item.ShowDialog();
                             if (result == DialogResult.Cancel)
                             {
@@ -324,7 +324,7 @@ end;",
                     else
                     {
                         sqlcmd = @"select DISTINCT l.ID ,l.Abb ,l.Name from dbo.LocalSupp l WITH (NOLOCK)  WHERE l.Junk=0 and IsFactory = 1 order by ID";
-                        item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,30", null);
+                        item = new Win.Tools.SelectItem(sqlcmd, "10,30", null);
                         DialogResult result = item.ShowDialog();
                         if (result == DialogResult.Cancel)
                         {
@@ -414,7 +414,7 @@ end;",
             comboBox1_RowSource.Add("O", "OSP");
             comboBox1_RowSource.Add("I", "InHouse");
 
-            Ict.Win.DataGridViewGeneratorComboBoxColumnSettings cs = new DataGridViewGeneratorComboBoxColumnSettings();
+            DataGridViewGeneratorComboBoxColumnSettings cs = new DataGridViewGeneratorComboBoxColumnSettings();
             cs.EditingControlShowing += (sender, eventArgs) =>
                 {
                     if (sender == null || eventArgs == null)
@@ -531,7 +531,7 @@ end;",
 
         private void BtnBatchApprove_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Planning.P01_BatchApprove();
+            var frm = new P01_BatchApprove();
             frm.ShowDialog(this);
             this.RenewData();
         }

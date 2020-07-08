@@ -12,14 +12,15 @@ using Ict.Win.UI;
 
 namespace Sci.Production.Quality
 {
-    public partial class P30 : Sci.Win.Tems.Input6
+    public partial class P30 : Win.Tems.Input6
     {
         protected DataRow motherData;
         Size thisSize;
         bool FirstTime = true;
 
         // (menuitem, args= 參數)
-        public P30(ToolStripMenuItem menuitem, string history) : base(menuitem)
+        public P30(ToolStripMenuItem menuitem, string history)
+            : base(menuitem)
         {
             this.InitializeComponent();
             this.thisSize = this.Size;
@@ -61,7 +62,7 @@ namespace Sci.Production.Quality
             this.colorSelect_CellMouseClick(e.Button, e.RowIndex);
         }
 
-        public void colorSelect_CellMouseClick(System.Windows.Forms.MouseButtons eButton, int eRowIndex)
+        public void colorSelect_CellMouseClick(MouseButtons eButton, int eRowIndex)
         {
             if (eButton == System.Windows.Forms.MouseButtons.Right)
             {
@@ -113,7 +114,7 @@ order by RowNum", this.txtSP.Text.ToString());
             this.itemSelect_CellMouseClick(e.Button, e.RowIndex);
         }
 
-        public void itemSelect_CellMouseClick(System.Windows.Forms.MouseButtons eButton, int eRowIndex)
+        public void itemSelect_CellMouseClick(MouseButtons eButton, int eRowIndex)
         {
             DataRow dr1 = this.detailgrid.GetDataRow<DataRow>(eRowIndex);
             if (dr1["Type"].ToString().ToUpper() != "ACCESSORY ITEMS")
@@ -423,7 +424,7 @@ where ColorID = '{1}'", this.txtSP.Text.ToString(), e.FormattedValue);
             this.Size = this.thisSize;
 
             DataTable dtCategory;
-            Ict.DualResult cbResult;
+            DualResult cbResult;
             if (cbResult = DBProxy.Current.Select(null, " select ID,Name from DropDownList WITH (NOLOCK) where type='category'", out dtCategory))
             {
                 this.comboCategory.DataSource = dtCategory;
@@ -557,13 +558,13 @@ where ColorID = '{1}'", this.txtSP.Text.ToString(), e.FormattedValue);
 
         private void btnFabricInspectionList_Click(object sender, EventArgs e)
         {
-            Sci.Production.Quality.P01 callNextForm = new Sci.Production.Quality.P01(MyUtility.Convert.GetString(this.txtSP.Text));
+            P01 callNextForm = new P01(MyUtility.Convert.GetString(this.txtSP.Text));
             callNextForm.ShowDialog(this);
         }
 
         private void btnAccessoryInspectionList_Click(object sender, EventArgs e)
         {
-            Sci.Production.Quality.P02 callNextForm = new Sci.Production.Quality.P02(MyUtility.Convert.GetString(this.txtSP.Text));
+            P02 callNextForm = new P02(MyUtility.Convert.GetString(this.txtSP.Text));
             callNextForm.ShowDialog(this);
         }
     }

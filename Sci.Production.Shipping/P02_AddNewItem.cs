@@ -13,7 +13,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P02_AddNewItem
     /// </summary>
-    public partial class P02_AddNewItem : Sci.Win.Subs.Input2A
+    public partial class P02_AddNewItem : Win.Subs.Input2A
     {
         /// <summary>
         /// P02_AddNewItem
@@ -46,7 +46,7 @@ namespace Sci.Production.Shipping
             {
                 // sql參數
                 // System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", txtSPNo.Text);
-                IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                IList<SqlParameter> cmds = new List<SqlParameter>();
                 cmds.Add(new SqlParameter("@id", this.txtSPNo.Text));
 
                 string sqlCmd = "select Orders.ID from Orders WITH (NOLOCK) ,factory WITH (NOLOCK) where Orders.ID = @id and Orders.FactoryID = Factory.ID and Factory.IsProduceFty = 1";
@@ -275,7 +275,7 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
         // Team Leader
         private void TxtTeamLeader_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) order by ID", "15,30,10,150", this.txtTeamLeader.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) order by ID", "15,30,10,150", this.txtTeamLeader.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

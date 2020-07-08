@@ -18,7 +18,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// R13
     /// </summary>
-    public partial class R13 : Sci.Win.Tems.PrintForm
+    public partial class R13 : Win.Tems.PrintForm
     {
         private DataTable dt_source; // For Grid用
         private DataTable[] dsData;
@@ -120,7 +120,7 @@ namespace Sci.Production.Planning
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             DualResult result = Result.True;
             try
@@ -177,7 +177,7 @@ namespace Sci.Production.Planning
         /// </summary>
         /// <param name="report">report</param>
         /// <returns>bool</returns>
-        protected override bool OnToExcel(Win.ReportDefinition report)
+        protected override bool OnToExcel(ReportDefinition report)
         {
             string strYear = this.decYear.ToString("0000");
             string strMonth = this.decMonth.ToString("00");

@@ -14,7 +14,7 @@ namespace Sci.Production.Sewing
     /// <summary>
     /// R08
     /// </summary>
-    public partial class R08 : Sci.Win.Tems.PrintForm
+    public partial class R08 : Win.Tems.PrintForm
     {
         private string line1;
         private string line2;
@@ -81,7 +81,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
         private string SelectSewingLine(string line)
         {
             string sql = string.Format("Select Distinct ID From SewingLine WITH (NOLOCK) {0}", MyUtility.Check.Empty(this.comboFactory.Text) ? string.Empty : string.Format(" where FactoryID = '{0}'", this.comboFactory.Text));
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "3", line, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "3", line, false, ",");
             item.Width = 300;
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
@@ -132,7 +132,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             DualResult failResult;
@@ -715,8 +715,8 @@ where f.Junk = 0",
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            Microsoft.Office.Interop.Excel.Range rngToInsert;
-            Microsoft.Office.Interop.Excel.Range rngBorders;
+            Excel.Range rngToInsert;
+            Excel.Range rngBorders;
 
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.printData.Rows.Count);
@@ -729,14 +729,14 @@ where f.Junk = 0",
 
             this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Sewing_R08_Factory_Yearly_CMP_Report.xltx";
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
                 return false;
             }
 
             // excel.Visible = true;
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[2, 1] = string.Format("{0}", this.factoryName);
             worksheet.Cells[3, 1] = $"All Factory Yearly CMP Report, Date:{Convert.ToDateTime(this.dateDateStart.Value).ToString("yyyy/MM")}-{Convert.ToDateTime(this.dateDateEnd.Value).ToString("yyyy/MM")}";
@@ -1110,11 +1110,11 @@ where f.Junk = 0",
             return true;
         }
 
-        private void DeleteExcelRow(int rowCount, int rowLocation, Microsoft.Office.Interop.Excel.Application excel)
+        private void DeleteExcelRow(int rowCount, int rowLocation, Excel.Application excel)
         {
             for (int i = 1; i <= rowCount; i++)
             {
-                Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[rowLocation];
+                Excel.Range rng = (Excel.Range)excel.Rows[rowLocation];
 
                 // rng.Select();
                 rng.Delete();

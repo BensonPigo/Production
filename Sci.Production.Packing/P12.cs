@@ -11,7 +11,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P12
     /// </summary>
-    public partial class P12 : Sci.Win.Tems.QueryForm
+    public partial class P12 : Win.Tems.QueryForm
     {
         private DualResult result;
         private DataTable gridData;
@@ -233,7 +233,7 @@ drop table #tmpClocationids,#tmpIDSeq,#tmp1,#tmp2
                 return;
             }
 
-            Sci.Production.Packing.P12_Print callNextForm = new Sci.Production.Packing.P12_Print((DataTable)this.listControlBindingSource1.DataSource);
+            P12_Print callNextForm = new P12_Print((DataTable)this.listControlBindingSource1.DataSource);
             callNextForm.ShowDialog(this);
         }
 

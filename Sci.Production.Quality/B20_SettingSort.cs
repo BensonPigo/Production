@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Sci.Production.Quality
 {
-    public partial class B20_SettingSort : Sci.Win.Subs.Base
+    public partial class B20_SettingSort : Win.Subs.Base
     {
         public B20_SettingSort()
         {

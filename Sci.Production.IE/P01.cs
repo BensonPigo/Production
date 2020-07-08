@@ -18,14 +18,14 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_P01
     /// </summary>
-    public partial class P01 : Sci.Win.Tems.Input6
+    public partial class P01 : Win.Tems.Input6
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings operation = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings machine = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings mold = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings frequency = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings smvsec = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings operation = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings machine = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings mold = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings frequency = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings smvsec = new DataGridViewGeneratorNumericColumnSettings();
         private string styleID;
         private string seasonID;
         private string brandID;
@@ -260,7 +260,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings seq = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings seq = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
 
             celltxtMachineGroup txtSubReason = (celltxtMachineGroup)celltxtMachineGroup.GetGridCell();
@@ -292,7 +292,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
-                            Sci.Production.IE.P01_SelectOperationCode callNextForm = new Sci.Production.IE.P01_SelectOperationCode();
+                            P01_SelectOperationCode callNextForm = new P01_SelectOperationCode();
                             DialogResult result = callNextForm.ShowDialog(this);
                             if (result == System.Windows.Forms.DialogResult.Cancel)
                             {
@@ -366,13 +366,13 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                         else
                         {
                             // sql參數
-                            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
+                            SqlParameter sp1 = new SqlParameter
                             {
                                 ParameterName = "@id",
                                 Value = e.FormattedValue.ToString(),
                             };
 
-                            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+                            IList<SqlParameter> cmds = new List<SqlParameter>
                             {
                                 sp1,
                             };
@@ -490,7 +490,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = "select ID,Description from MachineType WITH (NOLOCK) where Junk = 0";
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,35", dr["MachineTypeID"].ToString());
+                            SelectItem item = new SelectItem(sqlCmd, "8,35", dr["MachineTypeID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -537,7 +537,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = "select ID,DescEN from Mold WITH (NOLOCK) where Junk = 0";
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,15", dr["Mold"].ToString());
+                            SelectItem item = new SelectItem(sqlCmd, "8,15", dr["Mold"].ToString());
 
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
@@ -560,13 +560,13 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                     if (MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["Mold"]))
                     {
                         // sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
+                        SqlParameter sp1 = new SqlParameter
                         {
                             ParameterName = "@id",
                             Value = MyUtility.Convert.GetString(e.FormattedValue),
                         };
 
-                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+                        IList<SqlParameter> cmds = new List<SqlParameter>
                         {
                             sp1,
                         };
@@ -604,7 +604,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                 {
                     string sqlcmd = "select ID,Description from SewingMachineTemplate WITH (NOLOCK) where Junk = 0";
 
-                    Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Template"].ToString(), null, null, null)
+                    SelectItem2 item = new SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Template"].ToString(), null, null, null)
                     {
                         Width = 666,
                     };
@@ -708,7 +708,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
         /// <returns>bool</returns>
         protected override bool ClickCopyBefore()
         {
-            Sci.Production.IE.P01_Copy callNextForm = new Sci.Production.IE.P01_Copy(this.CurrentMaintain);
+            P01_Copy callNextForm = new P01_Copy(this.CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
             if (result == System.Windows.Forms.DialogResult.OK)
             {
@@ -805,10 +805,10 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             #region 檢查輸入的資料是否存在系統
 
             // sql參數
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+            SqlParameter sp1 = new SqlParameter();
+            SqlParameter sp2 = new SqlParameter();
+            SqlParameter sp3 = new SqlParameter();
+            SqlParameter sp4 = new SqlParameter();
             sp1.ParameterName = "@styleid";
             sp1.Value = this.CurrentMaintain["StyleID"].ToString();
             sp2.ParameterName = "@seasonid";
@@ -818,7 +818,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             sp4.ParameterName = "@combotype";
             sp4.Value = this.CurrentMaintain["ComboType"].ToString();
 
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+            IList<SqlParameter> cmds = new List<SqlParameter>
             {
                 sp1,
                 sp2,
@@ -1056,7 +1056,7 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
                 return false;
             }
 
-            Sci.Production.IE.P01_Print callNextForm = new Sci.Production.IE.P01_Print(this.CurrentMaintain);
+            P01_Print callNextForm = new P01_Print(this.CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
             return base.ClickPrint();
         }
@@ -1198,14 +1198,14 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
         // Art. Sum
         private void BtnArtSum_Click(object sender, EventArgs e)
         {
-            Sci.Production.IE.P01_ArtworkSummary callNextForm = new Sci.Production.IE.P01_ArtworkSummary("TimeStudy_Detail", Convert.ToInt64(this.CurrentMaintain["ID"]));
+            P01_ArtworkSummary callNextForm = new P01_ArtworkSummary("TimeStudy_Detail", Convert.ToInt64(this.CurrentMaintain["ID"]));
             DialogResult result = callNextForm.ShowDialog(this);
         }
 
         // Sketch
         private void BtnSketch_Click(object sender, EventArgs e)
         {
-            Sci.Production.IE.P01_Sketch callNextForm = new Sci.Production.IE.P01_Sketch(this.CurrentMaintain);
+            P01_Sketch callNextForm = new P01_Sketch(this.CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
         }
 
@@ -1365,10 +1365,10 @@ where ID = {0}",
             #endregion
 
             #region 設定sql參數
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+            SqlParameter sp1 = new SqlParameter();
+            SqlParameter sp2 = new SqlParameter();
+            SqlParameter sp3 = new SqlParameter();
+            SqlParameter sp4 = new SqlParameter();
             sp1.ParameterName = "@id";
             sp1.Value = this.txtStyle.Text;
             sp2.ParameterName = "@seasonid";
@@ -1382,7 +1382,7 @@ where ID = {0}",
                 sp4.Value = this.comboStyle.Text;
             }
 
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+            IList<SqlParameter> cmds = new List<SqlParameter>
             {
                 sp1,
                 sp2,
@@ -1448,7 +1448,7 @@ where ID = {0}",
         // History
         private void BtnHistory_Click(object sender, EventArgs e)
         {
-            Sci.Production.IE.P01_History callNextForm = new Sci.Production.IE.P01_History(this.CurrentMaintain);
+            P01_History callNextForm = new P01_History(this.CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
         }
 
@@ -1456,9 +1456,9 @@ where ID = {0}",
         private void BtnStdGSDList_Click(object sender, EventArgs e)
         {
             // sql參數
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+            SqlParameter sp1 = new SqlParameter();
+            SqlParameter sp2 = new SqlParameter();
+            SqlParameter sp3 = new SqlParameter();
             sp1.ParameterName = "@id";
             sp1.Value = this.CurrentMaintain["StyleID"].ToString();
             sp2.ParameterName = "@seasonid";
@@ -1466,7 +1466,7 @@ where ID = {0}",
             sp3.ParameterName = "@brandid";
             sp3.Value = this.CurrentMaintain["BrandID"].ToString();
 
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+            IList<SqlParameter> cmds = new List<SqlParameter>
             {
                 sp1,
                 sp2,
@@ -1484,7 +1484,7 @@ where ID = {0}",
 
             if (styleUkey.Rows.Count > 0)
             {
-                Sci.Production.PublicForm.StdGSDList callNextForm = new Sci.Production.PublicForm.StdGSDList(MyUtility.Convert.GetLong(styleUkey.Rows[0]["UKey"]));
+                StdGSDList callNextForm = new StdGSDList(MyUtility.Convert.GetLong(styleUkey.Rows[0]["UKey"]));
                 DialogResult dresult = callNextForm.ShowDialog(this);
             }
             else

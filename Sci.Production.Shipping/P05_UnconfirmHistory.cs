@@ -5,7 +5,7 @@ using System.Data;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P05_UnconfirmHistory : Sci.Win.Subs.Base
+    public partial class P05_UnconfirmHistory : Win.Subs.Base
     {
         private string GMTBookingID;
 

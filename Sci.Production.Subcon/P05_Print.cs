@@ -12,7 +12,7 @@ using System.Reflection;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P05_Print : Sci.Win.Forms.Base
+    public partial class P05_Print : Win.Forms.Base
     {
         DataRow masterData;
         string TotalReqQty;
@@ -159,7 +159,7 @@ order by ID", this.masterData["LocalSuppID"]);
                 }
 
                 report.ReportResource = reportresource;
-                var frm1 = new Sci.Win.Subs.ReportView(report);
+                var frm1 = new Win.Subs.ReportView(report);
                 frm1.MdiParent = this.MdiParent;
                 frm1.TopMost = true;
                 frm1.Show();
@@ -257,7 +257,7 @@ WHERE  ART.id = @ID
                 }
 
                 report.ReportResource = reportresource;
-                var frm1 = new Sci.Win.Subs.ReportView(report);
+                var frm1 = new Win.Subs.ReportView(report);
                 frm1.MdiParent = this.MdiParent;
                 frm1.TopMost = true;
                 frm1.Show();

@@ -9,7 +9,7 @@ using System.Linq;
 namespace Sci.Production.PPIC
 {
     /// <inheritdoc/>
-    public partial class P08_BatchConfirmRespDept : Sci.Win.Tems.QueryForm
+    public partial class P08_BatchConfirmRespDept : Win.Tems.QueryForm
     {
         private readonly string Type;
         private DataTable dt1;

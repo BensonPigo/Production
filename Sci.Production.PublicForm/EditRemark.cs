@@ -12,7 +12,7 @@ namespace Sci.Production.PublicForm
     /// <param name="strTableNm"></param>
     /// <param name="strColumnNm"></param>
     /// <param name="drData"></param>
-    public partial class EditRemark : Sci.Win.Subs.Base
+    public partial class EditRemark : Win.Subs.Base
     {
         string _tableNm;
         string _columnNm;

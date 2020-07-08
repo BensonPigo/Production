@@ -12,7 +12,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P13
     /// </summary>
-    public partial class P13 : Sci.Win.Tems.QueryForm
+    public partial class P13 : Win.Tems.QueryForm
     {
         private DataTable gridData;
         private DataGridViewGeneratorNumericColumnSettings ctnqty = new DataGridViewGeneratorNumericColumnSettings();

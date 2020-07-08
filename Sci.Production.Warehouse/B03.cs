@@ -5,7 +5,7 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class B03 : Sci.Win.Tems.Input1
+    public partial class B03 : Win.Tems.Input1
     {
         public B03(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -66,7 +66,7 @@ namespace Sci.Production.Warehouse
 
         private void txtActionCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select id,description from whseReason WITH (NOLOCK) where type='RA' and junk = 0", "10,20", this.txtDesc.Text, true, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select id,description from whseReason WITH (NOLOCK) where type='RA' and junk = 0", "10,20", this.txtDesc.Text, true, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

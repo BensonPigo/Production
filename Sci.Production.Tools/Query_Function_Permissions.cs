@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Tools
 {
-    public partial class Query_Function_Permissions : Sci.Win.Tems.QueryForm
+    public partial class Query_Function_Permissions : Win.Tems.QueryForm
     {
         private DataTable dtQuery;
 
@@ -282,7 +282,7 @@ select MenuName from Menu
 where IsSubMenu = 0 and MenuNo not in ('1400','1500')
 order by PKey
 ");
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd,  "15", this.txtModule.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd,  "15", this.txtModule.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -334,7 +334,7 @@ from (
 where s.R_MenuNo not in ('1400','1500')
 order by s.R_MenuNo,s.BarPrompt
 ");
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "40,15", this.txtFunction.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "40,15", this.txtFunction.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -385,7 +385,7 @@ order by s.R_MenuNo,s.BarPrompt
             string sqlcmd = string.Format(@"
 select ID,Description from pass0
 ");
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "20,25", this.txtPosition.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "20,25", this.txtPosition.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

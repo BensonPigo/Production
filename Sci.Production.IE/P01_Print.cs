@@ -10,7 +10,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_P01_Print
     /// </summary>
-    public partial class P01_Print : Sci.Win.Tems.PrintForm
+    public partial class P01_Print : Win.Tems.PrintForm
     {
         private DataRow masterData;
         private string artworktype;
@@ -71,7 +71,7 @@ and TimeStudy_Detail.ID = {0}",
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.custcdID = MyUtility.GetValue.Lookup(string.Format("select CdCodeID from Style WITH (NOLOCK) where ID = '{0}' and SeasonID = '{1}' and BrandID = '{2}'", MyUtility.Convert.GetString(this.masterData["StyleID"]), MyUtility.Convert.GetString(this.masterData["SeasonID"]), MyUtility.Convert.GetString(this.masterData["BrandID"])));
             this.machineID = MyUtility.GetValue.Lookup(string.Format(

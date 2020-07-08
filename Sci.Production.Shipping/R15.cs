@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
-    public partial class R15 : Sci.Win.Tems.PrintForm
+    public partial class R15 : Win.Tems.PrintForm
     {
         private DateTime? dateAddDate1;
         private DateTime? dateAddDate2;

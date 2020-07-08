@@ -13,7 +13,7 @@ using System.Reflection;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P61 : Sci.Win.Tems.Input6
+    public partial class P61 : Win.Tems.Input6
     {
         public P61(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -69,7 +69,7 @@ from LocalInventory
 where OrderID = '{0}'", this.CurrentDetailData["OrderID"]);
                     DBProxy.Current.Select(null, strSelectSqlCmd, out selectDt);
 
-                    Sci.Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "refno", "20", this.CurrentDetailData["Refno"].ToString());
+                    Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "refno", "20", this.CurrentDetailData["Refno"].ToString());
                     DialogResult result = selectItem.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -148,7 +148,7 @@ from LocalInventory
 where OrderID = '{0}'", this.CurrentDetailData["OrderID"]);
                     DBProxy.Current.Select(null, strSelectSqlCmd, out selectDt);
 
-                    Sci.Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "ThreadColorID", "20", this.CurrentDetailData["ThreadColorID"].ToString());
+                    Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "ThreadColorID", "20", this.CurrentDetailData["ThreadColorID"].ToString());
                     DialogResult result = selectItem.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -214,7 +214,7 @@ where   OrderID = '{0}'
                         this.CurrentDetailData["Refno"]);
                     DBProxy.Current.Select(null, strSelectSqlCmd, out selectDt);
 
-                    Sci.Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "Unit", "20", this.CurrentDetailData["unit"].ToString());
+                    Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "Unit", "20", this.CurrentDetailData["unit"].ToString());
                     DialogResult result = selectItem.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -254,7 +254,7 @@ where   orderID = '{0}'
             };
             #endregion
             #region Issue Qty Setting
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings setIssueQty = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings setIssueQty = new DataGridViewGeneratorNumericColumnSettings();
             setIssueQty.IsSupportNegative = true;
             setIssueQty.CellValidating += (s, e) =>
             {
@@ -565,7 +565,7 @@ where LID.ID = @ID";
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P61_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P61_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }
@@ -632,7 +632,7 @@ where id = '{0}'", Sci.Env.User.Keyword));
 
             report.ReportResource = reportresource;
 
-            var form = new Sci.Win.Subs.ReportView(report);
+            var form = new Win.Subs.ReportView(report);
             form.MdiParent = this.MdiParent;
             form.Show();
             #endregion

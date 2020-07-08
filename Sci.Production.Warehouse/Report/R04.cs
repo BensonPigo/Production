@@ -9,11 +9,27 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R04 : Sci.Win.Tems.PrintForm
+    public partial class R04 : Win.Tems.PrintForm
     {
         // string reason, factory, brand, mdivisionid, operation;
         // int ordertypeindex;
-        string factory, brand, mdivisionid, operation, fabricType;
+        string factory;
+
+        // string reason, factory, brand, mdivisionid, operation;
+        // int ordertypeindex;
+        string brand;
+
+        // string reason, factory, brand, mdivisionid, operation;
+        // int ordertypeindex;
+        string mdivisionid;
+
+        // string reason, factory, brand, mdivisionid, operation;
+        // int ordertypeindex;
+        string operation;
+
+        // string reason, factory, brand, mdivisionid, operation;
+        // int ordertypeindex;
+        string fabricType;
 
         DateTime? cfmdate1;
         DateTime? cfmdate2;
@@ -67,7 +83,7 @@ namespace Sci.Production.Warehouse
         }
 
         // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sql parameters declare --
 

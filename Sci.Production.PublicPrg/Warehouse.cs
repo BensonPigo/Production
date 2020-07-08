@@ -563,7 +563,7 @@ where p.id ='{0}'
         /// <param name="defaultseq"></param>
         /// <param name="filters"></param>
         /// <returns>Sci.Win.Tools.SelectItem</returns>
-        public static Sci.Win.Tools.SelectItem SelePoItem(string poid, string defaultseq, string filters = null, bool junk = true)
+        public static Win.Tools.SelectItem SelePoItem(string poid, string defaultseq, string filters = null, bool junk = true)
         {
             DataTable dt;
             string PoItemSql = selePoItemSqlCmd(junk);
@@ -577,7 +577,7 @@ where p.id ='{0}'
 
             DBProxy.Current.Select(null, sqlcmd, out dt);
 
-            Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(
+            Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(
                 dt,
                 "Seq,refno,description,colorid,SizeSpec,FinalETA,inqty,stockunit,outqty,adjustqty,balance,linvqty",
                 "6,8,35,8,10,6,6,6,6,6,6", defaultseq, "Seq,Ref#,Description,Color,Size,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty");
@@ -594,7 +594,7 @@ where p.id ='{0}'
         /// <param name="stocktype"></param>
         /// <param name="defaultseq"></param>
         /// <returns>Sci.Win.Tools.SelectItem2</returns>
-        public static Sci.Win.Tools.SelectItem2 SelectLocation(string stocktype, string defaultseq = "")
+        public static Win.Tools.SelectItem2 SelectLocation(string stocktype, string defaultseq = "")
         {
             string sqlcmd = string.Empty;
             if (MyUtility.Check.Empty(stocktype))
@@ -633,7 +633,7 @@ WHERE   StockType='{0}'
         and junk != '1'", stocktype);
             }
 
-            Sci.Win.Tools.SelectItem2 selectlocation = new Win.Tools.SelectItem2(
+            Win.Tools.SelectItem2 selectlocation = new Win.Tools.SelectItem2(
                 sqlcmd,
                 "Location ID,Description,Stock Type", "13,60,10", defaultseq, null, null, null);
             selectlocation.Width = 1024;
@@ -689,7 +689,7 @@ WHERE   StockType='{stocktype}'
         }
 
         #region-- GetLocation --
-        public static string GetLocation(int ukey, System.Data.SqlClient.SqlConnection conn = null)
+        public static string GetLocation(int ukey, SqlConnection conn = null)
         {
             // string rtn = "";
             DataRow dr;
@@ -2701,7 +2701,7 @@ WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
 
         public static string GetNextValue(string strValue, int sequenceMode)
         {
-            char[] charValue = strValue.ToArray<char>();
+            char[] charValue = strValue.ToArray();
             int sequenceValue = 0;
             string returnValue = string.Empty;
             int charAscii = 0;

@@ -10,7 +10,7 @@ using Sci.Win;
 
 namespace Sci.Production.Shipping
 {
-    public partial class R20 : Sci.Win.Tems.PrintForm
+    public partial class R20 : Win.Tems.PrintForm
     {
         private DataTable[] PrintTable;
         private string arrivePortDate_s;

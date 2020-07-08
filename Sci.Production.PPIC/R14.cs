@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
-    public partial class R14 : Sci.Win.Tems.PrintForm
+    public partial class R14 : Win.Tems.PrintForm
     {
         private DataTable dtPrint;
         private string sqlcmd;
@@ -152,7 +152,7 @@ where 1=1
             this.SetCount(this.dtPrint.Rows.Count); // 顯示筆數
 
             Excel.Application objApp = new Excel.Application();
-            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\PPIC_R14.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\PPIC_R14.xltx", objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
             com.WriteTable(this.dtPrint, 3);
             worksheet.get_Range($"A3:R{MyUtility.Convert.GetString(2 + this.dtPrint.Rows.Count)}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous; // 畫線

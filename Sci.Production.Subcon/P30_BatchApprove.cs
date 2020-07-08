@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P30_BatchApprove : Sci.Win.Forms.Base
+    public partial class P30_BatchApprove : Win.Forms.Base
     {
         Action delegateAct;
         DataTable LocalPOs;

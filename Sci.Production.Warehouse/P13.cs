@@ -16,7 +16,7 @@ using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P13 : Sci.Win.Tems.Input6
+    public partial class P13 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
@@ -81,9 +81,9 @@ namespace Sci.Production.Warehouse
         protected override DualResult ClickDeletePost()
         {
             // 當表身被刪除時，要判斷是否[Issue_Detail.ukey]有在[FIR_Physical].[Issue_DetailUkey]中，若有則將[FIR_Physical].[Issue_DetailUkey]更新成0。
-            string ID = this.CurrentMaintain["ID"].ToString();
+            string iD = this.CurrentMaintain["ID"].ToString();
 
-            List<string>ukeyList = this.DetailDatas.AsEnumerable().Select(o => o["Ukey"].ToString()).ToList();
+            List<string> ukeyList = this.DetailDatas.AsEnumerable().Select(o => o["Ukey"].ToString()).ToList();
             string ukeys = string.Join(",", ukeyList);
             string cmd = $@"
 UPDATE FIR_Physical
@@ -156,11 +156,11 @@ where id = @MDivision", pars, out dt);
 
             string RptTitle = dt.Rows[0]["NameEN"].ToString();
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CDate", CDate));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FtyGroup", FtyGroup));
+            report.ReportParameters.Add(new ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new ReportParameter("ID", id));
+            report.ReportParameters.Add(new ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new ReportParameter("CDate", CDate));
+            report.ReportParameters.Add(new ReportParameter("FtyGroup", FtyGroup));
 
             #endregion
             #region -- 撈表身資料 --
@@ -236,7 +236,7 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
 
@@ -823,14 +823,14 @@ Where a.id = '{0}'", masterID);
                 return;
             }
 
-            var frm = new Sci.Production.Warehouse.P13_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P13_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }
 
         private void btnAccumulatedQty_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P13_AccumulatedQty(this.CurrentMaintain);
+            var frm = new P13_AccumulatedQty(this.CurrentMaintain);
             frm.P13 = this;
             frm.ShowDialog(this);
         }
@@ -855,7 +855,7 @@ Where a.id = '{0}'", masterID);
 
         private void btCutRef_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P10_CutRef(this.CurrentMaintain);
+            var frm = new P10_CutRef(this.CurrentMaintain);
             frm.ShowDialog(this);
         }
 

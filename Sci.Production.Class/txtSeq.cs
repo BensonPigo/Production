@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace Sci.Production.Class
 {
-    public partial class txtSeq : Sci.Win.UI._UserControl
+    public partial class txtSeq : Win.UI._UserControl
     {
         public txtSeq()
         {

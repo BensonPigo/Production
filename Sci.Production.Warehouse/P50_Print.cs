@@ -8,7 +8,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P50_Print : Sci.Win.Tems.PrintForm
+    public partial class P50_Print : Win.Tems.PrintForm
     {
         public DataRow CurrentDataRow { get; set; }
 
@@ -25,7 +25,7 @@ namespace Sci.Production.Warehouse
            return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();

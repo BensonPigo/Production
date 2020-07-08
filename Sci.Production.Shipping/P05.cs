@@ -18,11 +18,11 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P05
     /// </summary>
-    public partial class P05 : Sci.Win.Tems.Input6
+    public partial class P05 : Win.Tems.Input6
     {
         private Ict.Win.UI.DataGridViewTextBoxColumn col_lock;
         private Ict.Win.UI.DataGridViewDateBoxColumn col_crd;
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings shipqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings shipqty = new DataGridViewGeneratorNumericColumnSettings();
         private string masterID;
         private DataTable selectData;
         private DataRow dr;
@@ -54,7 +54,7 @@ namespace Sci.Production.Shipping
                 this.emptyDTMask = this.emptyDTMask + this.empmask;
             }
 
-            this.txtCutoffDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CutOffDate", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, this.emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
+            this.txtCutoffDate.DataBindings.Add(new Binding("Text", this.mtbs, "CutOffDate", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, this.emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
             this.txtCutoffDate.Mask = this.dateTimeMask;
         }
 
@@ -228,12 +228,12 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                 if (MyUtility.Check.Seek(sqlCmd))
                 {
                     this.btnAirPPList.ForeColor = Color.Red;
-                    this.btnAirPPList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+                    this.btnAirPPList.Font = new Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
                 }
                 else
                 {
                     this.btnAirPPList.ForeColor = Color.Black;
-                    this.btnAirPPList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+                    this.btnAirPPList.Font = new Font("Microsoft Sans Serif", 10F);
                 }
             }
             #endregion
@@ -292,7 +292,7 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                         if (e.RowIndex != -1)
                         {
                             this.dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Production.Shipping.P05_QtyBreakDown callNextForm = new Sci.Production.Shipping.P05_QtyBreakDown(this.CurrentMaintain);
+                            P05_QtyBreakDown callNextForm = new P05_QtyBreakDown(this.CurrentMaintain);
                             callNextForm.Set(false, this.DetailDatas, this.CurrentDetailData);
                             callNextForm.ShowDialog(this);
                         }
@@ -1089,10 +1089,10 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         {
             if (this.EditMode)
             {
-                Sci.Win.Tools.SelectItem item;
+                Win.Tools.SelectItem item;
                 if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
                 {
-                    item = new Sci.Win.Tools.SelectItem(string.Format("select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = '{0}' order by ID", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"])), "17,3,17", this.txtCustCD.Text);
+                    item = new Win.Tools.SelectItem(string.Format("select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = '{0}' order by ID", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"])), "17,3,17", this.txtCustCD.Text);
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {
@@ -1103,7 +1103,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                 }
                 else
                 {
-                    item = new Sci.Win.Tools.SelectItem(string.Format("select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = '{0}' and CountryID = '{1}' order by ID", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Dest"])), "17,3,17", this.txtCustCD.Text);
+                    item = new Win.Tools.SelectItem(string.Format("select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = '{0}' and CountryID = '{1}' order by ID", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Dest"])), "17,3,17", this.txtCustCD.Text);
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {
@@ -1272,28 +1272,28 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         // AirPP List
         private void BtnAirPPList_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P05_AirPrePaidList callNextForm = new Sci.Production.Shipping.P05_AirPrePaidList(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            P05_AirPrePaidList callNextForm = new P05_AirPrePaidList(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
         }
 
         // Expense Data
         private void BtnExpenseData_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P05_ExpenseData callNextForm = new Sci.Production.Shipping.P05_ExpenseData(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "InvNo", false);
+            P05_ExpenseData callNextForm = new P05_ExpenseData(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "InvNo", false);
             callNextForm.ShowDialog(this);
         }
 
         // S/O Confirm History
         private void BtnH_Click(object sender, EventArgs e)
         {
-            Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("GMTBooking_History", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "SOCFMDate", reasonType: "GMTBooking_SO", caption: "S/O Revised History");
+            Win.UI.ShowHistory callNextForm = new Win.UI.ShowHistory("GMTBooking_History", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "SOCFMDate", reasonType: "GMTBooking_SO", caption: "S/O Revised History");
             callNextForm.ShowDialog(this);
         }
 
         // AirPPStatus
         private void BtnAirPPStatus_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P05_AirPrePaidStatus callNextForm = new Sci.Production.Shipping.P05_AirPrePaidStatus();
+            P05_AirPrePaidStatus callNextForm = new P05_AirPrePaidStatus();
             callNextForm.ShowDialog(this);
         }
 
@@ -1424,7 +1424,7 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
                 return;
             }
 
-            Sci.Production.Shipping.P05_ImportFromPackingList callNextForm = new Sci.Production.Shipping.P05_ImportFromPackingList(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            P05_ImportFromPackingList callNextForm = new P05_ImportFromPackingList(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             callNextForm.ShowDialog(this);
         }
 
@@ -1671,7 +1671,7 @@ where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.Current
                 return;
             }
 
-            Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("GMTBooking_UnCFM", true);
+            Win.UI.SelectReason callReason = new Win.UI.SelectReason("GMTBooking_UnCFM", true);
             DialogResult dResult = callReason.ShowDialog(this);
             if (dResult == System.Windows.Forms.DialogResult.OK)
             {
@@ -1759,7 +1759,7 @@ order by fwd.WhseNo",
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "WhseNo,address", "20,20", MyUtility.Convert.GetString(this.txtTerminalWhse.Text));
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(dt, "WhseNo,address", "20,20", MyUtility.Convert.GetString(this.txtTerminalWhse.Text));
 
             DialogResult result1 = item.ShowDialog();
             if (result1 == DialogResult.Cancel)
@@ -1842,7 +1842,7 @@ order by fwd.WhseNo", this.txtTerminalWhse.Text.ToString().Trim());
                 return false;
             }
 
-            Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("GMTBooking_SO", true);
+            Win.UI.SelectReason callReason = new Win.UI.SelectReason("GMTBooking_SO", true);
             DialogResult dResult = callReason.ShowDialog(this);
             if (dResult == System.Windows.Forms.DialogResult.OK)
             {
@@ -1919,7 +1919,7 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
 
         private void BtnUnCfmHis_Click(object sender, EventArgs e)
         {
-            Production.Shipping.P05_UnconfirmHistory dialog = new P05_UnconfirmHistory(this.CurrentMaintain["ID"].ToString());
+            P05_UnconfirmHistory dialog = new P05_UnconfirmHistory(this.CurrentMaintain["ID"].ToString());
             dialog.ShowDialog(this);
         }
 
@@ -2014,7 +2014,7 @@ where se.InvNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentM
 
         private void BtnFoundryList_Click(object sender, EventArgs e)
         {
-            Production.Shipping.P05_FoundryList dialog = new P05_FoundryList(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["ShipModeID"].ToString());
+            P05_FoundryList dialog = new P05_FoundryList(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["ShipModeID"].ToString());
             dialog.ShowDialog(this);
         }
     }

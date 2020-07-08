@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P10_RelaxationSticker : Sci.Win.Subs.Base
+    public partial class P10_RelaxationSticker : Win.Subs.Base
     {
         private string strIssueID;
 
@@ -123,7 +123,7 @@ order by NewRowNo";
                 Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
                 string ReportResourceName = "P10_RelaxationSticker_Print.rdlc";
 
-                Ict.Win.IReportResource reportresource;
+                IReportResource reportresource;
 
                 if ((result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)) == false)
                 {
@@ -134,7 +134,7 @@ order by NewRowNo";
                 report.ReportResource = reportresource;
 
                 // 開啟 report view
-                var frm = new Sci.Win.Subs.ReportView(report);
+                var frm = new Win.Subs.ReportView(report);
                 frm.MdiParent = this.MdiParent;
                 frm.ShowDialog();
 

@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class P10_Detail : Sci.Win.Forms.Base
+    public partial class P10_Detail : Win.Forms.Base
     {
         private DataRow Deatilrow;
         private DataRow MasterRow;
@@ -288,7 +288,7 @@ namespace Sci.Production.Quality
 
                     defaultSelected = tmpList.JoinToString(",");
 
-                    Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sql, "ID,Name", "ID,Name", defaultSelected, null, null, null);
+                    SelectItem2 item = new SelectItem2(sql, "ID,Name", "ID,Name", defaultSelected, null, null, null);
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
                     {
@@ -330,7 +330,7 @@ namespace Sci.Production.Quality
 
                     defaultSelected = tmpList.JoinToString(",");
 
-                    Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sql, "ID,Name", "ID,Name", defaultSelected.ToString(), null, null, null);
+                    SelectItem2 item = new SelectItem2(sql, "ID,Name", "ID,Name", defaultSelected.ToString(), null, null, null);
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
                     {
@@ -394,7 +394,7 @@ namespace Sci.Production.Quality
 
                     defaultSelected = tmpList.JoinToString(",");
 
-                    Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sql, "ID,Name", "ID,Name", defaultSelected, null, null, null);
+                    SelectItem2 item = new SelectItem2(sql, "ID,Name", "ID,Name", defaultSelected, null, null, null);
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
                     {
@@ -436,7 +436,7 @@ namespace Sci.Production.Quality
 
                     defaultSelected = tmpList.JoinToString(",");
 
-                    Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sql, "ID,Name", "ID,Name", defaultSelected.ToString(), null, null, null);
+                    SelectItem2 item = new SelectItem2(sql, "ID,Name", "ID,Name", defaultSelected.ToString(), null, null, null);
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
                     {

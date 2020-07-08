@@ -12,7 +12,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_Qty
     /// </summary>
-    public partial class P01_Qty : Sci.Win.Subs.Base
+    public partial class P01_Qty : Win.Subs.Base
     {
         private string orderID;
         private string poID;

@@ -14,7 +14,7 @@ namespace Sci.Production.Sewing
     /// <summary>
     /// P03
     /// </summary>
-    public partial class P03 : Sci.Win.Tems.QueryForm
+    public partial class P03 : Win.Tems.QueryForm
     {
         /// <summary>
         /// P03

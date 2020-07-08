@@ -13,7 +13,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_P10
     /// </summary>
-    public partial class P09 : Sci.Win.Tems.QueryForm
+    public partial class P09 : Win.Tems.QueryForm
     {
         /// <summary>
         /// P10

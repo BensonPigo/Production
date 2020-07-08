@@ -5,7 +5,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// B05
     /// </summary>
-    public partial class B05 : Sci.Win.Tems.Input1
+    public partial class B05 : Win.Tems.Input1
     {
         /// <summary>
         /// B05

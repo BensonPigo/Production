@@ -12,7 +12,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B42_BatchImport
     /// </summary>
-    public partial class B42_BatchImport : Sci.Win.Subs.Base
+    public partial class B42_BatchImport : Win.Subs.Base
     {
         private DataTable dtBatchImport;
 

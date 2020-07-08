@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class B05 : Sci.Win.Tems.Input1
+    public partial class B05 : Win.Tems.Input1
     {
         ToolTip toolTip1 = new ToolTip();
 

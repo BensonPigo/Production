@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P07_Print : Sci.Win.Tems.PrintForm
+    public partial class P07_Print : Win.Tems.PrintForm
     {
         DataTable dt;
         string id;
@@ -46,7 +46,7 @@ namespace Sci.Production.Warehouse
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             DataRow row = this.CurrentDataRow;
             this.id = row["ID"].ToString();

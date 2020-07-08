@@ -16,7 +16,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Packing
 {
-    public partial class P24 : Sci.Win.Tems.Input6
+    public partial class P24 : Win.Tems.Input6
     {
         private string destination_path; // 放的路徑
 
@@ -374,7 +374,7 @@ order by pd.SCICtnNo
                             System.IO.File.Delete(destination);
                         }
                     }
-                    catch (System.IO.IOException exception)
+                    catch (IOException exception)
                     {
                         MyUtility.Msg.ErrorBox("Error: Delete file fail. Original error: " + "\r\n" + destination + "\r\n" + exception.Message);
                     }
@@ -446,7 +446,7 @@ AND sd.SCICtnNo=@SCICtnNo
                         // //MyUtility.Msg.WarningBox($"File: {local_path_file} not exists!");
                         // }
                     }
-                    catch (System.IO.IOException exception)
+                    catch (IOException exception)
                     {
                         MyUtility.Msg.ErrorBox("Error: update file fail. Original error: " + exception.Message);
                     }
@@ -497,7 +497,7 @@ delete ShippingMarkPic_Detail where ShippingMarkPicUkey = {this.CurrentMaintain[
                         }
                     }
                 }
-                catch (System.IO.IOException exception)
+                catch (IOException exception)
                 {
                     MyUtility.Msg.ErrorBox("Error: update file fail. Original error: " + exception.Message);
                 }
@@ -739,13 +739,13 @@ order by SCICtnNo
         {
             try
             {
-                Microsoft.Office.Interop.Excel.Application xlsApp = new Microsoft.Office.Interop.Excel.Application();
+                Excel.Application xlsApp = new Excel.Application();
                 xlsApp.Visible = false;
-                Microsoft.Office.Interop.Excel.Workbook xlsBook = xlsApp.Workbooks.Open(strPath);
-                Microsoft.Office.Interop.Excel.Worksheet xlsSheet = xlsBook.ActiveSheet;
-                Microsoft.Office.Interop.Excel.Range xlsRangeFirstCell = xlsSheet.get_Range("A1");
-                Microsoft.Office.Interop.Excel.Range xlsRangeLastCell = xlsSheet.Cells.SpecialCells(Microsoft.Office.Interop.Excel.XlCellType.xlCellTypeLastCell);
-                Microsoft.Office.Interop.Excel.Range xlsRange = xlsSheet.get_Range(xlsRangeFirstCell, xlsRangeLastCell);
+                Excel.Workbook xlsBook = xlsApp.Workbooks.Open(strPath);
+                Excel.Worksheet xlsSheet = xlsBook.ActiveSheet;
+                Excel.Range xlsRangeFirstCell = xlsSheet.get_Range("A1");
+                Excel.Range xlsRangeLastCell = xlsSheet.Cells.SpecialCells(Microsoft.Office.Interop.Excel.XlCellType.xlCellTypeLastCell);
+                Excel.Range xlsRange = xlsSheet.get_Range(xlsRangeFirstCell, xlsRangeLastCell);
                 object[,] objValue = xlsRange.Value2 as object[,];
 
                 // Array[][] to DataTable

@@ -13,10 +13,10 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P03
     /// </summary>
-    public partial class P03 : Sci.Win.Tems.QueryForm
+    public partial class P03 : Win.Tems.QueryForm
     {
-        private Ict.Win.DataGridViewGeneratorDateColumnSettings rcvDate = new Ict.Win.DataGridViewGeneratorDateColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings ftyRemark = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorDateColumnSettings rcvDate = new DataGridViewGeneratorDateColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings ftyRemark = new DataGridViewGeneratorTextColumnSettings();
         private bool needSave = false;
         private bool alreadySave = false;
         private DataTable gridData;
@@ -227,7 +227,7 @@ and sp.ProductionKitsGroup='{Sci.Env.User.Keyword}'
         private void BtnViewDetail_Click(object sender, EventArgs e)
         {
             this.gridProductionKitsConfirm.ValidateControl();
-            Sci.Production.PPIC.P03_Detail doForm = new Sci.Production.PPIC.P03_Detail();
+            P03_Detail doForm = new P03_Detail();
             doForm.Set(false, ((DataTable)this.listControlBindingSource1.DataSource).ToList(), this.gridProductionKitsConfirm.GetDataRow(this.gridProductionKitsConfirm.GetSelectedRowIndex()));
             doForm.ShowDialog(this);
         }

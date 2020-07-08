@@ -7,9 +7,9 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P10_CutRef : Sci.Win.Subs.Base
+    public partial class P10_CutRef : Win.Subs.Base
     {
-        public Sci.Win.Tems.Base P10;
+        public Win.Tems.Base P10;
         protected DataRow dr;
 
         public P10_CutRef(DataRow data)

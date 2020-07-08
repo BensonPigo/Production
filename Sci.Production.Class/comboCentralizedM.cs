@@ -7,7 +7,7 @@ namespace Sci.Production.Class
     /// <summary>
     /// ComboFactory
     /// </summary>
-    public partial class comboCentralizedM : Sci.Win.UI.ComboBox
+    public partial class comboCentralizedM : Win.UI.ComboBox
     {
         /// <summary>
         /// ComboFactory

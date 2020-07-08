@@ -9,9 +9,9 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R37 : Sci.Win.Tems.PrintForm
+    public partial class R37 : Win.Tems.PrintForm
     {
-        string ReportType;
+        string reportType;
         List<SqlParameter> list;
         DataTable dtList; string cmd;
         DataTable dt; string cmdDt;
@@ -56,7 +56,7 @@ namespace Sci.Production.Subcon
             this.fac = this.comboFactory.Text.ToString();
             this.Pay = this.comboPaymentSettled.SelectedItem.ToString();
 
-            this.ReportType = this.comboReportType.Text;
+            this.reportType = this.comboReportType.Text;
 
             this.list = new List<SqlParameter>();
             string sqlWhere = string.Empty;
@@ -324,11 +324,11 @@ where a.type='F' and " + sqlWhere + ' ' + sqlHaving);
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
 
-            switch (this.ReportType)
+            switch (this.reportType)
             {
                 case "List":
                     res = DBProxy.Current.Select(string.Empty, this.cmd, this.list, out this.dtList);
@@ -346,7 +346,7 @@ where a.type='F' and " + sqlWhere + ' ' + sqlHaving);
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            switch (this.ReportType)
+            switch (this.reportType)
             {
                 case "List":
                     if (this.dtList == null || this.dtList.Rows.Count == 0)

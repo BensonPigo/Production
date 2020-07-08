@@ -15,7 +15,7 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P10 : Sci.Win.Tems.Input8
+    public partial class P10 : Win.Tems.Input8
     {
         public P10(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -74,7 +74,7 @@ namespace Sci.Production.Warehouse
         {
             Color backDefaultColor = this.detailgrid.DefaultCellStyle.BackColor;
             #region qty 開窗
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellMouseDoubleClick += (s, e) =>
             {
                 this.DoSubForm.IsSupportUpdate = false;
@@ -1025,14 +1025,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
         private void btnCutRef_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P10_CutRef(this.CurrentMaintain);
+            var frm = new P10_CutRef(this.CurrentMaintain);
             frm.P10 = this;
             frm.ShowDialog(this);
         }
 
         protected override bool ClickPrint()
         {
-            Sci.Production.Warehouse.P10_Print callForm;
+            P10_Print callForm;
             callForm = new P10_Print(this.CurrentMaintain, this.editCutNo.Text, this.CurrentMaintain);
             callForm.ShowDialog(this);
 

@@ -5,7 +5,7 @@ using System.Data;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P02_History : Sci.Win.Subs.Base
+    public partial class P02_History : Win.Subs.Base
     {
         private string HCNo;
 

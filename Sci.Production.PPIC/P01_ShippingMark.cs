@@ -5,7 +5,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_ShippingMark
     /// </summary>
-    public partial class P01_ShippingMark : Sci.Win.Subs.Input1A
+    public partial class P01_ShippingMark : Win.Subs.Input1A
     {
         /// <summary>
         /// P01_ShippingMark

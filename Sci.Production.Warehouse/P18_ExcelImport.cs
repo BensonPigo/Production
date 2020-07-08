@@ -12,7 +12,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P18_ExcelImport : Sci.Win.Subs.Base
+    public partial class P18_ExcelImport : Win.Subs.Base
     {
         DataTable grid2Data = new DataTable();
         DataTable detailData;
@@ -154,10 +154,10 @@ namespace Sci.Production.Warehouse
                     continue;
                 }
 
-                Microsoft.Office.Interop.Excel.Application excel;
+                Excel.Application excel;
                 try
                 {
-                    excel = new Microsoft.Office.Interop.Excel.Application();
+                    excel = new Excel.Application();
                 }
                 catch (Exception ex)
                 {
@@ -168,7 +168,7 @@ namespace Sci.Production.Warehouse
 
                 excel.Workbooks.Open(MyUtility.Convert.GetString(dr["FullFileName"]));
                 excel.Visible = false;
-                Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+                Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
                 int intColumnsCount = worksheet.UsedRange.Columns.Count;
 
                 if (intColumnsCount >= 30)
@@ -185,7 +185,7 @@ namespace Sci.Production.Warehouse
                 }
 
                 // 檢查Excel格式
-                Microsoft.Office.Interop.Excel.Range range = worksheet.Range[string.Format("A{0}:AE{0}", 2)];
+                Excel.Range range = worksheet.Range[string.Format("A{0}:AE{0}", 2)];
                 object[,] objCellArray = range.Value;
                 string[] ItemCheck = { "SP#", "SEQ1", "SEQ2", "Roll", "Dyelot", "G.W(kg)", "Qty", "Stock Type", "Location", "Remark" };
                 int[] ItemPosition = new int[ItemCheck.Length];

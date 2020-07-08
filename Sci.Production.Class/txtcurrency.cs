@@ -6,7 +6,7 @@ using Sci.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class txtcurrency : Sci.Win.UI.TextBox
+    public partial class txtcurrency : Win.UI.TextBox
     {
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
@@ -14,7 +14,7 @@ namespace Sci.Production.Class
             string sql = "select ID,NameCH,NameEN from Currency WITH (NOLOCK) where Junk = 0 order by ID";
             DataTable tbCurrency;
             DBProxy.Current.Select("Production", sql, out tbCurrency);
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbCurrency, "ID,NameCH,NameEn", "5,14,30", this.Text, "ID,NameCH,NameEn");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(tbCurrency, "ID,NameCH,NameEn", "5,14,30", this.Text, "ID,NameCH,NameEn");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

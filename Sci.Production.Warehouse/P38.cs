@@ -13,7 +13,7 @@ using Sci.Win.Tools;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P38 : Sci.Win.Tems.QueryForm
+    public partial class P38 : Win.Tems.QueryForm
     {
         const byte UnLock = 0;
         const byte Lock = 1;
@@ -33,8 +33,8 @@ namespace Sci.Production.Warehouse
             this.comboStockType.SelectedIndex = 0;
             this.comboDropDownList1.SelectedIndex = 0;
             Ict.Win.UI.DataGridViewTextBoxColumn columnStatus = new Ict.Win.UI.DataGridViewTextBoxColumn();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings remark = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings remark = new DataGridViewGeneratorTextColumnSettings();
 
             ns.CellMouseDoubleClick += (s, e) =>
                 {
@@ -426,7 +426,7 @@ left join #tmp_PointRate PointRate on PointRate.POID=fi.POID	and PointRate.SEQ1 
 drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp_Air,#tmp_Air_Lab,#tmp_PointRate
 ");
 
-            Ict.DualResult result;
+            DualResult result;
             DataTable dtData;
             this.ShowWaitMessage("Data Loading...");
             if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), cmds, out dtData))

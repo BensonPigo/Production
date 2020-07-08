@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P31_Import : Sci.Win.Subs.Base
+    public partial class P31_Import : Win.Subs.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
@@ -131,7 +131,7 @@ and c.inqty-c.outqty + c.adjustqty > 0 and  c.StockType='B'
 AND Orders.Category <> 'A' ");
 
                 this.ShowWaitMessage("Data Loading....");
-                Ict.DualResult result;
+                DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out this.dtBorrow))
                 {
                     if (this.dtBorrow.Rows.Count == 0)
@@ -175,7 +175,7 @@ AND Orders.Category <> 'A' ");
         {
             base.OnFormLoaded();
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
                 {
                     if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))

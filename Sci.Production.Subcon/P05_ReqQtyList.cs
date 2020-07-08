@@ -9,7 +9,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P05_ReqQtyList : Sci.Win.Subs.Base
+    public partial class P05_ReqQtyList : Win.Subs.Base
     {
         protected DataRow dr;
 
@@ -58,7 +58,7 @@ and ad.ArtworkReqID=''
                 this.ShowErr(selectCommand1, selectResult1);
             }
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings col_handle = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings col_handle = new DataGridViewGeneratorTextColumnSettings();
             col_handle.CellMouseDoubleClick += (s, e) =>
              {
                  DataRow dr = this.gridReqList.GetDataRow<DataRow>(e.RowIndex);

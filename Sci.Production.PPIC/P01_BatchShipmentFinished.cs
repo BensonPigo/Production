@@ -14,7 +14,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_BatchShipmentFinished
     /// </summary>
-    public partial class P01_BatchShipmentFinished : Sci.Win.Subs.Base
+    public partial class P01_BatchShipmentFinished : Win.Subs.Base
     {
         private bool haveupdate = false;
 
@@ -65,9 +65,9 @@ namespace Sci.Production.PPIC
         // Style#
         private void TxtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item;
+            Win.Tools.SelectItem item;
             string sqlCmd = "select ID,SeasonID,Description,BrandID from Style WITH (NOLOCK) where Junk = 0 order by ID";
-            item = new Sci.Win.Tools.SelectItem(sqlCmd, "16,8,35,10@760,500", this.Text);
+            item = new Win.Tools.SelectItem(sqlCmd, "16,8,35,10@760,500", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -82,7 +82,7 @@ namespace Sci.Production.PPIC
         private void TxtBuyer_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = "SELECT Id,NameCH,NameEN FROM Brand WITH (NOLOCK) WHERE Junk=0  ORDER BY Id";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,30,30@755,500", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "10,30,30@755,500", this.Text, false, ",");
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)

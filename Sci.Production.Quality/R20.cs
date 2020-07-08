@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class R20 : Sci.Win.Tems.PrintForm
+    public partial class R20 : Win.Tems.PrintForm
     {
         DataTable printData;
         DateTime? Period1;
@@ -106,7 +106,7 @@ namespace Sci.Production.Quality
         }
 
         // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             string d1 = string.Empty, d2 = string.Empty;

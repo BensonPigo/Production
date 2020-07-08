@@ -12,7 +12,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_Packing
     /// </summary>
-    public partial class R02 : Sci.Win.Tems.PrintForm
+    public partial class R02 : Win.Tems.PrintForm
     {
         /// <summary>
         /// R02
@@ -150,7 +150,7 @@ namespace Sci.Production.Packing
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region where
             string where = string.Empty;

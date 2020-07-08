@@ -14,7 +14,7 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P01_BatchCreate : Sci.Win.Subs.Base
+    public partial class P01_BatchCreate : Win.Subs.Base
     {
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private string poType;
@@ -135,7 +135,7 @@ namespace Sci.Production.Subcon
 
             #endregion
 
-            Ict.DualResult result;
+            DualResult result;
             if (result = DBProxy.Current.Select(null, SqlCmd, out this.dtArtwork))
             {
                 DualResult resultGetSpecialRecordData = this.GetSpecialRecordData();
@@ -567,7 +567,7 @@ namespace Sci.Production.Subcon
         private void btnToExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-            Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
+            Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
             sdExcel.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_P01_BatchCreate"));
         }
 
@@ -576,7 +576,7 @@ namespace Sci.Production.Subcon
             this.isArtwork = MyUtility.GetValue.Lookup(
                 string.Format(
                 "select isartwork from artworktype WITH (NOLOCK) where id = '{0}'",
-                ((Sci.Production.Class.txtartworktype_fty)sender).Text), null);
+                ((Class.txtartworktype_fty)sender).Text), null);
         }
 
         private string QuoteFromPlanningB03()

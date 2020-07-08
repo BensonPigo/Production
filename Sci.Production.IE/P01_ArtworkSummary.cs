@@ -8,7 +8,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_P01_ArtworkSummary
     /// </summary>
-    public partial class P01_ArtworkSummary : Sci.Win.Subs.Base
+    public partial class P01_ArtworkSummary : Win.Subs.Base
     {
         private string tableName;
 

@@ -12,7 +12,7 @@ namespace Sci.Production.Sewing
     /// <summary>
     /// R01
     /// </summary>
-    public partial class R01 : Sci.Win.Tems.PrintForm
+    public partial class R01 : Win.Tems.PrintForm
     {
         private DateTime? _date;
         private string _factory;
@@ -106,7 +106,7 @@ namespace Sci.Production.Sewing
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             #region 組撈Data SQL

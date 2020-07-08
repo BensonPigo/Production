@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
-    public partial class B01_SetCardBoarsPads : Sci.Win.Forms.Base
+    public partial class B01_SetCardBoarsPads : Win.Forms.Base
     {
         private DataRow masterrow;
 
@@ -34,7 +34,7 @@ namespace Sci.Production.Subcon
             base.OnFormLoaded();
             this.Query();
             #region
-            Ict.Win.DataGridViewGeneratorTextColumnSettings buyer = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings buyer = new DataGridViewGeneratorTextColumnSettings();
             buyer.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1)
@@ -93,7 +93,7 @@ namespace Sci.Production.Subcon
 
             #endregion
             #region  PadRefno
-            Ict.Win.DataGridViewGeneratorTextColumnSettings PadRefno = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings PadRefno = new DataGridViewGeneratorTextColumnSettings();
             PadRefno.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1)

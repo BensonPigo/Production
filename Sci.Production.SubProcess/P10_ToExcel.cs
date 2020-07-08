@@ -14,7 +14,7 @@ namespace Sci.Production.SubProcess
     /// <summary>
     /// P10_ToExcel
     /// </summary>
-    public partial class P10_ToExcel : Sci.Win.Tems.PrintForm
+    public partial class P10_ToExcel : Win.Tems.PrintForm
     {
         private DataTable dtRight;
         private DataTable dtLeft;
@@ -177,7 +177,7 @@ order by num";
         }
 
         /// <inheritdoc/>
-        protected override bool OnToExcel(Win.ReportDefinition report)
+        protected override bool OnToExcel(ReportDefinition report)
         {
             this.ShowWaitMessage("Excel Processing...");
 

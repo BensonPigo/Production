@@ -11,7 +11,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R08
     /// </summary>
-    public partial class R08 : Sci.Win.Tems.PrintForm
+    public partial class R08 : Win.Tems.PrintForm
     {
         private DateTime? buyerDlv1;
         private DateTime? buyerDlv2;
@@ -81,7 +81,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"

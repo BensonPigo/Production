@@ -15,7 +15,7 @@ using Sci.Utility.Excel;
 
 namespace Sci.Production.Quality
 {
-    public partial class P01_PhysicalInspection : Sci.Win.Subs.Input4
+    public partial class P01_PhysicalInspection : Win.Subs.Input4
     {
         private DataRow maindr;
         private string loginID = Sci.Env.User.UserID;

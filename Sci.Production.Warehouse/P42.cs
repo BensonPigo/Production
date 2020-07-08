@@ -8,7 +8,7 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P42 : Sci.Win.Tems.QueryForm
+    public partial class P42 : Win.Tems.QueryForm
     {
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
@@ -46,7 +46,7 @@ namespace Sci.Production.Warehouse
                 #endregion
             };
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
             ts1.CellMouseDoubleClick += (s, e) =>
             {
                 if (e.RowIndex < 0)
@@ -73,12 +73,12 @@ namespace Sci.Production.Warehouse
                     this.sum_checkedqty();
                 }
             };
-            Ict.Win.DataGridViewGeneratorDateColumnSettings ts2 = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorDateColumnSettings ts2 = new DataGridViewGeneratorDateColumnSettings();
             ts2.CellValidating += (s, e) =>
             {
                 if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                    DataRow dr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
                     if (MyUtility.Check.Empty(dr["tapeoffline"]))
                     {
                         return;
@@ -92,12 +92,12 @@ namespace Sci.Production.Warehouse
                 }
             };
 
-            Ict.Win.DataGridViewGeneratorDateColumnSettings ts3 = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorDateColumnSettings ts3 = new DataGridViewGeneratorDateColumnSettings();
             ts3.CellValidating += (s, e) =>
             {
                 if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                    DataRow dr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
                     if (MyUtility.Check.Empty(dr["tapeinline"]))
                     {
                         return;
@@ -258,7 +258,7 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.Use
 // ) tmp) is not null";
 //            }
             sqlcmd += @" ORDER BY b.FactoryID,c.POID";
-            Ict.DualResult result;
+            DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out dtData))
             {
                 if (dtData.Rows.Count == 0)

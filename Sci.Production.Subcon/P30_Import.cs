@@ -9,7 +9,7 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P30_Import : Sci.Win.Subs.Base
+    public partial class P30_Import : Win.Subs.Base
     {
         DataRow dr_localPO;
         DataTable dt_localPODetail;
@@ -415,7 +415,7 @@ where a.status = 'Approved'
                 }
                 #endregion
 
-                Ict.DualResult result;
+                DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd, cmds, out this.dtlocal))
                 {
                     this.listControlBindingSource1.DataSource = this.dtlocal;
@@ -533,8 +533,8 @@ where Qty - ShipQty - DiffQty = 0";
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings chk = new DataGridViewGeneratorCheckBoxColumnSettings();
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings chk = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
             chk.CellEditable += (s, e) =>
             {
                 DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
@@ -553,7 +553,7 @@ where Qty - ShipQty - DiffQty = 0";
                 if (e.Button == MouseButtons.Left && this.dr_localPO["category"].ToString().TrimEnd().ToUpper() == "CARTON")
                 {
                     DataRow dr = this.gridImport.GetDataRow<DataRow>(e.RowIndex);
-                    Sci.Production.Subcon.P30_Qty callNextForm = new Sci.Production.Subcon.P30_Qty(dr);
+                    P30_Qty callNextForm = new P30_Qty(dr);
                     callNextForm.ShowDialog(this);
                 }
             };
@@ -791,7 +791,7 @@ group by POID, OrderID, StyleID, SciDelivery, SeasonID, Refno
         {
             DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Copy();
             dt.Columns.RemoveAt(dt.Columns.Count - 1);
-            Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
+            Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
             sdExcel.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_P30_Import"));
         }
 

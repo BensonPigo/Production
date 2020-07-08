@@ -7,7 +7,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Class
 {
-    public partial class comboFactory : Sci.Win.UI.ComboBox
+    public partial class comboFactory : Win.UI.ComboBox
     {
         private bool _IssupportJunk = false;
         private bool _FilteMDivision = false;

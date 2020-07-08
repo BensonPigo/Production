@@ -8,11 +8,11 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P06_ReviseHistory
     /// </summary>
-    public partial class P06_ReviseHistory : Sci.Win.Subs.Base
+    public partial class P06_ReviseHistory : Win.Subs.Base
     {
         private string pulloutID;
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings oldqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings newqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings oldqty = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings newqty = new DataGridViewGeneratorNumericColumnSettings();
 
         /// <summary>
         /// P06_ReviseHistory
@@ -33,7 +33,7 @@ namespace Sci.Production.Shipping
                     DataRow dr = this.gridReviseHistory.GetDataRow<DataRow>(e.RowIndex);
                     if (e.Button == System.Windows.Forms.MouseButtons.Left)
                     {
-                        Sci.Production.Shipping.P06_ReviseHistory_Detail callNextForm = new Sci.Production.Shipping.P06_ReviseHistory_Detail(dr);
+                        P06_ReviseHistory_Detail callNextForm = new P06_ReviseHistory_Detail(dr);
                         callNextForm.ShowDialog(this);
                     }
                 };
@@ -43,7 +43,7 @@ namespace Sci.Production.Shipping
                 DataRow dr = this.gridReviseHistory.GetDataRow<DataRow>(e.RowIndex);
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
-                    Sci.Production.Shipping.P06_ReviseHistory_Detail callNextForm = new Sci.Production.Shipping.P06_ReviseHistory_Detail(dr);
+                    P06_ReviseHistory_Detail callNextForm = new P06_ReviseHistory_Detail(dr);
                     callNextForm.ShowDialog(this);
                 }
             };

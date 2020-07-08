@@ -12,7 +12,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// R07
     /// </summary>
-    public partial class R07 : Sci.Win.Tems.PrintForm
+    public partial class R07 : Win.Tems.PrintForm
     {
         private int _year;
         private int _month;
@@ -65,7 +65,7 @@ namespace Sci.Production.PPIC
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             #region 組SQL

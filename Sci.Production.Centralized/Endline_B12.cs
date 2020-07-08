@@ -8,7 +8,7 @@ using System.Windows.Forms;
 namespace Sci.Production.Centralized
 {
     /// <inheritdoc/>
-    public partial class Endline_B12 : Sci.Win.Tems.Input1
+    public partial class Endline_B12 : Win.Tems.Input1
     {
         private string reasonType = "ID";
 

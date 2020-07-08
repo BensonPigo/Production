@@ -2,7 +2,7 @@
 
 namespace Sci.Production.Thread
 {
-    public partial class B07 : Sci.Win.Tems.Input1
+    public partial class B07 : Win.Tems.Input1
     {
         public B07(ToolStripMenuItem menuitem)
             : base(menuitem)

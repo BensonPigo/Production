@@ -14,7 +14,7 @@ namespace Sci.Production.Thread
     /// <summary>
     /// P07
     /// </summary>
-    public partial class P07 : Sci.Win.Tems.Input6
+    public partial class P07 : Win.Tems.Input6
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
@@ -30,7 +30,7 @@ namespace Sci.Production.Thread
         }
 
         /// <inheritdoc/>
-        protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(
@@ -164,7 +164,7 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
                         return;
                     }
 
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from ThreadLocation WITH (NOLOCK) where junk = 0 order by ID", "10,40", this.CurrentDetailData["locationfrom"].ToString());
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Description from ThreadLocation WITH (NOLOCK) where junk = 0 order by ID", "10,40", this.CurrentDetailData["locationfrom"].ToString());
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {
@@ -227,7 +227,7 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
                     return;
                 }
 
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from ThreadLocation WITH (NOLOCK) where junk = 0 order by ID", "10,40", this.CurrentDetailData["locationto"].ToString());
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Description from ThreadLocation WITH (NOLOCK) where junk = 0 order by ID", "10,40", this.CurrentDetailData["locationto"].ToString());
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)
                 {
@@ -790,7 +790,7 @@ insert  ThreadStock (refno, threadcolorid, threadlocationid, newcone, usedcone, 
         private void BtnImportFromStock_Click(object sender, EventArgs e)
         {
             DataTable detTable = (DataTable)this.detailgridbs.DataSource;
-            Form p07_import = new Sci.Production.Thread.P07_Import(detTable);
+            Form p07_import = new P07_Import(detTable);
             p07_import.ShowDialog();
         }
     }

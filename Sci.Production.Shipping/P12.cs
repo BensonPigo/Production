@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P12 : Sci.Win.Tems.QueryForm
+    public partial class P12 : Win.Tems.QueryForm
     {
         public P12(ToolStripMenuItem menuitem)
             : base(menuitem)

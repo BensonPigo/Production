@@ -9,7 +9,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B03_PrintReviseList
     /// </summary>
-    public partial class B03_PrintReviseList : Sci.Win.Tems.PrintForm
+    public partial class B03_PrintReviseList : Win.Tems.PrintForm
     {
         private string reviseDate1;
         private string reviseDate2;
@@ -33,7 +33,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlCmd = string.Format(
                 @"with tmpCode

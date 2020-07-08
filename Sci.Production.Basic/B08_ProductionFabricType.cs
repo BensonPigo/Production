@@ -10,7 +10,7 @@ namespace Sci.Production.Basic
     /// <summary>
     /// B08_ProductionFabricType
     /// </summary>
-    public partial class B08_ProductionFabricType : Sci.Win.Subs.Input1A
+    public partial class B08_ProductionFabricType : Win.Subs.Input1A
     {
         /// <summary>
         /// B08_ProductionFabricType
@@ -25,11 +25,11 @@ namespace Sci.Production.Basic
 
         private void TxtProdTypeTopButtomInnerOuter_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.UI.TextBox prodText = (Sci.Win.UI.TextBox)sender;
-            Sci.Win.Tools.SelectItem item;
+            Win.UI.TextBox prodText = (Win.UI.TextBox)sender;
+            Win.Tools.SelectItem item;
             string selectCommand = "select Name from Reason WITH (NOLOCK) where Junk = 0 and ReasonTypeID = 'Style_Apparel_Type' order by ID";
 
-            item = new Sci.Win.Tools.SelectItem(selectCommand, "20", prodText.Text);
+            item = new Win.Tools.SelectItem(selectCommand, "20", prodText.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -41,11 +41,11 @@ namespace Sci.Production.Basic
 
         private void TxtFabricTypeTopButtomInnerOuter_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.UI.TextBox fabricText = (Sci.Win.UI.TextBox)sender;
-            Sci.Win.Tools.SelectItem item;
+            Win.UI.TextBox fabricText = (Win.UI.TextBox)sender;
+            Win.Tools.SelectItem item;
             string selectCommand = "select Name from Reason WITH (NOLOCK) where Junk = 0 and ReasonTypeID = 'Fabric_Kind' order by ID";
 
-            item = new Sci.Win.Tools.SelectItem(selectCommand, "20", fabricText.Text);
+            item = new Win.Tools.SelectItem(selectCommand, "20", fabricText.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -57,7 +57,7 @@ namespace Sci.Production.Basic
 
         private void TxtProdTypeTopButtomInnerOuter_Validating(object sender, CancelEventArgs e)
         {
-            Sci.Win.UI.TextBox prodTextValue = (Sci.Win.UI.TextBox)sender;
+            Win.UI.TextBox prodTextValue = (Win.UI.TextBox)sender;
             if (!MyUtility.Check.Empty(prodTextValue.Text) && prodTextValue.Text != prodTextValue.OldValue)
             {
                 // sql參數
@@ -93,7 +93,7 @@ namespace Sci.Production.Basic
 
         private void TxtFabricTypeTopButtomInnerOuter_Validating(object sender, CancelEventArgs e)
         {
-            Sci.Win.UI.TextBox fabricTextValue = (Sci.Win.UI.TextBox)sender;
+            Win.UI.TextBox fabricTextValue = (Win.UI.TextBox)sender;
             if (!MyUtility.Check.Empty(fabricTextValue.Text) && fabricTextValue.Text != fabricTextValue.OldValue)
             {
                 // sql參數

@@ -9,7 +9,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P05_AirPrePaidStatus
     /// </summary>
-    public partial class P05_AirPrePaidStatus : Sci.Win.Subs.Base
+    public partial class P05_AirPrePaidStatus : Win.Subs.Base
     {
         private DualResult result;
         private DataTable gridData;

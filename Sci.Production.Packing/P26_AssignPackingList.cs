@@ -9,7 +9,7 @@ using static Sci.Production.Packing.P26;
 
 namespace Sci.Production.Packing
 {
-    public partial class P26_AssignPackingList : Sci.Win.Tems.Base
+    public partial class P26_AssignPackingList : Win.Tems.Base
     {
         private List<NewFormModel> _NewFormModels;
         private DataTable _P25Dt;
@@ -193,7 +193,7 @@ namespace Sci.Production.Packing
                 }
             }
 
-            Sci.Production.Packing.P26 p26 = new P26(null);
+            P26 p26 = new P26(null);
 
             foreach (var item in file_PackID)
             {

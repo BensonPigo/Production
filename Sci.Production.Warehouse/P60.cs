@@ -16,7 +16,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P60 : Sci.Win.Tems.Input6
+    public partial class P60 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
@@ -174,7 +174,7 @@ where ID = '{0}'", this.CurrentMaintain["ID"].ToString()));
         {
             #region -- QTY 不可超過 On Road --
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.IsSupportNegative = true;
             ns.CellValidating += (s, e) =>
             {
@@ -199,7 +199,7 @@ where ID = '{0}'", this.CurrentMaintain["ID"].ToString()));
             };
             #endregion
             #region Location Setting
-            Ict.Win.DataGridViewGeneratorTextColumnSettings locationSet = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings locationSet = new DataGridViewGeneratorTextColumnSettings();
             locationSet.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
@@ -247,7 +247,7 @@ where	Junk != 1
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation("B", this.CurrentDetailData["location"].ToString());
+                    Win.Tools.SelectItem2 item = Prgs.SelectLocation("B", this.CurrentDetailData["location"].ToString());
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -733,7 +733,7 @@ Where a.id = '{0}' ", masterID);
                 return;
             }
 
-            var frm = new Sci.Production.Warehouse.P60_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P60_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.computeTotalQty();
             this.RenewData();
@@ -845,7 +845,7 @@ Where a.id = '{0}' ", masterID);
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
 

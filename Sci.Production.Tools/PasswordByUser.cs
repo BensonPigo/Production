@@ -12,11 +12,11 @@ using Sci.Production.Class;
 
 namespace Sci.Production.Tools
 {
-    public partial class PasswordByUser : Sci.Win.Tems.Input1
+    public partial class PasswordByUser : Win.Tems.Input1
     {
         OpenFileDialog openfiledialog;
         private string file;
-        private Sci.Production.Class.PictureSubPage picturePage;
+        private PictureSubPage picturePage;
         private DataTable dtPass2 = null;
         private DataTable dtSystem = null;
         private DataTable dtFactory = null;
@@ -24,7 +24,8 @@ namespace Sci.Production.Tools
         private string sqlCmd = string.Empty;
         private string destination_path; // 放圖檔的路徑
 
-        public PasswordByUser(ToolStripMenuItem menuitem) : base(menuitem)
+        public PasswordByUser(ToolStripMenuItem menuitem)
+            : base(menuitem)
         {
             this.InitializeComponent();
 
@@ -43,7 +44,7 @@ namespace Sci.Production.Tools
                 this.editFactory.PopUp += (s, e) =>
                 {
                     DBProxy.Current.Select(null, "SELECT DISTINCT FtyGroup FROM Factory WHERE FtyGroup != '' and Junk = 0 ORDER BY FtyGroup", out this.dtFactory);
-                    Sci.Win.Tools.SelectItem2 seleItem2 = new Sci.Win.Tools.SelectItem2(this.dtFactory, "FtyGroup", "Factory", "15", this.editFactory.Text.Replace(" ", string.Empty));
+                    Win.Tools.SelectItem2 seleItem2 = new Win.Tools.SelectItem2(this.dtFactory, "FtyGroup", "Factory", "15", this.editFactory.Text.Replace(" ", string.Empty));
                     if (seleItem2.ShowDialog(this) == DialogResult.OK)
                     {
                         this.CurrentMaintain["Factory"] = string.Empty;
@@ -57,7 +58,7 @@ namespace Sci.Production.Tools
 
                 this.txtPosition.PopUp += (s, e) =>
                 {
-                    Sci.Win.Tools.SelectItem seleItem = new Sci.Win.Tools.SelectItem("SELECT ID, Description, PKey From Pass0 ORDER BY ID", "15,25", this.txtPosition.Text, "Position,Description");
+                    Win.Tools.SelectItem seleItem = new Win.Tools.SelectItem("SELECT ID, Description, PKey From Pass0 ORDER BY ID", "15,25", this.txtPosition.Text, "Position,Description");
                     IList<DataRow> listSelect = null;
                     if (seleItem.ShowDialog(this) == DialogResult.OK)
                     {
@@ -71,7 +72,7 @@ namespace Sci.Production.Tools
             Dictionary<string, string> codePageSource = new Dictionary<string, string>();
             codePageSource.Add("950", "繁體中文");
             codePageSource.Add("0", "English");
-            this.comboLanguage.DataSource = new System.Windows.Forms.BindingSource(codePageSource, null);
+            this.comboLanguage.DataSource = new BindingSource(codePageSource, null);
             this.comboLanguage.ValueMember = "Key";
             this.comboLanguage.DisplayMember = "Value";
 
@@ -106,7 +107,7 @@ namespace Sci.Production.Tools
                     dr["lastTime"] = MyUtility.Check.Empty(dr["LastLoginTime"]) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(dr["LastLoginTime"])).ToString("yyyy/MM/dd HH:mm:ss");
                 }
 
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "ID,Name,lastTime", "15,20,20", this.Text, "ID,Name,Last Login Time");
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(dt, "ID,Name,lastTime", "15,20,20", this.Text, "ID,Name,Last Login Time");
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel)
                 {
@@ -209,7 +210,7 @@ namespace Sci.Production.Tools
                             this.CurrentMaintain["ESignature"] = string.Empty;
                             this.disBoxESignature.Text = MyUtility.Convert.GetString(this.CurrentMaintain["ESignature"]);
                         }
-                        catch (System.IO.IOException exception)
+                        catch (IOException exception)
                         {
                             MyUtility.Msg.ErrorBox("Error: Delete file fail. Original error: " + exception.Message);
                         }

@@ -12,7 +12,7 @@ namespace Sci.Production.Thread
     /// <summary>
     /// P01_CopyTo
     /// </summary>
-    public partial class P01_CopyTo : Sci.Win.Subs.Base
+    public partial class P01_CopyTo : Win.Subs.Base
     {
         private DataRow master;
 

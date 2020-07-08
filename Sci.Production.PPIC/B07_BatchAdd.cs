@@ -13,7 +13,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// B07_BatchAdd
     /// </summary>
-    public partial class B07_BatchAdd : Sci.Win.Subs.Base
+    public partial class B07_BatchAdd : Win.Subs.Base
     {
         private DataRow motherData;
 
@@ -67,7 +67,7 @@ namespace Sci.Production.PPIC
         // Line#按右鍵開窗
         private void TxtLineNoStart_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.UI.TextBox sewingLineText = (Sci.Win.UI.TextBox)sender;
+            Win.UI.TextBox sewingLineText = (Win.UI.TextBox)sender;
             string sql = "Select ID,Description From SewingLine WITH (NOLOCK) Where FactoryId = '" + Sci.Env.User.Factory + "' order by ID";
             SelectItem item = new SelectItem(sql, "4,15", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
@@ -82,7 +82,7 @@ namespace Sci.Production.PPIC
         // Line#檢查值輸入是否正確
         private void TxtLineNoStart_Validating(object sender, CancelEventArgs e)
         {
-            Sci.Win.UI.TextBox sewingLineText = (Sci.Win.UI.TextBox)sender;
+            Win.UI.TextBox sewingLineText = (Win.UI.TextBox)sender;
             if (!string.IsNullOrWhiteSpace(sewingLineText.Text) && sewingLineText.Text != sewingLineText.OldValue)
             {
                 // sql參數

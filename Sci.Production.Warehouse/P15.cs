@@ -18,7 +18,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P15 : Sci.Win.Tems.Input6
+    public partial class P15 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
@@ -68,10 +68,10 @@ namespace Sci.Production.Warehouse
         {
             foreach (Form form in Application.OpenForms)
             {
-                if (form is Sci.Production.Warehouse.P15)
+                if (form is P15)
                 {
                     form.Activate();
-                    Sci.Production.Warehouse.P15 activateForm = (Sci.Production.Warehouse.P15)form;
+                    P15 activateForm = (P15)form;
                     return;
                 }
             }
@@ -83,13 +83,13 @@ namespace Sci.Production.Warehouse
                 {
                     foreach (var subMenuItem in toolMenuItem.DropDown.Items)
                     {
-                        if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                        if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
                         {
                             if (((ToolStripMenuItem)subMenuItem).Text.EqualString("Issue Transaction"))
                             {
                                 foreach (var endMenuItem in ((ToolStripMenuItem)subMenuItem).DropDown.Items)
                                 {
-                                    if (endMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                                    if (endMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
                                     {
                                         if (((ToolStripMenuItem)endMenuItem).Text.EqualString("P15. Issue Accessory Lacking  && Replacement"))
                                         {
@@ -113,7 +113,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             #region 新增Batch Shipment Finished按鈕
-            Sci.Win.UI.Button btnUnFinish = new Sci.Win.UI.Button();
+            Win.UI.Button btnUnFinish = new Win.UI.Button();
             btnUnFinish.Text = "UnFinish";
             btnUnFinish.Click += new EventHandler(this.unfinish);
             this.browsetop.Controls.Add(btnUnFinish);
@@ -762,7 +762,7 @@ Where a.id = '{0}'", masterID);
             }
 
             // string aa = comboBox1.Text;
-            var frm = new Sci.Production.Warehouse.P15_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.comboType.Text, "P15_Import");
+            var frm = new P15_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.comboType.Text, "P15_Import");
             frm.P15 = this;
             frm.ShowDialog(this);
             this.RenewData();
@@ -771,7 +771,7 @@ Where a.id = '{0}'", masterID);
         // Accumulated Qty
         private void btnAccumulatedQty_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P15_AccumulatedQty(this.CurrentMaintain);
+            var frm = new P15_AccumulatedQty(this.CurrentMaintain);
             frm.P15 = this;
             frm.ShowDialog(this);
         }
@@ -779,7 +779,7 @@ Where a.id = '{0}'", masterID);
         // Unfinish
         private void unfinish(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P15_Unfinish(P15_Unfinish.TypeAccessory, "P15_Unfinish");
+            var frm = new P15_Unfinish(P15_Unfinish.TypeAccessory, "P15_Unfinish");
             frm.ShowDialog(this);
         }
 
@@ -877,12 +877,12 @@ where id = @MDivision", pars, out dt);
 
             string RptTitle = dt.Rows[0]["NameEN"].ToString();
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Requestid", Requestid));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("appvdate", appvdate));
+            report.ReportParameters.Add(new ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new ReportParameter("ID", id));
+            report.ReportParameters.Add(new ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new ReportParameter("Requestid", Requestid));
+            report.ReportParameters.Add(new ReportParameter("issuedate", issuedate));
+            report.ReportParameters.Add(new ReportParameter("appvdate", appvdate));
             #endregion
 
             #region  抓表身資料
@@ -955,7 +955,7 @@ where a.id= @ID", pars, out dd);
             #endregion
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
 

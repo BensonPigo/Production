@@ -8,7 +8,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Class
 {
-    public partial class txtTechnician : Sci.Win.UI._UserControl
+    public partial class txtTechnician : Win.UI._UserControl
     {
         public txtTechnician()
         {
@@ -24,12 +24,12 @@ namespace Sci.Production.Class
             get { return this.checkColumn; } set { this.checkColumn = value; }
         }
 
-        public Sci.Win.UI.TextBox TextBox1
+        public Win.UI.TextBox TextBox1
         {
             get { return this.textBox1; }
         }
 
-        public Sci.Win.UI.DisplayBox DisplayBox1
+        public Win.UI.DisplayBox DisplayBox1
         {
             get { return this.displayBox1; }
         }
@@ -53,7 +53,10 @@ namespace Sci.Production.Class
         [Bindable(true)]
         public string TextBox1Binding
         {
-            get { return this.textBox1.Text; }
+            get
+            {
+                return this.textBox1.Text;
+            }
 
             set
             {
@@ -98,7 +101,7 @@ namespace Sci.Production.Class
                         DataTable selectTable;
                         if (dtName.Rows.Count > 0)
                         {
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dtName, "ID,Name,ExtNo,Factory", "10,22,5,40", this.textBox1.Text);
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(dtName, "ID,Name,ExtNo,Factory", "10,22,5,40", this.textBox1.Text);
                             item.Size = new System.Drawing.Size(828, 509);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
@@ -114,7 +117,7 @@ namespace Sci.Production.Class
                         {
                             selectCommand = string.Format("select ID, Name, ExtNo, REPLACE(Factory,' ','') Factory from Pass1 WITH (NOLOCK) where ExtNo = '{0}' order by ID", textValue.Trim());
                             DBProxy.Current.Select(null, selectCommand, out selectTable);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo,Factory", "10,22,5,40", this.textBox1.Text);
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo,Factory", "10,22,5,40", this.textBox1.Text);
                             item.Size = new System.Drawing.Size(828, 509);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
@@ -148,13 +151,13 @@ namespace Sci.Production.Class
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+            Win.Forms.Base myForm = (Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || this.textBox1.ReadOnly == true)
             {
                 return;
             }
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem($"select ID, Name, ExtNo, replace(Factory,' ','')factory from Pass1 WITH (NOLOCK) where Resign is null  and {this.TechnicianWhere()}  order by ID", "10,22,5,40", this.textBox1.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem($"select ID, Name, ExtNo, replace(Factory,' ','')factory from Pass1 WITH (NOLOCK) where Resign is null  and {this.TechnicianWhere()}  order by ID", "10,22,5,40", this.textBox1.Text);
             item.Size = new System.Drawing.Size(828, 509);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)

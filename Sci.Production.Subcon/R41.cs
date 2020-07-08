@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R41 : Sci.Win.Tems.PrintForm
+    public partial class R41 : Win.Tems.PrintForm
     {
         string SubProcess;
         string SP;
@@ -92,7 +92,7 @@ namespace Sci.Production.Subcon
         }
 
         // 非同步讀取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             return Result.True;
         }

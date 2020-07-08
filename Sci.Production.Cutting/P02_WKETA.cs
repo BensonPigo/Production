@@ -7,7 +7,7 @@ using Ict;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P02_WKETA : Sci.Win.Tems.QueryForm
+    public partial class P02_WKETA : Win.Tems.QueryForm
     {
         DataRow CurrentRow;
 

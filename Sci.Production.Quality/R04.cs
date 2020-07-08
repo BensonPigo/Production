@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class R04 : Sci.Win.Tems.PrintForm
+    public partial class R04 : Win.Tems.PrintForm
     {
         DateTime? DateRecStart; DateTime? DateRecEnd;
         DateTime? DateArrStart; DateTime? DateArrEnd;
@@ -194,7 +194,7 @@ namespace Sci.Production.Quality
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.res = DBProxy.Current.Select(string.Empty, this.cmd, this.lis, out this.dt);
             if (!this.res)
@@ -217,7 +217,7 @@ namespace Sci.Production.Quality
 
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
 
-            Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R04.xltx", keepApp: true);
+            SaveXltReportCls xl = new SaveXltReportCls("Quality_R04.xltx", keepApp: true);
 
             string d1 = MyUtility.Check.Empty(this.DateRecStart) ? string.Empty : Convert.ToDateTime(this.DateRecStart).ToString("yyyy/MM/dd");
             string d2 = MyUtility.Check.Empty(this.DateRecEnd) ? string.Empty : Convert.ToDateTime(this.DateRecEnd).ToString("yyyy/MM/dd");

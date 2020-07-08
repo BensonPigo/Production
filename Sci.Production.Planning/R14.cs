@@ -14,7 +14,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// R14
     /// </summary>
-    public partial class R14 : Sci.Win.Tems.PrintForm
+    public partial class R14 : Win.Tems.PrintForm
     {
         private DataTable[] printData;
         private StringBuilder condition = new StringBuilder();
@@ -161,7 +161,7 @@ namespace Sci.Production.Planning
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlCmd = string.Empty;
 
@@ -271,7 +271,7 @@ outer apply(select [Result] = CASE	WHEN ed.PODD is null or ed.ActFCRDate is null
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R14");
-            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             objApp.Quit();

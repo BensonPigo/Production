@@ -10,7 +10,7 @@ using System.IO;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R52 : Sci.Win.Tems.PrintForm
+    public partial class R52 : Win.Tems.PrintForm
    {
       DataTable printData;
 

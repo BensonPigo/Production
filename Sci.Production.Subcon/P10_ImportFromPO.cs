@@ -8,7 +8,7 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P10_ImportFromPO : Sci.Win.Subs.Base
+    public partial class P10_ImportFromPO : Win.Subs.Base
     {
         DataRow dr_artworkAp;
         DataTable dt_artworkApDetail;
@@ -219,7 +219,7 @@ DROP TABLE #Bundle
                 cmds.Add(sp4);
                 #endregion
 
-                Ict.DualResult result;
+                DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd, cmds, out this.dtArtwork))
                 {
                     if (this.dtArtwork.Rows.Count == 0)
@@ -251,7 +251,7 @@ DROP TABLE #Bundle
         {
             base.OnFormLoaded();
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)

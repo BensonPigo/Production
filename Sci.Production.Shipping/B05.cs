@@ -6,7 +6,7 @@ using Ict;
 
 namespace Sci.Production.Shipping
 {
-    public partial class B05 : Sci.Win.Tems.Input1
+    public partial class B05 : Win.Tems.Input1
     {
       public B05(ToolStripMenuItem menuitem)
             : base(menuitem)

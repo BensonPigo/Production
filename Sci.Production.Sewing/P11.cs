@@ -12,7 +12,7 @@ using Sci.Win.Tools;
 
 namespace Sci.Production.Sewing
 {
-    public partial class P11 : Sci.Win.Tems.Input6
+    public partial class P11 : Win.Tems.Input6
     {
         // = P01手動拆表身數量操作(多天OutputDate)
         // 要被拆的表身(From)   拆出去(To)

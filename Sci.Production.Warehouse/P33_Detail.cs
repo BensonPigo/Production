@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P33_Detail : Sci.Win.Subs.Input8A
+    public partial class P33_Detail : Win.Subs.Input8A
     {
         public DataTable dtIssueBreakDown { get; set; }
 
@@ -26,7 +26,7 @@ namespace Sci.Production.Warehouse
         ///Issue_Detail
         protected override void OnSubDetailInsert(int index = -1)
         {
-            var frm = new Sci.Production.Warehouse.P33_Detail_Detail(this.CurrentDetailData, (DataTable)this.gridbs.DataSource, this.CurrentDetailData["AccuIssued"].ToString(), this.CurrentDetailData["Use Qty By Stock Unit"].ToString());
+            var frm = new P33_Detail_Detail(this.CurrentDetailData, (DataTable)this.gridbs.DataSource, this.CurrentDetailData["AccuIssued"].ToString(), this.CurrentDetailData["Use Qty By Stock Unit"].ToString());
             frm.P33_Detail = this;
             frm.ShowDialog(this);
             this.sum_checkedqty();
@@ -43,7 +43,7 @@ namespace Sci.Production.Warehouse
             if (!temp.Columns.Contains("BulkQty"))
             {
                 DataTable dtFtyinventory;
-                Ict.DualResult result;
+                DualResult result;
                 if (!(result = MyUtility.Tool.ProcessWithDatatable(
                         temp, string.Empty, @"  
 
@@ -107,7 +107,7 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
 
         protected override bool OnGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
                 // 先排除被刪掉的Row

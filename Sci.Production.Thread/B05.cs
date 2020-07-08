@@ -13,7 +13,7 @@ namespace Sci.Production.Thread
     /// <summary>
     /// B05
     /// </summary>
-    public partial class B05 : Sci.Win.Tems.Input6
+    public partial class B05 : Win.Tems.Input6
     {
         private string keyWord = Sci.Env.User.Keyword;
         private DataTable gridTb;
@@ -41,7 +41,7 @@ namespace Sci.Production.Thread
         }
 
         /// <inheritdoc/>
-        protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["refno"].ToString();
 

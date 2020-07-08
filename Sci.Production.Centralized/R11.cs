@@ -16,7 +16,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// R11
     /// </summary>
-    public partial class R11 : Sci.Win.Tems.PrintForm
+    public partial class R11 : Win.Tems.PrintForm
     {
         private string factoryid;
         private string countryid;
@@ -385,7 +385,7 @@ from #data";
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.dt_All = null;
             this.dt_Tmp = null;
@@ -766,7 +766,7 @@ order by FactorySort
             #endregion
 
             #region --匯出Excel
-            Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Centralized_R11_Transportation_Cost_Material_Import_clearance.xltx");
+            SaveXltReportCls xl = new SaveXltReportCls("Centralized_R11_Transportation_Cost_Material_Import_clearance.xltx");
             xl.BoOpenFile = true;
             SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(this.dt_All);
             xdt_All.ShowHeader = true;

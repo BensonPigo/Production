@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R37 : Sci.Win.Tems.PrintForm
+    public partial class R37 : Win.Tems.PrintForm
     {
         string factory;
         string spno1;
@@ -19,7 +19,8 @@ namespace Sci.Production.Warehouse
         string Stocktype;
         string Reason;
         string mdivision;
-        DateTime? issueDelivery1, issueDelivery2;
+        DateTime? issueDelivery1;
+        DateTime? issueDelivery2;
         DataTable printData;
 
         public R37(ToolStripMenuItem menuitem)
@@ -43,7 +44,7 @@ namespace Sci.Production.Warehouse
 
             // Combo DataSource設定
             DataTable dtReason;
-            Ict.DualResult cbResult;
+            DualResult cbResult;
             if (cbResult = DBProxy.Current.Select(null, @"
 select [ReasonDesc]='ALL','' as id
 union all

@@ -3153,39 +3153,39 @@ and ID != '{1}'",
 set TotalShipQty = @ttlShipQty, TotalCTNQty = @ttlCTNQty, TotalNW = @ttlNW, TotalNNW = @ttlNNW, TotalGW = @ttlGW, TotalCBM = @ttlCBM
 where ID = @INVNo";
                     #region 準備sql參數資料
-                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+                    SqlParameter sp1 = new SqlParameter();
                     sp1.ParameterName = "@ttlShipQty";
                     sp1.Value = MyUtility.Convert.GetInt(summaryData.Rows[0]["ShipQty"]) + MyUtility.Convert.GetInt(currentMaintain["ShipQty"]);
 
-                    System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+                    SqlParameter sp2 = new SqlParameter();
                     sp2.ParameterName = "@ttlCTNQty";
                     sp2.Value = MyUtility.Convert.GetInt(summaryData.Rows[0]["CTNQty"]) + MyUtility.Convert.GetInt(currentMaintain["CTNQty"]);
 
-                    System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+                    SqlParameter sp3 = new SqlParameter();
                     sp3.ParameterName = "@ttlNW";
                     sp3.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["NW"]) + MyUtility.Convert.GetDouble(currentMaintain["NW"]), 2);
 
-                    System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+                    SqlParameter sp4 = new SqlParameter();
                     sp4.ParameterName = "@ttlNNW";
                     sp4.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["NNW"]) + MyUtility.Convert.GetDouble(currentMaintain["NNW"]), 2);
 
-                    System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
+                    SqlParameter sp5 = new SqlParameter();
                     sp5.ParameterName = "@ttlGW";
 
                     // ISP20181015 GW抓到小數點後3位
                     sp5.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["GW"]) + MyUtility.Convert.GetDouble(currentMaintain["GW"]), 3);
 
-                    System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
+                    SqlParameter sp6 = new SqlParameter();
                     sp6.ParameterName = "@ttlCBM";
 
                     // ISP20181015 CBM抓到小數點後4位
                     sp6.Value = MyUtility.Convert.GetDouble(summaryData.Rows[0]["CBM"]) + MyUtility.Convert.GetDouble(currentMaintain["CBM"]);
 
-                    System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
+                    SqlParameter sp7 = new SqlParameter();
                     sp7.ParameterName = "@INVNo";
                     sp7.Value = currentMaintain["INVNo"].ToString();
 
-                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                    IList<SqlParameter> cmds = new List<SqlParameter>();
                     cmds.Add(sp1);
                     cmds.Add(sp2);
                     cmds.Add(sp3);

@@ -4,7 +4,7 @@ using Ict.Win;
 
 namespace Sci.Production.PublicForm
 {
-    public partial class PFHis : Sci.Win.Subs.Input4
+    public partial class PFHis : Win.Subs.Input4
     {
         private DataRow drOrders;
 

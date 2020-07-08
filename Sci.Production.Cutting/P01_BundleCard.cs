@@ -6,7 +6,7 @@ using Sci.Data;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P01_BundleCard : Sci.Win.Subs.Base
+    public partial class P01_BundleCard : Win.Subs.Base
     {
         private string cutid;
         private string M;

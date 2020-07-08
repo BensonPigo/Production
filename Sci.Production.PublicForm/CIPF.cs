@@ -9,7 +9,7 @@ namespace Sci.Production.PublicForm
     /// <summary>
     /// CIPF
     /// </summary>
-    public partial class CIPF : Sci.Win.Subs.Input4
+    public partial class CIPF : Win.Subs.Input4
     {
         private DataTable Detaildt;
 

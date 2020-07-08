@@ -12,14 +12,15 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R45 : Sci.Win.Tems.PrintForm
+    public partial class R45 : Win.Tems.PrintForm
     {
         private DataTable printData;
         private StringBuilder sqlWhere = new StringBuilder();
         string SubProcess;
         string strExcelName;
 
-        public R45(ToolStripMenuItem menuitem) : base(menuitem)
+        public R45(ToolStripMenuItem menuitem)
+            : base(menuitem)
         {
             this.InitializeComponent();
 
@@ -124,9 +125,6 @@ bd.BundleGroup
                     "CASE WHEN bd.Patterncode = 'ALLPARTS' THEN bdap.PatternDesc ELSE bd.PatternDesc END --basic from 「Extend All Parts」 is checked or not"
                     :
                     "bd.PatternDesc")}
-
-
-
 ,[SubProcessID]= SubProcess.SubProcessID
 ,w.CutCellID
 ,bd.Parts
@@ -238,7 +236,7 @@ WHERE 1=1
 
             #endregion
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R45.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R45.xltx"); // 預先開啟excel app
 
             for (int i = 0; i < DataList.Count; i++)
             {
@@ -246,8 +244,8 @@ WHERE 1=1
                 if (i > 0)
                 {
                     // 複製第一頁Sheet
-                    Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1];
-                    Microsoft.Office.Interop.Excel.Worksheet worksheetn = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1];
+                    Excel.Worksheet worksheet1 = (Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1];
+                    Excel.Worksheet worksheetn = (Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1];
                     worksheet1.Copy(worksheetn);
                 }
             }
@@ -261,7 +259,7 @@ WHERE 1=1
                 }
 
                 // 取得工作表
-                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];
+                Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];
 
                 // 將datatable copy to excel
                 MyUtility.Excel.CopyToXls(DataList[i], null, "Subcon_R45.xltx", headerRow: 8, excelApp: objApp, wSheet: objSheets, showExcel: false, showSaveMsg: false);
@@ -334,7 +332,7 @@ WHERE 1=1
 
             #region Save Excel
             this.strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R45");
-            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(this.strExcelName);
             workbook.Close();
             objApp.Quit();

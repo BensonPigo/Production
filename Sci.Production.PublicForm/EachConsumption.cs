@@ -10,7 +10,7 @@ using Sci.Production.PublicPrg;
 #pragma warning disable 0414
 namespace Sci.Production.PublicForm
 {
-    public partial class EachConsumption : Sci.Win.Subs.Input4Plus
+    public partial class EachConsumption : Win.Subs.Input4Plus
     {
         public EachConsumption()
         {
@@ -69,7 +69,7 @@ namespace Sci.Production.PublicForm
             }
         }
 
-        protected override Ict.DualResult OnRequery(out DataTable datas)
+        protected override DualResult OnRequery(out DataTable datas)
         {
             // return base.OnRequery();
             datas = null;
@@ -199,7 +199,7 @@ for xml path('')),1,1,'')  ", row["id"], row["Ukey"]), out dr))
                 return;
             }
 
-            var frm = new Sci.Production.PublicForm.EachConsumption_Detail(false, dr["ID"].ToString(), dr["ukey"].ToString(), this.detailgrid.GetDataRow(this.detailgrid.GetSelectedRowIndex())["colorid"].ToString());
+            var frm = new EachConsumption_Detail(false, dr["ID"].ToString(), dr["ukey"].ToString(), this.detailgrid.GetDataRow(this.detailgrid.GetSelectedRowIndex())["colorid"].ToString());
             frm.ShowDialog(this);
         }
 
@@ -211,7 +211,7 @@ for xml path('')),1,1,'')  ", row["id"], row["Ukey"]), out dr))
                 return;
             }
 
-            var frm = new Sci.Production.PublicForm.EachConsumption_DownloadIdList(false, dr["ID"].ToString(), null, null);
+            var frm = new EachConsumption_DownloadIdList(false, dr["ID"].ToString(), null, null);
             frm.ShowDialog(this);
         }
 
@@ -223,7 +223,7 @@ for xml path('')),1,1,'')  ", row["id"], row["Ukey"]), out dr))
                 return;
             }
 
-            var frm = new Sci.Production.PublicForm.EachConsumption_SwitchWorkOrder(dr["ID"].ToString());
+            var frm = new EachConsumption_SwitchWorkOrder(dr["ID"].ToString());
             frm.ShowDialog(this);
         }
     }

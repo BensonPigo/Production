@@ -6,13 +6,13 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Class
 {
-    public partial class txtMdivision : Sci.Win.UI.TextBox
+    public partial class txtMdivision : Win.UI.TextBox
     {
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from Production.dbo.MDivision WITH (NOLOCK) ", "8", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID from Production.dbo.MDivision WITH (NOLOCK) ", "8", this.Text, false, ",");
             item.Size = new System.Drawing.Size(300, 250);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)

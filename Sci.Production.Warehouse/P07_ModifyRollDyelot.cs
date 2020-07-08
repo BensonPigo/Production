@@ -11,7 +11,7 @@ using System.Transactions;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P07_ModifyRollDyelot : Sci.Win.Subs.Base
+    public partial class P07_ModifyRollDyelot : Win.Subs.Base
     {
         DataTable source;
         DataTable dtGridDyelot;
@@ -37,7 +37,7 @@ namespace Sci.Production.Warehouse
             this.di_stocktype.Add("I", "Inventory");
             this.listControlBindingSource1.DataSource = this.source;
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings actqty = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings actqty = new DataGridViewGeneratorNumericColumnSettings();
             actqty.CellValidating += (s, e) =>
             {
                 if (e.RowIndex == -1)

@@ -12,7 +12,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P14
     /// </summary>
-    public partial class P16 : Sci.Win.Tems.QueryForm
+    public partial class P16 : Win.Tems.QueryForm
     {
         /// <summary>
         /// P16

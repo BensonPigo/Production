@@ -11,7 +11,7 @@ namespace Sci.Production.Cutting
     /// <summary>
     /// B08
     /// </summary>
-    public partial class B08 : Sci.Win.Tems.Input6
+    public partial class B08 : Win.Tems.Input6
     {
         /// <summary>
         /// B08

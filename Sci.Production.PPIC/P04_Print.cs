@@ -10,7 +10,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P04_Print
     /// </summary>
-    public partial class P04_Print : Sci.Win.Tems.PrintForm
+    public partial class P04_Print : Win.Tems.PrintForm
     {
         private string style1;
         private string style2;
@@ -42,7 +42,7 @@ namespace Sci.Production.PPIC
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlCmd = string.Format(
                 @"select s.ID,s.SeasonID,s.BrandID,s.ProgramID,s.Model,s.Description,s.StyleName,

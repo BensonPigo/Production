@@ -13,10 +13,10 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P06
     /// </summary>
-    public partial class P06 : Sci.Win.Tems.QueryForm
+    public partial class P06 : Win.Tems.QueryForm
     {
         private DataTable gridData;
-        private Ict.Win.DataGridViewGeneratorDateColumnSettings cutoffDate = new Ict.Win.DataGridViewGeneratorDateColumnSettings();
+        private DataGridViewGeneratorDateColumnSettings cutoffDate = new DataGridViewGeneratorDateColumnSettings();
         private DataGridViewGeneratorNumericColumnSettings clogctn = new DataGridViewGeneratorNumericColumnSettings();
 
         /// <summary>
@@ -374,7 +374,7 @@ drop table #tmpClocationids,#tmpIDSeq,#tmp1,#tmp2,#Order_QtyShip_Detail,#MtlForm
                 return;
             }
 
-            Sci.Production.PPIC.P06_Print callNextForm = new Sci.Production.PPIC.P06_Print((DataTable)this.listControlBindingSource1.DataSource);
+            P06_Print callNextForm = new P06_Print((DataTable)this.listControlBindingSource1.DataSource);
             callNextForm.ShowDialog(this);
         }
     }

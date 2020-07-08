@@ -11,7 +11,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// R05
     /// </summary>
-    public partial class R05 : Sci.Win.Tems.PrintForm
+    public partial class R05 : Win.Tems.PrintForm
     {
         private DataTable _printData;
         private DateTime? _apvDate1;
@@ -60,7 +60,7 @@ namespace Sci.Production.PPIC
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"

@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Centralized
 {
-    public partial class IE_B13 : Sci.Win.Tems.Input1
+    public partial class IE_B13 : Win.Tems.Input1
     {
         public IE_B13(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -22,7 +22,7 @@ namespace Sci.Production.Centralized
             base.OnFormLoaded();
 
             // 新增Upload File from excel 按鈕
-            Sci.Win.UI.Button btn = new Win.UI.Button();
+            Win.UI.Button btn = new Win.UI.Button();
             btn.Text = "Upload File";
             btn.Click += new EventHandler(this.BtnUploadFile_Click);
             this.browsetop.Controls.Add(btn);
@@ -188,7 +188,7 @@ FROM OperationDesc WITH (NOLOCK)
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Centralized_IE_B13.xltx"); // 預先開啟excel app
 
-            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Centralized_IE_B13.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Centralized_IE_B13.xltx", objApp);
 
             com.ColumnsAutoFit = false;
             com.WriteTable(printData, 2);

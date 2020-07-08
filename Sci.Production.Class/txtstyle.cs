@@ -5,7 +5,7 @@ using Ict;
 
 namespace Sci.Production.Class
 {
-    public partial class txtstyle : Sci.Win.UI.TextBox
+    public partial class txtstyle : Win.UI.TextBox
     {
         public txtstyle()
         {
@@ -63,7 +63,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item;
+            Win.Tools.SelectItem item;
             string selectCommand;
             selectCommand = "select ID,SeasonID,Description,BrandID from Production.dbo.Style WITH (NOLOCK) where Junk = 0 order by ID";
             if (this.brandObject != null && !string.IsNullOrWhiteSpace((string)this.brandObject.Text))
@@ -71,7 +71,7 @@ namespace Sci.Production.Class
                 selectCommand = string.Format("select ID,SeasonID,Description,BrandID from Production.dbo.Style WITH (NOLOCK) where Junk = 0 and BrandID = '{0}' order by ID", this.brandObject.Text);
             }
 
-            item = new Sci.Win.Tools.SelectItem(selectCommand, "12,5,38,10", this.Text);
+            item = new Win.Tools.SelectItem(selectCommand, "12,5,38,10", this.Text);
             item.Size = new System.Drawing.Size(757, 530);
             DialogResult returnResult = item.ShowDialog();
 

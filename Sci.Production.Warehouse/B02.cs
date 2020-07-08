@@ -9,7 +9,7 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class B02 : Sci.Win.Tems.Input1
+    public partial class B02 : Win.Tems.Input1
     {
         public B02(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -52,7 +52,7 @@ namespace Sci.Production.Warehouse
         // 存檔前檢查
         protected override bool ClickSaveBefore()
         {
-            if (this.CurrentMaintain["ID"].ToString().IndexOfAny(new char[] { ','}, 0) > -1)
+            if (this.CurrentMaintain["ID"].ToString().IndexOfAny(new char[] { ',' }, 0) > -1)
             {
                 MyUtility.Msg.WarningBox("< Code > can not have ',' !");
                 this.txtCode.Focus();

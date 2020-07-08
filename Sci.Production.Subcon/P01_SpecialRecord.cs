@@ -8,7 +8,7 @@ using Ict.Win;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P01_SpecialRecord : Sci.Win.Subs.Base
+    public partial class P01_SpecialRecord : Win.Subs.Base
     {
         DataTable dt_artworkpo_detail;
         DataRow dr;
@@ -44,7 +44,7 @@ namespace Sci.Production.Subcon
         {
             base.OnFormLoaded();
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings pos = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings pos = new DataGridViewGeneratorNumericColumnSettings();
             pos.CellValidating += (s, e) =>
             {
                 DataRow ddr = this.gridSpecialRecord.GetDataRow<DataRow>(e.RowIndex);
@@ -52,7 +52,7 @@ namespace Sci.Production.Subcon
                 ddr["Amount"] = Convert.ToDecimal(ddr["UnitPrice"].ToString()) * (decimal)e.FormattedValue;
             };
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
                 {
                     DataRow ddr = this.gridSpecialRecord.GetDataRow<DataRow>(e.RowIndex);
@@ -179,7 +179,7 @@ left join artworktype  ccc WITH (NOLOCK) on  ccc.ID = aa.artworktypeid
 outer apply(select ott.price from Order_TmsCost ott where ott.artworktypeid = aa.artworktypeid and ott.id = aa.orderid)bb
 group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery,ccc.isArtwork ,oa.Cost,bb.Price,aaa.POID ";
 
-                Ict.DualResult result;
+                DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd, out this.dtArtwork))
                 {
                     if (this.dtArtwork.Rows.Count == 0)
@@ -266,18 +266,18 @@ group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery,ccc
 
         private void val(object sender, CancelEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(((Sci.Win.UI.TextBox)sender).Text))
+            if (string.IsNullOrWhiteSpace(((Win.UI.TextBox)sender).Text))
             {
                 return;
             }
 
-            if (!MyUtility.Check.Seek(string.Format("select POID from orders WITH (NOLOCK) where id='{0}'", ((Sci.Win.UI.TextBox)sender).Text), null))
+            if (!MyUtility.Check.Seek(string.Format("select POID from orders WITH (NOLOCK) where id='{0}'", ((Win.UI.TextBox)sender).Text), null))
             {
-                MyUtility.Msg.WarningBox(string.Format("SP# ({0}) is not found!", ((Sci.Win.UI.TextBox)sender).Text));
+                MyUtility.Msg.WarningBox(string.Format("SP# ({0}) is not found!", ((Win.UI.TextBox)sender).Text));
                 return;
             }
 
-            string category = MyUtility.GetValue.Lookup(string.Format("select category from orders WITH (NOLOCK) where ID = '{0}' ", ((Sci.Win.UI.TextBox)sender).Text), null);
+            string category = MyUtility.GetValue.Lookup(string.Format("select category from orders WITH (NOLOCK) where ID = '{0}' ", ((Win.UI.TextBox)sender).Text), null);
             string sqlCheckArtwork = string.Empty;
             if (this.poType.Equals("O"))
             {
@@ -294,7 +294,7 @@ group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery,ccc
             bool isArtworkCheckNG = MyUtility.Check.Seek(sqlCheckArtwork);
             if (category != "S" && isArtworkCheckNG)
             {
-                ((Sci.Win.UI.TextBox)sender).Text = string.Empty;
+                ((Win.UI.TextBox)sender).Text = string.Empty;
                 e.Cancel = true;
                 if (this.poType.Equals("O"))
                 {

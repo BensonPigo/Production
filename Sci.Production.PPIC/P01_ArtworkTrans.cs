@@ -8,7 +8,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_ArtworkTrans
     /// </summary>
-    public partial class P01_ArtworkTrans : Sci.Win.Subs.Base
+    public partial class P01_ArtworkTrans : Win.Subs.Base
     {
         private string orderID;
 

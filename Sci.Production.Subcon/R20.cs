@@ -9,7 +9,7 @@ using Sci.Utility.Excel;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R20 : Sci.Win.Tems.PrintForm
+    public partial class R20 : Win.Tems.PrintForm
     {
         private string type;
         private string supplier;
@@ -170,7 +170,7 @@ namespace Sci.Production.Subcon
             this.SetCount(this.dtPrint.Rows.Count);
 
             // 建立範本物件
-            Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("SubCon_R20.xltx")
+            SaveXltReportCls xl = new SaveXltReportCls("SubCon_R20.xltx")
             {
                 BoOpenFile = true,
             };

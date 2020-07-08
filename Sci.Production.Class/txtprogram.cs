@@ -4,7 +4,7 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtprogram : Sci.Win.UI.TextBox
+    public partial class txtprogram : Win.UI.TextBox
     {
         private string brand;
         private Control brandObject;    // 欄位.存入要取值的<控制項>
@@ -29,7 +29,7 @@ namespace Sci.Production.Class
             base.OnPopUp(e);
             this.brand = this.brandObject.Text;
             string sql = string.Format("Select id,BrandID from Program WITH (NOLOCK) where Brandid = '{0}'", this.brand);
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "12,8", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "12,8", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

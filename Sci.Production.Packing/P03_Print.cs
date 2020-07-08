@@ -11,7 +11,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Pcking_P03_Print
     /// </summary>
-    public partial class P03_Print : Sci.Win.Tems.PrintForm
+    public partial class P03_Print : Win.Tems.PrintForm
     {
         private DataRow masterData;
         private int orderQty;
@@ -71,7 +71,7 @@ namespace Sci.Production.Packing
 
         private void RadioBarcodePrint_CheckedChanged(object sender, EventArgs e)
         {
-            this.ControlPrintFunction(((Sci.Win.UI.RadioButton)sender).Checked);
+            this.ControlPrintFunction(((Win.UI.RadioButton)sender).Checked);
             this.checkBoxCountry.Enabled = this.radioNewBarcodePrint.Checked;
             this.checkBoxCountry.Checked = this.radioNewBarcodePrint.Checked;
         }
@@ -112,7 +112,7 @@ namespace Sci.Production.Packing
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             if (this.reportType == "1" || this.reportType == "2")
             {
@@ -285,11 +285,11 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                 return new DualResult(false, "Data not found.");
             }
 
-            Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
+            Word._Application winword = new Word.Application();
             winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
             winword.Visible = false;
             object printFile;
-            Microsoft.Office.Interop.Word._Document document;
+            Word._Document document;
             Word.Table tables = null;
 
             printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_Shipping mark.dotx";
@@ -433,11 +433,11 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                 return new DualResult(false, "Data not found.");
             }
 
-            Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
+            Word._Application winword = new Word.Application();
             winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
             winword.Visible = false;
             object printFile;
-            Microsoft.Office.Interop.Word._Document document;
+            Word._Document document;
             Word.Table tables = null;
 
             printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_Shipping mark To China.dotx";
@@ -574,11 +574,11 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                 return new DualResult(false, "Data not found.");
             }
 
-            Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
+            Word._Application winword = new Word.Application();
             winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
             winword.Visible = false;
             object printFile;
-            Microsoft.Office.Interop.Word._Document document;
+            Word._Document document;
             Word.Table tables = null;
 
             printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_Shipping mark To Usa Ind.dotx";
@@ -655,35 +655,35 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
 
         private void RdbtnShippingMarkToChina_CheckedChanged(object sender, EventArgs e)
         {
-            this.ControlPrintFunction(((Sci.Win.UI.RadioButton)sender).Checked);
+            this.ControlPrintFunction(((Win.UI.RadioButton)sender).Checked);
             this.checkBoxCountry.Enabled = this.radioNewBarcodePrint.Checked;
             this.checkBoxCountry.Checked = this.radioNewBarcodePrint.Checked;
         }
 
         private void RdbtnShippingMarkToUsaInd_CheckedChanged(object sender, EventArgs e)
         {
-            this.ControlPrintFunction(((Sci.Win.UI.RadioButton)sender).Checked);
+            this.ControlPrintFunction(((Win.UI.RadioButton)sender).Checked);
             this.checkBoxCountry.Enabled = this.radioNewBarcodePrint.Checked;
             this.checkBoxCountry.Checked = this.radioNewBarcodePrint.Checked;
         }
 
         private void RadioMDform_CheckedChanged(object sender, EventArgs e)
         {
-            this.ControlPrintFunction(!((Sci.Win.UI.RadioButton)sender).Checked);
-            this.checkBoxCountry.Enabled = !((Sci.Win.UI.RadioButton)sender).Checked;
-            this.checkBoxCountry.Checked = !((Sci.Win.UI.RadioButton)sender).Checked;
+            this.ControlPrintFunction(!((Win.UI.RadioButton)sender).Checked);
+            this.checkBoxCountry.Enabled = !((Win.UI.RadioButton)sender).Checked;
+            this.checkBoxCountry.Checked = !((Win.UI.RadioButton)sender).Checked;
         }
 
         private void RadioQRcodePrint_CheckedChanged(object sender, EventArgs e)
         {
-            this.ControlPrintFunction(((Sci.Win.UI.RadioButton)sender).Checked);
+            this.ControlPrintFunction(((Win.UI.RadioButton)sender).Checked);
             this.checkBoxCountry.Enabled = this.radioNewBarcodePrint.Checked;
             this.checkBoxCountry.Checked = this.radioNewBarcodePrint.Checked;
         }
 
         private void RadioCustCTN_CheckedChanged(object sender, EventArgs e)
         {
-            this.ControlPrintFunction(((Sci.Win.UI.RadioButton)sender).Checked);
+            this.ControlPrintFunction(((Win.UI.RadioButton)sender).Checked);
             this.checkBoxCountry.Enabled = !this.radioCustCTN.Checked;
             this.checkBoxCountry.Checked = !this.radioCustCTN.Checked;
         }

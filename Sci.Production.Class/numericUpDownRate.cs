@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    public class numericUpDownRate : Sci.Win.UI.NumericUpDown
+    public class numericUpDownRate : Win.UI.NumericUpDown
     {
         protected override void UpdateEditText()
         {

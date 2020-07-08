@@ -12,7 +12,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P43
     /// </summary>
-    public partial class P43 : Sci.Win.Tems.Input6
+    public partial class P43 : Win.Tems.Input6
     {
         /// <summary>
         /// P43
@@ -108,7 +108,7 @@ where agd.id = '{0}'",
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     string sqlCmd = $"Select distinct a.Article from Order_Qty a with (nolock) where a.id = '{this.CurrentDetailData["orderid"]}'";
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,10", this.CurrentDetailData["Article"].ToString());
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "10,10", this.CurrentDetailData["Article"].ToString());
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {
@@ -175,7 +175,7 @@ where agd.id = '{0}'",
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     string sqlCmd = $"Select distinct a.SizeCode from Order_Qty a with (nolock) where a.id = '{this.CurrentDetailData["orderid"]}' and  a.Article = '{this.CurrentDetailData["Article"]}'";
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,10", this.CurrentDetailData["SizeCode"].ToString());
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "10,10", this.CurrentDetailData["SizeCode"].ToString());
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {
@@ -246,7 +246,7 @@ where agd.id = '{0}'",
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     string sqlCmd = "Select distinct ID, Description from ShippingReason a with (nolock) WHERE Type='AG' AND junk = 0";
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,20", this.CurrentDetailData["ReasonID"].ToString());
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "10,20", this.CurrentDetailData["ReasonID"].ToString());
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {

@@ -9,7 +9,7 @@ using Ict;
 
 namespace Sci.Production.Class
 {
-    public partial class txtcloglocation : Sci.Win.UI.TextBox
+    public partial class txtcloglocation : Win.UI.TextBox
     {
         public txtcloglocation()
         {
@@ -34,7 +34,7 @@ namespace Sci.Production.Class
                 return;
             }
 
-            Sci.Win.Tems.Base myform = (Sci.Win.Tems.Base)this.FindForm();
+            Win.Tems.Base myform = (Win.Tems.Base)this.FindForm();
             if (myform.EditMode)
             {
                 string sql = "select ID,Description,MDivisionID from ClogLocation WITH (NOLOCK) order by ID";
@@ -45,7 +45,7 @@ namespace Sci.Production.Class
 
                 DataTable tbClogLocation;
                 DBProxy.Current.Select("Production", sql, out tbClogLocation);
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbClogLocation, "ID,Description,MDivisionID", "10,40,10", this.Text, "ID,Description,M");
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(tbClogLocation, "ID,Description,MDivisionID", "10,40,10", this.Text, "ID,Description,M");
 
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel)
@@ -110,7 +110,7 @@ namespace Sci.Production.Class
                     DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
                     // Parent form 若是非編輯狀態就 return
-                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                    if (!((Win.Forms.Base)grid.FindForm()).EditMode)
                     {
                         return;
                     }
@@ -119,7 +119,7 @@ namespace Sci.Production.Class
                     DataTable tbClogLocation;
                     string sql = $@"select ID,Description,MDivisionID from ClogLocation WITH (NOLOCK) where MDivisionID = '{mdivisionID.ToString().Trim()}' and junk=0 order by ID ";
                     DBProxy.Current.Select("Production", sql, out tbClogLocation);
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbClogLocation, "ID,Description,MDivisionID", "10,40,10", row["ClogLocationID"].ToString(), "ID,Description,M");
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(tbClogLocation, "ID,Description,MDivisionID", "10,40,10", row["ClogLocationID"].ToString(), "ID,Description,M");
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -137,7 +137,7 @@ namespace Sci.Production.Class
                 DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
                 // Parent form 若是非編輯狀態就 return
-                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                if (!((Win.Forms.Base)grid.FindForm()).EditMode)
                 {
                     return;
                 }

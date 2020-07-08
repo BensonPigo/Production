@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P13_Import : Sci.Win.Subs.Base
+    public partial class P13_Import : Win.Subs.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
@@ -117,7 +117,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 AND Ord
                 }
 
                 this.ShowWaitMessage("Data Loading....");
-                Ict.DualResult result;
+                DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out this.dtArtwork))
                 {
                     if (this.dtArtwork.Rows.Count == 0)
@@ -149,7 +149,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 AND Ord
         {
             base.OnFormLoaded();
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
                 {
                     if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))

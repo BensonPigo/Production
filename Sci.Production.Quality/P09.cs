@@ -12,7 +12,7 @@ using Sci.DB;
 
 namespace Sci.Production.Quality
 {
-    public partial class P09 : Sci.Win.Tems.QueryForm
+    public partial class P09 : Win.Tems.QueryForm
     {
         public P09(ToolStripMenuItem menuitem)
             : base(menuitem)

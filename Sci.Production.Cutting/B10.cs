@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
-    public partial class B10 : Sci.Win.Tems.Input7
+    public partial class B10 : Win.Tems.Input7
     {
         private DataTable Dt;
 

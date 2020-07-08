@@ -15,7 +15,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// P04
     /// </summary>
-    public partial class P04 : Sci.Win.Tems.QueryForm
+    public partial class P04 : Win.Tems.QueryForm
     {
         private Dictionary<string, string> di_inhouseOsp2 = new Dictionary<string, string>();
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
@@ -106,7 +106,7 @@ namespace Sci.Production.Planning
                 #endregion
             };
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
             ts1.CellMouseDoubleClick += (s, e) =>
             {
                 if (e.RowIndex < 0)
@@ -141,12 +141,12 @@ namespace Sci.Production.Planning
                 }
             };
 
-            Ict.Win.DataGridViewGeneratorDateColumnSettings ts2 = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorDateColumnSettings ts2 = new DataGridViewGeneratorDateColumnSettings();
             ts2.CellValidating += (s, e) =>
             {
                 if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                    DataRow dr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
                     if (MyUtility.Check.Empty(dr["tapeoffline"]))
                     {
                         return;
@@ -160,12 +160,12 @@ namespace Sci.Production.Planning
                 }
             };
 
-            Ict.Win.DataGridViewGeneratorDateColumnSettings ts3 = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorDateColumnSettings ts3 = new DataGridViewGeneratorDateColumnSettings();
             ts3.CellValidating += (s, e) =>
             {
                 if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                    DataRow dr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
                     if (MyUtility.Check.Empty(dr["tapeinline"]))
                     {
                         return;
@@ -476,7 +476,7 @@ where   a.Finished = 0
             this.ShowWaitMessage("Querying.... Please wait....");
             int wkdays = 0;
             DateTime inline;
-            Ict.DualResult result;
+            DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out this.dtData))
             {
                 if (this.dtData.Rows.Count == 0)

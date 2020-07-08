@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P46 : Sci.Win.Tems.Input6
+    public partial class P46 : Win.Tems.Input6
     {
         public P46(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -192,7 +192,7 @@ where AL2.Id='{0}' ", masterID);
         {
             #region -- Current Qty Vaild 判斷 --
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
 
             ns.CellValidating += (s, e) =>
             {
@@ -213,7 +213,7 @@ where AL2.Id='{0}' ", masterID);
 
             #endregion
             #region -- Reason ID 右鍵開窗 --
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
@@ -230,7 +230,7 @@ where AL2.Id='{0}' ", masterID);
                         return;
                     }
 
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                         poitems,
                         "ID,Name",
                         "5,150",
@@ -467,7 +467,7 @@ WHERE  AL2.id = '{0}' ", this.CurrentMaintain["id"]);
         // Import
         private void btnImport_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P46_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P46_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }

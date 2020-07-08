@@ -15,7 +15,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_P05
     /// </summary>
-    public partial class P05 : Sci.Win.Tems.QueryForm
+    public partial class P05 : Win.Tems.QueryForm
     {
         /// <summary>
         /// P05
@@ -304,9 +304,9 @@ DROP TABLE  #tmp_NoRepeat,#MainTable
             printDT.Columns.Remove("Selected");
             printDT.Columns.Remove("rn");
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Logistic_P05.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Logistic_P05.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(printDT, string.Empty, "Logistic_P05.xltx", 4, false, null, objApp); // 將datatable copy to excel
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             int r = printDT.Rows.Count;
             objSheets.get_Range(string.Format("A5:V{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
@@ -341,7 +341,7 @@ DROP TABLE  #tmp_NoRepeat,#MainTable
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Logistic_P05");
-            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             objApp.Quit();
@@ -403,7 +403,7 @@ group by a.orderid,o.CustPONo", out dtPrint);
             }
 
             Excel.Application objApp = new Excel.Application();
-            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Logistic_P05_ToDR.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Logistic_P05_ToDR.xltx", objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
             com.WriteTable(dtPrint, 2);
             worksheet.get_Range($"A2:D{MyUtility.Convert.GetString(1 + dtPrint.Rows.Count)}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous; // 畫線

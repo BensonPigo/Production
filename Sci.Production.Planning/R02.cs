@@ -12,7 +12,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// R02
     /// </summary>
-    public partial class R02 : Sci.Win.Tems.PrintForm
+    public partial class R02 : Win.Tems.PrintForm
     {
         private string factory;
         private string mdivision;
@@ -95,7 +95,7 @@ namespace Sci.Production.Planning
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sql parameters declare --
             System.Data.SqlClient.SqlParameter sp_spno1 = new System.Data.SqlClient.SqlParameter();
@@ -341,7 +341,7 @@ order by k.FactoryID,k.ID");
 
             if (this.checkIncludeFarmOutInDate.Checked)
             {
-                Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Planning_R02_Detail.xltx");
+                Utility.Excel.SaveXltReportCls x1 = new Utility.Excel.SaveXltReportCls("Planning_R02_Detail.xltx");
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R02_Detail.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Planning_R02_Detail.xltx", 6, false, null, objApp);      // 將datatable copy to excel
                 objApp.Visible = false;

@@ -8,7 +8,7 @@ namespace Sci.Production.SubProcess
     /// <summary>
     /// SubProcess_B04
     /// </summary>
-    public partial class B04 : Sci.Win.Tems.Input6
+    public partial class B04 : Win.Tems.Input6
     {
         /// <summary>
         /// B04
@@ -23,7 +23,7 @@ namespace Sci.Production.SubProcess
         // Type 右鍵開窗
         private void TxtType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                 @"Select  Id,ArtworkTypeId  from  subprocess  where isselection=1 and Junk=0  order by Id ",
                 "10,20",
                 this.txtType.Text);

@@ -9,7 +9,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P52_Import : Sci.Win.Subs.Base
+    public partial class P52_Import : Win.Subs.Base
     {
         private object stockType;
         private DataTable dtResultImportData;
@@ -76,7 +76,7 @@ select  [Location ID] = id
 from    mtllocation WITH (NOLOCK) 
 where   junk != '1'
         and StockType = '{0}'", this.stockType);
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(strLocation, "10,20", this.textBoxLocation.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(strLocation, "10,20", this.textBoxLocation.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

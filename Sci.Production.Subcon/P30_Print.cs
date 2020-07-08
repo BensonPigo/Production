@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P30_Print : Sci.Win.Tems.PrintForm
+    public partial class P30_Print : Win.Tems.PrintForm
     {
         DualResult result;
         DataTable dtHeader;
@@ -357,7 +357,7 @@ order by orderid,a.refno,threadcolorid", this.currentID);
             #endregion
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.TopMost = true;
             frm.Show();

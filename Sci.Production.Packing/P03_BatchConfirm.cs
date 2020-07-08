@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
-    public partial class P03_BatchConfirm : Sci.Win.Subs.Base
+    public partial class P03_BatchConfirm : Win.Subs.Base
     {
         DataTable dt_detail;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
@@ -135,7 +135,7 @@ where 1=1 and p1.Status='New' and p1.MDivisionID='{Sci.Env.User.Keyword}' and p1
             }
 
             this.ShowWaitMessage("Data Loading....");
-            Ict.DualResult result;
+            DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out this.dt_detail))
             {
                 if (this.dt_detail.Rows.Count == 0)

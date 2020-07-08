@@ -11,7 +11,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_B01_Print
     /// </summary>
-    public partial class B01_Print : Sci.Win.Tems.PrintForm
+    public partial class B01_Print : Win.Tems.PrintForm
     {
         private DataRow masterData;
         private string code1;
@@ -63,7 +63,7 @@ namespace Sci.Production.Logistic
         /// </summary>
         /// <param name="e">Win.ReportEventArgs</param>
         /// <returns>Result</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format("select ID from ClogLocation WITH (NOLOCK) where MDivisionID = '{0}' and Junk = 0", Sci.Env.User.Keyword));
@@ -104,10 +104,10 @@ namespace Sci.Production.Logistic
 
             this.SetCount(this.printData.Rows.Count);
             this.ShowWaitMessage("Data Loading ...");
-            Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
+            Word._Application winword = new Word.Application();
             winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
             winword.Visible = false;
-            Microsoft.Office.Interop.Word._Document document;
+            Word._Document document;
             Word.Table tables = null;
 
             object printFile = Sci.Env.Cfg.XltPathDir + "\\Logistic_B01_Barcode.dotx";

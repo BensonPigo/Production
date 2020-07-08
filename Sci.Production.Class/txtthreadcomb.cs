@@ -9,13 +9,13 @@ using Sci.Win.Tools;
 
 namespace Sci.Production.Class
 {
-    public partial class txtthreadcomb : Sci.Win.UI.TextBox
+    public partial class txtthreadcomb : Win.UI.TextBox
     {
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select id from threadcomb WITH (NOLOCK) where junk=0", "23", this.Text, false, ",");
+            SelectItem item = new SelectItem("Select id from threadcomb WITH (NOLOCK) where junk=0", "23", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -71,7 +71,7 @@ namespace Sci.Production.Class
                     DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
                     // Parent form 若是非編輯狀態就 return
-                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                    if (!((Win.Forms.Base)grid.FindForm()).EditMode)
                     {
                         return;
                     }
@@ -97,7 +97,7 @@ namespace Sci.Production.Class
                 DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
                 // Parent form 若是非編輯狀態就 return
-                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                if (!((Win.Forms.Base)grid.FindForm()).EditMode)
                 {
                     return;
                 }

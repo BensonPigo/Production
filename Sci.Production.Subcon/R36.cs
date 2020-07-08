@@ -9,14 +9,18 @@ using Ict;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R36 : Sci.Win.Tems.PrintForm
+    public partial class R36 : Win.Tems.PrintForm
     {
-        string ReportType;
+        string reportType;
         List<SqlParameter> ParameterList;
-        DataTable dt; string cmd;
-        DateTime? debitdate1; DateTime? debitdate2;
-        DateTime? aprdate1; DateTime? aprdate2;
-        string SDNo1; string SDNo2;
+        DataTable dt;
+        string cmd;
+        DateTime? debitdate1;
+        DateTime? debitdate2;
+        DateTime? aprdate1;
+        DateTime? aprdate2;
+        string SDNo1;
+        string SDNo2;
         string Supplier;
         string handle;
         string smr;
@@ -90,7 +94,7 @@ namespace Sci.Production.Subcon
             this.SettledDate2 = this.dateSettledDate.Value2;
             this.payment = this.comboPaymentSettled.SelectedItem.ToString();
 
-            this.ReportType = this.comboReportType.Text;
+            this.reportType = this.comboReportType.Text;
 
             this.ParameterList = new List<SqlParameter>();
 
@@ -613,10 +617,10 @@ OUTER APPLY(
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
-            switch (this.ReportType)
+            switch (this.reportType)
             {
                 case "Debit Note List":
                     res = DBProxy.Current.Select(string.Empty, this.cmd, this.ParameterList, out this.dt);
@@ -640,7 +644,7 @@ OUTER APPLY(
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            switch (this.ReportType)
+            switch (this.reportType)
             {
                 case "Debit Note List":
                     if (this.dt == null || this.dt.Rows.Count == 0)
@@ -688,8 +692,8 @@ OUTER APPLY(
 
             if ("Debit Note List".EqualString(this.comboReportType.Text))
             {
-                Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R36_DebitNote(LocalSupplier).xltx");
-                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(this.dt);
+                SaveXltReportCls x1 = new SaveXltReportCls("Subcon_R36_DebitNote(LocalSupplier).xltx");
+                SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(this.dt);
                 dt1.BoAutoFitRow = true;
                 x1.DicDatas.Add("##SD", dt1);
                 dt1.ShowHeader = false;
@@ -698,7 +702,7 @@ OUTER APPLY(
             }
             else if ("Summary".EqualString(this.comboReportType.Text))
             {
-                Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R36_DebitNote&ScheduleSummary(LocalSupplier).xltx");
+                SaveXltReportCls x1 = new SaveXltReportCls("Subcon_R36_DebitNote&ScheduleSummary(LocalSupplier).xltx");
                 string d1 = MyUtility.Check.Empty(this.debitdate1) ? string.Empty : Convert.ToDateTime(this.debitdate1).ToString("yyyy/MM/dd");
                 string d2 = MyUtility.Check.Empty(this.debitdate2) ? string.Empty : Convert.ToDateTime(this.debitdate2).ToString("yyyy/MM/dd");
                 string d3 = MyUtility.Check.Empty(this.aprdate1) ? string.Empty : Convert.ToDateTime(this.aprdate1).ToString("yyyy/MM/dd");
@@ -716,7 +720,7 @@ OUTER APPLY(
                 x1.DicDatas.Add("##FACTORY", this.factoryid);
                 x1.DicDatas.Add("##Status", this.status);
                 x1.DicDatas.Add("##PaymentSettled", this.payment);
-                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dtSummary1 = new SaveXltReportCls.XltRptTable(this.dtSummary);
+                SaveXltReportCls.XltRptTable dtSummary1 = new SaveXltReportCls.XltRptTable(this.dtSummary);
                 dtSummary1.BoAutoFitColumn = true;
                 x1.DicDatas.Add("##SD", dtSummary1);
                 dtSummary1.ShowHeader = false;
@@ -726,7 +730,7 @@ OUTER APPLY(
             }
             else if ("Detail".EqualString(this.comboReportType.Text))
             {
-                Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R36_DebitNoteDetail(LocalSupplier).xltx");
+                SaveXltReportCls x1 = new SaveXltReportCls("Subcon_R36_DebitNoteDetail(LocalSupplier).xltx");
                 string d1 = MyUtility.Check.Empty(this.debitdate1) ? string.Empty : Convert.ToDateTime(this.debitdate1).ToString("yyyy/MM/dd");
                 string d2 = MyUtility.Check.Empty(this.debitdate2) ? string.Empty : Convert.ToDateTime(this.debitdate2).ToString("yyyy/MM/dd");
                 string d3 = MyUtility.Check.Empty(this.aprdate1) ? string.Empty : Convert.ToDateTime(this.aprdate1).ToString("yyyy/MM/dd");
@@ -746,7 +750,7 @@ OUTER APPLY(
 
                 // SaveXltReportCls.xltRptTable xdt = new SaveXltReportCls.xltRptTable(dtDetail);
                 // xdt.boAutoFitColumn = true;
-                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dtDetail1 = new SaveXltReportCls.XltRptTable(this.dtDetail);
+                SaveXltReportCls.XltRptTable dtDetail1 = new SaveXltReportCls.XltRptTable(this.dtDetail);
                 dtDetail1.BoAutoFitColumn = true;
                 x1.DicDatas.Add("##SD", dtDetail1);
                 dtDetail1.ShowHeader = false;
@@ -756,7 +760,7 @@ OUTER APPLY(
             }
             else if ("Debit Schedule Detail".EqualString(this.comboReportType.Text))
             {
-                Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R36_DebitScheduleDetail(LocalSupplier).xltx");
+                SaveXltReportCls x1 = new SaveXltReportCls("Subcon_R36_DebitScheduleDetail(LocalSupplier).xltx");
                 string d1 = MyUtility.Check.Empty(this.debitdate1) ? string.Empty : Convert.ToDateTime(this.debitdate1).ToString("yyyy/MM/dd");
                 string d2 = MyUtility.Check.Empty(this.debitdate2) ? string.Empty : Convert.ToDateTime(this.debitdate2).ToString("yyyy/MM/dd");
                 string d3 = MyUtility.Check.Empty(this.aprdate1) ? string.Empty : Convert.ToDateTime(this.aprdate1).ToString("yyyy/MM/dd");
@@ -776,7 +780,7 @@ OUTER APPLY(
 
                 // SaveXltReportCls.xltRptTable xdt = new SaveXltReportCls.xltRptTable(dtSchedule);
                 // xdt.boAutoFitColumn = true;
-                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dtSchedule1 = new SaveXltReportCls.XltRptTable(this.dtSchedule);
+                SaveXltReportCls.XltRptTable dtSchedule1 = new SaveXltReportCls.XltRptTable(this.dtSchedule);
                 dtSchedule1.BoAutoFitColumn = true;
                 x1.DicDatas.Add("##SD", dtSchedule1);
                 dtSchedule1.ShowHeader = false;

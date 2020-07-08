@@ -16,7 +16,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_P03
     /// </summary>
-    public partial class P03 : Sci.Win.Tems.QueryForm
+    public partial class P03 : Win.Tems.QueryForm
     {
         /// <summary>
         /// P03
@@ -57,7 +57,7 @@ namespace Sci.Production.Logistic
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings col_chk = new Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings col_chk = new DataGridViewGeneratorCheckBoxColumnSettings();
             col_chk.CellValidating += (s, e) =>
             {
                 DataRow dr = this.gridReceiveDate.GetDataRow<DataRow>(e.RowIndex);

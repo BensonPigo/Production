@@ -7,9 +7,9 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P11_Detail : Sci.Win.Subs.Input8A
+    public partial class P11_Detail : Win.Subs.Input8A
     {
-        Sci.Win.MatrixHelper _matrix;
+        Win.MatrixHelper _matrix;
         string Orderid;
         public bool combo;
         public bool isSave;
@@ -58,7 +58,7 @@ namespace Sci.Production.Warehouse
             DataTable dtIssueBreakdown, dtX, dtY;
             #region -- matrix breakdown setting
             this.gridBreakDown.DataSource = this.listControlBindingSource1;
-            this._matrix = new Sci.Win.MatrixHelper(this, this.gridBreakDown, this.listControlBindingSource1); // 建立 Matrix 物件
+            this._matrix = new Win.MatrixHelper(this, this.gridBreakDown, this.listControlBindingSource1); // 建立 Matrix 物件
             this._matrix.XMap.Name = "sizecode";  // 對應到第三表格的 X 欄位名稱
             this._matrix.XOrder = "seq";
             this._matrix.YMap.Name = "article";  // 對應到第三表格的 Y 欄位名稱

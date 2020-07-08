@@ -7,7 +7,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_B05
     /// </summary>
-    public partial class B05 : Sci.Win.Tems.Input1
+    public partial class B05 : Win.Tems.Input1
     {
         /// <summary>
         /// B05
@@ -40,7 +40,7 @@ namespace Sci.Production.IE
 
         private void BtnThreadRatio_Click(object sender, EventArgs e)
         {
-            Sci.Production.IE.B05_ThreadRatio callNextForm = new Sci.Production.IE.B05_ThreadRatio(this.CurrentMaintain["ID"].ToString());
+            B05_ThreadRatio callNextForm = new B05_ThreadRatio(this.CurrentMaintain["ID"].ToString());
             DialogResult result = callNextForm.ShowDialog(this);
         }
     }

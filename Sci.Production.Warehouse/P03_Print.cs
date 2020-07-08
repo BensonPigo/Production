@@ -10,7 +10,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P03_Print : Sci.Win.Tems.PrintForm
+    public partial class P03_Print : Win.Tems.PrintForm
     {
         DataTable dt;
         DataRow CurrentDataRow;
@@ -56,7 +56,7 @@ namespace Sci.Production.Warehouse
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
@@ -370,7 +370,7 @@ namespace Sci.Production.Warehouse
             this.SetCount(this.dt.Rows.Count);
             if (this.radioPanel1.Value == this.radioMaterialStatus.Value)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-1.xltx"); // 預先開啟excel app
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-1.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Warehouse_P03_Print-1.xltx", 1, false, null, objApp);      // 將datatable copy to excel
                 Excel.Worksheet worksheet = objApp.Sheets[1];
 
@@ -395,7 +395,7 @@ namespace Sci.Production.Warehouse
             }
             else
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-2.xltx"); // 預先開啟excel app
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-2.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Warehouse_P03_Print-2.xltx", 1, false, null, objApp);      // 將datatable copy to excel
                 Excel.Worksheet worksheet = objApp.Sheets[1];
 

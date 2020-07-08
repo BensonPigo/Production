@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P60_Import : Sci.Win.Subs.Base
+    public partial class P60_Import : Win.Subs.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
@@ -141,7 +141,7 @@ Where b.Qty - b.InQty >0
                 cmds.Add(sp_category);
             }
 
-            Ict.DualResult result;
+            DualResult result;
             if (result = DBProxy.Current.Select(null, strSQLCmd, cmds, out this.dtArtwork))
             {
                 if (this.dtArtwork.Rows.Count == 0)
@@ -162,7 +162,7 @@ Where b.Qty - b.InQty >0
             base.OnFormLoaded();
             #region -- QTY 不可超過 On Road --
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.IsSupportNegative = true;
             ns.CellValidating += (s, e) =>
             {
@@ -178,7 +178,7 @@ Where b.Qty - b.InQty >0
             };
             #endregion
             #region Location Setting
-            Ict.Win.DataGridViewGeneratorTextColumnSettings locationSet = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings locationSet = new DataGridViewGeneratorTextColumnSettings();
             locationSet.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
@@ -230,7 +230,7 @@ where	Junk != 1
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataRow currentrow = this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex());
-                    Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("B", currentrow["location"].ToString());
+                    Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("B", currentrow["location"].ToString());
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {

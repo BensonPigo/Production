@@ -6,7 +6,7 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P15_Unfinish : Sci.Win.Subs.Base
+    public partial class P15_Unfinish : Win.Subs.Base
     {
         public static string TypeFabric = "F";
         public static string TypeAccessory = "A";

@@ -11,7 +11,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_P01_History
     /// </summary>
-    public partial class P01_History : Sci.Win.Subs.Base
+    public partial class P01_History : Win.Subs.Base
     {
         private DataTable gridData;
         private IList<string> comboBox1_RowSource = new List<string>();
@@ -142,14 +142,14 @@ order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3
         // Summary
         private void BtnSummary_Click(object sender, EventArgs e)
         {
-            Sci.Production.IE.P01_ArtworkSummary callNextForm;
+            P01_ArtworkSummary callNextForm;
             if (this.gridData.DefaultView.Count > 0)
             {
-                callNextForm = new Sci.Production.IE.P01_ArtworkSummary("TimeStudyHistory_Detail", MyUtility.Convert.GetLong(this.gridData.DefaultView[0]["ID"]));
+                callNextForm = new P01_ArtworkSummary("TimeStudyHistory_Detail", MyUtility.Convert.GetLong(this.gridData.DefaultView[0]["ID"]));
             }
             else
             {
-                callNextForm = new Sci.Production.IE.P01_ArtworkSummary("TimeStudyHistory_Detail", 0);
+                callNextForm = new P01_ArtworkSummary("TimeStudyHistory_Detail", 0);
             }
 
             DialogResult result = callNextForm.ShowDialog(this);
@@ -158,7 +158,7 @@ order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3
         // To Excel
         private void BtnToExcel_Click(object sender, EventArgs e)
         {
-            Sci.Production.IE.P01_History_Print callNextForm = new Sci.Production.IE.P01_History_Print(this.masterData, MyUtility.Convert.GetString(this.comboStatus.SelectedValue), MyUtility.Convert.GetString(this.displayCD.Value), MyUtility.Convert.GetInt(this.numTotalSewingTimePc.Value), MyUtility.Convert.GetInt(this.numNumOfSewer.Value));
+            P01_History_Print callNextForm = new P01_History_Print(this.masterData, MyUtility.Convert.GetString(this.comboStatus.SelectedValue), MyUtility.Convert.GetString(this.displayCD.Value), MyUtility.Convert.GetInt(this.numTotalSewingTimePc.Value), MyUtility.Convert.GetInt(this.numNumOfSewer.Value));
             DialogResult result = callNextForm.ShowDialog(this);
         }
     }

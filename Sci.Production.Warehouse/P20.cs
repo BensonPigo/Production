@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P20 : Sci.Win.Tems.QueryForm
+    public partial class P20 : Win.Tems.QueryForm
     {
         DataSet data = new DataSet();
         DataTable dtTpeIventory;
@@ -75,7 +75,7 @@ namespace Sci.Production.Warehouse
                  .Text("Reason", header: "Reason", width: Widths.AnsiChars(40))
                  ;
             #region -- Balance Qty 開窗 --
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ts6 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ts6 = new DataGridViewGeneratorNumericColumnSettings();
             ts6.CellMouseDoubleClick += (s, e) =>
             {
                 if (!this.EditMode)
@@ -86,7 +86,7 @@ namespace Sci.Production.Warehouse
                         return;
                     }
 
-                    var frm = new Sci.Production.Warehouse.P03_Transaction(dr, true);
+                    var frm = new P03_Transaction(dr, true);
                     frm.ShowDialog(this);
                 }
             };

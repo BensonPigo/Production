@@ -5,7 +5,7 @@ using Sci.Data;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P04_FabricIssueList : Sci.Win.Subs.Base
+    public partial class P04_FabricIssueList : Win.Subs.Base
     {
         DataTable gridTb;
         string cutplanid;

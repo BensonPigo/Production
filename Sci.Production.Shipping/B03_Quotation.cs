@@ -8,7 +8,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B03_Quotation
     /// </summary>
-    public partial class B03_Quotation : Sci.Win.Tems.Input1
+    public partial class B03_Quotation : Win.Tems.Input1
     {
         private DataRow motherData;
         private bool CanEdit = false;

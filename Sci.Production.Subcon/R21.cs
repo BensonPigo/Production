@@ -8,14 +8,15 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R21 : Sci.Win.Tems.PrintForm
+    public partial class R21 : Win.Tems.PrintForm
     {
         string category;
         string factory;
         string subcon;
         string mdivision;
         string orderby;
-        DateTime? APdate1, APdate2;
+        DateTime? APdate1;
+        DateTime? APdate2;
         DataTable printData;
 
         public R21(ToolStripMenuItem menuitem)
@@ -59,7 +60,7 @@ namespace Sci.Production.Subcon
         }
 
         // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- Sql Command --
             StringBuilder sqlCmd = new StringBuilder();

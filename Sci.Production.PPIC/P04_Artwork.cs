@@ -11,7 +11,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P04_Artwork
     /// </summary>
-    public partial class P04_Artwork : Sci.Win.Subs.Input4
+    public partial class P04_Artwork : Win.Subs.Input4
     {
         /// <summary>
         /// P04_Artwork
@@ -32,10 +32,10 @@ namespace Sci.Production.PPIC
         /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorTextColumnSettings artworktype = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings cutpartdesc = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings patterndesc = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings remark = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings artworktype = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings cutpartdesc = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings patterndesc = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings remark = new DataGridViewGeneratorTextColumnSettings();
             cutpartdesc.CharacterCasing = CharacterCasing.Normal;
             patterndesc.CharacterCasing = CharacterCasing.Normal;
             remark.CharacterCasing = CharacterCasing.Normal;
@@ -49,7 +49,7 @@ namespace Sci.Production.PPIC
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,ArtworkUnit from ArtworkType WITH (NOLOCK) where Junk = 0 and IsArtwork = 1", "20", dr["ArtworkTypeID"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,ArtworkUnit from ArtworkType WITH (NOLOCK) where Junk = 0 and IsArtwork = 1", "20", dr["ArtworkTypeID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {

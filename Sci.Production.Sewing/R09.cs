@@ -10,7 +10,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Sewing
 {
-    public partial class R09 : Sci.Win.Tems.PrintForm
+    public partial class R09 : Win.Tems.PrintForm
     {
         public R09(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -139,7 +139,7 @@ drop table #tmp
 
             #region Save Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(excelFile);
-            Microsoft.Office.Interop.Excel.Workbook workbook = excelApp.ActiveWorkbook;
+            Excel.Workbook workbook = excelApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
 
             excelApp.Visible = true;

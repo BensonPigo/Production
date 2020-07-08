@@ -2,7 +2,7 @@
 
 namespace Sci.Production.Shipping
 {
-    public partial class B48 : Sci.Win.Tems.Input1
+    public partial class B48 : Win.Tems.Input1
     {
         public B48(ToolStripMenuItem menuitem)
             : base(menuitem)

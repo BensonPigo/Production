@@ -7,7 +7,7 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P01_BatchApprove : Sci.Win.Subs.Base
+    public partial class P01_BatchApprove : Win.Subs.Base
     {
         Action delegateAct;
 

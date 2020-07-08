@@ -11,11 +11,12 @@ using System.Xml.Linq;
 
 namespace Sci.Production.Tools
 {
-    public partial class SwitchFactory : Sci.Win.Tems.QueryForm
+    public partial class SwitchFactory : Win.Tems.QueryForm
     {
         string OriginalDatasource;
 
-        public SwitchFactory(ToolStripMenuItem menuitem) : base(menuitem)
+        public SwitchFactory(ToolStripMenuItem menuitem)
+            : base(menuitem)
         {
             this.InitializeComponent();
 

@@ -16,7 +16,7 @@ using System.Diagnostics;
 
 namespace Sci.Production.Quality
 {
-    public partial class P03_Crocking : Sci.Win.Subs.Input4
+    public partial class P03_Crocking : Win.Subs.Input4
     {
         private string loginID = Sci.Env.User.UserID;
         private DataRow maindr;
@@ -332,7 +332,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             Resultdry.CellMouseDoubleClick += (s, e) =>
             {
                 DataGridView grid = ((DataGridViewColumn)s).DataGridView;
-                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                if (!((Win.Forms.Base)grid.FindForm()).EditMode)
                 {
                     return;
                 }
@@ -352,7 +352,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             Resultwet.CellMouseDoubleClick += (s, e) =>
             {
                 DataGridView grid = ((DataGridViewColumn)s).DataGridView;
-                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                if (!((Win.Forms.Base)grid.FindForm()).EditMode)
                 {
                     return;
                 }

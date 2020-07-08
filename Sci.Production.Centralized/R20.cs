@@ -15,7 +15,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// R20
     /// </summary>
-    internal partial class R20 : Sci.Win.Tems.PrintForm
+    internal partial class R20 : Win.Tems.PrintForm
     {
         private DataTable DT1;
         private string WhereStockStr = string.Empty;
@@ -458,7 +458,7 @@ from #Query
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.DT1 = null;
             DualResult result;
@@ -740,7 +740,7 @@ select DISTINCT ID,ETD from #GarmentInvoice";
                 title2ForExcel = "製成品進銷存明細表 -- FOB";
             }
 
-            Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls(callsExcel);
+            SaveXltReportCls xl = new SaveXltReportCls(callsExcel);
             SaveXltReportCls.XltRptTable data1 = new SaveXltReportCls.XltRptTable(this.DT1);
             xl.BoOpenFile = true;
             data1.ShowHeader = false;

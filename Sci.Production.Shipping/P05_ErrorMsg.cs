@@ -2,7 +2,7 @@
 
 namespace Sci.Production.Shipping
 {
-    public partial class P05_ErrorMsg : Sci.Win.Subs.Base
+    public partial class P05_ErrorMsg : Win.Subs.Base
     {
         /// <summary>
         /// P05_ErrorMsg

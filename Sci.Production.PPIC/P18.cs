@@ -16,7 +16,7 @@ using System.Reflection;
 
 namespace Sci.Production.PPIC
 {
-    public partial class P18 : Sci.Win.Tems.Input8
+    public partial class P18 : Win.Tems.Input8
     {
         private DualResult result;
         private string Excelfile;
@@ -84,7 +84,7 @@ where a.id='{masterID}'
         protected override void OnDetailGridSetup()
         {
             #region SP#
-            Ict.Win.DataGridViewGeneratorTextColumnSettings col_SP = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings col_SP = new DataGridViewGeneratorTextColumnSettings();
             col_SP.CellValidating += (s, e) =>
              {
                  if (this.CurrentDetailData == null)
@@ -197,7 +197,7 @@ WHERE oq.ID= @id
             #endregion
 
             #region SEQ
-            Ict.Win.DataGridViewGeneratorTextColumnSettings col_Seq = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings col_Seq = new DataGridViewGeneratorTextColumnSettings();
             col_Seq.CellValidating += (s, e) =>
             {
                 if (this.CurrentDetailData == null)
@@ -261,7 +261,7 @@ where oq.id='{this.CurrentDetailData["OrderID"]}' and oq.seq=@seq", sqlpara, out
 
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem sel = new Win.Tools.SelectItem(
+                    SelectItem sel = new SelectItem(
                         $@"
 SELECT Seq,ShipmodeID as 'ShipMode'
 FROM Order_QtyShip
@@ -280,7 +280,7 @@ WHERE ID = '{this.CurrentDetailData["OrderID"]}'", "Seq,ShipMode", this.CurrentD
             #endregion
 
             #region Ship Mode
-            Ict.Win.DataGridViewGeneratorTextColumnSettings col_ShipMode = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings col_ShipMode = new DataGridViewGeneratorTextColumnSettings();
             col_ShipMode.CellValidating += (s, e) =>
             {
                 if (this.CurrentDetailData == null)
@@ -319,7 +319,7 @@ from Order_QtyShip where id='{this.CurrentDetailData["OrderID"]}' and ShipmodeID
 
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem sel = new Win.Tools.SelectItem(
+                    SelectItem sel = new SelectItem(
                         $@"
 SELECT Seq,ShipmodeID as 'ShipMode'
 FROM Order_QtyShip
@@ -338,7 +338,7 @@ WHERE ID = '{this.CurrentDetailData["OrderID"]}'", "Seq,ShipMode", this.CurrentD
             #endregion
 
             #region AccLacking
-            Ict.Win.DataGridViewGeneratorTextColumnSettings col_acc = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings col_acc = new DataGridViewGeneratorTextColumnSettings();
 
             col_acc.CellValidating += (s, e) =>
             {
@@ -400,7 +400,7 @@ ORDER BY PSD.Refno ";
 
                  if (this.EditMode && e.Button == MouseButtons.Right)
                  {
-                     Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(
+                     SelectItem2 item = new SelectItem2(
                          $@"
 SELECT DISTINCT PSD.Refno
 FROM PO_Supp_Detail PSD
@@ -810,7 +810,7 @@ where a2.id ='{this.CurrentMaintain["id"]}'
 
                 rd.ReportDataSource = data;
                 rd.ReportResource = reportresource;
-                var frm1 = new Sci.Win.Subs.ReportView(rd);
+                var frm1 = new Win.Subs.ReportView(rd);
                 frm1.MdiParent = this.MdiParent;
                 frm1.TopMost = true;
                 frm1.Show();
@@ -874,7 +874,7 @@ where a2.id ='{this.CurrentMaintain["id"]}'
             }
 
             Excel.Application objApp = new Excel.Application();
-            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\PPIC_P18.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\PPIC_P18.xltx", objApp);
 
             Excel.Worksheet worksheet = objApp.Sheets[1];
 

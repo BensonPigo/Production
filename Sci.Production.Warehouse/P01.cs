@@ -10,11 +10,11 @@ using Sci.Production.PublicForm;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P01 : Sci.Win.Tems.Input1
+    public partial class P01 : Win.Tems.Input1
     {
         private string dataType = string.Empty;
 
-        private void OpenForm(Sci.Win.Forms.Base form)
+        private void OpenForm(Win.Forms.Base form)
         {
             form.MdiParent = this;
             form.Show();
@@ -81,7 +81,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             #region 新增Batch Shipment Finished按鈕
-            Sci.Win.UI.Button btnBatchClose = new Sci.Win.UI.Button();
+            Win.UI.Button btnBatchClose = new Win.UI.Button();
             if (this.dataType == "Y")
             {
                 btnBatchClose.Text = "Batch Re-Transfer Mtl. to Scrap";
@@ -104,14 +104,14 @@ namespace Sci.Production.Warehouse
         {
             if (this.dataType == "Y")
             {
-                var frm = new Sci.Production.Warehouse.P01_BatchReTransferMtlToScrap();
+                var frm = new P01_BatchReTransferMtlToScrap();
                 frm.ShowDialog(this);
                 this.ReloadDatas();
                 this.RenewData();
             }
             else
             {
-                var frm = new Sci.Production.Warehouse.P01_BatchCloseRowMaterial();
+                var frm = new P01_BatchCloseRowMaterial();
                 this.ShowWaitMessage("Data Loading....");
                 frm.QueryData(true);
                 this.HideWaitMessage();
@@ -291,49 +291,49 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
         // Production output
         private void btnProductionOutput_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_ProductionOutput callNextForm = new Sci.Production.PPIC.P01_ProductionOutput(this.CurrentMaintain);
+            PPIC.P01_ProductionOutput callNextForm = new PPIC.P01_ProductionOutput(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         // Order remark
         private void btnOrderRemark_Click(object sender, EventArgs e)
         {
-            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["OrderRemark"]), "Order Remark", false, null);
+            Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["OrderRemark"]), "Order Remark", false, null);
             callNextForm.ShowDialog(this);
         }
 
         // Factory CMT
         private void button5_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_FactoryCMT callNextForm = new Sci.Production.PPIC.P01_FactoryCMT(this.CurrentMaintain);
+            PPIC.P01_FactoryCMT callNextForm = new PPIC.P01_FactoryCMT(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         // Label & Hangtag
         private void btnLabelHangtag_Click(object sender, EventArgs e)
         {
-            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["Label"]), "Label & Hangtag", false, null);
+            Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["Label"]), "Label & Hangtag", false, null);
             callNextForm.ShowDialog(this);
         }
 
         // Shipping mark
         private void button9_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_ShippingMark callNextForm = new Sci.Production.PPIC.P01_ShippingMark(false, this.CurrentMaintain);
+            PPIC.P01_ShippingMark callNextForm = new PPIC.P01_ShippingMark(false, this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         // TMS & Cost
         private void button10_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_TMSAndCost callNextForm = new Sci.Production.PPIC.P01_TMSAndCost(false, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), null, null);
+            PPIC.P01_TMSAndCost callNextForm = new PPIC.P01_TMSAndCost(false, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), null, null);
             callNextForm.ShowDialog(this);
         }
 
         // Std.GSD List
         private void button11_Click(object sender, EventArgs e)
         {
-            Sci.Production.PublicForm.StdGSDList callNextForm = new Sci.Production.PublicForm.StdGSDList(MyUtility.Convert.GetLong(this.CurrentMaintain["StyleUKey"]));
+            StdGSDList callNextForm = new StdGSDList(MyUtility.Convert.GetLong(this.CurrentMaintain["StyleUKey"]));
             callNextForm.ShowDialog(this);
         }
 
@@ -342,56 +342,56 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
         {
             // Sci.Production.PPIC.P01_Artwork callNextForm = new Sci.Production.PPIC.P01_Artwork(false, MyUtility.Convert.GetString(CurrentMaintain["ID"]), null, null, MyUtility.Convert.GetString(CurrentMaintain["StyleID"]), MyUtility.Convert.GetString(CurrentMaintain["SeasonID"]));
             // callNextForm.ShowDialog(this);
-            Sci.Production.PPIC.P01_Artwork callNextForm = new Sci.Production.PPIC.P01_Artwork(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            PPIC.P01_Artwork callNextForm = new PPIC.P01_Artwork(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
         }
 
         // Garment export
         private void button15_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_GMTExport callNextForm = new Sci.Production.PPIC.P01_GMTExport(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            PPIC.P01_GMTExport callNextForm = new PPIC.P01_GMTExport(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
         }
 
         // Cutting Combo
         private void button17_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_CuttingCombo callNextForm = new Sci.Production.PPIC.P01_CuttingCombo(MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
+            PPIC.P01_CuttingCombo callNextForm = new PPIC.P01_CuttingCombo(MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
             callNextForm.ShowDialog(this);
         }
 
         // Material Import
         private void button19_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_MTLImport callNextForm = new Sci.Production.PPIC.P01_MTLImport(this.CurrentMaintain);
+            PPIC.P01_MTLImport callNextForm = new PPIC.P01_MTLImport(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         // Artwork Transaction List
         private void button24_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_ArtworkTrans callNextForm = new Sci.Production.PPIC.P01_ArtworkTrans(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            PPIC.P01_ArtworkTrans callNextForm = new PPIC.P01_ArtworkTrans(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
         }
 
         // Production Kits
         private void button25_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_ProductionKit callNextForm = new Sci.Production.PPIC.P01_ProductionKit(this.dataType == "Y" ? true : false, MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]), null, null, MyUtility.Convert.GetString(this.CurrentMaintain["StyleID"]));
+            PPIC.P01_ProductionKit callNextForm = new PPIC.P01_ProductionKit(this.dataType == "Y" ? true : false, MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]), null, null, MyUtility.Convert.GetString(this.CurrentMaintain["StyleID"]));
             callNextForm.ShowDialog(this);
         }
 
         // Q'ty b'down by schedule
         private void button27_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_QtySewingSchedule callNextForm = new Sci.Production.PPIC.P01_QtySewingSchedule(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]));
+            PPIC.P01_QtySewingSchedule callNextForm = new PPIC.P01_QtySewingSchedule(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]));
             callNextForm.ShowDialog(this);
         }
 
         // Carton Status
         private void button28_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_CTNStatus callNextForm = new Sci.Production.PPIC.P01_CTNStatus(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), false);
+            PPIC.P01_CTNStatus callNextForm = new PPIC.P01_CTNStatus(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), false);
             callNextForm.ShowDialog(this);
         }
 
@@ -478,7 +478,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
         // Packing Method
         private void btnPackingMethod_Click(object sender, EventArgs e)
         {
-            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["Packing"]), "Packing Method", false, null);
+            Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["Packing"]), "Packing Method", false, null);
             callNextForm.ShowDialog(this);
         }
 
@@ -529,20 +529,20 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
 
                 DualResult result;
                 #region store procedure parameters
-                IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                System.Data.SqlClient.SqlParameter sp_StocktakingID = new System.Data.SqlClient.SqlParameter();
+                IList<SqlParameter> cmds = new List<SqlParameter>();
+                SqlParameter sp_StocktakingID = new SqlParameter();
                 sp_StocktakingID.ParameterName = "@poid";
                 sp_StocktakingID.Value = dr["poid"].ToString().Trim();
                 cmds.Add(sp_StocktakingID);
-                System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
+                SqlParameter sp_mdivision = new SqlParameter();
                 sp_mdivision.ParameterName = "@MDivisionid";
                 sp_mdivision.Value = Sci.Env.User.Keyword;
                 cmds.Add(sp_mdivision);
-                System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
+                SqlParameter sp_factory = new SqlParameter();
                 sp_factory.ParameterName = "@factoryid";
                 sp_factory.Value = Sci.Env.User.Factory;
                 cmds.Add(sp_factory);
-                System.Data.SqlClient.SqlParameter sp_loginid = new System.Data.SqlClient.SqlParameter();
+                SqlParameter sp_loginid = new SqlParameter();
                 sp_loginid.ParameterName = "@loginid";
                 sp_loginid.Value = Sci.Env.User.UserID;
                 cmds.Add(sp_loginid);
@@ -569,7 +569,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
         // Quantity breakdown
         private void btnQuantityBreakdown_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(this.CurrentMaintain["id"].ToString(), this.CurrentMaintain["poid"].ToString(), this.editPOCombo.Text);
+            PPIC.P01_Qty callNextForm = new PPIC.P01_Qty(this.CurrentMaintain["id"].ToString(), this.CurrentMaintain["poid"].ToString(), this.editPOCombo.Text);
             callNextForm.ShowDialog(this);
         }
 
@@ -581,20 +581,20 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 return;
             }
 
-            var frm = new Sci.Production.PublicForm.EachConsumption(false, this.CurrentMaintain["id"].ToString(), null, null, false, false, false);
+            var frm = new EachConsumption(false, this.CurrentMaintain["id"].ToString(), null, null, false, false, false);
             frm.ShowDialog(this);
         }
 
         private void btnProductionKits_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_ProductionKit callNextForm =
-                new Sci.Production.PPIC.P01_ProductionKit(false, this.CurrentMaintain["StyleUkey"].ToString(), null, null, null);
+            PPIC.P01_ProductionKit callNextForm =
+                new PPIC.P01_ProductionKit(false, this.CurrentMaintain["StyleUkey"].ToString(), null, null, null);
             callNextForm.ShowDialog(this);
         }
 
         private void btnMaterialImport_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_MTLImport callNextForm = new Sci.Production.PPIC.P01_MTLImport(this.CurrentMaintain);
+            PPIC.P01_MTLImport callNextForm = new PPIC.P01_MTLImport(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
@@ -623,16 +623,16 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
             }
         }
 
-        Sci.Production.Warehouse.P03 callP03 = null;
+        P03 callP03 = null;
 
         private void P03FormOpen()
         {
             foreach (Form form in Application.OpenForms)
             {
-                if (form is Sci.Production.Warehouse.P03)
+                if (form is P03)
                 {
                     form.Activate();
-                    Sci.Production.Warehouse.P03 activateForm = (Sci.Production.Warehouse.P03)form;
+                    P03 activateForm = (P03)form;
                     activateForm.setTxtSPNo(this.CurrentMaintain["ID"].ToString());
                     activateForm.Query();
                     return;
@@ -646,7 +646,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 {
                     foreach (var subMenuItem in toolMenuItem.DropDown.Items)
                     {
-                        if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                        if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
                         {
                             if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P03. Material Status"))
                             {
@@ -674,16 +674,16 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
             #endregion
         }
 
-        Sci.Production.Warehouse.P04 callP04 = null;
+        P04 callP04 = null;
 
         private void P04FormOpen()
         {
             foreach (Form form in Application.OpenForms)
             {
-                if (form is Sci.Production.Warehouse.P04)
+                if (form is P04)
                 {
                     form.Activate();
-                    Sci.Production.Warehouse.P04 activateForm = (Sci.Production.Warehouse.P04)form;
+                    P04 activateForm = (P04)form;
                     activateForm.setTxtSPNo(this.CurrentMaintain["ID"].ToString());
                     activateForm.event_Query();
                     return;
@@ -697,7 +697,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 {
                     foreach (var subMenuItem in toolMenuItem.DropDown.Items)
                     {
-                        if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                        if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
                         {
                             if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P04. Material Status (Local)"))
                             {
@@ -770,7 +770,7 @@ and po3.junk=0
             string sqlCmd = string.Format("select ExpectionFormRemark from Style WITH (NOLOCK) where Ukey = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
             if (MyUtility.Check.Seek(sqlCmd, out styleData))
             {
-                Sci.Win.Tools.EditMemo form = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(styleData["ExpectionFormRemark"]), "Expection Form Remark", false, null);
+                Win.Tools.EditMemo form = new Win.Tools.EditMemo(MyUtility.Convert.GetString(styleData["ExpectionFormRemark"]), "Expection Form Remark", false, null);
                 form.ShowDialog(this);
             }
         }

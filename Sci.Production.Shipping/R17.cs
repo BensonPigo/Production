@@ -9,7 +9,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Shipping
 {
-    public partial class R17 : Sci.Win.Tems.PrintForm
+    public partial class R17 : Win.Tems.PrintForm
     {
         private string BuyerDelivery1;
         private string BuyerDelivery2;

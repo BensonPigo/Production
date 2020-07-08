@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
 {
-    public partial class B03 : Sci.Win.Tems.Input6
+    public partial class B03 : Win.Tems.Input6
     {
         public B03(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -47,9 +47,9 @@ and a.ProductionDate  = '{1}'",
             DataTable dt;
             DualResult result;
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings lineLocationID = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings sewingLineID = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings team = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings lineLocationID = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings sewingLineID = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings team = new DataGridViewGeneratorTextColumnSettings();
 
             #region lineLocationID Right Click & Validating
             lineLocationID.EditingMouseDown += (s, e) =>
@@ -62,7 +62,7 @@ and a.ProductionDate  = '{1}'",
 
                     sqlCmd = string.Format("select ID, Name from LineLocation where FactoryID = '{0}'", Sci.Env.User.Factory);
                     result = DBProxy.Current.Select(null, sqlCmd, out dt);
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,20", MyUtility.Convert.GetString(dr["LineLocationID"]), headercaptions: "ID,Name");
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "10,20", MyUtility.Convert.GetString(dr["LineLocationID"]), headercaptions: "ID,Name");
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {

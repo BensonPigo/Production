@@ -16,7 +16,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_P04
     /// </summary>
-    public partial class P04 : Sci.Win.Tems.QueryForm
+    public partial class P04 : Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_location;
@@ -80,7 +80,7 @@ namespace Sci.Production.Logistic
                 }
             };
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.CellValidating += (s, e) =>
             {
                 if (this.EditMode)
@@ -487,11 +487,11 @@ namespace Sci.Production.Logistic
                 }
 
                 rd.ReportResource = reportresource;
-                rd.ReportDataSources.Add(new System.Collections.Generic.KeyValuePair<string, object>("Report_UpdateLocation", report_UpdateLocation));
+                rd.ReportDataSources.Add(new KeyValuePair<string, object>("Report_UpdateLocation", report_UpdateLocation));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("title", MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Keyword))));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("request", MyUtility.Convert.GetString(this.comboRequestby.SelectedValue)));
 
-                using (var frm = new Sci.Win.Subs.ReportView(rd))
+                using (var frm = new Win.Subs.ReportView(rd))
                 {
                     frm.ShowDialog(this);
                 }

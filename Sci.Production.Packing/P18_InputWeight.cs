@@ -6,7 +6,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// P18_InputWeight
     /// </summary>
-    public partial class P18_InputWeight : Sci.Win.Forms.Base
+    public partial class P18_InputWeight : Win.Forms.Base
     {
         /// <summary>
         /// actWeight

@@ -9,7 +9,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
 {
-    public partial class R07 : Sci.Win.Tems.PrintForm
+    public partial class R07 : Win.Tems.PrintForm
     {
         private DataTable[] printData;
         private string Mdivision;

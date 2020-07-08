@@ -16,7 +16,7 @@ using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P25 : Sci.Win.Tems.Input6
+    public partial class P25 : Win.Tems.Input6
     {
         public P25(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -164,12 +164,12 @@ namespace Sci.Production.Warehouse
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorTextColumnSettings locationSet = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings locationSet = new DataGridViewGeneratorTextColumnSettings();
             locationSet.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem2 selectItem = Prgs.SelectLocation(this.CurrentDetailData["ToStockType"].ToString());
+                    Win.Tools.SelectItem2 selectItem = Prgs.SelectLocation(this.CurrentDetailData["ToStockType"].ToString());
                     DialogResult result = selectItem.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -954,7 +954,7 @@ where a.id= @ID", pars, out dtDetail);
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
 

@@ -9,7 +9,7 @@ using System.Transactions;
 
 namespace Sci.Production.Quality
 {
-    public partial class P01 : Sci.Win.Tems.Input6
+    public partial class P01 : Win.Tems.Input6
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
@@ -26,7 +26,7 @@ namespace Sci.Production.Quality
             this.detailgridmenus.Items.Remove(this.appendmenu);
             this.detailgridmenus.Items.Remove(this.modifymenu);
             this.detailgridmenus.Items.Remove(this.deletemenu);
-            this.detailgridmenus.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
+            this.detailgridmenus.Items.AddRange(new ToolStripItem[]
             {
                 this.modifyPhysicalInspectionToolStripMenuItem,
                 this.modifyWeightTestToolStripMenuItem,
@@ -81,7 +81,7 @@ namespace Sci.Production.Quality
             };
         }
 
-        protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
             string cmd = string.Format(
@@ -145,7 +145,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
                     return;
                 }
 
-                    var frm = new Sci.Production.Quality.P01_PhysicalInspection(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+                    var frm = new P01_PhysicalInspection(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
                     frm.ShowDialog(this);
                     frm.Dispose();
                     this.RenewData();
@@ -158,7 +158,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P01_PhysicalInspection(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+                var frm = new P01_PhysicalInspection(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -190,7 +190,7 @@ and ActualYds > 0
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P01_PhysicalInspection(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+                var frm = new P01_PhysicalInspection(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -203,7 +203,7 @@ and ActualYds > 0
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P01_Weight(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+                var frm = new P01_Weight(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -216,7 +216,7 @@ and ActualYds > 0
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P01_Weight(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+                var frm = new P01_Weight(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -229,7 +229,7 @@ and ActualYds > 0
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P01_ShadeBond(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+                var frm = new P01_ShadeBond(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -242,7 +242,7 @@ and ActualYds > 0
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P01_ShadeBond(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+                var frm = new P01_ShadeBond(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -255,7 +255,7 @@ and ActualYds > 0
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P01_Continuity(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+                var frm = new P01_Continuity(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -268,7 +268,7 @@ and ActualYds > 0
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P01_Continuity(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+                var frm = new P01_Continuity(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -281,7 +281,7 @@ and ActualYds > 0
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P01_Odor(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+                var frm = new P01_Odor(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -294,7 +294,7 @@ and ActualYds > 0
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P01_Odor(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+                var frm = new P01_Odor(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -723,7 +723,7 @@ and ActualYds > 0
             this.detailgridbs.Position = this.DetailDatas.IndexOf(this.find_dr[this.index]);
         }
 
-        override protected DetailGridContextMenuMode CurrentDetailGridContextMenuMode()
+        protected override DetailGridContextMenuMode CurrentDetailGridContextMenuMode()
         {
             // 非編輯狀態不顯示
             if (!this.EditMode)
@@ -743,7 +743,7 @@ and ActualYds > 0
             }
 
             var currentID = this.CurrentDetailData["ID"].ToString();
-            var frm = new Sci.Production.Quality.P01_PhysicalInspection(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+            var frm = new P01_PhysicalInspection(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
@@ -776,7 +776,7 @@ and ActualYds > 0
 
             var currentID = this.CurrentDetailData["ID"].ToString();
 
-            var frm = new Sci.Production.Quality.P01_Weight(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+            var frm = new P01_Weight(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
@@ -808,7 +808,7 @@ and ActualYds > 0
             }
 
             var currentID = this.CurrentDetailData["ID"].ToString();
-            var frm = new Sci.Production.Quality.P01_ShadeBond(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+            var frm = new P01_ShadeBond(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
@@ -840,7 +840,7 @@ and ActualYds > 0
             }
 
             var currentID = this.CurrentDetailData["ID"].ToString();
-            var frm = new Sci.Production.Quality.P01_Continuity(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+            var frm = new P01_Continuity(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
@@ -874,7 +874,7 @@ and ActualYds > 0
             }
 
             var currentID = this.CurrentDetailData["ID"].ToString();
-            var frm = new Sci.Production.Quality.P01_Odor(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+            var frm = new P01_Odor(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();

@@ -10,9 +10,9 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P16_Import : Sci.Win.Subs.Base
+    public partial class P16_Import : Win.Subs.Base
     {
-        public Sci.Win.Tems.Base P16;
+        public Win.Tems.Base P16;
         DataRow dr_master;
         DataTable dt_detail;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
@@ -178,7 +178,7 @@ Where a.id = '{0}'
                 ;
             #endregion
             #region --  Grid2 Setting --
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
                 {
                     if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))

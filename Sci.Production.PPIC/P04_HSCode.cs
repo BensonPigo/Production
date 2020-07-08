@@ -9,7 +9,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P04_HSCode
     /// </summary>
-    public partial class P04_HSCode : Sci.Win.Subs.Base
+    public partial class P04_HSCode : Win.Subs.Base
     {
         private string styleUkey;
 

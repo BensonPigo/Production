@@ -11,7 +11,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P07
     /// </summary>
-    public partial class P07 : Sci.Win.Tems.QueryForm
+    public partial class P07 : Win.Tems.QueryForm
     {
         private string useAPS;
 

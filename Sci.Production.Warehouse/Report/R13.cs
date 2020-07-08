@@ -10,13 +10,14 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R13 : Sci.Win.Tems.PrintForm
+    public partial class R13 : Win.Tems.PrintForm
     {
         string reason;
         string mdivision;
         string factory;
         string stocktype;
-        DateTime? issueDate1, issueDate2;
+        DateTime? issueDate1;
+        DateTime? issueDate2;
         DataTable printData;
 
         public R13(ToolStripMenuItem menuitem)
@@ -49,7 +50,7 @@ namespace Sci.Production.Warehouse
         }
 
         // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sql parameters declare --
 

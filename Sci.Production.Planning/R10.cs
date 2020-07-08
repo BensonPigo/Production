@@ -18,11 +18,11 @@ namespace Sci.Production.Planning
     /// <summary>
     /// R10
     /// </summary>
-    public partial class R10 : Sci.Win.Tems.PrintForm
+    public partial class R10 : Win.Tems.PrintForm
     {
         private DateTime currentTime = System.DateTime.Now;
 
-        private int ReportType = 1;
+        private int reportType = 1;
         private string BrandID = string.Empty;
         private string ArtWorkType = string.Empty;
         private bool isSCIDelivery = true;
@@ -52,10 +52,10 @@ namespace Sci.Production.Planning
         private Dictionary<string, string> dic = new Dictionary<string, string>();
         private DualResult dtresult;
 
-        private System.Data.DataTable[] dt2;
-        private System.Data.DataTable dt3fty;
-        private System.Data.DataTable dt2Factory = null;
-        private System.Data.DataTable dt2All = null;
+        private DataTable[] dt2;
+        private DataTable dt3fty;
+        private DataTable dt2Factory = null;
+        private DataTable dt2All = null;
 
         /// <inheritdoc/>
         public R10(ToolStripMenuItem menuitem)
@@ -91,7 +91,7 @@ namespace Sci.Production.Planning
                 return false;
             }
 
-            this.ReportType = this.rdMonth.Checked ? 1 : 2;
+            this.reportType = this.rdMonth.Checked ? 1 : 2;
             this.BrandID = this.txtBrand1.Text;
             this.ArtWorkType = this.cbReportType.SelectedValue.ToString();
             this.isSCIDelivery = (this.cbDateType.SelectedItem.ToString() == "SCI Delivery") ? true : false;
@@ -148,7 +148,7 @@ namespace Sci.Production.Planning
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             if (this.rdMonth.Checked || this.rdHalfMonth.Checked)
             {
@@ -171,7 +171,7 @@ namespace Sci.Production.Planning
 
                     // string xltPath = string.Empty;
                     // string strHeaderRange = string.Empty;
-                    // if (this.ReportType == 1)
+                    // if (this.reportType == 1)
                     // {
                     //    xltPath = @"Planning_R10_01.xltx";
                     //    strHeaderRange = "A2:O4";
@@ -202,7 +202,7 @@ namespace Sci.Production.Planning
                     // }
                     Dictionary<string, object> paras = new Dictionary<string, object>
                     {
-                        { "ReportType", this.ReportType },
+                        { "ReportType", this.reportType },
                         { "BrandID", this.BrandID },
                         { "isSCIDelivery", this.isSCIDelivery },
                         { "Year", this.intYear },
@@ -217,7 +217,7 @@ namespace Sci.Production.Planning
                         { "IncludeCancelOrder", this.IncludeCancelOrder },
                     };
 
-                    result = this.RunPlanningR10Report(false, this.chkByCPU.Checked, this.ReportType, artworkLis, paras);
+                    result = this.RunPlanningR10Report(false, this.chkByCPU.Checked, this.reportType, artworkLis, paras);
 
                     // this.sheetStart = 6; // 起始位置
                     //                    int artWorkStart = 2;
@@ -243,7 +243,7 @@ namespace Sci.Production.Planning
 
                     // if (dic[art] != null)
                     //                        {
-                    //                            if (this.ReportType == 1)
+                    //                            if (this.reportType == 1)
                     //                            {
                     //                                this.TransferReport1(dic[art], sxrc.ExcelApp.ActiveSheet);
                     //                            }
@@ -260,7 +260,7 @@ namespace Sci.Production.Planning
                     //                        }
 
                     // // 修改Header
-                    //                        if (this.ReportType == 1)
+                    //                        if (this.reportType == 1)
                     //                        {
                     //                            wks.Cells[artWorkStart, 1].Value = string.Format("Factory Capacity by Month Report  {0}", art + " " + artworkUnitStr);
                     //                            wks.Cells[artWorkStart + 1, 1].Value = string.Format("Year:{0}", this.intYear);
@@ -598,7 +598,7 @@ namespace Sci.Production.Planning
         // {
         //    return new List<SqlParameter>
         //                    {
-        //                        new SqlParameter("@ReportType", this.ReportType),
+        //                        new SqlParameter("@ReportType", this.reportType),
         //                        new SqlParameter("@BrandID", this.BrandID),
         //                        new SqlParameter("@ArtWorkType", art),
         //                        new SqlParameter("@isSCIDelivery", this.isSCIDelivery),
@@ -612,7 +612,7 @@ namespace Sci.Production.Planning
         // }
 
         /// <inheritdoc/>
-        protected override bool OnToExcel(Win.ReportDefinition report)
+        protected override bool OnToExcel(ReportDefinition report)
         {
             #region raProductionStatus
             if (this.radioProductionStatus.Checked == true)
@@ -623,7 +623,7 @@ namespace Sci.Production.Planning
                     return false;
                 }
 
-                Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Planning_R10_ProuctionStatus.xltx", keepApp: true);
+                SaveXltReportCls xl = new SaveXltReportCls("Planning_R10_ProuctionStatus.xltx", keepApp: true);
                 xl.BoOpenFile = true;
 
                 SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(this.dt);
@@ -2287,8 +2287,8 @@ namespace Sci.Production.Planning
 
         private void TxtZone_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select distinct zone from Factory WITH (NOLOCK) where isSCI=1 and junk=0 ", "8", this.Text, false, ",");
-            item.Size = new System.Drawing.Size(300, 250);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select distinct zone from Factory WITH (NOLOCK) where isSCI=1 and junk=0 ", "8", this.Text, false, ",");
+            item.Size = new Size(300, 250);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

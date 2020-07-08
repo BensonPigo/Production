@@ -13,7 +13,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_P03_Print
     /// </summary>
-    public partial class P03_Print : Sci.Win.Tems.PrintForm
+    public partial class P03_Print : Win.Tems.PrintForm
     {
         private DataRow masterData;
         private string display;
@@ -85,7 +85,7 @@ namespace Sci.Production.IE
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region 切分頁計算 takt
             decimal ttlnocount = MyUtility.Convert.GetInt(this.masterData["CurrentOperators"]);

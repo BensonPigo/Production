@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R32 : Sci.Win.Tems.PrintForm
+    public partial class R32 : Win.Tems.PrintForm
     {
         string subProcess;
         string factory;
@@ -55,7 +55,7 @@ where Junk != 1", out dtFactory);
             return true;
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             List<SqlParameter> listSqlPar = new List<SqlParameter>();
             #region SQL first where

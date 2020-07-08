@@ -8,7 +8,7 @@ namespace Sci.Production.SubProcess
     /// <summary>
     /// P01_QAOutput
     /// </summary>
-    public partial class P01_QAOutput : Sci.Win.Subs.Input8A
+    public partial class P01_QAOutput : Win.Subs.Input8A
     {
         /// <summary>
         /// P01_QAOutput

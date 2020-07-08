@@ -11,7 +11,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// R03
     /// </summary>
-    public partial class R03 : Sci.Win.Tems.PrintForm
+    public partial class R03 : Win.Tems.PrintForm
     {
         private DataTable printData;
         private DateTime? sciDate1;
@@ -54,7 +54,7 @@ namespace Sci.Production.Planning
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"select distinct s.ID,s.BrandID,s.SeasonID,sa.ArtworkTypeID,sa.Article,sa.ArtworkID,sa.ArtworkName,

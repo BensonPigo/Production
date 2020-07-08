@@ -8,7 +8,7 @@ using Sci.Data;
 
 namespace Sci.Production.Tools
 {
-    public partial class AuthorityByPosition_Setting : Sci.Win.Subs.Base
+    public partial class AuthorityByPosition_Setting : Win.Subs.Base
     {
         private DualResult result = null;
         private DataTable dtPass0 = null;

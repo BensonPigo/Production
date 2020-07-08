@@ -17,7 +17,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P08_ShareExpense
     /// </summary>
-    public partial class P08_ShareExpense : Sci.Win.Subs.Base
+    public partial class P08_ShareExpense : Win.Subs.Base
     {
         private DataRow apData;
         private DataTable SEData;
@@ -46,9 +46,9 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings bLNo = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings bL2No = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings wKNO = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings bLNo = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings bL2No = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings wKNO = new DataGridViewGeneratorTextColumnSettings();
 
             #region BLNo
             bLNo.CellValidating += (s, e) =>
@@ -782,12 +782,12 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                 {
                     if (buttonResult == System.Windows.Forms.DialogResult.Yes)
                     {
-                        Sci.Production.Shipping.P08_ShareExpense_ImportGarment callNextForm = new Sci.Production.Shipping.P08_ShareExpense_ImportGarment(this.SEGroupData, t);
+                        P08_ShareExpense_ImportGarment callNextForm = new P08_ShareExpense_ImportGarment(this.SEGroupData, t);
                         callNextForm.ShowDialog(this);
                     }
                     else
                     {
-                        Sci.Production.Shipping.P08_ShareExpense_ImportMaterial callNextForm = new Sci.Production.Shipping.P08_ShareExpense_ImportMaterial(this.SEGroupData, this.apData);
+                        P08_ShareExpense_ImportMaterial callNextForm = new P08_ShareExpense_ImportMaterial(this.SEGroupData, this.apData);
                         callNextForm.ShowDialog(this);
                     }
                 }
@@ -796,12 +796,12 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
             {
                 if (MyUtility.Convert.GetString(this.apData["SubType"]) == "GARMENT")
                 {
-                    Sci.Production.Shipping.P08_ShareExpense_ImportGarment callNextForm = new Sci.Production.Shipping.P08_ShareExpense_ImportGarment(this.SEGroupData, t);
+                    P08_ShareExpense_ImportGarment callNextForm = new P08_ShareExpense_ImportGarment(this.SEGroupData, t);
                     callNextForm.ShowDialog(this);
                 }
                 else
                 {
-                    Sci.Production.Shipping.P08_ShareExpense_ImportMaterial callNextForm = new Sci.Production.Shipping.P08_ShareExpense_ImportMaterial(this.SEGroupData, this.apData);
+                    P08_ShareExpense_ImportMaterial callNextForm = new P08_ShareExpense_ImportMaterial(this.SEGroupData, this.apData);
                     callNextForm.ShowDialog(this);
                 }
             }

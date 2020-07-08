@@ -99,7 +99,7 @@ namespace Sci.Production
         DataTable dtMenuDetail = null;
         DataRow[] drs = null;
 
-        Sci.Production.Win.Login login;
+        Win.Login login;
 
         int _isgeneralclosing;
         IList<TemplateInfo> _templates = new List<TemplateInfo>();
@@ -306,7 +306,7 @@ namespace Sci.Production
 
         private object CreateFormObject(ToolStripMenuItem menuItem, Type typeofControl, string strArg, string formName)
         {
-            bool isSwitchFactory = formName.IndexOf(typeof(Sci.Production.Tools.SwitchFactory).FullName, StringComparison.OrdinalIgnoreCase) >= 0;
+            bool isSwitchFactory = formName.IndexOf(typeof(Tools.SwitchFactory).FullName, StringComparison.OrdinalIgnoreCase) >= 0;
             if (isSwitchFactory)
             {
                 var formObj = this.CreateFormObject(menuItem, typeofControl, strArg);

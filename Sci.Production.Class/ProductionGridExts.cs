@@ -21,8 +21,8 @@ namespace Sci
             settings.CharacterCasing = CharacterCasing.Upper;
             settings.EditingMouseDown += (s, e) =>
             {
-                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                Win.UI.Grid g = (Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Win.Forms.Base frm = (Win.Forms.Base)g.FindForm();
                 if (frm.EditMode)
                 {
                     if (e.Button == System.Windows.Forms.MouseButtons.Right)
@@ -30,7 +30,7 @@ namespace Sci
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from ClogLocation group by ID,Description order by ID", "10,40", dr["ClogLocationId"].ToString().Trim());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Description from ClogLocation group by ID,Description order by ID", "10,40", dr["ClogLocationId"].ToString().Trim());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -44,8 +44,8 @@ namespace Sci
             };
             settings.CellValidating += (s, e) =>
             {
-                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                Win.UI.Grid g = (Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Win.Forms.Base frm = (Win.Forms.Base)g.FindForm();
                 if (frm.EditMode)
                 {
                     DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
@@ -75,8 +75,8 @@ namespace Sci
             settings.CharacterCasing = CharacterCasing.Upper;
             settings.EditingMouseDown += (s, e) =>
             {
-                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                Win.UI.Grid g = (Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Win.Forms.Base frm = (Win.Forms.Base)g.FindForm();
                 if (frm.EditMode)
                 {
                     if (e.Button == System.Windows.Forms.MouseButtons.Right)
@@ -94,7 +94,7 @@ namespace Sci
                                 sqlcmd = $"select ID,Description from CFALocation where MDivisionID='{M}'  group by ID,Description order by ID";
                             }
 
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,40", dr["CFALocationId"].ToString().Trim());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "10,40", dr["CFALocationId"].ToString().Trim());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -108,8 +108,8 @@ namespace Sci
             };
             settings.CellValidating += (s, e) =>
             {
-                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                Win.UI.Grid g = (Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Win.Forms.Base frm = (Win.Forms.Base)g.FindForm();
                 if (frm.EditMode)
                 {
                     DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
@@ -154,8 +154,8 @@ namespace Sci
 
             settings.CellValidating += (s, e) =>
             {
-                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                Win.UI.Grid g = (Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Win.Forms.Base frm = (Win.Forms.Base)g.FindForm();
                 if (frm.EditMode)
                 {
                     DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
@@ -191,8 +191,8 @@ namespace Sci
 
             settings.CellValidating += (s, e) =>
             {
-                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                Win.UI.Grid g = (Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Win.Forms.Base frm = (Win.Forms.Base)g.FindForm();
                 DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
                 if (frm.EditMode && String.Compare(dr["poid"].ToString(), e.FormattedValue.ToString()) != 0)
                 {
@@ -264,8 +264,8 @@ namespace Sci
 
             settings.CellValidating += (s, e) =>
             {
-                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                Win.UI.Grid g = (Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Win.Forms.Base frm = (Win.Forms.Base)g.FindForm();
                 if (frm.EditMode)
                 {
                     DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
@@ -296,8 +296,8 @@ namespace Sci
             settings.CharacterCasing = CharacterCasing.Upper;
             settings.EditingMouseDown += (s, e) =>
             {
-                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                Win.UI.Grid g = (Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Win.Forms.Base frm = (Win.Forms.Base)g.FindForm();
                 if (frm.EditMode)
                 {
                     if (e.Button == System.Windows.Forms.MouseButtons.Right)
@@ -305,7 +305,7 @@ namespace Sci
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from ThreadColor where junk = 0 order by ID", "10,40", dr["ThreadColorid"].ToString().Trim());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Description from ThreadColor where junk = 0 order by ID", "10,40", dr["ThreadColorid"].ToString().Trim());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -326,8 +326,8 @@ namespace Sci
 
             settings.CellValidating += (s, e) =>
             {
-                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                Win.UI.Grid g = (Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Win.Forms.Base frm = (Win.Forms.Base)g.FindForm();
                 if (frm.EditMode)
                 {
                     DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
@@ -359,8 +359,8 @@ namespace Sci
             settings.CharacterCasing = CharacterCasing.Upper;
             settings.EditingMouseDown += (s, e) =>
             {
-                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                Win.UI.Grid g = (Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Win.Forms.Base frm = (Win.Forms.Base)g.FindForm();
                 if (frm.EditMode)
                 {
                     if (e.Button == System.Windows.Forms.MouseButtons.Right)
@@ -389,7 +389,7 @@ namespace Sci
                                 sql = "select ID,Description from ThreadLocation where junk = 0 order by ID";
                             }
 
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, strwidth, dr["ThreadLocationid"].ToString().Trim());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, strwidth, dr["ThreadLocationid"].ToString().Trim());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -404,8 +404,8 @@ namespace Sci
 
             settings.CellValidating += (s, e) =>
             {
-                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                Win.UI.Grid g = (Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Win.Forms.Base frm = (Win.Forms.Base)g.FindForm();
                 if (frm.EditMode)
                 {
                     DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
@@ -437,8 +437,8 @@ namespace Sci
             settings.CharacterCasing = CharacterCasing.Upper;
             settings.EditingMouseDown += (s, e) =>
             {
-                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                Win.UI.Grid g = (Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Win.Forms.Base frm = (Win.Forms.Base)g.FindForm();
                 if (frm.EditMode)
                 {
                     if (e.Button == System.Windows.Forms.MouseButtons.Right)
@@ -446,7 +446,7 @@ namespace Sci
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select ID,Name from Pass1"), "10,40", dr[propertyname].ToString().Trim());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select ID,Name from Pass1"), "10,40", dr[propertyname].ToString().Trim());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -461,8 +461,8 @@ namespace Sci
 
             settings.CellValidating += (s, e) =>
             {
-                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                Win.UI.Grid g = (Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Win.Forms.Base frm = (Win.Forms.Base)g.FindForm();
                 if (frm.EditMode)
                 {
                     DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
@@ -506,8 +506,8 @@ namespace Sci
             settings.CharacterCasing = CharacterCasing.Upper;
             settings.EditingMouseDown += (s, e) =>
             {
-                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                Win.UI.Grid g = (Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Win.Forms.Base frm = (Win.Forms.Base)g.FindForm();
                 if (frm.EditMode)
                 {
                     if (e.Button == System.Windows.Forms.MouseButtons.Right)
@@ -515,7 +515,7 @@ namespace Sci
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from Scale where junk = 0 order by ID", "10,40", dr["Scale"].ToString().Trim());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID from Scale where junk = 0 order by ID", "10,40", dr["Scale"].ToString().Trim());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -530,8 +530,8 @@ namespace Sci
 
             settings.CellValidating += (s, e) =>
             {
-                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                Win.UI.Grid g = (Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Win.Forms.Base frm = (Win.Forms.Base)g.FindForm();
                 if (frm.EditMode)
                 {
                     DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
@@ -556,8 +556,8 @@ namespace Sci
     {
         public static void EditingMouseDown(object sender, Ict.Win.UI.DataGridViewEditingControlMouseEventArgs e)
         {
-            Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)sender).DataGridView;
-            Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+            Win.UI.Grid g = (Win.UI.Grid)((DataGridViewColumn)sender).DataGridView;
+            Win.Forms.Base frm = (Win.Forms.Base)g.FindForm();
             if (frm.EditMode)
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
@@ -565,7 +565,7 @@ namespace Sci
                     if (e.RowIndex != -1)
                     {
                         DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
-                        Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select RefNo,Description,STR(CtnLength,8,4)+'*'+STR(CtnWidth,8,4)+'*'+STR(CtnHeight,8,4) as Dim from LocalItem where Category = 'CARTON' and Junk = 0 order by RefNo", "10,25,25", dr["RefNo"].ToString().Trim());
+                        Win.Tools.SelectItem item = new Win.Tools.SelectItem("select RefNo,Description,STR(CtnLength,8,4)+'*'+STR(CtnWidth,8,4)+'*'+STR(CtnHeight,8,4) as Dim from LocalItem where Category = 'CARTON' and Junk = 0 order by RefNo", "10,25,25", dr["RefNo"].ToString().Trim());
                         DialogResult returnResult = item.ShowDialog();
                         if (returnResult == DialogResult.Cancel)
                         {

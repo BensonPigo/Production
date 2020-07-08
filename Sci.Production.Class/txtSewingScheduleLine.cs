@@ -5,7 +5,7 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtSewingScheduleLine : Sci.Win.UI.TextBox
+    public partial class txtSewingScheduleLine : Win.UI.TextBox
     {
         public txtSewingScheduleLine()
         {
@@ -13,10 +13,10 @@ namespace Sci.Production.Class
         }
 
         [Browsable(true)]
-        public Sci.Win.UI.TextBox SPtxt { get; set; }
+        public Win.UI.TextBox SPtxt { get; set; }
 
         [Browsable(true)]
-        public Sci.Win.UI.TextBox Factorytxt { get; set; }
+        public Win.UI.TextBox Factorytxt { get; set; }
 
         public string cell { get; set; }
 
@@ -34,13 +34,13 @@ namespace Sci.Production.Class
                 FactoryId = Sci.Env.User.Factory;
             }
 
-            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+            Win.Forms.Base myForm = (Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || this.ReadOnly == true)
             {
                 return;
             }
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                 string.Format(
                 @"
 SELECT ss.SewingLineID as Line,SL.[Description] AS [Description], SL.FactoryID as Factory,sl.SewingCell
@@ -82,7 +82,7 @@ where sod.OrderId = '{0}' and so.FactoryID = '{1}'
                 FactoryId = Sci.Env.User.Factory;
             }
 
-            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+            Win.Forms.Base myForm = (Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || this.ReadOnly == true)
             {
                 return;

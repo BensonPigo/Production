@@ -3,7 +3,7 @@ using System.Data;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P02_PaymentDetail : Sci.Win.Tems.QueryForm
+    public partial class P02_PaymentDetail : Win.Tems.QueryForm
     {
         private DataRow row;
 

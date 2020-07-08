@@ -9,7 +9,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P03_InspectionList : Sci.Win.Subs.Base
+    public partial class P03_InspectionList : Win.Subs.Base
     {
         DataRow dr;
 
@@ -95,49 +95,49 @@ Where a.poid = @poid and a.seq1 = @seq1 and a.seq2 = @seq2  and a.receivingid = 
 
                 if (inp_type.Equals("inspection"))
                 {
-                    var frm = new Sci.Production.Quality.P01_PhysicalInspection(false, data["ID"].ToString(), null, null, data);
+                    var frm = new Quality.P01_PhysicalInspection(false, data["ID"].ToString(), null, null, data);
                     frm.ShowDialog(this);
                     frm.Dispose();
                 }
                 else if (inp_type.Equals("weight"))
                 {
-                    var frm = new Sci.Production.Quality.P01_Weight(false, data["ID"].ToString(), null, null, data);
+                    var frm = new Quality.P01_Weight(false, data["ID"].ToString(), null, null, data);
                     frm.ShowDialog(this);
                     frm.Dispose();
                 }
                 else if (inp_type.Equals("shadebond"))
                 {
-                    var frm = new Sci.Production.Quality.P01_ShadeBond(false, data["ID"].ToString(), null, null, data);
+                    var frm = new Quality.P01_ShadeBond(false, data["ID"].ToString(), null, null, data);
                     frm.ShowDialog(this);
                     frm.Dispose();
                 }
                 else if (inp_type.Equals("continuity"))
                 {
-                    var frm = new Sci.Production.Quality.P01_Continuity(false, data["ID"].ToString(), null, null, data);
+                    var frm = new Quality.P01_Continuity(false, data["ID"].ToString(), null, null, data);
                     frm.ShowDialog(this);
                     frm.Dispose();
                 }
                 else if (inp_type.Equals("Odor"))
                 {
-                    var frm = new Sci.Production.Quality.P01_Odor(false, data["ID"].ToString(), null, null, data);
+                    var frm = new Quality.P01_Odor(false, data["ID"].ToString(), null, null, data);
                     frm.ShowDialog(this);
                     frm.Dispose();
                 }
                 else if (inp_type.Equals("crocking"))
                 {
-                    var frm = new Sci.Production.Quality.P03_Crocking(false, data["ID"].ToString(), null, null, data);
+                    var frm = new Quality.P03_Crocking(false, data["ID"].ToString(), null, null, data);
                     frm.ShowDialog(this);
                     frm.Dispose();
                 }
                 else if (inp_type.Equals("heat"))
                 {
-                    var frm = new Sci.Production.Quality.P03_Heat(false, data["ID"].ToString(), null, null, data);
+                    var frm = new Quality.P03_Heat(false, data["ID"].ToString(), null, null, data);
                     frm.ShowDialog(this);
                     frm.Dispose();
                 }
                 else if (inp_type.Equals("wash"))
                 {
-                    var frm = new Sci.Production.Quality.P03_Wash(false, data["ID"].ToString(), null, null, data);
+                    var frm = new Quality.P03_Wash(false, data["ID"].ToString(), null, null, data);
                     frm.ShowDialog(this);
                     frm.Dispose();
                 }

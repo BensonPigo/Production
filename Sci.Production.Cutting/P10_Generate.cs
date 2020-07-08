@@ -16,7 +16,7 @@ using System.Reflection;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P10_Generate : Sci.Win.Subs.Base
+    public partial class P10_Generate : Win.Subs.Base
     {
         DataRow maindatarow;
         DataTable allpartTb;
@@ -24,8 +24,14 @@ namespace Sci.Production.Cutting
         DataTable artTb;
         DataTable sizeTb;
         DataTable garmentTb;
-        DataTable detailTb, alltmpTb, bundle_detail_artTb, qtyTb;
-        DataTable detailTb2, alltmpTb2, bundle_detail_artTb2, qtyTb2;
+        DataTable detailTb;
+        DataTable alltmpTb;
+        DataTable bundle_detail_artTb;
+        DataTable qtyTb;
+        DataTable detailTb2;
+        DataTable alltmpTb2;
+        DataTable bundle_detail_artTb2;
+        DataTable qtyTb2;
         DataTable f_codeTb;
         DataTable garmentarRC;
 
@@ -1649,7 +1655,7 @@ order by iif(PatternCode='AllParts','ZZZZZZZ',PatternCode)
             string ukey = MyUtility.GetValue.Lookup("Styleukey", this.maindatarow["poid"].ToString(), "Orders", "ID");
             var Sizelist = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
 
-            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(ukey, this.maindatarow["poid"].ToString(), this.maindatarow["cutref"].ToString(), Sizelist);
+            PublicForm.GarmentList callNextForm = new PublicForm.GarmentList(ukey, this.maindatarow["poid"].ToString(), this.maindatarow["cutref"].ToString(), Sizelist);
             callNextForm.ShowDialog(this);
         }
 

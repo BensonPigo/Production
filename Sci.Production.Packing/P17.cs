@@ -15,7 +15,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P17
     /// </summary>
-    public partial class P17 : Sci.Win.Tems.QueryForm
+    public partial class P17 : Win.Tems.QueryForm
     {
         private DataTable grid2Data = new DataTable();
 

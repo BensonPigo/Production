@@ -7,7 +7,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// P01_DetailData
     /// </summary>
-    public partial class P01_DetailData : Sci.Win.Subs.Base
+    public partial class P01_DetailData : Win.Subs.Base
     {
         /// <summary>
         /// P01_DetailData

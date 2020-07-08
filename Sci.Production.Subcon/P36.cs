@@ -15,7 +15,7 @@ using Sci.Win;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P36 : Sci.Win.Tems.Input6
+    public partial class P36 : Win.Tems.Input6
     {
         public P36(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -357,7 +357,7 @@ Where a.id = '{0}' order by orderid ", masterID);
                     return;
                 }
 
-                var frm = new Sci.Win.UI.SelectReason(reasonType);
+                var frm = new Win.UI.SelectReason(reasonType);
                 frm.ShowDialog();
                 if (MyUtility.Check.Empty(frm.ReturnReason))
                 {
@@ -558,7 +558,7 @@ where id = '{4}'",
 
         private void btnStatusHistory_Click(object sender, EventArgs e)
         {
-            var showhis = new Sci.Win.UI.ShowHistory("localdebit_history", this.CurrentMaintain["ID"].ToString(), "LocalDebit", "DebitNote_LS");
+            var showhis = new Win.UI.ShowHistory("localdebit_history", this.CurrentMaintain["ID"].ToString(), "LocalDebit", "DebitNote_LS");
             showhis.ShowDialog();
         }
 
@@ -576,7 +576,7 @@ where id = '{4}'",
             }
 
             // var frm = new Sci.Production.Subcon.P37_DebitSchedule(Production.PublicPrg.Prgs.GetAuthority(dr["cfmname"].ToString()), dr["ID"].ToString(), null, null);
-            var frm = new Sci.Production.Subcon.P37_DebitSchedule(true, dr["ID"].ToString(), null, null, this.CurrentMaintain, "P36", (bool)this.CurrentMaintain["TaipeiDBC"]);  // 調成跟舊系統一樣，不管誰都可以編輯
+            var frm = new P37_DebitSchedule(true, dr["ID"].ToString(), null, null, this.CurrentMaintain, "P36", (bool)this.CurrentMaintain["TaipeiDBC"]);  // 調成跟舊系統一樣，不管誰都可以編輯
             frm.ShowDialog(this);
             this.RenewData();
             this.Refresh();
@@ -708,7 +708,7 @@ where Ldeb.ID= @ID";
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
 
             // 有按才更新列印日期printdate。
             frm.viewer.Print += (s, eArgs) => { var result3 = DBProxy.Current.Execute(null, string.Format("update localdebit set printdate=getdate() where id = '{0}'", this.CurrentMaintain["id"])); };

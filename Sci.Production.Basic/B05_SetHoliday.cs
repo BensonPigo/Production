@@ -7,7 +7,7 @@ namespace Sci.Production.Basic
     /// <summary>
     /// B05_SetHoliday
     /// </summary>
-    public partial class B05_SetHoliday : Sci.Win.Subs.Base
+    public partial class B05_SetHoliday : Win.Subs.Base
     {
         private DateTime reviseDate;
         private int newRecord;

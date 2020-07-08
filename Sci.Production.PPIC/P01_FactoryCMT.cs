@@ -11,7 +11,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_FactoryCMT
     /// </summary>
-    public partial class P01_FactoryCMT : Sci.Win.Subs.Base
+    public partial class P01_FactoryCMT : Win.Subs.Base
     {
         private DataRow orderData;
 

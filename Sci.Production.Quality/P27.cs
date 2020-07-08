@@ -11,7 +11,7 @@ using System.IO;
 
 namespace Sci.Production.Quality
 {
-    public partial class P27 : Sci.Win.Tems.QueryForm
+    public partial class P27 : Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_location;

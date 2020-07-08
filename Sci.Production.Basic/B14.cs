@@ -11,7 +11,7 @@ namespace Sci.Production.Basic
     /// <summary>
     /// B14
     /// </summary>
-    public partial class B14 : Sci.Win.Tems.Input1
+    public partial class B14 : Win.Tems.Input1
     {
         /// <summary>
         /// B14
@@ -70,7 +70,7 @@ END
 ",
     this.CurrentMaintain["ID"]);
 
-            Ict.DualResult returnResult;
+            DualResult returnResult;
             DataTable machineTable = new DataTable();
             if (returnResult = DBProxy.Current.Select(null, sqlCommand, out machineTable))
             {
@@ -149,7 +149,7 @@ END
 
         private void BtnMachine_Click(object sender, EventArgs e)
         {
-            Sci.Production.Basic.B14_Machine callNextForm = new Sci.Production.Basic.B14_Machine(this.CurrentMaintain);
+            B14_Machine callNextForm = new B14_Machine(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
     }

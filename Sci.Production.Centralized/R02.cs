@@ -20,10 +20,10 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// R02
     /// </summary>
-    public partial class R02 : Sci.Win.Tems.PrintForm
+    public partial class R02 : Win.Tems.PrintForm
     {
         private string temfile;
-        private Microsoft.Office.Interop.Excel.Application excel = null;
+        private Excel.Application excel = null;
 
         private decimal? gdclYear = 0;
 
@@ -58,7 +58,7 @@ namespace Sci.Production.Centralized
         }
 
         /// <inheritdoc/>
-        protected override bool OnToExcel(Win.ReportDefinition report)
+        protected override bool OnToExcel(ReportDefinition report)
         {
             DualResult result = Result.True;
             if (this.excel == null)
@@ -68,7 +68,7 @@ namespace Sci.Production.Centralized
 
             this.ShowInfo("Completed.");
             #region Save & Show Excel
-            Excel.Workbook workbook = this.excel.Workbooks[1];
+            Workbook workbook = this.excel.Workbooks[1];
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Centralized_R02.CPULoadingReport", Sci.Production.Class.ExcelFileNameExtension.Xlsm);
             workbook.SaveAs(strExcelName, Excel.XlFileFormat.xlOpenXMLWorkbookMacroEnabled);
             workbook.Close();
@@ -485,7 +485,7 @@ WHERE 1 = 0 ";
                     return result;
                 }
 
-                Microsoft.Office.Interop.Excel.Worksheet wsSheet = this.excel.Workbooks[1].Worksheets[1];
+                Worksheet wsSheet = this.excel.Workbooks[1].Worksheets[1];
                 wsSheet.Name = "Summary";
 
                 for (int intIndex_e = 0; intIndex_e < aryHeaders.Length; intIndex_e++)
@@ -621,7 +621,7 @@ WHERE 1 = 0 ";
             #region Export Detail Data
             if (this.checkBox1.Checked)
             {
-                Microsoft.Office.Interop.Excel.Worksheet wsSheet = null;
+                Worksheet wsSheet = null;
 
                 // #region Export Detail Data
                 string[] aryHeaders_D = new string[] { "SP No", "SCI Delivery", "KPI Group", "Factory", "Country", "Program", "OrderType", "Qty", "CPU", "Rate", "Total Cpu", "Category" };
@@ -649,8 +649,8 @@ WHERE 1 = 0 ";
                 if (this.excel.Workbooks[1].Worksheets.Count <= intsheet - 1)
                 {
                     wsSheet = this.excel.Workbooks[1].Worksheets.Add(Type.Missing, Type.Missing, Type.Missing, XlSheetType.xlWorksheet);
-                    Microsoft.Office.Interop.Excel.Worksheet wsSheet_o = this.excel.ActiveWorkbook.Worksheets[this.excel.Workbooks[1].Worksheets.Count];
-                    ((Excel.Worksheet)wsSheet).Move(Type.Missing, wsSheet_o);
+                    Worksheet wsSheet_o = this.excel.ActiveWorkbook.Worksheets[this.excel.Workbooks[1].Worksheets.Count];
+                    ((Worksheet)wsSheet).Move(Type.Missing, wsSheet_o);
                 }
                 else
                 {
@@ -715,8 +715,8 @@ WHERE 1 = 0 ";
                         if (this.excel.Workbooks[1].Worksheets.Count <= intsheet - 1)
                         {
                             wsSheet = this.excel.Workbooks[1].Worksheets.Add(Type.Missing, Type.Missing, Type.Missing, XlSheetType.xlWorksheet);
-                            Microsoft.Office.Interop.Excel.Worksheet wsSheet_o = this.excel.ActiveWorkbook.Worksheets[this.excel.Workbooks[1].Worksheets.Count];
-                            ((Excel.Worksheet)wsSheet).Move(Type.Missing, wsSheet_o);
+                            Worksheet wsSheet_o = this.excel.ActiveWorkbook.Worksheets[this.excel.Workbooks[1].Worksheets.Count];
+                            ((Worksheet)wsSheet).Move(Type.Missing, wsSheet_o);
                         }
                         else
                         {
@@ -1051,7 +1051,7 @@ where   orders.Category NOT IN ('G','A')
                     return result;
                 }
 
-                Microsoft.Office.Interop.Excel.Worksheet wsSheet = this.excel.Workbooks[1].Worksheets[1];
+                Worksheet wsSheet = this.excel.Workbooks[1].Worksheets[1];
                 wsSheet.Name = "Summary";
 
                 for (int intIndex_e = 0; intIndex_e < aryHeaders.Length; intIndex_e++)
@@ -1137,15 +1137,15 @@ where   orders.Category NOT IN ('G','A')
                             wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
                             wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
                             ii = 0;
-                            Microsoft.Office.Interop.Excel.Worksheet wsSheet_o = this.excel.ActiveWorkbook.Worksheets[intsheet];
-                            ((Excel.Worksheet)wsSheet_o).Select();
+                            Worksheet wsSheet_o = this.excel.ActiveWorkbook.Worksheets[intsheet];
+                            ((Worksheet)wsSheet_o).Select();
                             wsSheet.Copy(wsSheet_o);
                             intsheet = this.excel.ActiveWorkbook.Worksheets.Count;
-                            ((Excel.Worksheet)wsSheet_o).Move(this.excel.Worksheets[intsheet - 1]); // copy 的sheet 會產生在前 , 因此原本的Sheet要往前移
+                            ((Worksheet)wsSheet_o).Move(this.excel.Worksheets[intsheet - 1]); // copy 的sheet 會產生在前 , 因此原本的Sheet要往前移
                             wsSheet = this.excel.ActiveWorkbook.Worksheets[intsheet];
                             wsSheet.Name = "Detail Sheet. " + (intsheet - 1).ToString();
-                            ((Excel.Worksheet)wsSheet).Select();
-                            Microsoft.Office.Interop.Excel.Range formatRange1 = wsSheet.get_Range(string.Format("A{0}:{2}{1}", rownum, PrivUtils.getPageNum() - 1, PrivUtils.getPosition(intColumns)));
+                            ((Worksheet)wsSheet).Select();
+                            Range formatRange1 = wsSheet.get_Range(string.Format("A{0}:{2}{1}", rownum, PrivUtils.getPageNum() - 1, PrivUtils.getPosition(intColumns)));
                             formatRange1.Select();
                             formatRange1.Delete(Microsoft.Office.Interop.Excel.XlDeleteShiftDirection.xlShiftUp);
                         }

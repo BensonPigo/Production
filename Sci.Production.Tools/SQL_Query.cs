@@ -12,7 +12,7 @@ using Microsoft.SqlServer.Management.Smo;
 
 namespace Sci.Production.Tools
 {
-    public partial class SQL_Query : Sci.Win.Tems.QueryForm
+    public partial class SQL_Query : Win.Tems.QueryForm
     {
         public SQL_Query(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -117,7 +117,7 @@ namespace Sci.Production.Tools
         private void sendmail(string subject, string desc)
         {
             string sql_update_receiver = ConfigurationManager.AppSettings["sql_update_receiver"];
-            Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Sci.Env.Cfg.MailFrom, sql_update_receiver, string.Empty, subject, string.Empty, desc, true, true);
+            Win.Tools.MailTo mail = new Win.Tools.MailTo(Sci.Env.Cfg.MailFrom, sql_update_receiver, string.Empty, subject, string.Empty, desc, true, true);
             mail.ShowDialog();
         }
     }

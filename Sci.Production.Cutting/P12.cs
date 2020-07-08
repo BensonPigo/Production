@@ -13,7 +13,7 @@ using System.Linq;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P12 : Sci.Win.Tems.QueryForm
+    public partial class P12 : Win.Tems.QueryForm
     {
         BindingList<P12_PrintData> Data = new BindingList<P12_PrintData>();
 
@@ -833,7 +833,7 @@ OPTION (RECOMPILE)"
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
 
             // 有按才更新列印日期printdate。
             var res2 = this.dtt.AsEnumerable()

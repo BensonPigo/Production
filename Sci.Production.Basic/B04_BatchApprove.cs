@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Basic
 {
-    public partial class B04_BatchApprove : Sci.Win.Forms.Base
+    public partial class B04_BatchApprove : Win.Forms.Base
     {
         Action reloadParant;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();

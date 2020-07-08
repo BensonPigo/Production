@@ -9,7 +9,7 @@ using System.Transactions;
 
 namespace Sci.Production.PublicForm
 {
-    public partial class EachConsumption_SwitchWorkOrder : Sci.Win.Subs.Base
+    public partial class EachConsumption_SwitchWorkOrder : Win.Subs.Base
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
@@ -69,7 +69,7 @@ and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
 
             if (DTcheckAS.Rows.Count > 0)
             {
-                var m = new Sci.Win.UI.MsgGridForm(DTcheckAS, "Switching is stopped for these arctile size are not found in [ Each Consumpotion ], but exists in [ Quantity Breakdown ]", " Do you still want to Switch to WorkOrder ?", null, MessageBoxButtons.YesNo);
+                var m = new Win.UI.MsgGridForm(DTcheckAS, "Switching is stopped for these arctile size are not found in [ Each Consumpotion ], but exists in [ Quantity Breakdown ]", " Do you still want to Switch to WorkOrder ?", null, MessageBoxButtons.YesNo);
 
                 m.Width = 500;
                 m.grid1.Columns[1].Width = 140;

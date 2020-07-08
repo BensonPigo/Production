@@ -4,7 +4,7 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtCustomsContract : Sci.Win.UI.TextBox
+    public partial class txtCustomsContract : Win.UI.TextBox
     {
         private bool _CheckDate = false;
         private bool _CheckStatus = true;
@@ -42,7 +42,7 @@ namespace Sci.Production.Class
                 sqlcmd = sqlcmd + " and Status = 'Confirmed' ";
             }
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "15,10,10", this.Text, headercaptions: "Contract No.,Start Date, End Date");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "15,10,10", this.Text, headercaptions: "Contract No.,Start Date, End Date");
             item.Size = new System.Drawing.Size(550, 375);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)

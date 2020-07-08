@@ -4,7 +4,7 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtseason : Sci.Win.UI.TextBox
+    public partial class txtseason : Win.UI.TextBox
     {
         public txtseason()
         {
@@ -58,14 +58,14 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item;
+            Win.Tools.SelectItem item;
             string selectCommand = "select distinct ID from Production.dbo.Season WITH (NOLOCK) order by id desc";
             if (this.brandObject != null && !string.IsNullOrWhiteSpace((string)this.brandObject.Text))
             {
                 selectCommand = string.Format("select distinct ID from Production.dbo.Season WITH (NOLOCK) where BrandID = '{0}' order by id desc", this.brandObject.Text);
             }
 
-            item = new Sci.Win.Tools.SelectItem(selectCommand, "11", this.Text);
+            item = new Win.Tools.SelectItem(selectCommand, "11", this.Text);
             item.Width = 300;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)

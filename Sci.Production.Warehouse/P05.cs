@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P05 : Sci.Win.Tems.QueryForm
+    public partial class P05 : Win.Tems.QueryForm
     {
         private string para_Wkno;
         private string para_Spno;
@@ -44,15 +44,15 @@ WHERE p1.ID ='{Sci.Env.User.UserID}'
 
                DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
 
-               Sci.Production.Warehouse.P02 callP02 = null;
+                P02 callP02 = null;
 
                 // 避免重複開啟視窗
                foreach (Form form in Application.OpenForms)
                 {
-                    if (form is Sci.Production.Warehouse.P02)
+                    if (form is P02)
                     {
                         form.Activate();
-                        Sci.Production.Warehouse.P02 activateForm = (Sci.Production.Warehouse.P02)form;
+                        P02 activateForm = (P02)form;
 
                         // activateForm.setTxtSPNo(CurrentMaintain["ID"].ToString());
                         // activateForm.Query();
@@ -68,7 +68,7 @@ WHERE p1.ID ='{Sci.Env.User.UserID}'
                     {
                         foreach (var subMenuItem in toolMenuItem.DropDown.Items)
                         {
-                            if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                            if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
                             {
                                 if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P02. Import schedule"))
                                 {
@@ -100,15 +100,15 @@ WHERE p1.ID ='{Sci.Env.User.UserID}'
 
                 DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
 
-                Sci.Production.Warehouse.P02 callP02 = null;
+                P02 callP02 = null;
 
                 // 避免重複開啟視窗
                 foreach (Form form in Application.OpenForms)
                 {
-                    if (form is Sci.Production.Warehouse.P02)
+                    if (form is P02)
                     {
                         form.Activate();
-                        Sci.Production.Warehouse.P02 activateForm = (Sci.Production.Warehouse.P02)form;
+                        P02 activateForm = (P02)form;
 
                         // activateForm.setTxtSPNo(CurrentMaintain["ID"].ToString());
                         // activateForm.Query();
@@ -124,7 +124,7 @@ WHERE p1.ID ='{Sci.Env.User.UserID}'
                     {
                         foreach (var subMenuItem in toolMenuItem.DropDown.Items)
                         {
-                            if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                            if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
                             {
                                 if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P02. Import schedule"))
                                 {

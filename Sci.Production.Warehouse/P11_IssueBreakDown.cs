@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P11_IssueBreakDown : Sci.Win.Subs.Base
+    public partial class P11_IssueBreakDown : Win.Subs.Base
     {
         DataRow Master;
         DataTable dtQtyBreakDown;

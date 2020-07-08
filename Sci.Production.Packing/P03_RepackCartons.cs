@@ -18,7 +18,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// P03_RepackCartons
     /// </summary>
-    public partial class P03_RepackCartons : Sci.Win.Tems.QueryForm
+    public partial class P03_RepackCartons : Win.Tems.QueryForm
     {
         private DataTable dtMainDetail;
         private DataTable dtMiddleData;
@@ -86,7 +86,7 @@ namespace Sci.Production.Packing
                 .Numeric("ShipQty", header: "Qty", iseditingreadonly: true);
 
             #region seq 右鍵開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings seq = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings seq = new DataGridViewGeneratorTextColumnSettings();
             seq.EditingMouseDown += (s, e) =>
             {
                 if (e.Button != System.Windows.Forms.MouseButtons.Right ||
@@ -103,7 +103,7 @@ namespace Sci.Production.Packing
                     return;
                 }
 
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dtOrderShipmodeSeq, "ID,Seq,BuyerDelivery,ShipmodeID,Qty", "15,4,20,20,10", string.Empty);
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(dtOrderShipmodeSeq, "ID,Seq,BuyerDelivery,ShipmodeID,Qty", "15,4,20,20,10", string.Empty);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)
                 {
@@ -333,7 +333,7 @@ namespace Sci.Production.Packing
                 return;
             }
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dtOrderShipmodeSeq, "ID,Seq,BuyerDelivery,ShipmodeID,Qty", "15,4,20,20,10", string.Empty);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(dtOrderShipmodeSeq, "ID,Seq,BuyerDelivery,ShipmodeID,Qty", "15,4,20,20,10", string.Empty);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

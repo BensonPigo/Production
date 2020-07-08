@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
-    public partial class B01 : Sci.Win.Tems.Input1
+    public partial class B01 : Win.Tems.Input1
     {
         public B01(ToolStripMenuItem menuitem)
             : base(menuitem)

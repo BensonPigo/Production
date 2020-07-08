@@ -17,7 +17,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P08
     /// </summary>
-    public partial class P08 : Sci.Win.Tems.Input6
+    public partial class P08 : Win.Tems.Input6
     {
         // Dictionary<String, String> comboBox2_RowSource1 = new Dictionary<string, string>();
         // Dictionary<String, String> comboBox2_RowSource2 = new Dictionary<string, string>();
@@ -26,10 +26,10 @@ namespace Sci.Production.Shipping
         private BindingSource comboxbs1;
 
         // , comboxbs2_1, comboxbs2_2;
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings code = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings rate = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings price = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings code = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings rate = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings price = new DataGridViewGeneratorNumericColumnSettings();
         private Ict.Win.UI.DataGridViewTextBoxColumn col_code;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_qty;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_rate;
@@ -264,7 +264,7 @@ where sd.ID = '{0}'", masterID);
                                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                                 string localSuppID = MyUtility.Convert.GetString(this.CurrentMaintain["LocalSuppID"]);
                                 string sqlCmd = string.Format("select ID,Description,[Brand]=BrandID,CurrencyID, Price,[Unit]=UnitID from ShipExpense WITH (NOLOCK) where Junk = 0 and LocalSuppID = '{0}' and AccountID != ''", localSuppID);
-                                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20,50,6,3,11,8", MyUtility.Convert.GetString(dr["ShipExpenseID"]), columndecimals: "0,0,0,0,4");
+                                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "20,50,6,3,11,8", MyUtility.Convert.GetString(dr["ShipExpenseID"]), columndecimals: "0,0,0,0,4");
                                 DialogResult returnResult = item.ShowDialog();
                                 if (returnResult == DialogResult.Cancel)
                                 {
@@ -902,7 +902,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 result = DBProxy.Current.Select(null, sqlCmd, out report_ShippingAPDetail);
 
                 rd.ReportResource = reportresource;
-                rd.ReportDataSources.Add(new System.Collections.Generic.KeyValuePair<string, object>("Report_ShippingAPDetail", report_ShippingAPDetail));
+                rd.ReportDataSources.Add(new KeyValuePair<string, object>("Report_ShippingAPDetail", report_ShippingAPDetail));
                 if (factoryData.Rows.Count == 0)
                 {
                     rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("company", " "));
@@ -939,7 +939,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("total", this.Chk_null(MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(this.CurrentMaintain["Amount"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["VAT"])))));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("handle", this.Chk_null(MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["Handle"]))))));
 
-                using (var frm = new Sci.Win.Subs.ReportView(rd))
+                using (var frm = new Win.Subs.ReportView(rd))
                 {
                     frm.ShowDialog(this);
                 }
@@ -1001,7 +1001,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             dt.Dispose();
 
-            Sci.Production.Shipping.P08_ShareExpense callNextForm = new Sci.Production.Shipping.P08_ShareExpense(this.CurrentMaintain, apflag);
+            P08_ShareExpense callNextForm = new P08_ShareExpense(this.CurrentMaintain, apflag);
             callNextForm.ShowDialog(this);
         }
 
@@ -1111,8 +1111,8 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             }
 
             string strsqlcmd = $@"select ID,Description from ShippingReason where type='AP' and junk=0";
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(strsqlcmd, "8,20", this.txtReason.Text);
-            item.Size = new System.Drawing.Size(410, 666);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(strsqlcmd, "8,20", this.txtReason.Text);
+            item.Size = new Size(410, 666);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

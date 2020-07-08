@@ -4,14 +4,17 @@ using Sci.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class txtdropdownlist : Sci.Win.UI.ComboBox
+    public partial class txtdropdownlist : Win.UI.ComboBox
     {
         private string type;
 
         [Category("Custom Properties")]
         public string Type
         {
-            get { return this.type; }
+            get
+            {
+                return this.type;
+            }
 
             set
             {

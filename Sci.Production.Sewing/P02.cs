@@ -14,11 +14,11 @@ namespace Sci.Production.Sewing
     /// <summary>
     /// P02
     /// </summary>
-    public partial class P02 : Sci.Win.Tems.Input6
+    public partial class P02 : Win.Tems.Input6
     {
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings orderID = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings qaqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings inlineqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings orderID = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings qaqty = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings inlineqty = new DataGridViewGeneratorNumericColumnSettings();
 
         private DateTime? SewingMonthlyLockDate;
         private decimal systemTMS = 0;
@@ -115,7 +115,7 @@ where   mo.Junk = 0
         and f.IsProduceFty = 1",
                                 Sci.Env.User.Factory);
 
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "15,13,15,5,10", dr["OrderID"].ToString(), "ID,MockupID,Style,Season,Brand");
+                            SelectItem item = new SelectItem(sqlCmd, "15,13,15,5,10", dr["OrderID"].ToString(), "ID,MockupID,Style,Season,Brand");
                             item.Size = new System.Drawing.Size(700, 600);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
@@ -693,7 +693,7 @@ where   mo.Junk = 0
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
-            Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("Sewing_RVS", true);
+            Win.UI.SelectReason callReason = new Win.UI.SelectReason("Sewing_RVS", true);
             DialogResult dResult = callReason.ShowDialog(this);
             if (dResult == System.Windows.Forms.DialogResult.OK)
             {
@@ -744,7 +744,7 @@ where ID = '{MyUtility.Convert.GetString(this.CurrentMaintain["ID"])}'";
 
         private void BtnReqUnlock_Click(object sender, EventArgs e)
         {
-            Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("Sewing_RVS");
+            Win.UI.SelectReason callReason = new Win.UI.SelectReason("Sewing_RVS");
             DialogResult dResult = callReason.ShowDialog(this);
 
             if (dResult == System.Windows.Forms.DialogResult.OK)

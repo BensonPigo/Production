@@ -10,7 +10,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P17
     /// </summary>
-    public partial class P17 : Sci.Win.Tems.QueryForm
+    public partial class P17 : Win.Tems.QueryForm
     {
         /// <summary>
         /// P17

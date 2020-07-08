@@ -10,7 +10,7 @@ using System.Transactions;
 namespace Sci.Production.Shipping
 {
     /// <inheritdoc/>
-    public partial class B03_BatchApprove : Sci.Win.Forms.Base
+    public partial class B03_BatchApprove : Win.Forms.Base
     {
         Action reloadParant;
 

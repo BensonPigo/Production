@@ -9,7 +9,7 @@ using Sci.Data;
 
 namespace Sci.Production.Quality
 {
-    public partial class B20 : Sci.Win.Tems.Input1
+    public partial class B20 : Win.Tems.Input1
     {
         public B20(ToolStripMenuItem menuitem)
             : base(menuitem)

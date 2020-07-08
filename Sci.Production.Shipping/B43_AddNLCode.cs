@@ -11,10 +11,10 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B43_AddNLCode
     /// </summary>
-    public partial class B43_AddNLCode : Sci.Win.Subs.Base
+    public partial class B43_AddNLCode : Win.Subs.Base
     {
         private DataRow masterData;
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings unit = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings unit = new DataGridViewGeneratorTextColumnSettings();
 
         /// <summary>
         /// B43_AddNLCode

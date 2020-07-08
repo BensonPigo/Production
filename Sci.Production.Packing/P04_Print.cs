@@ -10,7 +10,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P04_Print
     /// </summary>
-    public partial class P04_Print : Sci.Win.Tems.PrintForm
+    public partial class P04_Print : Win.Tems.PrintForm
     {
         private DataRow masterData;
         private string reportType;
@@ -71,7 +71,7 @@ namespace Sci.Production.Packing
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             if (this.reportType == "1")
             {

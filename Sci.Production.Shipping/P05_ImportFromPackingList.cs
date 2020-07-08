@@ -12,7 +12,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P05_ImportFromPackingList
     /// </summary>
-    public partial class P05_ImportFromPackingList : Sci.Win.Tems.QueryForm
+    public partial class P05_ImportFromPackingList : Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private DataRow masterData;

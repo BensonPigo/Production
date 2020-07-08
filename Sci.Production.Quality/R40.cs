@@ -11,7 +11,7 @@ using Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Quality
 {
-    public partial class R40 : Sci.Win.Tems.PrintForm
+    public partial class R40 : Win.Tems.PrintForm
     {
         public R40(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -44,7 +44,7 @@ namespace Sci.Production.Quality
 
         System.Data.DataTable allFactory = null;
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.dtt_All = null;
             this.dtt = null;
@@ -533,7 +533,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
 
                 var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
 
-                Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R40_ByYear.xltx");
+                SaveXltReportCls xl = new SaveXltReportCls("Quality_R40_ByYear.xltx");
                 SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(this.dtt_All);
                 DateTime newtodaty = DateTime.Today;
                 int year1 = newtodaty.Year;
@@ -579,7 +579,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
 
                 var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
 
-                Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R40_ByFactory.xltx", keepApp: true);
+                SaveXltReportCls xl = new SaveXltReportCls("Quality_R40_ByFactory.xltx", keepApp: true);
                 SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(this.alltemp_All);
 
                 Dictionary<string, string> dic = new Dictionary<string, string>();
@@ -644,7 +644,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                 xl.DicDatas.Add("##copyftysheet", c);
 
                 xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Quality_R40_ByFactory"));
-                ((Microsoft.Office.Interop.Excel.Worksheet)xl.ExcelApp.ActiveSheet).Columns.AutoFit();
+                ((Worksheet)xl.ExcelApp.ActiveSheet).Columns.AutoFit();
                 xl.FinishSave();
                 #endregion
             }
@@ -666,8 +666,8 @@ drop table #dRangesM,#dRangesY,#daterange,#F
             mySheet.Cells[2, 10] = "Shipped";
             mySheet.Cells[2, 11] = "adiComp";
 
-            Microsoft.Office.Interop.Excel._Application myExcel = null;
-            Microsoft.Office.Interop.Excel._Workbook myBook = null;
+            _Application myExcel = null;
+            _Workbook myBook = null;
             myExcel = mySheet.Application;
             myBook = myExcel.ActiveWorkbook;
 
@@ -766,7 +766,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
 
                 // 設定 圖表 x 軸 內容
                 // 宣告
-                Microsoft.Office.Interop.Excel.Axis xAxis = (Microsoft.Office.Interop.Excel.Axis)myBook.ActiveChart.Axes(Microsoft.Office.Interop.Excel.XlAxisType.xlValue, Microsoft.Office.Interop.Excel.XlAxisGroup.xlPrimary);
+                Axis xAxis = (Axis)myBook.ActiveChart.Axes(Microsoft.Office.Interop.Excel.XlAxisType.xlValue, Microsoft.Office.Interop.Excel.XlAxisGroup.xlPrimary);
 
                 // 設定 圖表 x軸 橫向線條 線條樣式
                 // xAxis.MajorGridlines.Border.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlDashDotDot;
@@ -782,7 +782,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                 xAxis.TickLabels.Font.Size = 14; // 設定 x軸 字體大小
 
                 // 設定 圖表 y軸 內容
-                Microsoft.Office.Interop.Excel.Axis yAxis = (Microsoft.Office.Interop.Excel.Axis)myBook.ActiveChart.Axes(Microsoft.Office.Interop.Excel.XlAxisType.xlCategory, Microsoft.Office.Interop.Excel.XlAxisGroup.xlPrimary);
+                Axis yAxis = (Axis)myBook.ActiveChart.Axes(Microsoft.Office.Interop.Excel.XlAxisType.xlCategory, Microsoft.Office.Interop.Excel.XlAxisGroup.xlPrimary);
 
                 // yAxis.TickLabels.Font.Name = "標楷體"; //設定 y軸 字體字型=標楷體
                 yAxis.TickLabels.Font.Size = 14; // 設定 y軸 字體大小
@@ -832,14 +832,14 @@ drop table #dRangesM,#dRangesY,#daterange,#F
             formatRange = mySheet.get_Range("J3", "J15");
             formatRange.NumberFormat = "#,##0";
 
-            Microsoft.Office.Interop.Excel._Application myExcel = null;
-            Microsoft.Office.Interop.Excel._Workbook myBook = null;
+            _Application myExcel = null;
+            _Workbook myBook = null;
             myExcel = mySheet.Application;
             myBook = myExcel.ActiveWorkbook;
 
             try
             {
-                ((Microsoft.Office.Interop.Excel._Worksheet)mySheet).Activate();
+                ((_Worksheet)mySheet).Activate();
 
                 // 在工作簿 新增一張 統計圖表，單獨放在一個分頁裡面
                 Range range = mySheet.get_Range("a1", "a14"); // .Select();
@@ -930,7 +930,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
 
                 // 設定 圖表 x 軸 內容
                 // 宣告
-                Microsoft.Office.Interop.Excel.Axis xAxis = (Microsoft.Office.Interop.Excel.Axis)myBook.ActiveChart.Axes(Microsoft.Office.Interop.Excel.XlAxisType.xlValue, Microsoft.Office.Interop.Excel.XlAxisGroup.xlPrimary);
+                Axis xAxis = (Axis)myBook.ActiveChart.Axes(Microsoft.Office.Interop.Excel.XlAxisType.xlValue, Microsoft.Office.Interop.Excel.XlAxisGroup.xlPrimary);
 
                 // 設定 圖表 x軸 橫向線條 線條樣式
                 // xAxis.MajorGridlines.Border.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlDashDotDot;
@@ -947,7 +947,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                 xAxis.TickLabels.Font.Size = 14;       // 設定 x軸 字體大小
 
                 // 設定 圖表 y軸 內容
-                Microsoft.Office.Interop.Excel.Axis yAxis = (Microsoft.Office.Interop.Excel.Axis)myBook.ActiveChart.Axes(Microsoft.Office.Interop.Excel.XlAxisType.xlCategory, Microsoft.Office.Interop.Excel.XlAxisGroup.xlPrimary);
+                Axis yAxis = (Axis)myBook.ActiveChart.Axes(Microsoft.Office.Interop.Excel.XlAxisType.xlCategory, Microsoft.Office.Interop.Excel.XlAxisGroup.xlPrimary);
                 yAxis.TickLabels.Font.Name = "Arial"; // 設定 y軸 字體字型=標楷體
                 yAxis.TickLabels.Font.Size = 14; // 設定 y軸 字體大小
             }
@@ -970,8 +970,8 @@ drop table #dRangesM,#dRangesY,#daterange,#F
 
         void CopySheet(Worksheet mySheet, int rowNo, int columnNo)
         {
-            Microsoft.Office.Interop.Excel._Application myExcel = null;
-            Microsoft.Office.Interop.Excel._Workbook myBook = null;
+            _Application myExcel = null;
+            _Workbook myBook = null;
             myExcel = mySheet.Application;
             myBook = myExcel.ActiveWorkbook;
 

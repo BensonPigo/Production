@@ -7,7 +7,7 @@ using Ict;
 
 namespace Sci.Production.Class
 {
-    public partial class txtLocalTPESuppNoConfirm : Sci.Win.UI._UserControl
+    public partial class txtLocalTPESuppNoConfirm : Win.UI._UserControl
     {
         private bool isIncludeJunk;
 
@@ -23,12 +23,12 @@ namespace Sci.Production.Class
             set { this.isIncludeJunk = value; }
         }
 
-        public Sci.Win.UI.TextBox TextBox1
+        public Win.UI.TextBox TextBox1
         {
             get { return this.textBox1; }
         }
 
-        public Sci.Win.UI.DisplayBox DisplayBox1
+        public Win.UI.DisplayBox DisplayBox1
         {
             get { return this.displayBox1; }
         }
@@ -96,7 +96,7 @@ namespace Sci.Production.Class
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+            Win.Forms.Base myForm = (Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || this.textBox1.ReadOnly == true)
             {
                 return;
@@ -111,7 +111,7 @@ namespace Sci.Production.Class
 
             DataTable tbSelect;
             DBProxy.Current.Select("Production", selectCommand, out tbSelect);
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbSelect, "ID,Abb,Name", "9,13,40", this.Text, false, ",", "ID,Abb,Name");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(tbSelect, "ID,Abb,Name", "9,13,40", this.Text, false, ",", "ID,Abb,Name");
             item.Size = new System.Drawing.Size(690, 555);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)

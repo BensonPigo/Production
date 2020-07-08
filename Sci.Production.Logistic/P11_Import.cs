@@ -12,7 +12,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// P11_Import
     /// </summary>
-    public partial class P11_Import : Sci.Win.Subs.Base
+    public partial class P11_Import : Win.Subs.Base
     {
         private DataTable dtMasterDetail;
         private DataTable dtImport;

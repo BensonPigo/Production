@@ -28,11 +28,11 @@ namespace Sci.Production.Packing
                 return new DualResult(false, "Data not found.");
             }
 
-            Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
+            Word._Application winword = new Word.Application();
             winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
             winword.Visible = false;
             object printFile;
-            Microsoft.Office.Interop.Word._Document document;
+            Word._Document document;
             Word.Table tables = null;
 
             #region check Factory
@@ -266,11 +266,11 @@ namespace Sci.Production.Packing
                 return new DualResult(false, "Data not found.");
             }
 
-            Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
+            Word._Application winword = new Word.Application();
             winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
             winword.Visible = false;
             object printFile;
-            Microsoft.Office.Interop.Word._Document document;
+            Word._Document document;
             Word.Table tables = null;
 
             printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_QRcode.dotx";
@@ -378,11 +378,11 @@ namespace Sci.Production.Packing
                 return new DualResult(false, "Data not found.");
             }
 
-            Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
+            Word._Application winword = new Word.Application();
             winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
             winword.Visible = false;
             object printFile;
-            Microsoft.Office.Interop.Word._Document document;
+            Word._Document document;
             Word.Table tables = null;
 
             printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_Barcode_CustCTN.dotx";

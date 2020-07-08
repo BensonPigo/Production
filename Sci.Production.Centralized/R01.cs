@@ -17,7 +17,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// R01
     /// </summary>
-    public partial class R01 : Sci.Win.Tems.PrintForm
+    public partial class R01 : Win.Tems.PrintForm
     {
         private DataTable dtPrint = null;
 
@@ -79,13 +79,13 @@ namespace Sci.Production.Centralized
         }
 
         /// <inheritdoc/>
-        protected override bool OnToExcel(Win.ReportDefinition report)
+        protected override bool OnToExcel(ReportDefinition report)
         {
             return true;
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             DualResult result = Result.True;
             if (this.dtPrint != null)

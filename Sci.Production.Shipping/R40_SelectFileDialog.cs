@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
-    public partial class R40_SelectFileDialog : Sci.Win.Forms.Base
+    public partial class R40_SelectFileDialog : Win.Forms.Base
     {
         public R40_SelectFileDialog()
         {

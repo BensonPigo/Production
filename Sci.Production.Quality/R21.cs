@@ -9,7 +9,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Quality
 {
-    public partial class R21 : Sci.Win.Tems.PrintForm
+    public partial class R21 : Win.Tems.PrintForm
     {
         DateTime? cdate1;
         DateTime? cdate2;
@@ -56,7 +56,7 @@ namespace Sci.Production.Quality
         }
 
         // 非同步資料 必須要有
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd_Summary = new StringBuilder();
             if (this.radioSummary.Checked)
@@ -280,7 +280,7 @@ where a.Status = 'Confirmed'");
                     return false;
                 }
 
-                Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_Summary.xltx"); // 預先開啟excel app
+                Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_Summary.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.SummaryData, string.Empty, "Quality_R21_CFA_InlineReport_Summary.xltx", 2, false, null, excel);
 
                 excel.Cells.EntireColumn.AutoFit();
@@ -309,7 +309,7 @@ where a.Status = 'Confirmed'");
                 // Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_detail.xltx"); //預先開啟excel app
                // MyUtility.Excel.CopyToXls(DetailData,"", "Quality_R21_CFA_InlineReport_detail.xltx", 2, false, null, excel);
                 Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_detail.xltx");
-                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_detail.xltx", objApp);
+                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_detail.xltx", objApp);
                 com.WriteTable(this.DetailData, 3);
 
                 #region Save & Show Excel

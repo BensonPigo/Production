@@ -17,7 +17,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P10
     /// </summary>
-    public partial class P10 : Sci.Win.Tems.Input6
+    public partial class P10 : Win.Tems.Input6
     {
         private Ict.Win.UI.DataGridViewDateBoxColumn col_inspdate;
         private Ict.Win.UI.DataGridViewDateBoxColumn col_pulloutdate;
@@ -693,14 +693,14 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
         // Import Data
         private void BtnImportData_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P10_ImportData callNextForm = new Sci.Production.Shipping.P10_ImportData(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, (DataTable)this.listControlBindingSource1.DataSource);
+            P10_ImportData callNextForm = new P10_ImportData(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, (DataTable)this.listControlBindingSource1.DataSource);
             callNextForm.ShowDialog(this);
         }
 
         // Update Pullout Date
         private void BtnUpdatePulloutDate_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P10_UpdatePulloutDate callNextForm = new Sci.Production.Shipping.P10_UpdatePulloutDate(this.CurrentMaintain);
+            P10_UpdatePulloutDate callNextForm = new P10_UpdatePulloutDate(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
             this.RenewData();
         }

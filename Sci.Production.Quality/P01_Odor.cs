@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Quality
 {
-    public partial class P01_Odor : Sci.Win.Subs.Input4
+    public partial class P01_Odor : Win.Subs.Input4
     {
         private DataRow maindr;
         private string loginID = Sci.Env.User.UserID;

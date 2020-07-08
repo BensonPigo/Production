@@ -5,7 +5,7 @@ using Ict.Win;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P37_DebitSchedule : Sci.Win.Subs.Input4
+    public partial class P37_DebitSchedule : Win.Subs.Input4
     {
         private DataRow Master;
         private string _FromFuncton;
@@ -31,7 +31,7 @@ namespace Sci.Production.Subcon
 
         protected override bool OnGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings amountSetting = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings amountSetting = new DataGridViewGeneratorNumericColumnSettings();
 
             amountSetting.CellValidating += (s, e) =>
              {

@@ -8,14 +8,14 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P51_Print : Sci.Win.Tems.PrintForm
+    public partial class P51_Print : Win.Tems.PrintForm
     {
         public P51_Print()
         {
             this.InitializeComponent();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();

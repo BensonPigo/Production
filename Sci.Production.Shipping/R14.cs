@@ -11,7 +11,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R14
     /// </summary>
-    public partial class R14 : Sci.Win.Tems.PrintForm
+    public partial class R14 : Win.Tems.PrintForm
     {
         private DataTable printData;
 
@@ -59,7 +59,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region where
             string where = string.Empty;

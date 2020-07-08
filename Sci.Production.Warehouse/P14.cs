@@ -16,7 +16,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P14 : Sci.Win.Tems.Input6
+    public partial class P14 : Win.Tems.Input6
     {
         public P14(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -194,7 +194,7 @@ Where a.id = '{0}'", masterID);
         protected override void OnDetailGridSetup()
         {
             #region Seq 右鍵開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
@@ -206,7 +206,7 @@ where ID = '{this.CurrentMaintain["OrderID"]}'
 and Junk = 0
 order by SEQ1, SEQ2
 ";
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "4,4,30,15,15", string.Empty);
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "4,4,30,15,15", string.Empty);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -288,7 +288,7 @@ order by SEQ1, SEQ2
             };
             #endregion Seq 右鍵開窗
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings poid = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings poid = new DataGridViewGeneratorTextColumnSettings();
             poid.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
@@ -762,7 +762,7 @@ drop table #tmp
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
 
@@ -810,7 +810,7 @@ from orders o with(nolock)
 where Category ='A'
 and o.FtyGroup = '{Sci.Env.User.Factory}'
 ";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "16", this.txtOrderID.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "16", this.txtOrderID.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -857,7 +857,7 @@ select ID from SCIFty where junk = 0 and Type in ('B','S') and CountryID = (sele
 except
 select ID from Factory
 ";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "16", this.txtfactory.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "16", this.txtfactory.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

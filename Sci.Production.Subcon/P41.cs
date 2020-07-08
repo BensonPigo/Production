@@ -10,7 +10,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P41 : Sci.Win.Tems.QueryForm
+    public partial class P41 : Win.Tems.QueryForm
     {
         public P41(ToolStripMenuItem menuitem)
             : base(menuitem)

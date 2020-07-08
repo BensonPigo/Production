@@ -18,7 +18,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// P18
     /// </summary>
-    public partial class P18 : Sci.Win.Tems.QueryForm
+    public partial class P18 : Win.Tems.QueryForm
     {
         private DataTable dt_scanDetail;
         private SelectCartonDetail selecedPK;

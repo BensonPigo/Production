@@ -11,7 +11,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// R04
     /// </summary>
-    public partial class R04 : Sci.Win.Tems.PrintForm
+    public partial class R04 : Win.Tems.PrintForm
     {
         private DateTime? date1;
         private DateTime? date2;
@@ -75,7 +75,7 @@ namespace Sci.Production.PPIC
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             StringBuilder sqlCondition = new StringBuilder();

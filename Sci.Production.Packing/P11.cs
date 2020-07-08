@@ -12,7 +12,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P11
     /// </summary>
-    public partial class P11 : Sci.Win.Tems.Input6
+    public partial class P11 : Win.Tems.Input6
     {
         private string sqlCmd;
         private string masterID;
@@ -20,9 +20,9 @@ namespace Sci.Production.Packing
         private DataRow dr1;
         private DialogResult buttonResult;
         private DualResult result;
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings size = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings reason = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings article = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings size = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings reason = new DataGridViewGeneratorTextColumnSettings();
 
         /// <summary>
         /// P11
@@ -103,7 +103,7 @@ where od.ID = '{0}'", this.masterID);
                         {
                             this.dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             this.sqlCmd = string.Format("Select Article,SizeCode from Order_Qty WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(this.sqlCmd, "8", this.dr["Article"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.sqlCmd, "8", this.dr["Article"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -174,7 +174,7 @@ where od.ID = '{0}'", this.masterID);
                         {
                             this.dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             this.sqlCmd = string.Format("Select distinct SizeCode from Order_Qty WITH (NOLOCK) where ID = '{0}' and Article = '{1}'", this.CurrentMaintain["ID"].ToString(), this.dr["Article"].ToString());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(this.sqlCmd, "8", this.dr["SizeCode"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.sqlCmd, "8", this.dr["SizeCode"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -235,7 +235,7 @@ where od.ID = '{0}'", this.masterID);
                         if (e.RowIndex != -1)
                         {
                             this.dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select ID, Description from PackingReason WITH (NOLOCK) where Type = 'OG' and Junk = 0", "8,30", this.dr["PackingReasonID"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem("Select ID, Description from PackingReason WITH (NOLOCK) where Type = 'OG' and Junk = 0", "8,30", this.dr["PackingReasonID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {

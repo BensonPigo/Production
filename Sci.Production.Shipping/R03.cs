@@ -12,7 +12,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R03
     /// </summary>
-    public partial class R03 : Sci.Win.Tems.PrintForm
+    public partial class R03 : Win.Tems.PrintForm
     {
         private DateTime? pulloutDate1;
         private DateTime? pulloutDate2;
@@ -58,7 +58,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             string sqlWhere = string.Empty;

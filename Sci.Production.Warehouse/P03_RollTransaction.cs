@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P03_RollTransaction : Sci.Win.Subs.Base
+    public partial class P03_RollTransaction : Win.Subs.Base
     {
         DataRow dr;
         DataTable dtFtyinventory;

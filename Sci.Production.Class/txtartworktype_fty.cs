@@ -4,7 +4,7 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtartworktype_fty : Sci.Win.UI.TextBox
+    public partial class txtartworktype_fty : Win.UI.TextBox
     {
         private string m_type = string.Empty;
         private string m_subprocess = string.Empty;
@@ -48,7 +48,7 @@ namespace Sci.Production.Class
             }
 
             sqlCmd = "select ID, Abbreviation from ArtworkType WITH (NOLOCK)" + sqlWhere + " order by Seq";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20,4", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "20,4", this.Text, false, ",");
             item.Size = new System.Drawing.Size(435, 510);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)

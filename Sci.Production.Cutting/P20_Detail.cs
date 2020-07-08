@@ -3,7 +3,7 @@ using System;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P20_Detail : Sci.Win.Subs.Input8A
+    public partial class P20_Detail : Win.Subs.Input8A
     {
         public P20_Detail()
         {

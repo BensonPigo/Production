@@ -4,19 +4,19 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Class
 {
-    public partial class txtsupplier : Sci.Win.UI._UserControl
+    public partial class txtsupplier : Win.UI._UserControl
     {
         public txtsupplier()
         {
             this.InitializeComponent();
         }
 
-        public Sci.Win.UI.TextBox TextBox1
+        public Win.UI.TextBox TextBox1
         {
             get { return this.textBox1; }
         }
 
-        public Sci.Win.UI.DisplayBox DisplayBox1
+        public Win.UI.DisplayBox DisplayBox1
         {
             get { return this.displayBox1; }
         }
@@ -58,13 +58,13 @@ namespace Sci.Production.Class
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+            Win.Forms.Base myForm = (Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || this.textBox1.ReadOnly == true)
             {
                 return;
             }
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,AbbCH,AbbEN from Production.dbo.Supp WITH (NOLOCK) order by ID", "8,30,30", this.textBox1.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,AbbCH,AbbEN from Production.dbo.Supp WITH (NOLOCK) order by ID", "8,30,30", this.textBox1.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

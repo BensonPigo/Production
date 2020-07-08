@@ -9,7 +9,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P05_ExpenseData
     /// </summary>
-    public partial class P05_ExpenseData : Sci.Win.Subs.Base
+    public partial class P05_ExpenseData : Win.Subs.Base
     {
         private string id;
         private string columnName;

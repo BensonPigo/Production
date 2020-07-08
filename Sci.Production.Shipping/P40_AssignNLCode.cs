@@ -11,14 +11,14 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P40_AssignNLCode
     /// </summary>
-    public partial class P40_AssignNLCode : Sci.Win.Subs.Base
+    public partial class P40_AssignNLCode : Win.Subs.Base
     {
         private DataTable noNLCode;
         private DataTable notInPo;
         private DataTable unitNotFound;
         private DataRow masterRow;
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings nlcode = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings nlcode2 = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings nlcode = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings nlcode2 = new DataGridViewGeneratorTextColumnSettings();
 
         /// <summary>
         /// NoNLCode

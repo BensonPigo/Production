@@ -11,7 +11,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P14_BatchUpdate : Sci.Win.Forms.Base
+    public partial class P14_BatchUpdate : Win.Forms.Base
     {
         private DataTable dtBatchUpdate = new DataTable();
 

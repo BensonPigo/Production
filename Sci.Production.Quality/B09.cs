@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class B09 : Sci.Win.Tems.Input1
+    public partial class B09 : Win.Tems.Input1
     {
         private string destination_path; // 放圖檔的路徑
         private bool attach_flag = false;
@@ -111,7 +111,7 @@ namespace Sci.Production.Quality
                         System.IO.File.Delete(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["SignaturePic"]));
                         this.CurrentMaintain["SignaturePic"] = string.Empty;
                     }
-                    catch (System.IO.IOException exception)
+                    catch (IOException exception)
                     {
                         MyUtility.Msg.ErrorBox("Error: Delete file fail. Original error: " + exception.Message);
                     }
@@ -126,7 +126,7 @@ namespace Sci.Production.Quality
                         System.IO.File.Copy(local_path_file, this.destination_path + destination_fileName, true);
                         this.CurrentMaintain["SignaturePic"] = destination_fileName.Trim();
                     }
-                    catch (System.IO.IOException exception)
+                    catch (IOException exception)
                     {
                         MyUtility.Msg.ErrorBox("Error: update file fail. Original error: " + exception.Message);
                     }

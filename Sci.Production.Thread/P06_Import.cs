@@ -10,7 +10,7 @@ namespace Sci.Production.Thread
     /// <summary>
     /// P06_Import
     /// </summary>
-    public partial class P06_Import : Sci.Win.Subs.Base
+    public partial class P06_Import : Win.Subs.Base
     {
         private DataTable detTable;
         private DataTable gridTable;

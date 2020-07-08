@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P18_Import : Sci.Win.Subs.Base
+    public partial class P18_Import : Win.Subs.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
@@ -65,7 +65,7 @@ inner join PO_Supp_Detail psd WITH (NOLOCK) on b.POID = psd.id and b.Seq1 = psd.
 where a.status='Confirmed' and a.id='{0}'", transid));
 
             this.ShowWaitMessage("Data Loading....");
-            Ict.DualResult result;
+            DualResult result;
             if (!(result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out this.dtImportData)))
             {
                 this.ShowErr(strSQLCmd.ToString(), result);
@@ -89,13 +89,13 @@ where a.status='Confirmed' and a.id='{0}'", transid));
             base.OnFormLoaded();
 
             #region Location 右鍵開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataRow currentrow = this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex());
-                    Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation(currentrow["Stocktype"].ToString(), currentrow["Location"].ToString());
+                    Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation(currentrow["Stocktype"].ToString(), currentrow["Location"].ToString());
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -153,7 +153,7 @@ WHERE   StockType='{0}'
             #endregion Location 右鍵開窗
 
             #region StockType setting
-            Ict.Win.DataGridViewGeneratorComboBoxColumnSettings sk = new DataGridViewGeneratorComboBoxColumnSettings();
+            DataGridViewGeneratorComboBoxColumnSettings sk = new DataGridViewGeneratorComboBoxColumnSettings();
             sk.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)

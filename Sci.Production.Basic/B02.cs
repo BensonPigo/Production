@@ -7,7 +7,7 @@ namespace Sci.Production.Basic
     /// <summary>
     /// B02
     /// </summary>
-    public partial class B02 : Sci.Win.Tems.Input7
+    public partial class B02 : Win.Tems.Input7
     {
         /// <summary>
         /// B02
@@ -58,7 +58,7 @@ namespace Sci.Production.Basic
         // Mail To
         private void BtnMailTo_Click(object sender, EventArgs e)
         {
-            Sci.Production.Basic.B02_MailTo callNextForm = new Sci.Production.Basic.B02_MailTo(this.IsSupportEdit, null, null, null);
+            B02_MailTo callNextForm = new B02_MailTo(this.IsSupportEdit, null, null, null);
             callNextForm.ShowDialog(this);
         }
 

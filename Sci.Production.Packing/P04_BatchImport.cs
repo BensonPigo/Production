@@ -12,7 +12,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P04_BatchImport
     /// </summary>
-    public partial class P04_BatchImport : Sci.Win.Subs.Base
+    public partial class P04_BatchImport : Win.Subs.Base
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private DataRow packingListData;
@@ -189,7 +189,7 @@ left join View_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Arti
         private void TxtOrderType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = string.Format("select ID from OrderType WITH (NOLOCK) where BrandID = '{0}' order by ID", this.packingListData["BrandID"].ToString());
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "20", this.Text, false, string.Empty);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlWhere, "20", this.Text, false, string.Empty);
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)

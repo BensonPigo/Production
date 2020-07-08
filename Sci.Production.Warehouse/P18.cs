@@ -18,7 +18,7 @@ using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P18 : Sci.Win.Tems.Input6
+    public partial class P18 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
@@ -146,11 +146,11 @@ where   b.id = a.mdivisionid
                 string.Format(@"select NameEN from MDivision where ID='{0}'", Sci.Env.User.Keyword), out dtNAME);
             string RptTitle = dtNAME.Rows[0]["NameEN"].ToString();
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FromFtyID", fromFactory));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("IssueDate", issuedate));
+            report.ReportParameters.Add(new ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new ReportParameter("ID", id));
+            report.ReportParameters.Add(new ReportParameter("FromFtyID", fromFactory));
+            report.ReportParameters.Add(new ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new ReportParameter("IssueDate", issuedate));
 
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
@@ -227,7 +227,7 @@ where a.id = @ID", pars, out dtDetail);
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
 
@@ -417,7 +417,7 @@ where a.id = @ID", pars, out dtDetail);
         {
             #region -- Seq 右鍵開窗 --
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
@@ -460,7 +460,7 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
 
                     DBProxy.Current.Select(null, sqlcmd, out dt);
 
-                    Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(
+                    Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(
                         dt,
                         "Seq,refno,description",
                         "6,8,20", this.CurrentDetailData["seq"].ToString(), "Seq,Ref#,Description");
@@ -523,7 +523,7 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
             };
             #endregion Seq 右鍵開窗
             #region StockType
-            Ict.Win.DataGridViewGeneratorComboBoxColumnSettings sk = new DataGridViewGeneratorComboBoxColumnSettings();
+            DataGridViewGeneratorComboBoxColumnSettings sk = new DataGridViewGeneratorComboBoxColumnSettings();
             sk.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
@@ -544,12 +544,12 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
             #endregion
             #region -- Location 右鍵開窗 --
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation(this.CurrentDetailData["stocktype"].ToString(), this.CurrentDetailData["location"].ToString());
+                    Win.Tools.SelectItem2 item = Prgs.SelectLocation(this.CurrentDetailData["stocktype"].ToString(), this.CurrentDetailData["location"].ToString());
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -580,7 +580,7 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
             };
             #endregion Location 右鍵開窗
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts3 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts3 = new DataGridViewGeneratorTextColumnSettings();
             ts3.CellValidating += (s, e) =>
             {
                 if (this.EditMode == true && string.IsNullOrEmpty(e.FormattedValue.ToString()))
@@ -1282,7 +1282,7 @@ Where a.id = '{0}'", masterID, fromFty);
         // Accumulated Form
         private void btnAccumulatedQty_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P18_AccumulatedQty(this.CurrentMaintain);
+            var frm = new P18_AccumulatedQty(this.CurrentMaintain);
             frm.P18 = this;
             frm.ShowDialog(this);
         }
@@ -1308,7 +1308,7 @@ Where a.id = '{0}'", masterID, fromFty);
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P18_ExcelImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P18_ExcelImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }
@@ -1337,7 +1337,7 @@ Where a.id = '{0}'", masterID, fromFty);
             }
 
             string cmd = "select ID from scifty WITH (NOLOCK) where mdivisionid<>'' and Junk<>1 order by MDivisionID,ID ";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(cmd, "6", this.txtFromFactory.ToString());
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(cmd, "6", this.txtFromFactory.ToString());
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

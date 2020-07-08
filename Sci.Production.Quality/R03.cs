@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class R03 : Sci.Win.Tems.PrintForm
+    public partial class R03 : Win.Tems.PrintForm
     {
         DateTime? DateSCIStart; DateTime? DateSCIEnd;
         DateTime? DateSewStart; DateTime? DateSewEnd;
@@ -173,7 +173,7 @@ namespace Sci.Production.Quality
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.res = DBProxy.Current.Select(string.Empty, this.cmd, this.lis, out this.dt);
             if (!this.res)

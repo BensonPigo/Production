@@ -10,13 +10,14 @@ using Ict;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P04_LocalTransaction : Sci.Win.Subs.Base
+    public partial class P04_LocalTransaction : Win.Subs.Base
     {
         DataRow dataRow;
         DataTable dataTable;
         List<SqlParameter> sqlPar = new List<SqlParameter>();
 
-        public P04_LocalTransaction(DataRow dataRow, string from_program) : base()
+        public P04_LocalTransaction(DataRow dataRow, string from_program)
+            : base()
         {
             this.InitializeComponent();
             this.dataRow = dataRow;
@@ -118,7 +119,7 @@ order by s.date, s.Name, arrivedQty, releasedQty
             #endregion
             this.ShowWaitMessage("Data Loading....");
             #region SQL Data Loading....
-            Ict.DualResult result;
+            DualResult result;
             if (result = DBProxy.Current.Select(null, sql, this.sqlPar, out this.dataTable))
             {
                 if (this.dataTable == null || this.dataTable.Rows.Count == 0)
@@ -221,7 +222,7 @@ WHERE OrderId = @Poid and Refno = @Refno and ThreadColorID = @ColorID
             #endregion
             this.ShowWaitMessage("Data Loading....");
             #region SQL Data Loading....
-            Ict.DualResult result;
+            DualResult result;
             if (result = DBProxy.Current.Execute(null, sql, this.sqlPar))
             {
                 MyUtility.Msg.InfoBox("Finished");

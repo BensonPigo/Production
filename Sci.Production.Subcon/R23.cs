@@ -8,7 +8,7 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R23 : Sci.Win.Tems.PrintForm
+    public partial class R23 : Win.Tems.PrintForm
     {
         string artworktype;
         string factory;
@@ -94,7 +94,7 @@ namespace Sci.Production.Subcon
         }
 
         // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sqlparameter delcare --
             System.Data.SqlClient.SqlParameter sp_Podate1 = new System.Data.SqlClient.SqlParameter();

@@ -22,7 +22,7 @@ namespace Sci.Production.Win
 
                 using (conn)
                 {
-                    using (var adapter = new Sci.Production.SCHEMASTableAdapters.PASS1TableAdapter())
+                    using (var adapter = new SCHEMASTableAdapters.PASS1TableAdapter())
                     {
                         adapter.Connection = conn;
 

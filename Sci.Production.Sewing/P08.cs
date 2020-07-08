@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
 {
-    public partial class P08 : Sci.Win.Tems.QueryForm
+    public partial class P08 : Win.Tems.QueryForm
     {
         private DataTable dt = new DataTable();
 

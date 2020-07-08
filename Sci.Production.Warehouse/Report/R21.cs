@@ -11,7 +11,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R21 : Sci.Win.Tems.PrintForm
+    public partial class R21 : Win.Tems.PrintForm
     {
         string StartSPNo;
         string EndSPNo;
@@ -30,8 +30,10 @@ namespace Sci.Production.Warehouse
         private bool complete;
         DateTime? BuyerDelivery1;
         DateTime? BuyerDelivery2;
-        DateTime? ETA1, ETA2;
-        DateTime? arriveWH1, arriveWH2;
+        DateTime? ETA1;
+        DateTime? ETA2;
+        DateTime? arriveWH1;
+        DateTime? arriveWH2;
         string sqlcolumn = @"select
 	[M] = o.MDivisionID
 	,[Factory] = o.FactoryID
@@ -281,7 +283,7 @@ namespace Sci.Production.Warehouse
             return true;
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.sqlcmd.Clear();
             this.sqlcmd_fin.Clear();
@@ -619,7 +621,7 @@ or
                 string sqlcmd_dtail;
                 Excel.Application objApp;
                 Excel.Worksheet tmpsheep = null;
-                Sci.Utility.Report.ExcelCOM com;
+                Utility.Report.ExcelCOM com;
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName((this._reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary");
                 int sheet_cnt = 1;
                 int split_cnt = 500000;
@@ -638,7 +640,7 @@ or
                     sqlcmd_dtail = this.sqlcmd_fin.ToString() + string.Format("  and o.SciDelivery >= '{0}' and  o.SciDelivery < = '{1}' ", this.printData_yyyy.Rows[i][0].ToString() + "0101", this.printData_yyyy.Rows[i][0].ToString() + "1231");
                     strExcelName = Sci.Production.Class.MicrosoftFile.GetName((this._reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary" + this.printData_yyyy.Rows[i][0].ToString());
                     exl_name[i] = strExcelName;
-                    com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + reportname, null);
+                    com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + reportname, null);
                     objApp = com.ExcelApp;
                     com.TransferArray_Limit = 10000;
                     com.ColumnsAutoFit = false;
@@ -659,7 +661,7 @@ or
 
                                 tmpsheep = (Excel.Worksheet)objApp.Workbooks[1].Worksheets[sheet_cnt];
                                 tmpsheep.Name = this.printData_yyyy.Rows[i][0].ToString() + "-" + (j + 1).ToString();
-                                ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Sheets[sheet_cnt]).Select();
+                                ((Excel.Worksheet)objApp.ActiveWorkbook.Sheets[sheet_cnt]).Select();
                                 tmpTb = this.printData.AsEnumerable().Skip(j * split_cnt).Take(split_cnt).CopyToDataTable();
 
                                 DualResult ok = com.WriteTable(tmpTb, 2);
@@ -686,7 +688,7 @@ or
                             // 複製sheet
                             tmpsheep = (Excel.Worksheet)objApp.Workbooks[1].Worksheets[sheet_cnt];
                             tmpsheep.Name = this.printData_yyyy.Rows[i][0].ToString();
-                            ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Sheets[sheet_cnt]).Select();
+                            ((Excel.Worksheet)objApp.ActiveWorkbook.Sheets[sheet_cnt]).Select();
                             com.WriteTable(this.printData, 2);
                             sheet_cnt++;
                         }
@@ -750,7 +752,7 @@ or
                     return result;
                 }
 
-                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + reportname, null);
+                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + reportname, null);
                 Excel.Application objApp = com.ExcelApp;
 
                 // MyUtility.Excel.CopyToXls(printData, "", reportname, 1, showExcel: false, excelApp: objApp);

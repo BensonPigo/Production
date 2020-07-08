@@ -209,7 +209,7 @@ order by FactoryID
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             // 把DataTable的值清空
             this.dtSummary = null;

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P42 : Sci.Win.Tems.QueryForm
+    public partial class P42 : Win.Tems.QueryForm
     {
         public P42(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -37,7 +37,7 @@ namespace Sci.Production.Subcon
                     return;
                 }
 
-                var frm = new Sci.Production.Subcon.P42_SubProcessStatus(drSelected, summaryType);
+                var frm = new P42_SubProcessStatus(drSelected, summaryType);
                 frm.ShowDialog(this);
             };
 
@@ -1166,7 +1166,7 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
                 ;
             }
 
-            this.grid2.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.grid2_CellFormatting);
+            this.grid2.CellFormatting += new DataGridViewCellFormattingEventHandler(this.grid2_CellFormatting);
 
             #endregion
 

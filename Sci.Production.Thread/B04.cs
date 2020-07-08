@@ -5,7 +5,7 @@ namespace Sci.Production.Thread
     /// <summary>
     /// B04
     /// </summary>
-    public partial class B04 : Sci.Win.Tems.Input1
+    public partial class B04 : Win.Tems.Input1
     {
         private string keyword = Sci.Env.User.Keyword;
 

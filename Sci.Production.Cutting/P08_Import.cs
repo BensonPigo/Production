@@ -16,7 +16,7 @@ using Sci.Win.Tools;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P08_Import : Sci.Win.Subs.Base
+    public partial class P08_Import : Win.Subs.Base
     {
         DataTable gridTable;
 

@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class B10 : Sci.Win.Tems.Input1
+    public partial class B10 : Win.Tems.Input1
     {
         Hashtable ht = new Hashtable();
 

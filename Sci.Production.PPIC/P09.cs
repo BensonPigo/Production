@@ -18,7 +18,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P09
     /// </summary>
-    public partial class P09 : Sci.Win.Tems.Input6
+    public partial class P09 : Win.Tems.Input6
     {
         private string excelFile;
 
@@ -278,7 +278,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
             {
                 if (e.ColumnIndex == 1)
                 {
-                    Sci.Production.PPIC.P09_InputData callInputDataForm = new Sci.Production.PPIC.P09_InputData(this.CurrentMaintain);
+                    P09_InputData callInputDataForm = new P09_InputData(this.CurrentMaintain);
                     callInputDataForm.Set(this.EditMode, this.DetailDatas, this.CurrentDetailData);
                     callInputDataForm.ShowDialog(this);
                 }
@@ -559,7 +559,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
                 if (!MyUtility.Check.Empty(this.txtSPNo.Text))
                 {
                     // sql參數
-                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", this.txtSPNo.Text);
+                    SqlParameter sp1 = new SqlParameter("@poid", this.txtSPNo.Text);
 
                     // 用登入的Factory 抓取對應的FtyGroup
                     DataTable ftyGroupData;
@@ -573,9 +573,9 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
                         return;
                     }
 
-                    System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@factoryid", ftyGroupData.Rows[0]["FTYGroup"].ToString());
+                    SqlParameter sp2 = new SqlParameter("@factoryid", ftyGroupData.Rows[0]["FTYGroup"].ToString());
 
-                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                    IList<SqlParameter> cmds = new List<SqlParameter>();
                     cmds.Add(sp1);
                     cmds.Add(sp2);
                     string sqlCmd = "select ID,FtyGroup from Orders WITH (NOLOCK) where POID = @poid and FtyGroup  = @factoryid  AND Category !='A'";

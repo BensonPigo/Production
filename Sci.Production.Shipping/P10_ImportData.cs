@@ -10,7 +10,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P10_ImportData
     /// </summary>
-    public partial class P10_ImportData : Sci.Win.Subs.Base
+    public partial class P10_ImportData : Win.Subs.Base
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private DataTable plData;

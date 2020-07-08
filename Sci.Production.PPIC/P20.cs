@@ -13,7 +13,7 @@ using System.Windows.Forms;
 namespace Sci.Production.PPIC
 {
     /// <inheritdoc/>
-    public partial class P20 : Sci.Win.Tems.Input1
+    public partial class P20 : Win.Tems.Input1
     {
         private string reasonTypeID;
         private DataTable shipdata1;
@@ -695,7 +695,7 @@ VALUES('{1}','Reject','{0}',getdate())
             }
             else
             {
-                Sci.Production.PPIC.P01_ProductionOutput callNextForm = new Sci.Production.PPIC.P01_ProductionOutput(currOrder);
+                P01_ProductionOutput callNextForm = new P01_ProductionOutput(currOrder);
                 callNextForm.tabControl1.TabPages.Remove(callNextForm.tabControl1.TabPages[2]);
                 callNextForm.tabControl1.TabPages.Remove(callNextForm.tabControl1.TabPages[1]);
                 callNextForm.ShowDialog(this);

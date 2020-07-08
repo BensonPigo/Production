@@ -12,7 +12,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_ProductionKit
     /// </summary>
-    public partial class P01_ProductionKit : Sci.Win.Subs.Input4
+    public partial class P01_ProductionKit : Win.Subs.Input4
     {
         private string dataFilter1 = string.Empty;
 
@@ -83,7 +83,7 @@ from Style_ProductionKits sp WITH (NOLOCK)
 left join Reason r WITH (NOLOCK) on r.ID = sp.DOC and r.ReasonTypeID = 'ProductionKits'
 left join Style s WITH (NOLOCK) on sp.StyleUkey = s.Ukey
 where sp.StyleUkey = {0} order by sp.ProductionKitsGroup", this.KeyValue1);
-            Ict.DualResult returnResult;
+            DualResult returnResult;
             DataTable artworkTable = new DataTable();
             returnResult = DBProxy.Current.Select(null, selectCommand, out artworkTable);
             if (!returnResult)
@@ -203,7 +203,7 @@ where sp.StyleUkey = {0} order by sp.ProductionKitsGroup", this.KeyValue1);
         // View Detail
         private void BtnViewDetail_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P03_Detail doForm = new Sci.Production.PPIC.P03_Detail();
+            P03_Detail doForm = new P03_Detail();
             doForm.Set(false, new List<DataRow>(((DataTable)this.gridbs.DataSource).Select(this.DataFilter1)), this.grid.GetDataRow(this.grid.GetSelectedRowIndex()));
             doForm.ShowDialog(this);
         }

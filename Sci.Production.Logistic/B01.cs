@@ -5,7 +5,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_B01
     /// </summary>
-    public partial class B01 : Sci.Win.Tems.Input1
+    public partial class B01 : Win.Tems.Input1
     {
         /// <summary>
         /// Logistic_B01
@@ -65,7 +65,7 @@ namespace Sci.Production.Logistic
         /// <returns>base.ClickPrint()</returns>
         protected override bool ClickPrint()
         {
-            Sci.Production.Logistic.B01_Print callNextForm = new Sci.Production.Logistic.B01_Print(this.CurrentMaintain);
+            B01_Print callNextForm = new B01_Print(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
             return base.ClickPrint();
         }

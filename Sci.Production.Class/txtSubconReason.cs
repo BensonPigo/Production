@@ -8,7 +8,7 @@ using Ict;
 
 namespace Sci.Production.Class
 {
-    public partial class txtSubconReason : Sci.Win.UI._UserControl
+    public partial class txtSubconReason : Win.UI._UserControl
     {
         public txtSubconReason()
         {
@@ -38,12 +38,12 @@ namespace Sci.Production.Class
             }
         }
 
-        public Sci.Win.UI.TextBox TextBox1
+        public Win.UI.TextBox TextBox1
         {
             get { return this.textBox1; }
         }
 
-        public Sci.Win.UI.DisplayBox DisplayBox1
+        public Win.UI.DisplayBox DisplayBox1
         {
             get { return this.displayBox1; }
         }
@@ -148,7 +148,7 @@ namespace Sci.Production.Class
 
             if (this._mutiSelect)
             {
-                Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(
+                Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(
                     sqlGetSubconReason, "ID,Reason", this.textBox1.Text);
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel)
@@ -161,7 +161,7 @@ namespace Sci.Production.Class
             }
             else
             {
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                     sqlGetSubconReason, "ID,Reason", this.textBox1.Text);
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel)
@@ -214,14 +214,14 @@ namespace Sci.Production.Class
                 if (e.Button == MouseButtons.Right)
                 {
                     DataGridView grid = ((DataGridViewColumn)s).DataGridView;
-                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                    if (!((Win.Forms.Base)grid.FindForm()).EditMode)
                     {
                         return;
                     }
 
                     DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
                     string sqlcmd = $@"select id,Reason from SubconReason where Type='{Type}'";
-                    Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "10,20", string.Empty, "id,SubConReason");
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "10,20", string.Empty, "id,SubConReason");
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {
@@ -241,7 +241,7 @@ namespace Sci.Production.Class
                 DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
                 // Parent form 若是非編輯狀態就 return
-                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                if (!((Win.Forms.Base)grid.FindForm()).EditMode)
                 {
                     return;
                 }

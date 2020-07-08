@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P52 : Sci.Win.Tems.Input6
+    public partial class P52 : Win.Tems.Input6
     {
         public P52(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -92,7 +92,7 @@ where   Linv.OrderID = '{0}'
                     return;
                 }
                 #region Ref# 右鍵開窗
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                     string.Format(
                     @"
 select  LInv.Refno
@@ -143,7 +143,7 @@ Where LInv.OrderID = '{1}'", this.CurrentMaintain["StockType"],
                     return;
                 }
                 #region Ref# 右鍵開窗
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                     string.Format(
                     @"
 select  LInv.ThreadColorID
@@ -222,7 +222,7 @@ Where   LInv.OrderID = '{1}'
             dataRow.EndEdit();
         }
 
-        protected override Ict.DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string strMasterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(

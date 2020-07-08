@@ -4,13 +4,13 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtToMdivision : Sci.Win.UI.TextBox
+    public partial class txtToMdivision : Win.UI.TextBox
     {
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from dbo.ToMdivision WITH (NOLOCK) ", "8,40", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Name from dbo.ToMdivision WITH (NOLOCK) ", "8,40", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

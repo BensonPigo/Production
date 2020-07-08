@@ -11,7 +11,7 @@ using System.Xml.Linq;
 
 namespace Sci.Production.Class
 {
-    public partial class comboFtyZone : Sci.Win.UI.ComboBox
+    public partial class comboFtyZone : Win.UI.ComboBox
     {
         private bool _IssupportJunk = false;
         private bool _FilteMDivision = false;

@@ -13,7 +13,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P19_Print : Sci.Win.Tems.PrintForm
+    public partial class P19_Print : Win.Tems.PrintForm
     {
         DataRow mainCurrentMaintain;
         DataTable dtResult;
@@ -154,7 +154,7 @@ where ID = '{this.mainCurrentMaintain["ID"]}'
             }
 
             Excel.Application objApp = new Excel.Application();
-            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P18_ExcelImport.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P18_ExcelImport.xltx", objApp);
             com.UseInnerFormating = false;
             com.WriteTable(this.dtResult, 3);
 
@@ -222,7 +222,7 @@ where ID = '{this.mainCurrentMaintain["ID"]}'
             #endregion
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
 

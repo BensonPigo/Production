@@ -6,7 +6,7 @@ using Sci.Data;
 
 namespace Sci.Production.PublicForm
 {
-    public partial class GarmentList_ColorArticle : Sci.Win.Subs.Base
+    public partial class GarmentList_ColorArticle : Win.Subs.Base
     {
         private string styleukey;
         private string sukey;

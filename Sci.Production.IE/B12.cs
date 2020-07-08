@@ -8,7 +8,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// B12
     /// </summary>
-    public partial class B12 : Sci.Win.Tems.Input2
+    public partial class B12 : Win.Tems.Input2
     {
         /// <summary>
         /// B12

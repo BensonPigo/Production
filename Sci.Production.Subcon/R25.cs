@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R25 : Sci.Win.Tems.PrintForm
+    public partial class R25 : Win.Tems.PrintForm
     {
         public R25(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -52,7 +52,7 @@ namespace Sci.Production.Subcon
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             List<SqlParameter> lis = new List<SqlParameter>();
             string sqlWhere = string.Empty;

@@ -13,7 +13,7 @@ using Sci.Utility.Excel;
 namespace Sci.Production.PPIC
 {
     /// <inheritdoc/>
-    public partial class R11 : Sci.Win.Tems.PrintForm
+    public partial class R11 : Win.Tems.PrintForm
     {
         private string F;
         private string M;
@@ -674,7 +674,7 @@ drop table #Calendar,#CalendarData,#tmp,#tmp1,#tmp2
 
             DBProxy.Current.DefaultTimeout = 300;
             #endregion
-            return new Ict.DualResult(true);
+            return new DualResult(true);
         }
 
         /// <inheritdoc/>

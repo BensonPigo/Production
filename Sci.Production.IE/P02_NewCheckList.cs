@@ -10,7 +10,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_P02_NewCheckList
     /// </summary>
-    public partial class P02_NewCheckList : Sci.Win.Subs.Input4
+    public partial class P02_NewCheckList : Win.Subs.Input4
     {
         /// <summary>
         /// P02_NewCheckList
@@ -67,7 +67,7 @@ cl.Description as ChkListDesc
      from ChgOver_Check cc WITH (NOLOCK) 
 left join ChgOverCheckList cl WITH (NOLOCK) on cc.ChgOverCheckListID = cl.ID
 where cc.ID = {0} order by cc.ChgOverCheckListID", this.KeyValue1);
-            Ict.DualResult returnResult;
+            DualResult returnResult;
             DataTable chgOverChkList = new DataTable();
             returnResult = DBProxy.Current.Select(null, selectCommand, out chgOverChkList);
             if (!returnResult)

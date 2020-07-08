@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P04_ScrapQty : Sci.Win.Subs.Base
+    public partial class P04_ScrapQty : Win.Subs.Base
     {
         private string Poid;
         private string Refno;

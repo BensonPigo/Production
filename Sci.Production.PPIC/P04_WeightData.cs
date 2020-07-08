@@ -12,7 +12,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P04_WeightData
     /// </summary>
-    public partial class P04_WeightData : Sci.Win.Subs.Input4
+    public partial class P04_WeightData : Win.Subs.Input4
     {
         private string uk;
 
@@ -47,8 +47,8 @@ namespace Sci.Production.PPIC
         /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorTextColumnSettings size = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings size = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings article = new DataGridViewGeneratorTextColumnSettings();
             #region Size的Right Click & Validating
             size.EditingMouseDown += (s, e) =>
             {
@@ -59,7 +59,7 @@ namespace Sci.Production.PPIC
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where StyleUkey = {0} order by Seq", this.KeyValue1), "8", dr["SizeCode"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where StyleUkey = {0} order by Seq", this.KeyValue1), "8", dr["SizeCode"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -120,7 +120,7 @@ namespace Sci.Production.PPIC
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select Article from Style_Article WITH (NOLOCK) where StyleUkey = {0} order by Seq", this.KeyValue1), "8", dr["Article"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select Article from Style_Article WITH (NOLOCK) where StyleUkey = {0} order by Seq", this.KeyValue1), "8", dr["Article"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -221,7 +221,7 @@ namespace Sci.Production.PPIC
         // Copy Season
         private void BtnCopySeason_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P04_WeightData_CopySeason callNextForm = new Sci.Production.PPIC.P04_WeightData_CopySeason(this.KeyValue1);
+            P04_WeightData_CopySeason callNextForm = new P04_WeightData_CopySeason(this.KeyValue1);
             DialogResult result = callNextForm.ShowDialog(this);
             if (result == System.Windows.Forms.DialogResult.OK)
             {

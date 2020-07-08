@@ -16,12 +16,12 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P06
     /// </summary>
-    public partial class P06 : Sci.Win.Tems.Input8
+    public partial class P06 : Win.Tems.Input8
     {
         private string id;
         private DateTime pulloutDate;
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings shipqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings status = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings shipqty = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings status = new DataGridViewGeneratorTextColumnSettings();
         private ITableSchema revisedTS;
         private ITableSchema revised_detailTS;
         private DataTable PulloutReviseData;
@@ -222,7 +222,7 @@ order by os.Seq", masterID);
         /// <inheritdoc/>
         protected override bool ClickNewBefore()
         {
-            Sci.Production.Shipping.P06_Append callNextForm = new Sci.Production.Shipping.P06_Append();
+            P06_Append callNextForm = new P06_Append();
             DialogResult dr = callNextForm.ShowDialog(this);
 
             // 當Form:P06_Append是按OK時，要新增一筆資料進Cursor
@@ -725,7 +725,7 @@ where	exists (
             IList<string> sqlCmds = new List<string>();
             if (!MyUtility.Check.Empty(this.CurrentMaintain["SendToTPE"]))
             {
-                Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("Pullout_Delay");
+                Win.UI.SelectReason callReason = new Win.UI.SelectReason("Pullout_Delay");
                 DialogResult dResult = callReason.ShowDialog(this);
                 if (dResult == System.Windows.Forms.DialogResult.OK)
                 {
@@ -803,14 +803,14 @@ where ID = '{orderid}'
         {
             // 610: SHIPPING_P06_ReviseHistory_Revised History，出現錯誤訊息
             // Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("Pullout_History", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "Status", reasonType: "Pullout_Delay", caption: "History Pullout Confirm/Unconfirm", haveRemark: true, customerGridFormatTable: "HisType", moduleName: "Pullout");
-            Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("Pullout_History", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "Status", reasonType: "Pullout_Delay", caption: "History Pullout Confirm/Unconfirm", haveRemark: true, customerGridFormatTable: "HisType", moduleName: "Shipping");
+            Win.UI.ShowHistory callNextForm = new Win.UI.ShowHistory("Pullout_History", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "Status", reasonType: "Pullout_Delay", caption: "History Pullout Confirm/Unconfirm", haveRemark: true, customerGridFormatTable: "HisType", moduleName: "Shipping");
             callNextForm.ShowDialog(this);
         }
 
         // Revised History
         private void BtnRevisedHistory_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P06_ReviseHistory callNextForm = new Sci.Production.Shipping.P06_ReviseHistory(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            P06_ReviseHistory callNextForm = new P06_ReviseHistory(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
         }
 

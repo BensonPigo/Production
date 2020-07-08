@@ -10,7 +10,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R20 : Sci.Win.Tems.PrintForm
+    public partial class R20 : Win.Tems.PrintForm
     {
         string dateFormate = "yyyy-MM-dd";
         string StartBuyerDelivery;
@@ -55,7 +55,7 @@ namespace Sci.Production.Warehouse
             return true;
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region SQl Parameters --- _ADD10 -> SPNo 補足 10 碼
             List<SqlParameter> listSqlPar = new List<SqlParameter>();

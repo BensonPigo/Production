@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Cutting
 {
-    public partial class R09 : Sci.Win.Tems.PrintForm
+    public partial class R09 : Win.Tems.PrintForm
     {
         private string strM;
         private string strFty;
@@ -439,7 +439,7 @@ drop table #tmp
             }
 
             Excel.Application objApp = new Excel.Application();
-            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Cutting_R09.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Cutting_R09.xltx", objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
             com.WriteTable(this.printData, 3);
             com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);

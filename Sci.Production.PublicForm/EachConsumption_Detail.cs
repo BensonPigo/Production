@@ -5,7 +5,7 @@ using Sci.Data;
 
 namespace Sci.Production.PublicForm
 {
-    public partial class EachConsumption_Detail : Sci.Win.Subs.Input4Plus
+    public partial class EachConsumption_Detail : Win.Subs.Input4Plus
     {
         public EachConsumption_Detail()
         {
@@ -41,7 +41,7 @@ namespace Sci.Production.PublicForm
             return true;
         }
 
-        protected override Ict.DualResult OnRequery(out DataTable datas)
+        protected override DualResult OnRequery(out DataTable datas)
         {
             datas = null;
             string sqlCmd = $@"

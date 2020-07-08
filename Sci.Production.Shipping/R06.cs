@@ -11,7 +11,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R06
     /// </summary>
-    public partial class R06 : Sci.Win.Tems.PrintForm
+    public partial class R06 : Win.Tems.PrintForm
     {
         private DateTime? date1;
         private DateTime? date2;
@@ -75,7 +75,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             if (this.radioDetail.Checked == true)
@@ -404,7 +404,7 @@ where s.Status = 'Approved'");
 
             if (this.radioDetail.Checked == true)
             {
-                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetail.xltx", excel);
+                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetail.xltx", excel);
                 if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
                 {
                     excel.ActiveWorkbook.Worksheets[1].Cells[1, 10] = excel.ActiveWorkbook.Worksheets[1].Cells[1, 10].Value + "\r\n(USD)";
@@ -415,7 +415,7 @@ where s.Status = 'Approved'");
             }
             else if (this.radioByInvWK.Checked == true)
             {
-                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByInvWK.xltx", excel);
+                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByInvWK.xltx", excel);
                 if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
                 {
                     excel.ActiveWorkbook.Worksheets[1].Cells[1, 11] = excel.ActiveWorkbook.Worksheets[1].Cells[1, 11].Value + "\r\n(USD)";
@@ -426,7 +426,7 @@ where s.Status = 'Approved'");
             }
             else if (this.radioByAPP.Checked == true)
             {
-                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByAPP.xltx", excel);
+                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByAPP.xltx", excel);
                 if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
                 {
                     excel.ActiveWorkbook.Worksheets[1].Cells[1, 11] = excel.ActiveWorkbook.Worksheets[1].Cells[1, 11].Value + "\r\n(USD)";

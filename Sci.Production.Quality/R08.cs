@@ -12,7 +12,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Quality
 {
-    public partial class R08 : Sci.Win.Tems.PrintForm
+    public partial class R08 : Win.Tems.PrintForm
     {
         DataTable[] printData;
         private string Excelfile;
@@ -56,7 +56,7 @@ namespace Sci.Production.Quality
         }
 
         // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region 畫面上的條件
             StringBuilder sqlCmdW = new StringBuilder();

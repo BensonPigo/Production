@@ -11,7 +11,7 @@ using Ict;
 
 namespace Sci.Production.Quality
 {
-    public partial class P20 : Sci.Win.Tems.Input6
+    public partial class P20 : Win.Tems.Input6
     {
         string sql;
         DataRow ROW;

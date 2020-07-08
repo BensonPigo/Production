@@ -10,7 +10,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
 {
-    public partial class R06 : Sci.Win.Tems.PrintForm
+    public partial class R06 : Win.Tems.PrintForm
     {
         public R06(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -53,7 +53,7 @@ namespace Sci.Production.Cutting
         }
 
         // 非同步讀取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlcmd = string.Empty;
             string sqlwhere = string.Empty;
@@ -467,7 +467,7 @@ drop table #orderBuyer,#tmpc,#tmpc2,#tmpc3,#tmpcB,#tmpcB2,#tmpcB3,#pOffline,#tmp
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(filename);
-            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             objApp.Quit();

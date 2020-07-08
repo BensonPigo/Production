@@ -12,7 +12,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// R15
     /// </summary>
-    public partial class R15 : Sci.Win.Tems.PrintForm
+    public partial class R15 : Win.Tems.PrintForm
     {
         private int sbyindex;
         private string category;
@@ -136,7 +136,7 @@ namespace Sci.Production.Planning
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             StringBuilder sqlCmd = new StringBuilder();

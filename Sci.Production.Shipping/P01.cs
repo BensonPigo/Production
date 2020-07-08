@@ -16,7 +16,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P01
     /// </summary>
-    public partial class P01 : Sci.Win.Tems.Input1
+    public partial class P01 : Win.Tems.Input1
     {
         private string excelFile;
         private decimal numVWeightOldValue;
@@ -557,7 +557,7 @@ values ('{0}','Status','','New','{1}',GETDATE())",
         {
             if (this.EditMode)
             {
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Air_Prepaid_Reason' and Junk = 0 order by ID", "5,50", this.Text, false, ",");
+                SelectItem item = new SelectItem("select ID,Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Air_Prepaid_Reason' and Junk = 0 order by ID", "5,50", this.Text, false, ",");
 
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel)
@@ -917,7 +917,7 @@ where OrderID = '{orderID}' and OrderShipmodeSeq = '{orderQtyData.Rows[0]["Seq"]
                         else
                         {
                             IList<DataRow> orderQtyShipData;
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(orderQtyData, "Seq,BuyerDelivery,ShipModeID,Qty", "4,20,20,10", string.Empty, false, string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
+                            SelectItem item = new SelectItem(orderQtyData, "Seq,BuyerDelivery,ShipModeID,Qty", "4,20,20,10", string.Empty, false, string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -992,7 +992,7 @@ where oq.Id = b.Id and oq.Seq = b.Seq",
                 MyUtility.Check.Empty(this.CurrentMaintain["OrderID"]) ? string.Empty : this.CurrentMaintain["OrderID"],
                 MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? string.Empty : this.CurrentMaintain["ID"].ToString());
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
+            SelectItem item = new SelectItem(sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -1037,7 +1037,7 @@ where oq.Id = b.Id and oq.Seq = b.Seq",
                 return;
             }
 
-            Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("Air_Prepaid_unApprove");
+            Win.UI.SelectReason callReason = new Win.UI.SelectReason("Air_Prepaid_unApprove");
             DialogResult dResult = callReason.ShowDialog(this);
             if (dResult == System.Windows.Forms.DialogResult.OK)
             {
@@ -1202,7 +1202,7 @@ values ('{0}','Status','New','Checked','{1}',GetDate())",
                 return;
             }
 
-            Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("Air_Prepaid_unApprove");
+            Win.UI.SelectReason callReason = new Win.UI.SelectReason("Air_Prepaid_unApprove");
             DialogResult dResult = callReason.ShowDialog(this);
             if (dResult == System.Windows.Forms.DialogResult.OK)
             {
@@ -1300,7 +1300,7 @@ values ('{0}','Status','Checked','Approved','{1}',GetDate())",
         // Status update history
         private void BtnStatusUpdateHistory_Click(object sender, EventArgs e)
         {
-            Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("AirPP_History", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "Status", reasonType: "Air_Prepaid_unApprove", caption: "Status Update History");
+            Win.UI.ShowHistory callNextForm = new Win.UI.ShowHistory("AirPP_History", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "Status", reasonType: "Air_Prepaid_unApprove", caption: "Status Update History");
             callNextForm.ShowDialog(this);
         }
 
@@ -1412,14 +1412,14 @@ Remind:Please return the air pp request – approved  within 24hrs to avoid any 
         // AirPP List
         private void BtnAirPPList_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P01_AirPPList callNextForm = new Sci.Production.Shipping.P01_AirPPList(MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]));
+            P01_AirPPList callNextForm = new P01_AirPPList(MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]));
             callNextForm.ShowDialog(this);
         }
 
         // Q'ty B'down by Shipmode
         private void BtnQtyBDownByShipmode_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_QtyShip callNextForm = new Sci.Production.PPIC.P01_QtyShip(MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]), MyUtility.GetValue.Lookup(string.Format("select POID from Orders WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]))));
+            PPIC.P01_QtyShip callNextForm = new PPIC.P01_QtyShip(MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]), MyUtility.GetValue.Lookup(string.Format("select POID from Orders WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]))));
             callNextForm.ShowDialog(this);
         }
 
@@ -1434,14 +1434,14 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]
             DBProxy.Current.Select(null, sqlCmd, out orderData);
             int count = orderData.Rows.Count;
 
-            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]), (count == 0) ? string.Empty : MyUtility.Convert.GetString(orderData.Rows[0]["POID"]), (count == 0) ? string.Empty : MyUtility.Convert.GetString(orderData.Rows[0]["PoList"]));
+            PPIC.P01_Qty callNextForm = new PPIC.P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]), (count == 0) ? string.Empty : MyUtility.Convert.GetString(orderData.Rows[0]["POID"]), (count == 0) ? string.Empty : MyUtility.Convert.GetString(orderData.Rows[0]["PoList"]));
             callNextForm.ShowDialog(this);
         }
 
         // GMT Export
         private void BtnGMTExport_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_GMTExport callNextForm = new Sci.Production.PPIC.P01_GMTExport(MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]));
+            PPIC.P01_GMTExport callNextForm = new PPIC.P01_GMTExport(MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]));
             callNextForm.ShowDialog(this);
         }
 

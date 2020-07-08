@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P36_ModifyDetail : Sci.Win.Subs.Input6A
+    public partial class P36_ModifyDetail : Win.Subs.Input6A
     {
         public P36_ModifyDetail()
         {

@@ -10,7 +10,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P11_BatchImport
     /// </summary>
-    public partial class P11_BatchApprove : Sci.Win.Subs.Base
+    public partial class P11_BatchApprove : Win.Subs.Base
     {
         Action reloadParant;
         private DataTable dt;

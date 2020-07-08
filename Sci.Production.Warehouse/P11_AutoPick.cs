@@ -12,14 +12,18 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P11_AutoPick : Sci.Win.Subs.Base
+    public partial class P11_AutoPick : Win.Subs.Base
     {
         StringBuilder sbSizecode;
         string poid;
         string issueid;
         string cutplanid;
         string orderid;
-        public DataTable BOA, BOA_Orderlist, BOA_PO, BOA_PO_Size, dtIssueBreakDown;
+        public DataTable BOA;
+        public DataTable BOA_Orderlist;
+        public DataTable BOA_PO;
+        public DataTable BOA_PO_Size;
+        public DataTable dtIssueBreakDown;
         bool combo;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         public Dictionary<DataRow, DataTable> dictionaryDatas = new Dictionary<DataRow, DataTable>();
@@ -577,7 +581,7 @@ order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSi
             this.gridAutoPick.AutoResizeColumns();
 
             #region --Pick Qty 開窗--
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
             ns.CellMouseDoubleClick += (s, e) =>
             {
                 this.BOA_PO.AcceptChanges(); // 先做初始設定，再透過Detail來控制UNDO OR SAVE
@@ -587,14 +591,14 @@ order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSi
                     return;
                 }
 
-                var frm = new Sci.Production.Warehouse.P11_AutoPick_Detail(this.combo, this.poid, this.orderid, this.BOA_PO, e.RowIndex, e.ColumnIndex, this);
+                var frm = new P11_AutoPick_Detail(this.combo, this.poid, this.orderid, this.BOA_PO, e.RowIndex, e.ColumnIndex, this);
 
                 this.dictionaryDatasAcceptChanges();
 
                 DialogResult DResult = frm.ShowDialog(this);
             };
             #endregion
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.CellValidating += (s, e) =>
             {
                 var dr = this.gridAutoPick.GetDataRow<DataRow>(e.RowIndex);
@@ -761,7 +765,7 @@ order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSi
 
             sb.Append(")");
 
-            System.Data.SqlClient.SqlConnection conn;
+            SqlConnection conn;
             DBProxy.Current.OpenConnection(null, out conn);
 
             try
@@ -773,7 +777,7 @@ order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSi
                     return;
                 }
 
-                using (System.Data.SqlClient.SqlBulkCopy bulkcopy = new System.Data.SqlClient.SqlBulkCopy(conn))
+                using (SqlBulkCopy bulkcopy = new SqlBulkCopy(conn))
                 {
                     bulkcopy.BulkCopyTimeout = 60;
                     if (temptablename.TrimStart().StartsWith("#"))

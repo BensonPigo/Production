@@ -4,13 +4,13 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtshipterm : Sci.Win.UI.TextBox
+    public partial class txtshipterm : Win.UI.TextBox
     {
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from ShipTerm WITH (NOLOCK) order by ID", "6,80", this.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Description from ShipTerm WITH (NOLOCK) order by ID", "6,80", this.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

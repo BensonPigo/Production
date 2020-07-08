@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
-    public partial class R06 : Sci.Win.Tems.PrintForm
+    public partial class R06 : Win.Tems.PrintForm
     {
         DateTime? DateArrStart; DateTime? DateArrEnd;
         List<SqlParameter> lis;
@@ -21,7 +21,7 @@ namespace Sci.Production.Quality
         string refno;
         string brand;
         string season;
-        string ReportType;
+        string reportType;
 
         public R06(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -49,7 +49,7 @@ namespace Sci.Production.Quality
             this.refno = this.txtRef.Text.ToString();
             this.season = this.txtseason.Text;
             this.Supp = this.txtsupplier.TextBox1.Text;
-            this.ReportType = this.radioPanel.Value;
+            this.reportType = this.radioPanel.Value;
             this.lis = new List<SqlParameter>();
             string sqlWhere = string.Empty;
             string sqlRWhere = string.Empty;
@@ -116,8 +116,8 @@ namespace Sci.Production.Quality
 
             #endregion
             #region --撈Excel資料--
-            string groupby_col = this.ReportType.Equals("supplier") ? "SuppID" : "RefNo";
-            string ttlqty_col = this.ReportType.Equals("supplier") ? "RefNo" : "SuppID";
+            string groupby_col = this.reportType.Equals("supplier") ? "SuppID" : "RefNo";
+            string ttlqty_col = this.reportType.Equals("supplier") ? "RefNo" : "SuppID";
             this.cmd = string.Format($@"
 
 select distinct a.PoId,a.Seq1,a.Seq2,ps.SuppID,psd.Refno ,psd.ColorID,f.Clima
@@ -127,7 +127,7 @@ from
 	select r.PoId,r.Seq1,r.Seq2
 	from dbo.View_AllReceivingDetail r with (nolock)
 	where 1=1
-    {sqlRWhere }
+    {sqlRWhere}
 	and r.Status = 'Confirmed'
 	union
 	select sd.ToPOID as PoId,sd.ToSeq1 as Seq1,sd.ToSeq2 as Seq2
@@ -151,7 +151,7 @@ left join PO_Supp ps on ps.ID = a.PoId and ps.SEQ1 = a.Seq1
 left join PO_Supp_Detail psd on psd.ID = a.PoId and psd.SEQ1 = a.Seq1 and psd.SEQ2 = a.Seq2
 left join Fabric f on f.SCIRefno = psd.SCIRefno 
 where psd.FabricType = 'F'
-{sqlWhere }
+{sqlWhere}
 ------------Fabric Defect ----- 
 select rd.PoId,rd.Seq1,rd.Seq2,rd.ActualQty,rd.Dyelot,rd.Roll,t.SuppID,t.Refno,t.Colorid ,t.Clima
 into #tmpAllData
@@ -193,7 +193,7 @@ outer apply(
 ) s
 order by g.{groupby_col}
 ------------Total dye lots accepted(Shadeband)-------------
-{(this.ReportType.Equals("supplier") ? @"
+{(this.reportType.Equals("supplier") ? @"
 ----從篩選過的物料，找出他們的FIR紀錄
 SELECT f.*
 INTO #FirData
@@ -589,14 +589,14 @@ select a.{groupby_col},count(*)*1.0 Dcnt
 
 ------#TmpFinal 
 select --distinct
-{(this.ReportType.Equals("supplier") ? " Tmp.SuppID , Tmp.refno " : " Tmp.refno , Tmp.SuppID ")}
+{(this.reportType.Equals("supplier") ? " Tmp.SuppID , Tmp.refno " : " Tmp.refno , Tmp.SuppID ")}
     ,Tmp.abben 
 	,Tmp.BrandID
     ,Tmp.stockqty 
     ,totalYds.TotalInspYds 
     ,[Total PoCnt] = isnull(TLSP.cnt,0)
     ,[Total Dyelot] =isnull(TLDyelot.cnt,0)
-    {(this.ReportType.Equals("supplier") ? " ,[Total dye lots accepted(Shadeband)] = ISNULL( PassCountByDyelot.PassCTN ,0)" : string.Empty)}
+    {(this.reportType.Equals("supplier") ? " ,[Total dye lots accepted(Shadeband)] = ISNULL( PassCountByDyelot.PassCTN ,0)" : string.Empty)}
     ,[Insp Report] = isnull(InspReport.cnt,0)
 	,[Test Report] = isnull(TestReport.cnt,0)
 	,[Continuity Card] = isnull(Contcard.cnt,0)
@@ -681,7 +681,7 @@ outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0
 and isnull(SHORTWIDTHLevel.SHORTWIDTH,0) * 100 between range1 and range2
 )sl6
 outer apply (select cnt from #tmpDyelot where {groupby_col}=Tmp.{groupby_col} ) TLDyelot
-{(this.ReportType.Equals("supplier") ? "outer apply (select PassCTN from #PassCountByDyelot where SuppID=Tmp.SuppID) PassCountByDyelot" : string.Empty)}
+{(this.reportType.Equals("supplier") ? "outer apply (select PassCTN from #PassCountByDyelot where SuppID=Tmp.SuppID) PassCountByDyelot" : string.Empty)}
 outer apply (select TotalRoll from #tmpTotalRoll where {groupby_col}=tmp.{groupby_col}) TLRoll
 outer apply (select GradeA_Roll from #tmpGrade_A where {groupby_col}=tmp.{groupby_col}) GACount
 outer apply (select GradeB_Roll from #tmpGrade_B where {groupby_col}=tmp.{groupby_col}) GBCount
@@ -714,8 +714,8 @@ from(
 	from #TmpFinal t,#Weight
 ) a
 ,SuppLevel s
-where s.type='F' and s.Junk=0 and [AVG] * 100 between s.range1 and s.range2 {sqlSuppWhere }
-  ORDER BY {(this.ReportType.Equals("supplier") ? " SUPPID,refno " : " refno, SuppID ")}
+where s.type='F' and s.Junk=0 and [AVG] * 100 between s.range1 and s.range2 {sqlSuppWhere}
+  ORDER BY {(this.reportType.Equals("supplier") ? " SUPPID,refno " : " refno, SuppID ")}
 
 select distinct {groupby_col} from #TmpFinal order by {groupby_col} 
 
@@ -724,7 +724,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
 ,#tmpsd,#tmpDyelot,#tmpTotalPoint,#tmpTotalRoll,#tmpGrade_A,#tmpGrade_B,#tmpGrade_C,#tmpsuppEncode
 ,#tmpCountSP,#tmpTestReport,#InspReport,#tmpContinuityCard,#BulkDyelot
 ,#tmp_DyelotMain,#tmp_DyelotMcnt,#tmp_newSeasonSCI,#tmp_DyelotMonth,#tmp_DyelotDcnt
-{(this.ReportType.Equals("supplier") ? ",#PassCountByDyelot ,#FirData ,#All_Fir_shadebone" : string.Empty)}
+{(this.reportType.Equals("supplier") ? ",#PassCountByDyelot ,#FirData ,#All_Fir_shadebone" : string.Empty)}
 ");
             #endregion
             return base.ValidateInput();
@@ -753,7 +753,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string xltx_name = this.ReportType.Equals("supplier") ? "Quality_R06.xltx" : "Quality_R06_by_RefNo.xltx";
+            string xltx_name = this.reportType.Equals("supplier") ? "Quality_R06.xltx" : "Quality_R06_by_RefNo.xltx";
             Microsoft.Office.Interop.Excel._Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + xltx_name);
 
             DataTable toExcelDt = this.allDatas[0].Copy();
@@ -765,7 +765,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
             objApp.DisplayAlerts = false; // 禁止Excel跳出合併提示視窗
             int line = 6;
-            int coltype = this.ReportType.Equals("supplier") ? 2 : 1;
+            int coltype = this.reportType.Equals("supplier") ? 2 : 1;
             string key_column = this.allDatas[1].Columns[0].ColumnName;
 
             var combineCheckDt = this.allDatas[0].AsEnumerable();
@@ -786,7 +786,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
                         Microsoft.Office.Interop.Excel.Range rang2;
 
                         // Columns=2,4,5 是不需要合併的
-                        if (ii == 2 || ii == 4 || ii == 5 || (ii == 3 && this.ReportType.Equals("Refno")))
+                        if (ii == 2 || ii == 4 || ii == 5 || (ii == 3 && this.reportType.Equals("Refno")))
                         {
                             continue;
                         }
@@ -811,7 +811,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
             }
 
             // 由於複製格式的關係，會把原本的型態也取代。重新再壓回型態。
-            if (this.ReportType.Equals("supplier"))
+            if (this.reportType.Equals("supplier"))
             {
                 for (int ii = 1; ii <= this.allDatas[0].Columns.Count; ii++)
                 {
@@ -832,7 +832,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
             objSheets.Range["B3"].Activate();
 
             #region 調整欄寬
-            if (this.ReportType.Equals("supplier"))
+            if (this.reportType.Equals("supplier"))
             {
                 objSheets.Columns[5].ColumnWidth = 7.38;
                 objSheets.Columns[6].ColumnWidth = 7.38;

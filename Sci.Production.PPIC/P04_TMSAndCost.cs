@@ -11,7 +11,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P04_TMSAndCost
     /// </summary>
-    public partial class P04_TMSAndCost : Sci.Win.Subs.Input4
+    public partial class P04_TMSAndCost : Win.Subs.Input4
     {
         private Ict.Win.UI.DataGridViewNumericBoxColumn colQty = new Ict.Win.UI.DataGridViewNumericBoxColumn();
         private Ict.Win.UI.DataGridViewNumericBoxColumn colTms = new Ict.Win.UI.DataGridViewNumericBoxColumn();
@@ -37,9 +37,9 @@ namespace Sci.Production.PPIC
         /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings tms = new DataGridViewGeneratorNumericColumnSettings();
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings price = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings tms = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings price = new DataGridViewGeneratorNumericColumnSettings();
             qty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             tms.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             price.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;

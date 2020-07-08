@@ -11,7 +11,7 @@ using Microsoft.Reporting.WinForms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P50 : Sci.Win.Tems.Input6
+    public partial class P50 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
@@ -277,7 +277,7 @@ Where a.id = '{0}'", masterID);
         // Import
         private void btngenerate_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P50_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P50_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }

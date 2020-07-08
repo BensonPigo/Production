@@ -15,7 +15,7 @@ using Microsoft.Reporting.WinForms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P19 : Sci.Win.Tems.Input6
+    public partial class P19 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
@@ -676,7 +676,7 @@ Where a.id = '{0}'", masterID);
         // Accumulated
         private void btnAccumulatedQty_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P19_AccumulatedQty(this.CurrentMaintain);
+            var frm = new P19_AccumulatedQty(this.CurrentMaintain);
             frm.P19 = this;
             frm.ShowDialog(this);
         }
@@ -684,7 +684,7 @@ Where a.id = '{0}'", masterID);
         // Import
         private void btnImport_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P19_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P19_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }
@@ -746,7 +746,7 @@ Where a.id = '{0}'", masterID);
             }
 
             string cmd = "select ID from scifty WITH (NOLOCK) where mdivisionid<>'' and Junk<>1 order by MDivisionID,ID ";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(cmd, "6", this.txtFromFactory.ToString());
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(cmd, "6", this.txtFromFactory.ToString());
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

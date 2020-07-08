@@ -9,7 +9,7 @@ using System.Transactions;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P03_BatchUpload : Sci.Win.Subs.Base
+    public partial class P03_BatchUpload : Win.Subs.Base
     {
         private DataTable dtQuery;
 

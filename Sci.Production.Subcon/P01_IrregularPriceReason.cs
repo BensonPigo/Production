@@ -15,7 +15,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P01_IrregularPriceReason : Sci.Win.Subs.Base
+    public partial class P01_IrregularPriceReason : Win.Subs.Base
     {
         DataTable OriginDT_FromDB;
         DataTable ModifyDT_FromP01;
@@ -77,7 +77,7 @@ namespace Sci.Production.Subcon
                                         ,(select Name from DropDownList d where d.type = 'Pms_PoIr_Responsible' and d.ID = SubconReason.Responsible) as ResponsibleName
                                         ,Reason 
                                         FROM SubconReason WHERE Type = 'IP' AND Junk = 0";
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,20,20", string.Empty, "ID,Responsible,Reason");
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "10,20,20", string.Empty, "ID,Responsible,Reason");
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P21 : Sci.Win.Tems.Base
+    public partial class P21 : Win.Tems.Base
     {
         public P21(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -334,13 +334,13 @@ WHERE 1=0
             #endregion
         }
 
-        private void btnQuery_Click(object sender, System.EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
-            Sci.Production.Cutting.P21_QueryRevised form = new P21_QueryRevised();
+            P21_QueryRevised form = new P21_QueryRevised();
             form.ShowDialog();
         }
 
-        private void btnSave_Click(object sender, System.EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             DataRow[] allEmptyData;
             DataRow[] noEmptyData;
@@ -422,7 +422,7 @@ WHERE 1=0
 
         #region Grid Icon事件
 
-        private void gridIcon1_AppendClick(object sender, System.EventArgs e)
+        private void gridIcon1_AppendClick(object sender, EventArgs e)
         {
            DataTable gridData = (DataTable)this.listControlBindingSource1.DataSource;
            DataRow nRow = gridData.NewRow();
@@ -431,7 +431,7 @@ WHERE 1=0
             // gridData.ImportRow(nRow);
         }
 
-        private void gridIcon1_InsertClick(object sender, System.EventArgs e)
+        private void gridIcon1_InsertClick(object sender, EventArgs e)
         {
             if (this.gridP21.RowCount != 0)
             {
@@ -448,7 +448,7 @@ WHERE 1=0
             }
         }
 
-        private void gridIcon1_RemoveClick(object sender, System.EventArgs e)
+        private void gridIcon1_RemoveClick(object sender, EventArgs e)
         {
             if (this.gridP21.RowCount != 0)
             {

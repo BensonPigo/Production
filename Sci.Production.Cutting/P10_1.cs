@@ -13,7 +13,7 @@ using System.Transactions;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P10_1 : Sci.Win.Tems.Input6
+    public partial class P10_1 : Win.Tems.Input6
     {
         string keyword = Sci.Env.User.Keyword;
         string LoginId = Sci.Env.User.UserID;
@@ -89,7 +89,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             return base.OnGridSetup();
         }
 
-        protected override Ict.DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             #region 主 Detail
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
@@ -719,7 +719,7 @@ order by bundlegroup";
                 return;
             }
 
-            Sci.Win.Tools.SelectItem item;
+            SelectItem item;
             string cuttingid = MyUtility.GetValue.Lookup("Cuttingsp", this.CurrentMaintain["POID"].ToString(), "Orders", "ID");
 
             string selectCommand = string.Format(
@@ -728,7 +728,7 @@ select distinct b.orderid
 from workorder a WITH (NOLOCK) , workorder_distribute b WITH (NOLOCK) 
 where a.id = '{0}' and a.ukey = b.workorderukey",
                 cuttingid);
-            item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
+            item = new SelectItem(selectCommand, "20", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -826,8 +826,8 @@ where a.id = '{0}' and a.ukey = b.workorderukey",
             string ukey = MyUtility.GetValue.Lookup("Styleukey", this.CurrentMaintain["poid"].ToString(), "Orders", "ID");
             var Sizelist = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
 
-            Sci.Production.PublicForm.GarmentList callNextForm =
-    new Sci.Production.PublicForm.GarmentList(ukey, this.CurrentMaintain["poid"].ToString(), this.txtOriginBundleNo.Text, Sizelist);
+            PublicForm.GarmentList callNextForm =
+    new PublicForm.GarmentList(ukey, this.CurrentMaintain["poid"].ToString(), this.txtOriginBundleNo.Text, Sizelist);
             callNextForm.ShowDialog(this);
             this.OnDetailEntered();
         }
@@ -910,7 +910,7 @@ where a.id = '{0}' and a.ukey = b.workorderukey",
 
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             this.detailgrid.ValidateControl();
-            var frm = new Sci.Production.Cutting.P10_1_Generate(this.CurrentMaintain, dt, this.bundle_Detail_allpart_Tb, this.bundle_Detail_Art_Tb, this.bundle_Detail_Qty_Tb);
+            var frm = new P10_1_Generate(this.CurrentMaintain, dt, this.bundle_Detail_allpart_Tb, this.bundle_Detail_Art_Tb, this.bundle_Detail_Qty_Tb);
             frm.ShowDialog(this);
             dt.DefaultView.Sort = "BundleGroup";
         }
@@ -934,7 +934,7 @@ where a.id = '{0}' and a.ukey = b.workorderukey",
         private void txtArticle_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
             string selectCommand, sqlwhere = string.Empty;
-            Sci.Win.Tools.SelectItem item;
+            SelectItem item;
             if (!this.EditMode)
             {
                 return;
@@ -978,7 +978,7 @@ ORDER BY Seq",
                         this.CurrentMaintain["Orderid"].ToString());
                 }
 
-                item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
+                item = new SelectItem(selectCommand, "20", this.Text);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)
                 {
@@ -1050,7 +1050,7 @@ ORDER BY Seq",
             string sql = string.Format(
                 @"Select ID,FactoryID,Description  From SewingLine WITH (NOLOCK) 
                                         where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{0}')", Sci.Env.User.Keyword);
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2,8,16", this.Text, false, ",");
+            SelectItem item = new SelectItem(sql, "2,8,16", this.Text, false, ",");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

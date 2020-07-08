@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P01_BatchReTransferMtlToScrap : Sci.Win.Subs.Base
+    public partial class P01_BatchReTransferMtlToScrap : Win.Subs.Base
     {
         DataRow dr_master;
         DataTable dt_detail;
@@ -164,7 +164,7 @@ drop table #ReTransferToScrapList,#ReTransferToScrapSummary
 
             this.ShowWaitMessage("Data Loading....");
 
-            Ict.DualResult result;
+            DualResult result;
             if (result = DBProxy.Current.Select(null, strSQLCmd, out this.dtBatch))
             {
                 if (this.dtBatch[1].Rows.Count == 0)

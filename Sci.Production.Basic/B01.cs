@@ -7,7 +7,7 @@ namespace Sci.Production.Basic
     /// <summary>
     /// B01
     /// </summary>
-    public partial class B01 : Sci.Win.Tems.Input1
+    public partial class B01 : Win.Tems.Input1
     {
         /// <summary>
         /// B01
@@ -76,7 +76,7 @@ namespace Sci.Production.Basic
 
         private void BtnCapacityWorkday_Click(object sender, EventArgs e)
         {
-            Sci.Production.Basic.B01_CapacityWorkDay callNextForm = new Sci.Production.Basic.B01_CapacityWorkDay(this.CurrentMaintain);
+            B01_CapacityWorkDay callNextForm = new B01_CapacityWorkDay(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
     }

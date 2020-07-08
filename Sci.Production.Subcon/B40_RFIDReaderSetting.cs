@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Sci.Production.Subcon
 {
-    public partial class B40_RFIDReaderSetting : Sci.Win.Subs.Input4
+    public partial class B40_RFIDReaderSetting : Win.Subs.Input4
     {
         private string ID;
         private DataRow Master;
@@ -26,7 +26,7 @@ namespace Sci.Production.Subcon
         protected override bool OnGridSetup()
         {
             #region Grid事件
-            Ict.Win.DataGridViewGeneratorTextColumnSettings CutCellID = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings CutCellID = new DataGridViewGeneratorTextColumnSettings();
             CutCellID.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1)
@@ -43,7 +43,7 @@ namespace Sci.Production.Subcon
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string sqlcmd = $@"select ID,Description from CutCell with(nolock)where Junk = 0 and MDivisionID = '{this.Master["MDivisionID"]}' ";
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "8,40", null);
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "8,40", null);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {

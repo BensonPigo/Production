@@ -8,9 +8,9 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P33_Detail_Detail : Sci.Win.Subs.Base
+    public partial class P33_Detail_Detail : Win.Subs.Base
     {
-        public Sci.Win.Subs.Base P33_Detail;
+        public Win.Subs.Base P33_Detail;
         DataRow dr_master;
         DataTable dt_detail;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
@@ -38,7 +38,7 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Ict.DualResult result;
+            DualResult result;
 
             this.displaySCIRefno.Text = this.dr_master["SCIRefno"].ToString();
             this.displayRefno.Text = this.dr_master["refno"].ToString();
@@ -101,7 +101,7 @@ AND (a.stocktype = 'B' OR a.stocktype IS NULL)
 
             this.P33_Detail.HideWaitMessage();
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
                 if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))

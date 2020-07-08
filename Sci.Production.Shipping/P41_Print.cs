@@ -10,7 +10,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P41_Print
     /// </summary>
-    public partial class P41_Print : Sci.Win.Tems.PrintForm
+    public partial class P41_Print : Win.Tems.PrintForm
     {
         private DataTable printData;
         private DateTime? date1;
@@ -44,7 +44,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCondition = new StringBuilder();
             if (!MyUtility.Check.Empty(this.date1))

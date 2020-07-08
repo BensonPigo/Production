@@ -8,7 +8,7 @@ using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
-    public partial class B49 : Sci.Win.Tems.Input1
+    public partial class B49 : Win.Tems.Input1
     {
         public B49(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -26,7 +26,7 @@ namespace Sci.Production.Shipping
 
         private void txtCustomerCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                 @"select NLCode,HSCode,UnitID
 from VNContract_Detail WITH (NOLOCK) 
 where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )

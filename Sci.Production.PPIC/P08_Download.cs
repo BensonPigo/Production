@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
-    public partial class P08_Download : Sci.Win.Tems.QueryForm
+    public partial class P08_Download : Win.Tems.QueryForm
     {
         DataRow Master;
         string ClipPath;
@@ -102,7 +102,7 @@ where TableName = 'ReplacementReport' AND UniqueKey = '{this.Master["ID"]}'";
                 {
                     System.IO.File.Copy(filelist[0].FullName, saveFileDialog1.FileName, true);
                 }
-                catch (System.IO.IOException exception)
+                catch (IOException exception)
                 {
                     MyUtility.Msg.ErrorBox("Error: Download file fail. Original error: " + exception.Message);
                 }

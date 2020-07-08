@@ -14,7 +14,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// R12
     /// </summary>
-    public partial class R12 : Sci.Win.Tems.PrintForm
+    public partial class R12 : Win.Tems.PrintForm
     {
         private string season;
         private string brand;
@@ -82,7 +82,7 @@ namespace Sci.Production.PPIC
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlwhere = string.Empty;
             string sqlwhere2 = string.Empty;
@@ -442,7 +442,7 @@ drop table #tmp,#tmp2,#tmp3,#mondt
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R12_PadPrintInkForecast");
-            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             excel.Quit();

@@ -14,7 +14,7 @@ namespace Sci.Production.Planning
     /// <summary>
     /// R16
     /// </summary>
-    public partial class R16 : Sci.Win.Tems.PrintForm
+    public partial class R16 : Win.Tems.PrintForm
     {
         private string factory;
         private string mdivision;
@@ -67,7 +67,7 @@ namespace Sci.Production.Planning
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sql parameters declare --
 
@@ -374,7 +374,7 @@ where o.LocalOrder = 0 {whereIncludeCancelOrder}
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Planning_R16.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Planning_R16.xltx", 2, false, null, objApp);      // 將datatable copy to excel
             objApp.Visible = false;
-            Microsoft.Office.Interop.Excel.Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            Excel.Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             Excel.Range range = null;
 
@@ -773,7 +773,7 @@ where o.LocalOrder = 0 {whereIncludeCancelOrder}
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R16");
-            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
             objApp.Quit();

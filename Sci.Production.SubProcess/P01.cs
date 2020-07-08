@@ -17,7 +17,7 @@ namespace Sci.Production.SubProcess
     /// <summary>
     /// P01
     /// </summary>
-    public partial class P01 : Sci.Win.Tems.Input8
+    public partial class P01 : Win.Tems.Input8
     {
         /// <summary>
         /// P01
@@ -153,7 +153,7 @@ where type = '{0}' and Junk = 0 and MDivisionID = '{1}'
 order by Id",
                     this.CurrentMaintain["TypeID"],
                     Env.User.Keyword);
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,10,20", this.CurrentDetailData["subprocessLineID"].ToString());
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "10,10,20", this.CurrentDetailData["subprocessLineID"].ToString());
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {
@@ -281,7 +281,7 @@ and f.IsProduceFty = 1 and SF.Type='PPA' and o.MDivisionID  = '{1}'",
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     string sqlCmd = string.Format(@"select Article,ColorID from View_OrderFAColor where Id = '{0}'", this.CurrentDetailData["orderid"]);
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,10", this.CurrentDetailData["Article"].ToString());
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "10,10", this.CurrentDetailData["Article"].ToString());
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {
@@ -436,7 +436,7 @@ Where type='{0}'  and styleUkey='{1}'
 Order by Feature",
                     this.CurrentMaintain["TypeID"],
                     this.CurrentDetailData["styleukey"]);
-                    Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlCmd, "Feature,SMV,Remark", "12,8,20", MyUtility.Convert.GetString(this.CurrentDetailData["Feature"]), "0,4,0");
+                    Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlCmd, "Feature,SMV,Remark", "12,8,20", MyUtility.Convert.GetString(this.CurrentDetailData["Feature"]), "0,4,0");
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {

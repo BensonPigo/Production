@@ -12,13 +12,18 @@ using Sci.Utility.Excel;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P32 : Sci.Win.Tems.QueryForm
+    public partial class P32 : Win.Tems.QueryForm
     {
         protected DataTable dtGrid1;
         protected DataTable dtGrid2;
         protected DataTable dtGrid_NoCarton; DataSet dataSet;
-        string SP1, SP2, M; string POID; string sqlWhere = string.Empty;
-        DateTime? sewingdate1, sewingdate2, scidate1, scidate2;
+        string SP1;
+        string SP2;
+        string M; string POID; string sqlWhere = string.Empty;
+        DateTime? sewingdate1;
+        DateTime? sewingdate2;
+        DateTime? scidate1;
+        DateTime? scidate2;
         List<string> sqlWheres = new List<string>();
         StringBuilder sqlcmd = new StringBuilder();
 
@@ -43,19 +48,19 @@ namespace Sci.Production.Subcon
                 .Text("EmbThread", header: "Emb Thread", width: Widths.AnsiChars(5), iseditingreadonly: true);
             #endregion
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.EditingMouseDoubleClick += (s, e) =>
             {
                 DataRow thisRow = this.grid2.GetDataRow(this.listControlBindingSource2.Position);
-                var frm = new Sci.Production.Subcon.P30_InComingList(thisRow["Ukey"].ToString());
+                var frm = new P30_InComingList(thisRow["Ukey"].ToString());
                 DialogResult result = frm.ShowDialog(this);
             };
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.EditingMouseDoubleClick += (s, e) =>
             {
                 DataRow thisRow = this.grid2.GetDataRow(this.listControlBindingSource2.Position);
-                var frm = new Sci.Production.Subcon.P30_AccountPayble(thisRow["Ukey"].ToString());
+                var frm = new P30_AccountPayble(thisRow["Ukey"].ToString());
                 DialogResult result = frm.ShowDialog(this);
             };
 
@@ -355,7 +360,7 @@ drop table  #tmp,#tmp2
                 return;
             }
 
-            Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_P32.xltx");
+            SaveXltReportCls x1 = new SaveXltReportCls("Subcon_P32.xltx");
             if (this.chkCarton.Checked)
             {
                 if (this.dtGrid_NoCarton.Rows.Count == 0)
@@ -363,7 +368,7 @@ drop table  #tmp,#tmp2
                     return;
                 }
 
-                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt = new SaveXltReportCls.XltRptTable(this.dtGrid_NoCarton);
+                SaveXltReportCls.XltRptTable dt = new SaveXltReportCls.XltRptTable(this.dtGrid_NoCarton);
                 x1.DicDatas.Add("##dt1", dt);
                 dt.ShowHeader = false;
                 Microsoft.Office.Interop.Excel.Worksheet ws = x1.ExcelApp.ActiveWorkbook.Worksheets[1];
@@ -386,7 +391,7 @@ drop table  #tmp,#tmp2
                 DataTable dtChild = this.dtGrid2.AsEnumerable().Where(row => true).CopyToDataTable();
                 dtMaster.Columns.Remove("Poid");
                 dtChild.Columns.Remove("Poid");
-                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(dtMaster);
+                SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(dtMaster);
 
                 // DataView dataView = dtGrid2.DefaultView;
                 if (dtChild.Columns.Contains("Ukey"))
@@ -394,7 +399,7 @@ drop table  #tmp,#tmp2
                     dtChild.Columns.Remove("Ukey");
                 }
 
-                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt2 = new SaveXltReportCls.XltRptTable(dtChild);
+                SaveXltReportCls.XltRptTable dt2 = new SaveXltReportCls.XltRptTable(dtChild);
                 x1.DicDatas.Add("##dt1", dt1);
                 x1.DicDatas.Add("##dt2", dt2);
                 dt1.ShowHeader = false;

@@ -5,7 +5,7 @@ namespace Sci.Production.Basic
     /// <summary>
     /// B11_ShippingMark
     /// </summary>
-    public partial class B11_ShippingMark : Sci.Win.Subs.Input1A
+    public partial class B11_ShippingMark : Win.Subs.Input1A
     {
         /// <summary>
         /// B11_ShippingMark

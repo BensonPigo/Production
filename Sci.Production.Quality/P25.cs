@@ -11,7 +11,7 @@ namespace Sci.Production.Quality
     /// <summary>
     /// Quality_P25
     /// </summary>
-    public partial class P25 : Sci.Win.Tems.QueryForm
+    public partial class P25 : Win.Tems.QueryForm
     {
         /// <summary>
         /// P25

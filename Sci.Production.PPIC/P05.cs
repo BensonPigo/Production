@@ -14,12 +14,12 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P05
     /// </summary>
-    public partial class P05 : Sci.Win.Tems.QueryForm
+    public partial class P05 : Win.Tems.QueryForm
     {
         private DataTable gridData;
-        private Ict.Win.DataGridViewGeneratorDateColumnSettings readyDate = new Ict.Win.DataGridViewGeneratorDateColumnSettings();
-        private Ict.Win.DataGridViewGeneratorDateColumnSettings estPulloutDate = new Ict.Win.DataGridViewGeneratorDateColumnSettings();
-        private Ict.Win.DataGridViewGeneratorComboBoxColumnSettings outReasonSet = new Ict.Win.DataGridViewGeneratorComboBoxColumnSettings();
+        private DataGridViewGeneratorDateColumnSettings readyDate = new DataGridViewGeneratorDateColumnSettings();
+        private DataGridViewGeneratorDateColumnSettings estPulloutDate = new DataGridViewGeneratorDateColumnSettings();
+        private DataGridViewGeneratorComboBoxColumnSettings outReasonSet = new DataGridViewGeneratorComboBoxColumnSettings();
 
         /// <summary>
         /// P05
@@ -552,7 +552,7 @@ Order by tempData.Id");
                 return;
             }
 
-            Sci.Production.PPIC.P05_Print callNextForm = new Sci.Production.PPIC.P05_Print((DataTable)this.listControlBindingSource1.DataSource, MyUtility.Check.Empty(this.dateUptoSCIDelivery.Value) ? string.Empty : Convert.ToDateTime(this.dateUptoSCIDelivery.Value).ToString("d"));
+            P05_Print callNextForm = new P05_Print((DataTable)this.listControlBindingSource1.DataSource, MyUtility.Check.Empty(this.dateUptoSCIDelivery.Value) ? string.Empty : Convert.ToDateTime(this.dateUptoSCIDelivery.Value).ToString("d"));
             callNextForm.ShowDialog(this);
         }
 

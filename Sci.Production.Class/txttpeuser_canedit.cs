@@ -8,19 +8,19 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Class
 {
-    public partial class txttpeuser_canedit : Sci.Win.UI._UserControl
+    public partial class txttpeuser_canedit : Win.UI._UserControl
     {
         public txttpeuser_canedit()
         {
             this.InitializeComponent();
         }
 
-        public Sci.Win.UI.TextBox TextBox1
+        public Win.UI.TextBox TextBox1
         {
             get { return this.textBox1; }
         }
 
-        public Sci.Win.UI.DisplayBox DisplayBox1
+        public Win.UI.DisplayBox DisplayBox1
         {
             get { return this.displayBox1; }
         }
@@ -59,7 +59,7 @@ namespace Sci.Production.Class
                         {
                             selectCommand = string.Format("select ID, Name, ExtNo from TPEPass1 WITH (NOLOCK) where Name = '{0}' order by ID", textValue.Trim());
                             DBProxy.Current.Select(null, selectCommand, out selectTable);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo", "15,30,10", this.textBox1.Text);
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo", "15,30,10", this.textBox1.Text);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -73,7 +73,7 @@ namespace Sci.Production.Class
                         {
                             selectCommand = string.Format("select ID, Name, ExtNo from TPEPass1 WITH (NOLOCK) where Ext_No = '{0}' order by ID", textValue.Trim());
                             DBProxy.Current.Select(null, selectCommand, out selectTable);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo", "15,30,10", this.textBox1.Text);
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo", "15,30,10", this.textBox1.Text);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -97,7 +97,7 @@ namespace Sci.Production.Class
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+            Win.Forms.Base myForm = (Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == true)
             {
                 string selectSql = string.Format("Select Name from TPEPass1 WITH (NOLOCK) where id = '{0}'", this.textBox1.Text.ToString());
@@ -122,13 +122,13 @@ namespace Sci.Production.Class
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+            Win.Forms.Base myForm = (Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || this.textBox1.ReadOnly == true)
             {
                 return;
             }
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) order by ID", "15,30,10", this.textBox1.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) order by ID", "15,30,10", this.textBox1.Text);
             item.Width = 640;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)

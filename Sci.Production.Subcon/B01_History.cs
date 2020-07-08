@@ -6,7 +6,7 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class B01_History : Sci.Win.Subs.Base
+    public partial class B01_History : Win.Subs.Base
     {
         protected DataRow motherData;
 

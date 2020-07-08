@@ -6,7 +6,7 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P36_ModifyAfterSent : Sci.Win.Subs.Base
+    public partial class P36_ModifyAfterSent : Win.Subs.Base
     {
         DataRow dr;
         DataTable dtData;

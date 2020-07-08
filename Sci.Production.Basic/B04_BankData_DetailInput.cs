@@ -3,7 +3,7 @@ using static Sci.Production.Basic.B04_BankDetail;
 
 namespace Sci.Production.Basic
 {
-    public partial class B04_BankData_DetailInput : Sci.Win.Subs.Base
+    public partial class B04_BankData_DetailInput : Win.Subs.Base
     {
         public LocalSupp_Bank_Detail _detail;
 

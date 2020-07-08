@@ -11,7 +11,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Quality
 {
-    public partial class P10 : Sci.Win.Tems.Input6
+    public partial class P10 : Win.Tems.Input6
     {
         private string loginID = Sci.Env.User.UserID;
         private string Factory = Sci.Env.User.Keyword;
@@ -50,7 +50,7 @@ namespace Sci.Production.Quality
                 return;
             }
 
-            Sci.Production.Quality.P10_Detail callNewDetailForm = new P10_Detail(this.EditMode, this.CurrentMaintain, this.CurrentDetailData);
+            P10_Detail callNewDetailForm = new P10_Detail(this.EditMode, this.CurrentMaintain, this.CurrentDetailData);
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
             this.RenewData();

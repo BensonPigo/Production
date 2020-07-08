@@ -16,7 +16,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P04
     /// </summary>
-    public partial class P04 : Sci.Win.Tems.Input6
+    public partial class P04 : Win.Tems.Input6
     {
         private Ict.Win.UI.DataGridViewTextBoxColumn col_orderid;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_seq;
@@ -32,11 +32,11 @@ namespace Sci.Production.Packing
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_gw;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_nnw;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_nwpcs;
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings orderid = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings seq = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings size = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings shipQtySetting = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings orderid = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings seq = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings article = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings size = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings shipQtySetting = new DataGridViewGeneratorNumericColumnSettings();
         private DialogResult buttonResult;
         private DualResult result;
         private DataRow dr;
@@ -62,7 +62,7 @@ namespace Sci.Production.Packing
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             this.masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = Prgs.QueryPackingListSQLCmd(this.masterID);
@@ -221,7 +221,7 @@ where o.ID = @orderid
                                     else
                                     {
                                         sqlCmd = string.Format("select Seq,BuyerDelivery,ShipmodeID,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", this.dr["OrderID"].ToString());
-                                        Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
+                                        Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
                                         DialogResult returnResult = item.ShowDialog();
                                         if (returnResult == DialogResult.Cancel)
                                         {
@@ -256,7 +256,7 @@ where o.ID = @orderid
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             this.sqlCmd = string.Format("select Seq, BuyerDelivery,ShipmodeID,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", dr["OrderID"].ToString());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(this.sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -292,7 +292,7 @@ where o.ID = @orderid
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             this.sqlCmd = string.Format("Select Distinct Article from Order_QtyShip_Detail WITH (NOLOCK) where ID = '{0}' and Seq = '{1}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(this.sqlCmd, "8", dr["Article"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.sqlCmd, "8", dr["Article"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -384,7 +384,7 @@ left join Order_SizeCode os WITH (NOLOCK) on os.ID = o.POID and os.SizeCode = a.
 order by os.Seq", dr["OrderID"].ToString(),
                                 dr["OrderShipmodeSeq"].ToString(),
                                 dr["Article"].ToString());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(this.sqlCmd, "8", dr["SizeCode"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.sqlCmd, "8", dr["SizeCode"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -988,7 +988,7 @@ where InvA.OrderID = '{0}'
         /// <returns>bool</returns>
         protected override bool ClickPrint()
         {
-            Sci.Production.Packing.P04_Print callNextForm = new Sci.Production.Packing.P04_Print(this.CurrentMaintain);
+            P04_Print callNextForm = new P04_Print(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
             return base.ClickPrint();
         }
@@ -1052,7 +1052,7 @@ where InvA.OrderID = '{0}'
         // Carton Summary
         private void BtnCartonSummary_Click(object sender, EventArgs e)
         {
-            Sci.Production.Packing.P04_CartonSummary callNextForm = new Sci.Production.Packing.P04_CartonSummary(this.CurrentMaintain["ID"].ToString());
+            P04_CartonSummary callNextForm = new P04_CartonSummary(this.CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
         }
 
@@ -1065,7 +1065,7 @@ where InvA.OrderID = '{0}'
                 return;
             }
 
-            Sci.Production.Packing.P04_BatchImport callNextForm = new Sci.Production.Packing.P04_BatchImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            P04_BatchImport callNextForm = new P04_BatchImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             callNextForm.ShowDialog(this);
         }
 
@@ -1310,7 +1310,7 @@ Pullout No. < {0} > ", dtt.Rows[0]["PulloutId"].ToString()));
                 return;
             }
 
-            Sci.Production.Packing.P04_ExcelImport callNextForm = new Sci.Production.Packing.P04_ExcelImport((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["BrandID"].ToString(), this.CurrentMaintain["ShipModeID"].ToString());
+            P04_ExcelImport callNextForm = new P04_ExcelImport((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["BrandID"].ToString(), this.CurrentMaintain["ShipModeID"].ToString());
             callNextForm.ShowDialog(this);
         }
 

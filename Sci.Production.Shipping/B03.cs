@@ -11,7 +11,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B03
     /// </summary>
-    public partial class B03 : Sci.Win.Tems.Input1
+    public partial class B03 : Win.Tems.Input1
     {
         /// <summary>
         /// B03
@@ -142,7 +142,7 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override bool ClickPrint()
         {
-            Sci.Production.Shipping.B03_PrintReviseList callNextForm = new Sci.Production.Shipping.B03_PrintReviseList();
+            B03_PrintReviseList callNextForm = new B03_PrintReviseList();
             callNextForm.ShowDialog(this);
             return base.ClickPrint();
         }
@@ -172,14 +172,14 @@ namespace Sci.Production.Shipping
 
         private void BtnCanvassRecord_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.B03_Quotation callNextForm = new Sci.Production.Shipping.B03_Quotation(Prgs.GetAuthority(Sci.Env.User.UserID, "B03. Shipping Expense", "CanEdit"), this.CurrentMaintain, this.Perm.Confirm);
+            B03_Quotation callNextForm = new B03_Quotation(Prgs.GetAuthority(Sci.Env.User.UserID, "B03. Shipping Expense", "CanEdit"), this.CurrentMaintain, this.Perm.Confirm);
             callNextForm.ShowDialog(this);
             this.RenewData();
         }
 
         private void BtnPaymentHistory_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.B03_PaymentHistory callNextForm = new Sci.Production.Shipping.B03_PaymentHistory(this.CurrentMaintain);
+            B03_PaymentHistory callNextForm = new B03_PaymentHistory(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
@@ -195,7 +195,7 @@ namespace Sci.Production.Shipping
 
             if (this.batchapprove == null || this.batchapprove.IsDisposed)
             {
-                this.batchapprove = new Sci.Production.Shipping.B03_BatchApprove(this.reload);
+                this.batchapprove = new B03_BatchApprove(this.reload);
                 this.batchapprove.Show();
             }
             else

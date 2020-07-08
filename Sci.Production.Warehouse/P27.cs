@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P27 : Sci.Win.Tems.Input6
+    public partial class P27 : Win.Tems.Input6
     {
         public P27(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -168,12 +168,12 @@ where LD.Id = '{0}';", this.CurrentMaintain["id"], Location));
         {
             #region Location 右鍵開窗
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation(this.CurrentMaintain["stocktype"].ToString(), this.CurrentDetailData["tolocation"].ToString());
+                    Win.Tools.SelectItem2 item = Prgs.SelectLocation(this.CurrentMaintain["stocktype"].ToString(), this.CurrentDetailData["tolocation"].ToString());
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -261,7 +261,7 @@ Where LD.id = '{0}' ", masterID);
         // Import
         private void btnImport_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P27_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P27_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
         }
 

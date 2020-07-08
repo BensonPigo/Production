@@ -7,7 +7,7 @@ using Ict.Win;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P37 : Sci.Win.Tems.Input6
+    public partial class P37 : Win.Tems.Input6
     {
         public P37(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -117,7 +117,7 @@ from debit_detail WITH (NOLOCK) Where debit_detail.id = '{0}' order by orderid "
                 return;
             }
 
-            var frm = new Sci.Production.Subcon.P37_DebitSchedule(false, dr["ID"].ToString(), null, null, this.CurrentMaintain, "P37");
+            var frm = new P37_DebitSchedule(false, dr["ID"].ToString(), null, null, this.CurrentMaintain, "P37");
             frm.ShowDialog(this);
             this.RenewData();
         }

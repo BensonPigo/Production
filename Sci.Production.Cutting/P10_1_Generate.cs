@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P10_1_Generate : Sci.Win.Subs.Base
+    public partial class P10_1_Generate : Win.Subs.Base
     {
         DataRow maindatarow;
         DataTable allpartTb;
@@ -23,8 +23,14 @@ namespace Sci.Production.Cutting
         DataTable artTb;
         DataTable sizeTb;
         DataTable garmentTb;
-        DataTable detailTb, alltmpTb, bundle_detail_artTb, qtyTb;
-        DataTable detailTb2, alltmpTb2, bundle_detail_artTb2, qtyTb2;
+        DataTable detailTb;
+        DataTable alltmpTb;
+        DataTable bundle_detail_artTb;
+        DataTable qtyTb;
+        DataTable detailTb2;
+        DataTable alltmpTb2;
+        DataTable bundle_detail_artTb2;
+        DataTable qtyTb2;
         DataTable f_codeTb;
         DataTable garmentarRC;
 

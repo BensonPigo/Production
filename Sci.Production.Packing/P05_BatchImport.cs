@@ -12,7 +12,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P05_BatchImport
     /// </summary>
-    public partial class P05_BatchImport : Sci.Win.Subs.Base
+    public partial class P05_BatchImport : Win.Subs.Base
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private DataRow packingListData;

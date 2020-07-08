@@ -12,7 +12,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R04
     /// </summary>
-    public partial class R04 : Sci.Win.Tems.PrintForm
+    public partial class R04 : Win.Tems.PrintForm
     {
         private DateTime? buyerDlv1;
         private DateTime? buyerDlv2;
@@ -76,7 +76,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string whereFCRDate = string.Empty;
             string whereFCRDateOut = string.Empty;

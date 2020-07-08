@@ -7,7 +7,7 @@ using System.Windows.Forms;
 namespace Sci.Production.Packing
 {
     /// <inheritdoc/>
-    public partial class B04 : Sci.Win.Tems.Input1
+    public partial class B04 : Win.Tems.Input1
     {
         /// <inheritdoc/>
         public B04(ToolStripMenuItem menuitem)

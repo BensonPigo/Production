@@ -14,7 +14,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// R01
     /// </summary>
-    public partial class R01 : Sci.Win.Tems.PrintForm
+    public partial class R01 : Win.Tems.PrintForm
     {
         private DataTable printData;
         private string mDivision;
@@ -70,7 +70,7 @@ namespace Sci.Production.PPIC
         private string SelectSewingLine(string line)
         {
             string sql = string.Format("Select Distinct ID From SewingLine WITH (NOLOCK) {0}  ", MyUtility.Check.Empty(this.comboFactory.Text) ? string.Empty : string.Format(" where FactoryID = '{0}'", this.comboFactory.Text));
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "3", line, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "3", line, false, ",");
             item.Width = 300;
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
@@ -119,7 +119,7 @@ namespace Sci.Production.PPIC
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult result;
             /*
@@ -812,7 +812,7 @@ drop table #tmpFinal_step1
                             }
 
                             // 插入四行
-                            Microsoft.Office.Interop.Excel.Range rngToInsert;
+                            Excel.Range rngToInsert;
                             for (int i = 0; i < 4; i++)
                             {
                                 rngToInsert = worksheet.get_Range(string.Format("B{0}:B{0}", MyUtility.Convert.GetString(intRowsStart + i)), Type.Missing).EntireRow;
@@ -863,10 +863,10 @@ drop table #tmpFinal_step1
                         // 算出Excel的Column的英文位置
                         string excelStartColEng = PublicPrg.Prgs.GetExcelEnglishColumnName(startCol);
                         string excelEndColEng = PublicPrg.Prgs.GetExcelEnglishColumnName(endCol);
-                        Microsoft.Office.Interop.Excel.Range selrng = worksheet.get_Range(string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng), Type.Missing).EntireRow;
+                        Excel.Range selrng = worksheet.get_Range(string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng), Type.Missing).EntireRow;
 
                         // 設置儲存格的背景色
-                        Microsoft.Office.Interop.Excel.Range rngColor = worksheet.Range[$"{excelStartColEng}{MyUtility.Convert.GetString(intRowsStart)}:{excelEndColEng}{MyUtility.Convert.GetString(intRowsStart + 3)}"];
+                        Excel.Range rngColor = worksheet.Range[$"{excelStartColEng}{MyUtility.Convert.GetString(intRowsStart)}:{excelEndColEng}{MyUtility.Convert.GetString(intRowsStart + 3)}"];
 
                         // 合併儲存格,文字置中 (僅限Style)
                         worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Merge(Type.Missing);
@@ -1008,7 +1008,7 @@ drop table #tmpFinal_step1
                 #region Save & Show Excel
 
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R01_Style_PerEachSewingDate");
-                Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
                 objApp.Quit();
@@ -1084,7 +1084,7 @@ where id = '{0}'", Env.User.Factory), null);
 
                     #region Save & Show Excel
                     string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R01_PrintOut");
-                    Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                    Excel.Workbook workbook = objApp.ActiveWorkbook;
                     workbook.SaveAs(strExcelName);
                     workbook.Close();
                     objApp.Quit();
@@ -1122,7 +1122,7 @@ where id = '{0}'", Env.User.Factory), null);
 
                     #region Save & Show Excel
                     string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R01_SewingLineScheduleReport");
-                    Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                    Excel.Workbook workbook = objApp.ActiveWorkbook;
                     workbook.SaveAs(strExcelName);
                     workbook.Close();
                     objApp.Quit();

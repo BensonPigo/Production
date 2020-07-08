@@ -7,7 +7,7 @@ namespace Sci.Production.Sewing
     /// <summary>
     /// P04_SaveComplete
     /// </summary>
-    public partial class P04_SaveComplete : Sci.Win.Tems.QueryForm
+    public partial class P04_SaveComplete : Win.Tems.QueryForm
     {
         /// <summary>
         /// P04_SaveComplete

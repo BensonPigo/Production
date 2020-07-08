@@ -6,7 +6,7 @@ using Ict;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P03_Supplier : Sci.Win.Subs.Base
+    public partial class P03_Supplier : Win.Subs.Base
     {
         DataRow dr;
         DataTable selectDataTable1;

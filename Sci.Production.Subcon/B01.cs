@@ -8,7 +8,7 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class B01 : Sci.Win.Tems.Input1
+    public partial class B01 : Win.Tems.Input1
     {
         public B01(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -287,7 +287,7 @@ WHERE Type='Pms_LocalItem_UnPack'
                 return;
             }
 
-            var frm = new Sci.Production.Subcon.B01_Quotation(this.IsSupportEdit, dr, this.Perm.Confirm);
+            var frm = new B01_Quotation(this.IsSupportEdit, dr, this.Perm.Confirm);
             frm.ShowDialog(this);
             this.RenewData();
         }
@@ -369,7 +369,7 @@ WHERE Type='Pms_LocalItem_UnPack'
                 return;
             }
 
-            var frm = new Sci.Production.Subcon.B01_History(dr);
+            var frm = new B01_History(dr);
             frm.ShowDialog(this);
             this.RenewData();
         }
@@ -436,13 +436,13 @@ WHERE Type='Pms_LocalItem_UnPack'
         // [Thread Type]右鍵開窗
         private void txtThreadType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+            Win.Forms.Base myForm = (Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || this.txtThreadType.ReadOnly == true)
             {
                 return;
             }
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from ThreadType WITH (NOLOCK) WHERE Junk=0", "20", this.txtThreadType.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID from ThreadType WITH (NOLOCK) WHERE Junk=0", "20", this.txtThreadType.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -504,7 +504,7 @@ WHERE Type='Pms_LocalItem_UnPack'
 
             if (this.batchapprove == null || this.batchapprove.IsDisposed)
             {
-                this.batchapprove = new Sci.Production.Subcon.B01_BatchApprove(this.reload);
+                this.batchapprove = new B01_BatchApprove(this.reload);
                 this.batchapprove.Show();
             }
             else
@@ -515,7 +515,7 @@ WHERE Type='Pms_LocalItem_UnPack'
 
         private void btnSetCardboardPads_Click(object sender, EventArgs e)
         {
-            Form form = new Sci.Production.Subcon.B01_SetCardBoarsPads(this.CurrentMaintain);
+            Form form = new B01_SetCardBoarsPads(this.CurrentMaintain);
             form.ShowDialog(this);
             this.OnDetailEntered();
             this.RenewData();

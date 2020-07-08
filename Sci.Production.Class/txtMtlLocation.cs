@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Class
 {
-    public partial class txtMtlLocation : Sci.Win.UI.TextBox
+    public partial class txtMtlLocation : Win.UI.TextBox
     {
         private string stockTypeFilte = string.Empty;
 
@@ -90,7 +90,7 @@ WHERE Junk = 0
 	  {0}
 ORDER BY ID, StockType", dicSQLFilte["StockType"]);
             #endregion
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(strSQLCmd, "15,5", this.Text);
+            SelectItem item = new SelectItem(strSQLCmd, "15,5", this.Text);
             item.Size = new System.Drawing.Size(400, 530);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
@@ -123,7 +123,7 @@ ORDER BY ID, StockType", dicSQLFilte["StockType"]);
                     DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
                     // Parent form 若是非編輯狀態就 return
-                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                    if (!((Win.Forms.Base)grid.FindForm()).EditMode)
                     {
                         return;
                     }
@@ -158,7 +158,7 @@ ORDER BY ID, StockType", "15,5", row["tolocation"].ToString(), false, ",");
                 DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
                 // Parent form 若是非編輯狀態就 return
-                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                if (!((Win.Forms.Base)grid.FindForm()).EditMode)
                 {
                     return;
                 }

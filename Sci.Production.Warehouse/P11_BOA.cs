@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P11_BOA : Sci.Win.Subs.Base
+    public partial class P11_BOA : Win.Subs.Base
     {
         string poid;
         string issueid;

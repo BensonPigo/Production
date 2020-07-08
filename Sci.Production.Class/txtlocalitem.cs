@@ -11,7 +11,7 @@ using Sci.Win.Tools;
 
 namespace Sci.Production.Class
 {
-    public partial class txtlocalitem : Sci.Win.UI.TextBox
+    public partial class txtlocalitem : Win.UI.TextBox
     {
         private string category = string.Empty;
         private string localSupp = string.Empty;
@@ -78,7 +78,7 @@ namespace Sci.Production.Class
             }
 
             string sql = "Select Refno, LocalSuppid, category, description From LocalItem WITH (NOLOCK) " + this.where;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "20,8,20,50", this.Text, false, ",");
+            SelectItem item = new SelectItem(sql, "20,8,20,50", this.Text, false, ",");
 
             // select id from LocalItem where !Junk and LocalSuppid = localSupp and Category = category
             DialogResult result = item.ShowDialog();
@@ -218,7 +218,7 @@ namespace Sci.Production.Class
                     DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
                     // Parent form 若是非編輯狀態就 return
-                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                    if (!((Win.Forms.Base)grid.FindForm()).EditMode)
                     {
                         return;
                     }
@@ -269,7 +269,7 @@ namespace Sci.Production.Class
                 DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
                 // Parent form 若是非編輯狀態就 return
-                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                if (!((Win.Forms.Base)grid.FindForm()).EditMode)
                 {
                     return;
                 }

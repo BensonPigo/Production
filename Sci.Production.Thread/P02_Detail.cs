@@ -7,7 +7,7 @@ namespace Sci.Production.Thread
     /// <summary>
     /// P02_Detail
     /// </summary>
-    public partial class P02_Detail : Sci.Win.Subs.Input8A
+    public partial class P02_Detail : Win.Subs.Input8A
     {
         /// <summary>
         /// P02_Detail

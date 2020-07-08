@@ -111,7 +111,7 @@ where MDivisionID = '{0}'",
         }
 
         /// <inheritdoc/>
-        protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["OrderID"].ToString();
             this.DetailSelectCommand = string.Format(
@@ -160,7 +160,7 @@ WHERE a.OrderID = '{0}'",
         }
 
         /// <inheritdoc/>
-        protected override DualResult OnSubDetailSelectCommandPrepare(Win.Tems.Input8.PrepareSubDetailSelectCommandEventArgs e)
+        protected override DualResult OnSubDetailSelectCommandPrepare(PrepareSubDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Detail == null) ? string.Empty : e.Detail["Ukey"].ToString();
 
@@ -302,7 +302,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                                 return;
                             }
 
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from ThreadColor WITH (NOLOCK) where junk = 0 order by ID", "10,40", this.CurrentDetailData["ThreadColorid"].ToString().Trim());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Description from ThreadColor WITH (NOLOCK) where junk = 0 order by ID", "10,40", this.CurrentDetailData["ThreadColorid"].ToString().Trim());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -680,7 +680,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
             foreach (Control item in this.masterpanel.Controls)
             {
-                if (item is Sci.Win.UI.Label || item is Sci.Win.UI.Button || item == this.displayM || item == this.txtSP)
+                if (item is Win.UI.Label || item is Win.UI.Button || item == this.displayM || item == this.txtSP)
                 {
                 }
                 else

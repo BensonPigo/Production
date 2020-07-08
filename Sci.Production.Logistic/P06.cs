@@ -14,7 +14,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_P06
     /// </summary>
-    public partial class P06 : Sci.Win.Tems.QueryForm
+    public partial class P06 : Win.Tems.QueryForm
     {
         /// <summary>
         /// P06

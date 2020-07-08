@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P10_Detail : Sci.Win.Subs.Input8A
+    public partial class P10_Detail : Win.Subs.Input8A
     {
         int Type = 0;
         string RequestID;
@@ -28,7 +28,7 @@ namespace Sci.Production.Warehouse
 
         protected override void OnSubDetailInsert(int index = -1)
         {
-            var frm = new Sci.Production.Warehouse.P10_Detail_Detail(this.CurrentDetailData, (DataTable)this.gridbs.DataSource, this.Type);
+            var frm = new P10_Detail_Detail(this.CurrentDetailData, (DataTable)this.gridbs.DataSource, this.Type);
             frm.P10_Detail = this;
             frm.ShowDialog(this);
             this.sum_checkedqty();
@@ -41,7 +41,7 @@ namespace Sci.Production.Warehouse
             if (!temp.Columns.Contains("balanceqty"))
             {
                 DataTable dtFtyinventory;
-                Ict.DualResult result;
+                DualResult result;
                 if (!(result = MyUtility.Tool.ProcessWithDatatable(
                         temp, string.Empty, @"          
 select t.poid
@@ -141,7 +141,7 @@ order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp"))
 
         protected override bool OnGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
                 {
                     this.sum_checkedqty();

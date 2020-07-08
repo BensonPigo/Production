@@ -11,7 +11,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_EConsMNoticeFailed
     /// </summary>
-    public partial class P01_EConsMNoticeFailed : Sci.Win.Subs.Input4
+    public partial class P01_EConsMNoticeFailed : Win.Subs.Input4
     {
         private bool _mustEmpty;
 

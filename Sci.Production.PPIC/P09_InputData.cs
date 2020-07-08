@@ -11,7 +11,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P09_InputData
     /// </summary>
-    public partial class P09_InputData : Sci.Win.Subs.Input6A
+    public partial class P09_InputData : Win.Subs.Input6A
     {
         private DataRow masterData;
 
@@ -178,7 +178,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
                             else
                             {
                                 IList<DataRow> selectedReceiveData;
-                                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(receiveData, "INVNo", "25", string.Empty, "Invoice No");
+                                Win.Tools.SelectItem item = new Win.Tools.SelectItem(receiveData, "INVNo", "25", string.Empty, "Invoice No");
                                 DialogResult returnResult = item.ShowDialog();
                                 if (returnResult == DialogResult.Cancel)
                                 {
@@ -237,7 +237,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
                 if (result)
                 {
                     IList<DataRow> selectedReceiveData;
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(receiveData, "INVNo", "25", string.Empty, "Invoice No");
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(receiveData, "INVNo", "25", string.Empty, "Invoice No");
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult != DialogResult.Cancel)
                     {

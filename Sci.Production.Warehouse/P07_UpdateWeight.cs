@@ -9,7 +9,7 @@ using Ict;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P07_UpdateWeight : Sci.Win.Subs.Base
+    public partial class P07_UpdateWeight : Win.Subs.Base
     {
         DataRow dr;
         DataTable selectDataTable1;

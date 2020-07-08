@@ -10,7 +10,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_P01_History_Print
     /// </summary>
-    public partial class P01_History_Print : Sci.Win.Tems.PrintForm
+    public partial class P01_History_Print : Win.Tems.PrintForm
     {
         private DataTable printData;
         private DataTable artworkType;
@@ -62,7 +62,7 @@ namespace Sci.Production.IE
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlCmd = string.Format(
                 @"select t.ID,t.Phase,t.Version,td.Seq,td.OperationID,td.MachineTypeID,td.Mold,td.Frequency,

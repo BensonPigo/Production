@@ -6,7 +6,7 @@ using System.Data;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P03_COInformation : Sci.Win.Forms.Base
+    public partial class P03_COInformation : Win.Forms.Base
     {
         private string exportID;
 

@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P04 : Sci.Win.Tems.QueryForm
+    public partial class P04 : Win.Tems.QueryForm
     {
         DataTable dataTable;
         string SPNo;
@@ -39,10 +39,10 @@ namespace Sci.Production.Warehouse
         {
             foreach (Form form in Application.OpenForms)
             {
-                if (form is Sci.Production.Warehouse.P04)
+                if (form is P04)
                 {
                     form.Activate();
-                    Sci.Production.Warehouse.P04 activateForm = (Sci.Production.Warehouse.P04)form;
+                    P04 activateForm = (P04)form;
                     activateForm.setTxtSPNo(PPIC_SPNo);
                     activateForm.event_Query();
                     return;
@@ -56,7 +56,7 @@ namespace Sci.Production.Warehouse
                 {
                     foreach (var subMenuItem in toolMenuItem.DropDown.Items)
                     {
-                        if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                        if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
                         {
                             if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P04. Material Status (Local)"))
                             {
@@ -86,26 +86,26 @@ namespace Sci.Production.Warehouse
             base.OnFormLoaded();
 
             #region Balance 開窗 P04_LocalTransaction
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings setBalance = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings setBalance = new DataGridViewGeneratorNumericColumnSettings();
             setBalance.CellMouseDoubleClick += (s, e) =>
             {
                 var dataRow = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (dataRow != null)
                 {
-                    var form = new Sci.Production.Warehouse.P04_LocalTransaction(dataRow, "P04");
+                    var form = new P04_LocalTransaction(dataRow, "P04");
                     form.Show(this);
                 }
             };
             #endregion
             #region Scrap Qty 開窗 P04_ScrapQty
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings setScrapQty = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings setScrapQty = new DataGridViewGeneratorNumericColumnSettings();
             setScrapQty.CellMouseDoubleClick += (s, e) =>
             {
                 var dataRow = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (dataRow != null)
                 {
                     // var form = new Sci.Production.Warehouse.P04_ScrapQty(string Poid, string Refno, string Color);
-                    var form = new Sci.Production.Warehouse.P04_ScrapQty(dataRow["sp"].ToString(), dataRow["refno"].ToString(), dataRow["threadColor"].ToString());
+                    var form = new P04_ScrapQty(dataRow["sp"].ToString(), dataRow["refno"].ToString(), dataRow["threadColor"].ToString());
                     form.Show(this);
                 }
             };
@@ -193,7 +193,7 @@ drop table #tmp
             this.ShowWaitMessage("Data Loading....");
             #region SQL Data Loading....
 
-            Ict.DualResult result;
+            DualResult result;
 
             if (result = DBProxy.Current.Select(null, sql, sqlPar, out this.dataTable))
             {

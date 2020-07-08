@@ -17,7 +17,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P37 : Sci.Win.Tems.Input6
+    public partial class P37 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
@@ -127,10 +127,10 @@ namespace Sci.Production.Warehouse
 
             string RptTitle = dt1.Rows[0]["nameEN"].ToString();
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CDate", CDate));
+            report.ReportParameters.Add(new ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new ReportParameter("ID", id));
+            report.ReportParameters.Add(new ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new ReportParameter("CDate", CDate));
 
             DataTable dtRefund;
             string RefundResult;
@@ -150,7 +150,7 @@ namespace Sci.Production.Warehouse
                 RefundResult = dtRefund.Rows[0]["Description"].ToString();
             }
 
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RefundResult", RefundResult));
+            report.ReportParameters.Add(new ReportParameter("RefundResult", RefundResult));
 
             DataTable dtAction;
             string ActionResult;
@@ -169,7 +169,7 @@ namespace Sci.Production.Warehouse
                 ActionResult = dtAction.Rows[0]["desc"].ToString();
             }
 
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ActionResult", ActionResult));
+            report.ReportParameters.Add(new ReportParameter("ActionResult", ActionResult));
 
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
@@ -246,7 +246,7 @@ where R.id= @ID";
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
             return true;
@@ -362,9 +362,9 @@ where R.id= @ID";
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings SupportNegative = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings SupportNegative = new DataGridViewGeneratorNumericColumnSettings();
             SupportNegative.IsSupportNegative = true;
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
             ns.CellFormatting = (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
@@ -898,7 +898,7 @@ Where a.id = '{0}'", masterID);
         // Import
         private void btnImport_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P37_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P37_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }
@@ -906,7 +906,7 @@ Where a.id = '{0}'", masterID);
         // Accumulated Qty
         private void btnAccumulatedQty_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P37_AccumulatedQty(this.CurrentMaintain);
+            var frm = new P37_AccumulatedQty(this.CurrentMaintain);
             frm.P37 = this;
             frm.ShowDialog(this);
         }

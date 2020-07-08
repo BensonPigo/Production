@@ -9,7 +9,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P04_ImportTransferIn
     /// </summary>
-    public partial class P04_ImportTransferIn : Sci.Win.Subs.Base
+    public partial class P04_ImportTransferIn : Win.Subs.Base
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private DataTable detailData;

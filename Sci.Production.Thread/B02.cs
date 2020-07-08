@@ -6,7 +6,7 @@ namespace Sci.Production.Thread
     /// <summary>
     /// B02
     /// </summary>
-    public partial class B02 : Sci.Win.Tems.Input1
+    public partial class B02 : Win.Tems.Input1
     {
         /// <summary>
         /// B02
@@ -40,7 +40,7 @@ namespace Sci.Production.Thread
 
         private void TxtThreadColorGroupID_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                         @"Select ID,description  from ThreadColorGroup WITH (NOLOCK) where JUNK=0 order by ID", "10,45", null);
             item.Size = new System.Drawing.Size(630, 535);
             DialogResult result = item.ShowDialog();

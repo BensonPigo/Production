@@ -14,7 +14,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P09_StartToScan
     /// </summary>
-    public partial class P09_StartToScan : Sci.Win.Subs.Base
+    public partial class P09_StartToScan : Win.Subs.Base
     {
         private P09_IDX_CTRL IDX;
         private DataRow MasterDR;
@@ -296,7 +296,7 @@ order by Seq",
                     }
                     else
                     {
-                        Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(selectItemData, "OrderID,Article,Color,SizeCode", "13,8,6,8", string.Empty, headercaptions: "SP#,Colorway,Color,Size");
+                        Win.Tools.SelectItem item = new Win.Tools.SelectItem(selectItemData, "OrderID,Article,Color,SizeCode", "13,8,6,8", string.Empty, headercaptions: "SP#,Colorway,Color,Size");
                         DialogResult returnResult = item.ShowDialog();
                         if (returnResult == DialogResult.Cancel)
                         {

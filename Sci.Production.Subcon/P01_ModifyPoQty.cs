@@ -8,7 +8,7 @@ using System.Transactions;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P01_ModifyPoQty : Sci.Win.Subs.Base
+    public partial class P01_ModifyPoQty : Win.Subs.Base
     {
         protected DataRow dr;
         protected int sum_order_qty = 0;
@@ -48,10 +48,10 @@ namespace Sci.Production.Subcon
 
         private void numPOQty_Validated(object sender, EventArgs e)
         {
-            this.dr["poqty"] = ((Sci.Win.UI.NumericBox)sender).Value;
-            if (((Sci.Win.UI.NumericBox)sender).Value > this.sum_order_qty)
+            this.dr["poqty"] = ((Win.UI.NumericBox)sender).Value;
+            if (((Win.UI.NumericBox)sender).Value > this.sum_order_qty)
             {
-                this.dr["exceedqty"] = ((Sci.Win.UI.NumericBox)sender).Value - this.sum_order_qty;
+                this.dr["exceedqty"] = ((Win.UI.NumericBox)sender).Value - this.sum_order_qty;
                 this.displayExceedQty.Text = this.dr["exceedqty"].ToString();
             }
             else

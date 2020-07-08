@@ -8,7 +8,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P06_ReviseHistory_Detail
     /// </summary>
-    public partial class P06_ReviseHistory_Detail : Sci.Win.Subs.Base
+    public partial class P06_ReviseHistory_Detail : Win.Subs.Base
     {
         private DataRow masterData;
 

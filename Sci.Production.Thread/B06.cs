@@ -9,7 +9,7 @@ namespace Sci.Production.Thread
     /// <summary>
     /// B06
     /// </summary>
-    public partial class B06 : Sci.Win.Tems.QueryForm
+    public partial class B06 : Win.Tems.QueryForm
     {
         /// <summary>
         /// B06

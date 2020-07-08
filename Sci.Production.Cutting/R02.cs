@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Sci.Production.Cutting
 {
-    public partial class R02 : Sci.Win.Tems.PrintForm
+    public partial class R02 : Win.Tems.PrintForm
     {
         DataTable[] printData;
         string MD;
@@ -21,10 +21,12 @@ namespace Sci.Production.Cutting
         string SpreadingNo1;
         string SpreadingNo2;
         string[] cuttings;
-        DateTime? dateR_CuttingDate1, dateR_CuttingDate2;
+        DateTime? dateR_CuttingDate1;
+        DateTime? dateR_CuttingDate2;
         StringBuilder condition_CuttingDate = new StringBuilder();
         DataTable Maintb;
-        string NameEN, strExcelName;
+        string NameEN;
+        string strExcelName;
         string selected_splitWorksheet = "CutCell";
 
         public R02(ToolStripMenuItem menuitem)
@@ -158,7 +160,7 @@ namespace Sci.Production.Cutting
         }
 
         // 非同步讀取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
 
@@ -1158,7 +1160,7 @@ drop table #tmp{i}
             if (this.radioBySummary.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx"); // 預先開啟excel app
-                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx", objApp);
+                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx", objApp);
                 objApp.DisplayAlerts = false; // 設定Excel的警告視窗是否彈出
                 objApp.Cells[1, 1] = this.NameEN;
 

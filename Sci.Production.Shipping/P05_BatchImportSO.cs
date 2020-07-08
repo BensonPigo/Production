@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
-    public partial class P05_BatchImportSO : Sci.Win.Subs.Base
+    public partial class P05_BatchImportSO : Win.Subs.Base
     {
         public P05_BatchImportSO()
         {
@@ -56,7 +56,7 @@ from  ForwarderWhse fw
 ";
                     DBProxy.Current.Select(null, sqlcmd, out dt);
 
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "WhseNo,address", "20,20", string.Empty);
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(dt, "WhseNo,address", "20,20", string.Empty);
 
                     DialogResult result1 = item.ShowDialog();
                     if (result1 == DialogResult.Cancel)
@@ -218,7 +218,7 @@ VALUES (
         {
             DataTable dt;
             string sqlCmd = string.Empty;
-            Ict.DualResult result;
+            DualResult result;
 
             sqlCmd = $@"
 

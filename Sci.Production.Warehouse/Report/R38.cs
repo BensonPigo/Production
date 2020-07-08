@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R38 : Sci.Win.Tems.PrintForm
+    public partial class R38 : Win.Tems.PrintForm
     {
         string strSp1;
         string strSp2;
@@ -69,7 +69,7 @@ namespace Sci.Production.Warehouse
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtSPNoStart.Text.Trim()) || MyUtility.Check.Empty(this.txtSPNoEnd.Text.Trim()))
             {

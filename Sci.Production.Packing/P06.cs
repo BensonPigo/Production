@@ -14,7 +14,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P06
     /// </summary>
-    public partial class P06 : Sci.Win.Tems.Input6
+    public partial class P06 : Win.Tems.Input6
     {
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ctnno;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_article;
@@ -22,8 +22,8 @@ namespace Sci.Production.Packing
         private Ict.Win.UI.DataGridViewTextBoxColumn col_refno;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_ctnqty;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_shipqty;
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings size = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings article = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings size = new DataGridViewGeneratorTextColumnSettings();
 
         private DualResult result;
         private DialogResult buttonResult;
@@ -121,7 +121,7 @@ and pd.ID = '{this.CurrentMaintain["ID"]}'
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = string.Format("Select Distinct Article from Order_QtyShip_Detail WITH (NOLOCK) where ID = '{0}' and Seq = '{1}'", this.CurrentMaintain["OrderID"].ToString(), this.CurrentMaintain["OrderShipmodeSeq"].ToString());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", dr["Article"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "8", dr["Article"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -216,7 +216,7 @@ order by os.Seq",
                                 this.CurrentMaintain["OrderID"].ToString(),
                                 this.CurrentMaintain["OrderShipmodeSeq"].ToString(),
                                 dr["Article"].ToString());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", dr["SizeCode"].ToString());
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "8", dr["SizeCode"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -688,7 +688,7 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty",
                 @"select isnull(oq.Qty ,0) as Qty
 from (select distinct OrderID,OrderShipmodeSeq from PackingList_Detail WITH (NOLOCK) where ID = '{0}') a
 left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.OrderShipmodeSeq", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))));
-            Sci.Production.Packing.P06_Print callNextForm = new Sci.Production.Packing.P06_Print(this.CurrentMaintain, orderQty);
+            P06_Print callNextForm = new P06_Print(this.CurrentMaintain, orderQty);
             callNextForm.ShowDialog(this);
 
             return base.ClickPrint();
@@ -852,7 +852,7 @@ where ID = '{0}'", orderID);
         {
             IList<DataRow> orderQtyShipData;
             string sqlCmd = string.Format("select Seq,BuyerDelivery,ShipmodeID,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["OrderID"].ToString());
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -1012,7 +1012,7 @@ and p.ID = pl.PulloutID",
 
         private void btnCartonSummary_Click(object sender, EventArgs e)
         {
-            Sci.Production.Packing.P03_CartonSummary callNextForm = new Sci.Production.Packing.P03_CartonSummary(this.CurrentMaintain["ID"].ToString());
+            P03_CartonSummary callNextForm = new P03_CartonSummary(this.CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
         }
 

@@ -8,7 +8,7 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R24 : Sci.Win.Tems.PrintForm
+    public partial class R24 : Win.Tems.PrintForm
     {
         string artworktype;
         string factory;
@@ -19,8 +19,12 @@ namespace Sci.Production.Subcon
         string spno2;
         string ordertype;
         string ratetype;
-        int ordertypeindex, statusindex;
-        DateTime? APdate1, APdate2, GLdate1, GLdate2;
+        int ordertypeindex;
+        int statusindex;
+        DateTime? APdate1;
+        DateTime? APdate2;
+        DateTime? GLdate1;
+        DateTime? GLdate2;
         DataTable printData;
 
         public R24(ToolStripMenuItem menuitem)
@@ -102,7 +106,7 @@ namespace Sci.Production.Subcon
         }
 
         // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sqlparameter delcare --
             System.Data.SqlClient.SqlParameter sp_apdate1 = new System.Data.SqlClient.SqlParameter();

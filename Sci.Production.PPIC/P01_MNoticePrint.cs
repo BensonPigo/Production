@@ -18,7 +18,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_MNoticePrint
     /// </summary>
-    public partial class P01_MNoticePrint : Sci.Win.Tems.PrintForm
+    public partial class P01_MNoticePrint : Win.Tems.PrintForm
     {
         private const bool Excel = true;
         private const bool PDF = false;
@@ -60,9 +60,9 @@ namespace Sci.Production.PPIC
 
             foreach (var control in this.groupBox1.Controls)
             {
-                if (control is Sci.Win.UI.RadioButton)
+                if (control is Win.UI.RadioButton)
                 {
-                    Sci.Win.UI.RadioButton rdb = (Sci.Win.UI.RadioButton)control;
+                    Win.UI.RadioButton rdb = (Win.UI.RadioButton)control;
                     rdb.CheckedChanged += this.Rd_CheckedChanged;
                 }
             }
@@ -214,7 +214,7 @@ out dt);
                     int sPNoteRowHeight = msgs.Length == 0 ? 20 : msgs.Length * 20;
 
                     maxRowheight = maxRowheight < sPNoteRowHeight ? sPNoteRowHeight : maxRowheight;
-                    Microsoft.Office.Interop.Excel.Worksheet wks = wks = sxr.ExcelApp.Worksheets[2];
+                    Worksheet wks = wks = sxr.ExcelApp.Worksheets[2];
                     wks.get_Range($"A3:A3").RowHeight = maxRowheight;
 
                     sxr.DicDatas.Add(sxr.VPrefix + "Note" + idxStr, msg);
@@ -348,7 +348,7 @@ out dt);
                     }
 
                     // 調整列高
-                    Microsoft.Office.Interop.Excel.Worksheet wks = wks = sxr.ExcelApp.Worksheets[1];
+                    Worksheet wks = wks = sxr.ExcelApp.Worksheets[1];
                     wks.get_Range($"A4:A4").RowHeight = maxRowheight;
 
                     xltTbl.Separator1 = "'- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -";

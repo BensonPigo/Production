@@ -15,12 +15,13 @@ using ZXing.QrCode;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P02_Print : Sci.Win.Tems.PrintForm
+    public partial class P02_Print : Win.Tems.PrintForm
     {
         string S1;
         string S2;
         string Poid = string.Empty;
-        string cp, cr;
+        string cp;
+        string cr;
         private string keyword = Sci.Env.User.Keyword;
         private string cutrefSort;
         int SheetCount = 1;
@@ -77,7 +78,7 @@ namespace Sci.Production.Cutting
             this.labelCutRefNo.Text = this.radioByCutplanId.Checked ? "Cutplan ID" : "Cut RefNo";
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             List<SqlParameter> paras = new List<SqlParameter>();
             paras.Add(new SqlParameter("@Cutref1", this.S1));
@@ -252,14 +253,14 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
         public bool ByRequestExcel()
         {
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Cutting_P02_SpreadingReportbyRequest.xltx";
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
                 return false;
             }
 
             excel.Visible = false;
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             #region 寫入共用欄位
             worksheet.Cells[1, 6] = this.OrderDr["factoryid"];
@@ -381,7 +382,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                         {
                             if (fd.Length > fl * i)
                             {
-                                Microsoft.Office.Interop.Excel.Range rangeRow13 = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[13, System.Type.Missing];
+                                Excel.Range rangeRow13 = (Excel.Range)worksheet.Rows[13, System.Type.Missing];
                                 rangeRow13.RowHeight = 19.125 * (i + 1);
                             }
                         }
@@ -416,7 +417,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                     {
                         if (spList.Length > l * i)
                         {
-                            Microsoft.Office.Interop.Excel.Range rangeRow8 = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[8, System.Type.Missing];
+                            Excel.Range rangeRow8 = (Excel.Range)worksheet.Rows[8, System.Type.Missing];
                             rangeRow8.RowHeight = 20.25 * (i + 1);
                         }
                     }
@@ -465,7 +466,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                         {
                             if (size.Length > l * i)
                             {
-                                Microsoft.Office.Interop.Excel.Range rangeRow12 = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[nRow, System.Type.Missing];
+                                Excel.Range rangeRow12 = (Excel.Range)worksheet.Rows[nRow, System.Type.Missing];
                                 rangeRow12.RowHeight = 16.875 * (i + 1);
                             }
                         }
@@ -517,9 +518,9 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                 {
                     if (!MyUtility.Check.Empty(FabricComboDr["shc"]))
                     {
-                        Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[tmpn, Type.Missing];
+                        Excel.Range rng = (Excel.Range)worksheet.Rows[tmpn, Type.Missing];
                         rng.Insert(Microsoft.Office.Interop.Excel.XlDirection.xlDown);
-                        Microsoft.Office.Interop.Excel.Range rng2 = (Microsoft.Office.Interop.Excel.Range)worksheet.get_Range("I" + tmpn, "U" + tmpn);
+                        Excel.Range rng2 = (Excel.Range)worksheet.get_Range("I" + tmpn, "U" + tmpn);
                         rng2.Merge();
                         rng2.Cells.Font.Color = Color.Red;
                         rng2.Cells.Font.Bold = true;
@@ -623,13 +624,13 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
             this.SheetCount = this.CutrefTb.Rows.Count;
             #region By Cutref
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Cutting_P02_SpreadingReportbyCutref.xltx";
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             #region 寫入共用欄位
             worksheet.Cells[1, 6] = this.OrderDr["factoryid"];
@@ -737,7 +738,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                     {
                         if (fd.Length > fl * i)
                         {
-                            Microsoft.Office.Interop.Excel.Range rangeRow13 = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[13, System.Type.Missing];
+                            Excel.Range rangeRow13 = (Excel.Range)worksheet.Rows[13, System.Type.Missing];
                             rangeRow13.RowHeight = 19.125 * (i + 1);
                         }
                     }
@@ -773,7 +774,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                     {
                         if (spList.Length > l * i)
                         {
-                            Microsoft.Office.Interop.Excel.Range rangeRow8 = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[8, System.Type.Missing];
+                            Excel.Range rangeRow8 = (Excel.Range)worksheet.Rows[8, System.Type.Missing];
                             rangeRow8.RowHeight = 20.25 * (i + 1);
                         }
                     }
@@ -812,7 +813,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                     {
                         if (size.Length > l * i)
                         {
-                            Microsoft.Office.Interop.Excel.Range rangeRow12 = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[12, System.Type.Missing];
+                            Excel.Range rangeRow12 = (Excel.Range)worksheet.Rows[12, System.Type.Missing];
                             rangeRow12.RowHeight = 16.875 * (i + 1);
                         }
                     }
@@ -963,7 +964,7 @@ Where Cutref = '{0}'", cutref);
                 {
                     Excel.Range r = worksheet.get_Range("A14", "A14").EntireRow;
                     r.Insert(Excel.XlInsertShiftDirection.xlShiftDown); // 新增Row
-                    Microsoft.Office.Interop.Excel.Range rng2 = (Microsoft.Office.Interop.Excel.Range)worksheet.get_Range("I14:U14");
+                    Excel.Range rng2 = (Excel.Range)worksheet.get_Range("I14:U14");
                     rng2.Merge();
                     rng2.Cells.Font.Color = Color.Red;
                     rng2.Cells.Font.Bold = true;

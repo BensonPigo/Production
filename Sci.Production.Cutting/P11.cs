@@ -1,27 +1,27 @@
-﻿using Ict.Win;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Sci.Data;
-using Sci.Win.UI;
-using Ict;
-using Sci.Win.Tools;
 using System.Linq;
-using Sci.Production.PublicPrg;
-using System.Transactions;
-using System.Text.RegularExpressions;
 using System.Reflection;
-using static Sci.Production.Automation.Guozi_AGV;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Transactions;
+using System.Windows.Forms;
+using Ict;
+using Ict.Win;
+using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.PublicPrg;
+using Sci.Win.Tools;
+using Sci.Win.UI;
+using static Sci.Production.Automation.Guozi_AGV;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P11 : Sci.Win.Tems.QueryForm
+    public partial class P11 : Win.Tems.QueryForm
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
@@ -1688,7 +1688,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
             string ukey = MyUtility.GetValue.Lookup("Styleukey", selectDr["poid"].ToString(), "Orders", "ID");
             var Sizelist = this.ArticleSizeTb_View.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
 
-            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(ukey, selectDr["poid"].ToString(), selectDr["Cutref"].ToString(), Sizelist);
+            PublicForm.GarmentList callNextForm = new PublicForm.GarmentList(ukey, selectDr["poid"].ToString(), selectDr["Cutref"].ToString(), Sizelist);
             callNextForm.ShowDialog(this);
         }
 
@@ -1706,8 +1706,8 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
 
             DataRow selectDr = ((DataRowView)this.gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
             string ukey = MyUtility.GetValue.Lookup("Styleukey", selectDr["poid"].ToString(), "Orders", "ID");
-            Sci.Production.PublicForm.ColorCombination callNextForm =
-            new Sci.Production.PublicForm.ColorCombination(selectDr["poid"].ToString(), ukey);
+            PublicForm.ColorCombination callNextForm =
+            new PublicForm.ColorCombination(selectDr["poid"].ToString(), ukey);
             callNextForm.ShowDialog(this);
         }
 
@@ -1845,7 +1845,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
 
         private void btnCopy_to_other_Cutref_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Cutting.P11_copytocutref();
+            var frm = new P11_copytocutref();
             frm.ShowDialog(this);
             if (!MyUtility.Check.Empty(frm.copycutref))
             {

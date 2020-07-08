@@ -11,7 +11,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_R02
     /// </summary>
-    public partial class R02 : Sci.Win.Tems.PrintForm
+    public partial class R02 : Win.Tems.PrintForm
     {
         private string monthS;
         private string monthE;
@@ -51,7 +51,7 @@ namespace Sci.Production.IE
         private string SelectSewingLine(string line)
         {
             string sql = string.Format("Select Distinct ID From SewingLine WITH (NOLOCK) {0}", MyUtility.Check.Empty(this.comboFactory.Text) ? string.Empty : string.Format(" where FactoryID = '{0}'", this.comboFactory.Text));
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "3", line, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "3", line, false, ",");
             item.Width = 300;
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
@@ -89,7 +89,7 @@ namespace Sci.Production.IE
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult result = this.GetSummary();
             if (!result)

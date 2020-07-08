@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R07 : Sci.Win.Tems.PrintForm
+    public partial class R07 : Win.Tems.PrintForm
     {
         DataTable dt;
         DateTime? strIssueDate1;

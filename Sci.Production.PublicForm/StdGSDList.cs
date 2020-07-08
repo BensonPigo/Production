@@ -8,7 +8,7 @@ using Sci.Data;
 
 namespace Sci.Production.PublicForm
 {
-    public partial class StdGSDList : Sci.Win.Subs.Base
+    public partial class StdGSDList : Win.Subs.Base
     {
         private long styleUkey;
         private DataTable gridData1;

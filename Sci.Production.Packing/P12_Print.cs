@@ -9,7 +9,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P12_Print
     /// </summary>
-    public partial class P12_Print : Sci.Win.Tems.PrintForm
+    public partial class P12_Print : Win.Tems.PrintForm
     {
         private DataTable gridData;
         private string delDate1;
@@ -54,7 +54,7 @@ namespace Sci.Production.Packing
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder filter = new StringBuilder();
             if (!MyUtility.Check.Empty(this.delDate1))

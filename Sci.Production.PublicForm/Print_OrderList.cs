@@ -9,7 +9,7 @@ using Sci.Utility.Excel;
 
 namespace Sci.Production.PublicForm
 {
-    public partial class Print_OrderList : Sci.Win.Tems.QueryForm
+    public partial class Print_OrderList : Win.Tems.QueryForm
     {
         string _id;
         int _finished;
@@ -27,7 +27,7 @@ namespace Sci.Production.PublicForm
             if (this.radioEachConsumption.Checked)
             {
                 #region Each Consumption (Cutting Combo)
-                System.Data.DataTable[] dts;
+                DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01print_EachConsumption",
                     new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out dts);
 
@@ -114,7 +114,7 @@ namespace Sci.Production.PublicForm
             if (this.radioTTLConsumption.Checked)
             {
                 #region TTL consumption (PO Combo)
-                System.Data.DataTable[] dts;
+                DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01print_TTLconsumption", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out dts);
 
                 if (!res)
@@ -463,7 +463,7 @@ namespace Sci.Production.PublicForm
             this.removeRepeat(dt, new int[] { 0, 1 });
         }
 
-        private bool ChangeColumnDataType(System.Data.DataTable table, string columnname, Type newtype)
+        private bool ChangeColumnDataType(DataTable table, string columnname, Type newtype)
         {
             if (table.Columns.Contains(columnname) == false)
             {

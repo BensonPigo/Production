@@ -11,7 +11,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R07
     /// </summary>
-    public partial class R07 : Sci.Win.Tems.PrintForm
+    public partial class R07 : Win.Tems.PrintForm
     {
         private DateTime? date1;
         private DateTime? date2;
@@ -57,7 +57,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"select s.LocalSuppID+'-'+ISNULL(l.Abb,'') as Supplier,

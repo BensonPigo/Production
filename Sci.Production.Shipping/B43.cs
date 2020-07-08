@@ -12,7 +12,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B43
     /// </summary>
-    public partial class B43 : Sci.Win.Tems.Input6
+    public partial class B43 : Win.Tems.Input6
     {
         /// <summary>
         /// B43
@@ -356,7 +356,7 @@ AND vf.VNContractID = '{this.CurrentMaintain["ID"]}'
         // Add New NL Code
         private void BtnAddNewNLCode_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.B43_AddNLCode callNextForm = new Sci.Production.Shipping.B43_AddNLCode(this.CurrentMaintain);
+            B43_AddNLCode callNextForm = new B43_AddNLCode(this.CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
             if (result == System.Windows.Forms.DialogResult.OK)
             {

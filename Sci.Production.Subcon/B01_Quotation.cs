@@ -6,7 +6,7 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class B01_Quotation : Sci.Win.Tems.Input1
+    public partial class B01_Quotation : Win.Tems.Input1
     {
         protected DataRow dr;
         protected DataRow dr_detail;

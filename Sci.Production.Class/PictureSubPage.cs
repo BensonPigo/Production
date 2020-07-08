@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace Sci.Production.Class
 {
-    public partial class PictureSubPage : Sci.Win.Subs.Base
+    public partial class PictureSubPage : Win.Subs.Base
     {
         public PictureSubPage(Image img)
         {

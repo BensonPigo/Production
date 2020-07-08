@@ -13,7 +13,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P21_BatchConfirmRespDept
     /// </summary>
-    public partial class P21_BatchConfirmRespDept : Sci.Win.Forms.Base
+    public partial class P21_BatchConfirmRespDept : Win.Forms.Base
     {
         private DataTable dtICR;
         private List<DataRow> listICR_ResponsibilityDept;

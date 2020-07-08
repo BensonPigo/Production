@@ -11,17 +11,17 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P01_ProductionOutput
     /// </summary>
-    public partial class P01_ProductionOutput : Sci.Win.Subs.Base
+    public partial class P01_ProductionOutput : Win.Subs.Base
     {
         private DataRow masterData;
         private string cuttingWorkType;
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings sewingqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings t = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings b = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings i = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings o = new DataGridViewGeneratorNumericColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings cuttingqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings loadoutput = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings sewingqty = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings t = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings b = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings i = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings o = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings cuttingqty = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings loadoutput = new DataGridViewGeneratorNumericColumnSettings();
 
         /// <summary>
         /// P01_ProductionOutput
@@ -65,7 +65,7 @@ isnull((select SUM(c.Qty)
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
                     DataRow dr = this.gridSewingOutput.GetDataRow<DataRow>(e.RowIndex);
-                    Sci.Production.PPIC.P01_ProductionOutput_SewingDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "S", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
+                    P01_ProductionOutput_SewingDetail callNextForm = new P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "S", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
                     callNextForm.ShowDialog(this);
                 }
             };
@@ -75,7 +75,7 @@ isnull((select SUM(c.Qty)
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
                     DataRow dr = this.gridSewingOutput.GetDataRow<DataRow>(e.RowIndex);
-                    Sci.Production.PPIC.P01_ProductionOutput_SewingDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "T", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
+                    P01_ProductionOutput_SewingDetail callNextForm = new P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "T", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
                     callNextForm.ShowDialog(this);
                 }
             };
@@ -85,7 +85,7 @@ isnull((select SUM(c.Qty)
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
                     DataRow dr = this.gridSewingOutput.GetDataRow<DataRow>(e.RowIndex);
-                    Sci.Production.PPIC.P01_ProductionOutput_SewingDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "B", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
+                    P01_ProductionOutput_SewingDetail callNextForm = new P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "B", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
                     callNextForm.ShowDialog(this);
                 }
             };
@@ -95,7 +95,7 @@ isnull((select SUM(c.Qty)
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
                     DataRow dr = this.gridSewingOutput.GetDataRow<DataRow>(e.RowIndex);
-                    Sci.Production.PPIC.P01_ProductionOutput_SewingDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "I", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
+                    P01_ProductionOutput_SewingDetail callNextForm = new P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "I", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
                     callNextForm.ShowDialog(this);
                 }
             };
@@ -105,7 +105,7 @@ isnull((select SUM(c.Qty)
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
                     DataRow dr = this.gridSewingOutput.GetDataRow<DataRow>(e.RowIndex);
-                    Sci.Production.PPIC.P01_ProductionOutput_SewingDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "O", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
+                    P01_ProductionOutput_SewingDetail callNextForm = new P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "O", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
                     callNextForm.ShowDialog(this);
                 }
             };
@@ -188,7 +188,7 @@ isnull((select SUM(c.Qty)
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
                     DataRow dr = this.gridCutting.GetDataRow<DataRow>(e.RowIndex);
-                    Sci.Production.PPIC.P01_ProductionOutput_CuttingDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_CuttingDetail(this.cuttingWorkType, MyUtility.Convert.GetString(this.masterData["ID"]), "C", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
+                    P01_ProductionOutput_CuttingDetail callNextForm = new P01_ProductionOutput_CuttingDetail(this.cuttingWorkType, MyUtility.Convert.GetString(this.masterData["ID"]), "C", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
                     callNextForm.ShowDialog(this);
                 }
             };
@@ -212,7 +212,7 @@ isnull((select SUM(c.Qty)
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
                     DataRow dr = this.gridLoading.GetDataRow<DataRow>(e.RowIndex);
-                    Sci.Production.PPIC.P01_ProductionOutput_LoadingoutputDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_LoadingoutputDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "S", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
+                    P01_ProductionOutput_LoadingoutputDetail callNextForm = new P01_ProductionOutput_LoadingoutputDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "S", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
                     callNextForm.ShowDialog(this);
                 }
             };
@@ -334,13 +334,13 @@ where oq.id = '{this.masterData["ID"]}'
         // Sewing Q'ty
         private void NumSewingQty_DoubleClick(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_ProductionOutput_SewingDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "A", string.Empty, string.Empty);
+            P01_ProductionOutput_SewingDetail callNextForm = new P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "A", string.Empty, string.Empty);
             callNextForm.ShowDialog(this);
         }
 
         private void NumLoadingQty_DoubleClick(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_ProductionOutput_LoadingoutputDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_LoadingoutputDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "A", string.Empty, string.Empty);
+            P01_ProductionOutput_LoadingoutputDetail callNextForm = new P01_ProductionOutput_LoadingoutputDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "A", string.Empty, string.Empty);
             callNextForm.ShowDialog(this);
         }
     }

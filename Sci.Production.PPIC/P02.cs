@@ -12,7 +12,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P02
     /// </summary>
-    public partial class P02 : Sci.Win.Tems.QueryForm
+    public partial class P02 : Win.Tems.QueryForm
     {
         private DataGridViewGeneratorNumericColumnSettings oriqty = new DataGridViewGeneratorNumericColumnSettings();
         private DataGridViewGeneratorNumericColumnSettings newqty = new DataGridViewGeneratorNumericColumnSettings();
@@ -57,7 +57,7 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) 
             this.gridUpdateOrder.IsEditingReadOnly = true;
             this.gridUpdateOrder.RowHeadersVisible = true;
             this.gridUpdateOrder.DataSource = this.listControlBindingSource1;
-            this.gridUpdateOrder.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridUpdateOrder.Font = new Font("Microsoft Sans Serif", 10F);
 
             // 當欄位值為0時，顯示空白
             this.oriqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
@@ -105,7 +105,7 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) 
                     this.gridData.Rows[i]["DeleteOrder"].ToString() == "V")
                 {
                     this.gridUpdateOrder.Rows[i].DefaultCellStyle.ForeColor = Color.Red;
-                    this.gridUpdateOrder.Rows[i].DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+                    this.gridUpdateOrder.Rows[i].DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
                 }
             }
         }
@@ -185,7 +185,7 @@ order by oc.FactoryID,oc.OrderId";
                     this.gridData.Rows[i]["DeleteOrder"].ToString() == "V")
                 {
                     this.gridUpdateOrder.Rows[i].DefaultCellStyle.ForeColor = Color.Red;
-                    this.gridUpdateOrder.Rows[i].DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+                    this.gridUpdateOrder.Rows[i].DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
                 }
             }
         }

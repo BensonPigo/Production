@@ -12,7 +12,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P03
     /// </summary>
-    public partial class P03 : Sci.Win.Tems.Input2
+    public partial class P03 : Win.Tems.Input2
     {
         /// <summary>
         /// P03
@@ -319,7 +319,7 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
         /// <inheritdoc/>
         protected override bool ClickPrint()
         {
-            Sci.Production.Shipping.P03_Print callNextForm = new Sci.Production.Shipping.P03_Print(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            P03_Print callNextForm = new P03_Print(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             callNextForm.ShowDialog(this);
             return base.ClickPrint();
         }
@@ -348,14 +348,14 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
         // Expense Data
         private void BtnExpenseData_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P05_ExpenseData callNextForm = new Sci.Production.Shipping.P05_ExpenseData(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "WKNo", true);
+            P05_ExpenseData callNextForm = new P05_ExpenseData(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "WKNo", true);
             callNextForm.ShowDialog(this);
         }
 
         // Shipping Mark
         private void BtnShippingMark_Click(object sender, EventArgs e)
         {
-            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["ShipMarkDesc"]), "Shipping Mark", false, null);
+            Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["ShipMarkDesc"]), "Shipping Mark", false, null);
             callNextForm.ShowDialog(this);
         }
 

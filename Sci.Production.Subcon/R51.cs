@@ -8,7 +8,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R51 : Sci.Win.Tems.PrintForm
+    public partial class R51 : Win.Tems.PrintForm
     {
         // string DateFormate = "yyyy-MM-dd";
         // string StartDate, EndDate, ID, Factory, LocalSupplier;
@@ -31,7 +31,7 @@ namespace Sci.Production.Subcon
         //    #endregion
         //    return true;
         // }
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             // #region SQl Parameters
             // List<SqlParameter> listSqlPar = new List<SqlParameter>();

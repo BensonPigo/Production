@@ -6,7 +6,7 @@ using System.Data;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P01_MarkerList : Sci.Win.Subs.Input4Plus
+    public partial class P01_MarkerList : Win.Subs.Input4Plus
     {
         DataRow MasterData;
 
@@ -46,7 +46,7 @@ left join Order_FabricCode OFC WITH (NOLOCK)
 Where mark.id ='{0}' order by mark.Seq",
                 this.KeyValue1);
 
-            Ict.DualResult result;
+            DualResult result;
             if (!(result = DBProxy.Current.Select(null, sqlCmd, out datas)))
             {
                 return result;

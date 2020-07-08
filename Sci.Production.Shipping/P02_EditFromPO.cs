@@ -8,7 +8,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P02_EditFromPO
     /// </summary>
-    public partial class P02_EditFromPO : Sci.Win.Subs.Input2A
+    public partial class P02_EditFromPO : Win.Subs.Input2A
     {
         /// <summary>
         /// P02_EditFromPO

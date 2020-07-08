@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R15 : Sci.Win.Tems.PrintForm
+    public partial class R15 : Win.Tems.PrintForm
     {
         string artworktype;
         string factory;
@@ -18,7 +18,8 @@ namespace Sci.Production.Subcon
         string style;
         string orderby;
         string mdivision;
-        DateTime? issuedate1, issuedate2;
+        DateTime? issuedate1;
+        DateTime? issuedate2;
         DataTable printData;
         StringBuilder condition = new StringBuilder();
 
@@ -65,7 +66,7 @@ namespace Sci.Production.Subcon
         }
 
         // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
 

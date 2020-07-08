@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R22 : Sci.Win.Tems.PrintForm
+    public partial class R22 : Win.Tems.PrintForm
     {
         string strSP1;
         string strM;
@@ -60,7 +60,7 @@ namespace Sci.Production.Warehouse
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region Set SQL Command & SQLParameter
             string strSql = @"

@@ -23,7 +23,10 @@ namespace Sci.Production.Warehouse
 
         public bool selected
         {
-            get { return this.sele; }
+            get
+            {
+                return this.sele;
+            }
 
             set
             {

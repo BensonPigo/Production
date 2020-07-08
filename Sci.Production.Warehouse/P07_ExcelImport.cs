@@ -13,7 +13,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P07_ExcelImport : Sci.Win.Subs.Base
+    public partial class P07_ExcelImport : Win.Subs.Base
     {
         DataTable grid2Data = new DataTable();
         DataTable detailData;
@@ -76,7 +76,7 @@ namespace Sci.Production.Warehouse
             this.gridPoid.DataSource = this.listControlBindingSource2;
             #region Ship Qty Valid
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
@@ -90,7 +90,7 @@ namespace Sci.Production.Warehouse
                 }
             };
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)

@@ -4,14 +4,17 @@ using Sci.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class txtshipmode : Sci.Win.UI.ComboBox
+    public partial class txtshipmode : Win.UI.ComboBox
     {
         private string useFunction;
 
         [Category("Custom Properties")]
         public string UseFunction
         {
-            get { return this.useFunction; }
+            get
+            {
+                return this.useFunction;
+            }
 
             set
             {

@@ -5,7 +5,7 @@ using Ict;
 
 namespace Sci.Production.Class
 {
-    public partial class txtcustcd : Sci.Win.UI.TextBox
+    public partial class txtcustcd : Win.UI.TextBox
     {
         public txtcustcd()
         {
@@ -25,7 +25,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item;
+            Win.Tools.SelectItem item;
 
             // 20161124 如果沒選Brandid,則條件帶空值,取消帶全部資料
             string selectCommand = "select ID, CountryID, City from CustCD WITH (NOLOCK) where Junk = '0' order by ID";
@@ -34,7 +34,7 @@ namespace Sci.Production.Class
                 selectCommand = string.Format("select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = '{0}' and Junk = '0' order by ID", this.brandObject.Text);
             }
 
-            item = new Sci.Win.Tools.SelectItem(selectCommand, "17,3,17", this.Text);
+            item = new Win.Tools.SelectItem(selectCommand, "17,3,17", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

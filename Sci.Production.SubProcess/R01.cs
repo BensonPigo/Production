@@ -15,7 +15,7 @@ namespace Sci.Production.SubProcess
     /// <summary>
     /// R01
     /// </summary>
-    public partial class R01 : Sci.Win.Tems.PrintForm
+    public partial class R01 : Win.Tems.PrintForm
     {
         private DataTable dtPrint = null;
         private int intRowHeaderCount = 2;
@@ -93,7 +93,7 @@ from (
         }
 
         /// <inheritdoc/>
-        protected override bool OnToExcel(Win.ReportDefinition report)
+        protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.dtPrint == null
                 || this.dtPrint.Rows.Count == 0)

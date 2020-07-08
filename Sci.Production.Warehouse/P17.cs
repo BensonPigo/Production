@@ -17,7 +17,7 @@ using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P17 : Sci.Win.Tems.Input6
+    public partial class P17 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
@@ -129,10 +129,10 @@ where id = @MDivision", pars, out dt);
 
             string RptTitle = dt.Rows[0]["NameEN"].ToString();
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+            report.ReportParameters.Add(new ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new ReportParameter("ID", id));
+            report.ReportParameters.Add(new ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new ReportParameter("issuedate", issuedate));
             #endregion
 
             #region  抓表身資料
@@ -205,7 +205,7 @@ where a.id= @ID", pars, out dd);
             #endregion
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
 
@@ -330,7 +330,7 @@ where a.id= @ID", pars, out dd);
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             #region Seq 右鍵開窗
             ts.EditingMouseDown += (s, e) =>
             {
@@ -338,7 +338,7 @@ where a.id= @ID", pars, out dd);
                 {
                     IList<DataRow> x;
 
-                    Sci.Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(this.CurrentDetailData["poid"].ToString(), this.CurrentDetailData["seq"].ToString(), "f.MDivisionID = '{1}'", false);
+                    Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(this.CurrentDetailData["poid"].ToString(), this.CurrentDetailData["seq"].ToString(), "f.MDivisionID = '{1}'", false);
                     DialogResult result = selepoitem.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -441,7 +441,7 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
                 }
             };
             #endregion Seq 右鍵開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
             #region Roll#右鍵開窗
 
             ts4.EditingMouseDown += (s, e) =>
@@ -471,8 +471,8 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
                                                             AND seq1= '{1}' 
                                                             AND seq2= '{2}' 
                                                         order by poid,seq1,seq2,Roll", dr["poid"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString());
-                        Sci.Win.Tools.SelectItem item
-                            = new Sci.Win.Tools.SelectItem(sqlcmd, "13,4,3,10,5,10,0", dr["roll"].ToString(), "SP#,Seq1,Seq2,Roll,Dyelot,Balance,");
+                        Win.Tools.SelectItem item
+                            = new Win.Tools.SelectItem(sqlcmd, "13,4,3,10,5,10,0", dr["roll"].ToString(), "SP#,Seq1,Seq2,Roll,Dyelot,Balance,");
                         item.Width = 600;
                         DialogResult returnResult = item.ShowDialog();
                         if (returnResult == DialogResult.Cancel)
@@ -516,7 +516,7 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
                                                             AND roll= '{3}'
                                                        ", dr["poid"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString(), e.FormattedValue);
 
-                    Ict.DualResult result;
+                    DualResult result;
                     if (result = DBProxy.Current.Select(null, sqlcmd, out this.dtBorrow))
                     {
                         if (this.dtBorrow.Rows.Count > 0)
@@ -929,7 +929,7 @@ Where a.id = '{0}'", masterID);
 
         private void btnAccumulatedQty_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P17_AccumulatedQty(this.CurrentMaintain);
+            var frm = new P17_AccumulatedQty(this.CurrentMaintain);
             frm.P17 = this;
             frm.ShowDialog(this);
         }
@@ -1002,7 +1002,7 @@ AND o.Category <> 'A'
 
         private void BtnImport_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P17_ExcelImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P17_ExcelImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }

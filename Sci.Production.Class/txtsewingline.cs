@@ -4,7 +4,7 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtsewingline : Sci.Win.UI.TextBox
+    public partial class txtsewingline : Win.UI.TextBox
     {
         private string fty = string.Empty;
         public Control factoryObject = null;    // 欄位.存入要取值的<控制項>
@@ -44,7 +44,7 @@ namespace Sci.Production.Class
             }
 
             string sql = string.Format("Select ID,FactoryID,Description From Production.dbo.SewingLine WITH (NOLOCK) {0} ", ftyWhere);
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2,6,16", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "2,6,16", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

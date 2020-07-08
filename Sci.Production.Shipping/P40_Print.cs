@@ -10,7 +10,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P40_Print
     /// </summary>
-    public partial class P40_Print : Sci.Win.Tems.PrintForm
+    public partial class P40_Print : Win.Tems.PrintForm
     {
         private string type;
         private DataTable printData;
@@ -37,7 +37,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             DualResult result;

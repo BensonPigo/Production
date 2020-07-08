@@ -12,7 +12,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P05_ContainerTruck
     /// </summary>
-    public partial class P10_ContainerTruck : Sci.Win.Subs.Input4
+    public partial class P10_ContainerTruck : Win.Subs.Input4
     {
         private string ShipPlanID;
         private Dictionary<string, string> di_CYCFS = new Dictionary<string, string>();
@@ -43,10 +43,10 @@ namespace Sci.Production.Shipping
         {
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_CYCFS;
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings id = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings id = new DataGridViewGeneratorTextColumnSettings();
 
             // 限制最大字數，避免寫入DB錯誤
-            DataGridViewGeneratorTextColumnSettings CTNRNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 20};
+            DataGridViewGeneratorTextColumnSettings CTNRNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 20 };
             DataGridViewGeneratorTextColumnSettings SealNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 15 };
             DataGridViewGeneratorTextColumnSettings TruckNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 20 };
 
@@ -75,7 +75,7 @@ and s.IncludeSeaShipping = 1
 and g.CYCFS = 'CY-CY'";
                     DBProxy.Current.Select(null, strSelectSqlCmd, out selectDt);
 
-                    Sci.Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "GB#,LoadingType", "20,10", this.CurrentData["ID"].ToString());
+                    Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "GB#,LoadingType", "20,10", this.CurrentData["ID"].ToString());
                     DialogResult result = selectItem.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {

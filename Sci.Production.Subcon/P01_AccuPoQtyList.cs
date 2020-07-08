@@ -9,7 +9,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P01_AccuPoQtyList : Sci.Win.Subs.Base
+    public partial class P01_AccuPoQtyList : Win.Subs.Base
     {
         protected DataRow dr;
 
@@ -41,7 +41,7 @@ and ad.PatternCode = '{this.dr["PatternCode"]}'";
                 this.ShowErr(selectCommand1, selectResult1);
             }
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings col_handle = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings col_handle = new DataGridViewGeneratorTextColumnSettings();
             col_handle.CellMouseDoubleClick += (s, e) =>
             {
                 DataRow dr = this.gridReqList.GetDataRow<DataRow>(e.RowIndex);

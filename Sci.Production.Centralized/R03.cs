@@ -20,7 +20,7 @@ namespace Sci.Production.Centralized
     /// <summary>
     /// R03
     /// </summary>
-    public partial class R03 : Sci.Win.Tems.PrintForm
+    public partial class R03 : Win.Tems.PrintForm
     {
         private string temfile;
         private Microsoft.Office.Interop.Excel.Application excel = null;
@@ -108,7 +108,7 @@ namespace Sci.Production.Centralized
         }
 
         /// <inheritdoc/>
-        protected override bool OnToExcel(Win.ReportDefinition report)
+        protected override bool OnToExcel(ReportDefinition report)
         {
             DualResult result = Result.True;
             if (this.excel == null)
@@ -634,7 +634,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                     return result;
                 }
 
-                Microsoft.Office.Interop.Excel.Worksheet wsSheet;
+                Worksheet wsSheet;
                 #region 1.  By Factory
                 int intRowsCount = this.gdtData1.Rows.Count;
                 int intRowsStart = 2; // 匯入起始位置

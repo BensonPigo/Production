@@ -9,7 +9,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P02_Print
     /// </summary>
-    public partial class P02_Print : Sci.Win.Tems.PrintForm
+    public partial class P02_Print : Win.Tems.PrintForm
     {
         private DataRow masterData;
         private DataTable detailData;
@@ -67,7 +67,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             if (this.reportType == "1")
             {

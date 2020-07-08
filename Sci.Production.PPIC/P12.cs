@@ -8,7 +8,7 @@ namespace Sci.Production.PPIC
     /// <summary>
     /// P12
     /// </summary>
-    public partial class P12 : Sci.Win.Tems.Input1
+    public partial class P12 : Win.Tems.Input1
     {
         /// <summary>
         /// P12

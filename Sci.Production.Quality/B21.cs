@@ -8,7 +8,7 @@ using Sci.Data;
 
 namespace Sci.Production.Quality
 {
-    public partial class B21 : Sci.Win.Tems.Input1
+    public partial class B21 : Win.Tems.Input1
     {
         DualResult result;
 

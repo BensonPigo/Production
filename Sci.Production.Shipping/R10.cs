@@ -11,7 +11,7 @@ using System.Linq;
 namespace Sci.Production.Shipping
 {
     /// <inheritdoc/>
-    public partial class R10 : Sci.Win.Tems.PrintForm
+    public partial class R10 : Win.Tems.PrintForm
     {
         private DateTime? date1;
         private DateTime? date2;
@@ -98,7 +98,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             string queryAccount;

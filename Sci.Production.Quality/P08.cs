@@ -16,7 +16,7 @@ namespace Sci.Production.Quality
     /// <summary>
     /// P08
     /// </summary>
-    public partial class P08 : Sci.Win.Tems.QueryForm
+    public partial class P08 : Win.Tems.QueryForm
     {
         /// <summary>
         /// P08

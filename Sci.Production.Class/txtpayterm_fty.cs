@@ -7,19 +7,19 @@ using Sci.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class txtpayterm_fty : Sci.Win.UI._UserControl
+    public partial class txtpayterm_fty : Win.UI._UserControl
     {
         public txtpayterm_fty()
         {
             this.InitializeComponent();
         }
 
-        public Sci.Win.UI.TextBox TextBox1
+        public Win.UI.TextBox TextBox1
         {
             get { return this.textBox1; }
         }
 
-        public Sci.Win.UI.DisplayBox DisplayBox1
+        public Win.UI.DisplayBox DisplayBox1
         {
             get { return this.displayBox1; }
         }
@@ -62,7 +62,7 @@ namespace Sci.Production.Class
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+            Win.Forms.Base myForm = (Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || this.textBox1.ReadOnly == true)
             {
                 return;
@@ -71,7 +71,7 @@ namespace Sci.Production.Class
             string selItem = "select ID,Name from PayTerm WITH (NOLOCK) where Junk = 0 order by ID";
             DataTable itemDt;
             DBProxy.Current.Select("Production", selItem, out itemDt);
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(itemDt, "ID,Name", "6,40", this.textBox1.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(itemDt, "ID,Name", "6,40", this.textBox1.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

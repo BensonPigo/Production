@@ -4,13 +4,13 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtthreadcolor : Sci.Win.UI.TextBox
+    public partial class txtthreadcolor : Win.UI.TextBox
     {
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select id,description from threadcolor WITH (NOLOCK) where junk=0", "23,40", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("Select id,description from threadcolor WITH (NOLOCK) where junk=0", "23,40", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

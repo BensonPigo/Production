@@ -17,7 +17,7 @@ using System.Reflection;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P35 : Sci.Win.Tems.Input6
+    public partial class P35 : Win.Tems.Input6
     {
         public P35(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -71,8 +71,8 @@ where lapd.id = '{0}'",
 
         private void txtartworktype_ftyCategory_Validated(object sender, EventArgs e)
         {
-            Production.Class.txtartworktype_fty o;
-            o = (Production.Class.txtartworktype_fty)sender;
+            Class.txtartworktype_fty o;
+            o = (Class.txtartworktype_fty)sender;
 
             if ((o.Text != o.OldValue) && this.EditMode)
             {
@@ -119,7 +119,7 @@ where lapd.id = '{0}'",
         {
             if (this.CurrentMaintain["status"].ToString() == "Approved")
             {
-                var frm = new Sci.Production.PublicForm.EditRemark("Localap", "remark", this.CurrentMaintain);
+                var frm = new PublicForm.EditRemark("Localap", "remark", this.CurrentMaintain);
                 frm.ShowDialog(this);
                 this.RenewData();
                 return false;
@@ -366,7 +366,7 @@ where lapd.id = '{0}'",
         protected override void OnDetailGridSetup()
         {
             #region qtygarment Valid
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
@@ -686,7 +686,7 @@ inner join #tmp b on a.ukey = b.ukey";
                 return;
             }
 
-            var frm = new Sci.Production.Subcon.P35_Import(dr, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P35_Import(dr, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
 
             // foreach (DataRow drr in ((DataTable)detailgridbs.DataSource).Rows)
@@ -867,7 +867,7 @@ where a.id = @ID",
             #endregion
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
 

@@ -6,7 +6,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P06_ShipQtyDetail
     /// </summary>
-    public partial class P06_ShipQtyDetail : Sci.Win.Subs.Input8A
+    public partial class P06_ShipQtyDetail : Win.Subs.Input8A
     {
         /// <summary>
         /// P06_ShipQtyDetail

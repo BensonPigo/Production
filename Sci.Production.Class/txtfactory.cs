@@ -7,7 +7,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Class
 {
-    public partial class txtfactory : Sci.Win.UI.TextBox
+    public partial class txtfactory : Win.UI.TextBox
     {
         private bool _IssupportJunk = false;
         private bool _FilteMDivision = false;
@@ -86,9 +86,9 @@ namespace Sci.Production.Class
                 listFilte.Add("MDivisionID = @MDivision");
             }
 
-            if (this._MDivision != null && !MyUtility.Check.Empty(((Sci.Win.UI.TextBox)this._MDivision).Text))
+            if (this._MDivision != null && !MyUtility.Check.Empty(((Win.UI.TextBox)this._MDivision).Text))
             {
-                listSqlPar.Add(new SqlParameter("@MDivision", ((Sci.Win.UI.TextBox)this._MDivision).Text));
+                listSqlPar.Add(new SqlParameter("@MDivision", ((Win.UI.TextBox)this._MDivision).Text));
                 listFilte.Add("MDivisionID = @MDivision");
             }
             #endregion
@@ -112,7 +112,7 @@ from Production.dbo.Factory WITH (NOLOCK)
 {0}
 order by FtyGroup", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : string.Empty, strShowColumn);
             #endregion
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, listSqlPar, "8", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, listSqlPar, "8", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

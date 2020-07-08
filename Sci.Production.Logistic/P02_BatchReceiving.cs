@@ -10,7 +10,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_P02_BatchReceiving
     /// </summary>
-    public partial class P02_BatchReceiving : Sci.Win.Subs.Base
+    public partial class P02_BatchReceiving : Win.Subs.Base
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private int allRecord = 0;

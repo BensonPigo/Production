@@ -10,7 +10,7 @@ using System.Transactions;
 
 namespace Sci.Production.Quality
 {
-    public partial class P07 : Sci.Win.Tems.Input6
+    public partial class P07 : Win.Tems.Input6
     {
         DualResult result;
         string sql;
@@ -170,7 +170,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                var frm = new P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
             };
@@ -182,7 +182,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                var frm = new P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
             };
@@ -194,7 +194,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                var frm = new P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
             };
@@ -206,7 +206,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                var frm = new P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
             };
@@ -218,7 +218,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                var frm = new P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
             };
@@ -231,7 +231,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                var frm = new P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
             };
@@ -243,7 +243,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                var frm = new P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
             };
@@ -255,7 +255,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                var frm = new P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
             };
@@ -267,7 +267,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                var frm = new P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
             };
@@ -279,7 +279,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                var frm = new P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
             };
@@ -351,7 +351,7 @@ namespace Sci.Production.Quality
             string currentseq1 = this.CurrentDetailData["SEQ1"].ToString();
             string currentseq2 = this.CurrentDetailData["SEQ2"].ToString();
 
-            Sci.Production.Quality.P07_Oven callOvenDetailForm = new P07_Oven(true, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+            P07_Oven callOvenDetailForm = new P07_Oven(true, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
 
             callOvenDetailForm.ShowDialog(this);
             callOvenDetailForm.Dispose();
@@ -388,7 +388,7 @@ namespace Sci.Production.Quality
                 return;
             }
 
-            Sci.Production.Quality.P07_Wash callWasHDetailForm = new P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+            P07_Wash callWasHDetailForm = new P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
             callWasHDetailForm.ShowDialog(this);
             callWasHDetailForm.Dispose();
             this.RenewData();

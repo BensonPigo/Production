@@ -8,9 +8,9 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P10_Detail_Detail : Sci.Win.Subs.Base
+    public partial class P10_Detail_Detail : Win.Subs.Base
     {
-        public Sci.Win.Subs.Base P10_Detail;
+        public Win.Subs.Base P10_Detail;
         DataRow dr_master;
         DataTable dt_detail;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
@@ -106,7 +106,7 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC", this.dr_master["poid"],
             #endregion
 
             this.P10_Detail.ShowWaitMessage("Data Loading....");
-            Ict.DualResult result;
+            DualResult result;
             if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out this.dtFtyinventory))
             {
                 if (this.dtFtyinventory.Rows.Count == 0)
@@ -123,7 +123,7 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC", this.dr_master["poid"],
 
             this.P10_Detail.HideWaitMessage();
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
                 {
                     if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))

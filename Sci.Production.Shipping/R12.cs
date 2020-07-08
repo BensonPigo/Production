@@ -10,7 +10,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R12
     /// </summary>
-    public partial class R12 : Sci.Win.Tems.PrintForm
+    public partial class R12 : Win.Tems.PrintForm
     {
         private DateTime? FCR_date1;
         private DateTime? FCR_date2;
@@ -59,7 +59,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"with cte as (

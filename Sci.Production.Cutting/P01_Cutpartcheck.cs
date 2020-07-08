@@ -8,7 +8,7 @@ using Sci.Data;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P01_Cutpartcheck : Sci.Win.Subs.Base
+    public partial class P01_Cutpartcheck : Win.Subs.Base
     {
         private string _cutid;
         private string _WorkType;

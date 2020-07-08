@@ -5,7 +5,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P06_Append
     /// </summary>
-    public partial class P06_Append : Sci.Win.Subs.Base
+    public partial class P06_Append : Win.Subs.Base
     {
         private DateTime pulloutDate;
 

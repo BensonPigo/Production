@@ -15,15 +15,15 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B42_BatchCreate
     /// </summary>
-    public partial class B42_BatchCreate : Sci.Win.Subs.Base
+    public partial class B42_BatchCreate : Win.Subs.Base
     {
         private DataTable AllDetailData;
         private DataTable MidDetailData;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CustomSP;
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings vncontract = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings currentcustom = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private Ict.Win.DataGridViewGeneratorTextColumnSettings consumption = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings vncontract = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings currentcustom = new DataGridViewGeneratorTextColumnSettings();
+        private DataGridViewGeneratorTextColumnSettings consumption = new DataGridViewGeneratorTextColumnSettings();
 
         /// <summary>
         /// B42_BatchCreate
@@ -71,7 +71,7 @@ namespace Sci.Production.Shipping
                     if (e.RowIndex != -1)
                     {
                         DataRow dr = this.gridBatchCreate.GetDataRow<DataRow>(e.RowIndex);
-                        Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate order by StartDate", "15,10,10", MyUtility.Convert.GetString(dr["VNContractID"]), headercaptions: "Contract No.,Start Date, End Date");
+                        Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate order by StartDate", "15,10,10", MyUtility.Convert.GetString(dr["VNContractID"]), headercaptions: "Contract No.,Start Date, End Date");
                         DialogResult returnResult = item.ShowDialog();
                         if (returnResult == DialogResult.Cancel)
                         {
@@ -107,7 +107,7 @@ namespace Sci.Production.Shipping
                     if (e.RowIndex != -1)
                     {
                         DataRow dr = this.gridBatchCreate.GetDataRow<DataRow>(e.RowIndex);
-                        B42_BatchCreate_Consumption callNextForm = new Sci.Production.Shipping.B42_BatchCreate_Consumption(this.MidDetailData, this.AllDetailData, MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(',')), MyUtility.Convert.GetString(dr["VNContractID"]));
+                        B42_BatchCreate_Consumption callNextForm = new B42_BatchCreate_Consumption(this.MidDetailData, this.AllDetailData, MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(',')), MyUtility.Convert.GetString(dr["VNContractID"]));
                         DialogResult result = callNextForm.ShowDialog(this);
                         callNextForm.Dispose();
                     }
@@ -609,7 +609,7 @@ from a where rnd=1
         // update Contract
         private void TxtVNContractID_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate order by StartDate", "15,10,10", this.txtVNContractID.Text, headercaptions: "Contract No.,Start Date, End Date");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate order by StartDate", "15,10,10", this.txtVNContractID.Text, headercaptions: "Contract No.,Start Date, End Date");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

@@ -13,7 +13,7 @@ namespace Sci.Production.IE
     /// <summary>
     /// IE_P02
     /// </summary>
-    public partial class P02 : Sci.Win.Tems.Input1
+    public partial class P02 : Win.Tems.Input1
     {
         private string dateTimeMask = string.Empty;
         private string emptyDTMask = string.Empty;
@@ -47,7 +47,7 @@ namespace Sci.Production.IE
                 this.emptyDTMask = this.emptyDTMask + this.empmask;
             }
 
-            this.txtInLineDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Inline", true, DataSourceUpdateMode.OnValidation, this.emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
+            this.txtInLineDate.DataBindings.Add(new Binding("Text", this.mtbs, "Inline", true, DataSourceUpdateMode.OnValidation, this.emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
             this.txtInLineDate.Mask = this.DateTimeMask;
         }
 
@@ -277,7 +277,7 @@ order by OutputDate
         // Time of First/Last Good Output
         private void TxtTimeOfFirstGoodOutput_Validating(object sender, CancelEventArgs e)
         {
-            Sci.Win.UI.TextBox prodTextValue = (Sci.Win.UI.TextBox)sender;
+            Win.UI.TextBox prodTextValue = (Win.UI.TextBox)sender;
             if (this.EditMode && !MyUtility.Check.Empty(prodTextValue.Text) && prodTextValue.Text != prodTextValue.OldValue)
             {
                 string textValue = prodTextValue.Text.ToString().PadRight(4);
@@ -299,7 +299,7 @@ order by OutputDate
         // FTY GSD
         private void BtnFTYGSD_Click(object sender, EventArgs e)
         {
-            Sci.Production.IE.P01 callNextForm = new Sci.Production.IE.P01(this.CurrentMaintain["StyleID"].ToString(), MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["OrderID"].ToString())), this.CurrentMaintain["SeasonID"].ToString(), this.CurrentMaintain["ComboType"].ToString());
+            P01 callNextForm = new P01(this.CurrentMaintain["StyleID"].ToString(), MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["OrderID"].ToString())), this.CurrentMaintain["SeasonID"].ToString(), this.CurrentMaintain["ComboType"].ToString());
             callNextForm.ShowDialog(this);
         }
 
@@ -360,7 +360,7 @@ order by OutputDate
                 }
             }
 
-            Sci.Production.IE.P02_NewCheckList callNextForm = new Sci.Production.IE.P02_NewCheckList(string.Compare(this.CurrentMaintain["Status"].ToString(), "New", true) == 0, this.CurrentMaintain["ID"].ToString(), null, null, this.CurrentMaintain["Type"].ToString());
+            P02_NewCheckList callNextForm = new P02_NewCheckList(string.Compare(this.CurrentMaintain["Status"].ToString(), "New", true) == 0, this.CurrentMaintain["ID"].ToString(), null, null, this.CurrentMaintain["Type"].ToString());
             callNextForm.ShowDialog(this);
         }
 
@@ -388,7 +388,7 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
             bool canEdit = this.CurrentMaintain["Status"].ToString() != "Closed" &&
                            this.CurrentMaintain["Status"].ToString() != "Approved";
 
-            Sci.Production.IE.P02_Problem callNextForm = new Sci.Production.IE.P02_Problem(canEdit, this.CurrentMaintain["ID"].ToString(), null, null);
+            P02_Problem callNextForm = new P02_Problem(canEdit, this.CurrentMaintain["ID"].ToString(), null, null);
             callNextForm.ShowDialog(this);
         }
 

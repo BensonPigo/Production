@@ -6,7 +6,7 @@ namespace Sci.Production.Basic
     /// <summary>
     /// B04_BankData_Input
     /// </summary>
-    public partial class B04_BankData_Input : Sci.Win.Subs.Input6A
+    public partial class B04_BankData_Input : Win.Subs.Input6A
     {
         /// <summary>
         /// B04_BankData_Input

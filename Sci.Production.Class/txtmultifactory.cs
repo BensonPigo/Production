@@ -2,7 +2,7 @@
 
 namespace Sci.Production.Class
 {
-    public partial class txtmultifactory : Sci.Win.UI.TextBox
+    public partial class txtmultifactory : Win.UI.TextBox
     {
         public txtmultifactory()
         {
@@ -21,7 +21,7 @@ namespace Sci.Production.Class
                 sqlWhere = "select ID from Factory WITH (NOLOCK) where Junk = 0 and IsProduceFty = 1 order by ID";
             }
 
-            Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlWhere, "Factory", "10", this.Text, null, null, null);
+            Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlWhere, "Factory", "10", this.Text, null, null, null);
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)

@@ -13,7 +13,15 @@ namespace Sci.Production.PublicPrg
 
         public enum Pass1Format
         {
-            IDNameExtDateTime = 1, IDNameDateTime = 2, NameExtDateTime = 3, NameDateTime = 4, IDNameExtDate = 5, IDNameDate = 6, NameExtDate = 7, NameDate = 8, NameExt = 9,
+            IDNameExtDateTime = 1,
+            IDNameDateTime = 2,
+            NameExtDateTime = 3,
+            NameDateTime = 4,
+            IDNameExtDate = 5,
+            IDNameDate = 6,
+            NameExtDate = 7,
+            NameDate = 8,
+            NameExt = 9,
         }
 
         static Prgs()

@@ -15,7 +15,7 @@ namespace Sci.Production.Class
     /// </summary>
     public static class Extension
     {
-        private static SqlConnection ObtainSqlConnection(Sci.Data.IDBProxy proxy)
+        private static SqlConnection ObtainSqlConnection(Data.IDBProxy proxy)
         {
             SqlConnection cn;
             if (proxy.OpenConnection(string.Empty, out cn) == false)
@@ -34,7 +34,7 @@ namespace Sci.Production.Class
         /// <param name="sql">string</param>
         /// <param name="args">object[]</param>
         /// <returns><![CDATA[DualDisposableResult<DataTable>]]></returns>
-        public static DualDisposableResult<DataTable> SelectEx(this Sci.Data.IDBProxy proxy, string sql, params object[] args)
+        public static DualDisposableResult<DataTable> SelectEx(this Data.IDBProxy proxy, string sql, params object[] args)
         {
             return SelectEx(proxy, sql, false, args);
         }
@@ -48,7 +48,7 @@ namespace Sci.Production.Class
         /// <param name="withSchema">bool</param>
         /// <param name="args">object[]</param>
         /// <returns><![CDATA[DualDisposableResult<DataTable>]]></returns>
-        public static DualDisposableResult<DataTable> SelectEx(this Sci.Data.IDBProxy proxy, string sql, bool withSchema, params object[] args)
+        public static DualDisposableResult<DataTable> SelectEx(this Data.IDBProxy proxy, string sql, bool withSchema, params object[] args)
         {
             using (var cn = ObtainSqlConnection(proxy))
             {

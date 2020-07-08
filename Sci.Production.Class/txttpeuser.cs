@@ -7,19 +7,19 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Class
 {
-    public partial class txttpeuser : Sci.Win.UI._UserControl
+    public partial class txttpeuser : Win.UI._UserControl
     {
         public txttpeuser()
         {
             this.InitializeComponent();
         }
 
-        public Sci.Win.UI.DisplayBox DisplayBox1
+        public Win.UI.DisplayBox DisplayBox1
         {
             get { return this.displayBox1; }
         }
 
-        public Sci.Win.UI.DisplayBox DisplayBox2
+        public Win.UI.DisplayBox DisplayBox2
         {
             get { return this.displayBox2; }
         }

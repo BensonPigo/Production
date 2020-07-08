@@ -14,7 +14,7 @@ namespace Sci.Production.Thread
     /// <summary>
     /// P01_Generate
     /// </summary>
-    public partial class P01_Generate : Sci.Win.Subs.Base
+    public partial class P01_Generate : Win.Subs.Base
     {
         private DataTable gridTable;
         private string styleUkey;
@@ -323,7 +323,7 @@ where id = '{0}' and BrandID ='{1}' and SeasonID = '{2}'",
 
         private void TxtMachineType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                 string.Format(
                     @"Select distinct d.MachineTypeID
             from timestudy c WITH (NOLOCK) ,timestudy_Detail d WITH (NOLOCK) 

@@ -12,7 +12,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_R01
     /// </summary>
-    public partial class R01 : Sci.Win.Tems.PrintForm
+    public partial class R01 : Win.Tems.PrintForm
     {
         private DateTime? buyerDelivery1;
         private DateTime? buyerDelivery2;
@@ -79,7 +79,7 @@ namespace Sci.Production.Logistic
         /// </summary>
         /// <param name="e">Win.ReportEventArgs</param>
         /// <returns>Result</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             string chkWhere = string.Empty;

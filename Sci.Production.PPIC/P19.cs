@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
-    public partial class P19 : Sci.Win.Tems.QueryForm
+    public partial class P19 : Win.Tems.QueryForm
     {
         public P19(ToolStripMenuItem menuitem)
             : base(menuitem)

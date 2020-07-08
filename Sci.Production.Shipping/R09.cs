@@ -13,7 +13,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// R09
     /// </summary>
-    public partial class R09 : Sci.Win.Tems.PrintForm
+    public partial class R09 : Win.Tems.PrintForm
     {
         private DateTime? arrivePortDate1;
         private DateTime? arrivePortDate2;
@@ -71,7 +71,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             if (this.reportType == 1)
@@ -655,7 +655,7 @@ order by ID";
 
             DataTable tbSelect;
             DBProxy.Current.Select(null, selectCommand, out tbSelect);
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbSelect, "ID,Abb", "9,13", this.Text, false, ",", "ID,Abb");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(tbSelect, "ID,Abb", "9,13", this.Text, false, ",", "ID,Abb");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

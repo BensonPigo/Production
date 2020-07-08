@@ -12,7 +12,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P02_AddByPOItem
     /// </summary>
-    public partial class P02_AddByPOItem : Sci.Win.Subs.Input2A
+    public partial class P02_AddByPOItem : Win.Subs.Input2A
     {
         /// <summary>
         /// P02_AddByPOItem

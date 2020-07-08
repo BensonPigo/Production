@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P26 : Sci.Win.Tems.Input6
+    public partial class P26 : Win.Tems.Input6
     {
         public P26(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -82,7 +82,7 @@ WHERE BTD.ID = '{0}'", masterID);
 
         protected override bool ClickNew()
         {
-            var frm = new Sci.Production.Subcon.P26_ImportBarcode();
+            var frm = new P26_ImportBarcode();
             frm.ShowDialog(this);
             this.ReloadDatas();
             return true;

@@ -2,7 +2,7 @@
 
 namespace Sci.Production.Cutting
 {
-    public partial class P11_copytocutref : Sci.Win.Subs.Base
+    public partial class P11_copytocutref : Win.Subs.Base
     {
         public string copycutref;
 

@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
-    public partial class B02 : Sci.Win.Tems.Input1
+    public partial class B02 : Win.Tems.Input1
     {
         private string destination_path; // 放的路徑
         private bool Upload_flag = false;
@@ -116,7 +116,7 @@ FROM StickerSize WITH (NOLOCK)
 
         private void TxtCTNRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select RefNo  from LocalItem WITH (NOLOCK) where Junk = 0 and Category='CARTON' ", null, this.txtCTNRefno.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("Select RefNo  from LocalItem WITH (NOLOCK) where Junk = 0 and Category='CARTON' ", null, this.txtCTNRefno.Text);
 
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
@@ -154,7 +154,7 @@ FROM StickerSize WITH (NOLOCK)
                     {
                         System.IO.File.Copy(from_file_path, fbd.SelectedPath + @"\" + MyUtility.Convert.GetString(this.CurrentMaintain["FileName"]), true);
                     }
-                    catch (System.IO.IOException exception)
+                    catch (IOException exception)
                     {
                         MyUtility.Msg.ErrorBox("Error: Download file fail. Original error: " + exception.Message);
                     }
@@ -235,7 +235,7 @@ FROM StickerSize WITH (NOLOCK)
                     System.IO.File.Copy(local_path_file, destination, true);
                     this.CurrentMaintain["FileName"] = this.Destination_fileName.Trim();
                 }
-                catch (System.IO.IOException exception)
+                catch (IOException exception)
                 {
                     MyUtility.Msg.ErrorBox("Error: update file fail. Original error: " + exception.Message);
                     return new DualResult(false, exception);
@@ -258,7 +258,7 @@ FROM StickerSize WITH (NOLOCK)
                 string destination = Path.Combine(this.destination_path, fileName);
                 System.IO.File.Delete(destination);
             }
-            catch (System.IO.IOException exception)
+            catch (IOException exception)
             {
                 MyUtility.Msg.ErrorBox("Error: Delete file fail. Original error: " + exception.Message);
             }

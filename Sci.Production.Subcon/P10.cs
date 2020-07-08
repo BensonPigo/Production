@@ -18,7 +18,7 @@ using System.Reflection;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P10 : Sci.Win.Tems.Input6
+    public partial class P10 : Win.Tems.Input6
     {
         public P10(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -45,8 +45,8 @@ namespace Sci.Production.Subcon
 
         private void txtartworktype_ftyArtworkType_Validated(object sender, EventArgs e)
         {
-            Production.Class.txtartworktype_fty o;
-            o = (Production.Class.txtartworktype_fty)sender;
+            Class.txtartworktype_fty o;
+            o = (Class.txtartworktype_fty)sender;
 
             if ((o.Text != o.OldValue) && this.EditMode)
             {
@@ -91,7 +91,7 @@ namespace Sci.Production.Subcon
         {
             if (this.CurrentMaintain["status"].ToString() == "Approved")
             {
-                var frm = new Sci.Production.PublicForm.EditRemark("artworkap", "remark", this.CurrentMaintain);
+                var frm = new PublicForm.EditRemark("artworkap", "remark", this.CurrentMaintain);
                 frm.ShowDialog(this);
                 this.RenewData();
                 return false;
@@ -368,7 +368,7 @@ where a.id='{0}'
         protected override void OnDetailGridSetup()
         {
             #region qtygarment Valid
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
@@ -804,7 +804,7 @@ update ArtworkAP set amount = @Amount, vat = @Vat  where ID = '{this.CurrentMain
                 return;
             }
 
-            var frm = new Sci.Production.Subcon.P10_ImportFromPO(dr, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P10_ImportFromPO(dr, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }
@@ -970,7 +970,7 @@ where ap.ID= @ID";
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
+            var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
 

@@ -10,7 +10,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Quality
 {
-    public partial class P04 : Sci.Win.Tems.Input6
+    public partial class P04 : Win.Tems.Input6
     {
         private string loginID = Sci.Env.User.UserID;
         private string Factory = Sci.Env.User.Keyword;
@@ -25,7 +25,7 @@ namespace Sci.Production.Quality
             this.DefaultFilter = string.Format("MDivisionid='{0}'", this.Factory);
 
             // this.detailgrid.ContextMenuStrip = detailgridmenus;
-            this.detailgrid.ContextMenuShowing += new System.EventHandler<Ict.Win.ContextMenuShowingEventArgs>(this.detailgrid_ContextMenuShowing);
+            this.detailgrid.ContextMenuShowing += new EventHandler<ContextMenuShowingEventArgs>(this.detailgrid_ContextMenuShowing);
         }
 
         protected override DetailGridContextMenuMode CurrentDetailGridContextMenuMode()
@@ -79,7 +79,7 @@ namespace Sci.Production.Quality
                 return;
             }
 
-            Sci.Production.Quality.P04_Detail callNewDetailForm = new P04_Detail(this.EditMode, this.CurrentMaintain, this.CurrentDetailData);
+            P04_Detail callNewDetailForm = new P04_Detail(this.EditMode, this.CurrentMaintain, this.CurrentDetailData);
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
             this.RenewData();

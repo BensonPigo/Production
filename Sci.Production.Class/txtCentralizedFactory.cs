@@ -6,7 +6,7 @@ using System.Configuration;
 
 namespace Sci.Production.Class
 {
-    public partial class txtCentralizedFactory : Sci.Win.UI.TextBox
+    public partial class txtCentralizedFactory : Win.UI.TextBox
     {
         private string ConnServer;
 
@@ -31,7 +31,7 @@ namespace Sci.Production.Class
                 }
             }
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(FactoryData, "Factory", "5", this.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(FactoryData, "Factory", "5", this.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

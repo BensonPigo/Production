@@ -8,7 +8,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R23 : Sci.Win.Tems.PrintForm
+    public partial class R23 : Win.Tems.PrintForm
     {
         public R23(ToolStripMenuItem menuitem)
             : base(menuitem)

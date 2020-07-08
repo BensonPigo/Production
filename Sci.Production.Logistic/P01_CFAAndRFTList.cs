@@ -8,7 +8,7 @@ namespace Sci.Production.Logistic
     /// <summary>
     /// Logistic_P01_CFAAndRFTList
     /// </summary>
-    public partial class P01_CFAAndRFTList : Sci.Win.Subs.Base
+    public partial class P01_CFAAndRFTList : Win.Subs.Base
     {
         private DataRow masterData;
 

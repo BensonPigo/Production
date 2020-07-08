@@ -12,7 +12,7 @@ using static Sci.Production.PublicPrg.Prgs;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P02_StandardQtyPlannedCuttingWIP : Sci.Win.Tems.QueryForm
+    public partial class P02_StandardQtyPlannedCuttingWIP : Win.Tems.QueryForm
     {
         string ID;
         string finalmsg;

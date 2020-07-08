@@ -9,7 +9,7 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// P03_Print
     /// </summary>
-    public partial class P03_Print : Sci.Win.Tems.PrintForm
+    public partial class P03_Print : Win.Tems.PrintForm
     {
         private string reportType;
         private string eta1;
@@ -72,7 +72,7 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             if (this.reportType == "1")
             {

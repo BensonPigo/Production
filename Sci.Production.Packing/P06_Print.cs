@@ -7,7 +7,7 @@ namespace Sci.Production.Packing
     /// <summary>
     /// Packing_P06_Print
     /// </summary>
-    public partial class P06_Print : Sci.Win.Tems.PrintForm
+    public partial class P06_Print : Win.Tems.PrintForm
     {
         private string reportType;
         private string ctn1;
@@ -96,7 +96,7 @@ namespace Sci.Production.Packing
         /// </summary>
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             if (this.reportType == "1")
             {
