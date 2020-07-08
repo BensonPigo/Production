@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Data;
 using System.Data.SqlClient;
-using Sci.Production;
 using Ict;
 using Sci.Data;
+
 namespace Sci.Production.Win
 {
     public static class ProjUtils
@@ -19,7 +15,11 @@ namespace Sci.Production.Win
             try
             {
                 SqlConnection conn;
-                if (!(result = DBProxy.Current.OpenConnection(null, out conn))) return result;
+                if (!(result = DBProxy.Current.OpenConnection(null, out conn)))
+                {
+                    return result;
+                }
+
                 using (conn)
                 {
                     using (var adapter = new Sci.Production.SCHEMASTableAdapters.PASS1TableAdapter())
@@ -27,7 +27,10 @@ namespace Sci.Production.Win
                         adapter.Connection = conn;
 
                         var datas = adapter.Login(account, password);
-                        if (0 < datas.Count) data = datas[0];
+                        if (datas.Count > 0)
+                        {
+                            data = datas[0];
+                        }
                     }
                 }
             }

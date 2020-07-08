@@ -122,9 +122,9 @@ insert (ukey,localsuppid,currencyid,price,oven,wash,mockup,priceApv,styleukey)
 values (s.ukey,s.localsuppid,s.currencyid,s.price,s.oven,s.wash,mockup,s.priceApv,s.styleukey)
 when not matched by source and t.ukey = {0} then
 delete ;",
-dr2[i]["ukey"],
-this.data["styleukey"],
-this.data["ukey"]);
+                    dr2[i]["ukey"],
+                    this.data["styleukey"],
+                    this.data["ukey"]);
                 SqlCommandText tmp = new SqlCommandText(txttmp, null);
                 updateCmds.Add(tmp);
             }

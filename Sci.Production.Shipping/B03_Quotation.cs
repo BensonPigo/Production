@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using Ict;
-using System.Transactions;
 using Sci.Data;
 
 namespace Sci.Production.Shipping
@@ -74,7 +72,6 @@ namespace Sci.Production.Shipping
                         this.CurrentMaintain["CurrencyID1"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubconSupplier1.TextBox1.Text, "LocalSupp", "ID");
                     }
                 };
-
         }
 
         /// <inheritdoc/>
@@ -154,7 +151,7 @@ namespace Sci.Production.Shipping
         protected override bool ClickSaveBefore()
         {
             // 檢查是否還有建立的紀錄尚未被confirm，若有則無法新增資料
-            string sqlCmd = $"select ID from ShipExpense_CanVass WITH (NOLOCK) where ID = '{ MyUtility.Convert.GetString(this.MotherData["ID"]).Trim()}' and Status = 'New'  and ukey <> '{this.CurrentMaintain["ukey"]}'";
+            string sqlCmd = $"select ID from ShipExpense_CanVass WITH (NOLOCK) where ID = '{MyUtility.Convert.GetString(this.MotherData["ID"]).Trim()}' and Status = 'New'  and ukey <> '{this.CurrentMaintain["ukey"]}'";
             if (MyUtility.Check.Seek(sqlCmd, null))
             {
                 MyUtility.Msg.WarningBox("Still have data not yet confirm, so can't create new record!");

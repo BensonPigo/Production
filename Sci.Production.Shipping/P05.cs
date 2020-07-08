@@ -10,7 +10,6 @@ using Ict;
 using Sci.Data;
 using System.Transactions;
 using System.Runtime.InteropServices;
-using System.Data.SqlClient;
 using System.Linq;
 using Sci.Production.PublicPrg;
 
@@ -1683,7 +1682,6 @@ where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.Current
                 }
                 else
                 {
-
                     string insertCmd = string.Format(
                         @"insert into SewingOutput_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
                     values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",

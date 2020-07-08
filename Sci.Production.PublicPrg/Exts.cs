@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
 
-using Ict;
 namespace Sci.Production.Prg
 {
     public static class ProjExts
@@ -13,48 +10,86 @@ namespace Sci.Production.Prg
         public static T Val<T>(this DataRow row, string name)
         {
             var v = row[name];
-            if (DBNull.Value == v) return default(T);
-            return (T)v;
-        }
-        public static T Val<T>(this DataRow row, DataColumn col)
-        {
-            var v = row[col];
-            if (DBNull.Value == v) return default(T);
+            if (v == DBNull.Value)
+            {
+                return default(T);
+            }
+
             return (T)v;
         }
 
-        public static IDictionary<KEY, DataRow> ToDictionary<KEY>(this DataTable datas, Func<DataRow, KEY> keyselector
-            , bool ignore_deleted = false)
+        public static T Val<T>(this DataRow row, DataColumn col)
         {
-            if (null == keyselector) new ArgumentNullException("keyselector");
-            if (null == datas) return null;
+            var v = row[col];
+            if (v == DBNull.Value)
+            {
+                return default(T);
+            }
+
+            return (T)v;
+        }
+
+        public static IDictionary<KEY, DataRow> ToDictionary<KEY>(this DataTable datas, Func<DataRow, KEY> keyselector,
+            bool ignore_deleted = false)
+        {
+            if (keyselector == null)
+            {
+                new ArgumentNullException("keyselector");
+            }
+
+            if (datas == null)
+            {
+                return null;
+            }
 
             var dic = new Dictionary<KEY, DataRow>();
             foreach (DataRow it in datas.Rows)
             {
-                if (ignore_deleted && DataRowState.Deleted == it.RowState) continue;
+                if (ignore_deleted && it.RowState == DataRowState.Deleted)
+                {
+                    continue;
+                }
+
                 var key = keyselector(it);
 
                 dic.Add(key, it);
             }
+
             return dic;
         }
-        public static IDictionary<KEY, IList<DataRow>> ToDictionaryList<KEY>(this DataTable datas, Func<DataRow, KEY> keyselector
-            , bool ignore_deleted = false)
+
+        public static IDictionary<KEY, IList<DataRow>> ToDictionaryList<KEY>(this DataTable datas, Func<DataRow, KEY> keyselector,
+            bool ignore_deleted = false)
         {
-            if (null == keyselector) new ArgumentNullException("keyselector");
-            if (null == datas) return null;
+            if (keyselector == null)
+            {
+                new ArgumentNullException("keyselector");
+            }
+
+            if (datas == null)
+            {
+                return null;
+            }
 
             var dic = new Dictionary<KEY, IList<DataRow>>();
             foreach (DataRow it in datas.Rows)
             {
-                if (ignore_deleted && DataRowState.Deleted == it.RowState) continue;
+                if (ignore_deleted && it.RowState == DataRowState.Deleted)
+                {
+                    continue;
+                }
+
                 var key = keyselector(it);
 
                 IList<DataRow> rows;
-                if (!dic.TryGetValue(key, out rows)) dic.Add(key, rows = new List<DataRow>());
+                if (!dic.TryGetValue(key, out rows))
+                {
+                    dic.Add(key, rows = new List<DataRow>());
+                }
+
                 rows.Add(it);
             }
+
             return dic;
         }
 
@@ -79,26 +114,28 @@ namespace Sci.Production.Prg
                         {
                             return true;
                         }
+
                         break;
                     case TypeCode.DateTime:
                         if (MyUtility.Convert.GetDate(dr[col, DataRowVersion.Current]) != MyUtility.Convert.GetDate(dr[col, DataRowVersion.Original]))
                         {
                             return true;
                         }
+
                         break;
                     default:
                         if (dr[col, DataRowVersion.Current].ToString() != dr[col, DataRowVersion.Original].ToString())
                         {
                             return true;
                         }
+
                         break;
                 }
-                
             }
 
             return false;
         }
-        
+
         /// <summary>
         /// 如果資料列大於0，則會呼叫原本的CopyToDataTable，不然會用SrcTable做Clone
         /// </summary>

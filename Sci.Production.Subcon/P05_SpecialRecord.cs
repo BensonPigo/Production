@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Sci;
 using Sci.Data;
-using Ict;
 using Ict.Win;
 
 namespace Sci.Production.Subcon
@@ -21,26 +16,26 @@ namespace Sci.Production.Subcon
 
         public P05_SpecialRecord()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
+
         public P05_SpecialRecord(DataRow data, DataTable detail)
         {
-            InitializeComponent();
-            dt_artworkpo_detail = detail;
-            dr = data;
+            this.InitializeComponent();
+            this.dt_artworkpo_detail = detail;
+            this.dr = data;
 
-            this.Text += string.Format(" : {0}", dr["artworktypeid"].ToString());
+            this.Text += string.Format(" : {0}", this.dr["artworktypeid"].ToString());
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-
-            this.gridSpecialRecord.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridSpecialRecord.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridSpecialRecord)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+            this.gridSpecialRecord.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridSpecialRecord.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridSpecialRecord)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                 .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Numeric("OrderQty", header: "Qrder Qty", iseditingreadonly: true)
                 .Numeric("AccReqQty", header: "Accu. Req QTY", iseditingreadonly: true)
@@ -48,7 +43,6 @@ namespace Sci.Production.Subcon
                 .Numeric("qtygarment", header: "Qty/GMT", iseditingreadonly: true);
 
             this.gridSpecialRecord.Columns["ReqQty"].DefaultCellStyle.BackColor = Color.Pink;
-
         }
 
         private void btnFindNow_Click(object sender, EventArgs e)
@@ -59,7 +53,7 @@ namespace Sci.Production.Subcon
             if (string.IsNullOrWhiteSpace(orderID) && string.IsNullOrWhiteSpace(poid))
             {
                 MyUtility.Msg.WarningBox("< SP# > or < Mother SP# > can't be empty!!");
-                txtSPNo.Focus();
+                this.txtSPNo.Focus();
                 return;
             }
             else
@@ -69,11 +63,11 @@ namespace Sci.Production.Subcon
                 {
                     sqlwhere += string.Format(" and o.ID = '{0}' ", orderID);
                 }
+
                 if (!MyUtility.Check.Empty(poid))
                 {
                     sqlwhere += string.Format(" and o.poid = '{0}' ", poid);
                 }
-
 
                 string strSQLCmd = $@"
 --get special record
@@ -103,8 +97,8 @@ outer apply (
 		and OrderID = o.ID 
         and ad.PatternCode= ''
         and ad.PatternDesc = ''
-        and ad.ArtworkID = '{dr["artworktypeid"]}'
-        and a.id != '{dr["id"]}'
+        and ad.ArtworkID = '{this.dr["artworktypeid"]}'
+        and a.id != '{this.dr["id"]}'
         and a.status != 'Closed'
 ) ReqQty
 outer apply (
@@ -115,41 +109,50 @@ outer apply (
 		and OrderID = o.ID 
         and ad.PatternCode= ''
         and ad.PatternDesc = ''
-        and ad.ArtworkID = '{dr["artworktypeid"]}'
+        and ad.ArtworkID = '{this.dr["artworktypeid"]}'
 		and ad.ArtworkReqID=''
 ) PoQty
 where (o.Junk=0 or o.Junk=1 and o.NeedProduction=1) and o.Qty > 0 and
 	(
-	(o.Category = 'B' and at.IsSubprocess = 1 and at.isArtwork = 0 and at.Classify = 'O' and at.ID = '{dr["artworktypeid"]}') 
+	(o.Category = 'B' and at.IsSubprocess = 1 and at.isArtwork = 0 and at.Classify = 'O' and at.ID = '{this.dr["artworktypeid"]}') 
 	or 
-	(o.category = 'S' and at.ID = '{dr["artworktypeid"]}')
+	(o.category = 'S' and at.ID = '{this.dr["artworktypeid"]}')
 	)
     {sqlwhere}
  ";
 
-
                 Ict.DualResult result;
-                if (result = DBProxy.Current.Select(null, strSQLCmd, out dtArtwork))
+                if (result = DBProxy.Current.Select(null, strSQLCmd, out this.dtArtwork))
                 {
-                    if (dtArtwork.Rows.Count == 0)
-                    { MyUtility.Msg.WarningBox("Data not found!!"); }
-                    listControlBindingSource1.DataSource = dtArtwork;
+                    if (this.dtArtwork.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.WarningBox("Data not found!!");
+                    }
+
+                    this.listControlBindingSource1.DataSource = this.dtArtwork;
                 }
-                else { ShowErr(strSQLCmd, result); }
+                else
+                {
+                    this.ShowErr(strSQLCmd, result);
+                }
             }
         }
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            listControlBindingSource1.EndEdit();
-            DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
+            this.listControlBindingSource1.EndEdit();
+            DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dtGridBS1))
             {
                 return;
             }
-            if (dtGridBS1.Rows.Count == 0) return;
-            DataRow[] dr2 = dtGridBS1.Select("ReqQty = 0 and Selected = 1");
 
+            if (dtGridBS1.Rows.Count == 0)
+            {
+                return;
+            }
+
+            DataRow[] dr2 = dtGridBS1.Select("ReqQty = 0 and Selected = 1");
 
             if (dr2.Length > 0)
             {
@@ -160,9 +163,9 @@ where (o.Junk=0 or o.Junk=1 and o.NeedProduction=1) and o.Qty > 0 and
             dr2 = dtGridBS1.Select("Selected =  1");
             if (dr2.Length > 0)
             {
-                foreach (DataRow tmp in dr2)//dtGridBS1.Rows
+                foreach (DataRow tmp in dr2) // dtGridBS1.Rows
                 {
-                    DataRow[] findrow = dt_artworkpo_detail.Select(string.Format("orderid = '{0}' and ArtworkId = '{1}' ", tmp["orderid"].ToString(), tmp["ArtworkId"].ToString()));
+                    DataRow[] findrow = this.dt_artworkpo_detail.Select(string.Format("orderid = '{0}' and ArtworkId = '{1}' ", tmp["orderid"].ToString(), tmp["ArtworkId"].ToString()));
                     decimal exceedQty = MyUtility.Convert.GetDecimal(tmp["ReqQty"]) + MyUtility.Convert.GetDecimal(tmp["AccReqQty"]) - MyUtility.Convert.GetDecimal(tmp["OrderQty"]);
 
                     decimal finalExceedQty = exceedQty < 0 ? 0 : exceedQty;
@@ -178,13 +181,12 @@ where (o.Junk=0 or o.Junk=1 and o.NeedProduction=1) and o.Qty > 0 and
                     }
                     else
                     {
-
-                        tmp["id"] = dr["id"];
+                        tmp["id"] = this.dr["id"];
                         tmp["Stitch"] = 1;
                         tmp["ExceedQty"] = exceedQty < 0 ? 0 : exceedQty;
                         tmp.AcceptChanges();
                         tmp.SetAdded();
-                        dt_artworkpo_detail.ImportRow(tmp);
+                        this.dt_artworkpo_detail.ImportRow(tmp);
                     }
                 }
             }
@@ -193,6 +195,7 @@ where (o.Junk=0 or o.Junk=1 and o.NeedProduction=1) and o.Qty > 0 and
                 MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
                 return;
             }
+
             this.Close();
         }
 
@@ -203,12 +206,15 @@ where (o.Junk=0 or o.Junk=1 and o.NeedProduction=1) and o.Qty > 0 and
 
         private void txtSPNo_Validating(object sender, CancelEventArgs e)
         {
-            val(sender, e);
+            this.val(sender, e);
         }
 
         private void val(object sender, CancelEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(((Sci.Win.UI.TextBox)sender).Text)) return;
+            if (string.IsNullOrWhiteSpace(((Sci.Win.UI.TextBox)sender).Text))
+            {
+                return;
+            }
 
             if (!MyUtility.Check.Seek(string.Format("select POID from orders WITH (NOLOCK) where id='{0}'", ((Sci.Win.UI.TextBox)sender).Text), null))
             {
@@ -219,15 +225,14 @@ where (o.Junk=0 or o.Junk=1 and o.NeedProduction=1) and o.Qty > 0 and
             string category = MyUtility.GetValue.Lookup(string.Format("select category from orders WITH (NOLOCK) where ID = '{0}' ", ((Sci.Win.UI.TextBox)sender).Text), null);
             string sqlCheckArtwork = string.Empty;
             sqlCheckArtwork = $@"select id from artworktype WITH (NOLOCK) 
-                                        where id = '{dr["artworktypeid"]}'
+                                        where id = '{this.dr["artworktypeid"]}'
                                         EXCEPT select ID from artworktype WITH (NOLOCK) 
                                                 where IsSubprocess = 1 and isArtwork = 0 and Classify = 'O'";
-
 
             bool isArtworkCheckNG = MyUtility.Check.Seek(sqlCheckArtwork);
             if (category != "S" && isArtworkCheckNG)
             {
-                ((Sci.Win.UI.TextBox)sender).Text = "";
+                ((Sci.Win.UI.TextBox)sender).Text = string.Empty;
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox("Bulk orders only allow Artwork which like RECOAT Garment ....!!", "Warning");
 
@@ -237,7 +242,7 @@ where (o.Junk=0 or o.Junk=1 and o.NeedProduction=1) and o.Qty > 0 and
 
         private void txtMotherSPNo_Validating(object sender, CancelEventArgs e)
         {
-            val(sender, e);
+            this.val(sender, e);
         }
     }
 }

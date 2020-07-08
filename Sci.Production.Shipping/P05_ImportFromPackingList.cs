@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci;
 using System.Linq;
 
 namespace Sci.Production.Shipping
@@ -178,7 +174,6 @@ with IniBulkPack as (
             and BuyerDelivery <= '{0}' ", Convert.ToDateTime(this.dateDelivery.Value2).ToString("d")));
             }
 
-
             if (!MyUtility.Check.Empty(this.txtSpStart.Text))
             {
                 sqlCmd.Append($"AND OrderID >='{this.txtSpStart.Text}'");
@@ -295,7 +290,7 @@ from PackData pd");
 
                     foreach (DataRow currentRow in this.detailData.Rows)
                     {
-                        if (currentRow.RowState!= DataRowState.Deleted)
+                        if (currentRow.RowState != DataRowState.Deleted)
                         {
                             allPackID.Append("'" + MyUtility.Convert.GetString(currentRow["ID"]) + "',");
                         }
@@ -356,8 +351,7 @@ and a.OrderID = b.OrderID", allPackID.ToString().Substring(0, allPackID.Length -
 
                     if (MyUtility.Convert.GetString(this.masterData["ShipModeID"]) == "A/P" ||
                         MyUtility.Convert.GetString(this.masterData["ShipModeID"]) == "S-A/P" ||
-                        MyUtility.Convert.GetString(this.masterData["ShipModeID"]) == "E/P"
-                        )
+                        MyUtility.Convert.GetString(this.masterData["ShipModeID"]) == "E/P")
                     {
                         DataTable tmp = dr.CopyToDataTable();
                         string sqlcmd = $@"

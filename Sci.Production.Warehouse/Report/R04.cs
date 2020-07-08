@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -14,53 +11,57 @@ namespace Sci.Production.Warehouse
 {
     public partial class R04 : Sci.Win.Tems.PrintForm
     {
-        //string reason, factory, brand, mdivisionid, operation;
-        //int ordertypeindex;
-        string  factory, brand, mdivisionid, operation, fabricType;
-    
-        DateTime? cfmdate1, cfmdate2;
+        // string reason, factory, brand, mdivisionid, operation;
+        // int ordertypeindex;
+        string factory, brand, mdivisionid, operation, fabricType;
+
+        DateTime? cfmdate1;
+        DateTime? cfmdate2;
         DataTable printData;
         StringBuilder condition = new StringBuilder();
 
         public R04(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            txtMdivision.Text = Sci.Env.User.Keyword;
+            this.InitializeComponent();
+            this.txtMdivision.Text = Sci.Env.User.Keyword;
             this.comboFabricType.Type = "Pms_FabricType";
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if ((MyUtility.Check.Empty(dateCFMDate.Value1) && MyUtility.Check.Empty(dateCFMDate.Value2)) 
+            if ((MyUtility.Check.Empty(this.dateCFMDate.Value1) && MyUtility.Check.Empty(this.dateCFMDate.Value2))
                 &&
-                (MyUtility.Check.Empty(this.txtSpStart.Text) && MyUtility.Check.Empty(this.txtSpStart.Text))
-                )
+                (MyUtility.Check.Empty(this.txtSpStart.Text) && MyUtility.Check.Empty(this.txtSpStart.Text)))
             {
                 MyUtility.Msg.WarningBox("< CFM date > and < Bulk SP > can't be all empty!!");
                 return false;
             }
 
-            cfmdate1 = dateCFMDate.Value1;
-            cfmdate2 = dateCFMDate.Value2;
-            mdivisionid = txtMdivision.Text;
-            factory = txtfactory.Text;
-            brand = txtbrand.Text;
-            operation = txtdropdownlistOperation.SelectedValue.ToString();
-            fabricType = comboFabricType.SelectedValue.ToString();
+            this.cfmdate1 = this.dateCFMDate.Value1;
+            this.cfmdate2 = this.dateCFMDate.Value2;
+            this.mdivisionid = this.txtMdivision.Text;
+            this.factory = this.txtfactory.Text;
+            this.brand = this.txtbrand.Text;
+            this.operation = this.txtdropdownlistOperation.SelectedValue.ToString();
+            this.fabricType = this.comboFabricType.SelectedValue.ToString();
 
-            condition.Clear();
-            condition.Append(string.Format(@"Issue Date : {0} ~ {1}" + "   "
-                , Convert.ToDateTime(cfmdate1).ToString("d")
-                , Convert.ToDateTime(cfmdate2).ToString("d")));
-            condition.Append(string.Format(@"M : {0}" + "   "
-                , mdivisionid));
-            condition.Append(string.Format(@"Factory : {0}" + "   "
-                , factory));
-            condition.Append(string.Format(@"Brand : {0}"
-                , brand));
-            condition.Append(string.Format(@"Operation : {0}" + "   ", operation));
+            this.condition.Clear();
+            this.condition.Append(string.Format(
+                @"Issue Date : {0} ~ {1}" + "   ",
+                Convert.ToDateTime(this.cfmdate1).ToString("d"),
+                Convert.ToDateTime(this.cfmdate2).ToString("d")));
+            this.condition.Append(string.Format(
+                @"M : {0}" + "   ",
+                this.mdivisionid));
+            this.condition.Append(string.Format(
+                @"Factory : {0}" + "   ",
+                this.factory));
+            this.condition.Append(string.Format(
+                @"Brand : {0}",
+                this.brand));
+            this.condition.Append(string.Format(@"Operation : {0}" + "   ", this.operation));
 
             return base.ValidateInput();
         }
@@ -183,48 +184,52 @@ OUTER APPLY(
 	WHERE POID=a.InventoryPOID  AND SEQ1=a.InventorySeq1 AND SEQ2=a.InventorySeq2
 )InventoryInv
 
-where 1=1 "
- ));
-            string whereStr = "";
+where 1=1 "));
+            string whereStr = string.Empty;
 
-            if(!MyUtility.Check.Empty(cfmdate1))
-                whereStr += string.Format(" AND '{0} 00:00:00.000' <= a.ConfirmDate ", Convert.ToDateTime(cfmdate1).ToString("d"));
-            if(!MyUtility.Check.Empty(cfmdate2))
-                whereStr += string.Format(" AND a.ConfirmDate <= '{0} 23:59:59.999' ", Convert.ToDateTime(cfmdate2).ToString("d"));
+            if (!MyUtility.Check.Empty(this.cfmdate1))
+            {
+                whereStr += string.Format(" AND '{0} 00:00:00.000' <= a.ConfirmDate ", Convert.ToDateTime(this.cfmdate1).ToString("d"));
+            }
+
+            if (!MyUtility.Check.Empty(this.cfmdate2))
+            {
+                whereStr += string.Format(" AND a.ConfirmDate <= '{0} 23:59:59.999' ", Convert.ToDateTime(this.cfmdate2).ToString("d"));
+            }
 
             sqlCmd.Append(whereStr);
             #region --- 條件組合  ---
 
-            if (!MyUtility.Check.Empty(mdivisionid))
+            if (!MyUtility.Check.Empty(this.mdivisionid))
             {
                 sqlCmd.Append(" AND factory.MDivisionid = @mdivision");
-                sp_mdivision.Value = mdivisionid;
+                sp_mdivision.Value = this.mdivisionid;
                 cmds.Add(sp_mdivision);
             }
 
-            if (!MyUtility.Check.Empty(factory))
+            if (!MyUtility.Check.Empty(this.factory))
             {
                 sqlCmd.Append(" and (orders.FactoryID  =  @factory or a.TransferFactory =  @factory)");
-                sp_factory.Value = factory;
+                sp_factory.Value = this.factory;
                 cmds.Add(sp_factory);
             }
 
-            if (!MyUtility.Check.Empty(brand))
+            if (!MyUtility.Check.Empty(this.brand))
             {
                 sqlCmd.Append(" and A.Brandid = @brand");
-                sp_brand.Value = brand;
+                sp_brand.Value = this.brand;
                 cmds.Add(sp_brand);
             }
 
-            if (!MyUtility.Check.Empty(operation))
+            if (!MyUtility.Check.Empty(this.operation))
             {
-                sqlCmd.Append(string.Format(@" AND a.type = '{0}'", operation.TrimEnd()));
+                sqlCmd.Append(string.Format(@" AND a.type = '{0}'", this.operation.TrimEnd()));
             }
 
-            //如果Type = 2 或 6 ，會抓Seq70 Poid這個欄位放在 [bulkSP] 顯示
+            // 如果Type = 2 或 6 ，會抓Seq70 Poid這個欄位放在 [bulkSP] 顯示
             if (!MyUtility.Check.Empty(this.txtSpStart.Text))
             {
-                if (operation.TrimEnd() == "2" || operation.TrimEnd() == "6")
+                if (this.operation.TrimEnd() == "2" || this.operation.TrimEnd() == "6")
                 {
                     sqlCmd.Append($@" AND a.seq70poid >= '{this.txtSpStart.Text}' ");
                 }
@@ -236,7 +241,7 @@ where 1=1 "
 
             if (!MyUtility.Check.Empty(this.txtSpEnd.Text))
             {
-                if (operation.TrimEnd() == "2" || operation.TrimEnd() == "6")
+                if (this.operation.TrimEnd() == "2" || this.operation.TrimEnd() == "6")
                 {
                     sqlCmd.Append($@"AND a.seq70poid <= '{this.txtSpEnd.Text}' ");
                 }
@@ -246,19 +251,19 @@ where 1=1 "
                 }
             }
 
-
-            if (!MyUtility.Check.Empty(fabricType))
+            if (!MyUtility.Check.Empty(this.fabricType))
             {
-                sqlCmd.Append($@"AND a.FabricType IN ({fabricType}) ");
+                sqlCmd.Append($@"AND a.FabricType IN ({this.fabricType}) ");
             }
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
@@ -266,17 +271,18 @@ where 1=1 "
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R04.xltx"); //預先開啟excel app            
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R04.xltx"); // 預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.Cells[2, 1] = condition.ToString();   // 條件字串寫入excel
-            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R04.xltx", 3, true, null, objApp);      // 將datatable copy to excel
+            objSheets.Cells[2, 1] = this.condition.ToString();   // 條件字串寫入excel
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Warehouse_R04.xltx", 3, true, null, objApp);      // 將datatable copy to excel
 
             Marshal.ReleaseComObject(objSheets);
             return true;
@@ -284,9 +290,9 @@ where 1=1 "
 
         private void txtMdivision_Validated(object sender, EventArgs e)
         {
-            if (!txtMdivision.Text.EqualString(txtMdivision.OldValue))
+            if (!this.txtMdivision.Text.EqualString(this.txtMdivision.OldValue))
             {
-                this.txtfactory.Text = "";
+                this.txtfactory.Text = string.Empty;
             }
         }
     }

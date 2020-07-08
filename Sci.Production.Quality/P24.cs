@@ -5,7 +5,6 @@ using Sci.Production.Class;
 using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
@@ -18,13 +17,13 @@ using System.Windows.Forms;
 namespace Sci.Production.Quality
 {
     public partial class P24 : Sci.Win.Tems.QueryForm
-    {   
+    {
         private DataTable selectDataTable;
 
         public P24(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         protected override void OnFormLoaded()
@@ -135,21 +134,21 @@ and p2.DisposeFromClog= 0
 and (po.Status ='New' or po.Status is null)
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 order by p2.ID,p2.CTNStartNo";
-            #endregion            
-            DualResult result = DBProxy.Current.Select("", strCmd, listSQLParameter, out selectDataTable);
+            #endregion
+            DualResult result = DBProxy.Current.Select(string.Empty, strCmd, listSQLParameter, out this.selectDataTable);
 
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.ToString());
             }
-            else if (selectDataTable.Rows.Count < 1)
+            else if (this.selectDataTable.Rows.Count < 1)
             {
                 this.listControlBindingSource1.DataSource = null;
                 MyUtility.Msg.InfoBox("Data not found !");
             }
             else
             {
-                this.listControlBindingSource1.DataSource = selectDataTable;
+                this.listControlBindingSource1.DataSource = this.selectDataTable;
             }
 
             this.HideWaitMessage();
@@ -157,7 +156,7 @@ order by p2.ID,p2.CTNStartNo";
 
         private void btnFind_Click(object sender, EventArgs e)
         {
-            Find();
+            this.Find();
         }
 
         private void btnImportFromBarcode_Click(object sender, EventArgs e)
@@ -201,7 +200,7 @@ from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c
                 using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, System.Text.Encoding.UTF8))
                 {
                     DataRow seekData;
-                    DataTable notFoundErr = selectDataTable.Clone();
+                    DataTable notFoundErr = this.selectDataTable.Clone();
                     int insertCount = 0;
                     string line;
                     while ((line = reader.ReadLine()) != null)
@@ -216,7 +215,7 @@ from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c
                         }
                         else
                         {
-                            DataRow dr = selectDataTable.NewRow();
+                            DataRow dr = this.selectDataTable.NewRow();
 
                             // PackingID+CTN# 是連起來的ex: MA2PG180105821 前13碼是PackID 13碼後都是CTN#
                             if (sl[1].Length >= 13)
@@ -281,7 +280,7 @@ order by p2.ID,p2.CTNStartNo
                                     dr["ScanQty"] = seekData["ScanQty"];
                                     dr["ScanName"] = seekData["ScanName"];
                                     dr["ScanEditDate"] = seekData["ScanEditDate"];
-                                    selectDataTable.Rows.Add(dr);
+                                    this.selectDataTable.Rows.Add(dr);
                                     insertCount++;
                                 }
                                 else
@@ -345,7 +344,7 @@ order by p2.ID,p2.CTNStartNo
                                         dr["ScanQty"] = seekData["ScanQty"];
                                         dr["ScanName"] = seekData["ScanName"];
                                         dr["ScanEditDate"] = seekData["ScanEditDate"];
-                                        selectDataTable.Rows.Add(dr);
+                                        this.selectDataTable.Rows.Add(dr);
                                         insertCount++;
                                     }
                                     else
@@ -398,7 +397,7 @@ and (po.Status ='New' or po.Status is null)
 and p2.CustCTN='{sl[1]}'
 order by p2.ID,p2.CTNStartNo
 ";
-                                if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                               if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {
                                     dr["selected"] = 1;
                                     dr["ID"] = seekData["ID"].ToString().Trim();
@@ -415,7 +414,7 @@ order by p2.ID,p2.CTNStartNo
                                     dr["ScanQty"] = seekData["ScanQty"];
                                     dr["ScanName"] = seekData["ScanName"];
                                     dr["ScanEditDate"] = seekData["ScanEditDate"];
-                                    selectDataTable.Rows.Add(dr);
+                                    this.selectDataTable.Rows.Add(dr);
                                     insertCount++;
                                 }
                                 else
@@ -469,6 +468,7 @@ order by p2.ID,p2.CTNStartNo
                 MyUtility.Msg.WarningBox("Please select data first!");
                 return;
             }
+
             this.ShowWaitMessage("Data Processing...");
             DataRow drSelect;
 
@@ -508,7 +508,7 @@ and p2.CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}' and p2.DisposeFromClog=
                         switch (dr["Returnto"].ToString())
                         {
                             // Clog
-                            case "Clog": 
+                            case "Clog":
                                 updateCmds.Add($@"
 update PackingList_Detail 
 set TransferCFADate = null
@@ -536,7 +536,7 @@ where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToStri
 and DisposeFromClog= 0
 ");
                                 string ScanQty = MyUtility.Check.Empty(dr["ScanQty"]) ? "0" : dr["ScanQty"].ToString();
-                                string ScanEditDate = MyUtility.Check.Empty(dr["ScanEditDate"]) ? "NULL" : "'"+Convert.ToDateTime(dr["ScanEditDate"]).ToAppDateTimeFormatString()+"'";
+                                string ScanEditDate = MyUtility.Check.Empty(dr["ScanEditDate"]) ? "NULL" : "'" + Convert.ToDateTime(dr["ScanEditDate"]).ToAppDateTimeFormatString() + "'";
 
                                 insertCmds.Add($@"
 
@@ -586,6 +586,7 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
                     }
                 }
             }
+
             // Update Orders的資料
             DataTable selectData = null;
             try
@@ -618,7 +619,6 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
 
                     if (updateCmds.Count > 0 && insertCmds.Count > 0)
                     {
-
                         DualResult prgResult = Prgs.UpdateOrdersCTN(selectData);
 
                         if (result1 && result2 && prgResult)
@@ -656,7 +656,6 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
                 MyUtility.Msg.WarningBox(warningmsg.ToString());
             }
 
-            
             this.HideWaitMessage();
         }
 
@@ -669,7 +668,7 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
         {
             this.grid.ValidateControl();
             string txtReturnTo = this.comboDropDownList1.SelectedValue.ToString();
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             int pos = this.listControlBindingSource1.Position;     // 記錄目前指標位置
 
             if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0)

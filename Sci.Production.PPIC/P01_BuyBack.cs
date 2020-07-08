@@ -1,18 +1,16 @@
 ﻿using Ict;
 using Ict.Win.UI;
 using Sci.Data;
-//using Sci.Trade.Class;
-//using Sci.Trade.Class.Commons;
-using Sci.Win.Tems;
+
+// using Sci.Trade.Class;
+// using Sci.Trade.Class.Commons;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using DataGridViewComboBoxColumn = Ict.Win.UI.DataGridViewComboBoxColumn;
-using DataGridViewTextBoxColumn = Ict.Win.UI.DataGridViewTextBoxColumn;
 using Widths = Ict.Win.Widths;
 
 namespace Sci.Production.PPIC
@@ -150,7 +148,8 @@ and oq.SizeCode in ({sizeCodeStr})";
                     DataTable data;
                     DBProxy.Current.Select(null, cmd, out data)
                     ;
-                    //data.AsEnumerable().Where(rr => spList.Contains(rr["ID"].ToString())
+
+                    // data.AsEnumerable().Where(rr => spList.Contains(rr["ID"].ToString())
                     //    && rr["ID"].ToString() != dr["ID"].ToString()).Delete();
                     foreach (var row in data.AsEnumerable().Where(rr => spList.Contains(rr["ID"].ToString())
                         && rr["ID"].ToString() != dr["ID"].ToString()))
@@ -565,12 +564,12 @@ where   obq.ID = '{this.ID}'
             var articleList = this.dtMain.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted)
             .GroupBy(rr => new
             {
-                article = rr["Article"].ToString()
+                article = rr["Article"].ToString(),
             })
             .Select(rr => new
             {
                 article = rr.Key.article,
-                sumAssign = rr.Sum(rrr => MyUtility.Convert.GetInt(rrr[sizecode + StrAssign]))
+                sumAssign = rr.Sum(rrr => MyUtility.Convert.GetInt(rrr[sizecode + StrAssign])),
             })
             .ToList();
 

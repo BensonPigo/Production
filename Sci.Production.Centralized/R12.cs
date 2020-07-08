@@ -102,8 +102,8 @@ namespace Sci.Production.Centralized
             {
                 sqlWheres.Add(string.Format(
                     "fe.PortArrival between '{0}' and '{1}' ",
-                   ((DateTime)this.dateShipDate1.Value).ToShortDateString(),
-                   ((DateTime)this.dateShipDate2.Value).ToShortDateString()));
+                    ((DateTime)this.dateShipDate1.Value).ToShortDateString(),
+                    ((DateTime)this.dateShipDate2.Value).ToShortDateString()));
 
                 ship_Date = true;
             }
@@ -112,8 +112,8 @@ namespace Sci.Production.Centralized
             {
                 sqlWheres.Add(string.Format(
                     "ShippingAP.ApvDate between '{0}' and '{1}' ",
-                   ((DateTime)this.dateApproveDate1.Value).ToShortDateString(),
-                   ((DateTime)this.dateApproveDate2.Value).ToShortDateString()));
+                    ((DateTime)this.dateApproveDate1.Value).ToShortDateString(),
+                    ((DateTime)this.dateApproveDate2.Value).ToShortDateString()));
 
                 approve_Date = true;
             }
@@ -346,8 +346,8 @@ from #data";
                 this.SetLoadingText(
                     string.Format(
                         "Load data from connection {0}/{1} ",
-                   i + 1,
-                   connectionString.Count));
+                        i + 1,
+                        connectionString.Count));
                 SqlConnection conn;
                 using (conn = new SqlConnection(conString))
                 {
@@ -427,8 +427,8 @@ order by Brand
 
                     listSummary = string.Format(
                         listSummary,
-                       string.Join(",", ftyAmt),
-                       string.Join(",", ftyList));
+                        string.Join(",", ftyAmt),
+                        string.Join(",", ftyList));
                     result = DBProxy.Current.SelectByConn(conn, listSummary, out this.dt_Tmp);
                     if (!result)
                     {
@@ -511,8 +511,8 @@ order by Brand
                 this.SetLoadingText(
                     string.Format(
                         "Load data from connection {0}/{1} ",
-                   i + 1,
-                   connectionString.Count));
+                        i + 1,
+                        connectionString.Count));
                 SqlConnection conn;
                 using (conn = new SqlConnection(conString))
                 {

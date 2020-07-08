@@ -51,7 +51,7 @@ namespace Sci.Production.Win
             this.act.ShortcutsEnabled = false;
             this.act.Size = new System.Drawing.Size(131, 23);
             this.act.TabIndex = 0;
-            this.act.Validating += new System.ComponentModel.CancelEventHandler(this.act_Validated);
+            this.act.Validating += new System.ComponentModel.CancelEventHandler(this.Act_Validated);
             // 
             // label1
             // 
@@ -133,7 +133,7 @@ namespace Sci.Production.Win
             this.comboBox2.Size = new System.Drawing.Size(131, 24);
             this.comboBox2.TabIndex = 97;
             this.comboBox2.Visible = false;
-            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.ComboBox2_SelectedIndexChanged);
             // 
             // label4
             // 

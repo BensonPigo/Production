@@ -280,7 +280,7 @@ order by ld.No, ld.GroupKey", masterID);
                             string sqlCmd = "select ID,Description from MachineType WITH (NOLOCK) where Junk = 0";
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,43", dr["MachineTypeID"].ToString())
                             {
-                                Width = 590
+                                Width = 590,
                             };
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
@@ -305,12 +305,12 @@ order by ld.No, ld.GroupKey", masterID);
                         System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
                         {
                             ParameterName = "@id",
-                            Value = e.FormattedValue.ToString()
+                            Value = e.FormattedValue.ToString(),
                         };
 
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
                         {
-                            sp1
+                            sp1,
                         };
                         string sqlCmd = "select ID from MachineType WITH (NOLOCK) where Junk = 0 and ID = @id";
                         DataTable machineData;
@@ -351,7 +351,7 @@ order by ld.No, ld.GroupKey", masterID);
 
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(this.EmployeeData, "ID,Name,Skill,SewingLineID,FactoryID", "10,18,16,2,5", dr["EmployeeID"].ToString(), headercaptions: "ID,Name,Skill,SewingLine,Factory")
                             {
-                                Width = 700
+                                Width = 700,
                             };
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
@@ -409,7 +409,7 @@ order by ld.No, ld.GroupKey", masterID);
 
                     Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Attachment"].ToString(), null, null, null)
                     {
-                        Width = 666
+                        Width = 666,
                     };
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -466,7 +466,7 @@ order by ld.No, ld.GroupKey", masterID);
 
                     Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Template"].ToString(), null, null, null)
                     {
-                        Width = 666
+                        Width = 666,
                     };
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -616,7 +616,7 @@ order by ld.No, ld.GroupKey", masterID);
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@factoryid", this.CurrentMaintain["FactoryID"].ToString());
             System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter
             {
-                ParameterName = "@id"
+                ParameterName = "@id",
             };
             if (iD != null)
             {
@@ -630,7 +630,7 @@ order by ld.No, ld.GroupKey", masterID);
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
             {
                 sp1,
-                sp2
+                sp2,
             };
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
@@ -1040,7 +1040,7 @@ WHERE Ukey={item["Ukey"]}
 
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "15,8,10,40,5,6", this.txtStyleID.Text, "Style#,Season,Brand,Description,CPU,Key", columndecimals: "0,0,0,0,3,0")
             {
-                Width = 838
+                Width = 838,
             };
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)

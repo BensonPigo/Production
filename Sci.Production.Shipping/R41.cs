@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 
@@ -78,7 +74,7 @@ namespace Sci.Production.Shipping
                 sqlCondition.Append(string.Format(" and v.VNContractID = '{0}'", this.contractNo));
             }
 
-            DualResult result, failResult;
+            DualResult result;
             if (this.type == "Import" || this.type == string.Empty)
             {
                 if (this.rdSummary.Checked)

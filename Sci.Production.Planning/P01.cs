@@ -17,6 +17,7 @@ namespace Sci.Production.Planning
         private bool firstTime = true;
         private bool data_overload = false;
         private string overload_date;
+
         /// <summary>
         /// P01
         /// </summary>
@@ -74,7 +75,8 @@ namespace Sci.Production.Planning
 
                 // 因為在x86 run 有記憶體限制，如果筆數超過12萬筆就加入時間條件add_date兩年內的
                 DataRow dr;
-                if (MyUtility.Check.Seek("select count(*),FORMAT(dateadd(YEAR,-2,DATEADD(DD, DATEDIFF(DD, 0, GETDATE()), 0)),'yyyy/MM/dd') from orders where " + this.DefaultFilter, out dr)) {
+                if (MyUtility.Check.Seek("select count(*),FORMAT(dateadd(YEAR,-2,DATEADD(DD, DATEDIFF(DD, 0, GETDATE()), 0)),'yyyy/MM/dd') from orders where " + this.DefaultFilter, out dr))
+                {
                     if ((int)dr[0] > 120000)
                     {
                         this.DefaultFilter = this.DefaultFilter + @" and AddDate >= dateadd(YEAR,-2,DATEADD(DD, DATEDIFF(DD, 0, GETDATE()), 0)) ";
@@ -101,7 +103,6 @@ namespace Sci.Production.Planning
             {
                 MyUtility.Msg.InfoBox(string.Format("Due to excessive data, data show nearly two years only(AddDate from {0}).\r\nFilter other Data, please use the LOCATE function.", this.overload_date));
             }
-
         }
 
         private void ComboxChange(object o, DataGridViewCellEventArgs e)
@@ -121,8 +122,8 @@ LEFT JOIN Style_Artwork_Quot QU WITH (NOLOCK) ON QU.Ukey = SA.Ukey
 INNER JOIN LocalSupp WITH (NOLOCK) ON LocalSupp.ID = QU.LocalSuppId
 WHERE OT.ARTWORKTYPEID = '{1}' 
 GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup",
-                                                this.CurrentDetailData["ID"],
-                                                this.CurrentDetailData["Artworktypeid"]);
+                            this.CurrentDetailData["ID"],
+                            this.CurrentDetailData["Artworktypeid"]);
                     dr["localsuppid"] = MyUtility.GetValue.Lookup(localSuppId, null);
                 }
 
@@ -201,9 +202,9 @@ WHERE PriceApv ='Y' AND MOCKUP IS NOT NULL
 AND ORDERS.ID = '{0}' 
 and SA.ArtworkTypeID ='{1}' 
 and qu.localsuppid = '{2}'  ",
-dr["ID"],
-dr["Artworktypeid"],
-dr["localsuppid"]);
+                        dr["ID"],
+                        dr["Artworktypeid"],
+                        dr["localsuppid"]);
                     DBProxy.Current.Select(null, mockup, out order_dt);
                     if (order_dt.Rows.Count > 0 && !MyUtility.Check.Empty(order_dt.Rows[0]["mockup"]))
                     {
@@ -378,9 +379,9 @@ begin
 	from LocalSupp l
 	where l.junk = 0 and l.ID = '{2}'
 end;",
-this.CurrentDetailData["ID"],
-this.CurrentDetailData["Artworktypeid"],
-e.FormattedValue);
+                            this.CurrentDetailData["ID"],
+                            this.CurrentDetailData["Artworktypeid"],
+                            e.FormattedValue);
                         DualResult result = DBProxy.Current.Exists(null, exists, null, out exist);
                         if (!exist)
                         {
@@ -508,8 +509,8 @@ e.FormattedValue);
                                                     WHERE PriceApv ='Y' AND MOCKUP IS NOT NULL AND OT.ID = '{0}' 
                                                         AND OT.ARTWORKTYPEID = '{1}' 
                                                     GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup",
-                                                    this.CurrentDetailData["ID"],
-                                                    this.CurrentDetailData["Artworktypeid"]);
+                    this.CurrentDetailData["ID"],
+                    this.CurrentDetailData["Artworktypeid"]);
                 DualResult result = DBProxy.Current.Select(null, suppidAndName, out dt);
                 if (dt.Rows.Count == 0)
                 {

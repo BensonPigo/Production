@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
@@ -196,7 +195,7 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')
 
             if (tmp_dt.Rows.Count > 0)
             {
-                this.numericBoxTTLCTN.Value =  MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalCTNQty)", string.Empty));
+                this.numericBoxTTLCTN.Value = MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalCTNQty)", string.Empty));
                 this.numericBoxTTLQTY.Value = MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalShipQty)", string.Empty));
                 this.numericBoxTTLCBM.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalCBM)", string.Empty)), 2);
                 this.numericBoxTTLGW.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(tmp_dt.Compute("Sum(TotalGW)", string.Empty)), 2);
@@ -226,7 +225,6 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')
             {
                 this.numericBoxAIRGW.Value = 0;
             }
-
         }
 
         /// <inheritdoc/>
@@ -425,14 +423,14 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')
             DataTable packingListDt = (DataTable)this.listControlBindingSource1.DataSource;
 
             // 避免ISP20181052的狀況發生，因此從修改PackingList的語法要跟GMTBooking綁在一起，分開作
-            //foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
-            //{
+            // foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
+            // {
             //    if (dr.RowState == DataRowState.Modified || dr.RowState == DataRowState.Added)
             //    {
             //        this.UpdatePLCmd(dr);
             //        continue;
             //    }
-            //}
+            // }
 
             // 未篩選過的packingList
             DataTable packingList_List = (DataTable)this.listControlBindingSource1.DataSource;
@@ -518,6 +516,7 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')
             if (this.updateCmds.Count != 0)
             {
                 DualResult result;
+
                 // 2018/11/09 Benson 加上Transaction
                 using (TransactionScope scope = new TransactionScope())
                 {
@@ -529,6 +528,7 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')
                             DualResult failResult = new DualResult(false, "Update fail!!\r\n" + result.ToString());
                             return failResult;
                         }
+
                         scope.Complete();
                     }
                     catch (Exception ex)
@@ -538,7 +538,6 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')
                         return failResult;
                     }
                 }
-
             }
 
             return Result.True;
@@ -1123,7 +1122,7 @@ GB#:{dr["ID"]},   Shipping Mode:{dr["ShipModeID"]}
             }
 
             bool edit = MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToLower().EqualString("new") && this.Perm.Edit;
-            P10_ContainerTruck callNextForm = new P10_ContainerTruck(edit, null, null, null, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), reload);
+            P10_ContainerTruck callNextForm = new P10_ContainerTruck(edit, null, null, null, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.reload);
             callNextForm.ShowDialog(this);
             this.OnDetailEntered();
             this.Refresh();

@@ -8,7 +8,6 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Sci.Data;
-using System.Transactions;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
 using Ict.Win.UI;

@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Sci.Data;
 using Sci.Win.UI;
 using System.Data.SqlClient;
 
@@ -24,29 +18,29 @@ namespace Sci.Production.Class
         [Description("是否要顯示 Junk 的資料")]
         public bool IssupportJunk
         {
-            get { return _IssupportJunk; }
-            set { _IssupportJunk = value; }
+            get { return this._IssupportJunk; }
+            set { this._IssupportJunk = value; }
         }
-        
+
         [Description("是否需要排除非同 MDivition 的資料")]
         public bool FilteMDivision
         {
-            get { return _FilteMDivision; }
-            set { _FilteMDivision = value; }
+            get { return this._FilteMDivision; }
+            set { this._FilteMDivision = value; }
         }
 
         [Description("是否只顯示 IsProduceFty 的資料")]
         public bool IsProduceFty
         {
-            get { return _IsProduceFty; }
-            set { _IsProduceFty = value; }
+            get { return this._IsProduceFty; }
+            set { this._IsProduceFty = value; }
         }
 
         [Description("M元件")]
         public Object MDivision
         {
-            get { return _MDivision; }
-            set { _MDivision = value; }
+            get { return this._MDivision; }
+            set { this._MDivision = value; }
         }
 
         /// <summary>
@@ -59,11 +53,12 @@ namespace Sci.Production.Class
         {
             get
             {
-                return _boolFtyGroupList;
+                return this._boolFtyGroupList;
             }
+
             set
             {
-                _boolFtyGroupList = value;
+                this._boolFtyGroupList = value;
             }
         }
 
@@ -75,29 +70,33 @@ namespace Sci.Production.Class
             #endregion
             #region SQL Filte
             List<string> listFilte = new List<string>();
-            if (!IssupportJunk)
+            if (!this.IssupportJunk)
             {
                 listFilte.Add("Junk = 0");
             }
-            if (IsProduceFty)
+
+            if (this.IsProduceFty)
             {
                 listFilte.Add("IsProduceFty = 1");
             }
-            if (FilteMDivision)
+
+            if (this.FilteMDivision)
             {
                 listSqlPar.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
                 listFilte.Add("MDivisionID = @MDivision");
             }
-            if (_MDivision != null && !MyUtility.Check.Empty(((Sci.Win.UI.TextBox)_MDivision).Text))
+
+            if (this._MDivision != null && !MyUtility.Check.Empty(((Sci.Win.UI.TextBox)this._MDivision).Text))
             {
-                listSqlPar.Add(new SqlParameter("@MDivision", ((Sci.Win.UI.TextBox)_MDivision).Text));
+                listSqlPar.Add(new SqlParameter("@MDivision", ((Sci.Win.UI.TextBox)this._MDivision).Text));
                 listFilte.Add("MDivisionID = @MDivision");
             }
             #endregion
             #region SQL CMD
+
             // 依boolFtyGroupList=true 顯示FtyGroup 反之顯示ID
             string strShowColumn = string.Empty;
-            if (boolFtyGroupList)
+            if (this.boolFtyGroupList)
             {
                 strShowColumn = "DISTINCT FtyGroup";
             }
@@ -106,15 +105,20 @@ namespace Sci.Production.Class
                 strShowColumn = "ID";
             }
 
-            string sqlcmd = string.Format(@"
+            string sqlcmd = string.Format(
+                @"
 Select {1} as Factory 
 from Production.dbo.Factory WITH (NOLOCK) 
 {0}
-order by FtyGroup", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : "", strShowColumn);
+order by FtyGroup", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : string.Empty, strShowColumn);
             #endregion
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, listSqlPar, "8", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.Text = item.GetSelectedString();
             this.ValidateText();
         }
@@ -130,24 +134,27 @@ order by FtyGroup", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\
             #endregion
             #region SQL Filte
             List<string> listFilte = new List<string>();
-            
-            if (!IssupportJunk)
+
+            if (!this.IssupportJunk)
             {
                 listFilte.Add("Junk = 0");
             }
-            if (IsProduceFty)
+
+            if (this.IsProduceFty)
             {
                 listFilte.Add("IsProduceFty = 1");
             }
-            if (FilteMDivision)
+
+            if (this.FilteMDivision)
             {
                 listFilte.Add("MDivisionID = @MDivision");
             }
             #endregion
             #region SQL CMD
+
             // 依boolFtyGroupList=true 顯示FtyGroup 反之顯示ID
             string strShowColumn = string.Empty;
-            if (boolFtyGroupList)
+            if (this.boolFtyGroupList)
             {
                 strShowColumn = "DISTINCT FtyGroup";
                 listFilte.Add("FtyGroup = @str");
@@ -158,16 +165,17 @@ order by FtyGroup", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\
                 listFilte.Add("id = @str");
             }
 
-            string sqlcmd = string.Format(@"
+            string sqlcmd = string.Format(
+                @"
 Select {1}
 from Production.dbo.Factory WITH (NOLOCK) 
-{0}", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : "", strShowColumn);
+{0}", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : string.Empty, strShowColumn);
             #endregion
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
                 if (MyUtility.Check.Seek(sqlcmd, listSqlPar) == false)
                 {
-                    this.Text = "";
+                    this.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Factory : {0} > not found!!!", str));
                     return;
@@ -181,4 +189,3 @@ from Production.dbo.Factory WITH (NOLOCK)
         }
     }
 }
-

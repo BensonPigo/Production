@@ -2,11 +2,8 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Linq;
 using Sci.Utility.Excel;
@@ -572,7 +569,7 @@ select DISTINCT ID,ETD from #GarmentInvoice";
                     result = DBProxy.Current.SelectByConn(
                         conn,
                         sqlcmd,
-out dtGMTBooking);
+                        out dtGMTBooking);
                     if (!result)
                     {
                         return result;

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
@@ -25,28 +22,26 @@ namespace Sci.Production.Cutting
         private string strCutCell2;
         private string strCuttingSPNo;
 
-
         private DataTable printData;
 
         public R09(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.EditMode = true;
         }
 
         protected override bool ValidateInput()
         {
-            strM = this.txtMdivision.Text;
-            strFty = this.txtfactory.Text;
-            dateEstCut1 = this.dateEstCutDate.HasValue1 ? this.dateEstCutDate.Value1.Value.ToShortDateString() : string.Empty;
-            dateEstCut2 = this.dateEstCutDate.HasValue2 ? this.dateEstCutDate.Value2.Value.ToShortDateString() : string.Empty;
-            strSpreadingNo1 = this.txtSpreadingNo1.Text;
-            strSpreadingNo2 = this.txtSpreadingNo2.Text;
-            strCutCell1 = this.txtCutCell1.Text;
-            strCutCell2 = this.txtCutCell2.Text;
-            strCuttingSPNo = this.txtCuttingSP.Text;
-
+            this.strM = this.txtMdivision.Text;
+            this.strFty = this.txtfactory.Text;
+            this.dateEstCut1 = this.dateEstCutDate.HasValue1 ? this.dateEstCutDate.Value1.Value.ToShortDateString() : string.Empty;
+            this.dateEstCut2 = this.dateEstCutDate.HasValue2 ? this.dateEstCutDate.Value2.Value.ToShortDateString() : string.Empty;
+            this.strSpreadingNo1 = this.txtSpreadingNo1.Text;
+            this.strSpreadingNo2 = this.txtSpreadingNo2.Text;
+            this.strCutCell1 = this.txtCutCell1.Text;
+            this.strCutCell2 = this.txtCutCell2.Text;
+            this.strCuttingSPNo = this.txtCuttingSP.Text;
 
             return base.ValidateInput();
         }
@@ -57,44 +52,44 @@ namespace Sci.Production.Cutting
             StringBuilder sqlWhere = new StringBuilder();
             #region Filter 條件字串
 
-            if (!MyUtility.Check.Empty(strM))
+            if (!MyUtility.Check.Empty(this.strM))
             {
-                sqlWhere.Append($" and w.MdivisionID = '{strM}'");
+                sqlWhere.Append($" and w.MdivisionID = '{this.strM}'");
             }
 
-            if (!MyUtility.Check.Empty(strFty))
+            if (!MyUtility.Check.Empty(this.strFty))
             {
-                sqlWhere.Append($" and w.FactoryID = '{strFty}'");
+                sqlWhere.Append($" and w.FactoryID = '{this.strFty}'");
             }
 
-            if (!MyUtility.Check.Empty(dateEstCut1) && !MyUtility.Check.Empty(dateEstCut2))
+            if (!MyUtility.Check.Empty(this.dateEstCut1) && !MyUtility.Check.Empty(this.dateEstCut2))
             {
-                sqlWhere.Append($@" and w.EstCutDate between '{dateEstCut1}' and '{dateEstCut2}'");
+                sqlWhere.Append($@" and w.EstCutDate between '{this.dateEstCut1}' and '{this.dateEstCut2}'");
             }
 
-            if (!MyUtility.Check.Empty(strSpreadingNo1))
+            if (!MyUtility.Check.Empty(this.strSpreadingNo1))
             {
-                sqlWhere.Append($@" and w.SpreadingNoID >='{strSpreadingNo1}'");
+                sqlWhere.Append($@" and w.SpreadingNoID >='{this.strSpreadingNo1}'");
             }
 
-            if (!MyUtility.Check.Empty(strSpreadingNo2))
+            if (!MyUtility.Check.Empty(this.strSpreadingNo2))
             {
-                sqlWhere.Append($@" and w.SpreadingNoID <='{strSpreadingNo2}'");
+                sqlWhere.Append($@" and w.SpreadingNoID <='{this.strSpreadingNo2}'");
             }
 
-            if (!MyUtility.Check.Empty(strCutCell1))
+            if (!MyUtility.Check.Empty(this.strCutCell1))
             {
-                sqlWhere.Append($@" and w.CutCellid >='{strCutCell1}'");
+                sqlWhere.Append($@" and w.CutCellid >='{this.strCutCell1}'");
             }
 
-            if (!MyUtility.Check.Empty(strCutCell2))
+            if (!MyUtility.Check.Empty(this.strCutCell2))
             {
-                sqlWhere.Append($@" and w.CutCellid <='{strCutCell2}'");
+                sqlWhere.Append($@" and w.CutCellid <='{this.strCutCell2}'");
             }
 
-            if (!MyUtility.Check.Empty(strCuttingSPNo))
+            if (!MyUtility.Check.Empty(this.strCuttingSPNo))
             {
-                sqlWhere.Append($@" and w.id ='{strCuttingSPNo}'");
+                sqlWhere.Append($@" and w.id ='{this.strCuttingSPNo}'");
             }
 
             #endregion
@@ -422,9 +417,7 @@ drop table #tmp
 
 ");
 
-           
-
-            DualResult result = DBProxy.Current.Select(null, strSqlCmd.ToString(), out printData);
+            DualResult result = DBProxy.Current.Select(null, strSqlCmd.ToString(), out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -437,9 +430,9 @@ drop table #tmp
         protected override bool OnToExcel(ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -452,6 +445,7 @@ drop table #tmp
             com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
             objApp.Visible = true;
             objApp.Columns.AutoFit();
+
             // 調整欄寬
             worksheet.Columns["O:O"].ColumnWidth = 14;
             worksheet.Columns["P:P"].ColumnWidth = 25;

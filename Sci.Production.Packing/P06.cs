@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
@@ -645,7 +644,7 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty",
             }
             else
             {
-                if (!PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), ""))
+                if (!PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), string.Empty))
                 {
                     return false;
                 }

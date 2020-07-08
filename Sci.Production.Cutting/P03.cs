@@ -2,17 +2,13 @@
 using Ict.Win;
 using Sci.Production.Class;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Sci.Win;
 using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
-using Ict.Data;
 using System.Linq;
 
 namespace Sci.Production.Cutting
@@ -23,46 +19,46 @@ namespace Sci.Production.Cutting
         Ict.Win.UI.DataGridViewDateBoxColumn col_estcutdate;
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
-        
+
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            gridDetail.DataSource = gridbs;
-            gridbs.DataSource = detailTb;
-            setDetailGrid();
-            txtCell1.MDivisionID = keyWord;
+            this.InitializeComponent();
+            this.gridDetail.DataSource = this.gridbs;
+            this.gridbs.DataSource = this.detailTb;
+            this.setDetailGrid();
+            this.txtCell1.MDivisionID = this.keyWord;
         }
 
         Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNo;
         Ict.Win.UI.DataGridViewTextBoxColumn col_cutcell;
+
         public void setDetailGrid()
         {
-            this.gridDetail.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridDetail.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             DataGridViewGeneratorTextColumnSettings col_cutreason = cellcutreason.GetGridCell("RC");
             DataGridViewGeneratorCheckBoxColumnSettings col_check = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorTextColumnSettings col_Shift = cellTextDropDownList.GetGridCell("Pms_WorkOrderShift");
 
-
             #region set grid
-            Helper.Controls.Grid.Generator(this.gridDetail)
-            .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: col_check)
+            this.Helper.Controls.Grid.Generator(this.gridDetail)
+            .CheckBox("Sel", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: col_check)
             .Text("factoryID", header: "Factory", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("ID", header: "Cutting SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: true)
             .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2), iseditingreadonly: true)
             .Date("estcutdate", header: "Org.Est.\nCut Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Date("newestcutdate", header: "New Est.\nCut Date", width: Widths.AnsiChars(10)).Get(out col_estcutdate)
+            .Date("newestcutdate", header: "New Est.\nCut Date", width: Widths.AnsiChars(10)).Get(out this.col_estcutdate)
             .Date("sewinline", header: "Sewing inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Cutno", header: "Cut#", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("SpreadingNoID", header: "Org.\nSpreading No", width: Widths.AnsiChars(2), iseditingreadonly: true)
-            .Text("NewSpreadingNoID", header: "New\nSpreading No", width: Widths.AnsiChars(2)).Get(out col_SpreadingNo)
+            .Text("NewSpreadingNoID", header: "New\nSpreading No", width: Widths.AnsiChars(2)).Get(out this.col_SpreadingNo)
             .Text("Shift", header: "Org.\nShift", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("NewShift", header: "New\nShift", width: Widths.AnsiChars(5), settings: col_Shift)
             .Text("Cutcellid", header: "Org.\nCut Cell", width: Widths.AnsiChars(2), iseditingreadonly: true)
-            .Text("NewCutcellid", header: "New\nCut Cell", width: Widths.AnsiChars(2)).Get(out col_cutcell)
+            .Text("NewCutcellid", header: "New\nCut Cell", width: Widths.AnsiChars(2)).Get(out this.col_cutcell)
             .Text("CutReasonid", header: "Reason", width: Widths.AnsiChars(6), settings: col_cutreason)
             .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("Fabriccombo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
@@ -78,10 +74,14 @@ namespace Sci.Production.Cutting
             this.gridDetail.Columns["NewCutcellid"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
 
-            col_estcutdate.CellValidating += (s, e) =>
+            this.col_estcutdate.CellValidating += (s, e) =>
             {
-                if (MyUtility.Check.Empty(e.FormattedValue)) return;
-                DataRow dr = gridDetail.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridDetail.GetDataRow(e.RowIndex);
                 if ((DateTime)e.FormattedValue < DateTime.Today)
                 {
                     MyUtility.Msg.WarningBox("<Est Cut Date> can not early today.");
@@ -94,99 +94,136 @@ namespace Sci.Production.Cutting
                     dr.EndEdit();
                 }
             };
-            col_estcutdate.CellFormatting += (s, e) =>
+            this.col_estcutdate.CellFormatting += (s, e) =>
             {
                 e.CellStyle.BackColor = Color.Pink;
-                e.CellStyle.ForeColor = Color.Red; 
+                e.CellStyle.ForeColor = Color.Red;
             };
-            changeeditable();
+            this.changeeditable();
         }
 
-        private void changeeditable()// Grid Cell 物件設定
+        private void changeeditable() // Grid Cell 物件設定
         {
             #region col_SpreadingNo
-            col_SpreadingNo.EditingMouseDown += (s, e) =>
+            this.col_SpreadingNo.EditingMouseDown += (s, e) =>
             {
                 if (e.Button == MouseButtons.Right)
                 {
-                    // Parent form 若是非編輯狀態就 return 
-                    DataRow dr = gridDetail.GetDataRow(e.RowIndex);
+                    // Parent form 若是非編輯狀態就 return
+                    DataRow dr = this.gridDetail.GetDataRow(e.RowIndex);
                     SelectItem sele;
                     DataTable SpreadingNoTb;
-                    DBProxy.Current.Select(null, $"Select id from SpreadingNo WITH (NOLOCK) where mDivisionid = '{keyWord}' and junk=0", out SpreadingNoTb);
+                    DBProxy.Current.Select(null, $"Select id from SpreadingNo WITH (NOLOCK) where mDivisionid = '{this.keyWord}' and junk=0", out SpreadingNoTb);
                     sele = new SelectItem(SpreadingNoTb, "ID", "10@400,300", dr["NewSpreadingNoID"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     dr["NewSpreadingNoID"] = sele.GetSelectedString();
                     dr.EndEdit();
                 }
             };
-            col_SpreadingNo.CellValidating += (s, e) =>
+            this.col_SpreadingNo.CellValidating += (s, e) =>
             {
-                if (!this.EditMode) { return; }
-                if (e.RowIndex == -1) return;
-                DataRow dr = gridDetail.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridDetail.GetDataRow(e.RowIndex);
 
                 // 空白不檢查
-                if (e.FormattedValue.ToString().Empty()) return;
+                if (e.FormattedValue.ToString().Empty())
+                {
+                    return;
+                }
+
                 string oldvalue = dr["NewSpreadingNoID"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (oldvalue == newvalue) return;
+                if (oldvalue == newvalue)
+                {
+                    return;
+                }
 
                 DataRow SpreadingNodr;
-                string sqlSpreading = $"Select 1 from SpreadingNo WITH (NOLOCK) where mDivisionid = '{keyWord}' and  id = '{newvalue}' and junk=0";
+                string sqlSpreading = $"Select 1 from SpreadingNo WITH (NOLOCK) where mDivisionid = '{this.keyWord}' and  id = '{newvalue}' and junk=0";
                 if (!MyUtility.Check.Seek(sqlSpreading, out SpreadingNodr))
                 {
-                    dr["NewSpreadingNoID"] = "";
+                    dr["NewSpreadingNoID"] = string.Empty;
                     dr.EndEdit();
                     MyUtility.Msg.WarningBox(string.Format("<SpreadingNo> : {0} data not found!", newvalue));
                     return;
                 }
 
                 dr["NewSpreadingNoID"] = newvalue;
-                
+
                 dr.EndEdit();
             };
             #endregion
             #region cutcell
-            col_cutcell.EditingMouseDown += (s, e) =>
+            this.col_cutcell.EditingMouseDown += (s, e) =>
             {
                 if (e.Button == MouseButtons.Right)
                 {
-                    // Parent form 若是非編輯狀態就 return 
-                    DataRow dr = gridDetail.GetDataRow(e.RowIndex);
+                    // Parent form 若是非編輯狀態就 return
+                    DataRow dr = this.gridDetail.GetDataRow(e.RowIndex);
                     SelectItem sele;
                     DataTable cellTb;
-                    DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", keyWord), out cellTb);
+                    DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", this.keyWord), out cellTb);
                     sele = new SelectItem(cellTb, "ID", "10@300,300", dr["CutCellid"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     dr["NewCutcellid"] = sele.GetSelectedString();
-                    dr.EndEdit();                    
+                    dr.EndEdit();
                 }
             };
-            col_cutcell.CellValidating += (s, e) =>
+            this.col_cutcell.CellValidating += (s, e) =>
             {
-                if (!this.EditMode) { return; }
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
                 // 右鍵彈出功能
-                if (e.RowIndex == -1) return;
-                DataRow dr = gridDetail.GetDataRow(e.RowIndex);
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridDetail.GetDataRow(e.RowIndex);
 
                 // 空白不檢查
-                if (e.FormattedValue.ToString().Empty()) return;
+                if (e.FormattedValue.ToString().Empty())
+                {
+                    return;
+                }
 
                 string oldvalue = dr["NewCutcellid"].ToString();
                 string newvalue = e.FormattedValue.ToString();
 
-                if (oldvalue == newvalue) return;
+                if (oldvalue == newvalue)
+                {
+                    return;
+                }
 
                 DataTable cellTb;
-                DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", keyWord), out cellTb);
+                DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", this.keyWord), out cellTb);
 
                 DataRow[] seledr = cellTb.Select(string.Format("ID='{0}'", newvalue));
                 if (seledr.Length == 0)
                 {
-                    dr["NewCutcellid"] = "";
+                    dr["NewCutcellid"] = string.Empty;
                     dr.EndEdit();
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Cell> : {0} data not found!", newvalue));
@@ -198,6 +235,7 @@ namespace Sci.Production.Cutting
             };
             #endregion
         }
+
         private void btnQuery_Click(object sender, EventArgs e)
         {
             this.Queryable();
@@ -205,19 +243,24 @@ namespace Sci.Production.Cutting
 
         private void Queryable()
         {
-            if (detailTb != null) detailTb.Clear();
-            string cutsp = txtCuttingSPNo.Text;
-            string sp = txtSPNo.Text;
-            string seq = txtSEQ.Text;
-            string estcutdate = dateEstCutDate.Text;
-            string sewinginline = dateSewingInline.Text;
-            string cutref = txtCutRefNo.Text;
-            string cutplanID = txtCutplanID.Text;
-            if (MyUtility.Check.Empty(cutsp) && MyUtility.Check.Empty(sp) && MyUtility.Check.Empty(dateEstCutDate.Value) && MyUtility.Check.Empty(cutplanID))
+            if (this.detailTb != null)
+            {
+                this.detailTb.Clear();
+            }
+
+            string cutsp = this.txtCuttingSPNo.Text;
+            string sp = this.txtSPNo.Text;
+            string seq = this.txtSEQ.Text;
+            string estcutdate = this.dateEstCutDate.Text;
+            string sewinginline = this.dateSewingInline.Text;
+            string cutref = this.txtCutRefNo.Text;
+            string cutplanID = this.txtCutplanID.Text;
+            if (MyUtility.Check.Empty(cutsp) && MyUtility.Check.Empty(sp) && MyUtility.Check.Empty(this.dateEstCutDate.Value) && MyUtility.Check.Empty(cutplanID))
             {
                 MyUtility.Msg.WarningBox("You must be entry conditions <Cutting SP#> or <SP#> or <Est. Cut Date> or <CutplanID>");
                 return;
             }
+
             string sql = @"
 Select * 
 From
@@ -257,90 +300,135 @@ From
         ,NewSpreadingNoID=''
         ,[NewShift]=''
     from Workorder a";
-            string where = string.Format(" Where cutplanid!='' and MDivisionId = '{0}'", keyWord);
-            if (!MyUtility.Check.Empty(cutsp)) where = where + string.Format(" and id='{0}'", cutsp);
-            if (!MyUtility.Check.Empty(sp)) where = where + string.Format(" and OrderID='{0}'", sp);
-            if (!MyUtility.Check.Empty(seq)) where = where + string.Format(" and Seq1+SEQ2='{0}'", seq);
-            if (!MyUtility.Check.Empty(dateEstCutDate.Value)) where = where + string.Format("and estcutdate='{0}'", estcutdate);
-            if (!MyUtility.Check.Empty(cutref)) where = where + string.Format(" and cutref='{0}'", cutref);
-            if (!MyUtility.Check.Empty(txtfactoryByM.Text)) where = where + string.Format(" and a.Factoryid='{0}'", txtfactoryByM.Text);
-            if (!MyUtility.Check.Empty(cutplanID)) where = where + string.Format(" and a.CutplanID='{0}'", cutplanID);
+            string where = string.Format(" Where cutplanid!='' and MDivisionId = '{0}'", this.keyWord);
+            if (!MyUtility.Check.Empty(cutsp))
+            {
+                where = where + string.Format(" and id='{0}'", cutsp);
+            }
+
+            if (!MyUtility.Check.Empty(sp))
+            {
+                where = where + string.Format(" and OrderID='{0}'", sp);
+            }
+
+            if (!MyUtility.Check.Empty(seq))
+            {
+                where = where + string.Format(" and Seq1+SEQ2='{0}'", seq);
+            }
+
+            if (!MyUtility.Check.Empty(this.dateEstCutDate.Value))
+            {
+                where = where + string.Format("and estcutdate='{0}'", estcutdate);
+            }
+
+            if (!MyUtility.Check.Empty(cutref))
+            {
+                where = where + string.Format(" and cutref='{0}'", cutref);
+            }
+
+            if (!MyUtility.Check.Empty(this.txtfactoryByM.Text))
+            {
+                where = where + string.Format(" and a.Factoryid='{0}'", this.txtfactoryByM.Text);
+            }
+
+            if (!MyUtility.Check.Empty(cutplanID))
+            {
+                where = where + string.Format(" and a.CutplanID='{0}'", cutplanID);
+            }
 
             sql = sql + where + " ) as #tmp ";
             where = " Where 1=1 and actcutdate =''";
-            if (!MyUtility.Check.Empty(dateSewingInline.Value)) where = where + string.Format(" and Sewinline='{0}'", sewinginline);
+            if (!MyUtility.Check.Empty(this.dateSewingInline.Value))
+            {
+                where = where + string.Format(" and Sewinline='{0}'", sewinginline);
+            }
+
             sql = sql + where;
-            DualResult dResult = DBProxy.Current.Select(null, sql, out detailTb);
-            if (detailTb == null || detailTb.Rows.Count == 0)
+            DualResult dResult = DBProxy.Current.Select(null, sql, out this.detailTb);
+            if (this.detailTb == null || this.detailTb.Rows.Count == 0)
             {
                 MyUtility.Msg.ErrorBox("Data not found!!");
                 return;
             }
-            gridDetail.DataSource = gridbs;
-            gridbs.DataSource = detailTb;
+
+            this.gridDetail.DataSource = this.gridbs;
+            this.gridbs.DataSource = this.detailTb;
         }
 
         private void dateNewEstCutDate_Validating(object sender, CancelEventArgs e)
         {
-            if (dateNewEstCutDate.Value != null && dateNewEstCutDate.Value < DateTime.Today)
+            if (this.dateNewEstCutDate.Value != null && this.dateNewEstCutDate.Value < DateTime.Today)
             {
                 MyUtility.Msg.WarningBox("<Est Cut Date> can not early today.");
-                dateNewEstCutDate.Value = null;
+                this.dateNewEstCutDate.Value = null;
             }
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            gridDetail.ValidateControl();
-            if (detailTb == null) return;
-            string reason = txtcutReason.TextBox1.Text;
-            string SpreadingNo = txtSpreadingNo1.Text;
-            string cell = txtCell1.Text;
-            string shift = txtShift.Text;
-            foreach (DataRow dr in detailTb.Rows)
+            this.gridDetail.ValidateControl();
+            if (this.detailTb == null)
             {
-                if(dr["Sel"].ToString()=="1")
+                return;
+            }
+
+            string reason = this.txtcutReason.TextBox1.Text;
+            string SpreadingNo = this.txtSpreadingNo1.Text;
+            string cell = this.txtCell1.Text;
+            string shift = this.txtShift.Text;
+            foreach (DataRow dr in this.detailTb.Rows)
+            {
+                if (dr["Sel"].ToString() == "1")
                 {
-                    if (MyUtility.Check.Empty(dateNewEstCutDate.Value))
+                    if (MyUtility.Check.Empty(this.dateNewEstCutDate.Value))
                     {
                         dr["newestcutdate"] = DBNull.Value;
                     }
                     else
                     {
-                        dr["newestcutdate"] = ((DateTime)dateNewEstCutDate.Value).ToShortDateString();
+                        dr["newestcutdate"] = ((DateTime)this.dateNewEstCutDate.Value).ToShortDateString();
                     }
+
                     dr["cutreasonid"] = reason;
                     dr["NewSpreadingNoID"] = SpreadingNo;
                     dr["NewCutcellid"] = cell;
-                    dr["NewShift"]= shift;
+                    dr["NewShift"] = shift;
                 }
             }
         }
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            Close();
+            this.Close();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            gridDetail.ValidateControl();
-            string update = "";
-            if (MyUtility.Check.Empty(detailTb))return;
-            if (detailTb.Rows.Count == 0) return;
-            if (detailTb.Select("Sel = 1").Length == 0)
+            this.gridDetail.ValidateControl();
+            string update = string.Empty;
+            if (MyUtility.Check.Empty(this.detailTb))
+            {
+                return;
+            }
+
+            if (this.detailTb.Rows.Count == 0)
+            {
+                return;
+            }
+
+            if (this.detailTb.Select("Sel = 1").Length == 0)
             {
                 MyUtility.Msg.WarningBox("Please select data first.");
                 return;
             }
-            DataTable saveDataTable = detailTb.Select("Sel = 1").CopyToDataTable();
+
+            DataTable saveDataTable = this.detailTb.Select("Sel = 1").CopyToDataTable();
             foreach (DataRow dr in saveDataTable.Rows)
             {
-                if ((dr["EstCutDate"] != dr["NewEstCutDate"] && !MyUtility.Check.Empty((dr["NewEstCutDate"].ToString().Replace("/", "")))) || 
+                if ((dr["EstCutDate"] != dr["NewEstCutDate"] && !MyUtility.Check.Empty(dr["NewEstCutDate"].ToString().Replace("/", string.Empty))) ||
                     (dr["Cutcellid"] != dr["NewCutcellid"] && !MyUtility.Check.Empty(dr["NewCutcellid"])) ||
                     (dr["SpreadingNoID"] != dr["NewSpreadingNoID"] && !MyUtility.Check.Empty(dr["NewSpreadingNoID"])) ||
-                    (dr["Shift"] != dr["NewShift"] && !MyUtility.Check.Empty(dr["NewShift"]))
-                    )
+                    (dr["Shift"] != dr["NewShift"] && !MyUtility.Check.Empty(dr["NewShift"])))
                 {
                     if (MyUtility.Check.Empty(dr["CutReasonid"]))
                     {
@@ -352,19 +440,22 @@ From
                     string NewCutcellid = MyUtility.Check.Empty(dr["NewCutcellid"]) ? "Null" : $"'{dr["NewCutcellid"]}'";
                     string NewSpreadingNoID = MyUtility.Check.Empty(dr["NewSpreadingNoID"]) ? "Null" : $"'{dr["NewSpreadingNoID"]}'";
                     string NewShift = MyUtility.Check.Empty(dr["NewShift"]) ? "''" : $"'{dr["NewShift"]}'";
-                    string orgEstCutDate =((DateTime)dr["EstCutDate"]).ToShortDateString();
+                    string orgEstCutDate = ((DateTime)dr["EstCutDate"]).ToShortDateString();
                     if (!MyUtility.Check.Empty(dr["newestcutdate"]))
                     {
                         update = update + $"Update Workorder Set estcutdate ='{((DateTime)dr["newestcutdate"]).ToShortDateString()}',EditDate=getdate(),EditName='{Sci.Env.User.UserID}' where Ukey = {dr["Ukey"]}; ";
                     }
+
                     if (!MyUtility.Check.Empty(dr["NewCutcellid"]))
                     {
                         update = update + $"Update Workorder Set CutCellid = '{dr["NewCutcellid"]}',EditDate=getdate(),EditName='{Sci.Env.User.UserID}' where Ukey = {dr["Ukey"]}; ";
                     }
+
                     if (!MyUtility.Check.Empty(dr["NewSpreadingNoID"]))
                     {
                         update = update + $"Update Workorder Set SpreadingNoID='{dr["NewSpreadingNoID"]}',EditDate=getdate(),EditName='{Sci.Env.User.UserID}' where Ukey = {dr["Ukey"]}; ";
                     }
+
                     if (!MyUtility.Check.Empty(dr["NewShift"]))
                     {
                         update = update + $"Update Workorder Set Shift='{dr["NewShift"]}',EditDate=getdate(),EditName='{Sci.Env.User.UserID}' where Ukey = {dr["Ukey"]}; ";
@@ -382,14 +473,16 @@ Values                                       ({dr["Ukey"]}    ,'{orgEstCutDate}'
             foreach (string tmp_id in distnct_id)
             {
                 // Mantis_9252 連帶更新Cutting資料表的CutInLine及CutOffLine,CutInLine-->MIN(Workorder.estcutdate),CutOffLine-->MAX(Workorder.estcutdate)
-                update = update + string.Format(@"update cutting set CutInLine =  wk.Min_Wk_estcutdate,CutOffLine = wk.Max_Wk_estcutdate
+                update = update + string.Format(
+                    @"update cutting set CutInLine =  wk.Min_Wk_estcutdate,CutOffLine = wk.Max_Wk_estcutdate
 from dbo.cutting WITH (NOLOCK)
 left join (select id,Min_Wk_estcutdate =  min(estcutdate), Max_Wk_estcutdate = max(estcutdate) 
 			from dbo.WorkOrder  WITH (NOLOCK) where id = '{0}' group by id) wk on wk.id = cutting.ID
 where cutting.ID = '{0}';", tmp_id);
 
-                //orders.CutInLine及CutOffLine也要連帶更新_Wk_estcutdate                                               
-                update = update + string.Format(@"update orders set CutInLine =  wk.Min_Wk_estcutdate, CutOffLine = wk.Max_Wk_estcutdate 
+                // orders.CutInLine及CutOffLine也要連帶更新_Wk_estcutdate
+                update = update + string.Format(
+                    @"update orders set CutInLine =  wk.Min_Wk_estcutdate, CutOffLine = wk.Max_Wk_estcutdate 
                                                  from dbo.orders WITH (NOLOCK)
                                                 left join (select id,Min_Wk_estcutdate =  min(estcutdate), Max_Wk_estcutdate = max(estcutdate) 
 			                                                from dbo.WorkOrder  WITH (NOLOCK) where id = '{0}' group by id) wk on wk.id = orders.POID
@@ -400,8 +493,8 @@ where cutting.ID = '{0}';", tmp_id);
             var distnct_List = saveDataTable.AsEnumerable().
                 Select(m => new
                 {
-                    MDivisionId = m.Field<string>("MDivisionId"),                    
-                    CutRef = m.Field<string>("CutRef")
+                    MDivisionId = m.Field<string>("MDivisionId"),
+                    CutRef = m.Field<string>("CutRef"),
                 }).Distinct();
             string inUkey = "'" + string.Join("','", saveDataTable.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["ukey"]))) + "'";
 
@@ -418,10 +511,11 @@ where cutting.ID = '{0}';", tmp_id);
                         NewShift = m.Field<string>("NewShift"),
                         NewCutcellid = m.Field<string>("NewCutcellid"),
                         NewEstcutdate = m.Field<DateTime?>("NewEstcutdate"),
-                        CutReasonid = m.Field<string>("CutReasonid")
+                        CutReasonid = m.Field<string>("CutReasonid"),
                     }).Distinct().ToList();
+
                     // 更新的欄位不能合併表示不一樣
-                    if (chksame.Count> 1)
+                    if (chksame.Count > 1)
                     {
                         MyUtility.Msg.WarningBox("You can't set different [Est.CutDate] or [CutCell] or [Spreading No.] or [reason] or [Shift] in same M and CutRef#");
                         return;
@@ -452,21 +546,25 @@ and CutRef = '{item.CutRef}'
                     {
                         isNotsame = true;
                     }
+
                     if (!MyUtility.Check.Empty(chkdrs[0]["NewCutcellid"]) &&
                         !MyUtility.Convert.GetString(dr["Cutcellid"]).EqualString(MyUtility.Convert.GetString(chkdrs[0]["NewCutcellid"])))
                     {
                         isNotsame = true;
                     }
+
                     if (!MyUtility.Check.Empty(chkdrs[0]["NewSpreadingNoID"]) &&
                         !MyUtility.Convert.GetString(dr["SpreadingNoID"]).EqualString(MyUtility.Convert.GetString(chkdrs[0]["NewSpreadingNoID"])))
                     {
                         isNotsame = true;
                     }
+
                     if (!MyUtility.Check.Empty(chkdrs[0]["NewShift"]) &&
                         !MyUtility.Convert.GetString(dr["Shift"]).EqualString(MyUtility.Convert.GetString(chkdrs[0]["NewShift"])))
                     {
                         isNotsame = true;
                     }
+
                     if (isNotsame)
                     {
                         MyUtility.Msg.WarningBox("You can't set different [Est.CutDate] or [CutCell] or [Spreading No.] or [reason] or [Shift] in same M and CutRef#");
@@ -476,7 +574,11 @@ and CutRef = '{item.CutRef}'
             }
             #endregion
 
-            if (update == "") return;
+            if (update == string.Empty)
+            {
+                return;
+            }
+
             DualResult upResult;
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
@@ -486,18 +588,20 @@ and CutRef = '{item.CutRef}'
                     if (!(upResult = DBProxy.Current.Execute(null, update)))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(upResult);
+                        this.ShowErr(upResult);
                         return;
                     }
+
                     _transactionscope.Complete();
                 }
                 catch (Exception ex)
                 {
                     _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
+
             _transactionscope.Dispose();
             _transactionscope = null;
             MyUtility.Msg.InfoBox("Finished");

@@ -4,19 +4,13 @@ using Sci.Data;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 using System.Linq;
-using System.Diagnostics;
-using System.Drawing.Printing;
 using System.IO;
-
 
 namespace Sci.Production.Cutting
 {
@@ -25,28 +19,32 @@ namespace Sci.Production.Cutting
         DualResult result;
         DataRow CurrentDataRow;
         string pathName;
+
         public P10_Print(DataRow row)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.CurrentDataRow = row;
-            toexcel.Enabled = false;
+            this.toexcel.Enabled = false;
         }
 
         string Bundle_Card;
         string Bundle_Check_list;
         string Extend_All_Parts;
+
         protected override bool ValidateInput()
         {
-            Bundle_Card = radioBundleCard.Checked.ToString();
-            Bundle_Check_list = radioBundleChecklist.Checked.ToString();
-            Extend_All_Parts = checkExtendAllParts.Checked.ToString();
+            this.Bundle_Card = this.radioBundleCard.Checked.ToString();
+            this.Bundle_Check_list = this.radioBundleChecklist.Checked.ToString();
+            this.Extend_All_Parts = this.checkExtendAllParts.Checked.ToString();
             return base.ValidateInput();
         }
+
         DataTable dtt;
         DataTable dt;
+
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            if (radioBundleCard.Checked == true)
+            if (this.radioBundleCard.Checked == true)
             {
                 #region report
                 DataRow row = this.CurrentDataRow;
@@ -54,15 +52,19 @@ namespace Sci.Production.Cutting
 
                 List<SqlParameter> pars = new List<SqlParameter>();
                 pars.Add(new SqlParameter("@ID", id));
-                pars.Add(new SqlParameter("@CutRef", CurrentDataRow["cutref"].ToString()));
-                pars.Add(new SqlParameter("@POID", CurrentDataRow["POID"].ToString()));
-                if (checkExtendAllParts.Checked)
+                pars.Add(new SqlParameter("@CutRef", this.CurrentDataRow["cutref"].ToString()));
+                pars.Add(new SqlParameter("@POID", this.CurrentDataRow["POID"].ToString()));
+                if (this.checkExtendAllParts.Checked)
+                {
                     pars.Add(new SqlParameter("@extend", "1"));
+                }
                 else
+                {
                     pars.Add(new SqlParameter("@extend", "0"));
+                }
 
                 string scmd = string.Empty;
-                if (checkExtendAllParts.Checked)  //有勾[Extend All Parts]
+                if (this.checkExtendAllParts.Checked) // 有勾[Extend All Parts]
                 {
                     #region SQL
                     scmd = string.Format(@"
@@ -160,7 +162,7 @@ outer apply
 order by x.[Barcode]");
                     #endregion
                 }
-                else  //沒勾[Extend All Parts]
+                else // 沒勾[Extend All Parts]
                 {
                     #region SQL
                     scmd = string.Format(@"
@@ -246,11 +248,11 @@ order by x.[Barcode]");
                     #endregion
                 }
 
-                result = DBProxy.Current.Select("", scmd, pars, out dt);
+                this.result = DBProxy.Current.Select(string.Empty, scmd, pars, out this.dt);
 
-                if (!result)
+                if (!this.result)
                 {
-                    return result;
+                    return this.result;
                 }
                 #endregion
             }
@@ -261,13 +263,17 @@ order by x.[Barcode]");
                 string id = row["ID"].ToString();
                 List<SqlParameter> lis = new List<SqlParameter>();
                 lis.Add(new SqlParameter("@ID", id));
-                if (checkExtendAllParts.Checked)
+                if (this.checkExtendAllParts.Checked)
+                {
                     lis.Add(new SqlParameter("@extend", "1"));
+                }
                 else
+                {
                     lis.Add(new SqlParameter("@extend", "0"));
+                }
 
                 string sqlcmd = string.Empty;
-                if (checkExtendAllParts.Checked)  //有勾[Extend All Parts]
+                if (this.checkExtendAllParts.Checked) // 有勾[Extend All Parts]
                 {
                     #region SQL
                     sqlcmd = string.Format(@"
@@ -342,7 +348,7 @@ outer apply
 order by x.[Bundle]");
                     #endregion
                 }
-                else  //沒勾[Extend All Parts]
+                else // 沒勾[Extend All Parts]
                 {
                     #region SQL
                     sqlcmd = string.Format(@"
@@ -416,50 +422,50 @@ order by x.[Bundle]");
                     #endregion
                 }
 
-                result = DBProxy.Current.Select("", sqlcmd, lis, out dtt);
-                if (!result)
+                this.result = DBProxy.Current.Select(string.Empty, sqlcmd, lis, out this.dtt);
+                if (!this.result)
                 {
-                    return result;
+                    return this.result;
                 }
                 #endregion
-            }            
-            return result;
-        }
+            }
 
+            return this.result;
+        }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (dtt == null || dtt.Rows.Count == 0)
+            if (this.dtt == null || this.dtt.Rows.Count == 0)
             {
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             }
+
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(dtt.Rows.Count);
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); //預先開啟excel app
+            this.SetCount(this.dtt.Rows.Count);
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); // 預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where id = '{0}'", CurrentDataRow["ID"].ToString().Substring(0, 3)));
-            objSheets.Cells[3, 1] = "To Line: " + CurrentDataRow["sewinglineid"].ToString();
-            objSheets.Cells[3, 3] = "Cell: " + CurrentDataRow["SewingCell"].ToString();
-            objSheets.Cells[3, 4] = "Comb: " + CurrentDataRow["PatternPanel"].ToString();
-            objSheets.Cells[3, 5] = "Marker No: " + (CurrentDataRow["cutref"].ToString() == "" ? ""
-                : MyUtility.GetValue.Lookup(string.Format(@"select top 1 MarkerNo from WorkOrder where  CutRef='{0}' and id = '{1}'", CurrentDataRow["cutref"].ToString(), CurrentDataRow["poid"].ToString())));
-            objSheets.Cells[3, 7] = "Item: " + CurrentDataRow["item"].ToString();
-            objSheets.Cells[3, 9] = "Article/Color: " + CurrentDataRow["article"].ToString() + "/ " + CurrentDataRow["colorid"].ToString();
-            objSheets.Cells[3, 11] = "ID: " + CurrentDataRow["ID"].ToString();
-            objSheets.Cells[4, 1] = "SP#: " + CurrentDataRow["Orderid"].ToString();
-            objSheets.Cells[4, 4] = "Style#: " + MyUtility.GetValue.Lookup(string.Format("Select Styleid from Orders WITH (NOLOCK) Where id='{0}'", CurrentDataRow["Orderid"].ToString()));
-            objSheets.Cells[4, 7] = "Cutting#: " + CurrentDataRow["cutno"].ToString();
-            objSheets.Cells[4, 9] = "MasterSP#: " + CurrentDataRow["POID"].ToString();
+            objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where id = '{0}'", this.CurrentDataRow["ID"].ToString().Substring(0, 3)));
+            objSheets.Cells[3, 1] = "To Line: " + this.CurrentDataRow["sewinglineid"].ToString();
+            objSheets.Cells[3, 3] = "Cell: " + this.CurrentDataRow["SewingCell"].ToString();
+            objSheets.Cells[3, 4] = "Comb: " + this.CurrentDataRow["PatternPanel"].ToString();
+            objSheets.Cells[3, 5] = "Marker No: " + (this.CurrentDataRow["cutref"].ToString() == string.Empty ? string.Empty
+                : MyUtility.GetValue.Lookup(string.Format(@"select top 1 MarkerNo from WorkOrder where  CutRef='{0}' and id = '{1}'", this.CurrentDataRow["cutref"].ToString(), this.CurrentDataRow["poid"].ToString())));
+            objSheets.Cells[3, 7] = "Item: " + this.CurrentDataRow["item"].ToString();
+            objSheets.Cells[3, 9] = "Article/Color: " + this.CurrentDataRow["article"].ToString() + "/ " + this.CurrentDataRow["colorid"].ToString();
+            objSheets.Cells[3, 11] = "ID: " + this.CurrentDataRow["ID"].ToString();
+            objSheets.Cells[4, 1] = "SP#: " + this.CurrentDataRow["Orderid"].ToString();
+            objSheets.Cells[4, 4] = "Style#: " + MyUtility.GetValue.Lookup(string.Format("Select Styleid from Orders WITH (NOLOCK) Where id='{0}'", this.CurrentDataRow["Orderid"].ToString()));
+            objSheets.Cells[4, 7] = "Cutting#: " + this.CurrentDataRow["cutno"].ToString();
+            objSheets.Cells[4, 9] = "MasterSP#: " + this.CurrentDataRow["POID"].ToString();
             objSheets.Cells[4, 11] = "DATE: " + DateTime.Today.ToShortDateString();
-            MyUtility.Excel.CopyToXls(dtt, "", "Cutting_P10.xltx", 5, false, null, objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(this.dtt, string.Empty, "Cutting_P10.xltx", 5, false, null, objApp);      // 將datatable copy to excel
             objSheets.get_Range("D1:D1").ColumnWidth = 11;
             objSheets.get_Range("E1:E1").Columns.AutoFit();
             objSheets.get_Range("G1:H1").ColumnWidth = 9;
             objSheets.get_Range("I1:L1").ColumnWidth = 15;
 
-
-            objSheets.Range[String.Format("A6:L{0}", dtt.Rows.Count+5)].Borders.Weight = 2;//設定全框線
+            objSheets.Range[string.Format("A6:L{0}", this.dtt.Rows.Count + 5)].Borders.Weight = 2; // 設定全框線
 
             #region Save & Shwo Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_P10");
@@ -469,52 +475,55 @@ order by x.[Bundle]");
             Marshal.ReleaseComObject(objSheets);
 
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
             return true;
         }
 
         protected override bool OnToPrint(ReportDefinition report)
         {
-            if (radioBundleCard.Checked)
+            if (this.radioBundleCard.Checked)
             {
                 #region Bundle Card
-                if (dt == null || dt.Rows.Count == 0)
+                if (this.dt == null || this.dt.Rows.Count == 0)
                 {
                     MyUtility.Msg.ErrorBox("Data not found");
                     return false;
                 }
-                // 顯示筆數於PrintForm上Count欄位
-                SetCount(dt.Rows.Count);
 
+                // 顯示筆數於PrintForm上Count欄位
+                this.SetCount(this.dt.Rows.Count);
 
                 DataTable dt1, dt2, dt3;
-                //int count =dt.Rows.Count;
+
+                // int count =dt.Rows.Count;
                 int count = 1;
-                dt1 = dt.Clone();
-                dt2 = dt.Clone();
-                dt3 = dt.Clone();
-                foreach (DataRow dr in dt.Rows)
+                dt1 = this.dt.Clone();
+                dt2 = this.dt.Clone();
+                dt3 = this.dt.Clone();
+                foreach (DataRow dr in this.dt.Rows)
                 {
-                    //第一列資料
+                    // 第一列資料
                     if (count % 3 == 1)
                     {
                         dt1.ImportRow(dr);
                     }
-                    //第二列資料
+
+                    // 第二列資料
                     if (count % 3 == 2)
                     {
                         dt2.ImportRow(dr);
                     }
-                    //第三列資料
+
+                    // 第三列資料
                     if (count % 3 == 0)
                     {
                         dt3.ImportRow(dr);
                     }
+
                     count++;
                 }
 
-
-                // 傳 list 資料     
+                // 傳 list 資料
                 List<P10_PrintData> data = dt1.AsEnumerable()
                     .Select(row1 => new P10_PrintData()
                     {
@@ -529,7 +538,7 @@ order by x.[Bundle]");
                         Parts = row1["Parts"].ToString(),
                         Color = row1["Color"].ToString(),
                         Size = row1["Size"].ToString(),
-                        SizeSpec = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? "" : "(" + row1["SizeSpec"].ToString() + ")",
+                        SizeSpec = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? string.Empty : "(" + row1["SizeSpec"].ToString() + ")",
                         Desc = row1["Desc"].ToString(),
                         Artwork = row1["Artwork"].ToString(),
                         Quantity = row1["Quantity"].ToString(),
@@ -537,9 +546,9 @@ order by x.[Bundle]");
                         Season = row1["Seasonid"].ToString(),
                         brand = row1["brand"].ToString(),
                         item = row1["item"].ToString(),
-                        EXCESS1 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : "",
+                        EXCESS1 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : string.Empty,
                         NoBundleCardAfterSubprocess1 = row1["NoBundleCardAfterSubprocess"].ToString(),
-                        Replacement1 = ""
+                        Replacement1 = string.Empty,
                     }).ToList();
                 data.AddRange(
                  dt2.AsEnumerable().Select(row1 => new P10_PrintData()
@@ -555,7 +564,7 @@ order by x.[Bundle]");
                      Parts2 = row1["Parts"].ToString(),
                      Color2 = row1["Color"].ToString(),
                      Size2 = row1["Size"].ToString(),
-                     SizeSpec2 = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? "" : "(" + row1["SizeSpec"].ToString() + ")",
+                     SizeSpec2 = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? string.Empty : "(" + row1["SizeSpec"].ToString() + ")",
                      Desc2 = row1["Desc"].ToString(),
                      Artwork2 = row1["Artwork"].ToString(),
                      Quantity2 = row1["Quantity"].ToString(),
@@ -563,11 +572,10 @@ order by x.[Bundle]");
                      Season2 = row1["Seasonid"].ToString(),
                      brand2 = row1["brand"].ToString(),
                      item2 = row1["item"].ToString(),
-                     EXCESS2 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : "",
+                     EXCESS2 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : string.Empty,
                      NoBundleCardAfterSubprocess2 = row1["NoBundleCardAfterSubprocess"].ToString(),
-                     Replacement2 = ""
+                     Replacement2 = string.Empty,
                  }).ToList());
-
 
                 data.AddRange(
                 dt3.AsEnumerable().Select(row1 => new P10_PrintData()
@@ -583,7 +591,7 @@ order by x.[Bundle]");
                     Parts3 = row1["Parts"].ToString(),
                     Color3 = row1["Color"].ToString(),
                     Size3 = row1["Size"].ToString(),
-                    SizeSpec3 = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? "" : "(" + row1["SizeSpec"].ToString() + ")",
+                    SizeSpec3 = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? string.Empty : "(" + row1["SizeSpec"].ToString() + ")",
                     Desc3 = row1["Desc"].ToString(),
                     Artwork3 = row1["Artwork"].ToString(),
                     Quantity3 = row1["Quantity"].ToString(),
@@ -591,9 +599,9 @@ order by x.[Bundle]");
                     Season3 = row1["Seasonid"].ToString(),
                     brand3 = row1["brand"].ToString(),
                     item3 = row1["item"].ToString(),
-                    EXCESS3 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : "",
+                    EXCESS3 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : string.Empty,
                     NoBundleCardAfterSubprocess3 = row1["NoBundleCardAfterSubprocess"].ToString(),
-                    Replacement3 = ""
+                    Replacement3 = string.Empty,
                 }).ToList());
 
                 report.ReportDataSource = data;
@@ -603,17 +611,17 @@ order by x.[Bundle]");
                 string ReportResourceName = "P10_Print.rdlc";
 
                 IReportResource reportresource;
-                if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+                if (!(this.result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
                 {
-                    this.ShowException(result);
-                    return result;
+                    this.ShowException(this.result);
+                    return this.result;
                 }
 
                 report.ReportResource = reportresource;
 
                 // 開啟 report view
                 var frm = new Sci.Win.Subs.ReportView(report);
-                frm.MdiParent = MdiParent;
+                frm.MdiParent = this.MdiParent;
                 frm.DirectPrint = true;
                 frm.ShowDialog();
                 #endregion
@@ -621,71 +629,88 @@ order by x.[Bundle]");
             else
             {
                 #region Bundle Check List
-                if (dtt == null || dtt.Rows.Count == 0)
+                if (this.dtt == null || this.dtt.Rows.Count == 0)
                 {
                     MyUtility.Msg.ErrorBox("Data not found");
                     return false;
                 }
-                // 顯示筆數於PrintForm上Count欄位
-                SetCount(dtt.Rows.Count);
 
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); //預先開啟excel app
-                pathName = Sci.Env.Cfg.ReportTempDir + "Cutting_BundleChecklist" + DateTime.Now.ToFileTime() + ".xls";
+                // 顯示筆數於PrintForm上Count欄位
+                this.SetCount(this.dtt.Rows.Count);
+
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); // 預先開啟excel app
+                this.pathName = Sci.Env.Cfg.ReportTempDir + "Cutting_BundleChecklist" + DateTime.Now.ToFileTime() + ".xls";
                 string tmpName = Sci.Env.Cfg.ReportTempDir + "tmp.xls";
-                if (MyUtility.Excel.CopyToXls(dtt, "", "Cutting_P10.xltx", 5, false, null, objApp, false))
+                if (MyUtility.Excel.CopyToXls(this.dtt, string.Empty, "Cutting_P10.xltx", 5, false, null, objApp, false))
                 {
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                     Microsoft.Office.Interop.Excel._Workbook objBook = objApp.ActiveWorkbook;
-                    objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where id = '{0}'", CurrentDataRow["ID"].ToString().Substring(0, 3)));
-                    objSheets.Cells[3, 1] = "To Line: " + CurrentDataRow["sewinglineid"].ToString();
-                    objSheets.Cells[3, 3] = "Cell: " + CurrentDataRow["SewingCell"].ToString();
-                    objSheets.Cells[3, 4] = "Comb: " + CurrentDataRow["PatternPanel"].ToString();
-                    objSheets.Cells[3, 5] = "Marker No: " + (CurrentDataRow["cutref"].ToString() == "" ? ""
-                        : MyUtility.GetValue.Lookup(string.Format(@"select top 1 MarkerNo from WorkOrder where  CutRef='{0}' and id = '{1}'", CurrentDataRow["cutref"].ToString(), CurrentDataRow["poid"].ToString())));
-                    objSheets.Cells[3, 7] = "Item: " + CurrentDataRow["item"].ToString();
-                    objSheets.Cells[3, 9] = "Article/Color: " + CurrentDataRow["article"].ToString() + "/ " + CurrentDataRow["colorid"].ToString();
-                    objSheets.Cells[3, 11] = "ID: " + CurrentDataRow["ID"].ToString();
-                    objSheets.Cells[4, 1] = "SP#: " + CurrentDataRow["Orderid"].ToString();
-                    objSheets.Cells[4, 4] = "Style#: " + MyUtility.GetValue.Lookup(string.Format("Select Styleid from Orders WITH (NOLOCK) Where id='{0}'", CurrentDataRow["Orderid"].ToString()));
-                    objSheets.Cells[4, 7] = "Cutting#: " + CurrentDataRow["cutno"].ToString();
-                    objSheets.Cells[4, 9] = "MasterSP#: " + CurrentDataRow["POID"].ToString();
+                    objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where id = '{0}'", this.CurrentDataRow["ID"].ToString().Substring(0, 3)));
+                    objSheets.Cells[3, 1] = "To Line: " + this.CurrentDataRow["sewinglineid"].ToString();
+                    objSheets.Cells[3, 3] = "Cell: " + this.CurrentDataRow["SewingCell"].ToString();
+                    objSheets.Cells[3, 4] = "Comb: " + this.CurrentDataRow["PatternPanel"].ToString();
+                    objSheets.Cells[3, 5] = "Marker No: " + (this.CurrentDataRow["cutref"].ToString() == string.Empty ? string.Empty
+                        : MyUtility.GetValue.Lookup(string.Format(@"select top 1 MarkerNo from WorkOrder where  CutRef='{0}' and id = '{1}'", this.CurrentDataRow["cutref"].ToString(), this.CurrentDataRow["poid"].ToString())));
+                    objSheets.Cells[3, 7] = "Item: " + this.CurrentDataRow["item"].ToString();
+                    objSheets.Cells[3, 9] = "Article/Color: " + this.CurrentDataRow["article"].ToString() + "/ " + this.CurrentDataRow["colorid"].ToString();
+                    objSheets.Cells[3, 11] = "ID: " + this.CurrentDataRow["ID"].ToString();
+                    objSheets.Cells[4, 1] = "SP#: " + this.CurrentDataRow["Orderid"].ToString();
+                    objSheets.Cells[4, 4] = "Style#: " + MyUtility.GetValue.Lookup(string.Format("Select Styleid from Orders WITH (NOLOCK) Where id='{0}'", this.CurrentDataRow["Orderid"].ToString()));
+                    objSheets.Cells[4, 7] = "Cutting#: " + this.CurrentDataRow["cutno"].ToString();
+                    objSheets.Cells[4, 9] = "MasterSP#: " + this.CurrentDataRow["POID"].ToString();
                     objSheets.Cells[4, 11] = "DATE: " + DateTime.Today.ToShortDateString();
                     objSheets.get_Range("D1:D1").ColumnWidth = 11;
                     objSheets.get_Range("E1:E1").Columns.AutoFit();
                     objSheets.get_Range("G1:H1").ColumnWidth = 9;
                     objSheets.get_Range("I1:L1").ColumnWidth = 15;
 
-                    objSheets.Range[String.Format("A6:L{0}", dtt.Rows.Count + 5)].Borders.Weight = 2;//設定全框線
+                    objSheets.Range[string.Format("A6:L{0}", this.dtt.Rows.Count + 5)].Borders.Weight = 2; // 設定全框線
 
-                    //Random Excle名稱
+                    // Random Excle名稱
                     Random random = new Random();
-                    pathName = Sci.Env.Cfg.ReportTempDir + "Cutting_BundleChecklist - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) + ".xlsx";
-                    pathName = Path.GetFullPath(pathName);
-                    objBook.SaveAs(pathName);
+                    this.pathName = Sci.Env.Cfg.ReportTempDir + "Cutting_BundleChecklist - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) + ".xlsx";
+                    this.pathName = Path.GetFullPath(this.pathName);
+                    objBook.SaveAs(this.pathName);
                     PrintDialog pd = new PrintDialog();
                     if (pd.ShowDialog() == DialogResult.OK)
                     {
                         string printer = pd.PrinterSettings.PrinterName;
                         objBook.PrintOutEx(ActivePrinter: printer);
                     }
+
                     objBook.Close();
                     objApp.Workbooks.Close();
                     objApp.Quit();
 
-                    if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                    if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-                    if (objBook != null) Marshal.FinalReleaseComObject(objBook);
+                    if (objSheets != null)
+                    {
+                        Marshal.FinalReleaseComObject(objSheets);    // 釋放sheet
+                    }
+
+                    if (objApp != null)
+                    {
+                        Marshal.FinalReleaseComObject(objApp);          // 釋放objApp
+                    }
+
+                    if (objBook != null)
+                    {
+                        Marshal.FinalReleaseComObject(objBook);
+                    }
+
                     objApp = null;
                 }
-                System.IO.File.Delete(pathName);
-                //刪除存檔
+
+                System.IO.File.Delete(this.pathName);
+
+                // 刪除存檔
                 #endregion
             }
+
             return true;
         }
 
-        //public bool PrintExcel(string filePath)
-        //{
+        // public bool PrintExcel(string filePath)
+        // {
         //    // 1. 判斷檔案是否存在
         //    //if (!System.IO.File.Exists(filePath)) return false;
         //    PrintDocument printDoc = new PrintDocument();
@@ -696,22 +721,19 @@ order by x.[Bundle]");
         //        printDoc.Print();
         //    //System.IO.File.Delete(filePath);
         //    return true;
-        //}
-
+        // }
         private void radioPanel1_Paint(object sender, PaintEventArgs e)
         {
-
-            if (radioBundleCard.Checked == true)
+            if (this.radioBundleCard.Checked == true)
             {
-                print.Enabled = true;
-                toexcel.Enabled = false;
+                this.print.Enabled = true;
+                this.toexcel.Enabled = false;
             }
-            else if (radioBundleChecklist.Checked == true)
+            else if (this.radioBundleChecklist.Checked == true)
             {
-                toexcel.Enabled = true;
-                print.Enabled = true;
+                this.toexcel.Enabled = true;
+                this.print.Enabled = true;
             }
-
         }
     }
 }

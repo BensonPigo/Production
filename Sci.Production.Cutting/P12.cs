@@ -1,31 +1,27 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Data.SqlClient;
-using System.Drawing;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Linq;
-using System.Runtime.InteropServices;
-using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
 
 namespace Sci.Production.Cutting
 {
     public partial class P12 : Sci.Win.Tems.QueryForm
     {
         BindingList<P12_PrintData> Data = new BindingList<P12_PrintData>();
+
         public P12(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            GridSetup();
+            this.InitializeComponent();
+            this.GridSetup();
             this.EditMode = true;
             this.comboSortBy.SelectedIndex = 0;
         }
@@ -53,7 +49,7 @@ namespace Sci.Production.Cutting
         void GridSetup()
         {
             this.grid1.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("selected", header: "Sel", width: Widths.AnsiChars(4), iseditable: true, trueValue: true, falseValue: false)
                 .DateTime("PrintDate", header: "Print Date", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 .Date("CreateDate", header: "Create Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -85,77 +81,88 @@ namespace Sci.Production.Cutting
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            if (this.txtCutRefStart.Text.Empty() && this.txtCutRefEnd.Text.Empty() 
-                && this.txtSPNoStart.Text.Empty() && this.txtSPNoEnd.Text.Empty() 
-                && this.txtPOID.Text.Empty() 
+            if (this.txtCutRefStart.Text.Empty() && this.txtCutRefEnd.Text.Empty()
+                && this.txtSPNoStart.Text.Empty() && this.txtSPNoEnd.Text.Empty()
+                && this.txtPOID.Text.Empty()
                 && this.txtBundleStart.Text.Empty() && this.txtBundleEnd.Text.Empty()
                 && this.dateBox1.Value.Empty() && this.dateBundlecreatedDate.Value.Empty())
             {
-                txtCutRefStart.Focus();
-                if (dtt != null) dtt.Clear();
+                this.txtCutRefStart.Focus();
+                if (this.dtt != null)
+                {
+                    this.dtt.Clear();
+                }
+
                 MyUtility.Msg.WarningBox("[Cut_Ref# and SP# and POID and Bundle# and Est.Cut Date and Bundle created Date ] can not be all null !!");
                 return;
             }
 
             if ((!this.txtCutRefStart.Text.Empty() && this.txtCutRefEnd.Text.Empty()) || (this.txtCutRefStart.Text.Empty() && !this.txtCutRefEnd.Text.Empty())
                 || (!this.txtSPNoStart.Text.Empty() && this.txtSPNoEnd.Text.Empty()) || (this.txtSPNoStart.Text.Empty() && !this.txtSPNoEnd.Text.Empty())
-                || (!this.txtBundleStart.Text.Empty() && this.txtBundleEnd.Text.Empty()) || (this.txtBundleStart.Text.Empty() && !this.txtBundleEnd.Text.Empty())
-                )
+                || (!this.txtBundleStart.Text.Empty() && this.txtBundleEnd.Text.Empty()) || (this.txtBundleStart.Text.Empty() && !this.txtBundleEnd.Text.Empty()))
             {
-                txtCutRefStart.Focus();
-                if (dtt != null) dtt.Clear();
+                this.txtCutRefStart.Focus();
+                if (this.dtt != null)
+                {
+                    this.dtt.Clear();
+                }
+
                 MyUtility.Msg.WarningBox("[Cut_Ref# and SP# and Bundle#] must enter start and end !!");
                 return;
             }
 
             this.ShowWaitMessage("Data processing, please wait...");
 
-            Cut_Ref = txtCutRefStart.Text.ToString();
-            Cut_Ref1 = txtCutRefEnd.Text.ToString();
-            SP = txtSPNoStart.Text.ToString();
-            SP1 = txtSPNoEnd.Text.ToString();
-            POID = txtPOID.Text.ToString();
-            Bundle = txtBundleStart.Text.ToString();
-            Bundle1 = txtBundleEnd.Text.ToString();
-            Est_CutDate = dateBox1.Value;
-            Cell = txtCell.Text.ToString();
-            size = txtSize.Text.ToString();
-            Sort_by = comboSortBy.SelectedIndex.ToString();
-            Extend = checkExtendAllParts.Checked.ToString();
-            Addname = txtuser1.TextBox1.Text;
-            AddDate = dateBundlecreatedDate.Value;
-            Cutno = txtCutno.Text;
-            Comb = txtComb.Text;
-            SpreadingNoID = txtSpreadingNo1.Text;
+            this.Cut_Ref = this.txtCutRefStart.Text.ToString();
+            this.Cut_Ref1 = this.txtCutRefEnd.Text.ToString();
+            this.SP = this.txtSPNoStart.Text.ToString();
+            this.SP1 = this.txtSPNoEnd.Text.ToString();
+            this.POID = this.txtPOID.Text.ToString();
+            this.Bundle = this.txtBundleStart.Text.ToString();
+            this.Bundle1 = this.txtBundleEnd.Text.ToString();
+            this.Est_CutDate = this.dateBox1.Value;
+            this.Cell = this.txtCell.Text.ToString();
+            this.size = this.txtSize.Text.ToString();
+            this.Sort_by = this.comboSortBy.SelectedIndex.ToString();
+            this.Extend = this.checkExtendAllParts.Checked.ToString();
+            this.Addname = this.txtuser1.TextBox1.Text;
+            this.AddDate = this.dateBundlecreatedDate.Value;
+            this.Cutno = this.txtCutno.Text;
+            this.Comb = this.txtComb.Text;
+            this.SpreadingNoID = this.txtSpreadingNo1.Text;
 
-            string sqlWhere = "";
-            string sb = "";
+            string sqlWhere = string.Empty;
+            string sb = string.Empty;
             string declare = string.Empty;
             List<string> sqlWheres = new List<string>();
 
             sqlWheres.Add("b.MDivisionID=@Keyword");
 
-
             if (!this.txtCutRefStart.Text.Empty() && !this.txtCutRefEnd.Text.Empty())
             {
                 sqlWheres.Add("b.CutRef between @Cut_Ref and @Cut_Ref1");
             }
+
             if (!this.txtSPNoStart.Text.Empty() && !this.txtSPNoEnd.Text.Empty())
             {
                 sqlWheres.Add("b.OrderID  between @SP and @SP1");
             }
+
             if (!this.txtPOID.Text.Empty())
             {
                 sqlWheres.Add("b.POID=@POID");
             }
+
             if (!this.txtBundleStart.Text.Empty() && !this.txtBundleEnd.Text.Empty())
             {
                 sqlWheres.Add("a.BundleNo between @Bundle and @Bundle1");
             }
+
             if (!this.txtCell.Text.Empty())
             {
                 sqlWheres.Add("b.SewingCell =@Cell");
             }
+
             if (!this.txtSize.Text.Empty())
             {
                 sqlWheres.Add("a.SizeCode =@Size");
@@ -164,21 +171,25 @@ namespace Sci.Production.Cutting
             if (!this.dateBox1.Value.Empty())
             {
                 sqlWheres.Add("WorkOrder.EstCutDate=@Est_CutDate");
-                declare += $@" declare @Est_CutDate date = '{((DateTime)Est_CutDate).ToString("yyyy/MM/dd")}' ";
+                declare += $@" declare @Est_CutDate date = '{((DateTime)this.Est_CutDate).ToString("yyyy/MM/dd")}' ";
             }
-            if (!MyUtility.Check.Empty(Addname))
+
+            if (!MyUtility.Check.Empty(this.Addname))
             {
                 sqlWheres.Add(" b.AddName = @AddName");
             }
+
             if (!this.dateBundlecreatedDate.Value.Empty())
             {
                 sqlWheres.Add(" format(b.AddDate,'yyyy/MM/dd') = @AddDate");
-                declare += $@" declare @AddDate varchar(10) = '{((DateTime)AddDate).ToString("yyyy/MM/dd")}' ";
+                declare += $@" declare @AddDate varchar(10) = '{((DateTime)this.AddDate).ToString("yyyy/MM/dd")}' ";
             }
-            if (!MyUtility.Check.Empty(Cutno))
+
+            if (!MyUtility.Check.Empty(this.Cutno))
             {
                 sqlWheres.Add(" b.Cutno=@Cutno");
             }
+
             if (this.comboSortBy.Text == "Bundle#")
             {
                 sb = "order by x.Bundle,x.[SP],x.[Comb],x.Article,x.[Size]";
@@ -198,7 +209,7 @@ namespace Sci.Production.Cutting
                 sqlWheres.Add(" b.PatternPanel  = @Comb ");
             }
 
-            if (!MyUtility.Check.Empty(SpreadingNoID))
+            if (!MyUtility.Check.Empty(this.SpreadingNoID))
             {
                 sqlWheres.Add(" WorkOrder.SpreadingNoID=@SpreadingNoID");
             }
@@ -209,34 +220,34 @@ namespace Sci.Production.Cutting
                 sqlWhere = " where " + sqlWhere;
             }
 
-            if (!checkExtendAllParts.Checked)
+            if (!this.checkExtendAllParts.Checked)
             {
                 declare += $@" declare @extend bit = 0 ";
             }
 
             string sqlcmd = string.Empty;
-            
-            if (checkExtendAllParts.Checked)  //有勾[Extend All Parts]
+
+            if (this.checkExtendAllParts.Checked) // 有勾[Extend All Parts]
             {
                 #region SQL
 
-                DBProxy.Current.DefaultTimeout = 1800;  //加長時間為30分鐘，避免timeout
+                DBProxy.Current.DefaultTimeout = 1800;  // 加長時間為30分鐘，避免timeout
                 sqlcmd = $@"
 declare @Keyword varchar(8) = '{Sci.Env.User.Keyword}'
-declare @Cut_Ref varchar(6) = '{Cut_Ref}'
-declare @Cut_Ref1 varchar(6) = '{Cut_Ref1}'
-declare @SP varchar(13) = '{SP}'
-declare @SP1 varchar(13) = '{SP1}'
-declare @POID varchar(13) = '{POID}'
-declare @Bundle varchar(13) = '{Bundle}'
-declare @Bundle1 varchar(13) = '{Bundle1}'
-declare @Cell varchar(3) = '{Cell}'
-declare @size varchar(8) = '{size}'
-declare @Addname varchar(10) = '{Addname}'
-declare @Cutno varchar(6) = '{Cutno}'
-declare @SpreadingNoID varchar(6) = '{SpreadingNoID}'
-declare @FtyGroup varchar(8) = '{txtfactoryByM.Text}'
-declare @Comb varchar(2) = '{txtComb.Text}'
+declare @Cut_Ref varchar(6) = '{this.Cut_Ref}'
+declare @Cut_Ref1 varchar(6) = '{this.Cut_Ref1}'
+declare @SP varchar(13) = '{this.SP}'
+declare @SP1 varchar(13) = '{this.SP1}'
+declare @POID varchar(13) = '{this.POID}'
+declare @Bundle varchar(13) = '{this.Bundle}'
+declare @Bundle1 varchar(13) = '{this.Bundle1}'
+declare @Cell varchar(3) = '{this.Cell}'
+declare @size varchar(8) = '{this.size}'
+declare @Addname varchar(10) = '{this.Addname}'
+declare @Cutno varchar(6) = '{this.Cutno}'
+declare @SpreadingNoID varchar(6) = '{this.SpreadingNoID}'
+declare @FtyGroup varchar(8) = '{this.txtfactoryByM.Text}'
+declare @Comb varchar(2) = '{this.txtComb.Text}'
 {declare}
 set arithabort on
 select 
@@ -421,30 +432,30 @@ outer apply
 	where(mss.SizeCode is not null or msso.SizeCode  is not null) AND msi.SizeItem = 'S01' and m.ID = x.[SP]
 	and iif(mss.SizeCode is not null, mss.SizeCode, msso.SizeCode) = x.[Size]
 )cu
-" + sb+ @"
+" + sb + @"
 OPTION (RECOMPILE)"
-;                
+;
                 #endregion
             }
-            else  //沒勾[Extend All Parts]
+            else // 沒勾[Extend All Parts]
             {
                 #region SQL
                 sqlcmd = $@"
 declare @Keyword varchar(8) = '{Sci.Env.User.Keyword}'
-declare @Cut_Ref varchar(6) = '{Cut_Ref}'
-declare @Cut_Ref1 varchar(6) = '{Cut_Ref1}'
-declare @SP varchar(13) = '{SP}'
-declare @SP1 varchar(13) = '{SP1}'
-declare @POID varchar(13) = '{POID}'
-declare @Bundle varchar(13) = '{Bundle}'
-declare @Bundle1 varchar(13) = '{Bundle1}'
-declare @Cell varchar(3) = '{Cell}'
-declare @size varchar(8) = '{size}'
-declare @Addname varchar(10) = '{Addname}'
-declare @Cutno varchar(6) = '{Cutno}'
-declare @SpreadingNoID varchar(6) = '{SpreadingNoID}'
-declare @FtyGroup varchar(8) = '{txtfactoryByM.Text}'
-declare @Comb varchar(2) = '{txtComb.Text}'
+declare @Cut_Ref varchar(6) = '{this.Cut_Ref}'
+declare @Cut_Ref1 varchar(6) = '{this.Cut_Ref1}'
+declare @SP varchar(13) = '{this.SP}'
+declare @SP1 varchar(13) = '{this.SP1}'
+declare @POID varchar(13) = '{this.POID}'
+declare @Bundle varchar(13) = '{this.Bundle}'
+declare @Bundle1 varchar(13) = '{this.Bundle1}'
+declare @Cell varchar(3) = '{this.Cell}'
+declare @size varchar(8) = '{this.size}'
+declare @Addname varchar(10) = '{this.Addname}'
+declare @Cutno varchar(6) = '{this.Cutno}'
+declare @SpreadingNoID varchar(6) = '{this.SpreadingNoID}'
+declare @FtyGroup varchar(8) = '{this.txtfactoryByM.Text}'
+declare @Comb varchar(2) = '{this.txtComb.Text}'
 {declare}
 set arithabort on
 select 
@@ -623,23 +634,28 @@ outer apply
 	where(mss.SizeCode is not null or msso.SizeCode  is not null) AND msi.SizeItem = 'S01' and m.ID = x.[SP]
 	and iif(mss.SizeCode is not null, mss.SizeCode, msso.SizeCode) = x.[Size]
 )cu
-" + sb+@"
+" + sb + @"
 OPTION (RECOMPILE)"
-;  
+;
                 #endregion
             }
 
-            DBProxy.Current.DefaultTimeout = 1800;  //加長時間為30分鐘，避免timeout
-            result = DBProxy.Current.Select("", sqlcmd, out dtt);
-            if (!result)
+            DBProxy.Current.DefaultTimeout = 1800;  // 加長時間為30分鐘，避免timeout
+            this.result = DBProxy.Current.Select(string.Empty, sqlcmd, out this.dtt);
+            if (!this.result)
             {
-                ShowErr(result);
+                this.ShowErr(this.result);
                 this.HideWaitMessage();
                 return;
             }
-            if (dtt.Rows.Count == 0)  MyUtility.Msg.WarningBox("Data not found!!"); 
-            listControlBindingSource1.DataSource = dtt;
-            DBProxy.Current.DefaultTimeout = 300;  //恢復時間為5分鐘
+
+            if (this.dtt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!!");
+            }
+
+            this.listControlBindingSource1.DataSource = this.dtt;
+            DBProxy.Current.DefaultTimeout = 300;  // 恢復時間為5分鐘
             this.HideWaitMessage();
         }
 
@@ -650,32 +666,33 @@ OPTION (RECOMPILE)"
             bool checkone = false;
             for (int i = 0; i < this.grid1.Rows.Count; i++)
             {
-                if (!MyUtility.Check.Empty(this.grid1[0, i].Value)  //判斷是否為空值
-                    && (bool)this.grid1[0, i].Value == true)　//判斷是否有打勾
+                if (!MyUtility.Check.Empty(this.grid1[0, i].Value) // 判斷是否為空值
+                    && (bool)this.grid1[0, i].Value == true)　// 判斷是否有打勾
                 {
                     checkone = true;
                 }
             }
+
             if (!checkone)
             {
-                grid1.Focus();
+                this.grid1.Focus();
                 MyUtility.Msg.ErrorBox("Grid must be chose one");
                 return;
             }
 
             DataTable dtSelect;
 
-            dtSelect = dtt.DefaultView.ToTable()
+            dtSelect = this.dtt.DefaultView.ToTable()
                 .AsEnumerable()
-                .Where(row=> (bool)row["selected"])
+                .Where(row => (bool)row["selected"])
                 .CopyToDataTable();
-            
+
             List<P12_PrintData> data = new List<P12_PrintData>();
             bool changeGroup = true;
-            for (int i = 0; i< dtSelect.Rows.Count;)
+            for (int i = 0; i < dtSelect.Rows.Count;)
             {
                 string thisGroupCut;
-                if (checkChangepagebyCut.Checked)
+                if (this.checkChangepagebyCut.Checked)
                 {
                     thisGroupCut = MyUtility.Convert.GetString(dtSelect.Rows[i]["Comb"]) + MyUtility.Convert.GetString(dtSelect.Rows[i]["Cut"]);
                 }
@@ -683,6 +700,7 @@ OPTION (RECOMPILE)"
                 {
                     thisGroupCut = "1";
                 }
+
                 string tmpCut = "-1";
                 var pdata = new P12_PrintData();
                 data.Add(pdata);
@@ -690,7 +708,7 @@ OPTION (RECOMPILE)"
                 for (; j < 3 && i + j < dtSelect.Rows.Count; j++)
                 {
                     DataRow dr = dtSelect.Rows[i + j];
-                    if (checkChangepagebyCut.Checked)
+                    if (this.checkChangepagebyCut.Checked)
                     {
                         tmpCut = MyUtility.Convert.GetString(dr["Comb"]) + MyUtility.Convert.GetString(dr["cut"]);
                     }
@@ -698,7 +716,7 @@ OPTION (RECOMPILE)"
                     {
                         tmpCut = "1";
                     }
-                    
+
                     if (changeGroup && tmpCut != thisGroupCut)
                     {
                         break;
@@ -729,7 +747,7 @@ OPTION (RECOMPILE)"
                         pdata.item = dr["item"].ToString();
                         pdata.EXCESS1 = dr["IsEXCESS"].ToString();
                         pdata.CutRef = tmpCut;
-                        pdata.NoBundleCardAfterSubprocess1 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? "" : "(X)";
+                        pdata.NoBundleCardAfterSubprocess1 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? string.Empty : "(X)";
                     }
                     else if (j == 1)
                     {
@@ -756,7 +774,7 @@ OPTION (RECOMPILE)"
                         pdata.item2 = dr["item"].ToString();
                         pdata.EXCESS2 = dr["IsEXCESS"].ToString();
                         pdata.CutRef2 = tmpCut;
-                        pdata.NoBundleCardAfterSubprocess2 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? "" : "(X)";
+                        pdata.NoBundleCardAfterSubprocess2 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? string.Empty : "(X)";
                     }
                     else
                     {
@@ -783,10 +801,10 @@ OPTION (RECOMPILE)"
                         pdata.item3 = dr["item"].ToString();
                         pdata.EXCESS3 = dr["IsEXCESS"].ToString();
                         pdata.CutRef3 = tmpCut;
-                        pdata.NoBundleCardAfterSubprocess3 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? "" : "(X)";
+                        pdata.NoBundleCardAfterSubprocess3 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? string.Empty : "(X)";
                     }
                 }
-                
+
                 if (changeGroup && tmpCut != thisGroupCut)
                 {
                     i += j;
@@ -795,35 +813,35 @@ OPTION (RECOMPILE)"
                 {
                     i += 3;
                 }
-                
             }
+
             var res = data;
 
-            //指定是哪個 RDLC
-
+            // 指定是哪個 RDLC
             Type ReportResourceNamespace = typeof(P12_PrintData);
             Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
             string ReportResourceName = "P12_Print.rdlc";
             IReportResource reportresource;
-            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            if (!(this.result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
             {
-                this.ShowException(result);
+                this.ShowException(this.result);
                 return;
             }
+
             ReportDefinition report = new ReportDefinition();
             report.ReportDataSource = res;
             report.ReportResource = reportresource;
 
-            //開啟 report view
+            // 開啟 report view
             var frm = new Sci.Win.Subs.ReportView(report);
-            //有按才更新列印日期printdate。
 
-            var res2 = dtt.AsEnumerable()
+            // 有按才更新列印日期printdate。
+            var res2 = this.dtt.AsEnumerable()
                 .Where(row => (bool)row["selected"])
             .Select(row1 => new P12_PrintData()
             {
                 SP = row1["SP"].ToString(),
-                Barcode = row1["Bundle"].ToString()
+                Barcode = row1["Bundle"].ToString(),
             }).ToList();
             StringBuilder ups = new StringBuilder();
             foreach (var item in res2)
@@ -836,20 +854,25 @@ from Bundle_Detail bd WITH (NOLOCK)
 where bd.BundleNo = '{0}'",
                     item.Barcode));
 
-                ups.Append(string.Format(@"
+                ups.Append(string.Format(
+                    @"
                             update b
                             set b.PrintDate = GETDATE()
                             from Bundle b WITH (NOLOCK)
                             inner join Bundle_Detail bd WITH (NOLOCK) on b.id=bd.ID
-                            where bd.BundleNo = '{1}'"
-                          , item.SP, item.Barcode));
+                            where bd.BundleNo = '{1}'",
+                    item.SP, item.Barcode));
             }
 
             frm.viewer.Print += (s, eArgs) =>
             {
                 var result3 = DBProxy.Current.Execute(null, ups.ToString());
             };
-            if(MdiParent!=null)  frm.MdiParent = MdiParent;
+            if (this.MdiParent != null)
+            {
+                frm.MdiParent = this.MdiParent;
+            }
+
             frm.Show();
 
             return;
@@ -861,20 +884,20 @@ where bd.BundleNo = '{0}'",
         {
             #region excel
             this.grid1.ValidateControl();
-            var r = dtt.AsEnumerable().Where(row => (bool)row["selected"]).ToList();
+            var r = this.dtt.AsEnumerable().Where(row => (bool)row["selected"]).ToList();
             if (r.Count == 0)
             {
-                grid1.Focus();
+                this.grid1.Focus();
                 MyUtility.Msg.ErrorBox("Grid must be chose one");
                 return;
             }
 
-            DataTable selects = dtt.AsEnumerable()
+            DataTable selects = this.dtt.AsEnumerable()
                 .Where(row => (bool)row["selected"])
                 .CopyToDataTable();
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P12.xltx"); //預先開啟excel app                         
-            MyUtility.Excel.CopyToXls(selects, "", "Cutting_P12.xltx", 1, true, "Bundle,CutRef,POID,SP,Group,Line,SpreadingNoID,Cell,Style,Item,Comb,Cut,Article,Color,Size,SizeSpec,Cutpart,Description,SubProcess,Parts,Qty", objApp);      // 將datatable copy to excel
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P12.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(selects, string.Empty, "Cutting_P12.xltx", 1, true, "Bundle,CutRef,POID,SP,Group,Line,SpreadingNoID,Cell,Style,Item,Comb,Cut,Article,Color,Size,SizeSpec,Cutpart,Description,SubProcess,Parts,Qty", objApp);      // 將datatable copy to excel
             return;
             #endregion
         }
@@ -882,6 +905,6 @@ where bd.BundleNo = '{0}'",
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
-        }        
+        }
     }
 }

@@ -1,14 +1,9 @@
 ﻿using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
@@ -16,9 +11,9 @@ namespace Sci.Production.Quality
     {
         public B20_SettingSort()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
-        
+
         /// <inheritdoc/>
         protected override void OnLoad(EventArgs e)
         {
@@ -43,11 +38,12 @@ namespace Sci.Production.Quality
         private void btnSave_Click(object sender, EventArgs e)
         {
             string update = string.Empty;
-            foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(w=>w.RowState == DataRowState
+            foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(w => w.RowState == DataRowState
             .Modified))
             {
                 update += $@" update GarmentDefectType set seq = '{dr["seq"]}' , editname = '{Sci.Env.User.UserID}',editDate = getdate() where id = '{dr["id"]}'; ";
             }
+
             DBProxy.Current.Execute(null, update);
             MyUtility.Msg.InfoBox("Success!");
             this.Close();

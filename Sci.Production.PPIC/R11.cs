@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
@@ -8,7 +7,6 @@ using System.Windows.Forms;
 using Ict;
 using Sci.Win;
 using Sci.Data;
-using Excel = Microsoft.Office.Interop.Excel;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 using Sci.Utility.Excel;
 
@@ -769,7 +767,7 @@ drop table #Calendar,#CalendarData,#tmp,#tmp1,#tmp2
                 }
             }
 
-            //畫框線
+            // 畫框線
             Microsoft.Office.Interop.Excel.Range rg1;
             rg1 = wkcolor.Range["I1", $"{MyExcelPrg.GetExcelColumnName(9 + this.dtFty.Rows.Count)}{range + 1}"];
             rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
@@ -798,12 +796,12 @@ drop table #Calendar,#CalendarData,#tmp,#tmp1,#tmp2
 
                 if (this.dtList[1].Rows[i]["Fty"].ToString() == "Grand Total")
                 {
-                    wkcolor.Cells[i + 2, 2].Value = "";
+                    wkcolor.Cells[i + 2, 2].Value = string.Empty;
                     wkcolor.Range[$"C{i + 2}", $"G{i + 2}"].Font.Bold = true;
                 }
             }
 
-            //畫框線
+            // 畫框線
             Microsoft.Office.Interop.Excel.Range rg2;
             rg2 = wkcolor.Range["A1", $"G{this.dtList[1].Rows.Count + 1}"];
             rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;

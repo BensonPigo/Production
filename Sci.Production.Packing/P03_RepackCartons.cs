@@ -6,13 +6,10 @@ using Sci.Production.PublicPrg;
 using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -265,7 +262,7 @@ namespace Sci.Production.Packing
                              .Select(s => new
                              {
                                  OriCTNStartNo = s["CTNStartNo", DataRowVersion.Original],
-                                 NewCTNStartNo = s["CTNStartNo"]
+                                 NewCTNStartNo = s["CTNStartNo"],
                              }).ToList();
 
             if (!listUp.Any())
@@ -560,6 +557,5 @@ where SCICtnNo = '{dr["SCICtnNo"]}'
             }
             #endregion
         }
-
     }
 }

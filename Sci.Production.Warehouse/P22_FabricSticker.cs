@@ -4,13 +4,10 @@ using Sci.Data;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
@@ -21,8 +18,8 @@ namespace Sci.Production.Warehouse
 
         public P22_FabricSticker(object strSubTransferID)
         {
-            InitializeComponent();
-            this.strSubTransferID = strSubTransferID;           
+            this.InitializeComponent();
+            this.strSubTransferID = strSubTransferID;
         }
 
         protected override void OnFormLoaded()
@@ -142,7 +139,7 @@ order by NewRowNo";
 
                 // 開啟 report view
                 var frm = new Sci.Win.Subs.ReportView(report);
-                frm.MdiParent = MdiParent;
+                frm.MdiParent = this.MdiParent;
                 frm.Show();
                 #endregion
             }

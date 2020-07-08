@@ -43,7 +43,6 @@ namespace Sci.Production.PublicPrg
                     application.Quit();
                 }
 
-
                 Marshal.ReleaseComObject(workBook);
                 Marshal.ReleaseComObject(application);
 
@@ -64,9 +63,11 @@ namespace Sci.Production.PublicPrg
         {
             bool result = false;
             Microsoft.Office.Interop.Word.WdExportFormat exportFormat = Microsoft.Office.Interop.Word.WdExportFormat.wdExportFormatPDF;
-            Microsoft.Office.Interop.Word.Application application = null; Microsoft.Office.Interop.Word.Document document = null;
+            Microsoft.Office.Interop.Word.Application application = null;
+            Microsoft.Office.Interop.Word.Document document = null;
 
-            try {
+            try
+            {
                 application = new Microsoft.Office.Interop.Word.Application();
                 application.Visible = false;
                 document = application.Documents.Open(wordPath);

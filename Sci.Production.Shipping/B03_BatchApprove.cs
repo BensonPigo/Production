@@ -1,16 +1,11 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Transactions;
-using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
@@ -53,7 +48,7 @@ namespace Sci.Production.Shipping
                 .Numeric("NewPrice", header: "New Price", width: Widths.AnsiChars(7), decimal_places: 5, iseditingreadonly: true)
                 ;
 
-            //this.Helper.Controls.Grid.Generator(this.grid2)
+            // this.Helper.Controls.Grid.Generator(this.grid2)
             //    .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out this.col_chk2)
             //    .Text("LocalSuppID", header: "Supp", width: Widths.AnsiChars(6), iseditingreadonly: true)
             //    .Text("SuppAbb", header: "Supp Abb", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -62,12 +57,10 @@ namespace Sci.Production.Shipping
             //    .Date("QuotDate", header: "QuotDate", width: Widths.AnsiChars(10), iseditingreadonly: true)
             //    ;
 
-
-            //for (int i = 0; i < this.grid2.Columns.Count; i++)
-            //{
+            // for (int i = 0; i < this.grid2.Columns.Count; i++)
+            // {
             //    this.grid2.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            //}
-
+            // }
             this.Query();
             this.listControlBindingSource1.Filter = "IsApproved='N'";
         }
@@ -360,7 +353,6 @@ when matched then update set
                 {
                     this.grid1.Rows[i].DefaultCellStyle.BackColor = Color.White;
                 }
-
             }
         }
 

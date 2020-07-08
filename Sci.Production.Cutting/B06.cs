@@ -1,11 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
@@ -15,8 +10,8 @@ namespace Sci.Production.Cutting
         public B06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            displayBox1.Text = @"*Spreading Time = Preparation Time *Marker Length + Changeover time *
+            this.InitializeComponent();
+            this.displayBox1.Text = @"*Spreading Time = Preparation Time *Marker Length + Changeover time *
 No. of Roll + Set up time + (Machine Spreading Time*Marker Length*Layer) + 
 Separator Time*(Dye Lot-1)  + Forward Time";
         }
@@ -26,28 +21,29 @@ Separator Time*(Dye Lot-1)  + Forward Time";
             base.OnDetailEntered();
             string sqlcmd = $@"select * from SpreadingTime where WeaveTypeID = '{this.CurrentMaintain["ID"]}'";
             DataRow dr;
-            if (MyUtility.Check.Seek(sqlcmd,out dr))
+            if (MyUtility.Check.Seek(sqlcmd, out dr))
             {
-                numPreparationTime.Value = MyUtility.Convert.GetDecimal(dr["PreparationTime"]);
-                numChangeOverRollTime.Value = MyUtility.Convert.GetDecimal(dr["ChangeOverRollTime"]);
-                numChangeOverUnRollTime.Value = MyUtility.Convert.GetDecimal(dr["ChangeOverUnRollTime"]);
-                numSetupTime.Value = MyUtility.Convert.GetDecimal(dr["SetupTime"]);
-                numSeparatorTime.Value = MyUtility.Convert.GetDecimal(dr["SeparatorTime"]);
-                numSpreadingTime.Value = MyUtility.Convert.GetDecimal(dr["SpreadingTime"]);
-                numForwardTime.Value = MyUtility.Convert.GetDecimal(dr["ForwardTime"]);
+                this.numPreparationTime.Value = MyUtility.Convert.GetDecimal(dr["PreparationTime"]);
+                this.numChangeOverRollTime.Value = MyUtility.Convert.GetDecimal(dr["ChangeOverRollTime"]);
+                this.numChangeOverUnRollTime.Value = MyUtility.Convert.GetDecimal(dr["ChangeOverUnRollTime"]);
+                this.numSetupTime.Value = MyUtility.Convert.GetDecimal(dr["SetupTime"]);
+                this.numSeparatorTime.Value = MyUtility.Convert.GetDecimal(dr["SeparatorTime"]);
+                this.numSpreadingTime.Value = MyUtility.Convert.GetDecimal(dr["SpreadingTime"]);
+                this.numForwardTime.Value = MyUtility.Convert.GetDecimal(dr["ForwardTime"]);
             }
             else
             {
-                numPreparationTime.Value = 0;
-                numChangeOverRollTime.Value = 0;
-                numChangeOverUnRollTime.Value = 0;
-                numSetupTime.Value = 0;
-                numSeparatorTime.Value = 0;
-                numSpreadingTime.Value = 0;
-                numForwardTime.Value = 0;
+                this.numPreparationTime.Value = 0;
+                this.numChangeOverRollTime.Value = 0;
+                this.numChangeOverUnRollTime.Value = 0;
+                this.numSetupTime.Value = 0;
+                this.numSeparatorTime.Value = 0;
+                this.numSpreadingTime.Value = 0;
+                this.numForwardTime.Value = 0;
             }
-            createby.Text = string.Empty;
-            editby.Text = MyUtility.GetValue.Lookup($@"select EditName = concat(EditName,'-'+(select name from Pass1 where id = s.EditName),' '+format(EditDate,'yyyy/MM/dd HH:mm:ss') )
+
+            this.createby.Text = string.Empty;
+            this.editby.Text = MyUtility.GetValue.Lookup($@"select EditName = concat(EditName,'-'+(select name from Pass1 where id = s.EditName),' '+format(EditDate,'yyyy/MM/dd HH:mm:ss') )
 from SpreadingTime s where WeaveTypeID = '{this.CurrentMaintain["ID"]}'");
         }
 
@@ -64,19 +60,19 @@ select WeaveType = '{this.CurrentMaintain["ID"]}' into #tmp
 merge SpreadingTime
 using #tmp s ON s.WeaveType = dbo.SpreadingTime.WeaveTypeID
 when matched then update set
-	 [PreparationTime]		={numPreparationTime.Value}
-	,[ChangeOverRollTime]	={numChangeOverRollTime.Value}
-	,[ChangeOverUnRollTime]	={numChangeOverUnRollTime.Value}
-	,[SetupTime]			={numSetupTime.Value}
-	,[SeparatorTime]		={numSeparatorTime.Value}
-	,[SpreadingTime]		={numSpreadingTime.Value}
-	,[ForwardTime]			={numForwardTime.Value}
+	 [PreparationTime]		={this.numPreparationTime.Value}
+	,[ChangeOverRollTime]	={this.numChangeOverRollTime.Value}
+	,[ChangeOverUnRollTime]	={this.numChangeOverUnRollTime.Value}
+	,[SetupTime]			={this.numSetupTime.Value}
+	,[SeparatorTime]		={this.numSeparatorTime.Value}
+	,[SpreadingTime]		={this.numSpreadingTime.Value}
+	,[ForwardTime]			={this.numForwardTime.Value}
 	,[EditName]				='{Sci.Env.User.UserID}'
 	,[EditDate]				=getdate()
 when not matched by target then
 insert ([WeaveTypeID],[PreparationTime],[ChangeOverRollTime],[ChangeOverUnRollTime],[SetupTime],[SeparatorTime],[SpreadingTime],[ForwardTime],[EditName],[EditDate])
-values(s.WeaveType,{numPreparationTime.Value},{numChangeOverRollTime.Value},{numChangeOverUnRollTime.Value},{numSetupTime.Value},
-{numSeparatorTime.Value},{numSpreadingTime.Value},{numForwardTime.Value},'{Sci.Env.User.UserID}',getdate())
+values(s.WeaveType,{this.numPreparationTime.Value},{this.numChangeOverRollTime.Value},{this.numChangeOverUnRollTime.Value},{this.numSetupTime.Value},
+{this.numSeparatorTime.Value},{this.numSpreadingTime.Value},{this.numForwardTime.Value},'{Sci.Env.User.UserID}',getdate())
 ;
 drop table #tmp
 ";
@@ -85,6 +81,7 @@ drop table #tmp
             {
                 return Result.F(result.ToString());
             }
+
             return Result.True;
         }
     }

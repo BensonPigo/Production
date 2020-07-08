@@ -3,14 +3,8 @@ using Ict.Win;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
@@ -20,6 +14,7 @@ namespace Sci.Production.PPIC
     public partial class P01_EConsMNoticeFailed : Sci.Win.Subs.Input4
     {
         private bool _mustEmpty;
+
         /// <inheritdoc/>
         public P01_EConsMNoticeFailed(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, bool mustEmpty = false)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)

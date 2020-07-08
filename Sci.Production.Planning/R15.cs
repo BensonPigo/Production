@@ -231,6 +231,7 @@ namespace Sci.Production.Planning
                     Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R15_WIP.xltx"); // 預先開啟excel app
                     MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Planning_R15_WIP.xltx", 1, false, null, objApp);      // 將datatable copy to excel
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+
                     // 首列資料篩選
                     Microsoft.Office.Interop.Excel.Range firstRow = (Microsoft.Office.Interop.Excel.Range)objSheets.Rows[1];
                     firstRow.AutoFilter(1, Type.Missing, Microsoft.Office.Interop.Excel.XlAutoFilterOperator.xlAnd, Type.Missing, true);
@@ -514,7 +515,7 @@ where IsTMS =1 or IsPrice = 1
       sum(price_tms)
       for artworktypeid in ( {0})
   )as pvt ",
-                this.artworktypes.ToString().Substring(0, this.artworktypes.ToString().Length - 1)));
+this.artworktypes.ToString().Substring(0, this.artworktypes.ToString().Length - 1)));
             }
             #endregion
 
@@ -1527,12 +1528,12 @@ outer apply(
             {
                 case 0:
                          this.ReportType = "SP#";
-                    break;
+                         break;
                 case 1:
-                    this.ReportType = "Acticle / Size";
-                    break;
+                         this.ReportType = "Acticle / Size";
+                         break;
                 default:
-                    break;
+                         break;
             }
         }
     }

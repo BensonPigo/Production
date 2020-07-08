@@ -2,13 +2,7 @@
 using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
@@ -18,20 +12,20 @@ namespace Sci.Production.Cutting
         public P07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            EditMode = true;
-            setDetailGrid();
+            this.InitializeComponent();
+            this.EditMode = true;
+            this.setDetailGrid();
         }
 
         public P07(string sp, ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            EditMode = true;
-            setDetailGrid();
+            this.InitializeComponent();
+            this.EditMode = true;
+            this.setDetailGrid();
         }
 
-        //隨著 P02上下筆SP#切換資料
+        // 隨著 P02上下筆SP#切換資料
         public void P07Data(string P02SPNo)
         {
             this.EditMode = true;
@@ -42,19 +36,19 @@ namespace Sci.Production.Cutting
         public void setTxtSPNo(string spNo)
         {
             this.txtCuttingSPNo.Text = spNo;
-            txtfactoryByM.Text = string.Empty;
-            txtSPNo.Text = string.Empty;
-            txtSEQ.Text = string.Empty;
-            dateEstCutDate.Text = string.Empty;
-            dateSewingInline.Text = string.Empty;
-            txtCutRefNo.Text = string.Empty;
-            txtCutplanID.Text = string.Empty;
+            this.txtfactoryByM.Text = string.Empty;
+            this.txtSPNo.Text = string.Empty;
+            this.txtSEQ.Text = string.Empty;
+            this.dateEstCutDate.Text = string.Empty;
+            this.dateSewingInline.Text = string.Empty;
+            this.txtCutRefNo.Text = string.Empty;
+            this.txtCutplanID.Text = string.Empty;
         }
 
         public void setDetailGrid()
         {
             #region set grid
-            Helper.Controls.Grid.Generator(this.gridDetail)
+            this.Helper.Controls.Grid.Generator(this.gridDetail)
             .Text("factoryID", header: "Factory", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("ID", header: "Cutting SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -91,19 +85,20 @@ namespace Sci.Production.Cutting
         public void Queryable()
         {
             DataTable detailTb = null;
-            gridDetail.DataSource = null;
-            string cutsp = txtCuttingSPNo.Text;
-            string sp = txtSPNo.Text;
-            string seq = txtSEQ.Text;
-            string estcutdate = dateEstCutDate.Text;
-            string sewinginline = dateSewingInline.Text;
-            string cutref = txtCutRefNo.Text;
-            string cutplanID = txtCutplanID.Text;
-            if (MyUtility.Check.Empty(cutsp) && MyUtility.Check.Empty(sp) && MyUtility.Check.Empty(dateEstCutDate.Value) && MyUtility.Check.Empty(cutplanID))
+            this.gridDetail.DataSource = null;
+            string cutsp = this.txtCuttingSPNo.Text;
+            string sp = this.txtSPNo.Text;
+            string seq = this.txtSEQ.Text;
+            string estcutdate = this.dateEstCutDate.Text;
+            string sewinginline = this.dateSewingInline.Text;
+            string cutref = this.txtCutRefNo.Text;
+            string cutplanID = this.txtCutplanID.Text;
+            if (MyUtility.Check.Empty(cutsp) && MyUtility.Check.Empty(sp) && MyUtility.Check.Empty(this.dateEstCutDate.Value) && MyUtility.Check.Empty(cutplanID))
             {
                 MyUtility.Msg.WarningBox("You must be entry conditions <Cutting SP#> or <SP#> or <Est. Cut Date> or <CutplanID>");
                 return;
             }
+
             string sql = @"
 Select * 
 From
@@ -147,17 +142,48 @@ From
 
 ";
             string where = string.Format(" Where a.cutplanid!='' and a.MDivisionId = '{0}'", Sci.Env.User.Keyword);
-            if (!MyUtility.Check.Empty(cutsp)) where = where + string.Format(" and a.id='{0}'", cutsp);
-            if (!MyUtility.Check.Empty(sp)) where = where + string.Format(" and a.OrderID='{0}'", sp);
-            if (!MyUtility.Check.Empty(seq)) where = where + string.Format(" and a.Seq1+a.SEQ2='{0}'", seq);
-            if (!MyUtility.Check.Empty(dateEstCutDate.Value)) where = where + string.Format("and a.estcutdate='{0}'", estcutdate);
-            if (!MyUtility.Check.Empty(cutref)) where = where + string.Format(" and a.cutref='{0}'", cutref);
-            if (!MyUtility.Check.Empty(txtfactoryByM.Text)) where = where + string.Format(" and a.Factoryid='{0}'", txtfactoryByM.Text);
-            if (!MyUtility.Check.Empty(cutplanID)) where = where + string.Format(" and a.CutplanID='{0}'", cutplanID);
+            if (!MyUtility.Check.Empty(cutsp))
+            {
+                where = where + string.Format(" and a.id='{0}'", cutsp);
+            }
+
+            if (!MyUtility.Check.Empty(sp))
+            {
+                where = where + string.Format(" and a.OrderID='{0}'", sp);
+            }
+
+            if (!MyUtility.Check.Empty(seq))
+            {
+                where = where + string.Format(" and a.Seq1+a.SEQ2='{0}'", seq);
+            }
+
+            if (!MyUtility.Check.Empty(this.dateEstCutDate.Value))
+            {
+                where = where + string.Format("and a.estcutdate='{0}'", estcutdate);
+            }
+
+            if (!MyUtility.Check.Empty(cutref))
+            {
+                where = where + string.Format(" and a.cutref='{0}'", cutref);
+            }
+
+            if (!MyUtility.Check.Empty(this.txtfactoryByM.Text))
+            {
+                where = where + string.Format(" and a.Factoryid='{0}'", this.txtfactoryByM.Text);
+            }
+
+            if (!MyUtility.Check.Empty(cutplanID))
+            {
+                where = where + string.Format(" and a.CutplanID='{0}'", cutplanID);
+            }
 
             sql = sql + where + " ) as #tmp ";
             where = " Where 1=1 and actcutdate is null ";
-            if (!MyUtility.Check.Empty(dateSewingInline.Value)) where = where + string.Format(" and Sewinline='{0}'", sewinginline);
+            if (!MyUtility.Check.Empty(this.dateSewingInline.Value))
+            {
+                where = where + string.Format(" and Sewinline='{0}'", sewinginline);
+            }
+
             sql = sql + where;
             DualResult dResult = DBProxy.Current.Select(null, sql, out detailTb);
             if (!dResult)
@@ -165,18 +191,20 @@ From
                 this.ShowErr(dResult);
                 return;
             }
+
             if (detailTb.Rows.Count == 0)
             {
                 MyUtility.Msg.ErrorBox("Data not found!!");
                 return;
             }
-            gridDetail.DataSource = gridbs;
-            gridbs.DataSource = detailTb;
+
+            this.gridDetail.DataSource = this.gridbs;
+            this.gridbs.DataSource = detailTb;
         }
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            Close();
+            this.Close();
         }
     }
 }

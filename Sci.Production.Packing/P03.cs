@@ -10,8 +10,6 @@ using Sci.Data;
 using Sci.Production.PublicPrg;
 using System.Transactions;
 using System.Linq;
-using System.Data.SqlClient;
-using System.Runtime.InteropServices;
 
 namespace Sci.Production.Packing
 {
@@ -385,7 +383,7 @@ where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
             this.numAppBookingVW.Value = MyUtility.Convert.GetDecimal(dt.Compute("sum(APPBookingVW)", string.Empty));
             this.numAppEstAmtVW.Value = MyUtility.Convert.GetDecimal(dt.Compute("sum(APPEstAmtVW)", string.Empty));
 
-            Color_Change();
+            this.Color_Change();
         }
 
         /// <summary>
@@ -1062,7 +1060,7 @@ order by os.Seq",
 
             foreach (var orderID in orderIdList)
             {
-                bool exists = MyUtility.Check.Seek($"SELECT TOP 1 ShipmodeID FROM Order_QtyShip WHERE ID='{orderID}' AND ShipmodeID='{this.CurrentMaintain["ShipModeID"].ToString() }'");
+                bool exists = MyUtility.Check.Seek($"SELECT TOP 1 ShipmodeID FROM Order_QtyShip WHERE ID='{orderID}' AND ShipmodeID='{this.CurrentMaintain["ShipModeID"].ToString()}'");
 
                 if (!exists)
                 {
@@ -1078,11 +1076,11 @@ order by os.Seq",
             }
 
             // 檢查Packing數量是否超過總訂單數量
-            var listOrder = this.DetailDatas.GroupBy(s => new { OrderID = s["OrderID"].ToString()})
+            var listOrder = this.DetailDatas.GroupBy(s => new { OrderID = s["OrderID"].ToString() })
                 .Select(s => new
                 {
                     ID = s.Key.OrderID,
-                    ShipQty = s.Sum(dr => MyUtility.Convert.GetInt(dr["ShipQty"]))
+                    ShipQty = s.Sum(dr => MyUtility.Convert.GetInt(dr["ShipQty"])),
                 });
             foreach (var order in listOrder)
             {
@@ -1118,7 +1116,7 @@ order by os.Seq",
             }
             else
             {
-                if (!PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), ""))
+                if (!PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), string.Empty))
                 {
                     return false;
                 }
@@ -1455,7 +1453,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                         break;
                     }
 
-((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "Seq";
+                    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "Seq";
                     break;
             }
         }
@@ -1515,7 +1513,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
 
             string sqlcmd = $@"exec dbo.usp_Packing_P03_Confirm '{this.CurrentMaintain["ID"]}','{Sci.Env.User.Factory}','{Sci.Env.User.UserID}','1'";
             DataTable dtSP = new DataTable();
-            if (result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtSP))
+            if (this.result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtSP))
             {
                 if (dtSP.Rows.Count > 0)
                 {
@@ -1851,7 +1849,7 @@ order by PD.seq
 
             printData.Columns.Remove("seq");
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Packing_P03_CustCTN.xltx");
-            MyUtility.Excel.CopyToXls(printData, string.Empty, "Packing_P03_CustCTN.xltx", 1, false, null, objApp);// 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(printData, string.Empty, "Packing_P03_CustCTN.xltx", 1, false, null, objApp); // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Range["H2", $"H{printData.Rows.Count + 1}"].Interior.Color = Color.FromArgb(255, 199, 206);
             objApp.Visible = true;
@@ -2026,7 +2024,7 @@ update PackingList set  EditName = '{Sci.Env.User.UserID}', EditDate = GETDATE()
                 this.ReloadDatas();
             }
         }
-        
+
         private void btnPackScanHistory_Click(object sender, EventArgs e)
         {
             Sci.Production.Packing.P03_ScanAndPackDeletedHistory form = new P03_ScanAndPackDeletedHistory(this.CurrentMaintain["ID"].ToString());

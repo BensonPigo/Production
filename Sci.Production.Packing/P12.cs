@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci;
-using System.Linq;
 
 namespace Sci.Production.Packing
 {
@@ -122,9 +117,9 @@ and o.Qty > 0
 and (oq.EstPulloutDate <= '{1}' or dateadd(day,4,o.SewOffLine) <= '{1}')
 and o.Category in ({2})
 ",
-            Sci.Env.User.Keyword,
-            Convert.ToDateTime(this.dateExpPoutDate.Value).ToString("d"),
-            category));
+                Sci.Env.User.Keyword,
+                Convert.ToDateTime(this.dateExpPoutDate.Value).ToString("d"),
+                category));
             sqlCmd.Append(@"
 select distinct id,seq into #tmpIDSeq from  #tmpClocationids
 

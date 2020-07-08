@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
-using System.Linq;
 using System.Transactions;
 using System.Runtime.InteropServices;
 
@@ -53,7 +50,7 @@ namespace Sci.Production.Shipping
                         this.DefaultWhere = string.Empty;
                         break;
                     default:
-                        this.DefaultWhere = $" Status = '{this.queryfors.SelectedValue}'"; 
+                        this.DefaultWhere = $" Status = '{this.queryfors.SelectedValue}'";
                         break;
                 }
 
@@ -240,7 +237,6 @@ where o.Id = '{0}'",
         /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
-
             if (MyUtility.Check.Empty(this.CurrentMaintain["APAmountEditDate"]) && this.CurrentMaintain["Status"].ToString() != "New")
             {
                 this.SetReadonly();
@@ -401,7 +397,6 @@ where o.Id = '{0}'",
                 }
 
                 this.CurrentMaintain["ID"] = id;
-
             }
 
             string checkStatus = MyUtility.GetValue.Lookup(string.Format("select Status from AirPP where id = '{0}'", this.CurrentMaintain["ID"].ToString()));
@@ -597,7 +592,7 @@ values ('{0}','Status','','New','{1}',GETDATE())",
         // V.Weight(Kgs)
         private void NumVWeight_Validated(object sender, EventArgs e)
         {
-            //if (this.EditMode && this.numVWeight.OldValue != this.numVWeight.Value)\
+            // if (this.EditMode && this.numVWeight.OldValue != this.numVWeight.Value)\
             if (this.EditMode && this.numVWeightOldValue != this.numVWeight.Value)
             {
                 this.CalculateEstAmt();
@@ -1505,19 +1500,16 @@ and Forwarder = '{this.txtSubconForwarderN.TextBox1.Text}'";
 
         private void numVWeight_ValueChanged(object sender, EventArgs e)
         {
-            this.numVWeightOldValue = this.numVWeight.OldValue.HasValue ? this.numVWeight.OldValue.Value : 0 ;
+            this.numVWeightOldValue = this.numVWeight.OldValue.HasValue ? this.numVWeight.OldValue.Value : 0;
         }
 
         private void numForwarderNQuotation_VisibleChanged(object sender, EventArgs e)
         {
-            
             this.numForwarderNQuotationOldValue = this.numForwarderNQuotation.OldValue.HasValue ? this.numForwarderNQuotation.OldValue.Value : 0;
-
         }
 
         private void detailcont_Paint(object sender, PaintEventArgs e)
         {
-
         }
     }
 }

@@ -1,12 +1,8 @@
 ﻿using Ict;
 using Ict.Win;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Sci.Data;
 
 namespace Sci.Production.PublicForm
@@ -18,36 +14,33 @@ namespace Sci.Production.PublicForm
         private DataTable colortb;
         private DataTable dtQTWith;
 
-
         public ColorCombination()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         public ColorCombination(string cID, string _Styleukey)
         {
-            InitializeComponent();
-            cutid = cID;
-            Styleukey = _Styleukey;
+            this.InitializeComponent();
+            this.cutid = cID;
+            this.Styleukey = _Styleukey;
 
-            GetQTWith();  //參考TRADE的方式抓[QT WITH]資料
-            requery();
-            color();
+            this.GetQTWith();  // 參考TRADE的方式抓[QT WITH]資料
+            this.requery();
+            this.color();
         }
 
         private void requery()
         {
-
-            Helper.Controls.Grid.Generator(this.gridFabric)
+            this.Helper.Controls.Grid.Generator(this.gridFabric)
             .Text("FabricCode", header: "Fabric#", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("Refno", header: "Refno", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Description", header: "Description", width: Widths.AnsiChars(55), iseditingreadonly: true);
 
-
-            Helper.Controls.Grid.Generator(this.gridColCombin)
+            this.Helper.Controls.Grid.Generator(this.gridColCombin)
             .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
-            Helper.Controls.Grid.Generator(this.gridColorDesc)
+            this.Helper.Controls.Grid.Generator(this.gridColorDesc)
             .Text("ID", header: "Color ID", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("Name", header: "Color Decription", width: Widths.AnsiChars(18), iseditingreadonly: true);
             this.gridColorDesc.Font = new Font("Arial", 9);
@@ -55,29 +48,32 @@ namespace Sci.Production.PublicForm
             #region Create header
             string createheader = "Select Article";
             string headername;
-            //Order_Fabric
-            string headersql = string.Format("Select distinct FabricCode,PatternPanel,FabricPanelCode from Order_FabricCode WITH (NOLOCK) where id = '{0}' order by PatternPanel,FabricCode", cutid);
+
+            // Order_Fabric
+            string headersql = string.Format("Select distinct FabricCode,PatternPanel,FabricPanelCode from Order_FabricCode WITH (NOLOCK) where id = '{0}' order by PatternPanel,FabricCode", this.cutid);
             DataTable headertb0, headertb;
             DualResult sqlresult = DBProxy.Current.Select(null, headersql, out headertb0);
             if (!sqlresult)
             {
-                ShowErr(headersql, sqlresult);
+                this.ShowErr(headersql, sqlresult);
                 return;
             }
+
             foreach (DataRow dr in headertb0.Rows)
             {
                 headername = dr["FabricPanelCode"].ToString().Trim();
                 createheader = createheader + string.Format(",case when a.FabricPanelCode='{0}' then Colorid end '{0}' ", dr["FabricPanelCode"].ToString().Trim());
 
-                Helper.Controls.Grid.Generator(this.gridColCombin)
+                this.Helper.Controls.Grid.Generator(this.gridColCombin)
                 .Text(headername, header: headername, width: Widths.AnsiChars(8), iseditingreadonly: true);
             }
-            //BOA
-            headersql = string.Format("Select distinct PatternPanel from Order_BOA WITH (NOLOCK) where id = '{0}' and patternpanel!='' order by PatternPanel", cutid);
+
+            // BOA
+            headersql = string.Format("Select distinct PatternPanel from Order_BOA WITH (NOLOCK) where id = '{0}' and patternpanel!='' order by PatternPanel", this.cutid);
             sqlresult = DBProxy.Current.Select(null, headersql, out headertb);
             if (!sqlresult)
             {
-                ShowErr(headersql, sqlresult);
+                this.ShowErr(headersql, sqlresult);
                 return;
             }
 
@@ -85,49 +81,50 @@ namespace Sci.Production.PublicForm
             {
                 headername = dr["PatternPanel"].ToString().Trim();
                 createheader = createheader + string.Format(",case when a.PatternPanel='{0}' then Colorid end '{0}' ", headername);
-                Helper.Controls.Grid.Generator(this.gridColCombin)
+                this.Helper.Controls.Grid.Generator(this.gridColCombin)
                 .Text(headername, header: headername, width: Widths.AnsiChars(8), iseditingreadonly: true);
             }
 
-            string createtable = createheader + string.Format(" From Order_ColorCombo a WITH (NOLOCK) where id ='{0}' ", cutid); //create data
-            createheader = createheader + " From Order_ColorCombo a WITH (NOLOCK) where 1=0"; //empty table
+            string createtable = createheader + string.Format(" From Order_ColorCombo a WITH (NOLOCK) where id ='{0}' ", this.cutid); // create data
+            createheader = createheader + " From Order_ColorCombo a WITH (NOLOCK) where 1=0"; // empty table
 
-            //BOF
+            // BOF
             string cmd = $@"
 SELECT o.FabricCode,f.Refno,f.Description
 FROM Order_BOF o with(nolock) 
 LEFT JOIN Fabric f with(nolock) ON o.SCIRefno=f.SCIRefno
-where o.id = '{cutid}'
+where o.id = '{this.cutid}'
 ORDER BY o.FabricCode
 ";
 
-            DataTable gridtb, datatb ,gridFabric;
+            DataTable gridtb, datatb, gridFabric;
             sqlresult = DBProxy.Current.Select(null, createheader, out gridtb);
             if (!sqlresult)
             {
-                ShowErr(createheader, sqlresult);
+                this.ShowErr(createheader, sqlresult);
                 return;
             }
 
             sqlresult = DBProxy.Current.Select(null, cmd, out gridFabric);
             if (!sqlresult)
             {
-                ShowErr(createheader, sqlresult);
+                this.ShowErr(createheader, sqlresult);
                 return;
             }
             #endregion
 
             #region QT 塞資料
-            string qtsql = string.Format("Select * from order_FabricCode_Qt a WITH (NOLOCK) where a.id = '{0}'", cutid);
+            string qtsql = string.Format("Select * from order_FabricCode_Qt a WITH (NOLOCK) where a.id = '{0}'", this.cutid);
             DataTable qttb;
             sqlresult = DBProxy.Current.Select(null, qtsql, out qttb);
             DataTable qttb2 = qttb.Copy();
             if (!sqlresult)
             {
-                ShowErr(qtsql, sqlresult);
+                this.ShowErr(qtsql, sqlresult);
                 return;
             }
-            //加入前3列,第一欄設定名稱
+
+            // 加入前3列,第一欄設定名稱
             DataRow ndr = gridtb.NewRow();
             ndr["Article"] = "PatternPanel";
             gridtb.Rows.Add(ndr);
@@ -147,11 +144,13 @@ ORDER BY o.FabricCode
                 DataRow[] tbdr2 = gridtb.Select("Article = 'Fabric'");
                 tbdr2[0][lc] = fc;
 
-                //產生[QT With]資料
+                // 產生[QT With]資料
                 DataRow[] tbdr3 = gridtb.Select("Article = 'QT With'");
-                DataRow[] drQTWith = dtQTWith.Select(string.Format("FabricPanelCode = '{0}'", lc));
-                if (drQTWith.Length > 0) tbdr3[0][lc] = drQTWith[0]["IsQT"].ToString();
-
+                DataRow[] drQTWith = this.dtQTWith.Select(string.Format("FabricPanelCode = '{0}'", lc));
+                if (drQTWith.Length > 0)
+                {
+                    tbdr3[0][lc] = drQTWith[0]["IsQT"].ToString();
+                }
             }
 
             #endregion
@@ -160,9 +159,10 @@ ORDER BY o.FabricCode
             sqlresult = DBProxy.Current.Select(null, createtable, out datatb);
             if (!sqlresult)
             {
-                ShowErr(createtable, sqlresult);
+                this.ShowErr(createtable, sqlresult);
                 return;
             }
+
             foreach (DataRow dr in datatb.Rows)
             {
                 DataRow[] dr2 = gridtb.Select(string.Format("Article = '{0}'", dr["Article"]));
@@ -203,7 +203,7 @@ ORDER BY o.FabricCode
 
         private void color()
         {
-            string brandid = MyUtility.GetValue.Lookup("Brandid", cutid, "Orders", "ID");
+            string brandid = MyUtility.GetValue.Lookup("Brandid", this.cutid, "Orders", "ID");
             #region SQL CMD 串出ColorComb 所有Color, 含在Color_Mutiple
             string colorsql = string.Format(
                             @"select distinct * from 
@@ -245,21 +245,23 @@ ORDER BY o.FabricCode
                                     where e.ukey = f.ColorUkey and f.Brandid = '{1}' 
                                 ) h 
                                 where g.brandid = h.brandid and g.id = h.ColorID and g.BrandId = '{1}' 
-                            ) ord order by id ", cutid, brandid); //串出所有Colorid
+                            ) ord order by id ", this.cutid, brandid); // 串出所有Colorid
             #endregion
 
-            DualResult sqlresult = DBProxy.Current.Select(null, colorsql, out colortb);
+            DualResult sqlresult = DBProxy.Current.Select(null, colorsql, out this.colortb);
             if (!sqlresult)
             {
-                ShowErr(sqlresult);
+                this.ShowErr(sqlresult);
                 return;
             }
-            this.listControlBindingSource2.DataSource = colortb;
+
+            this.listControlBindingSource2.DataSource = this.colortb;
         }
 
         private void GetQTWith()
         {
-            string sql = string.Format(@"with 
+            string sql = string.Format(
+                @"with 
 	            fabericCode as (Select StyleUkey as myKey, Style_BOFUkey as parentKey, * From Style_FabricCode WITH (NOLOCK) where StyleUkey = '{0}'),
 	            bof as (Select StyleUkey as myKey, * From Style_BOF WITH (NOLOCK) where StyleUkey = '{0}'),
 	            boa as (Select StyleUkey as myKey, * From Style_BOA WITH (NOLOCK) where StyleUkey = '{0}'),
@@ -278,15 +280,13 @@ ORDER BY o.FabricCode
 	            and qt.SeqNO > (Select distinct SeqNO From qt QR where QR.myKey = qt.myKey and QR.QTFabricPanelCode = f.FabricPanelCode)
 	            Order by qt.SeqNO
             ) as q
-            Order by f.PatternPanel, f.FabricCode, f.FabricPanelCode;", Styleukey);
-            DualResult sqlresult = DBProxy.Current.Select(null, sql, out dtQTWith);
+            Order by f.PatternPanel, f.FabricCode, f.FabricPanelCode;", this.Styleukey);
+            DualResult sqlresult = DBProxy.Current.Select(null, sql, out this.dtQTWith);
             if (!sqlresult)
             {
-                ShowErr(sqlresult);
+                this.ShowErr(sqlresult);
                 return;
             }
         }
-
-
     }
 }

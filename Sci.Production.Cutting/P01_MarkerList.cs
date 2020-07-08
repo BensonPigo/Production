@@ -2,22 +2,18 @@
 using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
     public partial class P01_MarkerList : Sci.Win.Subs.Input4Plus
     {
         DataRow MasterData;
+
         public P01_MarkerList(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, string tablename, DataRow MasterData)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             this.DetailGridAlias = "Order_MarkerList_SizeQty";
             this.DetailKeyField = "Order_MarkerListUkey";
@@ -29,7 +25,8 @@ namespace Sci.Production.Cutting
             datas = null;
             string sqlCmd;
 
-            sqlCmd = string.Format(@"
+            sqlCmd = string.Format(
+                @"
 Select mark.*
 ,OE.Article ForArticle
 ,b.Description,b.Width as FabricWidth
@@ -46,22 +43,26 @@ left join Order_EachCons OE WITH (NOLOCK)
     and mark.FabricPanelCode=OE.FabricPanelCode 
 left join Order_FabricCode OFC WITH (NOLOCK) 
     on OFC.Id=mark.Id and OFC.FabricPanelCode=mark.FabricPanelCode and OFC.FabricCode=mark.FabricCode
-Where mark.id ='{0}' order by mark.Seq"
-                , this.KeyValue1);
+Where mark.id ='{0}' order by mark.Seq",
+                this.KeyValue1);
 
             Ict.DualResult result;
-            if (!(result = DBProxy.Current.Select(null, sqlCmd, out datas))) return result;
+            if (!(result = DBProxy.Current.Select(null, sqlCmd, out datas)))
+            {
+                return result;
+            }
+
             return Result.True;
         }
 
         protected override bool OnGridSetup()
         {
-            Helper.Controls.Grid.Generator(this.grid)
+            this.Helper.Controls.Grid.Generator(this.grid)
                 .Text("Seq", header: "Seq", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("Markername", header: "Marker" + Environment.NewLine + "name", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("FabricCombo", header: "Fabric" + Environment.NewLine + "Combo", width: Widths.AnsiChars(2), iseditingreadonly: true);
 
-            Helper.Controls.Grid.Generator(this.detailgrid)
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(5))
                 .Numeric("Qty", header: "Qty", width: Widths.Numeric(6), maximum: 999999, minimum: 0, decimal_places: 0);
             return true;
@@ -70,24 +71,24 @@ Where mark.id ='{0}' order by mark.Seq"
         protected override void OnGridRowChanged()
         {
             base.OnGridRowChanged();
-            SumSizeQty();
+            this.SumSizeQty();
         }
 
         protected override void OnDetailGridRowChanged()
         {
             base.OnDetailGridRowChanged();
-            SumSizeQty();
+            this.SumSizeQty();
         }
 
         private void SumSizeQty()
         {
             // 計算每個Marker 的總裁剪訂單數
-            DataTable detailGrid = (DataTable)detailgridbs.DataSource;
-            int rowid = grid.GetSelectedRowIndex();
-            DataRowView dr = grid.GetData<DataRowView>(rowid);
+            DataTable detailGrid = (DataTable)this.detailgridbs.DataSource;
+            int rowid = this.grid.GetSelectedRowIndex();
+            DataRowView dr = this.grid.GetData<DataRowView>(rowid);
             if (dr != null && detailGrid != null)
             {
-                Object totalSizeQty = detailGrid.Compute("sum(Qty)", "");
+                object totalSizeQty = detailGrid.Compute("sum(Qty)", string.Empty);
                 this.displayTotal.Value = totalSizeQty.ToString();
             }
         }

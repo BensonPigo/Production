@@ -16,13 +16,7 @@ namespace Sci.Production.Planning
     /// </summary>
     public partial class R14 : Sci.Win.Tems.PrintForm
     {
-        private int selectindex = 0;
-        private string factory;
-        private string mdivision;
-        private DateTime? sewingDate1;
-        private DateTime? sewingDate2;
         private DataTable[] printData;
-        private DataTable dtDateList;
         private StringBuilder condition = new StringBuilder();
         private StringBuilder datelist = new StringBuilder();
         List<SqlParameter> listPar = new List<SqlParameter>();

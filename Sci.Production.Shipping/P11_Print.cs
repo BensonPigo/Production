@@ -2,16 +2,11 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Shipping
@@ -20,6 +15,7 @@ namespace Sci.Production.Shipping
     {
         private IList<DataRow> DetailDatas;
         private DataRow CurrentMaintain;
+
         /// <summary>
         /// P11_Print
         /// </summary>
@@ -381,7 +377,7 @@ where a.id = '{top1id}'
             decimal sumM = sumJ;
             decimal sumE = MyUtility.Convert.GetDecimal(dt.Compute("sum(E)", null));
 
-            //worksheet.Cells[48, 3] = MyUtility.Convert.USDMoney(sumI).Replace("AND CENTS", Environment.NewLine + "AND CENTS");
+            // worksheet.Cells[48, 3] = MyUtility.Convert.USDMoney(sumI).Replace("AND CENTS", Environment.NewLine + "AND CENTS");
             worksheet.Cells[57, 3] = MyUtility.Convert.USDMoney(sumJ);
 
             string sumGW = $@"

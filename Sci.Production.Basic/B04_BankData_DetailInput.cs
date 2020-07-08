@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using static Sci.Production.Basic.B04_BankDetail;
 
 namespace Sci.Production.Basic
@@ -15,7 +9,7 @@ namespace Sci.Production.Basic
 
         public B04_BankData_DetailInput(LocalSupp_Bank_Detail detail)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this._detail = detail;
         }
 
@@ -29,7 +23,8 @@ namespace Sci.Production.Basic
             this.txtBranchCode.Text = this._detail.BranchCode;
             this.txtBranchName.Text = this._detail.BranchName;
             this.txtCountry.TextBox1.Text = this._detail.CountryID;
-            //this.txtAlias.Text = this._detail.Alias;
+
+            // this.txtAlias.Text = this._detail.Alias;
             this.txtCity.Text = this._detail.City;
             this.txtSWIFTCode.Text = this._detail.SWIFTCode;
             this.txtMidSWIFTCode.Text = this._detail.MidSWIFTCode;

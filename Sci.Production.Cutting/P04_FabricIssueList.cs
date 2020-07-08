@@ -1,17 +1,7 @@
-﻿using Ict;
-using Ict.Win;
-using Sci.Production.Class;
+﻿using Ict.Win;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Sci.Win;
 using Sci.Data;
-using System.Transactions;
-using Sci.Win.Tools;
 
 namespace Sci.Production.Cutting
 {
@@ -19,22 +9,24 @@ namespace Sci.Production.Cutting
     {
         DataTable gridTb;
         string cutplanid;
+
         public P04_FabricIssueList()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         public P04_FabricIssueList(string str)
         {
-            InitializeComponent();
-            cutplanid = str;
-            DBProxy.Current.Select(null, string.Format("Select id,issuedate,Status from Issue WITH (NOLOCK) Where Cutplanid ='{0}'", str), out gridTb);
-            gridFabricIssueList.DataSource = gridTb;
+            this.InitializeComponent();
+            this.cutplanid = str;
+            DBProxy.Current.Select(null, string.Format("Select id,issuedate,Status from Issue WITH (NOLOCK) Where Cutplanid ='{0}'", str), out this.gridTb);
+            this.gridFabricIssueList.DataSource = this.gridTb;
         }
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Helper.Controls.Grid.Generator(this.gridFabricIssueList)
+            this.Helper.Controls.Grid.Generator(this.gridFabricIssueList)
             .Text("id", header: "Issue ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("IssueDate", header: "Issue Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true);

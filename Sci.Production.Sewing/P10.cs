@@ -1,12 +1,6 @@
 ﻿using Ict;
-using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
@@ -32,12 +26,11 @@ namespace Sci.Production.Sewing
                 return;
             }
 
-            //if (this.dateBoxUpdateDate.Value >= DateTime.Now.Date)
-            //{
+            // if (this.dateBoxUpdateDate.Value >= DateTime.Now.Date)
+            // {
             //    MyUtility.Msg.WarningBox("<Update Date> must be earlier today");
             //    return;
-            //}
-
+            // }
             string sqlcmd = $"exec SNPAutoTransferToSewingOutput '{this.dateBoxUpdateDate.Text}' ";
 
             // 12分鐘  比照排程執行時間
@@ -50,7 +43,8 @@ namespace Sci.Production.Sewing
             {
                 MyUtility.Msg.WarningBox(result.Messages.ToString());
                 return;
-            }else
+            }
+            else
             {
                 MyUtility.Msg.InfoBox("Updated successfully.");
             }

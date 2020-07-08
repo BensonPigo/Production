@@ -3,8 +3,6 @@ using Ict.Win;
 using Sci.Data;
 using Sci.Production.Class;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -13,7 +11,7 @@ using System.Transactions;
 using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
-{  
+{
     public partial class P05_IrregularQtyReason : Sci.Win.Subs.Base
     {
         DataRow _masterData;
@@ -22,43 +20,41 @@ namespace Sci.Production.Subcon
         string _ArtWorkReq_ID = string.Empty;
         Ict.Win.UI.DataGridViewTextBoxColumn txt_SubReason;
 
-        public P05_IrregularQtyReason(string ArtWorkReq_ID,DataRow masterData, DataTable detailDatas)
+        public P05_IrregularQtyReason(string ArtWorkReq_ID, DataRow masterData, DataTable detailDatas)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.EditMode = false;
-            _masterData = masterData;
-            _ArtWorkReq_ID = ArtWorkReq_ID;
-            _detailDatas = detailDatas;
+            this._masterData = masterData;
+            this._ArtWorkReq_ID = ArtWorkReq_ID;
+            this._detailDatas = detailDatas;
         }
 
         protected override void OnFormLoaded()
         {
-
             cellSubconReason txtSubReason = (cellSubconReason)cellSubconReason.GetGridtxtCell("SQ");
 
-            //comboSubReason.EditingControlShowing += (s, e) =>
+            // comboSubReason.EditingControlShowing += (s, e) =>
             // {
             //     if (s==null || e == null)
             //     {
             //         return;
             //     }
 
-            //     var eventArgs = (Ict.Win.UI.DataGridViewEditingControlShowingEventArgs)e;
+            // var eventArgs = (Ict.Win.UI.DataGridViewEditingControlShowingEventArgs)e;
             //     ComboBox cb = eventArgs.Control as ComboBox;
             //     if (cb != null)
             //     {
             //         cb.SelectionChangeCommitted -= this.combo_SelectionChangeCommitted;
             //         cb.SelectionChangeCommitted += this.combo_SelectionChangeCommitted;
             //     }
-            //};
-
-            Query();
+            // };
+            this.Query();
             this.gridIrregularQty.IsEditingReadOnly = false;
-            this.gridIrregularQty.DataSource = listControlBindingSource1;
+            this.gridIrregularQty.DataSource = this.listControlBindingSource1;
 
             #region Grid欄位設定
 
-            Helper.Controls.Grid.Generator(this.gridIrregularQty)
+            this.Helper.Controls.Grid.Generator(this.gridIrregularQty)
                 .Text("FactoryID", header: "Factory", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Text("ArtworkTypeID", header: "Artwork Type", iseditingreadonly: true, width: Widths.AnsiChars(15))
                 .Text("OrderID", header: "SP", iseditingreadonly: true, width: Widths.AnsiChars(15))
@@ -66,7 +62,7 @@ namespace Sci.Production.Subcon
                 .Text("BrandID", header: "Brand", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Numeric("StandardQty", header: "Std. Qty", decimal_places: 0, iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Numeric("ReqQty", header: "Req. Qty", decimal_places: 0, iseditingreadonly: true, width: Widths.AnsiChars(10))
-                .Text("SubconReasonID", header: "Reason# ", width: Widths.AnsiChars(15), iseditable: false, settings: txtSubReason).Get(out txt_SubReason)
+                .Text("SubconReasonID", header: "Reason# ", width: Widths.AnsiChars(15), iseditable: false, settings: txtSubReason).Get(out this.txt_SubReason)
                 .Text("ReasonDesc", header: "Reason Desc.", iseditingreadonly: true, width: Widths.AnsiChars(15))
 
                 .DateTime("CreateDate", header: "Create" + Environment.NewLine + "Date", iseditingreadonly: true, width: Widths.AnsiChars(16))
@@ -103,13 +99,13 @@ namespace Sci.Production.Subcon
 
         private void Query()
         {
-            listControlBindingSource1.DataSource = getData();
+            this.listControlBindingSource1.DataSource = this.getData();
         }
 
         public DataTable Check_Irregular_Qty()
         {
-            DataTable dt = getData();
-            listControlBindingSource1.DataSource =dt;
+            DataTable dt = this.getData();
+            this.listControlBindingSource1.DataSource = dt;
 
             return dt;
         }
@@ -118,13 +114,13 @@ namespace Sci.Production.Subcon
         {
             if (this.EditMode)
             {
-                DataTable ModifyTable = (DataTable)listControlBindingSource1.DataSource;
+                DataTable ModifyTable = (DataTable)this.listControlBindingSource1.DataSource;
 
                 StringBuilder sqlcmd = new StringBuilder();
 
-                var Insert_Or_Update = dtLoad.AsEnumerable().Where(o => o.Field<string>("SubconReasonID").Trim() != "");
+                var Insert_Or_Update = this.dtLoad.AsEnumerable().Where(o => o.Field<string>("SubconReasonID").Trim() != string.Empty);
 
-                var deleteTmp = dtLoad.AsEnumerable().Where(o => o.Field<string>("SubconReasonID").Trim() == "");
+                var deleteTmp = this.dtLoad.AsEnumerable().Where(o => o.Field<string>("SubconReasonID").Trim() == string.Empty);
 
                 foreach (var item in deleteTmp)
                 {
@@ -174,7 +170,7 @@ VALUES ('{OrderID}','{ArtworkType}',{StandardQty},{ReqQty},'{SubconReasonID}',GE
                             upResult = DBProxy.Current.Execute(null, sqlcmd.ToString());
                             if (!upResult)
                             {
-                                ShowErr(sqlcmd.ToString(), upResult);
+                                this.ShowErr(sqlcmd.ToString(), upResult);
                                 return;
                             }
 
@@ -184,25 +180,25 @@ VALUES ('{OrderID}','{ArtworkType}',{StandardQty},{ReqQty},'{SubconReasonID}',GE
                         catch (Exception ex)
                         {
                             scope.Dispose();
-                            ShowErr("Commit transaction error.", ex);
+                            this.ShowErr("Commit transaction error.", ex);
                         }
                     }
                 }
-
             }
 
-            Query();
+            this.Query();
             this.EditMode = !this.EditMode;
-            if (EditMode)
+            if (this.EditMode)
             {
-                txt_SubReason.IsEditable = true;
+                this.txt_SubReason.IsEditable = true;
             }
             else
             {
-                txt_SubReason.IsEditable = false;
+                this.txt_SubReason.IsEditable = false;
             }
-            btnEdit.Text = this.EditMode ? "Save" : "Edit";
-            btnClose.Text = this.EditMode ? "Undo" : "Close";
+
+            this.btnEdit.Text = this.EditMode ? "Save" : "Edit";
+            this.btnClose.Text = this.EditMode ? "Undo" : "Close";
         }
 
         private DataTable getData()
@@ -215,7 +211,7 @@ VALUES ('{OrderID}','{ArtworkType}',{StandardQty},{ReqQty},'{SubconReasonID}',GE
 -- exists DB
 select distinct
 o.FactoryID
-,ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
+,ArtworkTypeID = '{this._masterData["ArtworkTypeID"]}'
 ,ai.OrderID
 ,o.StyleID
 ,o.BrandID
@@ -234,12 +230,12 @@ into #tmpDB
 from ArtworkReq_IrregularQty ai
 inner join Orders o on o.ID = ai.OrderID
 inner join #tmp s on s.OrderID = ai.OrderID 
-where ai.ArtworkTypeID like '{_masterData["ArtworkTypeID"]}%'
+where ai.ArtworkTypeID like '{this._masterData["ArtworkTypeID"]}%'
 
 -- not exists DB
 select 
 o.FactoryID
-,ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
+,ArtworkTypeID = '{this._masterData["ArtworkTypeID"]}'
 ,[OrderID] = o.ID
 ,o.StyleID
 ,o.BrandID
@@ -263,9 +259,9 @@ outer apply(
     and OrderID = o.ID 
     and ad.PatternCode = isnull(s.PatternCode,'')
 	and ad.PatternDesc = isnull(s.PatternDesc,'') 
-    and ad.ArtworkID = iif(s.ArtworkID is null,'{_masterData["ArtworkTypeID"]}',s.ArtworkID)
+    and ad.ArtworkID = iif(s.ArtworkID is null,'{this._masterData["ArtworkTypeID"]}',s.ArtworkID)
 	and ad.ArtworkReqID =''
-	and a.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
+	and a.ArtworkTypeID = '{this._masterData["ArtworkTypeID"]}'
 ) PoQty
 outer apply(
 	select value = ISNULL(sum(ReqQty),0)
@@ -273,14 +269,14 @@ outer apply(
 	where ad.ID = a.ID
 	and OrderID = o.ID and ad.PatternCode= isnull(s.PatternCode,'')
 	and ad.PatternDesc = isnull(s.PatternDesc,'') 
-    and ad.ArtworkID = iif(s.ArtworkID is null,'{_masterData["ArtworkTypeID"]}',s.ArtworkID)
-	and ad.id !=  '{_ArtWorkReq_ID}'
-	and a.ArtworkTypeID = '{_masterData["ArtworkTypeID"]}'
+    and ad.ArtworkID = iif(s.ArtworkID is null,'{this._masterData["ArtworkTypeID"]}',s.ArtworkID)
+	and ad.id !=  '{this._ArtWorkReq_ID}'
+	and a.ArtworkTypeID = '{this._masterData["ArtworkTypeID"]}'
     and a.status != 'Closed'
 )ReqQty
 where not exists(
 	select 1 from #tmpDB
-	where orderID = o.ID and ArtworkTypeID like '{_masterData["ArtworkTypeID"]}%'
+	where orderID = o.ID and ArtworkTypeID like '{this._masterData["ArtworkTypeID"]}%'
 )
 group by o.FactoryID,o.ID,o.StyleID,o.BrandID,ReqQty.value,PoQty.value,s.ReqQty
 ,s.ArtworkID,s.PatternCode,s.PatternDesc
@@ -302,32 +298,37 @@ drop table #tmpCurrent,#tmpFinal,#tmpDB
 
 ";
 
-            result = MyUtility.Tool.ProcessWithDatatable(_detailDatas, "", sqlcmd, out dtLoad);
-            if (result == false) ShowErr(sqlcmd, result);
+            result = MyUtility.Tool.ProcessWithDatatable(this._detailDatas, string.Empty, sqlcmd, out this.dtLoad);
+            if (result == false)
+            {
+                this.ShowErr(sqlcmd, result);
+            }
 
-            return dtLoad;
+            return this.dtLoad;
         }
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            if (btnClose.Text == "Close")
-                Close();
+            if (this.btnClose.Text == "Close")
+            {
+                this.Close();
+            }
             else
             {
                 this.EditMode = !this.EditMode;
-                btnEdit.Text = "Edit";
-                btnClose.Text = "Close";
-                if (EditMode)
+                this.btnEdit.Text = "Edit";
+                this.btnClose.Text = "Close";
+                if (this.EditMode)
                 {
-                    txt_SubReason.IsEditable = true;
+                    this.txt_SubReason.IsEditable = true;
                 }
                 else
                 {
-                    txt_SubReason.IsEditable = false;
+                    this.txt_SubReason.IsEditable = false;
                 }
 
-                //回到檢視模式，並且重新取得資料
-                Query();
+                // 回到檢視模式，並且重新取得資料
+                this.Query();
             }
         }
     }

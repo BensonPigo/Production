@@ -3,13 +3,8 @@ using Ict.Win;
 using Sci.Data;
 using Sci.Win.Tools;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using System.Linq;
 
 namespace Sci.Production.PPIC
 {
@@ -48,8 +43,16 @@ namespace Sci.Production.PPIC
             #region col_Factory
             col_Factory.CellMouseClick += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
@@ -68,8 +71,16 @@ namespace Sci.Production.PPIC
 
             col_Factory.EditingMouseDown += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
@@ -91,10 +102,26 @@ namespace Sci.Production.PPIC
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["FactoryID"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (!this.EditMode) return;//非編輯模式 
-                if (e.RowIndex == -1) return; //沒東西 return
-                if (oldvalue.Equals(newvalue)) return;
-                if (MyUtility.Check.Empty(e.FormattedValue)) return;
+                if (!this.EditMode)
+                {
+                    return; // 非編輯模式
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return; // 沒東西 return
+                }
+
+                if (oldvalue.Equals(newvalue))
+                {
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+
                 string sqlcmd = $@"Select distinct FtyGroup from Factory where junk = 0 and Type in ('B','S') and FtyGroup ='{newvalue}'";
                 if (!MyUtility.Check.Seek(sqlcmd))
                 {
@@ -113,8 +140,16 @@ namespace Sci.Production.PPIC
             #region col_Dept
             col_Dept.CellMouseClick += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
@@ -133,8 +168,16 @@ namespace Sci.Production.PPIC
 
             col_Dept.EditingMouseDown += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
@@ -156,10 +199,26 @@ namespace Sci.Production.PPIC
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["DepartmentID"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (!this.EditMode) return;//非編輯模式 
-                if (e.RowIndex == -1) return; //沒東西 return
-                if (oldvalue.Equals(newvalue)) return;
-                if (MyUtility.Check.Empty(e.FormattedValue)) return;
+                if (!this.EditMode)
+                {
+                    return; // 非編輯模式
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return; // 沒東西 return
+                }
+
+                if (oldvalue.Equals(newvalue))
+                {
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+
                 string sqlcmd = $@"select ID,Name from [FinanceEN].dbo.Department where Junk = 0 and id ='{newvalue}'";
                 if (!MyUtility.Check.Seek(sqlcmd))
                 {
@@ -175,15 +234,27 @@ namespace Sci.Production.PPIC
             #endregion
 
             DataGridViewGeneratorNumericColumnSettings col_Percentage = new DataGridViewGeneratorNumericColumnSettings();
-            col_Percentage.CellValidating += (s, e) => 
+            col_Percentage.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 decimal oldvalue = MyUtility.Convert.GetDecimal(dr["Percentage"]);
                 decimal newvalue = MyUtility.Convert.GetDecimal(e.FormattedValue);
-                if (!this.EditMode) return;//非編輯模式 
-                if (e.RowIndex == -1) return; //沒東西 return
-                if (oldvalue.Equals(newvalue)) return;
-                //if (MyUtility.Check.Empty(e.FormattedValue)) return;
+                if (!this.EditMode)
+                {
+                    return; // 非編輯模式
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return; // 沒東西 return
+                }
+
+                if (oldvalue.Equals(newvalue))
+                {
+                    return;
+                }
+
+                // if (MyUtility.Check.Empty(e.FormattedValue)) return;
                 decimal? amt = Math.Round(
                     (decimal)this.numTotalAmt.Value
                     * (newvalue
@@ -233,10 +304,22 @@ namespace Sci.Production.PPIC
                     useValue = newvalue;
                 }
 
-                if (!this.EditMode) return;//非編輯模式 
-                if (e.RowIndex == -1) return; //沒東西 return
-                if (oldvalue.Equals(newvalue)) return;
-                //if (MyUtility.Check.Empty(e.FormattedValue)) return;
+                if (!this.EditMode)
+                {
+                    return; // 非編輯模式
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return; // 沒東西 return
+                }
+
+                if (oldvalue.Equals(newvalue))
+                {
+                    return;
+                }
+
+                // if (MyUtility.Check.Empty(e.FormattedValue)) return;
                 decimal? perct = 0;
                 if (!MyUtility.Check.Empty(this.numTotalAmt.Value))
                 {
@@ -333,6 +416,7 @@ namespace Sci.Production.PPIC
         protected override void OnDelete()
         {
             base.OnDelete();
+
             // 加總表身Amount,Percentage資料
             decimal curAmount = 0;
             decimal curPercentage = 0;
@@ -353,9 +437,8 @@ namespace Sci.Production.PPIC
         protected override DualResult OnRequery()
         {
             DataRow drMaster;
-            DualResult result;
             string sqlcmd = string.Empty;
-            if (FormType == "Replacement")
+            if (this.FormType == "Replacement")
             {
                 sqlcmd = $@"
 select r.ID

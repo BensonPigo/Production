@@ -4,10 +4,8 @@ using Sci.Data;
 using Sci.Production.Class;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -28,7 +26,6 @@ namespace Sci.Production.Thread
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-
             this.InitializeComponent();
             Dictionary<string, string> comboBox1_RowSource2 = new Dictionary<string, string>();
             comboBox1_RowSource2.Add("Fordward", "Fordward");
@@ -310,7 +307,7 @@ namespace Sci.Production.Thread
             if (MyUtility.Check.Empty(this.CurrentMaintain["cDate"].ToString()))
             {
                 this.dateDate.Focus();
-               MyUtility.Msg.WarningBox("<Date> can not be empty!", "Warning");
+                MyUtility.Msg.WarningBox("<Date> can not be empty!", "Warning");
                 return false;
             }
 

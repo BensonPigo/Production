@@ -13,7 +13,6 @@ using System.Transactions;
 using System.Data.SqlClient;
 using Sci.Win.Tools;
 using System.Runtime.InteropServices;
-using Sci.Production.Class;
 using System.IO;
 
 namespace Sci.Production.Sewing
@@ -477,7 +476,9 @@ select Location
 ,Rate = isnull([dbo].[GetOrderLocation_Rate]('{1}',Location)
 ,[dbo].[GetStyleLocation_Rate]('{0}',Location)) 
 from Style_Location WITH (NOLOCK) 
-where StyleUkey = {0}", MyUtility.Convert.GetString(ordersData.Rows[0]["StyleUkey"]), MyUtility.Convert.GetString(dr["OrderID"]));
+where StyleUkey = {0}",
+                                    MyUtility.Convert.GetString(ordersData.Rows[0]["StyleUkey"]),
+                                    MyUtility.Convert.GetString(dr["OrderID"]));
                             }
 
                             DataTable orderLocation;
@@ -732,6 +733,7 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                                 whereForDQSCheck = $@" and isnull(ForDQSCheck, 0) = 1";
                             }
                         }
+
                         // 查詢視窗資料來源
                         string sqlCmd = $"SELECT DISTINCT ID,Description FROM SewingReason WHERE Type='SO' AND isnull(Junk, 0) = 0 {whereForDQSCheck} -- SO代表SewingOutput";
                         DataTable reasonDatas;
@@ -972,6 +974,7 @@ and Team = '{this.CurrentMaintain["Team"]}'
 and Shift = '{shift}'
 and SunriseNid = 0
 ";
+
             // 先判斷此表頭組合, 是否有任何一筆DQS, 若無則不用限制
             if (!MyUtility.Check.Seek(checkDQSexists, "ManufacturingExecution"))
             {
@@ -1035,14 +1038,14 @@ and SunriseNid = 0
                     }
 
                     // 反過來檢查,主要是看表身有沒有多出來, DQS卻沒有的
-                    foreach (DataRow Row_Size in subDetailData.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
+                    foreach (DataRow row_Size in subDetailData.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
                     {
                         if (!sewDt2.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Any(row =>
-                            MyUtility.Convert.GetString(row["OrderID"]).EqualString(MyUtility.Convert.GetString(Row_Size["OrderID"]))
-                            && MyUtility.Convert.GetString(row["ComboType"]).EqualString(MyUtility.Convert.GetString(Row_Size["ComboType"]))
-                            && MyUtility.Convert.GetString(row["Article"]).EqualString(MyUtility.Convert.GetString(Row_Size["Article"]))
-                            && MyUtility.Convert.GetString(row["SizeCode"]).EqualString(MyUtility.Convert.GetString(Row_Size["SizeCode"]))
-                            && MyUtility.Convert.GetDecimal(row["DQSQAQty"]).Equals(MyUtility.Convert.GetDecimal(Row_Size["QAQty"]))))
+                            MyUtility.Convert.GetString(row["OrderID"]).EqualString(MyUtility.Convert.GetString(row_Size["OrderID"]))
+                            && MyUtility.Convert.GetString(row["ComboType"]).EqualString(MyUtility.Convert.GetString(row_Size["ComboType"]))
+                            && MyUtility.Convert.GetString(row["Article"]).EqualString(MyUtility.Convert.GetString(row_Size["Article"]))
+                            && MyUtility.Convert.GetString(row["SizeCode"]).EqualString(MyUtility.Convert.GetString(row_Size["SizeCode"]))
+                            && MyUtility.Convert.GetDecimal(row["DQSQAQty"]).Equals(MyUtility.Convert.GetDecimal(row_Size["QAQty"]))))
                         {
                             return false;
                         }
@@ -1470,8 +1473,7 @@ order by a.OrderId,os.Seq",
                     MyUtility.Convert.GetString(this.CurrentMaintain["Team"]),
                     MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID"]),
                     MyUtility.Convert.GetString(this.CurrentMaintain["SubconOutFty"]),
-                    MyUtility.Convert.GetString(this.CurrentMaintain["SubConOutContractNumber"]))
-                    );
+                    MyUtility.Convert.GetString(this.CurrentMaintain["SubConOutContractNumber"])));
 
                 return false;
             }
@@ -1781,11 +1783,11 @@ sd.Combotype = '{dr["ComboType"]}'
 
                         if (MyUtility.Check.Seek(chkContractQty, out outputDr))
                         {
-                            int SewingOutputQty = (int)outputDr["SewingOutputQty"] + (int)dr["QAQty"];
-                            int SubconOutContractQty = (int)outputDr["SubconOutContractQty"];
-                            if (SewingOutputQty > SubconOutContractQty)
+                            int sewingOutputQty = (int)outputDr["SewingOutputQty"] + (int)dr["QAQty"];
+                            int subconOutContractQty = (int)outputDr["SubconOutContractQty"];
+                            if (sewingOutputQty > subconOutContractQty)
                             {
-                                MyUtility.Msg.WarningBox($@"Sewing Output Qty({SewingOutputQty}) can't more than SubconOut Contract Qty({SubconOutContractQty})!!
+                                MyUtility.Msg.WarningBox($@"Sewing Output Qty({sewingOutputQty}) can't more than SubconOut Contract Qty({subconOutContractQty})!!
 <SubConOutContractNumber> '{this.CurrentMaintain["SubConOutContractNumber"]}'
 <SubconOutFty> '{this.CurrentMaintain["SubConOutFty"]}'
 <OrderID> '{dr["OrderID"]}'
@@ -2226,14 +2228,14 @@ and ukey = (select max(ukey) from SewingOutput_Detail s2 where s.id =s2.id)
             using (transactionscope)
             {
                 DualResult dualResult = DBProxy.Current.Execute(null, strUpdateWorkHour, listSqlParmeter);
-            
+
                 if (dualResult == false)
                 {
                     transactionscope.Dispose();
                     MyUtility.Msg.WarningBox(dualResult.ToString());
                     return;
                 }
-            
+
                 transactionscope.Complete();
                 transactionscope.Dispose();
             }
@@ -2597,8 +2599,8 @@ WHERE sewqty < (packqty + adjQty) ";
         /// <returns>bool</returns>
         private bool CheckSPEditable()
         {
-            string CanReviseDailyLockData = MyUtility.GetValue.Lookup("select CanReviseDailyLockData from System");
-            if (CanReviseDailyLockData.ToUpper() != "TRUE" && !MyUtility.Check.Empty(this.CurrentMaintain["Status"]))
+            string canReviseDailyLockData = MyUtility.GetValue.Lookup("select CanReviseDailyLockData from System");
+            if (canReviseDailyLockData.ToUpper() != "TRUE" && !MyUtility.Check.Empty(this.CurrentMaintain["Status"]))
             {
                 return false;
             }
@@ -2779,7 +2781,7 @@ AND p0.PKey IN (
 FOR XML PATH('')
 
 ");
-                string ccAddress = "";
+                string ccAddress = string.Empty;
                 string subject = "Request Unlock Sewing";
 
                 string od = string.Empty;
@@ -2821,8 +2823,8 @@ values('{this.CurrentMaintain["ID"]}','{callReason.ReturnReason}','{callReason.R
         /// <summary>
         /// email畫面關閉後額外塞入CC人員
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">sender</param>
+        /// <param name="e">e</param>
         private void Email_SendingBefore(object sender, MailTo.SendMailBeforeArg e)
         {
             e.Mail.CC.Add("planning@sportscity.com.tw");
@@ -3869,11 +3871,9 @@ order by ArtworkTypeID"),
 
             excel.Visible = false;
             #region Save & Show Excel
-            string excelFileR01 = Path.Combine(Sci.Env.Cfg.ReportTempDir,
-                                "Daily CMP Report"
-                               + ((DateTime)dateMaxOutputDate).ToString("_yyyyMMdd")
-                               + DateTime.Now.ToString("_HHmmssfff")
-                               + "(" + Sci.Env.User.Factory + ").xlsx");
+            string excelFileR01 = Path.Combine(
+                Sci.Env.Cfg.ReportTempDir,
+                "Daily CMP Report" + ((DateTime)dateMaxOutputDate).ToString("_yyyyMMdd") + DateTime.Now.ToString("_HHmmssfff") + "(" + Sci.Env.User.Factory + ").xlsx");
             excel.ActiveWorkbook.SaveAs(excelFileR01);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
@@ -3887,14 +3887,14 @@ order by ArtworkTypeID"),
             #region 產生R04 報表
             DataTable dtR04;
             string sqlcmd = $"exec [dbo].[Send_SewingDailyOutput] '{Sci.Env.User.Factory}', '{Convert.ToDateTime(dateMaxOutputDate).ToString("d")}'";
-            result = DBProxy.Current.Select("", sqlcmd, out dtR04);
+            result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtR04);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Sewing_R04_SewingDailyOutputList.xltx"); //預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Sewing_R04_SewingDailyOutputList.xltx"); // 預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得
             objSheets.get_Range("AM:AN").EntireColumn.Delete();
             for (int i = 40; i < dtR04.Columns.Count; i++)
@@ -3909,14 +3909,12 @@ order by ArtworkTypeID"),
 
             if (dtR04.Rows.Count != 0)
             {
-                MyUtility.Excel.CopyToXls(dtR04, "", "Sewing_R04_SewingDailyOutputList.xltx", 1, false, null, objApp);
+                MyUtility.Excel.CopyToXls(dtR04, string.Empty, "Sewing_R04_SewingDailyOutputList.xltx", 1, false, null, objApp);
             }
 
-            string excelFileR04 = Path.Combine(Sci.Env.Cfg.ReportTempDir,
-                                "Sewing daily output list -"
-                               + ((DateTime)dateMaxOutputDate).ToString("_yyyyMMdd")
-                               + DateTime.Now.ToString("_HHmmssfff")
-                               + "(" + Sci.Env.User.Factory + ").xlsx");
+            string excelFileR04 = Path.Combine(
+                Sci.Env.Cfg.ReportTempDir,
+                "Sewing daily output list -" + ((DateTime)dateMaxOutputDate).ToString("_yyyyMMdd") + DateTime.Now.ToString("_HHmmssfff") + "(" + Sci.Env.User.Factory + ").xlsx");
             objApp.ActiveWorkbook.SaveAs(excelFileR04);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
@@ -4154,7 +4152,6 @@ order by a.OrderId,os.Seq
             DualResult result = this.GetDQSDataForDetail(out sewDt1);
             if (!result)
             {
-
                 if (result.Messages.Count == 0)
                 {
                     MyUtility.Msg.InfoBox("DQS Data not found!");

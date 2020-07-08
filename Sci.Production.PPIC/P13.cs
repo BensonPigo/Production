@@ -413,9 +413,9 @@ select *,iif(isnull(SewOutQty,0) >= Qty, tmpActSewOffLine, null) as ActSewOffLin
                             updateCmds.Add(string.Format(
                                 @"insert into Order_History (ID,HisType,OldValue,NewValue,Remark,AddName,AddDate)
 values ('{0}','SewInOffLine',{1},{2},'Sewing Inline Update','{3}',GETDATE()) ", MyUtility.Convert.GetString(dr["ID"]),
-                            MyUtility.Check.Empty(dr["OInline"]) ? "null" : "'" + Convert.ToDateTime(dr["OInline"]).ToString("d") + "'",
-                            MyUtility.Check.Empty(dr["TInLine"]) ? "null" : "'" + Convert.ToDateTime(dr["TInLine"]).ToString("d") + "'",
-                            Sci.Env.User.UserID));
+                                MyUtility.Check.Empty(dr["OInline"]) ? "null" : "'" + Convert.ToDateTime(dr["OInline"]).ToString("d") + "'",
+                                MyUtility.Check.Empty(dr["TInLine"]) ? "null" : "'" + Convert.ToDateTime(dr["TInLine"]).ToString("d") + "'",
+                                Sci.Env.User.UserID));
                         }
 
                         if (MyUtility.Convert.GetString(dr["OfflineDiff"]) == "1")
@@ -423,9 +423,9 @@ values ('{0}','SewInOffLine',{1},{2},'Sewing Inline Update','{3}',GETDATE()) ", 
                             updateCmds.Add(string.Format(
                                 @"insert into Order_History (ID,HisType,OldValue,NewValue,Remark,AddName,AddDate)
 values ('{0}','SewInOffLine',{1},{2},'Sewing Offline Update','{3}',GETDATE()) ", MyUtility.Convert.GetString(dr["ID"]),
-                            MyUtility.Check.Empty(dr["OOffLine"]) ? "null" : "'" + Convert.ToDateTime(dr["OOffLine"]).ToString("d") + "'",
-                            MyUtility.Check.Empty(dr["TOffLine"]) ? "null" : "'" + Convert.ToDateTime(dr["TOffLine"]).ToString("d") + "'",
-                            Sci.Env.User.UserID));
+                                MyUtility.Check.Empty(dr["OOffLine"]) ? "null" : "'" + Convert.ToDateTime(dr["OOffLine"]).ToString("d") + "'",
+                                MyUtility.Check.Empty(dr["TOffLine"]) ? "null" : "'" + Convert.ToDateTime(dr["TOffLine"]).ToString("d") + "'",
+                                Sci.Env.User.UserID));
                         }
                     }
 
@@ -695,7 +695,7 @@ DROP TABLE #updatetemp  ",
             if (!dresult)
             {
                  this.ShowErr(updsql, dresult);
-                        return;
+                 return;
             }
             #endregion
             MyUtility.Msg.InfoBox("Update is Completed!");

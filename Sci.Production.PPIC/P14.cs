@@ -2,11 +2,8 @@
 using Sci.Data;
 using Sci.Win.Tools;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.PPIC

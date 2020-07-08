@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Xml.Linq;
@@ -531,7 +528,7 @@ from (
 ", displayBy);
             MyUtility.Tool.ProcessWithDatatable(matrixDataDt, string.Empty, strX, out dtX);
             MyUtility.Tool.ProcessWithDatatable(matrixDataDt, string.Empty, strY, out dtY);
-             this._matrix.Clear();
+            this._matrix.Clear();
             try
             {
                 this._matrix.Sets(matrixDataDt, dtX, dtY);

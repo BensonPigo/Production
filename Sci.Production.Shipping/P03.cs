@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
-using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -111,7 +108,7 @@ where ed.ID = '{0}'", masterID);
             this.txtLocateSP2.ReadOnly = false;
             this.chkReplacement.ReadOnly = true;
             this.chkDelay.ReadOnly = true;
-            this.label21.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["Junk"]) == "True" ? true : false; 
+            this.label21.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["Junk"]) == "True" ? true : false;
             this.labelFormE.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["FormE"]) == "True" ? true : false;
 
             switch (MyUtility.Convert.GetString(this.CurrentMaintain["Payer"]))

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 
@@ -13,7 +10,13 @@ namespace Sci.Production.Subcon
 {
     public partial class R01 : Sci.Win.Tems.PrintForm
     {
-        string artworktype,factory,subcon,spno,style,orderby,mdivision;
+        string artworktype;
+        string factory;
+        string subcon;
+        string spno;
+        string style;
+        string orderby;
+        string mdivision;
         string brandID;
         DateTime? issuedate1, issuedate2;
         DataTable printData;
@@ -21,42 +24,42 @@ namespace Sci.Production.Subcon
         public R01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            comboFactory.Text = Sci.Env.User.Factory;
-            MyUtility.Tool.SetupCombox(comboOrderBy, 1, 1, "Issue date,Supplier");
-            comboOrderBy.SelectedIndex = 0;
-            txtMdivisionM.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.comboFactory.Text = Sci.Env.User.Factory;
+            MyUtility.Tool.SetupCombox(this.comboOrderBy, 1, 1, "Issue date,Supplier");
+            this.comboOrderBy.SelectedIndex = 0;
+            this.txtMdivisionM.Text = Sci.Env.User.Keyword;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            //if (MyUtility.Check.Empty(dateRange1.Value1))
-            //{
+            // if (MyUtility.Check.Empty(dateRange1.Value1))
+            // {
             //    MyUtility.Msg.WarningBox("Issue Date can't empty!!");
             //    return false;
-            //}
-            issuedate1 = dateIssueDate.Value1;
-            issuedate2 = dateIssueDate.Value2;
+            // }
+            this.issuedate1 = this.dateIssueDate.Value1;
+            this.issuedate2 = this.dateIssueDate.Value2;
 
-            //IssueDate 為必輸條件
-            if (MyUtility.Check.Empty(issuedate1) || MyUtility.Check.Empty(issuedate2))
+            // IssueDate 為必輸條件
+            if (MyUtility.Check.Empty(this.issuedate1) || MyUtility.Check.Empty(this.issuedate2))
             {
                 MyUtility.Msg.InfoBox("Issue Date can't empty!!");
                 return false;
             }
 
-            artworktype = txtartworktype_ftyArtworkType.Text;
-            mdivision = txtMdivisionM.Text;
-            factory = comboFactory.Text;
-            subcon = txtsubconSupplier.TextBox1.Text;
-            spno = txtSPNO.Text;
-            style = txtstyle.Text;
-            orderby = comboOrderBy.Text;
-            brandID = this.txtbrand.Text;
+            this.artworktype = this.txtartworktype_ftyArtworkType.Text;
+            this.mdivision = this.txtMdivisionM.Text;
+            this.factory = this.comboFactory.Text;
+            this.subcon = this.txtsubconSupplier.TextBox1.Text;
+            this.spno = this.txtSPNO.Text;
+            this.style = this.txtstyle.Text;
+            this.orderby = this.comboOrderBy.Text;
+            this.brandID = this.txtbrand.Text;
 
             return base.ValidateInput();
         }
@@ -96,8 +99,15 @@ namespace Sci.Production.Subcon
                                         inner join  orders c WITH (NOLOCK) on b.OrderID = c.ID
                                         where 1=1 "));
 
-            if (!MyUtility.Check.Empty(issuedate1)) sqlCmd.Append(string.Format(" and a.issuedate >= '{0}' ", Convert.ToDateTime(issuedate1).ToString("d")));
-            if (!MyUtility.Check.Empty(issuedate2)) sqlCmd.Append(string.Format(" and a.issuedate <= '{0}' ", Convert.ToDateTime(issuedate2).ToString("d")));
+            if (!MyUtility.Check.Empty(this.issuedate1))
+            {
+                sqlCmd.Append(string.Format(" and a.issuedate >= '{0}' ", Convert.ToDateTime(this.issuedate1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.issuedate2))
+            {
+                sqlCmd.Append(string.Format(" and a.issuedate <= '{0}' ", Convert.ToDateTime(this.issuedate2).ToString("d")));
+            }
 
             System.Data.SqlClient.SqlParameter sp_artworktype = new System.Data.SqlClient.SqlParameter();
             sp_artworktype.ParameterName = "@artworktype";
@@ -122,66 +132,76 @@ namespace Sci.Production.Subcon
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
 
-
-            if (!MyUtility.Check.Empty(artworktype))
+            if (!MyUtility.Check.Empty(this.artworktype))
             {
                 sqlCmd.Append(" and a.artworktypeid = @artworktype");
-                sp_artworktype.Value = artworktype;
+                sp_artworktype.Value = this.artworktype;
                 cmds.Add(sp_artworktype);
             }
-            if (!MyUtility.Check.Empty(mdivision))
+
+            if (!MyUtility.Check.Empty(this.mdivision))
             {
                 sqlCmd.Append(" and a.mdivisionid = @MDivision");
-                sp_mdivision.Value = mdivision;
+                sp_mdivision.Value = this.mdivision;
                 cmds.Add(sp_mdivision);
             }
-            if (!MyUtility.Check.Empty(factory))
+
+            if (!MyUtility.Check.Empty(this.factory))
             {
                 sqlCmd.Append(" and a.factoryid = @factory");
-                sp_factory.Value = factory;
+                sp_factory.Value = this.factory;
                 cmds.Add(sp_factory);
             }
-            if (!MyUtility.Check.Empty(subcon))
+
+            if (!MyUtility.Check.Empty(this.subcon))
             {
                 sqlCmd.Append(" and a.localsuppid = @subcon");
-                sp_subcon.Value = subcon;
+                sp_subcon.Value = this.subcon;
                 cmds.Add(sp_subcon);
             }
-            if (!MyUtility.Check.Empty(spno))
+
+            if (!MyUtility.Check.Empty(this.spno))
             {
                 sqlCmd.Append(" and c.id = @spno ");
-                sp_spno.Value = spno;
+                sp_spno.Value = this.spno;
                 cmds.Add(sp_spno);
             }
-            if (!MyUtility.Check.Empty(style))
+
+            if (!MyUtility.Check.Empty(this.style))
             {
                 sqlCmd.Append(" and c.styleid = @style");
-                sp_style.Value = style;
+                sp_style.Value = this.style;
                 cmds.Add(sp_style);
             }
-            if (!MyUtility.Check.Empty(brandID))
+
+            if (!MyUtility.Check.Empty(this.brandID))
             {
                 sqlCmd.Append(" and c.BrandID = @brandID");
-                sp_brandID.Value = brandID;
+                sp_brandID.Value = this.brandID;
                 cmds.Add(sp_brandID);
             }
 
-            if (checkOutstanding.Checked)
+            if (this.checkOutstanding.Checked)
             {
                 sqlCmd.Append(" and b.Farmin - b.ApQty > 0 and a.status!='Closed' ");
             }
 
-            if (orderby.ToUpper() == "ISSUE DATE")
+            if (this.orderby.ToUpper() == "ISSUE DATE")
+            {
                 sqlCmd.Append(" order by a.mdivisionid, a.FactoryId, a.ID, a.issuedate ");
+            }
             else
+            {
                 sqlCmd.Append(" order by a.mdivisionid, a.FactoryId, a.ID, a.localsuppid ");
+            }
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(),cmds, out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
@@ -189,15 +209,15 @@ namespace Sci.Production.Subcon
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
-            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R01.xltx");
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Subcon_R01.xltx");
             return true;
         }
     }

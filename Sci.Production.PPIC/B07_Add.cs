@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using System.Transactions;
 using Sci.Data;
 using Ict;
@@ -85,7 +81,7 @@ namespace Sci.Production.PPIC
                             foreach (DataRow currentRecord in sewingLine.Rows)
                             {
                                 sqlCommand = string.Format("select Date from WorkHour WITH (NOLOCK) where SewingLineID = '{0}' and FactoryID = '{1}' and Date = '{2}'", currentRecord["ID"].ToString(), Sci.Env.User.Factory, startDate.ToString("d"));
-                              if (!MyUtility.Check.Seek(sqlCommand, null))
+                                if (!MyUtility.Check.Seek(sqlCommand, null))
                                {
                                    insertCmds.Add(string.Format(
                                        @"

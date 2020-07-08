@@ -3,11 +3,9 @@ using Sci.Data;
 using Sci.Utility.Excel;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Linq;
 using System.Xml.Linq;
@@ -103,8 +101,8 @@ namespace Sci.Production.Centralized
             {
                 sqlWheres.Add(string.Format(
                     "Pullout_Detail.PulloutDate between '{0}' and '{1}' ",
-                   ((DateTime)this.datePulloutDate1.Value).ToShortDateString(),
-                   ((DateTime)this.datePulloutDate2.Value).ToShortDateString()));
+                    ((DateTime)this.datePulloutDate1.Value).ToShortDateString(),
+                    ((DateTime)this.datePulloutDate2.Value).ToShortDateString()));
                 pullout_Date = true;
             }
 
@@ -112,8 +110,8 @@ namespace Sci.Production.Centralized
             {
                 sqlWheres.Add(string.Format(
                     "ShippingAP.ApvDate between '{0}' and '{1}' ",
-                   ((DateTime)this.dateApproveDate1.Value).ToShortDateString(),
-                   ((DateTime)this.dateApproveDate2.Value).ToShortDateString()));
+                    ((DateTime)this.dateApproveDate1.Value).ToShortDateString(),
+                    ((DateTime)this.dateApproveDate2.Value).ToShortDateString()));
                 approve_Date = true;
             }
 
@@ -298,8 +296,8 @@ order by ID,OrderID";
                 this.SetLoadingText(
                     string.Format(
                         "Load data from connection {0}/{1} ",
-                   i + 1,
-                   connectionString.Count));
+                        i + 1,
+                        connectionString.Count));
                 SqlConnection conn;
                 using (conn = new SqlConnection(conString))
                 {
@@ -376,8 +374,8 @@ order by BrandID
 
                     listSummary = string.Format(
                         listSummary,
-                       string.Join(",", ftyAmt),
-                       string.Join(",", ftyList));
+                        string.Join(",", ftyAmt),
+                        string.Join(",", ftyList));
 
                     // 執行pivot
                     result = DBProxy.Current.SelectByConn(conn, listSummary, out this.dt_Tmp);
@@ -456,8 +454,8 @@ order by BrandID
                 this.SetLoadingText(
                     string.Format(
                         "Load data from connection {0}/{1} ",
-                   i + 1,
-                   connectionString.Count));
+                        i + 1,
+                        connectionString.Count));
                 SqlConnection conn;
                 using (conn = new SqlConnection(conString))
                 {

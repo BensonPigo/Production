@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Xml.Linq;
@@ -358,6 +356,7 @@ declare @TTLZ nvarchar(max) =
 ,',[TTL_',ArtworkType_Unit,']=Round(sum(o.QAQty*Rate*[',ArtworkType_Unit,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty),',iif(Unit='QTY','4','3'),')'
 ,iif(ArtworkType_CPU = '', '', concat(',[TTL_',ArtworkType_CPU,']=Round(sum(o.QAQty*Rate*[',ArtworkType_CPU,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty),',iif(Unit='QTY','4','3'),')'))
 )from #atall for xml path(''))" : " ")}
+
 -----by orderid & all ArtworkTypeID
 declare @lastSql nvarchar(max) =N'
 {(this.chk_Include_Artwork.Checked ?

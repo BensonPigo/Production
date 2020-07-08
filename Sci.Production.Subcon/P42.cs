@@ -4,16 +4,9 @@ using Sci.Data;
 using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Data.SqlClient;
 using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
 using System.Windows.Forms;
-using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Subcon
 {
@@ -22,9 +15,9 @@ namespace Sci.Production.Subcon
         public P42(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             MyUtility.Tool.SetupCombox(this.cmbSummaryBy, 2, 1, "0,SP#,1,Article / Size");
-            this.txtfactory1.MDivision = txtMdivision1;
+            this.txtfactory1.MDivision = this.txtMdivision1;
         }
 
         protected override void OnFormLoaded()
@@ -56,6 +49,7 @@ namespace Sci.Production.Subcon
                 {
                     return;
                 }
+
                 string where = string.Empty;
                 string caption = $"SP:{drSelected["OrderID"]} ";
                 if (summaryType == 1)
@@ -63,6 +57,7 @@ namespace Sci.Production.Subcon
                     where = $"and bd.SizeCode = '{drSelected["SizeCode"]}' and b.Article = '{drSelected["Article"]}'";
                     caption += $" Size:{drSelected["SizeCode"]}' Article :{drSelected["Article"]}";
                 }
+
                 string sqlcmd = $@"
 select
 	Date = bi.DefectUpdateDate,
@@ -160,7 +155,6 @@ where b.Orderid = '{drSelected["OrderID"]}'
                             default:
                                 break;
                         }
-
                     };
                     this.Helper.Controls.Grid.Generator(this.grid1)
                     .Text(column.ColumnName, header: column.ColumnName, width: Widths.AnsiChars(12), iseditingreadonly: true, settings: subprocess);
@@ -186,6 +180,7 @@ where b.Orderid = '{drSelected["OrderID"]}'
                 this.txtSp1.Focus();
                 return;
             }
+
             if (!MyUtility.Check.Empty(this.txtSp1.Text) && MyUtility.Check.Empty(this.txtSp2.Text))
             {
                 MyUtility.Msg.WarningBox("Must enter SP#2");
@@ -211,38 +206,47 @@ where b.Orderid = '{drSelected["OrderID"]}'
             {
                 whereCategory.Add("'B'");
             }
+
             if (this.chkSample.Checked)
             {
                 whereCategory.Add("'S'");
             }
+
             if (whereCategory.Count > 0)
             {
                 where += $" and o.Category in ({string.Join(",", whereCategory)}) ";
             }
+
             if (!MyUtility.Check.Empty(this.txtSp1.Text))
             {
                 where += $" and o.id between '{this.txtSp1.Text}' and '{this.txtSp2.Text}' ";
             }
+
             if (!MyUtility.Check.Empty(this.txtPO.Text))
             {
                 where += $" and o.CustPONo  ='{this.txtPO.Text}' ";
             }
+
             if (!MyUtility.Check.Empty(this.txtMdivision1.Text))
             {
                 where += $" and o.MDivisionID  ='{this.txtMdivision1.Text}' ";
             }
+
             if (!MyUtility.Check.Empty(this.txtfactory1.Text))
             {
                 where += $" and o.FactoryID  ='{this.txtfactory1.Text}' ";
             }
+
             if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
             {
                 where += $" and o.SCIDelivery between '{((DateTime)this.dateSCIDelivery.Value1).ToString("d")}' and '{((DateTime)this.dateSCIDelivery.Value2).ToString("d")}' ";
             }
+
             if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
             {
                 where += $" and o.BuyerDelivery between '{((DateTime)this.dateBuyerDelivery.Value1).ToString("d")}' and '{((DateTime)this.dateBuyerDelivery.Value2).ToString("d")}' ";
             }
+
             if (!MyUtility.Check.Empty(this.dateInline.Value1))
             {
                 if (summaryType == 0)
@@ -252,7 +256,7 @@ where b.Orderid = '{drSelected["OrderID"]}'
                 else
                 {
                     where += $" and Inline between '{((DateTime)this.dateInline.Value1).ToString("d")}' and '{((DateTime)this.dateInline.Value2).ToString("d")}' ";
-                }           
+                }
             }
             #endregion
 
@@ -684,13 +688,15 @@ exec(@sql)
 drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete,#tmp ,#tmpBundleNo_Complete2, #tmpBundleInspection
 ";
             }
+
             DataTable dt;
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (!result)
             {
-                ShowErr(result);
+                this.ShowErr(result);
                 return;
             }
+
             if (dt.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
@@ -1125,7 +1131,7 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (!result)
             {
-                ShowErr(result);
+                this.ShowErr(result);
                 return;
             }
 
@@ -1133,7 +1139,8 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
 
             this.listControlBindingSource2.DataSource = dt;
             this.grid2.Columns.Clear();
-            //準備Grid 2
+
+            // 準備Grid 2
             this.Helper.Controls.Grid.Generator(this.grid2)
             .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Bundle#", header: "BundleNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -1158,22 +1165,21 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
                 .CheckBox("NoBundleCardAfterSubprocess", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0, iseditable: false)
                 ;
             }
+
             this.grid2.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.grid2_CellFormatting);
 
             #endregion
 
             MsgGridForm msgGridForm = new MsgGridForm(this.grid2, caption: caption, eventname: new string[] { "CellFormatting" });
- 
+
             msgGridForm.FormBorderStyle = FormBorderStyle.Sizable;
             msgGridForm.grid1.RowHeadersVisible = true;
             msgGridForm.ControlBox = true;
             msgGridForm.ShowDialog();
         }
-        
+
         private void grid2_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-
-
             switch (MyUtility.Convert.GetString(e.Value))
             {
                 case "Complete":
@@ -1188,9 +1194,6 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
                 default:
                     break;
             }
-
-            
         }
-        
     }
 }

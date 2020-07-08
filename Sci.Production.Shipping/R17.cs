@@ -2,12 +2,8 @@
 using Sci.Data;
 using Sci.Win;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -210,8 +206,15 @@ drop table #tmp,#DistinctSeq,#diffSeq,#diffSeqData
             workbook.Close();
             excelApp.Quit();
 
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);
-            if (excelApp != null) Marshal.FinalReleaseComObject(excelApp);
+            if (worksheet != null)
+            {
+                Marshal.FinalReleaseComObject(worksheet);
+            }
+
+            if (excelApp != null)
+            {
+                Marshal.FinalReleaseComObject(excelApp);
+            }
             #endregion
 
             this.HideWaitMessage();

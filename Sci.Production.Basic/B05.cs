@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Reflection;
 using Sci.Production.Class;
 using Sci.Data;
-using Ict;
 
 namespace Sci.Production.Basic
 {

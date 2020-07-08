@@ -2,20 +2,15 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.PublicPrg;
-using Sci.Win.Tems;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
     public partial class P21 : Sci.Win.Tems.Input6
     {
-
         public P21(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -99,7 +94,6 @@ And Reason.ReasonTypeID = 'PO_IrregularCost'");
 
                 this.gridReplacement.DataSource = dt;
                 this.gridReplacement.ClearSelection();
-
             }
             else
             {
@@ -131,7 +125,7 @@ And Reason.ReasonTypeID = 'PO_IrregularCost'");
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+            string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = $@"
 
 select  

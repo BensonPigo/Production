@@ -40,7 +40,7 @@ where   MDivisionID = '{0}'
         and UpdateDate = (select max(UpdateDate) 
                           from OrderComparisonList WITH (NOLOCK) 
                           where MDivisionID = '{0}')",
-                Sci.Env.User.Keyword), out drOC))
+                    Sci.Env.User.Keyword), out drOC))
             {
                 this.dateUpdate.Value1 = Convert.ToDateTime(drOC["UpdateDate"]);
                 this.dateUpdate.Value2 = Convert.ToDateTime(drOC["UpdateDate"]);

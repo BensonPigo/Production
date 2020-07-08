@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
@@ -282,7 +279,7 @@ where agd.id = '{0}'",
 
                 string sqlCmd = $"Select distinct ID, Description from ShippingReason a with (nolock) WHERE Type='AG' AND junk = 0 and id = '{e.FormattedValue}'";
                 DataRow reasondr;
-                if (!MyUtility.Check.Seek(sqlCmd,out reasondr))
+                if (!MyUtility.Check.Seek(sqlCmd, out reasondr))
                 {
                     MyUtility.Msg.WarningBox("Data not found!!");
                     this.CurrentDetailData["ReasonID"] = string.Empty;

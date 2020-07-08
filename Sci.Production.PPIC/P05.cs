@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
@@ -8,9 +7,7 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci;
 using Sci.Production.PublicPrg;
-using System.Linq;
 
 namespace Sci.Production.PPIC
 {
@@ -422,14 +419,14 @@ Order by tempData.Id");
                                 , EditName = '{5}'
                                 , EditDate = GETDATE() 
                         where ID = '{6}' and Seq = '{7}'",
-                        MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'",
-                        MyUtility.Check.Empty(dr["ReadyDate"]) ? "null" : "'" + Convert.ToDateTime(dr["ReadyDate"]).ToString("d") + "'",
-                        dr["ProdRemark"].ToString(),
-                        dr["OutReason"].ToString(),
-                        dr["OutRemark"].ToString(),
-                        Sci.Env.User.UserID,
-                        dr["ID"].ToString(),
-                        dr["Seq"].ToString()));
+                            MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'",
+                            MyUtility.Check.Empty(dr["ReadyDate"]) ? "null" : "'" + Convert.ToDateTime(dr["ReadyDate"]).ToString("d") + "'",
+                            dr["ProdRemark"].ToString(),
+                            dr["OutReason"].ToString(),
+                            dr["OutRemark"].ToString(),
+                            Sci.Env.User.UserID,
+                            dr["ID"].ToString(),
+                            dr["Seq"].ToString()));
                         allSP.Append(string.Format("'{0}',", dr["ID"].ToString()));
 
                         // 若Outstanding Reason或Outstanding Remark有值，則更新OutstandingInCharge
@@ -496,10 +493,10 @@ Order by tempData.Id");
                                 , EditName = '{1}'
                                 , EditDate = GETDATE() 
                         where ID = '{2}' and Seq = '{3}'",
-                        MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'",
-                        Sci.Env.User.UserID,
-                        dr["ID"].ToString(),
-                        dr["Seq"].ToString()));
+                            MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'",
+                            Sci.Env.User.UserID,
+                            dr["ID"].ToString(),
+                            dr["Seq"].ToString()));
                         allSP.Append(string.Format("'{0}',", dr["ID"].ToString()));
                     }
                 }

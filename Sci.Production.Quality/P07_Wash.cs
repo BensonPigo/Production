@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using System.Data.SqlClient;
@@ -14,30 +12,33 @@ namespace Sci.Production.Quality
     public partial class P07_Wash : Sci.Win.Subs.Input2A
     {
         private DataRow maindr;
-        private string ID, PoID, SEQ1, SEQ2;
+        private string ID;
+        private string PoID;
+        private string SEQ1;
+        private string SEQ2;
         private bool EDIT;
         string sql;
         DataRow DR;
 
         public P07_Wash(bool canedit, string id, string Poid, string seq1, string seq2, DataRow mainDr)
         {
-            InitializeComponent();
-            maindr = mainDr;            
-            ID = id.Trim();
-            PoID = Poid.Trim();
-            SEQ1 = seq1.Trim();
-            SEQ2 = seq2.Trim();
+            this.InitializeComponent();
+            this.maindr = mainDr;
+            this.ID = id.Trim();
+            this.PoID = Poid.Trim();
+            this.SEQ1 = seq1.Trim();
+            this.SEQ2 = seq2.Trim();
 
             #region 設定可否編輯
             if (!canedit)
             {
-                SetView(maindr);
-                EDIT = false;
+                this.SetView(this.maindr);
+                this.EDIT = false;
             }
             else
             {
-                EDIT = true;
-                SetUpdate(maindr);
+                this.EDIT = true;
+                this.SetUpdate(this.maindr);
             }
             #endregion
 
@@ -48,78 +49,85 @@ namespace Sci.Production.Quality
             base.OnFormLoaded();
 
             #region [comboResult]
-            Dictionary<String, String> Result_RowSource = new Dictionary<string, string>();
-            Result_RowSource.Add("", "");
+            Dictionary<string, string> Result_RowSource = new Dictionary<string, string>();
+            Result_RowSource.Add(string.Empty, string.Empty);
             Result_RowSource.Add("Pass", "Pass");
             Result_RowSource.Add("Fail", "Fail");
-            comboResult.DataSource = new BindingSource(Result_RowSource, null);
-            comboResult.ValueMember = "Key";
-            comboResult.DisplayMember = "Value";
+            this.comboResult.DataSource = new BindingSource(Result_RowSource, null);
+            this.comboResult.ValueMember = "Key";
+            this.comboResult.DisplayMember = "Value";
             #endregion
 
             #region [btnEncode]
             this.btnEdit.Enabled = false;
-            save.Visible = false;
-            if (EDIT)
+            this.save.Visible = false;
+            if (this.EDIT)
             {
-                if (Convert.ToBoolean(maindr["WashEncode"]))
+                if (Convert.ToBoolean(this.maindr["WashEncode"]))
                 {
-                    btnEncode.Text = "Amend";
-                    btnEncode.Enabled = true;
+                    this.btnEncode.Text = "Amend";
+                    this.btnEncode.Enabled = true;
                 }
                 else
                 {
-                    btnEncode.Text = "Encode";
-                    btnEncode.Enabled = true;
+                    this.btnEncode.Text = "Encode";
+                    this.btnEncode.Enabled = true;
                     this.btnEdit.Enabled = true;
                 }
             }
             else
             {
-                undo.Visible = false;
+                this.undo.Visible = false;
                 this.btnEdit.Visible = false;
-                btnClose.Visible = true;
-
+                this.btnClose.Visible = true;
             }
             #endregion
 
-            OnRequery();
+            this.OnRequery();
         }
 
         private void OnRequery()
         {
-            sql = string.Format(@"select  C.ExportId , B.ArriveQty , E.StockUnit , E.SizeSpec , B.SCIRefno
+            this.sql = string.Format(
+                @"select  C.ExportId , B.ArriveQty , E.StockUnit , E.SizeSpec , B.SCIRefno
 	                                    , B.Refno , B.Suppid + '-' + D.AbbEN as supplier , E.ColorID
                                     from AIR_Laboratory A WITH (NOLOCK) 
                                     left join AIR B WITH (NOLOCK) on A.id=B.id
                                     left join Receiving C WITH (NOLOCK) on C.id=B.receivingID
                                     left join Supp D WITH (NOLOCK) on D.ID=B.Suppid
                                     left join PO_Supp_Detail E WITH (NOLOCK) on E.ID=A.POID and E.SEQ1=A.SEQ1 and E.SEQ2=A.SEQ2
-                                    where A.id={0} and A.POID='{1}' and A.SEQ1='{2}' and A.SEQ2='{3}'", ID, PoID, SEQ1, SEQ2);
-            if (MyUtility.Check.Seek(sql, out DR))
+                                    where A.id={0} and A.POID='{1}' and A.SEQ1='{2}' and A.SEQ2='{3}'", this.ID, this.PoID, this.SEQ1, this.SEQ2);
+            if (MyUtility.Check.Seek(this.sql, out this.DR))
             {
-                displaySP.Text = maindr["SEQ1"] + "-" + maindr["SEQ2"];
-                displayWKNO.Text = DR["ExportId"].ToString().Trim();
-                numActiveQty.Value = Convert.ToDecimal(DR["ArriveQty"]);
-                displayUnit.Text = DR["StockUnit"].ToString().Trim();
-                displaySize.Text = DR["SizeSpec"].ToString().Trim();
-                displaySCIRefno.Text = DR["SCIRefno"].ToString().Trim();
-                displayRefno.Text = DR["Refno"].ToString().Trim();
-                displaySupplier.Text = DR["supplier"].ToString().Trim();
-                displayColor.Text = DR["ColorID"].ToString().Trim();
+                this.displaySP.Text = this.maindr["SEQ1"] + "-" + this.maindr["SEQ2"];
+                this.displayWKNO.Text = this.DR["ExportId"].ToString().Trim();
+                this.numActiveQty.Value = Convert.ToDecimal(this.DR["ArriveQty"]);
+                this.displayUnit.Text = this.DR["StockUnit"].ToString().Trim();
+                this.displaySize.Text = this.DR["SizeSpec"].ToString().Trim();
+                this.displaySCIRefno.Text = this.DR["SCIRefno"].ToString().Trim();
+                this.displayRefno.Text = this.DR["Refno"].ToString().Trim();
+                this.displaySupplier.Text = this.DR["supplier"].ToString().Trim();
+                this.displayColor.Text = this.DR["ColorID"].ToString().Trim();
             }
 
-            comboResult.SelectedValue2 = maindr["Wash"].ToString().Trim();
-
+            this.comboResult.SelectedValue2 = this.maindr["Wash"].ToString().Trim();
         }
 
         private void txtScale_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
-            if (!EDIT) return;
+            if (!this.EDIT)
+            {
+                return;
+            }
+
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select id from Scale WITH (NOLOCK) where junk=0", "10", this.txtScale.Text);
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.txtScale.Text = item.GetSelectedString();
         }
 
@@ -130,7 +138,7 @@ namespace Sci.Production.Quality
             {
                 if (!MyUtility.Check.Seek(string.Format(@"Select id from Scale WITH (NOLOCK) where junk=0 and id = '{0}'", textValue)))
                 {
-                    this.txtScale.Text = "";
+                    this.txtScale.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Scale: {0} > not found!!!", textValue));
                     return;
@@ -138,24 +146,25 @@ namespace Sci.Production.Quality
             }
         }
 
-        //[Encode][Amend]
+        // [Encode][Amend]
         private void btnEncode_Click(object sender, EventArgs e)
         {
-            if (btnEncode.Text == "Encode")
+            if (this.btnEncode.Text == "Encode")
             {
-
                 #region Valid
-                if (MyUtility.Check.Empty(comboResult.SelectedValue2))
+                if (MyUtility.Check.Empty(this.comboResult.SelectedValue2))
                 {
                     MyUtility.Msg.WarningBox("[Result] can not be empty !!");
                     return;
                 }
-                if (MyUtility.Check.Empty(dateInspectDate.Value))
+
+                if (MyUtility.Check.Empty(this.dateInspectDate.Value))
                 {
                     MyUtility.Msg.WarningBox("[Inspect Date] can not be empty !!");
                     return;
                 }
-                if (MyUtility.Check.Empty(txtuserLabTech.TextBox1.Text))
+
+                if (MyUtility.Check.Empty(this.txtuserLabTech.TextBox1.Text))
                 {
                     MyUtility.Msg.WarningBox("[Lab Tech] can not be empty !!");
                     return;
@@ -163,34 +172,37 @@ namespace Sci.Production.Quality
                 #endregion
 
                 #region ii.填入Air_Laboratory.WashEncode = T。iv.填入Air_Laboratory.EditName=Userid, Air_Laboratory.EditDate=Datetime()
-                sql = string.Format(@"update Air_Laboratory set WashEncode=1 , editName='{0}', editDate='{1}'
-                                      where ID='{2}' and POID='{3}' and SEQ1='{4}' and SEQ2='{5}'"
-                                    , Sci.Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), ID, PoID, SEQ1, SEQ2);
-                DBProxy.Current.Execute(null, sql);
+                this.sql = string.Format(
+                    @"update Air_Laboratory set WashEncode=1 , editName='{0}', editDate='{1}'
+                                      where ID='{2}' and POID='{3}' and SEQ1='{4}' and SEQ2='{5}'",
+                    Sci.Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), this.ID, this.PoID, this.SEQ1, this.SEQ2);
+                DBProxy.Current.Execute(null, this.sql);
                 #endregion
 
                 #region iii.Air_Laboratory.OvenEncode 為.T.時或Air_Laboratory.NonOven=.T.時，判斷當Air_Laboratory.Oven 與Air_Laboratory.Wash 只要有一個為’Fail’則Air_Laboratory.Result=‘Fail’，否則填入Air_Laboratory.Result=‘Pass’
-                if (Convert.ToBoolean(maindr["OvenEncode"]) || Convert.ToBoolean(maindr["NonOven"]))
+                if (Convert.ToBoolean(this.maindr["OvenEncode"]) || Convert.ToBoolean(this.maindr["NonOven"]))
                 {
-                    if (maindr["Oven"].ToString().Trim() == "Fail" || maindr["Wash"].ToString().Trim() == "Fail")
+                    if (this.maindr["Oven"].ToString().Trim() == "Fail" || this.maindr["Wash"].ToString().Trim() == "Fail")
                     {
-                        sql = string.Format(@"update Air_Laboratory set Result='Fail' 
-                                      where ID='{0}' and POID='{1}' and SEQ1='{2}' and SEQ2='{3}'"
-                                    , ID, PoID, SEQ1, SEQ2);
-                        DBProxy.Current.Execute(null, sql);
+                        this.sql = string.Format(
+                            @"update Air_Laboratory set Result='Fail' 
+                                      where ID='{0}' and POID='{1}' and SEQ1='{2}' and SEQ2='{3}'",
+                            this.ID, this.PoID, this.SEQ1, this.SEQ2);
+                        DBProxy.Current.Execute(null, this.sql);
                     }
                     else
                     {
-                        sql = string.Format(@"update Air_Laboratory set Result='Pass' 
-                                      where ID='{0}' and POID='{1}' and SEQ1='{2}' and SEQ2='{3}'"
-                                    , ID, PoID, SEQ1, SEQ2);
-                        DBProxy.Current.Execute(null, sql);
+                        this.sql = string.Format(
+                            @"update Air_Laboratory set Result='Pass' 
+                                      where ID='{0}' and POID='{1}' and SEQ1='{2}' and SEQ2='{3}'",
+                            this.ID, this.PoID, this.SEQ1, this.SEQ2);
+                        DBProxy.Current.Execute(null, this.sql);
                     }
                 }
                 #endregion
 
-                //ISP20200575 Encode全部執行後
-                string sqlcmd = $@"select distinct orderid=o.ID from Orders o with(nolock) where o.poid = '{PoID}'";
+                // ISP20200575 Encode全部執行後
+                string sqlcmd = $@"select distinct orderid=o.ID from Orders o with(nolock) where o.poid = '{this.PoID}'";
                 DataTable dtid;
                 DualResult result1 = DBProxy.Current.Select(string.Empty, sqlcmd, out dtid);
                 if (!result1)
@@ -215,35 +227,39 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
                     }
                 }
 
-                btnEncode.Text = "Amend";
+                this.btnEncode.Text = "Amend";
                 this.btnEdit.Enabled = false;
             }
-            else if (btnEncode.Text == "Amend")
+            else if (this.btnEncode.Text == "Amend")
             {
                 #region i.將Air_Laboratory.WashEncode 改為.F。ii.清空Air_Laboratory.Result。iii.填入Air_Laboratory.EditName=Userid, Air_Laboratory.EditDate=Datetime()
-                sql = string.Format(@"update Air_Laboratory set WashEncode=0 , Result='' ,  editName='{0}', editDate='{1}'
-                                      where ID='{2}' and POID='{3}' and SEQ1='{4}' and SEQ2='{5}'"
-                                    , Sci.Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), ID, PoID, SEQ1, SEQ2);
-                DBProxy.Current.Execute(null, sql);
+                this.sql = string.Format(
+                    @"update Air_Laboratory set WashEncode=0 , Result='' ,  editName='{0}', editDate='{1}'
+                                      where ID='{2}' and POID='{3}' and SEQ1='{4}' and SEQ2='{5}'",
+                    Sci.Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), this.ID, this.PoID, this.SEQ1, this.SEQ2);
+                DBProxy.Current.Execute(null, this.sql);
                 #endregion
 
-                btnEncode.Text = "Encode";
-                //btnEncode.Enabled = false;
+                this.btnEncode.Text = "Encode";
+
+                // btnEncode.Enabled = false;
                 this.btnEdit.Enabled = true;
             }
-            
-            //更新PO.AIRLabInspPercent
+
+            // 更新PO.AIRLabInspPercent
             DualResult upResult;
-            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'AIRLab','{maindr["POID"]}'")))
+            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'AIRLab','{this.maindr["POID"]}'")))
             {
-                ShowErr(upResult);
+                this.ShowErr(upResult);
                 return;
             }
-            OnRequery();
+
+            this.OnRequery();
         }
-        //20161105 改變寫法
-        //protected override bool OnSaveBefore()
-        //{
+
+        // 20161105 改變寫法
+        // protected override bool OnSaveBefore()
+        // {
         //    if (save.Text == "Edit")
         //    {
         //        txtScale.Enabled = true;
@@ -275,23 +291,22 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
         //        return true;
         //    }
 
-        //}
-
+        // }
         private void btnClose_Click(object sender, EventArgs e)
         {
-            SetView(maindr);
+            this.SetView(this.maindr);
             this.Close();
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            if (btnEdit.Text == "Edit")
+            if (this.btnEdit.Text == "Edit")
             {
-                txtScale.Enabled = true;
-                comboResult.Enabled = true;
-                txtRemark.Enabled = true;
-                txtuserLabTech.Enabled = true;
-                dateInspectDate.Enabled = true;
+                this.txtScale.Enabled = true;
+                this.comboResult.Enabled = true;
+                this.txtRemark.Enabled = true;
+                this.txtuserLabTech.Enabled = true;
+                this.dateInspectDate.Enabled = true;
                 this.btnEdit.Text = "Save";
                 this.btnEncode.Enabled = false;
                 this.btnClose.Visible = false;
@@ -300,29 +315,32 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
             }
             else
             {
-                if (MyUtility.Check.Empty(txtuserLabTech.TextBox1.Text))
+                if (MyUtility.Check.Empty(this.txtuserLabTech.TextBox1.Text))
                 {
-                    CurrentData["WashInspector"] = Sci.Env.User.UserID;
+                    this.CurrentData["WashInspector"] = Sci.Env.User.UserID;
                 }
-                if (MyUtility.Check.Empty(dateInspectDate.Value))
+
+                if (MyUtility.Check.Empty(this.dateInspectDate.Value))
                 {
-                    CurrentData["WashDate"] = DateTime.Now;
+                    this.CurrentData["WashDate"] = DateTime.Now;
                 }
-                txtScale.Enabled = false;
-                comboResult.Enabled = false;
-                txtRemark.Enabled = false;
-                txtuserLabTech.Enabled = false;
-                dateInspectDate.Enabled = false;
+
+                this.txtScale.Enabled = false;
+                this.comboResult.Enabled = false;
+                this.txtRemark.Enabled = false;
+                this.txtuserLabTech.Enabled = false;
+                this.dateInspectDate.Enabled = false;
                 this.btnClose.Visible = true;
                 this.undo.Visible = false;
-                string sqlcmd = string.Format(@"update AIR_Laboratory
+                string sqlcmd = string.Format(
+                    @"update AIR_Laboratory
 set WashScale = '{3}',
 Wash='{4}',
 WashRemark='{5}',
 WashInspector='{6}',
 WashDate='{7}'
 where POID='{0}' and seq1='{1}' and SEQ2='{2}'",
-PoID, SEQ1, SEQ2, txtScale.Text, this.comboResult.Text, txtRemark.Text, txtuserLabTech.TextBox1.Text, ((DateTime)this.dateInspectDate.Value).ToShortDateString());
+                    this.PoID, this.SEQ1, this.SEQ2, this.txtScale.Text, this.comboResult.Text, this.txtRemark.Text, this.txtuserLabTech.TextBox1.Text, ((DateTime)this.dateInspectDate.Value).ToShortDateString());
                 DBProxy.Current.Execute(null, sqlcmd);
                 this.btnEdit.Text = "Edit";
                 this.btnEncode.Enabled = true;

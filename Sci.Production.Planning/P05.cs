@@ -211,7 +211,7 @@ GROUP  BY QU.localsuppid,
           localsupp.abb, 
           QU.mockup 
 order by QU.localsuppid ",
-ddr["ID"].ToString().Trim());
+                    ddr["ID"].ToString().Trim());
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,30,15", null);
@@ -253,7 +253,7 @@ GROUP  BY QU.localsuppid,
           localsupp.abb, 
           QU.mockup 
 order by QU.localsuppid ",
-ddr["ID"].ToString().Trim());
+                    ddr["ID"].ToString().Trim());
                 Ict.DualResult result;
                 string dtid = string.Empty;
                 string dtabb = string.Empty;
@@ -530,9 +530,9 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
 where   a.Finished = 0 
         and a.Category !='M' and a.Category !='T' and a.Category != 'A' and factory.IsProduceFty = 1
         and b.ArtworkTypeID = 'EMBROIDERY' " + orderby,
-        this.numHeads.Text,
-        this.numWorkHours.Text,
-        this.numEfficiency.Text);
+                    this.numHeads.Text,
+                    this.numWorkHours.Text,
+                    this.numEfficiency.Text);
 
             if (!MyUtility.Check.Empty(styleid))
             {
@@ -797,7 +797,7 @@ where   a.Finished = 0
                            Supplier = grouprows.Key.localsuppid + "-" + grouprows.Key.suppnm,
                            TotalQty = grouprows.Sum(r => r.Field<decimal?>("totalqty").GetValueOrDefault(0)),
                            Balance = grouprows.Sum(r => r.Field<decimal?>("balance").GetValueOrDefault(0)),
-                           Totaltms = grouprows.Sum(r => r.Field<decimal?>("totaltms").GetValueOrDefault(0))
+                           Totaltms = grouprows.Sum(r => r.Field<decimal?>("totaltms").GetValueOrDefault(0)),
                        }).ToList();
 
             var bs2 = (from rows in ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable()
@@ -807,7 +807,7 @@ where   a.Finished = 0
                            Supplier = grouprows.Key.localsuppid,
                            TotalQty = grouprows.Sum(r => r.Field<decimal?>("totalqty").GetValueOrDefault(0)),
                            Balance = grouprows.Sum(r => r.Field<decimal?>("balance").GetValueOrDefault(0)),
-                           Totaltms = grouprows.Sum(r => r.Field<decimal?>("totaltms").GetValueOrDefault(0))
+                           Totaltms = grouprows.Sum(r => r.Field<decimal?>("totaltms").GetValueOrDefault(0)),
                        }).ToList();
             bs1.AddRange(bs2);
             this.gridSupplier.DataSource = bs1;
@@ -875,8 +875,8 @@ where   a.Finished = 0
                     @"
 select b.priceapv,oven,wash,mockup from style_artwork  a WITH (NOLOCK) inner join style_artwork_quot b WITH (NOLOCK)  
 on a.ukey = b.ukey where a.styleukey = {0} and b.localsuppid = '{1}'",
-item["styleukey"],
-item["localsuppid"]);
+                    item["styleukey"],
+                    item["localsuppid"]);
                 if (MyUtility.Check.Seek(seek, out dr, null) == false)
                 {
                     item["msg"] = "Quotation data was not found!!";

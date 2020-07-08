@@ -668,7 +668,7 @@ where   a.Finished = 0
                            Supplier = grouprows.Key.localsuppid + "-" + grouprows.Key.suppnm,
                            TotalQty = grouprows.Sum(r => r.Field<decimal?>("totalqty").GetValueOrDefault(0)),
                            Balance = grouprows.Sum(r => r.Field<decimal?>("balance").GetValueOrDefault(0)),
-                           Totaltms = grouprows.Sum(r => r.Field<decimal?>("totaltms").GetValueOrDefault(0))
+                           Totaltms = grouprows.Sum(r => r.Field<decimal?>("totaltms").GetValueOrDefault(0)),
                        }).ToList();
 
             var bs2 = (from rows in ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable()
@@ -678,7 +678,7 @@ where   a.Finished = 0
                            Supplier = grouprows.Key.localsuppid,
                            TotalQty = grouprows.Sum(r => r.Field<decimal?>("totalqty").GetValueOrDefault(0)),
                            Balance = grouprows.Sum(r => r.Field<decimal?>("balance").GetValueOrDefault(0)),
-                           Totaltms = grouprows.Sum(r => r.Field<decimal?>("totaltms").GetValueOrDefault(0))
+                           Totaltms = grouprows.Sum(r => r.Field<decimal?>("totaltms").GetValueOrDefault(0)),
                        }).ToList();
             bs1.AddRange(bs2);
             this.gridSupplier.DataSource = bs1;

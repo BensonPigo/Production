@@ -1,12 +1,8 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -18,14 +14,14 @@ namespace Sci.Production.Shipping
        private DataTable dtExport;
        private DataSet ds = new DataSet();
 
-        public P14_Old(ToolStripMenuItem menuitem)
+       public P14_Old(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
             this.EditMode = true;
         }
 
-        protected override void OnFormLoaded()
+       protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
@@ -42,7 +38,11 @@ namespace Sci.Production.Shipping
 
             col_SendDate.CellValidating += (s, e) =>
             {
-                if (e.RowIndex == -1 || e.FormattedValue == null) return;
+                if (e.RowIndex == -1 || e.FormattedValue == null)
+                {
+                    return;
+                }
+
                 DataRow dr = this.gridCertOfOrigin.GetDataRow<DataRow>(e.RowIndex);
 
                 if (!MyUtility.Check.Empty(e.FormattedValue) && !MyUtility.Check.Empty(dr["ReceiveDate"]))
@@ -103,12 +103,12 @@ namespace Sci.Production.Shipping
             #endregion
         }
 
-        private void BtnQuery_Click(object sender, EventArgs e)
+       private void BtnQuery_Click(object sender, EventArgs e)
         {
             this.QueryData();
         }
 
-        private void BtnSave_Click(object sender, EventArgs e)
+       private void BtnSave_Click(object sender, EventArgs e)
         {
             this.gridCertOfOrigin.ValidateControl();
             DataTable dt = this.dtCertOfOrigin.Copy();
@@ -122,8 +122,7 @@ namespace Sci.Production.Shipping
                     (MyUtility.Check.Empty(dr["COName"]) ||
                     MyUtility.Check.Empty(dr["ReceiveDate"]) ||
                     MyUtility.Check.Empty(dr["Carrier"]) ||
-                    MyUtility.Check.Empty(dr["AWBNo"]))
-                   )
+                    MyUtility.Check.Empty(dr["AWBNo"])))
                 {
                     MyUtility.Msg.WarningBox(" <Form C/O Name>、<Form Rcvd Date>、<Carrier> and <AWB#> cannot be empty.");
                     return;
@@ -190,7 +189,7 @@ Values(s.SuppID,s.FormXPayINV,s.COName,convert(date,s.ReceiveDate),s.Carrier,s.A
             this.QueryData();
         }
 
-        private void QueryData()
+       private void QueryData()
         {
             string sqlcmd;
             string sqlwhere = string.Empty;
@@ -275,10 +274,9 @@ group by e.id,e.FactoryID,e.Consignee,e.Eta,e.ShipModeID
             }
 
             DataRelation rel = new DataRelation(
-                "rel"
-                , new DataColumn[] { this.dtCertOfOrigin.Columns["SuppID"], this.dtCertOfOrigin.Columns["FormXPayINV"] }
-                , new DataColumn[] { this.dtExport.Columns["SuppID"], this.dtExport.Columns["FormXPayINV"] }
-            );
+                "rel",
+                new DataColumn[] { this.dtCertOfOrigin.Columns["SuppID"], this.dtCertOfOrigin.Columns["FormXPayINV"] },
+                new DataColumn[] { this.dtExport.Columns["SuppID"], this.dtExport.Columns["FormXPayINV"] });
 
             this.ds.Relations.Add(rel);
 

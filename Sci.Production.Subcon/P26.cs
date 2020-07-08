@@ -1,12 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
@@ -16,29 +11,30 @@ namespace Sci.Production.Subcon
         public P26(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            lbl_queryfor.Text = "Sub Process";
+            this.lbl_queryfor.Text = "Sub Process";
             DataTable queryDT;
             string querySql = @"select '' union select Id from SubProcess where IsRFIDProcess=1";
             DBProxy.Current.Select(null, querySql, out queryDT);
-            MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
-            queryfors.SelectedIndex = 0;
-            queryfors.SelectedIndexChanged += (s, e) =>
+            MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
+            this.queryfors.SelectedIndex = 0;
+            this.queryfors.SelectedIndexChanged += (s, e) =>
             {
-                switch (queryfors.SelectedIndex)
+                switch (this.queryfors.SelectedIndex)
                 {
                     case 0:
-                        this.DefaultWhere = "";
+                        this.DefaultWhere = string.Empty;
                         break;
                     default:
-                        this.DefaultWhere = string.Format("StartProcess = '{0}'", queryfors.SelectedValue);
+                        this.DefaultWhere = string.Format("StartProcess = '{0}'", this.queryfors.SelectedValue);
                         break;
                 }
+
                 this.ReloadDatas();
             };
         }
@@ -47,7 +43,7 @@ namespace Sci.Production.Subcon
         {
             base.OnDetailGridSetup();
 
-            Helper.Controls.Grid.Generator(this.detailgrid)
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("BundleNo", header: "Bundle#", width: Widths.AnsiChars(11), iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13))
                 .Text("SubprocessId", header: "Artwork", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -59,8 +55,9 @@ namespace Sci.Production.Subcon
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"
+            string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
+            this.DetailSelectCommand = string.Format(
+                @"
 select 
 	BTD.BundleNo
 	,BTD.orderid

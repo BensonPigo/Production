@@ -1,14 +1,7 @@
 ﻿using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
@@ -18,7 +11,7 @@ namespace Sci.Production.Packing
 
         public P03_ScanAndPackDeletedHistory(string _PackingListID)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.PackingListID = _PackingListID;
         }
 
@@ -28,7 +21,7 @@ namespace Sci.Production.Packing
                 .Text("DeleteFrom", header: "Delete From", width: Widths.AnsiChars(10))
                 .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6))
                 .Text("OrderID", header: "Order ID", width: Widths.AnsiChars(18))
-                .Numeric("ScanQty", header: "Scan Qty", width: Widths.AnsiChars(6) ,decimal_places:0)
+                .Numeric("ScanQty", header: "Scan Qty", width: Widths.AnsiChars(6), decimal_places: 0)
                 .Text("ScanName", header: "Scan Name", width: Widths.AnsiChars(25))
                 .DateTime("ScanDate", header: "Scan Date", width: Widths.AnsiChars(25))
                 .Numeric("LackingQty", header: "Lacking Qty", width: Widths.AnsiChars(6), decimal_places: 0)

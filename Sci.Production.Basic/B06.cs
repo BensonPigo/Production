@@ -1,11 +1,5 @@
-﻿using Ict;
-using Sci.Data;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Basic

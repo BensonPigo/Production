@@ -1,11 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
@@ -15,7 +10,7 @@ namespace Sci.Production.PPIC
         public B09(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         protected override void EnsureToolbarExt()

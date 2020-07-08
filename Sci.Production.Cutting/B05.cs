@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
@@ -13,7 +7,7 @@ namespace Sci.Production.Cutting
         public B05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.DefaultFilter = $" MDivisionid = '{Sci.Env.User.Keyword}' ";
             this.txtCell1.MDivisionID = Sci.Env.User.Keyword;
         }
@@ -21,7 +15,7 @@ namespace Sci.Production.Cutting
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            txtID.ReadOnly = true;
+            this.txtID.ReadOnly = true;
         }
 
         protected override void ClickNewAfter()

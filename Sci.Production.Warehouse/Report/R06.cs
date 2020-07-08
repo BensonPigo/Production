@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -15,59 +12,80 @@ namespace Sci.Production.Warehouse
 {
     public partial class R06 : Sci.Win.Tems.PrintForm
     {
-        //string reason, factory, stocktype, fabrictype, mdivisionid, shift;
-        //int ordertypeindex;
-        string  factory, fabrictype, mdivisionid, shift;
-       
-        DateTime? issuedate1, issuedate2, approveDate1, approveDate2;
+        // string reason, factory, stocktype, fabrictype, mdivisionid, shift;
+        // int ordertypeindex;
+        string factory;
+
+        // string reason, factory, stocktype, fabrictype, mdivisionid, shift;
+        // int ordertypeindex;
+        string fabrictype;
+
+        // string reason, factory, stocktype, fabrictype, mdivisionid, shift;
+        // int ordertypeindex;
+        string mdivisionid;
+
+        // string reason, factory, stocktype, fabrictype, mdivisionid, shift;
+        // int ordertypeindex;
+        string shift;
+
+        DateTime? issuedate1;
+        DateTime? issuedate2;
+        DateTime? approveDate1;
+        DateTime? approveDate2;
         DataTable printData;
         StringBuilder condition = new StringBuilder();
 
         public R06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            txtMdivision.Text = Sci.Env.User.Keyword;
-            txtfactory.Text = Sci.Env.User.Keyword;
-            MyUtility.Tool.SetupCombox(comboFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
-            comboFabricType.SelectedIndex = 0;
-            txtdropdownlistShift.SelectedIndex = 0;
+            this.InitializeComponent();
+            this.txtMdivision.Text = Sci.Env.User.Keyword;
+            this.txtfactory.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(this.comboFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
+            this.comboFabricType.SelectedIndex = 0;
+            this.txtdropdownlistShift.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateIssueDate.Value1) && MyUtility.Check.Empty(dateIssueDate.Value2) && 
-                MyUtility.Check.Empty(dateApproveDate.Value2) &&MyUtility.Check.Empty(dateApproveDate.Value1))
+            if (MyUtility.Check.Empty(this.dateIssueDate.Value1) && MyUtility.Check.Empty(this.dateIssueDate.Value2) &&
+                MyUtility.Check.Empty(this.dateApproveDate.Value2) && MyUtility.Check.Empty(this.dateApproveDate.Value1))
             {
                 MyUtility.Msg.WarningBox("< Issue date > , < Approve date > can't be empty!!");
                 return false;
             }
 
-            issuedate1 = dateIssueDate.Value1;
-            issuedate2 = dateIssueDate.Value2;
-            approveDate1 = dateApproveDate.Value1;
-            approveDate2 = dateApproveDate.Value2;
-            fabrictype = comboFabricType.SelectedValue.ToString();
-            mdivisionid = txtMdivision.Text;
-            factory = txtfactory.Text;
-            shift = txtdropdownlistShift.SelectedValue.ToString();
+            this.issuedate1 = this.dateIssueDate.Value1;
+            this.issuedate2 = this.dateIssueDate.Value2;
+            this.approveDate1 = this.dateApproveDate.Value1;
+            this.approveDate2 = this.dateApproveDate.Value2;
+            this.fabrictype = this.comboFabricType.SelectedValue.ToString();
+            this.mdivisionid = this.txtMdivision.Text;
+            this.factory = this.txtfactory.Text;
+            this.shift = this.txtdropdownlistShift.SelectedValue.ToString();
 
-            condition.Clear();
-            condition.Append(string.Format(@"Issue Date : {0} ~ {1}" + "   "
-                , Convert.ToDateTime(issuedate1).ToString("d")
-                , Convert.ToDateTime(issuedate2).ToString("d")));
-            condition.Append(string.Format(@"Approve Date : {0} ~ {1}" + "   "
-                , Convert.ToDateTime(approveDate1).ToString("d")
-                , Convert.ToDateTime(approveDate2).ToString("d")));
-            condition.Append(string.Format(@"M : {0}" + "   "
-                , txtMdivision.Text));
-            condition.Append(string.Format(@"Factory : {0}" + "   "
-                , txtfactory.Text));
-            condition.Append(string.Format(@"Shift : {0}" + "   "
-                , txtdropdownlistShift.Text));
-            condition.Append(string.Format(@"Fabric Type : {0}"
-                , comboFabricType.Text));
+            this.condition.Clear();
+            this.condition.Append(string.Format(
+                @"Issue Date : {0} ~ {1}" + "   ",
+                Convert.ToDateTime(this.issuedate1).ToString("d"),
+                Convert.ToDateTime(this.issuedate2).ToString("d")));
+            this.condition.Append(string.Format(
+                @"Approve Date : {0} ~ {1}" + "   ",
+                Convert.ToDateTime(this.approveDate1).ToString("d"),
+                Convert.ToDateTime(this.approveDate2).ToString("d")));
+            this.condition.Append(string.Format(
+                @"M : {0}" + "   ",
+                this.txtMdivision.Text));
+            this.condition.Append(string.Format(
+                @"Factory : {0}" + "   ",
+                this.txtfactory.Text));
+            this.condition.Append(string.Format(
+                @"Shift : {0}" + "   ",
+                this.txtdropdownlistShift.Text));
+            this.condition.Append(string.Format(
+                @"Fabric Type : {0}",
+                this.comboFabricType.Text));
 
             return base.ValidateInput();
         }
@@ -126,53 +144,66 @@ where (a.Status ='Received' or a.Status = 'Confirmed') "));
 
             #region --- 條件組合  ---
 
-            if (!MyUtility.Check.Empty(issuedate1) || !MyUtility.Check.Empty(issuedate2))
+            if (!MyUtility.Check.Empty(this.issuedate1) || !MyUtility.Check.Empty(this.issuedate2))
             {
-                if(!MyUtility.Check.Empty(issuedate1))
-                    sqlCmd.Append(string.Format(@" and '{0}' <= a.issuedate", Convert.ToDateTime(issuedate1).ToString("d")));
-                if (!MyUtility.Check.Empty(issuedate2))
-                    sqlCmd.Append(string.Format(@" and a.issuedate <= '{0}'", Convert.ToDateTime(issuedate2).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(approveDate1) || !MyUtility.Check.Empty(approveDate2))
-            {
-                if(!MyUtility.Check.Empty(approveDate1))
-                    sqlCmd.Append(string.Format(@" and '{0}' <= a.apvdate", Convert.ToDateTime(approveDate1).ToString("d")));
-                if (!MyUtility.Check.Empty(approveDate2))
-                    sqlCmd.Append(string.Format(@" and a.apvdate <= '{0}'", Convert.ToDateTime(approveDate2).ToString("d")));
+                if (!MyUtility.Check.Empty(this.issuedate1))
+                {
+                    sqlCmd.Append(string.Format(@" and '{0}' <= a.issuedate", Convert.ToDateTime(this.issuedate1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.issuedate2))
+                {
+                    sqlCmd.Append(string.Format(@" and a.issuedate <= '{0}'", Convert.ToDateTime(this.issuedate2).ToString("d")));
+                }
             }
 
-            if (!MyUtility.Check.Empty(mdivisionid))
+            if (!MyUtility.Check.Empty(this.approveDate1) || !MyUtility.Check.Empty(this.approveDate2))
+            {
+                if (!MyUtility.Check.Empty(this.approveDate1))
+                {
+                    sqlCmd.Append(string.Format(@" and '{0}' <= a.apvdate", Convert.ToDateTime(this.approveDate1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.approveDate2))
+                {
+                    sqlCmd.Append(string.Format(@" and a.apvdate <= '{0}'", Convert.ToDateTime(this.approveDate2).ToString("d")));
+                }
+            }
+
+            if (!MyUtility.Check.Empty(this.mdivisionid))
             {
                 sqlCmd.Append(" and A.MDivisionid = @mdivision");
-                sp_mdivision.Value = mdivisionid;
+                sp_mdivision.Value = this.mdivisionid;
                 cmds.Add(sp_mdivision);
             }
 
-            if (!MyUtility.Check.Empty(factory))
+            if (!MyUtility.Check.Empty(this.factory))
             {
                 sqlCmd.Append(" and A.factoryid = @factory");
-                sp_factory.Value = factory;
+                sp_factory.Value = this.factory;
                 cmds.Add(sp_factory);
             }
 
-            if (!MyUtility.Check.Empty(shift))
+            if (!MyUtility.Check.Empty(this.shift))
             {
-                sqlCmd.Append(string.Format(@" and a.shift = '{0}'", shift));
+                sqlCmd.Append(string.Format(@" and a.shift = '{0}'", this.shift));
             }
 
-            if (!MyUtility.Check.Empty(fabrictype))
+            if (!MyUtility.Check.Empty(this.fabrictype))
             {
-                sqlCmd.Append(string.Format(@" and c.fabrictype = '{0}'", fabrictype));
+                sqlCmd.Append(string.Format(@" and c.fabrictype = '{0}'", this.fabrictype));
             }
+
             sqlCmd.Append(string.Format(@" ORDER BY ApvDate "));
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
@@ -180,41 +211,54 @@ where (a.Status ='Received' or a.Status = 'Confirmed') "));
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R06.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R06.xltx", 4, showExcel: false, showSaveMsg: false, excelApp: objApp);      // 將datatable copy to excel
+
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R06.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Warehouse_R06.xltx", 4, showExcel: false, showSaveMsg: false, excelApp: objApp);      // 將datatable copy to excel
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format(@"
+            objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format(
+                @"
 select  NameEN
 from factory
 where id = '{0}'", Sci.Env.User.Keyword));
             objSheets.Cells[2, 1] = @"Fabric/Accessory Lacking & Replacement Report";
-            //Lacking Date (3, 2)
-            objSheets.Cells[3, 2] = string.Format(@"{0} ~ {1}" + "   "
-                , Convert.ToDateTime(issuedate1).ToString("d")
-                , Convert.ToDateTime(issuedate2).ToString("d"));
-            //Approve Date (3, 4)
-            objSheets.Cells[3, 4] = string.Format(@"{0} ~ {1}" + "   "
-                , Convert.ToDateTime(approveDate1).ToString("d")
-                , Convert.ToDateTime(approveDate2).ToString("d"));
-            //Shift (3, 6)
-            objSheets.Cells[3, 6] = string.Format(@"{0}" + "   "
-                , txtdropdownlistShift.Text);
-            //Date (3, 11)
+
+            // Lacking Date (3, 2)
+            objSheets.Cells[3, 2] = string.Format(
+                @"{0} ~ {1}" + "   ",
+                Convert.ToDateTime(this.issuedate1).ToString("d"),
+                Convert.ToDateTime(this.issuedate2).ToString("d"));
+
+            // Approve Date (3, 4)
+            objSheets.Cells[3, 4] = string.Format(
+                @"{0} ~ {1}" + "   ",
+                Convert.ToDateTime(this.approveDate1).ToString("d"),
+                Convert.ToDateTime(this.approveDate2).ToString("d"));
+
+            // Shift (3, 6)
+            objSheets.Cells[3, 6] = string.Format(
+                @"{0}" + "   ",
+                this.txtdropdownlistShift.Text);
+
+            // Date (3, 11)
             objSheets.Cells[3, 11] = string.Format("{0:d}", DateTime.Now);
 
             this.ShowWaitMessage("Excel Processing...");
-            for (int i = 1; i <= printData.Rows.Count; i++) {
+            for (int i = 1; i <= this.printData.Rows.Count; i++)
+            {
                 string str = objSheets.Cells[i + 4, 12].Value;
-                if(!MyUtility.Check.Empty(str))
-                    objSheets.Cells[i + 4, 12] = str.Trim(); 
+                if (!MyUtility.Check.Empty(str))
+                {
+                    objSheets.Cells[i + 4, 12] = str.Trim();
+                }
             }
+
             objSheets.Columns.AutoFit();
             objSheets.Rows.AutoFit();
 
@@ -233,9 +277,9 @@ where id = '{0}'", Sci.Env.User.Keyword));
 
         private void txtMdivision_Validated(object sender, EventArgs e)
         {
-            if (!txtMdivision.Text.EqualString(txtMdivision.OldValue))
+            if (!this.txtMdivision.Text.EqualString(this.txtMdivision.OldValue))
             {
-                this.txtfactory.Text = "";
+                this.txtfactory.Text = string.Empty;
             }
         }
     }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
@@ -137,7 +136,7 @@ where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
             this.numAppBookingVW.Value = MyUtility.Convert.GetDecimal(dt.Compute("sum(APPBookingVW)", string.Empty));
             this.numAppEstAmtVW.Value = MyUtility.Convert.GetDecimal(dt.Compute("sum(APPEstAmtVW)", string.Empty));
 
-            Color_Change();
+            this.Color_Change();
         }
 
         /// <summary>
@@ -694,6 +693,7 @@ order by os.Seq", dr["OrderID"].ToString(),
                 if (drCtnQty > 0)
                 {
                     ctnCBM = MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo");
+
                     // ISP20181015 CBM抓到小數點後4位
                     cbm = MyUtility.Math.Round(cbm + (MyUtility.Convert.GetDouble(ctnCBM) * drCtnQty), 4);
                 }
@@ -795,10 +795,10 @@ where pl.ID != '{0}'
       and pld.OrderShipmodeSeq = '{2}'
       and pld.Article = '{3}'
       and pld.SizeCode = '{4}'", dr["ID"],
-                               dr["OrderID"],
-                               dr["OrderShipmodeSeq"],
-                               dr["Article"],
-                               dr["SizeCode"]);
+                    dr["OrderID"],
+                    dr["OrderShipmodeSeq"],
+                    dr["Article"],
+                    dr["SizeCode"]);
 
                 string strInvAdjustSQL = string.Format(
                     @"
@@ -809,9 +809,9 @@ where InvA.OrderID = '{0}'
       and InvA.OrderShipmodeSeq = '{1}'
       and InvAQ.Article = '{2}'
       and InvAQ.SizeCode = '{3}'", dr["OrderID"],
-                                 dr["OrderShipmodeSeq"],
-                                 dr["Article"],
-                                 dr["SizeCode"]);
+                    dr["OrderShipmodeSeq"],
+                    dr["Article"],
+                    dr["SizeCode"]);
 
                 dr["OtherConfirmQty"] = MyUtility.GetValue.Lookup(strOtherConfirmSQL);
                 dr["InvAdjustQty"] = MyUtility.GetValue.Lookup(strInvAdjustSQL);
@@ -895,7 +895,7 @@ where InvA.OrderID = '{0}'
             }
             else
             {
-                if (!PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), ""))
+                if (!PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), string.Empty))
                 {
                     return false;
                 }
@@ -1160,7 +1160,6 @@ AND s.ShipGroup <> (
                     this.result = DBProxy.Current.Execute(null, this.sqlCmd);
                     if (!this.result)
                     {
-
                         transactionScope.Dispose();
                         MyUtility.Msg.WarningBox("Confirm fail !\r\n" + this.result.ToString());
                         return;
@@ -1193,7 +1192,6 @@ AND s.ShipGroup <> (
                             iNVNo.ParameterName = "@INVNo";
                             iNVNo.Value = this.CurrentMaintain["INVNo"].ToString();
 
-
                             IList<System.Data.SqlClient.SqlParameter> parameters = new List<System.Data.SqlClient.SqlParameter>();
                             parameters.Add(ttlCBM);
                             parameters.Add(iNVNo);
@@ -1223,7 +1221,6 @@ AND s.ShipGroup <> (
 
                     transactionScope.Complete();
                     transactionScope.Dispose();
-
                 }
                 catch (Exception ex)
                 {
@@ -1233,6 +1230,7 @@ AND s.ShipGroup <> (
                 }
             }
         }
+
         /// <summary>
         /// ClickUnconfirm
         /// </summary>
@@ -1359,7 +1357,7 @@ select oqd.Id as OrderID
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 where oqd.Id = '{0}'
       and oqd.Seq = '{1}'", dr["OrderID"].ToString(),
-                          dr["OrderShipmodeSeq"].ToString());
+                        dr["OrderShipmodeSeq"].ToString());
                     if (!(selectResult = DBProxy.Current.Select(null, this.sqlCmd, out tmpPackData)))
                     {
                         MyUtility.Msg.WarningBox("Query pack qty fail!");
@@ -1405,10 +1403,10 @@ where pl.ID != '{0}'
       and pld.OrderShipmodeSeq = '{2}'
       and pld.Article = '{3}'
       and pld.SizeCode = '{4}'", dr["ID"],
-                               dr["OrderID"],
-                               dr["OrderShipmodeSeq"],
-                               dr["Article"],
-                               dr["SizeCode"]);
+                    dr["OrderID"],
+                    dr["OrderShipmodeSeq"],
+                    dr["Article"],
+                    dr["SizeCode"]);
 
                 string strInvAdjustSQL = string.Format(
                     @"
@@ -1419,9 +1417,9 @@ where InvA.OrderID = '{0}'
       and InvA.OrderShipmodeSeq = '{1}'
       and InvAQ.Article = '{2}'
       and InvAQ.SizeCode = '{3}'", dr["OrderID"],
-                                 dr["OrderShipmodeSeq"],
-                                 dr["Article"],
-                                 dr["SizeCode"]);
+                    dr["OrderShipmodeSeq"],
+                    dr["Article"],
+                    dr["SizeCode"]);
 
                 dr["OtherConfirmQty"] = MyUtility.GetValue.Lookup(strOtherConfirmSQL);
                 dr["InvAdjustQty"] = MyUtility.GetValue.Lookup(strInvAdjustSQL);

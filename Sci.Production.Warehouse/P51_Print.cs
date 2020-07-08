@@ -2,12 +2,8 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using System.Linq;
 
 namespace Sci.Production.Warehouse
@@ -16,7 +12,7 @@ namespace Sci.Production.Warehouse
     {
         public P51_Print()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
@@ -28,7 +24,7 @@ namespace Sci.Production.Warehouse
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
-            DualResult result = DBProxy.Current.Select("", @"
+            DualResult result = DBProxy.Current.Select(string.Empty, @"
 select  iif(T.stocktype = 'B','Bulk','Inventory') AS stocktype
         ,S.poid AS OrderID,S.seq1  + '-' +S.seq2 as SEQ
         ,S.Roll,S.dyelot
@@ -46,22 +42,20 @@ from dbo.Stocktaking_detail S WITH (NOLOCK)
 LEFT join dbo.PO_Supp_Detail P WITH (NOLOCK) on P.ID = S.POID and  P.SEQ1 = S.Seq1 and P.seq2 = S.Seq2 
 left join dbo.FtyInventory Fi on s.poid = fi.poid and s.seq1 = fi.seq1 and s.seq2 = fi.seq2
     and s.roll = fi.roll and s.stocktype = fi.stocktype and s.Dyelot = fi.Dyelot
-LEFT JOIN DBO.Stocktaking T  WITH (NOLOCK) ON T.ID = S.Id  WHERE S.Id = @ID", pars, out dt); ;
-              
+LEFT JOIN DBO.Stocktaking T  WITH (NOLOCK) ON T.ID = S.Id  WHERE S.Id = @ID", pars, out dt);
+
             string StockType;
-             StockType = dt.Rows.Count ==0  ? "" :  dt.Rows[0]["stocktype"].ToString();
+            StockType = dt.Rows.Count == 0 ? string.Empty : dt.Rows[0]["stocktype"].ToString();
 
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issuedate", Issuedate));
-            if (ReportResourceName == "P51_Report2.rdlc")
+            if (this.ReportResourceName == "P51_Report2.rdlc")
             {
                 e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("StockType", StockType));
-
 
                 List<P51_PrintData> data = dt.AsEnumerable()
                                .Select(row1 => new P51_PrintData()
                                {
-
                                    OrderID = row1["OrderID"].ToString(),
                                    SEQ = row1["SEQ"].ToString(),
                                    Roll = row1["Roll"].ToString(),
@@ -76,13 +70,10 @@ LEFT JOIN DBO.Stocktaking T  WITH (NOLOCK) ON T.ID = S.Id  WHERE S.Id = @ID", pa
                                    Variance = row1["Variance"].ToString(),
                                    Total1 = row1["Total1"].ToString(),
                                    Total2 = row1["Total2"].ToString(),
-
                                }).ToList();
-
 
                 e.Report.ReportDataSource = data;
             }
-           
 
             return Result.True;
         }
@@ -92,12 +83,8 @@ LEFT JOIN DBO.Stocktaking T  WITH (NOLOCK) ON T.ID = S.Id  WHERE S.Id = @ID", pa
         private void radioGroup1_ValueChanged(object sender, EventArgs e)
         {
             this.ReportResourceNamespace = typeof(P51_PrintData);
-            this.ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            this.ReportResourceAssembly = this.ReportResourceNamespace.Assembly;
             this.ReportResourceName = this.radioPanel1.Value == this.radioBackwardSocktakingForm.Value ? "P51_Report1.rdlc" : "P51_Report2.rdlc";
-
         }
     }
 }
-
-
-

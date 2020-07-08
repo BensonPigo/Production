@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -14,47 +11,56 @@ namespace Sci.Production.Subcon
 {
     public partial class R15 : Sci.Win.Tems.PrintForm
     {
-        string artworktype,factory,subcon,spno,style,orderby,mdivision;
+        string artworktype;
+        string factory;
+        string subcon;
+        string spno;
+        string style;
+        string orderby;
+        string mdivision;
         DateTime? issuedate1, issuedate2;
         DataTable printData;
         StringBuilder condition = new StringBuilder();
+
         public R15(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            comboFactory.Text = Sci.Env.User.Factory;
-            MyUtility.Tool.SetupCombox(comboOrderBy, 1, 1, "Issue date,Supplier");
-            comboOrderBy.SelectedIndex = 0;
-            txtMdivisionM.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.comboFactory.Text = Sci.Env.User.Factory;
+            MyUtility.Tool.SetupCombox(this.comboOrderBy, 1, 1, "Issue date,Supplier");
+            this.comboOrderBy.SelectedIndex = 0;
+            this.txtMdivisionM.Text = Sci.Env.User.Keyword;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateIssueDate.Value1) && MyUtility.Check.Empty(dateIssueDate.Value2))
+            if (MyUtility.Check.Empty(this.dateIssueDate.Value1) && MyUtility.Check.Empty(this.dateIssueDate.Value2))
             {
                 MyUtility.Msg.WarningBox("Issue Date can't empty!!");
                 return false;
             }
-            issuedate1 = dateIssueDate.Value1;
-            issuedate2 = dateIssueDate.Value2;
 
-            artworktype = txtartworktype_ftyArtworkType.Text;
-            mdivision = txtMdivisionM.Text;
-            factory = comboFactory.Text;
-            subcon = txtsubconSupplier.TextBox1.Text;
-            spno = txtSPNO.Text;
-            style = txtstyle.Text;
-            orderby = comboOrderBy.Text;
+            this.issuedate1 = this.dateIssueDate.Value1;
+            this.issuedate2 = this.dateIssueDate.Value2;
 
-            condition.Clear();
-            
-            condition.Append(string.Format(@"Issue Date : {0} ~ {1};     " 
-                , Convert.ToDateTime(issuedate1).ToString("d")
-                , Convert.ToDateTime(issuedate2).ToString("d")));
+            this.artworktype = this.txtartworktype_ftyArtworkType.Text;
+            this.mdivision = this.txtMdivisionM.Text;
+            this.factory = this.comboFactory.Text;
+            this.subcon = this.txtsubconSupplier.TextBox1.Text;
+            this.spno = this.txtSPNO.Text;
+            this.style = this.txtstyle.Text;
+            this.orderby = this.comboOrderBy.Text;
+
+            this.condition.Clear();
+
+            this.condition.Append(string.Format(
+                @"Issue Date : {0} ~ {1};     ",
+                Convert.ToDateTime(this.issuedate1).ToString("d"),
+                Convert.ToDateTime(this.issuedate2).ToString("d")));
             return base.ValidateInput();
         }
 
@@ -113,79 +119,89 @@ where 1=1"));
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
 
-            if (!MyUtility.Check.Empty(issuedate1))
+            if (!MyUtility.Check.Empty(this.issuedate1))
             {
                 sqlCmd.Append(" and a.issuedate >= @issuedate1");
-                sp_issuedate1.Value = issuedate1;
+                sp_issuedate1.Value = this.issuedate1;
                 cmds.Add(sp_issuedate1);
             }
 
-            if (!MyUtility.Check.Empty(issuedate2))
+            if (!MyUtility.Check.Empty(this.issuedate2))
             {
                 sqlCmd.Append(" and a.issuedate <= @issuedate2");
-                sp_issuedate2.Value = issuedate2;
+                sp_issuedate2.Value = this.issuedate2;
                 cmds.Add(sp_issuedate2);
             }
-            
-            if (!MyUtility.Check.Empty(artworktype))
+
+            if (!MyUtility.Check.Empty(this.artworktype))
             {
                 sqlCmd.Append(" and a.artworktypeid = @artworktype");
-                sp_artworktype.Value = artworktype;
+                sp_artworktype.Value = this.artworktype;
                 cmds.Add(sp_artworktype);
-                condition.Append(string.Format(@"Artworktype Type : {0};     ", artworktype));
+                this.condition.Append(string.Format(@"Artworktype Type : {0};     ", this.artworktype));
             }
-            if (!MyUtility.Check.Empty(mdivision))
+
+            if (!MyUtility.Check.Empty(this.mdivision))
             {
                 sqlCmd.Append(" and a.mdivisionid = @MDivision");
-                sp_mdivision.Value = mdivision;
+                sp_mdivision.Value = this.mdivision;
                 cmds.Add(sp_mdivision);
-                condition.Append(string.Format(@"M : {0};    ", mdivision));
+                this.condition.Append(string.Format(@"M : {0};    ", this.mdivision));
             }
-            if (!MyUtility.Check.Empty(factory))
+
+            if (!MyUtility.Check.Empty(this.factory))
             {
                 sqlCmd.Append(" and a.factoryid = @factory");
-                sp_factory.Value = factory;
+                sp_factory.Value = this.factory;
                 cmds.Add(sp_factory);
-                condition.Append(string.Format(@"Factory : {0};   ", factory));
+                this.condition.Append(string.Format(@"Factory : {0};   ", this.factory));
             }
-            if (!MyUtility.Check.Empty(subcon))
+
+            if (!MyUtility.Check.Empty(this.subcon))
             {
                 sqlCmd.Append(" and a.localsuppid = @subcon");
-                sp_subcon.Value = subcon;
+                sp_subcon.Value = this.subcon;
                 cmds.Add(sp_subcon);
-                condition.Append(string.Format(@"Supplier : {0};   ", subcon));
+                this.condition.Append(string.Format(@"Supplier : {0};   ", this.subcon));
             }
-            if (!MyUtility.Check.Empty(spno))
+
+            if (!MyUtility.Check.Empty(this.spno))
             {
                 sqlCmd.Append(" and c.id = @spno ");
-                sp_spno.Value = spno;
+                sp_spno.Value = this.spno;
                 cmds.Add(sp_spno);
-                condition.Append(string.Format(@"SP# : {0};   ", spno));
+                this.condition.Append(string.Format(@"SP# : {0};   ", this.spno));
             }
-            if (!MyUtility.Check.Empty(style))
+
+            if (!MyUtility.Check.Empty(this.style))
             {
                 sqlCmd.Append(" and c.styleid = @style");
-                sp_style.Value = style;
+                sp_style.Value = this.style;
                 cmds.Add(sp_style);
-                condition.Append(string.Format(@"Style : {0};   ", style));
+                this.condition.Append(string.Format(@"Style : {0};   ", this.style));
             }
 
-            if (!MyUtility.Check.Empty(orderby))
+            if (!MyUtility.Check.Empty(this.orderby))
             {
-                condition.Append(string.Format(@"Order by : {0};   ", orderby));
+                this.condition.Append(string.Format(@"Order by : {0};   ", this.orderby));
             }
 
-            if (orderby.ToUpper() == "ISSUE DATE")
+            if (this.orderby.ToUpper() == "ISSUE DATE")
+            {
                 sqlCmd.Append(" order by a.issuedate ");
+            }
             else
+            {
                 sqlCmd.Append(" order by a.localsuppid ");
+            }
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(),cmds, out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
@@ -193,18 +209,18 @@ where 1=1"));
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R15.xltx"); //預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R15.xltx"); // 預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.Cells[2, 1] = condition.ToString();   // 條件字串寫入excel
-            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R15.xltx", 3, true, null, objApp);      // 將datatable copy to excel
+            objSheets.Cells[2, 1] = this.condition.ToString();   // 條件字串寫入excel
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Subcon_R15.xltx", 3, true, null, objApp);      // 將datatable copy to excel
             Marshal.ReleaseComObject(objSheets);
             return true;
         }

@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-
 
 namespace Sci.Production.Warehouse
 {
@@ -16,10 +11,11 @@ namespace Sci.Production.Warehouse
     {
         public Sci.Win.Tems.Base P18;
         protected DataRow dr;
+
         public P18_AccumulatedQty(DataRow data)
         {
-            InitializeComponent();
-            dr = data;
+            this.InitializeComponent();
+            this.dr = data;
         }
 
         protected override void OnFormLoaded()
@@ -27,52 +23,54 @@ namespace Sci.Production.Warehouse
             base.OnFormLoaded();
             StringBuilder selectCommand1 = new StringBuilder();
             #region 20161118 willy backup
-            //            selectCommand1.Append(string.Format(@";with cte as 
-//(
-//select A.PoId,A.Seq1,A.Seq2,isnull(sum(a1.qty),0 ) requestqty
-//	,A1.UnitID
-//	,sum(a.Qty) as Qty 
-//	,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
-//	from dbo.TransferIn_Detail A LEFT JOIN DBO.Invtrans A1 
-//	ON a1.Seq70poid = a.PoId and a1.seq70seq1 = a.seq1 and a1.seq70seq2 = a.seq2
-//	where a1.type = 2 AND a.Id = '{0}' AND A1.FactoryID ='{2}' and a1.TransferFactory='{1}'
-//	GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.QTY,A1.FactoryID,A1.TransferFactory,A1.UnitID
-//union all
-//select A.PoId,A.Seq1,A.Seq2,isnull(sum(0 - a1.Qty),0) requestqty
-//	,A1.UnitID
-//	,sum(a.Qty) as Qty 
-//	,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
-//	from dbo.TransferIn_Detail a LEFT JOIN DBO.Invtrans A1 
-//	ON a1.Seq70poid = a.PoId and a1.seq70seq1 = a.seq1 and a1.seq70seq2 = a.seq2
-//	where a1.type = 6 AND a.Id = '{0}'  AND A1.FactoryID ='{2}' and a1.TransferFactory='{1}'
-//	GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.UnitID
-//union all
-//select A.PoId,A.Seq1,A.Seq2,isnull(sum(a1.qty),0) requestqty
-//	,A1.UnitID
-//	,sum(a.Qty) as Qty 
-//	,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
-//	from dbo.TransferIn_Detail a LEFT JOIN DBO.Invtrans A1 
-//	ON  a1.InventoryPOID = a.PoId and a1.InventorySeq1 = a.Seq1 and a1.InventorySeq2 = a.Seq2
-//					WHERE  a1.Type =3 -- 20161118 WILLY 依照舊系統邏輯 抓TYPE=2,3
-//					AND TransferFactory = '{1}' 
-//					and a1.FactoryID='{2}'
-//					and a.Id = '{0}'
-//	GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.UnitID
-//)
-//select cte.Poid,seq1,seq2
-//,sum(cte.requestqty) * (select v.Rate from dbo.View_Unitrate v where v.FROM_U = cte.UnitID and v.TO_U = cte.stockunit) requestqty
-//,cte.qty
-//,dbo.getmtldesc(cte.poid,cte.seq1,cte.seq2,2,0) as [Description]
-//,cte.UnitID
-//,cte.stockunit from cte
-//group by cte.Poid,seq1,seq2
-//,cte.qty
-//,dbo.getmtldesc(cte.poid,cte.seq1,cte.seq2,2,0)
-//,cte.UnitID
-//,cte.stockunit ;
-            //", dr["id"].ToString(), dr["mdivisionid"].ToString(), dr["fromftyid"].ToString()));
+
+            // selectCommand1.Append(string.Format(@";with cte as
+// (
+// select A.PoId,A.Seq1,A.Seq2,isnull(sum(a1.qty),0 ) requestqty
+// ,A1.UnitID
+// ,sum(a.Qty) as Qty
+// ,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
+// from dbo.TransferIn_Detail A LEFT JOIN DBO.Invtrans A1
+// ON a1.Seq70poid = a.PoId and a1.seq70seq1 = a.seq1 and a1.seq70seq2 = a.seq2
+// where a1.type = 2 AND a.Id = '{0}' AND A1.FactoryID ='{2}' and a1.TransferFactory='{1}'
+// GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.QTY,A1.FactoryID,A1.TransferFactory,A1.UnitID
+// union all
+// select A.PoId,A.Seq1,A.Seq2,isnull(sum(0 - a1.Qty),0) requestqty
+// ,A1.UnitID
+// ,sum(a.Qty) as Qty
+// ,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
+// from dbo.TransferIn_Detail a LEFT JOIN DBO.Invtrans A1
+// ON a1.Seq70poid = a.PoId and a1.seq70seq1 = a.seq1 and a1.seq70seq2 = a.seq2
+// where a1.type = 6 AND a.Id = '{0}'  AND A1.FactoryID ='{2}' and a1.TransferFactory='{1}'
+// GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.UnitID
+// union all
+// select A.PoId,A.Seq1,A.Seq2,isnull(sum(a1.qty),0) requestqty
+// ,A1.UnitID
+// ,sum(a.Qty) as Qty
+// ,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
+// from dbo.TransferIn_Detail a LEFT JOIN DBO.Invtrans A1
+// ON  a1.InventoryPOID = a.PoId and a1.InventorySeq1 = a.Seq1 and a1.InventorySeq2 = a.Seq2
+// WHERE  a1.Type =3 -- 20161118 WILLY 依照舊系統邏輯 抓TYPE=2,3
+// AND TransferFactory = '{1}'
+// and a1.FactoryID='{2}'
+// and a.Id = '{0}'
+// GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.UnitID
+// )
+// select cte.Poid,seq1,seq2
+// ,sum(cte.requestqty) * (select v.Rate from dbo.View_Unitrate v where v.FROM_U = cte.UnitID and v.TO_U = cte.stockunit) requestqty
+// ,cte.qty
+// ,dbo.getmtldesc(cte.poid,cte.seq1,cte.seq2,2,0) as [Description]
+// ,cte.UnitID
+// ,cte.stockunit from cte
+// group by cte.Poid,seq1,seq2
+// ,cte.qty
+// ,dbo.getmtldesc(cte.poid,cte.seq1,cte.seq2,2,0)
+// ,cte.UnitID
+// ,cte.stockunit ;
+            // ", dr["id"].ToString(), dr["mdivisionid"].ToString(), dr["fromftyid"].ToString()));
             #endregion
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
 ;with Z as(
 	select A.PoId,A.Seq1,A.Seq2
 	,requestqty = isnull(X.Q,0)
@@ -153,23 +151,25 @@ select  z.POID
         ,[Description] = dbo.getmtldesc(Z.poid,Z.seq1,Z.seq2,2,0)
 from Z 
 group by z.POID,z.Seq1,z.Seq2,qty,z.stockunit
-            ", dr["id"].ToString(), dr["mdivisionid"].ToString(), dr["fromftyid"].ToString()));
+            ", this.dr["id"].ToString(), this.dr["mdivisionid"].ToString(), this.dr["fromftyid"].ToString()));
 
             DataTable selectDataTable1;
-            P18.ShowWaitMessage("Data Loading...");
+            this.P18.ShowWaitMessage("Data Loading...");
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1.ToString(), out selectDataTable1);
-            
+
             if (selectResult1 == false)
-            { ShowErr(selectCommand1.ToString(), selectResult1); }
+            {
+                this.ShowErr(selectCommand1.ToString(), selectResult1);
+            }
 
-            P18.HideWaitMessage();
+            this.P18.HideWaitMessage();
 
-            bindingSource1.DataSource = selectDataTable1;
+            this.bindingSource1.DataSource = selectDataTable1;
 
-            //設定Grid1的顯示欄位
+            // 設定Grid1的顯示欄位
             this.gridAccumulatedQty.IsEditingReadOnly = true;
-            this.gridAccumulatedQty.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.gridAccumulatedQty)
+            this.gridAccumulatedQty.DataSource = this.bindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridAccumulatedQty)
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13))
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4))
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3))

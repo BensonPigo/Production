@@ -2,13 +2,11 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Quality
@@ -19,38 +17,43 @@ namespace Sci.Production.Quality
         List<SqlParameter> lis;
         DataTable[] allDatas;
         string cmd;
-        string Supp, refno, brand, season, ReportType;
+        string Supp;
+        string refno;
+        string brand;
+        string season;
+        string ReportType;
 
         public R06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            print.Enabled = false;
-            txtbrand.MultiSelect = true;
+            this.InitializeComponent();
+            this.print.Enabled = false;
+            this.txtbrand.MultiSelect = true;
         }
 
         protected override bool ValidateInput()
         {
-            lis = new List<SqlParameter>();
-            bool DateArr_empty = !dateArriveWHDate.HasValue, Supplier_empty = !this.txtsupplier.Text.Empty(), refno_empty = !this.txtRef.Text.Empty(), brand_empty = !this.txtbrand.Text.Empty(),
-                 season_empty = !txtseason.Text.Empty();
+            this.lis = new List<SqlParameter>();
+            bool DateArr_empty = !this.dateArriveWHDate.HasValue, Supplier_empty = !this.txtsupplier.Text.Empty(), refno_empty = !this.txtRef.Text.Empty(), brand_empty = !this.txtbrand.Text.Empty(),
+                 season_empty = !this.txtseason.Text.Empty();
             if (DateArr_empty)
             {
-                dateArriveWHDate.Focus();
+                this.dateArriveWHDate.Focus();
                 MyUtility.Msg.ErrorBox("<Arrive W/H> Cannot be empty");
                 return false;
             }
-            DateArrStart = dateArriveWHDate.Value1;
-            DateArrEnd = dateArriveWHDate.Value2;
-            brand = txtbrand.Text;
-            refno = txtRef.Text.ToString();
-            season = txtseason.Text;
-            Supp = txtsupplier.TextBox1.Text;
-            ReportType = radioPanel.Value;
-            lis = new List<SqlParameter>();
-            string sqlWhere = "";
-            string sqlRWhere = "";
-            string sqlSuppWhere = "";
+
+            this.DateArrStart = this.dateArriveWHDate.Value1;
+            this.DateArrEnd = this.dateArriveWHDate.Value2;
+            this.brand = this.txtbrand.Text;
+            this.refno = this.txtRef.Text.ToString();
+            this.season = this.txtseason.Text;
+            this.Supp = this.txtsupplier.TextBox1.Text;
+            this.ReportType = this.radioPanel.Value;
+            this.lis = new List<SqlParameter>();
+            string sqlWhere = string.Empty;
+            string sqlRWhere = string.Empty;
+            string sqlSuppWhere = string.Empty;
             List<string> sqlWheres = new List<string>();
             List<string> RWheres = new List<string>();
             #region --組WHERE--
@@ -58,43 +61,46 @@ namespace Sci.Production.Quality
             if (!this.dateArriveWHDate.Value1.Empty())
             {
                 RWheres.Add("r.WhseArrival >= @DateArrStart");
-                lis.Add(new SqlParameter("@DateArrStart", DateArrStart));
+                this.lis.Add(new SqlParameter("@DateArrStart", this.DateArrStart));
             }
+
             if (!this.dateArriveWHDate.Value2.Empty())
             {
                 RWheres.Add("r.WhseArrival <= @DateArrEnd");
-                lis.Add(new SqlParameter("@DateArrEnd", DateArrEnd));
+                this.lis.Add(new SqlParameter("@DateArrEnd", this.DateArrEnd));
             }
 
             if (!this.Supp.Empty())
             {
                 sqlSuppWhere = " and a.SuppID = @Supp ";
-                lis.Add(new SqlParameter("@Supp", Supp));
-
+                this.lis.Add(new SqlParameter("@Supp", this.Supp));
             }
+
             if (!this.refno.Empty())
             {
                 sqlWheres.Add("psd.Refno = @refno");
-                lis.Add(new SqlParameter("@refno", refno));
-
+                this.lis.Add(new SqlParameter("@refno", this.refno));
             }
+
             if (!this.brand.Empty())
             {
-                string str_multi = "";
-                foreach (string v_str in brand.Split(','))
+                string str_multi = string.Empty;
+                foreach (string v_str in this.brand.Split(','))
                 {
                     str_multi += "," + "'" + v_str + "'";
                 }
 
                 sqlWheres.Add(string.Format("o.brandid in ({0})", str_multi.Substring(1)));
-                //lis.Add(new SqlParameter("@brand", brand));
 
+                // lis.Add(new SqlParameter("@brand", brand));
             }
+
             if (!this.season.Empty())
             {
                 sqlWheres.Add("o.Seasonid = @season");
-                lis.Add(new SqlParameter("@season", season));
+                this.lis.Add(new SqlParameter("@season", this.season));
             }
+
             sqlWhere = string.Join(" and ", sqlWheres);
             sqlRWhere = string.Join(" and ", RWheres);
 
@@ -102,6 +108,7 @@ namespace Sci.Production.Quality
             {
                 sqlWhere = " and " + sqlWhere;
             }
+
             if (!MyUtility.Check.Empty(sqlRWhere))
             {
                 sqlRWhere = " and " + sqlRWhere;
@@ -109,9 +116,9 @@ namespace Sci.Production.Quality
 
             #endregion
             #region --撈Excel資料--
-            string groupby_col = ReportType.Equals("supplier") ? "SuppID" : "RefNo";
-            string ttlqty_col = ReportType.Equals("supplier") ? "RefNo" : "SuppID";
-            cmd = string.Format($@"
+            string groupby_col = this.ReportType.Equals("supplier") ? "SuppID" : "RefNo";
+            string ttlqty_col = this.ReportType.Equals("supplier") ? "RefNo" : "SuppID";
+            this.cmd = string.Format($@"
 
 select distinct a.PoId,a.Seq1,a.Seq2,ps.SuppID,psd.Refno ,psd.ColorID,f.Clima
 into #tmp1
@@ -120,14 +127,14 @@ from
 	select r.PoId,r.Seq1,r.Seq2
 	from dbo.View_AllReceivingDetail r with (nolock)
 	where 1=1
-    { sqlRWhere }
+    {sqlRWhere }
 	and r.Status = 'Confirmed'
 	union
 	select sd.ToPOID as PoId,sd.ToSeq1 as Seq1,sd.ToSeq2 as Seq2
 	from SubTransfer s
 	inner join SubTransfer_Detail sd on s.Id = sd.ID
 	where 1=1
-    { sqlRWhere.Replace("r.WhseArrival", "s.IssueDate") }
+    {sqlRWhere.Replace("r.WhseArrival", "s.IssueDate")}
 	and s.Status = 'Confirmed'
 	and s.Type = 'B'
 	union
@@ -135,7 +142,7 @@ from
 	from BorrowBack b
 	inner join BorrowBack_Detail bd on b.Id = bd.ID
 	where 1=1
-    { sqlRWhere.Replace("r.WhseArrival", "b.IssueDate") }
+    {sqlRWhere.Replace("r.WhseArrival", "b.IssueDate")}
 	and b.Status = 'Confirmed'
 	and (b.Type = 'A' or b.Type = 'B')
 ) a
@@ -144,7 +151,7 @@ left join PO_Supp ps on ps.ID = a.PoId and ps.SEQ1 = a.Seq1
 left join PO_Supp_Detail psd on psd.ID = a.PoId and psd.SEQ1 = a.Seq1 and psd.SEQ2 = a.Seq2
 left join Fabric f on f.SCIRefno = psd.SCIRefno 
 where psd.FabricType = 'F'
-{ sqlWhere }
+{sqlWhere }
 ------------Fabric Defect ----- 
 select rd.PoId,rd.Seq1,rd.Seq2,rd.ActualQty,rd.Dyelot,rd.Roll,t.SuppID,t.Refno,t.Colorid ,t.Clima
 into #tmpAllData
@@ -186,7 +193,7 @@ outer apply(
 ) s
 order by g.{groupby_col}
 ------------Total dye lots accepted(Shadeband)-------------
-{ (ReportType.Equals("supplier") ? @"
+{(this.ReportType.Equals("supplier") ? @"
 ----從篩選過的物料，找出他們的FIR紀錄
 SELECT f.*
 INTO #FirData
@@ -210,7 +217,8 @@ FROM #tmpsd t
 )PassCTN*/
 WHERE NOT EXISTS(SELECT * FROM #All_Fir_shadebone b WHERE  b.Suppid=t.SuppID AND b.Dyelot = t.Dyelot AND b.Result <> 'Pass')
 GROUP BY t.SuppID
-" : "") }
+" : string.Empty)}
+
 ------------Total Point----------
 select g.{groupby_col},sum(fp.TotalPoint) TotalPoint
 into #tmpTotalPoint
@@ -581,14 +589,14 @@ select a.{groupby_col},count(*)*1.0 Dcnt
 
 ------#TmpFinal 
 select --distinct
-{ (ReportType.Equals("supplier") ? " Tmp.SuppID , Tmp.refno " : " Tmp.refno , Tmp.SuppID ") }
+{(this.ReportType.Equals("supplier") ? " Tmp.SuppID , Tmp.refno " : " Tmp.refno , Tmp.SuppID ")}
     ,Tmp.abben 
 	,Tmp.BrandID
     ,Tmp.stockqty 
     ,totalYds.TotalInspYds 
     ,[Total PoCnt] = isnull(TLSP.cnt,0)
     ,[Total Dyelot] =isnull(TLDyelot.cnt,0)
-    { (ReportType.Equals("supplier") ? " ,[Total dye lots accepted(Shadeband)] = ISNULL( PassCountByDyelot.PassCTN ,0)" : "") }
+    {(this.ReportType.Equals("supplier") ? " ,[Total dye lots accepted(Shadeband)] = ISNULL( PassCountByDyelot.PassCTN ,0)" : string.Empty)}
     ,[Insp Report] = isnull(InspReport.cnt,0)
 	,[Test Report] = isnull(TestReport.cnt,0)
 	,[Continuity Card] = isnull(Contcard.cnt,0)
@@ -673,7 +681,7 @@ outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0
 and isnull(SHORTWIDTHLevel.SHORTWIDTH,0) * 100 between range1 and range2
 )sl6
 outer apply (select cnt from #tmpDyelot where {groupby_col}=Tmp.{groupby_col} ) TLDyelot
-{ (ReportType.Equals("supplier") ? "outer apply (select PassCTN from #PassCountByDyelot where SuppID=Tmp.SuppID) PassCountByDyelot" : "") }
+{(this.ReportType.Equals("supplier") ? "outer apply (select PassCTN from #PassCountByDyelot where SuppID=Tmp.SuppID) PassCountByDyelot" : string.Empty)}
 outer apply (select TotalRoll from #tmpTotalRoll where {groupby_col}=tmp.{groupby_col}) TLRoll
 outer apply (select GradeA_Roll from #tmpGrade_A where {groupby_col}=tmp.{groupby_col}) GACount
 outer apply (select GradeB_Roll from #tmpGrade_B where {groupby_col}=tmp.{groupby_col}) GBCount
@@ -706,8 +714,8 @@ from(
 	from #TmpFinal t,#Weight
 ) a
 ,SuppLevel s
-where s.type='F' and s.Junk=0 and [AVG] * 100 between s.range1 and s.range2 { sqlSuppWhere }
-  ORDER BY { (ReportType.Equals("supplier") ? " SUPPID,refno " : " refno, SuppID ") }
+where s.type='F' and s.Junk=0 and [AVG] * 100 between s.range1 and s.range2 {sqlSuppWhere }
+  ORDER BY {(this.ReportType.Equals("supplier") ? " SUPPID,refno " : " refno, SuppID ")}
 
 select distinct {groupby_col} from #TmpFinal order by {groupby_col} 
 
@@ -716,7 +724,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
 ,#tmpsd,#tmpDyelot,#tmpTotalPoint,#tmpTotalRoll,#tmpGrade_A,#tmpGrade_B,#tmpGrade_C,#tmpsuppEncode
 ,#tmpCountSP,#tmpTestReport,#InspReport,#tmpContinuityCard,#BulkDyelot
 ,#tmp_DyelotMain,#tmp_DyelotMcnt,#tmp_newSeasonSCI,#tmp_DyelotMonth,#tmp_DyelotDcnt
-{ (ReportType.Equals("supplier") ? ",#PassCountByDyelot ,#FirData ,#All_Fir_shadebone" : "") }
+{(this.ReportType.Equals("supplier") ? ",#PassCountByDyelot ,#FirData ,#All_Fir_shadebone" : string.Empty)}
 ");
             #endregion
             return base.ValidateInput();
@@ -725,69 +733,74 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
-            res = DBProxy.Current.Select("", cmd, lis, out allDatas);
+            res = DBProxy.Current.Select(string.Empty, this.cmd, this.lis, out this.allDatas);
             if (!res)
             {
                 return res;
             }
+
             return res;
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(allDatas[0].Rows.Count);
-            if (allDatas[0] == null || allDatas[0].Rows.Count == 0)
+            this.SetCount(this.allDatas[0].Rows.Count);
+            if (this.allDatas[0] == null || this.allDatas[0].Rows.Count == 0)
             {
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             }
+
             this.ShowWaitMessage("Starting EXCEL...");
-            string xltx_name = ReportType.Equals("supplier") ? "Quality_R06.xltx" : "Quality_R06_by_RefNo.xltx";
+            string xltx_name = this.ReportType.Equals("supplier") ? "Quality_R06.xltx" : "Quality_R06_by_RefNo.xltx";
             Microsoft.Office.Interop.Excel._Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + xltx_name);
 
-            DataTable toExcelDt = allDatas[0].Copy();
+            DataTable toExcelDt = this.allDatas[0].Copy();
             toExcelDt.Columns.Remove("KeyCnt");
             toExcelDt.Columns.Remove("Clima");
-            MyUtility.Excel.CopyToXls(toExcelDt, "", xltx_name, 5, false, null, objApp);
-            //objApp.Visible = true;
+            MyUtility.Excel.CopyToXls(toExcelDt, string.Empty, xltx_name, 5, false, null, objApp);
+
+            // objApp.Visible = true;
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
             objApp.DisplayAlerts = false; // 禁止Excel跳出合併提示視窗
             int line = 6;
-            int coltype = ReportType.Equals("supplier") ? 2 : 1;
-            string key_column = allDatas[1].Columns[0].ColumnName;
+            int coltype = this.ReportType.Equals("supplier") ? 2 : 1;
+            string key_column = this.allDatas[1].Columns[0].ColumnName;
 
-            var combineCheckDt = allDatas[0].AsEnumerable();
+            var combineCheckDt = this.allDatas[0].AsEnumerable();
             Microsoft.Office.Interop.Excel.Range rang;
-            for (int i = 0; i < allDatas[0].Rows.Count; i++)
+            for (int i = 0; i < this.allDatas[0].Rows.Count; i++)
             {
-                int cnt = (int)allDatas[0].Rows[i]["KeyCnt"];
+                int cnt = (int)this.allDatas[0].Rows[i]["KeyCnt"];
                 if (cnt > 1)
                 {
                     // 合併儲存格,尾端要-1不然會重疊
                     // 只合併最後一欄，其餘用複製格式方式合併
-                    rang = objSheets.Range[objSheets.Cells[allDatas[0].Columns.Count][line], objSheets.Cells[allDatas[0].Columns.Count][line + cnt - 1]];
+                    rang = objSheets.Range[objSheets.Cells[this.allDatas[0].Columns.Count][line], objSheets.Cells[this.allDatas[0].Columns.Count][line + cnt - 1]];
                     rang.Merge();
                     rang.Copy(Type.Missing);
 
-                    for (int ii = 1; ii <= allDatas[0].Columns.Count; ii++)
+                    for (int ii = 1; ii <= this.allDatas[0].Columns.Count; ii++)
                     {
                         Microsoft.Office.Interop.Excel.Range rang2;
+
                         // Columns=2,4,5 是不需要合併的
-                        if (ii == 2 || ii == 4 || ii == 5 || (ii == 3 && ReportType.Equals("Refno")))
+                        if (ii == 2 || ii == 4 || ii == 5 || (ii == 3 && this.ReportType.Equals("Refno")))
                         {
                             continue;
                         }
 
                         // 複製格式
-                        //objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]].Style = rang.Style;
+                        // objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]].Style = rang.Style;
                         rang2 = objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]];
-                        rang2.PasteSpecial(Microsoft.Office.Interop.Excel.XlPasteType.xlPasteFormats,
-                        Microsoft.Office.Interop.Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
+                        rang2.PasteSpecial(
+                            Microsoft.Office.Interop.Excel.XlPasteType.xlPasteFormats,
+                            Microsoft.Office.Interop.Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
                     }
                 }
 
-                bool Clima = (bool)allDatas[0].Rows[i]["Clima"];
+                bool Clima = (bool)this.allDatas[0].Rows[i]["Clima"];
                 if (Clima)
                 {
                     objSheets.get_Range((Microsoft.Office.Interop.Excel.Range)objSheets.Cells[line, coltype], (Microsoft.Office.Interop.Excel.Range)objSheets.Cells[line, coltype]).Interior.Color = Color.Yellow;
@@ -796,10 +809,11 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
                 line = line + cnt;
                 i = i + cnt - 1;
             }
-            //由於複製格式的關係，會把原本的型態也取代。重新再壓回型態。
-            if (ReportType.Equals("supplier"))
+
+            // 由於複製格式的關係，會把原本的型態也取代。重新再壓回型態。
+            if (this.ReportType.Equals("supplier"))
             {
-                for (int ii = 1; ii <= allDatas[0].Columns.Count; ii++)
+                for (int ii = 1; ii <= this.allDatas[0].Columns.Count; ii++)
                 {
                     int col = (ii >= 20 && ii <= 38 && !(ii == 23)) ? 5 : 3;
                     objSheets.Columns[ii].NumberFormat = objSheets.Cells[ii][col].NumberFormat;
@@ -807,7 +821,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
             }
             else
             {
-                for (int ii = 1; ii <= allDatas[0].Columns.Count; ii++)
+                for (int ii = 1; ii <= this.allDatas[0].Columns.Count; ii++)
                 {
                     int col = (ii >= 19 && ii <= 37 && !(ii == 22)) ? 5 : 3;
                     objSheets.Columns[ii].NumberFormat = objSheets.Cells[ii][col].NumberFormat;
@@ -818,7 +832,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
             objSheets.Range["B3"].Activate();
 
             #region 調整欄寬
-            if (ReportType.Equals("supplier"))
+            if (this.ReportType.Equals("supplier"))
             {
                 objSheets.Columns[5].ColumnWidth = 7.38;
                 objSheets.Columns[6].ColumnWidth = 7.38;

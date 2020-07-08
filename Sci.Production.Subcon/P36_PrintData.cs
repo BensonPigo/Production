@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sci.Production.Subcon
+﻿namespace Sci.Production.Subcon
 {
     class P36_PrintData
     {
         public string OrderID { get; set; }
+
         public string AffectQty { get; set; }
+
         public string Reason { get; set; }
+
         public string Desc { get; set; }
     }
 }

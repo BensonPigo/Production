@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -21,7 +17,6 @@ namespace Sci.Production.Shipping
         private string contract;
         private string hscode;
         private string nlcode;
-        private string sp;
         private List<string> FactoryList;
         private bool liguidationonly;
         private DataTable Summary;
@@ -1537,13 +1532,13 @@ drop table  #tmpContract
             , #tmpScrapQty
             , #tmpOutstanding 
 ", MyUtility.Check.Empty(this.hscode) ? string.Empty : string.Format("and HSCode = '{0}'", this.hscode),
-                                                                       MyUtility.Check.Empty(this.nlcode) ? string.Empty : string.Format("and NLCode = '{0}'", this.nlcode)));
+                    MyUtility.Check.Empty(this.nlcode) ? string.Empty : string.Format("and NLCode = '{0}'", this.nlcode)));
                 #endregion
             }
             #endregion
 
             DataTable[] allData;
-            DBProxy.Current.DefaultTimeout = 12000;  //加長時間為 2 小時，避免timeout
+            DBProxy.Current.DefaultTimeout = 12000;  // 加長時間為 2 小時，避免timeout
 
             DualResult queryResult = MyUtility.Tool.ProcessWithDatatable(this.dtImportEcusData, string.Empty, sqlCmd.ToString(), out allData, temptablename: "#CusQty");
             if (!queryResult)
@@ -1582,7 +1577,6 @@ drop table  #tmpContract
             this.SetCount(this.Summary.Rows.Count + (this.liguidationonly ? 0 : this.OnRoadMaterial.Rows.Count + this.WHDetail.Rows.Count + this.WIPDetail.Rows.Count + this.ProdDetail.Rows.Count + this.ScrapDetail.Rows.Count + this.OnRoadProduction.Rows.Count + this.Outstanding.Rows.Count));
 
             this.ShowWaitMessage("Starting EXCEL...");
-            bool result;
             this.ShowWaitMessage("Starting EXCEL...Summary");
             string filename = string.Empty;
             string ftys = string.Join(",", this.FactoryList);

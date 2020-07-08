@@ -1,32 +1,25 @@
 ﻿using Ict;
-using Ict.Win;
 using Sci.Data;
-using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Transactions;
-using System.Windows.Forms;
-using System.Reflection;
 using System.Data.SqlClient;
-using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
     public partial class P50_Print : Sci.Win.Tems.PrintForm
     {
         public DataRow CurrentDataRow { get; set; }
+
         public P50_Print(DataRow row)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.CurrentDataRow = row;
         }
 
         string selectOption;
+
         protected override bool ValidateInput()
         {
            return base.ValidateInput();
@@ -40,11 +33,19 @@ namespace Sci.Production.Warehouse
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
-            DualResult result= DBProxy.Current.Select("",
-            @"select Iif(Stocktaking.stocktype='B','Bulk','Inventory') as ST
-		    from dbo.Stocktaking WITH (NOLOCK) 		
-            where id = @ID", pars, out dt); 
-            if (!result) { return result; }
+            DualResult result = DBProxy.Current.Select(
+                string.Empty,
+                @"
+select Iif(Stocktaking.stocktype='B','Bulk','Inventory') as ST
+from dbo.Stocktaking WITH (NOLOCK)
+where id = @ID",
+                pars,
+                out dt);
+            if (!result)
+            {
+                return result;
+            }
+
             string ST = dt.Rows[0]["ST"].ToString();
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ST", ST));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
@@ -53,7 +54,7 @@ namespace Sci.Production.Warehouse
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
-            result = DBProxy.Current.Select("", @"
+            result = DBProxy.Current.Select(string.Empty, @"
 select a.POID
         ,a.Seq1+'-'+a.seq2 as SEQ
 		,a.Roll,a.Dyelot	        
@@ -67,13 +68,15 @@ left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 an
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
     and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
 where a.id= @ID", pars, out dd);
-            if (!result) { this.ShowErr(result); }
-
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
 
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable da;
-            result = DBProxy.Current.Select("", @"
+            result = DBProxy.Current.Select(string.Empty, @"
 select a.POID
         ,a.Seq1+'-'+a.seq2 as SEQ
 		,a.Roll,a.Dyelot	        
@@ -92,10 +95,12 @@ left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 an
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
     and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
 where a.id= @ID", pars, out da);
-            if (!result) { this.ShowErr(result); }
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
 
-            
-            if (isStockList)
+            if (this.isStockList)
             {
                 List<P50_PrintData> data1 = da.AsEnumerable()
                .Select(row1 => new P50_PrintData()
@@ -113,12 +118,13 @@ where a.id= @ID", pars, out da);
                    Actual_Qty = row1["Actual_Qty"].ToString(),
                    Variance = row1["Variance"].ToString(),
                    Total1 = row1["Total1"].ToString(),
-                   Total2 = row1["Total2"].ToString()
+                   Total2 = row1["Total2"].ToString(),
                }).ToList();
 
                 e.Report.ReportDataSource = data1;
             }
-            else {
+            else
+            {
                 List<P50_PrintData> data = dd.AsEnumerable()
                  .Select(row1 => new P50_PrintData()
                  {
@@ -130,26 +136,25 @@ where a.id= @ID", pars, out da);
                      Material_Type = row1["Material_Type"].ToString(),
                      Color = row1["Color"].ToString(),
                      Unit = row1["Unit"].ToString(),
-                     Book_Location = row1["Book_Location"].ToString()
+                     Book_Location = row1["Book_Location"].ToString(),
                  }).ToList();
 
                 e.Report.ReportDataSource = data;
-            
             }
 
             return Result.True;
         }
 
         bool isStockList = false;
+
         private void radioGroup1_ValueChanged(object sender, EventArgs e)
         {
-            selectOption = this.radioGroup1.Value;
-            isStockList = (selectOption == this.radioStocktakingList.Value);
+            this.selectOption = this.radioGroup1.Value;
+            this.isStockList = this.selectOption == this.radioStocktakingList.Value;
 
             this.ReportResourceNamespace = typeof(P50_PrintData);
-            this.ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            this.ReportResourceName = selectOption == this.radioBookQty.Value ? "P50BookQty_Print.rdlc" : "P50List_Print.rdlc";
-            
+            this.ReportResourceAssembly = this.ReportResourceNamespace.Assembly;
+            this.ReportResourceName = this.selectOption == this.radioBookQty.Value ? "P50BookQty_Print.rdlc" : "P50List_Print.rdlc";
         }
     }
 }

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Win;
@@ -11,24 +7,26 @@ using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using System.IO;
-using System.Text.RegularExpressions;
 
 namespace Sci.Production.Subcon
 {
-   public partial class R52 : Sci.Win.Tems.PrintForm
+    public partial class R52 : Sci.Win.Tems.PrintForm
    {
       DataTable printData;
+
       public R52(ToolStripMenuItem menuitem)
       {
-         InitializeComponent();
+         this.InitializeComponent();
       }
+
       string SeasonID;
 
       protected override bool ValidateInput()
       {
-         SeasonID = txtseason.Text;
+         this.SeasonID = this.txtseason.Text;
          return base.ValidateInput();
       }
+
       protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
       {
          #region SQL Command
@@ -85,18 +83,19 @@ outer apply(
 )x
 Where	vSA.ArtworkTypeID = 'Printing'
 ");
-         if (!MyUtility.Check.Empty(SeasonID))
+         if (!MyUtility.Check.Empty(this.SeasonID))
          {
-            sqlcmd += (string.Format("  And S.SeasonID= '{0}'", SeasonID));
+            sqlcmd += string.Format("  And S.SeasonID= '{0}'", this.SeasonID);
          }
 
          #endregion
          DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
          DualResult result;
-         if (result = DBProxy.Current.Select(null, sqlcmd, out printData))
+         if (result = DBProxy.Current.Select(null, sqlcmd, out this.printData))
          {
             return result;
          }
+
          DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
          return base.OnAsyncDataLoad(e);
       }
@@ -104,20 +103,20 @@ Where	vSA.ArtworkTypeID = 'Printing'
       protected override bool OnToExcel(ReportDefinition report)
       {
          #region Check Data
-         if (MyUtility.Check.Empty(printData) || printData.Rows.Count == 0)
+         if (MyUtility.Check.Empty(this.printData) || this.printData.Rows.Count == 0)
          {
             MyUtility.Msg.InfoBox("Data not found.");
             return false;
          }
          #endregion
-         this.SetCount(printData.Rows.Count);
+         this.SetCount(this.printData.Rows.Count);
          this.ShowWaitMessage("Excel Processing");
 
          #region  To Excel
          Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R52.xltx");
-         MyUtility.Excel.CopyToXls(printData, "", "Subcon_R52.xltx", 2, showExcel: false, excelApp: objApp);
+         MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Subcon_R52.xltx", 2, showExcel: false, excelApp: objApp);
          Excel.Worksheet worksheet = objApp.Sheets[1];
-         worksheet.Cells[1, 2] = SeasonID;
+         worksheet.Cells[1, 2] = this.SeasonID;
          worksheet.Columns.AutoFit();
          #endregion
          #region Save & Show Excel
@@ -134,7 +133,7 @@ Where	vSA.ArtworkTypeID = 'Printing'
          return true;
       }
 
-        private void BtnSketchDownload_Click(object sender, EventArgs e)
+      private void BtnSketchDownload_Click(object sender, EventArgs e)
         {
             int ttlCnt = 0;
             string destination_path = MyUtility.GetValue.Lookup("select StyleSketch from System WITH (NOLOCK) ", null);
@@ -143,28 +142,29 @@ Where	vSA.ArtworkTypeID = 'Printing'
             string sqlcmd = $@"
 select * from
 (
-	select Picture =Picture1,ID,SeasonID,BrandID,PicNo = '01' from Style where SeasonID='{txtseason.Text}' and Picture1 !=''
+	select Picture =Picture1,ID,SeasonID,BrandID,PicNo = '01' from Style where SeasonID='{this.txtseason.Text}' and Picture1 !=''
 	union all
-	select Picture =Picture2,ID,SeasonID,BrandID,PicNo = '02' from Style where SeasonID='{txtseason.Text}' and Picture2 !=''
+	select Picture =Picture2,ID,SeasonID,BrandID,PicNo = '02' from Style where SeasonID='{this.txtseason.Text}' and Picture2 !=''
 ) a order by  Picture
 ";
             DualResult result;
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out dt)))
             {
-                ShowErr(result);
+                this.ShowErr(result);
                 return;
             }
 
             if (Directory.Exists(destination_path))
             {
                 DirectoryInfo dir = new DirectoryInfo(destination_path);
+
                 // 開窗選擇存放位置
                 FolderBrowserDialog path = new FolderBrowserDialog();
                 if (path.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     this.ShowLoadingText("Loading...");
                     ttlCnt = 0;
-                    
+
                     if (!MyUtility.Check.Empty(dt))
                     {
                         ttlCnt = dt.Rows.Count;
@@ -175,18 +175,18 @@ select * from
                             try
                             {
                                 string newName = dr["ID"].ToString().Trim() + "@" + dr["SeasonID"].ToString().Trim() + "@" + dr["BrandID"].ToString().Trim() + "@" + dr["PicNo"].ToString().Trim() + ".jpg";
+
                                 // 複製檔案並更名到指定路徑
                                 File.Copy(dir + "\\" + dr["Picture"].ToString(), path.SelectedPath + "\\" + newName, true);
                                 this.ShowLoadingText($"{cnt}/{ttlCnt}");
                                 cnt++;
                             }
-                            catch (Exception ex)
+                            catch (Exception)
                             {
-
                             }
                         }
                     }
-                    
+
                     this.HideLoadingText();
                 }
                 else
@@ -195,7 +195,7 @@ select * from
                 }
             }
 
-            if (ttlCnt !=0)
+            if (ttlCnt != 0)
             {
                 MyUtility.Msg.InfoBox("Finished!");
             }

@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-
 
 namespace Sci.Production.Warehouse
 {
@@ -16,17 +11,19 @@ namespace Sci.Production.Warehouse
     {
         public Sci.Win.Tems.Base P22;
         protected DataRow dr;
+
         public P22_AccumulatedQty(DataRow data)
         {
-            InitializeComponent();
-            dr = data;
+            this.InitializeComponent();
+            this.dr = data;
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             StringBuilder selectCommand1 = new StringBuilder();
-            selectCommand1.Append(string.Format(@"with cte
+            selectCommand1.Append(string.Format(
+                @"with cte
 as (
 select pd.id as poid, pd.seq1,pd.seq2,pd.Qty,pd.ShipQty,pd.StockQty,pd.InputQty,pd.OutputQty
 	,x.taipei_issue_date,x.taipei_qty,pd.POUnit,pd.StockUnit,st.trans_qty
@@ -70,22 +67,25 @@ cross apply
 		) xx
   ) xxx
 
-", dr["id"],dr["mdivisionid"]));
+", this.dr["id"], this.dr["mdivisionid"]));
 
             DataTable selectDataTable1;
-            P22.ShowWaitMessage("Data Loading...");
+            this.P22.ShowWaitMessage("Data Loading...");
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1.ToString(), out selectDataTable1);
-            
+
             if (selectResult1 == false)
-            { ShowErr(selectCommand1.ToString(), selectResult1); }
-            P22.HideWaitMessage();
+            {
+                this.ShowErr(selectCommand1.ToString(), selectResult1);
+            }
 
-            bindingSource1.DataSource = selectDataTable1;
+            this.P22.HideWaitMessage();
 
-            //設定Grid1的顯示欄位
+            this.bindingSource1.DataSource = selectDataTable1;
+
+            // 設定Grid1的顯示欄位
             this.gridAccumulatedQty.IsEditingReadOnly = true;
-            this.gridAccumulatedQty.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.gridAccumulatedQty)
+            this.gridAccumulatedQty.DataSource = this.bindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridAccumulatedQty)
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13))
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4))
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3))

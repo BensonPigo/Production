@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Win;
@@ -31,24 +28,24 @@ namespace Sci.Production.Warehouse
         public R26(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.EditMode = true;
         }
 
         protected override bool ValidateInput()
         {
-            ConfirmedDate1 = dateConfirmedDate.Value1;
-            ConfirmedDate2 = dateConfirmedDate.Value2;
-            CfmUser = txtuser1.TextBox1.Text; 
-            M = txtMdivision1.Text;
-            Factory = txtfactory1.Text;
-            Brand = txtbrand1.Text;
-            WK = txtWK.Text;
-            SP1 = txtSP1.Text;
-            SP2 = txtSP2.Text;
-            WHP21only = chkWHP21only.Checked;
+            this.ConfirmedDate1 = this.dateConfirmedDate.Value1;
+            this.ConfirmedDate2 = this.dateConfirmedDate.Value2;
+            this.CfmUser = this.txtuser1.TextBox1.Text;
+            this.M = this.txtMdivision1.Text;
+            this.Factory = this.txtfactory1.Text;
+            this.Brand = this.txtbrand1.Text;
+            this.WK = this.txtWK.Text;
+            this.SP1 = this.txtSP1.Text;
+            this.SP2 = this.txtSP2.Text;
+            this.WHP21only = this.chkWHP21only.Checked;
 
-            if (MyUtility.Check.Empty(ConfirmedDate1) && MyUtility.Check.Empty(ConfirmedDate2))
+            if (MyUtility.Check.Empty(this.ConfirmedDate1) && MyUtility.Check.Empty(this.ConfirmedDate2))
             {
                 MyUtility.Msg.WarningBox("Confirmed Date date can't be empty!!");
                 return false;
@@ -63,45 +60,52 @@ namespace Sci.Production.Warehouse
             List<SqlParameter> lis = new List<SqlParameter>();
 
             string where = "and cast(L.EditDate as date)  between @ConfirmedDate1 and @ConfirmedDate2";
-            lis.Add(new SqlParameter("@ConfirmedDate1", ConfirmedDate1));
-            lis.Add(new SqlParameter("@ConfirmedDate2", ConfirmedDate2));
+            lis.Add(new SqlParameter("@ConfirmedDate1", this.ConfirmedDate1));
+            lis.Add(new SqlParameter("@ConfirmedDate2", this.ConfirmedDate2));
 
-            if (!MyUtility.Check.Empty(CfmUser))
+            if (!MyUtility.Check.Empty(this.CfmUser))
             {
                 where += "\r\n" + "and L.EditName = @CfmUser";
-                lis.Add(new SqlParameter("@CfmUser", CfmUser));
+                lis.Add(new SqlParameter("@CfmUser", this.CfmUser));
             }
-            if (!MyUtility.Check.Empty(M))
+
+            if (!MyUtility.Check.Empty(this.M))
             {
                 where += "\r\n" + "and L.MDivisionID = @M";
-                lis.Add(new SqlParameter("@M", M));
+                lis.Add(new SqlParameter("@M", this.M));
             }
-            if (!MyUtility.Check.Empty(Factory))
+
+            if (!MyUtility.Check.Empty(this.Factory))
             {
                 where += "\r\n" + "and L.FactoryID = @Factory";
-                lis.Add(new SqlParameter("@Factory", Factory));
+                lis.Add(new SqlParameter("@Factory", this.Factory));
             }
-            if (!MyUtility.Check.Empty(Brand))
+
+            if (!MyUtility.Check.Empty(this.Brand))
             {
                 where += "\r\n" + "and O.BrandID = @Brand";
-                lis.Add(new SqlParameter("@Brand", Brand));
+                lis.Add(new SqlParameter("@Brand", this.Brand));
             }
-            if (!MyUtility.Check.Empty(WK))
+
+            if (!MyUtility.Check.Empty(this.WK))
             {
                 where += "\r\n" + "and R.ExportId = @WK";
-                lis.Add(new SqlParameter("@WK", WK));
+                lis.Add(new SqlParameter("@WK", this.WK));
             }
-            if (!MyUtility.Check.Empty(SP1))
+
+            if (!MyUtility.Check.Empty(this.SP1))
             {
                 where += "\r\n" + "and LD.Poid >= @SP1";
-                lis.Add(new SqlParameter("@SP1", SP1));
+                lis.Add(new SqlParameter("@SP1", this.SP1));
             }
-            if (!MyUtility.Check.Empty(SP2))
+
+            if (!MyUtility.Check.Empty(this.SP2))
             {
                 where += "\r\n" + "and LD.Poid <= @SP2";
-                lis.Add(new SqlParameter("@SP2", SP2));
+                lis.Add(new SqlParameter("@SP2", this.SP2));
             }
-            if (WHP21only)
+
+            if (this.WHP21only)
             {
                 where += "\r\n" + "and L.Remark Like '%Create from P21.'";
             }
@@ -143,15 +147,15 @@ left join Receiving R on RD.ID=R.Id
 where L.status='Confirmed'
 {where}
 ";
-            return DBProxy.Current.Select(null, sqlcmd, lis, out dt);
+            return DBProxy.Current.Select(null, sqlcmd, lis, out this.dt);
         }
 
         protected override bool OnToExcel(ReportDefinition report)
         {
             this.ShowWaitMessage("Excel Processing...");
-            this.SetCount(dt.Rows.Count); // 顯示筆數
+            this.SetCount(this.dt.Rows.Count); // 顯示筆數
 
-            if (dt.Rows.Count == 0)
+            if (this.dt.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 this.HideWaitMessage();
@@ -161,7 +165,7 @@ where L.status='Confirmed'
             Excel.Application objApp = new Excel.Application();
             Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R26.xltx", objApp);
             com.UseInnerFormating = false;
-            com.WriteTable(dt, 2);
+            com.WriteTable(this.dt, 2);
 
             com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
             objApp.Visible = true;

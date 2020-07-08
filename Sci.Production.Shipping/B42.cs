@@ -8,10 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
-using System.Data.SqlClient;
-using Sci.Win.Tems;
 using Sci.Production.PublicPrg;
-using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -384,7 +381,6 @@ where vdd.ID = '{0}'
                     dr["StockQty"] = drNLCode["StockQty"];
                     dr["UsageQty"] = newvalue;
                 }
-
             };
             #endregion
 
@@ -855,7 +851,7 @@ select [dbo].[getWaste]( '{this.CurrentMaintain["StyleID"]}','{this.CurrentMaint
                 return;
             }
 
-            DataTable queryDetailData, queryDetail2Data, fixDeclareData, necessaryItem, invalidData;
+            DataTable queryDetail2Data, necessaryItem, invalidData;
             StringBuilder sqlCmd = new StringBuilder();
             StringBuilder needItem = new StringBuilder();
             StringBuilder emptyNLCode = new StringBuilder();

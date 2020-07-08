@@ -1,18 +1,11 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Production.Class;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Sci.Win;
 using Sci.Data;
 using System.Transactions;
-using Sci.Win.Tools;
-using System.Linq;
 
 namespace Sci.Production.Quality
 {
@@ -23,33 +16,33 @@ namespace Sci.Production.Quality
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
         private bool boolFromP02;
-        string find = "";
+        string find = string.Empty;
         int index;
         DataRow[] find_dr;
 
         public P02(ToolStripMenuItem menuitem) : base(menuitem)
         {
-            InitializeComponent();
-            detailgrid.ContextMenuStrip = detailgridmenus;
-            boolFromP02 = false;
+            this.InitializeComponent();
+            this.detailgrid.ContextMenuStrip = this.detailgridmenus;
+            this.boolFromP02 = false;
         }
 
         public P02(string POID)
         {
-            InitializeComponent();
-            DefaultFilter = string.Format("ID = '{0}'", POID);
-            InsertDetailGridOnDoubleClick = false;
-            IsSupportEdit = false;
-            detailgrid.ContextMenuStrip = detailgridmenus;
-            boolFromP02 = true;
+            this.InitializeComponent();
+            this.DefaultFilter = string.Format("ID = '{0}'", POID);
+            this.InsertDetailGridOnDoubleClick = false;
+            this.IsSupportEdit = false;
+            this.detailgrid.ContextMenuStrip = this.detailgridmenus;
+            this.boolFromP02 = true;
         }
 
-        //表身額外的資料來源
+        // 表身額外的資料來源
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
-            find_dr = null;
-            find = "";
-            string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
+            this.find_dr = null;
+            this.find = string.Empty;
+            string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
             string cmd = string.Format(
                 @"
 Select a.id
@@ -112,19 +105,20 @@ Where a.poid='{0}' order by seq1,seq2
         {
             base.OnDetailGridSetup();
 
-            //Grid 事件屬性: 右鍵跳出新視窗
+            // Grid 事件屬性: 右鍵跳出新視窗
             DataGridViewGeneratorTextColumnSettings detail = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings detail_Int = new DataGridViewGeneratorNumericColumnSettings();
 
-
             detail.CellMouseDoubleClick += (s, e) =>
             {
-               
                 var dr = this.CurrentDetailData;
-                if (dr == null) return;
-                
+                if (dr == null)
+                {
+                    return;
+                }
+
                 P02_Detail DoForm = new P02_Detail(false, this.CurrentDetailData["ID"].ToString(), this.CurrentMaintain["ID"].ToString());
-                DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);                
+                DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);
                 DoForm.ShowDialog(this);
                 DoForm.Close();
                 this.RenewData();
@@ -132,20 +126,23 @@ Where a.poid='{0}' order by seq1,seq2
             detail_Int.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
-                if (dr == null) return;                
+                if (dr == null)
+                {
+                    return;
+                }
+
                 P02_Detail DoForm = new P02_Detail(false, this.CurrentDetailData["ID"].ToString(), this.CurrentMaintain["ID"].ToString());
-                DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);                
+                DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);
                 DoForm.ShowDialog(this);
                 DoForm.Close();
                 this.RenewData();
             };
 
-            
             #region set Grid
 
             this.detailgrid.IsEditingReadOnly = false;
 
-            Helper.Controls.Grid.Generator(this.detailgrid)
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("SEQ", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("ExportID", header: "WKNO", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Date("whseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -163,163 +160,175 @@ Where a.poid='{0}' order by seq1,seq2
                 .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: detail)
                 .Text("Inspdate", header: "Insp. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("Inspector2", header: "Inspector", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
-                .Text("Remark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail   )            
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("ReplacementID", header: "1st ReplacementID", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("ReceivingID", header: "Receiving ID", width: Widths.AnsiChars(15), iseditingreadonly: true);
-            detailgrid.Columns["InspQty"].DefaultCellStyle.BackColor = Color.LemonChiffon;
-            detailgrid.Columns["RejectQty"].DefaultCellStyle.BackColor = Color.LemonChiffon;
-            detailgrid.Columns["DefectDescription"].DefaultCellStyle.BackColor = Color.LemonChiffon;
-            detailgrid.Columns["Result"].DefaultCellStyle.BackColor = Color.LemonChiffon;
-            detailgrid.Columns["Inspdate"].DefaultCellStyle.BackColor = Color.LemonChiffon;
-            detailgrid.Columns["inspector2"].DefaultCellStyle.BackColor = Color.LemonChiffon;
-            detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            this.detailgrid.Columns["InspQty"].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            this.detailgrid.Columns["RejectQty"].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            this.detailgrid.Columns["DefectDescription"].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            this.detailgrid.Columns["Result"].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            this.detailgrid.Columns["Inspdate"].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            this.detailgrid.Columns["inspector2"].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            this.detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.LemonChiffon;
             #endregion
-           
 
         }
 
         protected override void OnFormLoaded()
         {
             this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
-            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("ModifyDetail", onclick: (s, e) => ModifyDetail()).Get(out edit);
+            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("ModifyDetail", onclick: (s, e) => this.ModifyDetail()).Get(out this.edit);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, 1, ",last two years data");
-            if (boolFromP02)
+            if (this.boolFromP02)
             {
                 this.ExpressQuery = false;
             }
             else
             {
-                queryfors.SelectedIndex = 1;
+                this.queryfors.SelectedIndex = 1;
                 this.DefaultWhere = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
                 this.ExpressQuery = true;
             }
+
             base.OnFormLoaded();
-            queryfors.SelectedIndexChanged += (s, e) =>
+            this.queryfors.SelectedIndexChanged += (s, e) =>
             {
-                switch (queryfors.SelectedIndex)
+                switch (this.queryfors.SelectedIndex)
                 {
                     case 0:
-                        this.DefaultWhere = "";
+                        this.DefaultWhere = string.Empty;
                         break;
                     case 1:
                         this.DefaultWhere = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
                         break;
                 }
+
                 this.ReloadDatas();
             };
         }
 
         protected override void OnDetailEntered()
         {
-            contextMenuStrip();
+            this.contextMenuStrip();
             base.OnDetailEntered();
             this.detailgrid.AutoResizeColumns();
 
             DataRow queryDr;
-            DualResult dResult = PublicPrg.Prgs.QueryQaInspectionHeader(CurrentMaintain["ID"].ToString(), out queryDr);
+            DualResult dResult = PublicPrg.Prgs.QueryQaInspectionHeader(this.CurrentMaintain["ID"].ToString(), out queryDr);
             if (!dResult)
             {
-                ShowErr(dResult);
+                this.ShowErr(dResult);
                 return;
             }
+
             DataTable sciTb;
-            string query_cmd = string.Format("select * from Getsci('{0}','{1}')", CurrentMaintain["ID"], MyUtility.Check.Empty(queryDr) ? "" : queryDr["Category"]);
+            string query_cmd = string.Format("select * from Getsci('{0}','{1}')", this.CurrentMaintain["ID"], MyUtility.Check.Empty(queryDr) ? string.Empty : queryDr["Category"]);
             DBProxy.Current.Select(null, query_cmd, out sciTb);
             if (!dResult)
             {
-                ShowErr(query_cmd, dResult);
+                this.ShowErr(query_cmd, dResult);
                 return;
             }
-            //Get scidelivery_box.Text  value
-            if (sciTb.Rows.Count>0)
+
+            // Get scidelivery_box.Text  value
+            if (sciTb.Rows.Count > 0)
             {
-                if (sciTb.Rows[0]["MinSciDelivery"]==DBNull.Value)
+                if (sciTb.Rows[0]["MinSciDelivery"] == DBNull.Value)
                 {
-                    //dateEarliestSCIDel.Text = "";
+                    // dateEarliestSCIDel.Text = "";
                 }
                 else
                 {
-                    //dateEarliestSCIDel.Text = Convert.ToDateTime(sciTb.Rows[0]["MinSciDelivery"]).ToShortDateString();
+                    // dateEarliestSCIDel.Text = Convert.ToDateTime(sciTb.Rows[0]["MinSciDelivery"]).ToShortDateString();
                 }
             }
             else
             {
-                //dateEarliestSCIDel.Text = "";
+                // dateEarliestSCIDel.Text = "";
             }
-            //找出Cutinline and MinSciDelivery 比較早的日期
-            DateTime? targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(MyUtility.Check.Empty(queryDr) ? "" : queryDr["CUTINLINE"], sciTb.Rows[0]["MinSciDelivery"]);
-            if (targT!=null)
+
+            // 找出Cutinline and MinSciDelivery 比較早的日期
+            DateTime? targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(MyUtility.Check.Empty(queryDr) ? string.Empty : queryDr["CUTINLINE"], sciTb.Rows[0]["MinSciDelivery"]);
+            if (targT != null)
             {
-                dateTargetLeadTime.Text = ((DateTime)targT).ToShortDateString();
+                this.dateTargetLeadTime.Text = ((DateTime)targT).ToShortDateString();
             }
             else
             {
-                dateTargetLeadTime.Text = "";
+                this.dateTargetLeadTime.Text = string.Empty;
             }
-            displayStyle.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Styleid"].ToString();
-            displaySeason.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Seasonid"].ToString();
-            displayBrand.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["brandid"].ToString();
+
+            this.displayStyle.Text = MyUtility.Check.Empty(queryDr) ? string.Empty : queryDr["Styleid"].ToString();
+            this.displaySeason.Text = MyUtility.Check.Empty(queryDr) ? string.Empty : queryDr["Seasonid"].ToString();
+            this.displayBrand.Text = MyUtility.Check.Empty(queryDr) ? string.Empty : queryDr["brandid"].ToString();
             if (MyUtility.Check.Empty(queryDr))
             {
-                dateEarliestEstCutDate.Text = "";
+                this.dateEarliestEstCutDate.Text = string.Empty;
             }
             else
             {
-                if (queryDr["cutinline"] == DBNull.Value) dateEarliestEstCutDate.Text = "";
-                else dateEarliestEstCutDate.Text = Convert.ToDateTime(queryDr["cutinline"]).ToShortDateString();
-            }
-           
-            displayMTLCmlpt.Text = CurrentMaintain["Complete"].ToString() == "1" ? "Y" : "";
-            decimal detailRowCount = DetailDatas.Count;
-            string inspnum = "0";
-            DataTable detailTb = (DataTable)detailgridbs.DataSource;
-            int t = detailTb.Rows.Count;
-            for (int i =t-1; i >= 0; i--)
-            {
-                if (detailTb.Rows[i]["STATUS"].ToString().ToUpper()=="NEW")
+                if (queryDr["cutinline"] == DBNull.Value)
                 {
-                    detailTb.Rows[i]["Result"] = "";
+                    this.dateEarliestEstCutDate.Text = string.Empty;
+                }
+                else
+                {
+                    this.dateEarliestEstCutDate.Text = Convert.ToDateTime(queryDr["cutinline"]).ToShortDateString();
                 }
             }
-            if (detailRowCount!=0)
-            {
-                if (detailTb.Rows.Count!=0)
-                {
 
+            this.displayMTLCmlpt.Text = this.CurrentMaintain["Complete"].ToString() == "1" ? "Y" : string.Empty;
+            decimal detailRowCount = this.DetailDatas.Count;
+            string inspnum = "0";
+            DataTable detailTb = (DataTable)this.detailgridbs.DataSource;
+            int t = detailTb.Rows.Count;
+            for (int i = t - 1; i >= 0; i--)
+            {
+                if (detailTb.Rows[i]["STATUS"].ToString().ToUpper() == "NEW")
+                {
+                    detailTb.Rows[i]["Result"] = string.Empty;
+                }
+            }
+
+            if (detailRowCount != 0)
+            {
+                if (detailTb.Rows.Count != 0)
+                {
                     DataRow[] inspectAry = detailTb.Select("Result<>'' AND STATUS='Confirmed'");
-                    
-                    if (inspectAry.Length >0)
+
+                    if (inspectAry.Length > 0)
                     {
                         inspnum = Math.Round(((decimal)inspectAry.Length / detailRowCount) * 100, 2).ToString();
                     }
                 }
             }
 
-            //displayofInspection.Text = inspnum;
+            // displayofInspection.Text = inspnum;
             DateTime completedate;
             if (inspnum == "100")
             {
-                completedate = ((DateTime)detailTb.Compute("Max(InspDate)", ""));
-               
+                completedate = (DateTime)detailTb.Compute("Max(InspDate)", string.Empty);
 
-                dateCompletionDate.Text = completedate.ToShortDateString();
+                this.dateCompletionDate.Text = completedate.ToShortDateString();
             }
-            else dateCompletionDate.Text = "";
-            //this.grid.AutoResizeColumns();
+            else
+            {
+                this.dateCompletionDate.Text = string.Empty;
+            }
+
+            // this.grid.AutoResizeColumns();
 
             // 判斷Batch Encode是否可用
-            //this.btnBatchEncode.Enabled = this.EditMode ? false : detailTb.AsEnumerable().Where(s => !s["Status"].Equals("Confirmed")).Any();
-
-            string strInspAutoLockAcc=MyUtility.GetValue.Lookup("SELECT InspAutoLockAcc FROM System");
-            chkInspAutoLockAcc.Checked = MyUtility.Convert.GetBool(strInspAutoLockAcc);
-
+            // this.btnBatchEncode.Enabled = this.EditMode ? false : detailTb.AsEnumerable().Where(s => !s["Status"].Equals("Confirmed")).Any();
+            string strInspAutoLockAcc = MyUtility.GetValue.Lookup("SELECT InspAutoLockAcc FROM System");
+            this.chkInspAutoLockAcc.Checked = MyUtility.Convert.GetBool(strInspAutoLockAcc);
         }
-        
+
         protected override DualResult ClickSave()
         {
-            //因為表頭是PO不能覆蓋其他資料，必需自行存檔
-            //string save_po_cmd = string.Format("update po set AirRemark = '{0}' where id = '{1}';", CurrentMaintain["AiRemark"], CurrentMaintain["ID"]);
-            string save_po_cmd = string.Format("update po set AIRRemark = '{0}' where id = '{1}';", editRemark.Text.ToString(), CurrentMaintain["ID"]);
+            // 因為表頭是PO不能覆蓋其他資料，必需自行存檔
+            // string save_po_cmd = string.Format("update po set AirRemark = '{0}' where id = '{1}';", CurrentMaintain["AiRemark"], CurrentMaintain["ID"]);
+            string save_po_cmd = string.Format("update po set AIRRemark = '{0}' where id = '{1}';", this.editRemark.Text.ToString(), this.CurrentMaintain["ID"]);
 
             DualResult upResult;
             TransactionScope _transactionscope = new TransactionScope();
@@ -327,16 +336,14 @@ Where a.poid='{0}' order by seq1,seq2
             {
                 try
                 {
-
                     if (!(upResult = DBProxy.Current.Execute(null, save_po_cmd)))
                     {
                         _transactionscope.Dispose();
                         return upResult;
                     }
 
-
-                    //更新PO.AIRInspPercent
-                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'AIR','{CurrentMaintain["ID"]}'")))
+                    // 更新PO.AIRInspPercent
+                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'AIR','{this.CurrentMaintain["ID"]}'")))
                     {
                         _transactionscope.Dispose();
                         return upResult;
@@ -349,31 +356,33 @@ Where a.poid='{0}' order by seq1,seq2
                 catch (Exception ex)
                 {
                     _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return Result.True;
                 }
             }
 
             _transactionscope.Dispose();
             _transactionscope = null;
-           
+
             return Result.True;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            DataTable detDtb = (DataTable)detailgridbs.DataSource;
-            //移到指定那筆
-            string wk = txtLocateforWK.Text;
-            string seq1 = txtSEQ1.Text;
-            string seq2 = txtSEQ2.Text;
-            string find = "";
-            string find_new = "";
+            DataTable detDtb = (DataTable)this.detailgridbs.DataSource;
+
+            // 移到指定那筆
+            string wk = this.txtLocateforWK.Text;
+            string seq1 = this.txtSEQ1.Text;
+            string seq2 = this.txtSEQ2.Text;
+            string find = string.Empty;
+            string find_new = string.Empty;
 
             if (!MyUtility.Check.Empty(wk))
             {
                 find_new = string.Format("Exportid='{0}'", wk);
             }
+
             if (!MyUtility.Check.Empty(seq1))
             {
                 if (!MyUtility.Check.Empty(find_new))
@@ -385,6 +394,7 @@ Where a.poid='{0}' order by seq1,seq2
                     find_new = string.Format("SEQ1 = '{0}'", seq1);
                 }
             }
+
             if (!MyUtility.Check.Empty(seq2))
             {
                 if (!MyUtility.Check.Empty(find_new))
@@ -396,43 +406,65 @@ Where a.poid='{0}' order by seq1,seq2
                     find_new = string.Format("SEQ2 = '{0}'", seq2);
                 }
             }
+
             if (find != find_new)
             {
                 find = find_new;
-                find_dr = detDtb.Select(find_new);
-                if (find_dr.Length == 0)
+                this.find_dr = detDtb.Select(find_new);
+                if (this.find_dr.Length == 0)
                 {
                     MyUtility.Msg.WarningBox("Not Found");
                     return;
                 }
-                else { index = 0; }
+                else
+                {
+                    this.index = 0;
+                }
             }
             else
             {
-                index++;
-                if (index >= find_dr.Length) index = 0;
+                this.index++;
+                if (this.index >= this.find_dr.Length)
+                {
+                    this.index = 0;
+                }
             }
-            detailgridbs.Position = DetailDatas.IndexOf(find_dr[index]);
+
+            this.detailgridbs.Position = this.DetailDatas.IndexOf(this.find_dr[this.index]);
         }
 
         private void ModifyDetail()
         {
-            if (!IsSupportEdit||EditMode) return;   //沒編輯權限 OR 編輯模式下 不能跳下一層編輯
-            if (MyUtility.Check.Empty(CurrentDetailData["ID"].ToString())) return;
-            string currentID = CurrentDetailData["ID"].ToString();
-            var dr = this.CurrentDetailData; if (null == dr) return;
-            P02_Detail DoForm = new P02_Detail(IsSupportEdit, this.CurrentDetailData["ID"].ToString(),this.CurrentMaintain["ID"].ToString());
+            if (!this.IsSupportEdit || this.EditMode)
+            {
+                return;   // 沒編輯權限 OR 編輯模式下 不能跳下一層編輯
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentDetailData["ID"].ToString()))
+            {
+                return;
+            }
+
+            string currentID = this.CurrentDetailData["ID"].ToString();
+            var dr = this.CurrentDetailData;
+            if (dr == null)
+            {
+                return;
+            }
+
+            P02_Detail DoForm = new P02_Detail(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), this.CurrentMaintain["ID"].ToString());
             DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);
             DoForm.Text = "Accessory Inspection- SP+SEQ+Detail(Modify)";
             DoForm.ShowDialog(this);
             DoForm.Close();
             this.RenewData();
             this.OnDetailEntered();
+
             // 固定滑鼠指向位置,避免被renew影響
             int rowindex = 0;
-            for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
+            for (int rIdx = 0; rIdx < this.detailgrid.Rows.Count; rIdx++)
             {
-                DataGridViewRow dvr = detailgrid.Rows[rIdx];
+                DataGridViewRow dvr = this.detailgrid.Rows[rIdx];
                 DataRow row = ((DataRowView)dvr.DataBoundItem).Row;
 
                 if (row["ID"].ToString() == currentID)
@@ -441,42 +473,44 @@ Where a.poid='{0}' order by seq1,seq2
                     break;
                 }
             }
-            detailgrid.SelectRowTo(rowindex);
-            contextMenuStrip();
 
+            this.detailgrid.SelectRowTo(rowindex);
+            this.contextMenuStrip();
         }
 
         private void contextMenuStrip()
         {
             var dr = this.CurrentDetailData;
-            edit.Enabled = true;
+            this.edit.Enabled = true;
 
-            if (dr==null)
+            if (dr == null)
             {
-                edit.Enabled = false;
+                this.edit.Enabled = false;
                 return;
             }
         }
 
         protected override void OnDetailGridRowChanged()
         {
-            contextMenuStrip();
+            this.contextMenuStrip();
             base.OnDetailGridRowChanged();
         }
 
         private void btnFind_Click(object sender, EventArgs e)
         {
-            DataTable detDtb = (DataTable)detailgridbs.DataSource;
-            //移到指定那筆
-            string wk = txtLocateforWK.Text;
-            string seq1 = txtSEQ1.Text;
-            string seq2 = txtSEQ2.Text;
-            string find_new = "";
+            DataTable detDtb = (DataTable)this.detailgridbs.DataSource;
+
+            // 移到指定那筆
+            string wk = this.txtLocateforWK.Text;
+            string seq1 = this.txtSEQ1.Text;
+            string seq2 = this.txtSEQ2.Text;
+            string find_new = string.Empty;
 
             if (!MyUtility.Check.Empty(wk))
             {
                 find_new = string.Format("Exportid='{0}'", wk);
             }
+
             if (!MyUtility.Check.Empty(seq1))
             {
                 if (!MyUtility.Check.Empty(find_new))
@@ -488,6 +522,7 @@ Where a.poid='{0}' order by seq1,seq2
                     find_new = string.Format("SEQ1 = '{0}'", seq1);
                 }
             }
+
             if (!MyUtility.Check.Empty(seq2))
             {
                 if (!MyUtility.Check.Empty(find_new))
@@ -499,33 +534,43 @@ Where a.poid='{0}' order by seq1,seq2
                     find_new = string.Format("SEQ2 = '{0}'", seq2);
                 }
             }
-            if (find != find_new)
+
+            if (this.find != find_new)
             {
-                find = find_new;
-                find_dr = detDtb.Select(find_new);
-                if (find_dr.Length == 0)
+                this.find = find_new;
+                this.find_dr = detDtb.Select(find_new);
+                if (this.find_dr.Length == 0)
                 {
                     MyUtility.Msg.WarningBox("Not Found");
                     return;
                 }
-                else { index = 0; }
+                else
+                {
+                    this.index = 0;
+                }
             }
             else
             {
-                if (find_dr==null)
+                if (this.find_dr == null)
                 {
                     MyUtility.Msg.WarningBox("Not Found");
                     return;
                 }
-                if (find_dr.Length == 0)
+
+                if (this.find_dr.Length == 0)
                 {
                     MyUtility.Msg.WarningBox("Not Found");
                     return;
                 }
-                index++;
-                if (index >= find_dr.Length) index = 0;
+
+                this.index++;
+                if (this.index >= this.find_dr.Length)
+                {
+                    this.index = 0;
+                }
             }
-            detailgridbs.Position = DetailDatas.IndexOf(find_dr[index]);
+
+            this.detailgridbs.Position = this.DetailDatas.IndexOf(this.find_dr[this.index]);
         }
 
         private void btnBatchEncode_Click(object sender, EventArgs e)

@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci;
 using System.Transactions;
 using System.Data.SqlClient;
 using System.Linq;
@@ -103,7 +100,7 @@ inner join Pullout_Detail p on p.PackingListID = pd.ID
 where pd.ID = @PackingID
 and Factory.IsProduceFty=1
 ";
-            if (MyUtility.Check.Seek(sqlcmdChk, listParameter,out dr))
+            if (MyUtility.Check.Seek(sqlcmdChk, listParameter, out dr))
             {
                 MyUtility.Msg.WarningBox($@"Sapmle PL# already in pullout ID: {dr["PulloutID"]}");
                 return;
@@ -280,21 +277,21 @@ values(
 ,'{2}','{3}','{4}',{5},{6},'{7}'
 ,'2'  ----Category
 ,'{8}',{9},'{10}','{11}','{12}','{13}','{14}','{14}',GETDATE());",
-                                            MyUtility.Convert.GetString(this.masterData["ID"]),
-                                            MyUtility.Convert.GetString(dr["OrderID"]),
-                                            MyUtility.Convert.GetString(dr["SeasonID"]),
-                                            MyUtility.Convert.GetString(dr["StyleID"]),
-                                            MyUtility.Convert.GetString(dr["Description"]),
-                                            MyUtility.Convert.GetString(dr["ShipQty"]),
-                                            MyUtility.Convert.GetString(dr["NW"]),
-                                            MyUtility.Convert.GetString(dr["CTNNo"]),
-                                            MyUtility.Convert.GetString(dr["ID"]),
-                                            MyUtility.Convert.GetString(dr["Price"]),
-                                            MyUtility.Convert.GetString(dr["UnitID"]),
-                                            MyUtility.Convert.GetString(dr["Receiver"]),
-                                            MyUtility.Convert.GetString(dr["BrandID"]),
-                                            MyUtility.Convert.GetString(dr["LeaderID"]),
-                                            Sci.Env.User.UserID));
+                    MyUtility.Convert.GetString(this.masterData["ID"]),
+                    MyUtility.Convert.GetString(dr["OrderID"]),
+                    MyUtility.Convert.GetString(dr["SeasonID"]),
+                    MyUtility.Convert.GetString(dr["StyleID"]),
+                    MyUtility.Convert.GetString(dr["Description"]),
+                    MyUtility.Convert.GetString(dr["ShipQty"]),
+                    MyUtility.Convert.GetString(dr["NW"]),
+                    MyUtility.Convert.GetString(dr["CTNNo"]),
+                    MyUtility.Convert.GetString(dr["ID"]),
+                    MyUtility.Convert.GetString(dr["Price"]),
+                    MyUtility.Convert.GetString(dr["UnitID"]),
+                    MyUtility.Convert.GetString(dr["Receiver"]),
+                    MyUtility.Convert.GetString(dr["BrandID"]),
+                    MyUtility.Convert.GetString(dr["LeaderID"]),
+                    Sci.Env.User.UserID));
             }
 
             insertCmds.Add($"update PackingList set ExpressID = '{this.masterData["ID"]}' where ID = '{dt.Rows[0]["ID"]}'");
@@ -327,7 +324,7 @@ values(
             MyUtility.Msg.InfoBox("Update complete!!");
         }
 
-        private bool HcImportCheck(string packingListID ,string orderID)
+        private bool HcImportCheck(string packingListID, string orderID)
         {
             DataTable dt;
             string sqlCmd = $@"

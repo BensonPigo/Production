@@ -4,12 +4,9 @@ using Sci.Data;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
@@ -17,9 +14,10 @@ namespace Sci.Production.Warehouse
     public partial class P10_RelaxationSticker : Sci.Win.Subs.Base
     {
         private string strIssueID;
+
         public P10_RelaxationSticker(string issueID)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.strIssueID = issueID;
         }
 
@@ -39,7 +37,7 @@ namespace Sci.Production.Warehouse
                 .Numeric("Qty", header: "Qty", decimal_places: 2, iseditingreadonly: true);
             #endregion
 
-            for (int i = 0; i < grid1.Columns.Count; i++)
+            for (int i = 0; i < this.grid1.Columns.Count; i++)
             {
                 this.grid1.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
@@ -67,16 +65,17 @@ outer apply(
     and fi.Roll = isd.Roll and fi.Dyelot = isd.Dyelot
     and StockType in ('B','I')
 ) as StockList
-where isd.ID = '{strIssueID}'
+where isd.ID = '{this.strIssueID}'
 order by RowNo
 ";
             DataTable dt;
-            DualResult result = DBProxy.Current.Select(string.Empty,sqlcmd,out dt);
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
             if (result == false)
             {
-                ShowErr(result);
+                this.ShowErr(result);
                 return;
             }
+
             this.listControlBindingSource.DataSource = dt;
         }
 
@@ -111,12 +110,12 @@ order by NewRowNo";
                     Color = row["Color"].ToString().Trim(),
                     Roll = row["Roll"].ToString().Trim(),
                     Dyelot = row["Dyelot"].ToString().Trim(),
-                    Qty = Convert.ToDouble(row["Qty"])
+                    Qty = Convert.ToDouble(row["Qty"]),
                 }).ToList();
 
                 ReportDefinition report = new ReportDefinition
                 {
-                    ReportDataSource = listData
+                    ReportDataSource = listData,
                 };
 
                 // 指定是哪個 RDLC
@@ -136,8 +135,9 @@ order by NewRowNo";
 
                 // 開啟 report view
                 var frm = new Sci.Win.Subs.ReportView(report);
-                frm.MdiParent = MdiParent;
+                frm.MdiParent = this.MdiParent;
                 frm.ShowDialog();
+
                 // 關閉視窗
                 if (frm.DialogResult == DialogResult.Cancel)
                 {

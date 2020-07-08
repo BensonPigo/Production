@@ -1,23 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 using Ict;
 using Ict.Win;
-using Sci;
 using Sci.Data;
-using Sci.Production;
 
 using Sci.Production.PublicPrg;
 using System.Linq;
-using System.Data.SqlClient;
-using Sci.Win;
-using System.Reflection;
-using System.Transactions;
 
 namespace Sci.Production.Subcon
 {
@@ -26,20 +18,19 @@ namespace Sci.Production.Subcon
         string artworkunit;
         Form batchapprove;
 
-
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.DefaultFilter = $"MdivisionID = '{Sci.Env.User.Keyword}'";
-            gridicon.Append.Enabled = false;
-            gridicon.Append.Visible = false;
-            gridicon.Insert.Enabled = false;
-            gridicon.Insert.Visible = false;
+            this.gridicon.Append.Enabled = false;
+            this.gridicon.Append.Visible = false;
+            this.gridicon.Insert.Enabled = false;
+            this.gridicon.Insert.Visible = false;
 
-            txtsubconSupplier.TextBox1.Validated += (s, e) =>
+            this.txtsubconSupplier.TextBox1.Validated += (s, e) =>
             {
-                this.CurrentMaintain["localsuppid"] = txtsubconSupplier.TextBox1.Text;
+                this.CurrentMaintain["localsuppid"] = this.txtsubconSupplier.TextBox1.Text;
             };
         }
 
@@ -48,11 +39,10 @@ namespace Sci.Production.Subcon
             base.OnFormLoaded();
 
             #region 權限控管
+
             // 檢查是否擁有Confirm or Check權限
             bool canConfrim = Prgs.GetAuthority(Sci.Env.User.UserID, "P05. Sub-con Requisition", "CanConfirm");
             bool canCheck = Prgs.GetAuthority(Sci.Env.User.UserID, "P05. Sub-con Requisition", "CanCheck");
-            
-
 
             if (canConfrim || canCheck || Env.User.IsAdmin)
             {
@@ -74,9 +64,10 @@ namespace Sci.Production.Subcon
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+            string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
 
-            this.DetailSelectCommand = string.Format(@"
+            this.DetailSelectCommand = string.Format(
+                @"
 select 
 ap.OrderID
 ,o.StyleID
@@ -111,47 +102,46 @@ ORDER BY ap.OrderID   ", masterID);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            ChangeDetailHeader();
-            
+            this.ChangeDetailHeader();
+
             if (this.CurrentMaintain["ID"] == DBNull.Value)
             {
-                btnIrrQtyReason.Enabled = false;
+                this.btnIrrQtyReason.Enabled = false;
             }
             else
             {
-                btnIrrQtyReason.Enabled = true;
+                this.btnIrrQtyReason.Enabled = true;
             }
 
             #region Status Label
-            labStatus.Text = CurrentMaintain["Status"].ToString();
+            this.labStatus.Text = this.CurrentMaintain["Status"].ToString();
             #endregion
             #region exceed status
-            labExceed.Visible = CurrentMaintain["Exceed"].ToString().ToUpper() == "TRUE";
+            this.labExceed.Visible = this.CurrentMaintain["Exceed"].ToString().ToUpper() == "TRUE";
             #endregion
             #region Batch Import, Special record button
-            btnBatchImport.Enabled = this.EditMode;
+            this.btnBatchImport.Enabled = this.EditMode;
             #endregion
-            //#region Batch create
-            //btnBatchCreate.Enabled = !this.EditMode;
-            //#endregion
 
+            // #region Batch create
+            // btnBatchCreate.Enabled = !this.EditMode;
+            // #endregion
             #region Irregular 判斷
-            RefreshIrregularQtyReason();
+            this.RefreshIrregularQtyReason();
             #endregion
 
             #region 表尾
-            string dateDeptApv = MyUtility.Check.Empty(MyUtility.Convert.GetDate(CurrentMaintain["DeptApvDate"])) ? "" : ((DateTime)MyUtility.Convert.GetDate(CurrentMaintain["DeptApvDate"])).ToString("yyyy/MM/dd HH:mm:ss");
+            string dateDeptApv = MyUtility.Check.Empty(MyUtility.Convert.GetDate(this.CurrentMaintain["DeptApvDate"])) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(this.CurrentMaintain["DeptApvDate"])).ToString("yyyy/MM/dd HH:mm:ss");
 
+            this.dispDeptApv.Text = this.CurrentMaintain["DeptApvName"].ToString() + "-" + MyUtility.GetValue.Lookup("Name", this.CurrentMaintain["DeptApvName"].ToString(), "Pass1", "ID") + " " + dateDeptApv;
 
-            dispDeptApv.Text = CurrentMaintain["DeptApvName"].ToString() + "-" + MyUtility.GetValue.Lookup("Name", CurrentMaintain["DeptApvName"].ToString(), "Pass1", "ID") + " " + dateDeptApv;
+            string dateMgApv = MyUtility.Check.Empty(MyUtility.Convert.GetDate(this.CurrentMaintain["MgApvDate"])) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(this.CurrentMaintain["MgApvDate"])).ToString("yyyy/MM/dd HH:mm:ss");
 
-            string dateMgApv = MyUtility.Check.Empty(MyUtility.Convert.GetDate(CurrentMaintain["MgApvDate"])) ? "" : ((DateTime)MyUtility.Convert.GetDate(CurrentMaintain["MgApvDate"])).ToString("yyyy/MM/dd HH:mm:ss");
+            this.dispMgrApv.Text = this.CurrentMaintain["MgApvName"].ToString() + "-" + MyUtility.GetValue.Lookup("Name", this.CurrentMaintain["MgApvName"].ToString(), "Pass1", "ID") + " " + dateMgApv;
 
-            dispMgrApv.Text = CurrentMaintain["MgApvName"].ToString() + "-" + MyUtility.GetValue.Lookup("Name", CurrentMaintain["MgApvName"].ToString(), "Pass1", "ID") + " " + dateMgApv;
+            string dateClose = MyUtility.Check.Empty(MyUtility.Convert.GetDate(this.CurrentMaintain["CloseUnCloseDate"])) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(this.CurrentMaintain["CloseUnCloseDate"])).ToString("yyyy/MM/dd HH:mm:ss");
 
-            string dateClose = MyUtility.Check.Empty(MyUtility.Convert.GetDate(CurrentMaintain["CloseUnCloseDate"])) ? "" : ((DateTime)MyUtility.Convert.GetDate(CurrentMaintain["CloseUnCloseDate"])).ToString("yyyy/MM/dd HH:mm:ss");
-
-            dispClosed.Text = CurrentMaintain["CloseUnCloseName"].ToString() + "-" + MyUtility.GetValue.Lookup("Name", CurrentMaintain["CloseUnCloseName"].ToString(), "Pass1", "ID") + " " + dateClose;
+            this.dispClosed.Text = this.CurrentMaintain["CloseUnCloseName"].ToString() + "-" + MyUtility.GetValue.Lookup("Name", this.CurrentMaintain["CloseUnCloseName"].ToString(), "Pass1", "ID") + " " + dateClose;
             #endregion
         }
 
@@ -163,7 +153,7 @@ ORDER BY ap.OrderID   ", masterID);
             if (!this.EditMode && this.CurrentMaintain != null)
             {
                 // Close ChkValue
-                if (string.Compare(this.CurrentMaintain["Status"].ToString(), "Closed", true) != 0 && !IsDetailInserting)
+                if (string.Compare(this.CurrentMaintain["Status"].ToString(), "Closed", true) != 0 && !this.IsDetailInserting)
                 {
                     this.toolbar.cmdClose.Enabled = true;
                 }
@@ -173,7 +163,7 @@ ORDER BY ap.OrderID   ", masterID);
                 }
 
                 // unApv ChkValue
-                if (string.Compare(this.CurrentMaintain["Status"].ToString(), "Approved", true) == 0 && !MyUtility.Check.Empty(CurrentMaintain["Exceed"]))
+                if (string.Compare(this.CurrentMaintain["Status"].ToString(), "Approved", true) == 0 && !MyUtility.Check.Empty(this.CurrentMaintain["Exceed"]))
                 {
                     this.toolbar.cmdUnconfirm.Enabled = true;
                 }
@@ -183,9 +173,8 @@ ORDER BY ap.OrderID   ", masterID);
                 }
 
                 // unCheck ChkValue
-                if ((string.Compare(this.CurrentMaintain["Status"].ToString(), "Locked", true) == 0 && !MyUtility.Check.Empty(CurrentMaintain["Exceed"]))
-                    || (string.Compare(this.CurrentMaintain["Status"].ToString(), "Approved", true) == 0 && MyUtility.Check.Empty(CurrentMaintain["Exceed"]))
-                    )
+                if ((string.Compare(this.CurrentMaintain["Status"].ToString(), "Locked", true) == 0 && !MyUtility.Check.Empty(this.CurrentMaintain["Exceed"]))
+                    || (string.Compare(this.CurrentMaintain["Status"].ToString(), "Approved", true) == 0 && MyUtility.Check.Empty(this.CurrentMaintain["Exceed"])))
                 {
                     this.toolbar.cmdUncheck.Enabled = true;
                 }
@@ -259,7 +248,7 @@ cross apply(
 		from Order_Artwork a WITH (NOLOCK)
 		inner join order_qty q WITH (NOLOCK) on q.id = a.ID and  (a.Article = q.Article or a.Article = '----')
 		where a.id = o.id
-		and a.ArtworkTypeID = '{CurrentMaintain["ArtworktypeId"]}'
+		and a.ArtworkTypeID = '{this.CurrentMaintain["ArtworktypeId"]}'
 		) s
 	where rowNo = 1 
 )oa
@@ -279,17 +268,17 @@ outer apply(
 	where rowNo = 1 
 )vsa
 left join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and sao.PriceApv = 'Y' and sao.Price > 0
-and sao.LocalSuppId = '{CurrentMaintain["localsuppid"]}' 
+and sao.LocalSuppId = '{this.CurrentMaintain["localsuppid"]}' 
 left join ArtworkType at WITH (NOLOCK) on at.id = oa.ArtworkTypeID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
 outer apply (
         select value = ISNULL(sum(ReqQty),0)
         from ArtworkReq_Detail AD, ArtworkReq a
         where ad.ID=a.ID
-		and a.ArtworkTypeID = '{CurrentMaintain["ArtworktypeId"]}' 
+		and a.ArtworkTypeID = '{this.CurrentMaintain["ArtworktypeId"]}' 
 		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
         and ad.PatternDesc = isnull(oa.PatternDesc,'') 
-        and ad.ArtworkID = iif(oa.ArtworkID is null,'{CurrentMaintain["ArtworktypeId"]}' ,oa.ArtworkID)
+        and ad.ArtworkID = iif(oa.ArtworkID is null,'{this.CurrentMaintain["ArtworktypeId"]}' ,oa.ArtworkID)
         and a.status != 'Closed' and ad.ArtworkPOID =''
         and a.id != '{dr["id"]}'
 ) ReqQty
@@ -297,17 +286,17 @@ outer apply (
         select value = ISNULL(sum(PoQty),0)
         from ArtworkPO_Detail AD,ArtworkPO A
         where a.ID=ad.ID
-		and a.ArtworkTypeID = '{CurrentMaintain["ArtworktypeId"]}'
+		and a.ArtworkTypeID = '{this.CurrentMaintain["ArtworktypeId"]}'
 		and OrderID = o.ID 
         and ad.PatternCode= isnull(oa.PatternCode,'')
         and ad.PatternDesc = isnull(oa.PatternDesc,'') 
-        and ad.ArtworkID = iif(oa.ArtworkID is null, '{CurrentMaintain["ArtworktypeId"]}' , oa.ArtworkID)
+        and ad.ArtworkID = iif(oa.ArtworkID is null, '{this.CurrentMaintain["ArtworktypeId"]}' , oa.ArtworkID)
 		and ad.ArtworkReqID=''
 ) PoQty
 where f.IsProduceFty=1
 and o.category in ('B','S')
 and o.MDivisionID='{Sci.Env.User.Keyword}' 
-and ot.ArtworkTypeID like '{CurrentMaintain["artworktypeid"]}%' 
+and ot.ArtworkTypeID like '{this.CurrentMaintain["artworktypeid"]}%' 
 and o.Junk=0
 and o.id = '{dr["OrderID"]}'
 and isnull(oa.PatternCode,'') = '{dr["PatternCode"]}'
@@ -318,22 +307,19 @@ group by ReqQty.value,PoQty.value";
                         #endregion
                     }
 
-
-                   
-                    DataRow drQty;                    
-                    if (MyUtility.Check.Seek(sqlcmd , out drQty))
+                    DataRow drQty;
+                    if (MyUtility.Check.Seek(sqlcmd, out drQty))
                     {
-                        CurrentDetailData["exceedqty"] = ((decimal)drQty["AccReqQty"] - (int)drQty["OrderQty"]) < 0 ? 0 : (decimal)drQty["AccReqQty"] - (int)drQty["OrderQty"];
+                        this.CurrentDetailData["exceedqty"] = ((decimal)drQty["AccReqQty"] - (int)drQty["OrderQty"]) < 0 ? 0 : (decimal)drQty["AccReqQty"] - (int)drQty["OrderQty"];
                     }
 
-                    CurrentDetailData["ReqQty"] = e.FormattedValue;
-                    RefreshIrregularQtyReason();
+                    this.CurrentDetailData["ReqQty"] = e.FormattedValue;
+                    this.RefreshIrregularQtyReason();
                 }
-
             };
 
             #region 欄位設定
-            Helper.Controls.Grid.Generator(this.detailgrid)
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Date("sewinline", header: "Sewing Inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -341,8 +327,8 @@ group by ReqQty.value,PoQty.value";
             .Text("ArtworkId", header: "Artwork", width: Widths.AnsiChars(17), iseditingreadonly: true)
             .Text("patterncode", header: "Cut Part", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("PatternDesc", header: "Cut Part Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Numeric("ReqQty", header: "Req. Qty", width: Widths.AnsiChars(6) , settings: col_ReqQty) // 可編輯
-            .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(3))// 可編輯
+            .Numeric("ReqQty", header: "Req. Qty", width: Widths.AnsiChars(6), settings: col_ReqQty) // 可編輯
+            .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(3)) // 可編輯
             .Numeric("qtygarment", header: "Qty/GMT", width: Widths.AnsiChars(5), maximum: 99, integer_places: 2) // 可編輯
             .Text("Farmout", header: "Farm Out", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("Farmin", header: "Farm In", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -352,9 +338,9 @@ group by ReqQty.value,PoQty.value";
             ;
             #endregion
             #region 可編輯欄位變色
-            detailgrid.Columns["ReqQty"].DefaultCellStyle.BackColor = Color.Pink;
-            detailgrid.Columns["stitch"].DefaultCellStyle.BackColor = Color.Pink;
-            detailgrid.Columns["qtygarment"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["ReqQty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["stitch"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["qtygarment"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
 
         }
@@ -363,18 +349,18 @@ group by ReqQty.value,PoQty.value";
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["MdivisionID"] = Sci.Env.User.Keyword;
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            CurrentMaintain["Reqdate"] = System.DateTime.Today;
-            CurrentMaintain["handle"] = Sci.Env.User.UserID;
-            CurrentMaintain["Status"] = "New";
-            ((DataTable)(detailgridbs.DataSource)).Rows[0].Delete();
+            this.CurrentMaintain["MdivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["Reqdate"] = System.DateTime.Today;
+            this.CurrentMaintain["handle"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["Status"] = "New";
+            ((DataTable)this.detailgridbs.DataSource).Rows[0].Delete();
         }
 
         // edit前檢查
         protected override bool ClickEditBefore()
-        {   
-            if (CurrentMaintain["Status"].ToString() != "New")
+        {
+            if (this.CurrentMaintain["Status"].ToString() != "New")
             {
                 MyUtility.Msg.WarningBox("The record status is not new, can't modify !!");
                 return false;
@@ -386,41 +372,40 @@ group by ReqQty.value,PoQty.value";
         // save前檢查 & 取id
         protected override bool ClickSaveBefore()
         {
-
             #region 必輸檢查
 
-            if (CurrentMaintain["ReqDate"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["ReqDate"].ToString()))
+            if (this.CurrentMaintain["ReqDate"] == DBNull.Value || string.IsNullOrWhiteSpace(this.CurrentMaintain["ReqDate"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Req. Date >  canot be empty!", "Warning");
-                dateReqDate.Focus();
+                this.dateReqDate.Focus();
                 return false;
             }
 
-            if (CurrentMaintain["ArtworktypeId"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["ArtworktypeId"].ToString()))
+            if (this.CurrentMaintain["ArtworktypeId"] == DBNull.Value || string.IsNullOrWhiteSpace(this.CurrentMaintain["ArtworktypeId"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Artwork Type >  canot be empty!", "Warning");
-                txtartworktype_ftyArtworkType.Focus();
+                this.txtartworktype_ftyArtworkType.Focus();
                 return false;
             }
 
-            if (CurrentMaintain["LocalSuppID"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["LocalSuppID"].ToString()))
+            if (this.CurrentMaintain["LocalSuppID"] == DBNull.Value || string.IsNullOrWhiteSpace(this.CurrentMaintain["LocalSuppID"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Supplier >  canot be empty!", "Warning");
-                txtsubconSupplier.TextBox1.Focus();
+                this.txtsubconSupplier.TextBox1.Focus();
                 return false;
             }
 
-            if (CurrentMaintain["Handle"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["Handle"].ToString()))
+            if (this.CurrentMaintain["Handle"] == DBNull.Value || string.IsNullOrWhiteSpace(this.CurrentMaintain["Handle"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Handle >  canot be empty!", "Warning");
-                txtuserHandle.TextBox1.Focus();
+                this.txtuserHandle.TextBox1.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["factoryid"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["factoryid"]))
             {
                 MyUtility.Msg.WarningBox("< Factory >  canot be empty!", "Warning");
-                txtmfactory.Focus();
+                this.txtmfactory.Focus();
                 return false;
             }
 
@@ -434,12 +419,12 @@ group by ReqQty.value,PoQty.value";
             }
             #endregion
 
-            foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("ReqQty = 0"))
+            foreach (DataRow row in ((DataTable)this.detailgridbs.DataSource).Select("ReqQty = 0"))
             {
                 row.Delete();
             }
 
-            if (DetailDatas.Count == 0)
+            if (this.DetailDatas.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
                 return false;
@@ -448,7 +433,7 @@ group by ReqQty.value,PoQty.value";
             this.UpdateExceedStatus();
 
             // 判斷irregular Reason沒寫不能存檔
-            var IrregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)detailgridbs.DataSource);
+            var IrregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
 
             DataTable dtIrregular = IrregularQtyReason.Check_Irregular_Qty();
             if (dtIrregular != null)
@@ -463,7 +448,7 @@ group by ReqQty.value,PoQty.value";
 
             if (this.IsDetailInserting)
             {
-                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "OR", "artworkReq", (DateTime)CurrentMaintain["ReqDate"]);
+                this.CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "OR", "artworkReq", (DateTime)this.CurrentMaintain["ReqDate"]);
             }
 
             return base.ClickSaveBefore();
@@ -484,7 +469,7 @@ group by ReqQty.value,PoQty.value";
             }
             #endregion
 
-            if (MyUtility.Check.Empty(CurrentMaintain["Exceed"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Exceed"]))
             {
                 strStatus = "Approved";
             }
@@ -494,7 +479,7 @@ group by ReqQty.value,PoQty.value";
             }
 
             // 判斷irregular Reason沒寫不能存檔
-            var IrregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)detailgridbs.DataSource);
+            var IrregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
 
             DataTable dtIrregular = IrregularQtyReason.Check_Irregular_Qty();
             if (dtIrregular != null)
@@ -512,12 +497,13 @@ update artworkReq
 set status='{strStatus}'
 , DeptApvName ='{Env.User.UserID}', DeptApvDate = GETDATE()
 , editname='{Env.User.UserID}', editdate=GETDATE() 
-where id = '{CurrentMaintain["id"]}'";
+where id = '{this.CurrentMaintain["id"]}'";
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
             {
-                ShowErr(sqlcmd, result);
+                this.ShowErr(sqlcmd, result);
                 return;
             }
+
             MyUtility.Msg.InfoBox("Successfully");
         }
 
@@ -525,7 +511,7 @@ where id = '{CurrentMaintain["id"]}'";
         {
             base.ClickUncheck();
             DualResult result;
-            String sqlcmd;
+            string sqlcmd;
 
             bool isPoExists = this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["ArtworkPOID"]));
             if (isPoExists)
@@ -539,13 +525,14 @@ update artworkReq
 set status='New'
 , DeptApvName = '', DeptApvDate = null
 , editname='{Env.User.UserID}', editdate=GETDATE() 
-where id = '{CurrentMaintain["id"]}'";
+where id = '{this.CurrentMaintain["id"]}'";
 
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
             {
-                ShowErr(sqlcmd, result);
+                this.ShowErr(sqlcmd, result);
                 return;
             }
+
             MyUtility.Msg.InfoBox("Successfully");
         }
 
@@ -567,13 +554,14 @@ update artworkReq
 set status='Approved'
 , MgApvName = '{Env.User.UserID}', MgApvDate = GETDATE() 
 , editname='{Env.User.UserID}', editdate = GETDATE() 
-where id = '{CurrentMaintain["id"]}'";
+where id = '{this.CurrentMaintain["id"]}'";
 
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
             {
-                ShowErr(sqlcmd, result);
+                this.ShowErr(sqlcmd, result);
                 return;
             }
+
             MyUtility.Msg.InfoBox("Successfully");
             base.ClickConfirm();
         }
@@ -582,7 +570,7 @@ where id = '{CurrentMaintain["id"]}'";
         {
             base.ClickUnconfirm();
             DualResult result;
-            String sqlcmd;
+            string sqlcmd;
 
             bool isPoExists = this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["ArtworkPOID"]));
             if (isPoExists)
@@ -590,60 +578,63 @@ where id = '{CurrentMaintain["id"]}'";
                 MyUtility.Msg.WarningBox("PO has been create, cannot be unconfirm!");
                 return;
             }
-           
+
             sqlcmd = $@"
 update artworkReq 
 set status='Locked'
 , MgApvName = '', MgApvDate = null 
 , editname='{Env.User.UserID}', editdate = GETDATE() 
-where id = '{CurrentMaintain["id"]}'";
+where id = '{this.CurrentMaintain["id"]}'";
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
             {
-                ShowErr(sqlcmd, result);
+                this.ShowErr(sqlcmd, result);
                 return;
             }
+
             MyUtility.Msg.InfoBox("Successfully");
         }
 
         protected override void ClickClose()
         {
             base.ClickClose();
-            String sqlcmd;
+            string sqlcmd;
             sqlcmd = $@"
 update artworkReq 
 set status = 'Closed'
 , OriStatus = Status
 , CloseUnCloseName = '{Env.User.UserID}', CloseUnCloseDate = GETDATE()
 , editname='{Env.User.UserID}', editdate = GETDATE() 
-where id = '{CurrentMaintain["id"]}'";
+where id = '{this.CurrentMaintain["id"]}'";
 
             DualResult result;
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
             {
-                ShowErr(sqlcmd, result);
+                this.ShowErr(sqlcmd, result);
                 return;
             }
+
             MyUtility.Msg.InfoBox("Successfully");
         }
 
         protected override void ClickUnclose()
         {
             base.ClickUnclose();
-          
-            String sqlcmd;           
-             sqlcmd = $@"
+
+            string sqlcmd;
+            sqlcmd = $@"
 update artworkReq 
 set status = OriStatus
 , CloseUnCloseName = '{Env.User.UserID}', CloseUnCloseDate = GETDATE()
 , editname='{Env.User.UserID}', editdate = GETDATE() 
-where id = '{CurrentMaintain["id"]}'";
+where id = '{this.CurrentMaintain["id"]}'";
 
             DualResult result;
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
             {
-                ShowErr(sqlcmd, result);
+                this.ShowErr(sqlcmd, result);
                 return;
             }
+
             MyUtility.Msg.InfoBox("Successfully");
         }
 
@@ -655,74 +646,101 @@ where id = '{CurrentMaintain["id"]}'";
 
         protected override bool ClickDeleteBefore()
         {
-            if (CurrentMaintain["Status"].ToString() != "New")
+            if (this.CurrentMaintain["Status"].ToString() != "New")
             {
                 MyUtility.Msg.WarningBox("Data is Approved or Closed cannot delete.", "Warning");
                 return false;
             }
+
             return base.ClickDeleteBefore();
         }
 
-        //print
+        // print
         protected override bool ClickPrint()
         {
             decimal totalReqQty = 0;
             #region -- 加總明細金額，顯示於表頭 --
-            if (!(CurrentMaintain == null))
+            if (!(this.CurrentMaintain == null))
             {
-                
-                foreach (DataRow drr in ((DataTable)detailgridbs.DataSource).Rows)
+                foreach (DataRow drr in ((DataTable)this.detailgridbs.DataSource).Rows)
                 {
                     totalReqQty += (decimal)drr["ReqQty"];
                 }
             }
             #endregion
 
-            //跳轉至PrintForm
+            // 跳轉至PrintForm
             Sci.Production.Subcon.P05_Print callPrintForm = new Sci.Production.Subcon.P05_Print(this.CurrentMaintain, totalReqQty.ToString());
             callPrintForm.ShowDialog(this);
             return true;
         }
 
-        //batch import
+        // batch import
         private void btnBatchImport_Click(object sender, EventArgs e)
         {
-            var dr = CurrentMaintain; if (null == dr) return;
+            var dr = this.CurrentMaintain;
+            if (dr == null)
+            {
+                return;
+            }
+
             if (MyUtility.Check.Empty(this.txtsubconSupplier.TextBox1.Text))
             {
                 MyUtility.Msg.WarningBox("Please fill Supplier first!");
-                txtsubconSupplier.TextBox1.Focus();
+                this.txtsubconSupplier.TextBox1.Focus();
                 return;
             }
+
             if (dr["artworktypeid"] == DBNull.Value)
             {
                 MyUtility.Msg.WarningBox("Please fill Artworktype first!");
-                txtartworktype_ftyArtworkType.Focus();
+                this.txtartworktype_ftyArtworkType.Focus();
                 return;
             }
-            var frm = new Sci.Production.Subcon.P05_Import(dr, (DataTable)detailgridbs.DataSource);
+
+            var frm = new Sci.Production.Subcon.P05_Import(dr, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
 
-            DataTable dg = (DataTable)detailgridbs.DataSource;
-            if (dg.Columns["style"] == null) dg.Columns.Add("Style", typeof(String));
-            if (dg.Columns["sewinline"] == null) dg.Columns.Add("sewinline", typeof(DateTime));
-            if (dg.Columns["scidelivery"] == null) dg.Columns.Add("scidelivery", typeof(DateTime));
-            foreach (DataRow drr in ((DataTable)detailgridbs.DataSource).Rows)
+            DataTable dg = (DataTable)this.detailgridbs.DataSource;
+            if (dg.Columns["style"] == null)
             {
-                if (drr.RowState == DataRowState.Deleted) continue;
+                dg.Columns.Add("Style", typeof(string));
+            }
+
+            if (dg.Columns["sewinline"] == null)
+            {
+                dg.Columns.Add("sewinline", typeof(DateTime));
+            }
+
+            if (dg.Columns["scidelivery"] == null)
+            {
+                dg.Columns.Add("scidelivery", typeof(DateTime));
+            }
+
+            foreach (DataRow drr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                if (drr.RowState == DataRowState.Deleted)
+                {
+                    continue;
+                }
+
                 DataTable order_dt;
                 DBProxy.Current.Select(null, string.Format("select styleid, sewinline, scidelivery from orders WITH (NOLOCK) where id='{0}'", drr["orderid"].ToString()), out order_dt);
                 if (order_dt.Rows.Count == 0)
+                {
                     break;
+                }
+
                 drr["style"] = order_dt.Rows[0]["styleid"].ToString();
                 drr["sewinline"] = order_dt.Rows[0]["sewinline"];
                 drr["scidelivery"] = order_dt.Rows[0]["scidelivery"];
             }
+
             this.RenewData();
 
             #region 檢查異常價格
 
-            RefreshIrregularQtyReason();
+            this.RefreshIrregularQtyReason();
 
             #endregion
 
@@ -731,10 +749,14 @@ where id = '{CurrentMaintain["id"]}'";
         // batch create
         private void btnBatchCreate_Click(object sender, EventArgs e)
         {
-            if (this.EditMode) return;
+            if (this.EditMode)
+            {
+                return;
+            }
+
             var frm = new Sci.Production.Subcon.P05_BatchCreate();
             frm.ShowDialog(this);
-            ReloadDatas();
+            this.ReloadDatas();
         }
 
         private void txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
@@ -744,58 +766,61 @@ where id = '{CurrentMaintain["id"]}'";
 
             if ((o.Text != o.OldValue) && this.EditMode)
             {
-                ((DataTable)detailgridbs.DataSource).Rows.Clear();
+                ((DataTable)this.detailgridbs.DataSource).Rows.Clear();
             }
-            ChangeDetailHeader();
 
+            this.ChangeDetailHeader();
         }
 
         private void ChangeDetailHeader()
         {
             #region --動態unit header --
-            artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype WITH (NOLOCK) where id='{0}'", txtartworktype_ftyArtworkType.Text)).ToString().Trim();
-            if (artworkunit == "") artworkunit = "PCS";
-            this.detailgrid.Columns["stitch"].HeaderText = artworkunit;
+            this.artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype WITH (NOLOCK) where id='{0}'", this.txtartworktype_ftyArtworkType.Text)).ToString().Trim();
+            if (this.artworkunit == string.Empty)
+            {
+                this.artworkunit = "PCS";
+            }
+
+            this.detailgrid.Columns["stitch"].HeaderText = this.artworkunit;
             #endregion
         }
 
-
         private void btnIrrPriceReason_Click(object sender, EventArgs e)
         {
-            if ((DataTable)detailgridbs.DataSource == null)
+            if ((DataTable)this.detailgridbs.DataSource == null)
             {
                 return;
             }
 
-            DataTable detailDatas = ((DataTable)detailgridbs.DataSource).Clone();
-            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
+            DataTable detailDatas = ((DataTable)this.detailgridbs.DataSource).Clone();
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
                     detailDatas.ImportRow(dr);
                 }
-
             }
+
             var frm = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, detailDatas);
             frm.ShowDialog(this);
 
-            //畫面關掉後，再檢查一次有無價格異常
+            // 畫面關掉後，再檢查一次有無價格異常
             this.ShowWaitMessage("Data Loading...");
-            RefreshIrregularQtyReason();
+            this.RefreshIrregularQtyReason();
         }
 
         private void btnBatchApprove_Click(object sender, EventArgs e)
         {
             if (this.Perm.Confirm || this.Perm.Check)
             {
-                if (batchapprove == null || batchapprove.IsDisposed)
+                if (this.batchapprove == null || this.batchapprove.IsDisposed)
                 {
-                    batchapprove = new Sci.Production.Subcon.P05_BatchApprove(reload);
-                    batchapprove.Show();
+                    this.batchapprove = new Sci.Production.Subcon.P05_BatchApprove(this.reload);
+                    this.batchapprove.Show();
                 }
                 else
                 {
-                    batchapprove.Activate();
+                    this.batchapprove.Activate();
                 }
             }
             else
@@ -809,32 +834,36 @@ where id = '{CurrentMaintain["id"]}'";
             if (this.CurrentDataRow != null)
             {
                 string idIndex = string.Empty;
-                if (!MyUtility.Check.Empty(CurrentMaintain))
+                if (!MyUtility.Check.Empty(this.CurrentMaintain))
                 {
-                    if (!MyUtility.Check.Empty(CurrentMaintain["id"]))
+                    if (!MyUtility.Check.Empty(this.CurrentMaintain["id"]))
                     {
-                        idIndex = MyUtility.Convert.GetString(CurrentMaintain["id"]);
+                        idIndex = MyUtility.Convert.GetString(this.CurrentMaintain["id"]);
                     }
                 }
+
                 this.ReloadDatas();
                 this.RenewData();
-                if (!MyUtility.Check.Empty(idIndex)) this.gridbs.Position = this.gridbs.Find("ID", idIndex);
+                if (!MyUtility.Check.Empty(idIndex))
+                {
+                    this.gridbs.Position = this.gridbs.Find("ID", idIndex);
+                }
             }
         }
 
         private void P05_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (batchapprove != null)
+            if (this.batchapprove != null)
             {
-                batchapprove.Dispose();
+                this.batchapprove.Dispose();
             }
-        }        
+        }
 
         private void txtsubconSupplier_Validating(object sender, CancelEventArgs e)
         {
             if (this.CurrentMaintain["LocalSuppID"].ToString() != this.txtsubconSupplier.TextBox1.Text)
             {
-                ((DataTable)detailgridbs.DataSource).Rows.Clear();
+                ((DataTable)this.detailgridbs.DataSource).Rows.Clear();
             }
 
             if (MyUtility.Check.Empty(this.txtsubconSupplier.TextBox1.Text))
@@ -845,7 +874,6 @@ where id = '{CurrentMaintain["id"]}'";
             {
                 this.CurrentMaintain["LocalSuppID"] = this.txtsubconSupplier.TextBox1.Text;
             }
-
         }
 
         /// <summary>
@@ -854,20 +882,19 @@ where id = '{CurrentMaintain["id"]}'";
         /// <param name="showMSG"></param>
         private void RefreshIrregularQtyReason()
         {
-            if ((DataTable)detailgridbs.DataSource == null)
+            if ((DataTable)this.detailgridbs.DataSource == null)
             {
                 return;
             }
 
-            DataTable detailDatas = ((DataTable)detailgridbs.DataSource).Clone();
+            DataTable detailDatas = ((DataTable)this.detailgridbs.DataSource).Clone();
 
-            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
                     detailDatas.ImportRow(dr);
                 }
-
             }
 
             this.btnIrrQtyReason.ForeColor = Color.Black;
@@ -880,7 +907,7 @@ where id = '{CurrentMaintain["id"]}'";
             this.btnIrrQtyReason.Enabled = false;
             if (dtIrregular != null)
             {
-                if (dtIrregular.Rows.Count > 0 && CurrentMaintain["Exceed"].ToString().ToUpper() == "TRUE")
+                if (dtIrregular.Rows.Count > 0 && this.CurrentMaintain["Exceed"].ToString().ToUpper() == "TRUE")
                 {
                     this.btnIrrQtyReason.Enabled = true;
                     this.btnIrrQtyReason.ForeColor = Color.Red;
@@ -905,24 +932,30 @@ where id = '{CurrentMaintain["id"]}'";
                         this.DefaultWhere = "Exceed = 1";
                         break;
                 }
+
                 this.ReloadDatas();
             };
         }
 
         private void btnSpecialRecord_Click(object sender, EventArgs e)
         {
-            var dr = CurrentMaintain; if (null == dr) return;
-            if (dr["artworktypeid"] == DBNull.Value)
+            var dr = this.CurrentMaintain;
+            if (dr == null)
             {
-                MyUtility.Msg.WarningBox("Please fill Artworktype first!");
-                txtartworktype_ftyArtworkType.Focus();
                 return;
             }
 
-            var frm = new Sci.Production.Subcon.P05_SpecialRecord(dr, (DataTable)detailgridbs.DataSource);
+            if (dr["artworktypeid"] == DBNull.Value)
+            {
+                MyUtility.Msg.WarningBox("Please fill Artworktype first!");
+                this.txtartworktype_ftyArtworkType.Focus();
+                return;
+            }
+
+            var frm = new Sci.Production.Subcon.P05_SpecialRecord(dr, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
-            detailgridbs.EndEdit();
+            this.detailgridbs.EndEdit();
 
             this.RefreshIrregularQtyReason();
         }
@@ -932,13 +965,12 @@ where id = '{CurrentMaintain["id"]}'";
             bool isDetailExceedQtyNotZero = this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["ExceedQty"]));
             if (isDetailExceedQtyNotZero)
             {
-                CurrentMaintain["Exceed"] = 1;
+                this.CurrentMaintain["Exceed"] = 1;
             }
             else
             {
-                CurrentMaintain["Exceed"] = 0;
+                this.CurrentMaintain["Exceed"] = 0;
             }
         }
     }
-
 }

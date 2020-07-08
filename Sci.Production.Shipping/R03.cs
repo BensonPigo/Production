@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -197,8 +194,9 @@ drop table #temp1,#temp2
                 objArray[0, 7] = dr["byCombo"];
                 objArray[0, 8] = dr["ShipQty"];
                 objArray[0, 9] = dr["StatusExp"];
-                //objArray[0, 10] = dr["CMP"];
-                //objArray[0, 10] = dr["CMPAmt"];
+
+                // objArray[0, 10] = dr["CMP"];
+                // objArray[0, 10] = dr["CMPAmt"];
                 objArray[0, 10] = dr["PoPrice"];
                 objArray[0, 11] = dr["FOBAmt"];
                 objArray[0, 12] = dr["BrandID"];

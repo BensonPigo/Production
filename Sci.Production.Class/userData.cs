@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
-using Sci;
 using Sci.Data;
 using Ict;
-using Ict.Win;
-using Sci.Win;
 
 namespace Sci.Production.Class
 {
@@ -21,34 +12,35 @@ namespace Sci.Production.Class
         private string sql;
         private List<SqlParameter> sqlPar;
         private DataTable dt;
-        public string errMsg { set; get; }
+
+        public string errMsg { get; set; }
 
         public userData(string sql, List<SqlParameter> sqlPar)
         {
-            errMsg = null;
+            this.errMsg = null;
             this.sql = sql;
             this.sqlPar = sqlPar;
-            InitializeComponent();
+            this.InitializeComponent();
 
             DualResult result;
-            if (result = DBProxy.Current.Select(null, sql, sqlPar, out dt))
+            if (result = DBProxy.Current.Select(null, sql, sqlPar, out this.dt))
             {
-                if (dt != null && dt.Rows.Count > 0)
+                if (this.dt != null && this.dt.Rows.Count > 0)
                 {
-                    DataRow dr = dt.Rows[0];
-                    displayBox1.Text = (dr["id"] != null) ? dr["id"].ToString() : "";
-                    displayBox2.Text = (dr["name"] != null) ? dr["name"].ToString() : "";
-                    displayBox3.Text = (dr["ext"] != null) ? dr["ext"].ToString() : "";
-                    displayBox4.Text = (dr["mail"] != null) ? dr["mail"].ToString() : "";
+                    DataRow dr = this.dt.Rows[0];
+                    this.displayBox1.Text = (dr["id"] != null) ? dr["id"].ToString() : string.Empty;
+                    this.displayBox2.Text = (dr["name"] != null) ? dr["name"].ToString() : string.Empty;
+                    this.displayBox3.Text = (dr["ext"] != null) ? dr["ext"].ToString() : string.Empty;
+                    this.displayBox4.Text = (dr["mail"] != null) ? dr["mail"].ToString() : string.Empty;
                 }
                 else
                 {
-                    errMsg = "Data not found!";
+                    this.errMsg = "Data not found!";
                 }
             }
             else
             {
-                errMsg = "Sql connection fail!\r\n" + result.ToString();
+                this.errMsg = "Sql connection fail!\r\n" + result.ToString();
             }
         }
     }

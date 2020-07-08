@@ -157,10 +157,10 @@ from ((Select a.Id as TransferToClogId, PackingListId, OrderId, CTNStartNo
 	   {3})) as a 
 left join Orders b WITH (NOLOCK) On a.OrderID = b.ID 
 left join Country c WITH (NOLOCK) On b.Dest = c.ID",
- MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? string.Empty : " and a.Id >= @id1",
- MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? string.Empty : " and a.Id <= @id2",
- MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? string.Empty : " and TransferToClogId >= @id1",
- MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? string.Empty : " and TransferToClogId <= @id2");
+                MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? string.Empty : " and a.Id >= @id1",
+                MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? string.Empty : " and a.Id <= @id2",
+                MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? string.Empty : " and TransferToClogId >= @id1",
+                MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? string.Empty : " and TransferToClogId <= @id2");
         }
 
         // 組算TTL CTN的SQL
@@ -182,10 +182,10 @@ from ((Select a.Id as TransferToClogId, PackingListId, OrderId, CTNStartNo
 	   and a.TransferToClogId >= '{2}' 
 	   and a.TransferToClogId <= '{3}' 
 	   and b.Status = 'Confirmed')) as result",
- MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? string.Empty : " and a.Id >= @id1",
- MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? string.Empty : " and a.Id <= @id2",
- MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? string.Empty : " and a.TransferToClogId >= @id1",
- MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? string.Empty : " and a.TransferToClogId <= @id2");
+                MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? string.Empty : " and a.Id >= @id1",
+                MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? string.Empty : " and a.Id <= @id2",
+                MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? string.Empty : " and a.TransferToClogId >= @id1",
+                MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? string.Empty : " and a.TransferToClogId <= @id2");
         }
 
         // 組算Received CTN的SQL
@@ -208,8 +208,8 @@ from ((Select a.TransferToClogId, a.PackingListId, a.OrderId, a.CTNStartNo
 	   {0}
 	   {1}
 	   and b.Status = 'Confirmed')) as result",
-MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? string.Empty : " and a.TransferToClogId >= @id1",
- MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? string.Empty : " and a.TransferToClogId <= @id2");
+                MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? string.Empty : " and a.TransferToClogId >= @id1",
+                MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? string.Empty : " and a.TransferToClogId <= @id2");
         }
 
         // Update All Location

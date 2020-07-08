@@ -6,11 +6,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Packing
@@ -23,7 +18,6 @@ namespace Sci.Production.Packing
         private Hashtable ht = new Hashtable();
         private DataTable sizes;
         private DataTable sizesAll;
-
 
         /// <summary>
         /// B03
@@ -215,7 +209,6 @@ and Seq = '{this.CurrentMaintain["Seq"]}'
 
         private void ComboStickerSize_SelectedValueChanged(object sender, EventArgs e)
         {
-
             if (this.comboStickerSize.SelectedIndex == -1)
             {
                 return;

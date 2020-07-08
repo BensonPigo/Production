@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
-using System.Net.Http;
-using System.Net;
-using Newtonsoft.Json;
 
 namespace Sci.Production.Sewing
 {
@@ -28,6 +22,7 @@ namespace Sci.Production.Sewing
         private DataTable _ttlData;
         private DataTable _subprocessData;
         private List<APIData> dataMode = new List<APIData>();
+
         /// <summary>
         /// R01
         /// </summary>
@@ -74,7 +69,9 @@ namespace Sci.Production.Sewing
                     and OutputDate = cast('{0}' as date)
                     and Status in('','NEW')
                     and FactoryID = '{1}'
-            ", Convert.ToDateTime(this.dateDate.Value).ToString("d"), this.comboFactory.Text);
+            ",
+            Convert.ToDateTime(this.dateDate.Value).ToString("d"),
+            this.comboFactory.Text);
             DualResult result = DBProxy.Current.Select(null, sql, out dt);
             if (!result)
             {
@@ -87,7 +84,13 @@ namespace Sci.Production.Sewing
                 errMsg += MyUtility.Check.Empty(errMsg) ? "Please lock data first! \r\n" : "\r\n";
                 errMsg += string.Format(
                     "Date:{0},Factory: {1}, Line#: {2}, Team:{3}, Shift:{4}, SubconOut-Fty:{5}, SubconOut_Contract#:{6}.",
-                    Convert.ToDateTime(dr["OutputDate"].ToString()).ToString("d"), dr["FactoryID"], dr["SewingLineID"], dr["Team"], dr["Shift"], dr["SubconOutFty"], dr["SubConOutContractNumber"]);
+                    Convert.ToDateTime(dr["OutputDate"].ToString()).ToString("d"),
+                    dr["FactoryID"],
+                    dr["SewingLineID"],
+                    dr["Team"],
+                    dr["Shift"],
+                    dr["SubconOutFty"],
+                    dr["SubConOutContractNumber"]);
             }
 
             if (!MyUtility.Check.Empty(errMsg))
@@ -866,7 +869,7 @@ order by ArtworkTypeID"),
             else
             {
                 this.dataMode = new List<APIData>();
-                GetApiData.GetAPIData(string.Empty,this._factory, (DateTime)this.dateDate.Value, (DateTime)this.dateDate.Value, out this.dataMode);
+                GetApiData.GetAPIData(string.Empty, this._factory, (DateTime)this.dateDate.Value, (DateTime)this.dateDate.Value, out this.dataMode);
                 if (this.dataMode != null)
                 {
                     worksheet.Cells[insertRow, 5] = this.dataMode[0].SewTtlManpower;

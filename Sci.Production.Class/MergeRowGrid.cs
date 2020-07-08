@@ -1,17 +1,10 @@
 ﻿using Sci.Win.UI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Class
 {
     public class MergeRowGrid : Grid
     {
-        private string colSelectedState = "Y";
-
         protected override void InitLayout()
         {
             base.InitLayout();
@@ -31,7 +24,7 @@ namespace Sci.Production.Class
                     if (dr.Cells[0].GetType().BaseType.Name == "DataGridViewCheckBoxCell")
                     {
                         DataGridViewCheckBoxCell drChk = (DataGridViewCheckBoxCell)dr.Cells[0];
-                        drChk.Value = drChk.Value.ToString() == "Y" ? "":"Y";
+                        drChk.Value = drChk.Value.ToString() == "Y" ? string.Empty : "Y";
                     }
                 }
 
@@ -43,6 +36,5 @@ namespace Sci.Production.Class
                 base.OnCellClick(e);
             }
         }
-
     }
 }

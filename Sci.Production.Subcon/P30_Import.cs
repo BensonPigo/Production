@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 
 namespace Sci.Production.Subcon
@@ -22,49 +19,85 @@ namespace Sci.Production.Subcon
 
         public P30_Import(DataRow master, DataTable detail)
         {
-            InitializeComponent();
-            dr_localPO = master;
-            dt_localPODetail = detail;
-            this.Text += string.Format(" ( Categgory:{0} - Supplier:{1} )", dr_localPO["category"].ToString(), dr_localPO["localsuppid"].ToString());
-            this.dateApproveDate.Enabled = dr_localPO["category"].ToString().TrimEnd().ToUpper() == "CARTON";
+            this.InitializeComponent();
+            this.dr_localPO = master;
+            this.dt_localPODetail = detail;
+            this.Text += string.Format(" ( Categgory:{0} - Supplier:{1} )", this.dr_localPO["category"].ToString(), this.dr_localPO["localsuppid"].ToString());
+            this.dateApproveDate.Enabled = this.dr_localPO["category"].ToString().TrimEnd().ToUpper() == "CARTON";
         }
 
-        //Find Now Button
+        // Find Now Button
         private void btnFindNow_Click(object sender, EventArgs e)
         {
-            String sp_b = this.txtSPNoStart.Text;
-            String sp_e = this.txtSPNoEnd.Text;
-            String brandid = this.txtbrand.Text;
-            String factory = this.txtfactory1.Text;
+            string sp_b = this.txtSPNoStart.Text;
+            string sp_e = this.txtSPNoEnd.Text;
+            string brandid = this.txtbrand.Text;
+            string factory = this.txtfactory1.Text;
 
             string booking_b, booking_e, sewinline_b, sewinline_e, arrived_b, arrived_e, approved_b, approved_e, scidelivery_b, scidelivery_e, sql, tmp;
             booking_b = null;
             booking_e = null;
             sewinline_b = null;
             sewinline_e = null;
-            arrived_b= null;
+            arrived_b = null;
             arrived_e = null;
-            approved_b= null;
-            approved_e= null;
-            scidelivery_b= null;
+            approved_b = null;
+            approved_e = null;
+            scidelivery_b = null;
             scidelivery_e = null;
-            
 
-            if (dateEstBookingDate.Value1 != null) booking_b = this.dateEstBookingDate.Text1;
-            if (dateEstBookingDate.Value2 != null) { booking_e = this.dateEstBookingDate.Text2; }
-            if (dateSewingInlineDate.Value1 != null) sewinline_b = this.dateSewingInlineDate.Text1;
-            if (dateSewingInlineDate.Value2 != null) { sewinline_e = this.dateSewingInlineDate.Text2; }
-            if (dateEstArrivedDate.Value1 != null) arrived_b = this.dateEstArrivedDate.Text1;
-            if (dateEstArrivedDate.Value2 != null) { arrived_e = this.dateEstArrivedDate.Text2; }
-            if (dateApproveDate.Value1 != null) approved_b = this.dateApproveDate.Text1;
-            if (dateApproveDate.Value2 != null) { approved_e = this.dateApproveDate.Text2; }
-            if (dateSCIDelivery.Value1 != null) scidelivery_b = this.dateSCIDelivery.Text1;
-            if (dateSCIDelivery.Value2 != null) { scidelivery_e = this.dateSCIDelivery.Text2; }
+            if (this.dateEstBookingDate.Value1 != null)
+            {
+                booking_b = this.dateEstBookingDate.Text1;
+            }
 
-            
+            if (this.dateEstBookingDate.Value2 != null)
+            {
+                booking_e = this.dateEstBookingDate.Text2;
+            }
+
+            if (this.dateSewingInlineDate.Value1 != null)
+            {
+                sewinline_b = this.dateSewingInlineDate.Text1;
+            }
+
+            if (this.dateSewingInlineDate.Value2 != null)
+            {
+                sewinline_e = this.dateSewingInlineDate.Text2;
+            }
+
+            if (this.dateEstArrivedDate.Value1 != null)
+            {
+                arrived_b = this.dateEstArrivedDate.Text1;
+            }
+
+            if (this.dateEstArrivedDate.Value2 != null)
+            {
+                arrived_e = this.dateEstArrivedDate.Text2;
+            }
+
+            if (this.dateApproveDate.Value1 != null)
+            {
+                approved_b = this.dateApproveDate.Text1;
+            }
+
+            if (this.dateApproveDate.Value2 != null)
+            {
+                approved_e = this.dateApproveDate.Text2;
+            }
+
+            if (this.dateSCIDelivery.Value1 != null)
+            {
+                scidelivery_b = this.dateSCIDelivery.Text1;
+            }
+
+            if (this.dateSCIDelivery.Value2 != null)
+            {
+                scidelivery_e = this.dateSCIDelivery.Text2;
+            }
 
             if ((MyUtility.Check.Empty(booking_b) && MyUtility.Check.Empty(booking_e)) &&
-                (MyUtility.Check.Empty(sewinline_b) && MyUtility.Check.Empty(sewinline_e ))  &&
+                (MyUtility.Check.Empty(sewinline_b) && MyUtility.Check.Empty(sewinline_e)) &&
                 (MyUtility.Check.Empty(arrived_b) && MyUtility.Check.Empty(arrived_e)) &&
                 (MyUtility.Check.Empty(approved_b) && MyUtility.Check.Empty(approved_e)) &&
                 (MyUtility.Check.Empty(scidelivery_b) && MyUtility.Check.Empty(scidelivery_e)) &&
@@ -72,7 +105,7 @@ namespace Sci.Production.Subcon
             {
                 MyUtility.Msg.WarningBox(@"< Booking Date > or < Sci Delivery > or < Arrived Date > or < Sewing Inline >  
                                                 or < Approve Date > or  < SP# > or  < Brand > can't be empty!!");
-                txtSPNoStart.Focus();
+                this.txtSPNoStart.Focus();
                 return;
             }
             else
@@ -80,10 +113,12 @@ namespace Sci.Production.Subcon
                 #region 組sql語法
                 string strSQLCmd = null;
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+
                 // 建立可以符合回傳的Cursor - Carton
-                if (dr_localPO["category"].ToString().TrimEnd().ToUpper() == "CARTON")
+                if (this.dr_localPO["category"].ToString().TrimEnd().ToUpper() == "CARTON")
                 {
-                    strSQLCmd = string.Format(@"
+                    strSQLCmd = string.Format(
+                        @"
 select distinct iif(sum(b.CTNQty) -isnull(lp.qty,0)<=0,0,1) as Selected
        , c.POID 
        , b.OrderID 
@@ -136,25 +171,75 @@ where a.ApvToPurchase = 1
       and c.Junk = 0
       and factory.IsProduceFty = 1
       and c.PulloutComplete = 0
-", Env.User.Factory
-                     , Env.User.Keyword
-                     , dr_localPO["category"]
-                     ,dr_localPO["localsuppid"]
-                     );
+", Env.User.Factory,
+                        Env.User.Keyword,
+                        this.dr_localPO["category"],
+                        this.dr_localPO["localsuppid"]);
 
-                    if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
-                    if (!MyUtility.Check.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }
-                    if (!MyUtility.Check.Empty(factory)) { strSQLCmd += $" and a.FactoryID = '{factory}'"; }
-                    if (!MyUtility.Check.Empty(sewinline_b)) { strSQLCmd += string.Format(" and c.sewinline >= '{0}' ", sewinline_b); }
-                    if (!MyUtility.Check.Empty(sewinline_e)) { strSQLCmd += string.Format(" and c.sewinline <= '{0}' ", sewinline_e); }
-                    if (!MyUtility.Check.Empty(scidelivery_b)) { strSQLCmd += string.Format(" and c.scidelivery >= '{0}' ", scidelivery_b); }
-                    if (!MyUtility.Check.Empty(scidelivery_e)) { strSQLCmd += string.Format(" and c.scidelivery <= '{0}' ", scidelivery_e); }
-                    if (!MyUtility.Check.Empty(booking_b)) { strSQLCmd += string.Format(" and a.EstCTNBooking >= '{0}' ", booking_b); }
-                    if (!MyUtility.Check.Empty(booking_e)) { strSQLCmd += string.Format(" and a.EstCTNBooking <= '{0}' ", booking_e); }
-                    if (!MyUtility.Check.Empty(arrived_b)) { strSQLCmd += string.Format(" and a.EstCTNArrive >= '{0}' ", arrived_b); }
-                    if (!MyUtility.Check.Empty(arrived_e)) { strSQLCmd += string.Format(" and a.EstCTNArrive <= '{0}' ", arrived_e); }
-                    if (!MyUtility.Check.Empty(approved_b)) { strSQLCmd += string.Format(" and a.ApvToPurchaseDate >= '{0}' ", approved_b); }
-                    if (!MyUtility.Check.Empty(approved_e)) { strSQLCmd += string.Format(" and a.ApvToPurchaseDate <= '{0}' ", approved_e); }
+                    if (!MyUtility.Check.Empty(sp_b))
+                    {
+                        strSQLCmd += " and c.id between @sp1 and @sp2";
+                    }
+
+                    if (!MyUtility.Check.Empty(brandid))
+                    {
+                        strSQLCmd += " and c.brandid = @brandid";
+                    }
+
+                    if (!MyUtility.Check.Empty(factory))
+                    {
+                        strSQLCmd += $" and a.FactoryID = '{factory}'";
+                    }
+
+                    if (!MyUtility.Check.Empty(sewinline_b))
+                    {
+                        strSQLCmd += string.Format(" and c.sewinline >= '{0}' ", sewinline_b);
+                    }
+
+                    if (!MyUtility.Check.Empty(sewinline_e))
+                    {
+                        strSQLCmd += string.Format(" and c.sewinline <= '{0}' ", sewinline_e);
+                    }
+
+                    if (!MyUtility.Check.Empty(scidelivery_b))
+                    {
+                        strSQLCmd += string.Format(" and c.scidelivery >= '{0}' ", scidelivery_b);
+                    }
+
+                    if (!MyUtility.Check.Empty(scidelivery_e))
+                    {
+                        strSQLCmd += string.Format(" and c.scidelivery <= '{0}' ", scidelivery_e);
+                    }
+
+                    if (!MyUtility.Check.Empty(booking_b))
+                    {
+                        strSQLCmd += string.Format(" and a.EstCTNBooking >= '{0}' ", booking_b);
+                    }
+
+                    if (!MyUtility.Check.Empty(booking_e))
+                    {
+                        strSQLCmd += string.Format(" and a.EstCTNBooking <= '{0}' ", booking_e);
+                    }
+
+                    if (!MyUtility.Check.Empty(arrived_b))
+                    {
+                        strSQLCmd += string.Format(" and a.EstCTNArrive >= '{0}' ", arrived_b);
+                    }
+
+                    if (!MyUtility.Check.Empty(arrived_e))
+                    {
+                        strSQLCmd += string.Format(" and a.EstCTNArrive <= '{0}' ", arrived_e);
+                    }
+
+                    if (!MyUtility.Check.Empty(approved_b))
+                    {
+                        strSQLCmd += string.Format(" and a.ApvToPurchaseDate >= '{0}' ", approved_b);
+                    }
+
+                    if (!MyUtility.Check.Empty(approved_e))
+                    {
+                        strSQLCmd += string.Format(" and a.ApvToPurchaseDate <= '{0}' ", approved_e);
+                    }
 
                     strSQLCmd += string.Format(@" 
 group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID,c.FactoryID ,c.SewInLine,c.SciDelivery,y.order_amt,y.order_qty,y.POID,br.BuyerID,lp.qty
@@ -173,18 +258,22 @@ group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTN
                     sp3.ParameterName = "@brandid";
                     sp3.Value = brandid;
 
-                    
                     cmds.Add(sp1);
                     cmds.Add(sp2);
                     cmds.Add(sp3);
-                    
+
                     #endregion
                 }
                 else
                 {
                     string wf = string.Empty;
-                    if (!MyUtility.Check.Empty(factory)) { wf = $" and c.FactoryID = '{factory}'"; }
-                    strSQLCmd = string.Format(@"
+                    if (!MyUtility.Check.Empty(factory))
+                    {
+                        wf = $" and c.FactoryID = '{factory}'";
+                    }
+
+                    strSQLCmd = string.Format(
+                        @"
 select distinct 1 as Selected
        , c.POID 
        , a.OrderID 
@@ -248,25 +337,64 @@ where a.status = 'Approved'
       				  		and OrderID = a.OrderID 
       				  		and Refno = b.RefNo 
       				  		and ThreadColorID = b.threadcolorid
-                            and ID !='{4}')", Env.User.Factory
-                     , Env.User.Keyword
-                     , dr_localPO["category"]
-                     , dr_localPO["localsuppid"]
-                     , dr_localPO["ID"]
-                     , wf);
+                            and ID !='{4}')", Env.User.Factory,
+                        Env.User.Keyword,
+                        this.dr_localPO["category"],
+                        this.dr_localPO["localsuppid"],
+                        this.dr_localPO["ID"],
+                        wf);
 
-                    if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
-                    if (!MyUtility.Check.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }
-                    if (!MyUtility.Check.Empty(sewinline_b)) { strSQLCmd += string.Format(" and c.sewinline >= '{0}' ", sewinline_b); }
-                    if (!MyUtility.Check.Empty(sewinline_e)) { strSQLCmd += string.Format(" and c.sewinline <= '{0}' ", sewinline_e); }
-                    if (!MyUtility.Check.Empty(scidelivery_b)) { strSQLCmd += string.Format(" and c.scidelivery >= '{0}' ", scidelivery_b); }
-                    if (!MyUtility.Check.Empty(scidelivery_e)) { strSQLCmd += string.Format(" and c.scidelivery <= '{0}' ", scidelivery_e); }
-                    if (!MyUtility.Check.Empty(booking_b)) { strSQLCmd += string.Format(" and a.EstBookDate >= '{0}' ", booking_b); }
-                    if (!MyUtility.Check.Empty(booking_e)) { strSQLCmd += string.Format(" and a.EstBookDate <= '{0}' ", booking_e); }
-                    if (!MyUtility.Check.Empty(arrived_b)) { strSQLCmd += string.Format(" and a.EstArriveDate >= '{0}' ", arrived_b); }
-                    if (!MyUtility.Check.Empty(arrived_e)) { strSQLCmd += string.Format(" and a.EstArriveDate <= '{0}' ", arrived_e); }
-                    //strSQLCmd += " group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstArriveDate,a.ID ";
+                    if (!MyUtility.Check.Empty(sp_b))
+                    {
+                        strSQLCmd += " and c.id between @sp1 and @sp2";
+                    }
 
+                    if (!MyUtility.Check.Empty(brandid))
+                    {
+                        strSQLCmd += " and c.brandid = @brandid";
+                    }
+
+                    if (!MyUtility.Check.Empty(sewinline_b))
+                    {
+                        strSQLCmd += string.Format(" and c.sewinline >= '{0}' ", sewinline_b);
+                    }
+
+                    if (!MyUtility.Check.Empty(sewinline_e))
+                    {
+                        strSQLCmd += string.Format(" and c.sewinline <= '{0}' ", sewinline_e);
+                    }
+
+                    if (!MyUtility.Check.Empty(scidelivery_b))
+                    {
+                        strSQLCmd += string.Format(" and c.scidelivery >= '{0}' ", scidelivery_b);
+                    }
+
+                    if (!MyUtility.Check.Empty(scidelivery_e))
+                    {
+                        strSQLCmd += string.Format(" and c.scidelivery <= '{0}' ", scidelivery_e);
+                    }
+
+                    if (!MyUtility.Check.Empty(booking_b))
+                    {
+                        strSQLCmd += string.Format(" and a.EstBookDate >= '{0}' ", booking_b);
+                    }
+
+                    if (!MyUtility.Check.Empty(booking_e))
+                    {
+                        strSQLCmd += string.Format(" and a.EstBookDate <= '{0}' ", booking_e);
+                    }
+
+                    if (!MyUtility.Check.Empty(arrived_b))
+                    {
+                        strSQLCmd += string.Format(" and a.EstArriveDate >= '{0}' ", arrived_b);
+                    }
+
+                    if (!MyUtility.Check.Empty(arrived_e))
+                    {
+                        strSQLCmd += string.Format(" and a.EstArriveDate <= '{0}' ", arrived_e);
+                    }
+
+                    // strSQLCmd += " group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstArriveDate,a.ID ";
                     #region 準備sql參數資料
                     System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
                     sp1.ParameterName = "@sp1";
@@ -280,37 +408,43 @@ where a.status = 'Approved'
                     sp3.ParameterName = "@brandid";
                     sp3.Value = brandid;
 
-
                     cmds.Add(sp1);
                     cmds.Add(sp2);
                     cmds.Add(sp3);
-                    #endregion  
+                    #endregion
                 }
                 #endregion
 
                 Ict.DualResult result;
-                if (result = DBProxy.Current.Select(null, strSQLCmd,cmds, out dtlocal))
+                if (result = DBProxy.Current.Select(null, strSQLCmd, cmds, out this.dtlocal))
                 {
-                    listControlBindingSource1.DataSource = dtlocal;
+                    this.listControlBindingSource1.DataSource = this.dtlocal;
                 }
-                else 
-                    { ShowErr(strSQLCmd, result); }
+                else
+                {
+                    this.ShowErr(strSQLCmd, result);
+                }
 
                 #region 加工remark欄位
-                string category,Finished;
+                string category, Finished;
                 decimal price;
-                foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
+                foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
                 {
                     category = MyUtility.GetValue.Lookup(string.Format(@"select category from orders WITH (NOLOCK) where id = '{0}'", dr["orderid"]), null);
                     if (category == "B")
                     {
-                        sql = string.Format(@"select price from order_tmscost WITH (NOLOCK) where id='{0}' and artworktypeid='{1}'"
-                                            , dr["orderid"], dr_localPO["category"].ToString().TrimEnd().ToUpper());
+                        sql = string.Format(
+                            @"select price from order_tmscost WITH (NOLOCK) where id='{0}' and artworktypeid='{1}'",
+                            dr["orderid"], this.dr_localPO["category"].ToString().TrimEnd().ToUpper());
                         tmp = MyUtility.GetValue.Lookup(sql);
                         if (MyUtility.Check.Empty(tmp))
+                        {
                             price = 0;
+                        }
                         else
+                        {
                             price = decimal.Parse(tmp);
+                        }
 
                         if (MyUtility.Check.Empty(price) || price == 0)
                         {
@@ -318,6 +452,7 @@ where a.status = 'Approved'
                             dr["selected"] = 0;
                         }
                     }
+
                     Finished = MyUtility.GetValue.Lookup(string.Format(@"select Finished from orders WITH (NOLOCK) where id = '{0}'", dr["orderid"]), null);
                     if (Finished == "True")
                     {
@@ -325,9 +460,10 @@ where a.status = 'Approved'
                         dr["selected"] = 0;
                     }
 
-                    if (dr_localPO["category"].ToString().EqualString("SP_THREAD")
-                        || dr_localPO["category"].ToString().EqualString("EMB_THREAD")
-                        || dr_localPO["category"].ToString().EqualString("CARTON")) {
+                    if (this.dr_localPO["category"].ToString().EqualString("SP_THREAD")
+                        || this.dr_localPO["category"].ToString().EqualString("EMB_THREAD")
+                        || this.dr_localPO["category"].ToString().EqualString("CARTON"))
+                        {
                         #region CARTON
                         var strCheckOrderID = dr["OrderID"];
                         var strCheckRemark = "  This orders already PulloutComplete, can not be transfered to local purchase!!";
@@ -348,8 +484,8 @@ AND (O.Qty-pd.ShipQty-inv.DiffQty = 0)";
                         #endregion
 
                         #region SP_THREAD, EMB_THREAD
-                        if (dr_localPO["category"].ToString().EqualString("SP_THREAD")
-                            || dr_localPO["category"].ToString().EqualString("EMB_THREAD"))
+                        if (this.dr_localPO["category"].ToString().EqualString("SP_THREAD")
+                            || this.dr_localPO["category"].ToString().EqualString("EMB_THREAD"))
                         {
                             strCheckOrderID = dr["POID"];
                             strCheckRemark = "  This POID already PulloutComplete, can not be transfered to local purchase!!";
@@ -384,7 +520,7 @@ where Qty - ShipQty - DiffQty = 0";
                         }
                     }
                 }
-                #endregion  
+                #endregion
             }
 
             this.showQtymorezero();
@@ -414,7 +550,7 @@ where Qty - ShipQty - DiffQty = 0";
 
             qty.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == MouseButtons.Left && dr_localPO["category"].ToString().TrimEnd().ToUpper() == "CARTON")
+                if (e.Button == MouseButtons.Left && this.dr_localPO["category"].ToString().TrimEnd().ToUpper() == "CARTON")
                 {
                     DataRow dr = this.gridImport.GetDataRow<DataRow>(e.RowIndex);
                     Sci.Production.Subcon.P30_Qty callNextForm = new Sci.Production.Subcon.P30_Qty(dr);
@@ -422,27 +558,27 @@ where Qty - ShipQty - DiffQty = 0";
                 }
             };
 
-            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridImport.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridImport)
-            .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: chk).Get(out col_chk)   //0
-            .Text("poid", header: "Master SP#", iseditingreadonly: true) //0
-            .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))//1
-            .Text("styleid", header: "Style", iseditingreadonly: true, width: Widths.AnsiChars(13))//2
-            .Text("Seasonid", header: "Season", iseditingreadonly: true, width: Widths.AnsiChars(13))//3
-            .Text("refno", header: "Refno", iseditingreadonly: true)      //4
-            .Text("description", header: "Description", iseditingreadonly: true)//5
-            .Text("threadcolorid", header: "Color Shade", iseditingreadonly: true)//6
-            .Numeric("qty", header: "Qty", iseditingreadonly: true, settings: qty)//7
-            .Text("Unitid", header: "Unit", iseditingreadonly: true)//8
-            .Numeric("Price", header: "Price", iseditable: true, decimal_places: 4, integer_places: 4)  //9
-            .Numeric("amount", header: "Amount", iseditable: true, decimal_places: 4, integer_places: 4)  //10
-            .Text("remark", header: "Remark", iseditingreadonly: true)//11
-            .Date("etd", header: "ETD", iseditingreadonly: true)//12
-            .Text("requestid", header: "Request ID", iseditingreadonly: true)//13
-            .Text("BuyerID", header: "Buyer", iseditingreadonly: true)//14
+            this.gridImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridImport)
+            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: chk).Get(out this.col_chk) // 0
+            .Text("poid", header: "Master SP#", iseditingreadonly: true) // 0
+            .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) // 1
+            .Text("styleid", header: "Style", iseditingreadonly: true, width: Widths.AnsiChars(13)) // 2
+            .Text("Seasonid", header: "Season", iseditingreadonly: true, width: Widths.AnsiChars(13)) // 3
+            .Text("refno", header: "Refno", iseditingreadonly: true) // 4
+            .Text("description", header: "Description", iseditingreadonly: true) // 5
+            .Text("threadcolorid", header: "Color Shade", iseditingreadonly: true) // 6
+            .Numeric("qty", header: "Qty", iseditingreadonly: true, settings: qty) // 7
+            .Text("Unitid", header: "Unit", iseditingreadonly: true) // 8
+            .Numeric("Price", header: "Price", iseditable: true, decimal_places: 4, integer_places: 4) // 9
+            .Numeric("amount", header: "Amount", iseditable: true, decimal_places: 4, integer_places: 4) // 10
+            .Text("remark", header: "Remark", iseditingreadonly: true) // 11
+            .Date("etd", header: "ETD", iseditingreadonly: true) // 12
+            .Text("requestid", header: "Request ID", iseditingreadonly: true) // 13
+            .Text("BuyerID", header: "Buyer", iseditingreadonly: true) // 14
             ;
-            Color backDefaultColor = gridImport.DefaultCellStyle.BackColor;
+            Color backDefaultColor = this.gridImport.DefaultCellStyle.BackColor;
             this.gridImport.RowPrePaint += (s, e) =>
             {
                 if (e.RowIndex < 0)
@@ -479,37 +615,39 @@ where Qty - ShipQty - DiffQty = 0";
         // import
         private void btnImport_Click(object sender, EventArgs e)
         {
-            listControlBindingSource1.EndEdit();
-            gridImport.ValidateControl();
-            
-            DataTable dtImport = (DataTable)listControlBindingSource1.DataSource;
-            
-            if (MyUtility.Check.Empty(dtImport) || dtImport.Rows.Count == 0) return;
-            
+            this.listControlBindingSource1.EndEdit();
+            this.gridImport.ValidateControl();
+
+            DataTable dtImport = (DataTable)this.listControlBindingSource1.DataSource;
+
+            if (MyUtility.Check.Empty(dtImport) || dtImport.Rows.Count == 0)
+            {
+                return;
+            }
+
             DataRow[] dr2 = dtImport.Select("Selected = 1 and remark=''");
             if (dr2.Length > 0)
             {
-
                 foreach (DataRow tmp in dr2)
                 {
-
                         DataRow[] findrow =
-                        dt_localPODetail.Select(string.Format(@"orderid = '{0}' and refno = '{1}' and threadcolorid = '{2}' and requestID = '{3}'"
-                                                                                , tmp["orderid"].ToString()
-                                                                                , tmp["refno"].ToString()
-                                                                                , tmp["threadcolorid"].ToString()
-                                                                                , tmp["RequestID"].ToString()));
-                    if (findrow.Length > 0)
+                        this.dt_localPODetail.Select(string.Format(
+                            @"orderid = '{0}' and refno = '{1}' and threadcolorid = '{2}' and requestID = '{3}'",
+                            tmp["orderid"].ToString(),
+                            tmp["refno"].ToString(),
+                            tmp["threadcolorid"].ToString(),
+                            tmp["RequestID"].ToString()));
+                        if (findrow.Length > 0)
                     {
                         findrow[0]["Price"] = tmp["Price"];
                         findrow[0]["qty"] = tmp["qty"];
                     }
                     else
                     {
-                        tmp["id"] = dr_localPO["id"];
+                        tmp["id"] = this.dr_localPO["id"];
                         tmp.AcceptChanges();
                         tmp.SetAdded();
-                        dt_localPODetail.ImportRow(tmp);
+                        this.dt_localPODetail.ImportRow(tmp);
                     }
                 }
 
@@ -581,79 +719,80 @@ group by POID, OrderID, StyleID, SciDelivery, SeasonID, Refno
                 DataTable CartonCardboardPad;
                 DualResult result = MyUtility.Tool.ProcessWithDatatable(tmpdt, string.Empty, sqlcmd, out CartonCardboardPad);
 
-                //複製DataTable結構，若已複製過則不執行，否則會清空資料
+                // 複製DataTable結構，若已複製過則不執行，否則會清空資料
                 if (P30.dtPadBoardInfo.Columns.Count == 0)
+                {
                     P30.dtPadBoardInfo = CartonCardboardPad.Clone();
+                }
 
                 List<string> Refno = new List<string>();
                 foreach (DataRow tmp in CartonCardboardPad.Rows)
                 {
-
-                    //判斷紙箱、天地板供應商是否相同：相同寫回表身、不同則h存進P30.dtPadBoardInfo後續處理
-                    if (dr_localPO["localsuppid"].ToString() == tmp["localsuppid"].ToString())
+                    // 判斷紙箱、天地板供應商是否相同：相同寫回表身、不同則h存進P30.dtPadBoardInfo後續處理
+                    if (this.dr_localPO["localsuppid"].ToString() == tmp["localsuppid"].ToString())
                     {
-                        //判斷 dtPadBoardInfo 是否已經存在相同的 『OrderID, Refno, ThreadColorID, RequestID』
+                        // 判斷 dtPadBoardInfo 是否已經存在相同的 『OrderID, Refno, ThreadColorID, RequestID』
                         DataRow[] findrow =
-                        dt_localPODetail.Select(string.Format(@"orderid = '{0}' and refno = '{1}' and threadcolorid = '{2}' and requestID = '{3}'"
-                                                                                , tmp["orderid"].ToString()
-                                                                                , tmp["refno"].ToString()
-                                                                                , tmp["threadcolorid"].ToString()
-                                                                                , tmp["RequestID"].ToString()));
+                        this.dt_localPODetail.Select(string.Format(
+                            @"orderid = '{0}' and refno = '{1}' and threadcolorid = '{2}' and requestID = '{3}'",
+                            tmp["orderid"].ToString(),
+                            tmp["refno"].ToString(),
+                            tmp["threadcolorid"].ToString(),
+                            tmp["RequestID"].ToString()));
 
-                        if (findrow.Length > 0) //已存在更新 Price 與 Qty
+                        if (findrow.Length > 0) // 已存在更新 Price 與 Qty
                         {
                             findrow[0]["Price"] = tmp["Price"];
                             findrow[0]["qty"] = tmp["qty"];
                         }
-                        else//不存在則新增
+                        else// 不存在則新增
                         {
-                            tmp["id"] = dr_localPO["id"];
+                            tmp["id"] = this.dr_localPO["id"];
                             tmp.AcceptChanges();
                             tmp.SetAdded();
-                            dt_localPODetail.ImportRow(tmp);
+                            this.dt_localPODetail.ImportRow(tmp);
                         }
                     }
-                    else//物料供應商與表頭不同，將資訊整理寫入 dtPadBoardInfo
+                    else// 物料供應商與表頭不同，將資訊整理寫入 dtPadBoardInfo
                     {
-                        DataRow[] findrow = P30.dtPadBoardInfo.Select(string.Format(@"orderid = '{0}' and refno = '{1}' and threadcolorid = '{2}' and requestID = '{3}'"
-                                                           , tmp["orderid"].ToString()
-                                                           , tmp["refno"].ToString()
-                                                           , tmp["threadcolorid"].ToString()
-                                                           , tmp["RequestID"].ToString()));
+                        DataRow[] findrow = P30.dtPadBoardInfo.Select(string.Format(
+                            @"orderid = '{0}' and refno = '{1}' and threadcolorid = '{2}' and requestID = '{3}'",
+                            tmp["orderid"].ToString(),
+                            tmp["refno"].ToString(),
+                            tmp["threadcolorid"].ToString(),
+                            tmp["RequestID"].ToString()));
 
-                        if (findrow.Length > 0) //已存在更新 Price 與 Qty
+                        if (findrow.Length > 0) // 已存在更新 Price 與 Qty
                         {
                             findrow[0]["Price"] = tmp["Price"];
                             findrow[0]["qty"] = tmp["qty"];
                         }
-                        else//不存在則新增
+                        else// 不存在則新增
                         {
-                            tmp["id"] = dr_localPO["id"];
+                            tmp["id"] = this.dr_localPO["id"];
                             tmp.AcceptChanges();
                             tmp.SetAdded();
                             P30.dtPadBoardInfo.ImportRow(tmp);
                         }
                     }
                 }
-
             }
             else
             {
                 MyUtility.Msg.WarningBox("Please select rows with empty remark first!", "Warnning");
                 return;
             }
+
             this.Close();
         }
 
         // To Excel
         private void btnToExcel_Click(object sender, EventArgs e)
         {
-
-            DataTable dt = ((DataTable)listControlBindingSource1.DataSource).Copy();
-            dt.Columns.RemoveAt(dt.Columns.Count-1);
+            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Copy();
+            dt.Columns.RemoveAt(dt.Columns.Count - 1);
             Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
             sdExcel.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_P30_Import"));
-
         }
 
         private void ChkQty_CheckedChanged(object sender, EventArgs e)
@@ -671,7 +810,7 @@ group by POID, OrderID, StyleID, SciDelivery, SeasonID, Refno
                 }
                 else
                 {
-                    ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = "";
+                    ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = string.Empty;
                 }
             }
         }

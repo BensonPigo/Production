@@ -1,42 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-
+﻿using System.Data;
 using Ict;
-using Ict.Win;
+
 namespace Sci.Win
 {
     public partial class SUBBASE : Sci.Win.Subs.Base
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SUBBASE"/> class.
+        /// </summary>
         public SUBBASE()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            Helper.Controls.Grid.Generator(grid)
-                .CheckBox().Get(out col_chk)
+            this.Helper.Controls.Grid.Generator(this.grid)
+                .CheckBox().Get(out this.col_chk)
                 .Text("id", header: "id")
                 .Text("name", header: "name")
                 ;
 
-            chk_yes.Click += (s, e) =>
+            this.chk_yes.Click += (s, e) =>
             {
-                grid.SetCheckeds(col_chk);
+                this.grid.SetCheckeds(this.col_chk);
             };
-            chk_no.Click += (s, e) =>
+            this.chk_no.Click += (s, e) =>
             {
-                grid.SetUncheckeds(col_chk);
+                this.grid.SetUncheckeds(this.col_chk);
             };
-            get.Click += (s, e) =>
+            this.get.Click += (s, e) =>
             {
-                var datas = grid.GetCheckeds(col_chk);
-                ShowInfo(datas.Count.ToString());
+                var datas = this.grid.GetCheckeds(this.col_chk);
+                this.ShowInfo(datas.Count.ToString());
             };
         }
+
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -45,9 +42,12 @@ namespace Sci.Win
             DataTable datas;
             if (!(result = Sci.Data.DBProxy.Current.Select(null, "SELECT * FROM accno", out datas)))
             {
-                ShowErr(result);
+                this.ShowErr(result);
             }
-            else gridbs.DataSource = datas;
+            else
+            {
+                this.gridbs.DataSource = datas;
+            }
         }
 
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;

@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 using Sci.Production.PublicPrg;
 
@@ -21,29 +15,31 @@ namespace Sci.Production.Subcon
         private bool boolDeptApv;
         private bool canConfrim;
         private bool canCheck;
+
         public P05_BatchApprove(Action reload)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.EditMode = true;
             this.delegateAct = reload;
-            // 檢查是否擁有Confirm or Check權限
-            canConfrim = Prgs.GetAuthority(Sci.Env.User.UserID, "P05. Sub-con Requisition", "CanConfirm");
-            canCheck = Prgs.GetAuthority(Sci.Env.User.UserID, "P05. Sub-con Requisition", "CanCheck");
 
-            boolDeptApv = true;
-            Authority();
+            // 檢查是否擁有Confirm or Check權限
+            this.canConfrim = Prgs.GetAuthority(Sci.Env.User.UserID, "P05. Sub-con Requisition", "CanConfirm");
+            this.canCheck = Prgs.GetAuthority(Sci.Env.User.UserID, "P05. Sub-con Requisition", "CanCheck");
+
+            this.boolDeptApv = true;
+            this.Authority();
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Query();
+            this.Query();
 
-            this.gridArtworkReq.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridArtworkReq.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridArtworkReq)
-                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
-                 .Text("ID", header: "Req#", width: Widths.AnsiChars(15), iseditingreadonly :true)
+            this.gridArtworkReq.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridArtworkReq.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridArtworkReq)
+                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+                 .Text("ID", header: "Req#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("FactoryId", header: "Factory", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Date("ReqDate", header: "Req Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("ArtworkTypeID", header: "Artwork Type", width: Widths.AnsiChars(30), iseditingreadonly: true)
@@ -58,9 +54,9 @@ namespace Sci.Production.Subcon
                 this.gridArtworkReq.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
 
-            this.gridArtworkReqDetail.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridArtworkReqDetail.DataSource = listControlBindingSource2;
-            Helper.Controls.Grid.Generator(this.gridArtworkReqDetail)                 
+            this.gridArtworkReqDetail.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridArtworkReqDetail.DataSource = this.listControlBindingSource2;
+            this.Helper.Controls.Grid.Generator(this.gridArtworkReqDetail)
                  .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("StyleID", header: "Style", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Numeric("ReqQty", header: "Req Qty", width: Widths.AnsiChars(8), integer_places: 6, decimal_places: 0, iseditingreadonly: true)
@@ -77,20 +73,20 @@ namespace Sci.Production.Subcon
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            Query();
+            this.Query();
         }
 
         private void Query()
         {
-            listControlBindingSource1.DataSource = null;
-            listControlBindingSource2.DataSource = null;
+            this.listControlBindingSource1.DataSource = null;
+            this.listControlBindingSource2.DataSource = null;
             DataSet ds = null;
             DataRelation relation;
             string sqlCmd = string.Empty;
             string filter = string.Empty;
-            if (boolDeptApv)
+            if (this.boolDeptApv)
             {
-                filter = @" and Status = 'New'";               
+                filter = @" and Status = 'New'";
             }
             else
             {
@@ -129,27 +125,28 @@ where 1=1
 {filter}
                       ";
 
-            if (!SQL.Selects("", sqlCmd, out ds)){
+            if (!SQL.Selects(string.Empty, sqlCmd, out ds))
+            {
                 MyUtility.Msg.WarningBox(sqlCmd, "DB error!!");
                 return;
             }
 
-            relation = new DataRelation("rel1"
-                , new DataColumn[] { ds.Tables[0].Columns["ID"] }
-                , new DataColumn[] { ds.Tables[1].Columns["ID"] }
-           );
+            relation = new DataRelation(
+                "rel1",
+                new DataColumn[] { ds.Tables[0].Columns["ID"] },
+                new DataColumn[] { ds.Tables[1].Columns["ID"] });
 
             ds.Relations.Add(relation);
             ds.Tables[0].TableName = "Master";
             ds.Tables[1].TableName = "Detail";
 
-            listControlBindingSource1.DataSource = ds;
-            listControlBindingSource1.DataMember = "Master";
-            listControlBindingSource2.DataSource = listControlBindingSource1;
-            listControlBindingSource2.DataMember = "rel1";
+            this.listControlBindingSource1.DataSource = ds;
+            this.listControlBindingSource1.DataMember = "Master";
+            this.listControlBindingSource2.DataSource = this.listControlBindingSource1;
+            this.listControlBindingSource2.DataMember = "rel1";
             this.gridArtworkReq.AutoResizeColumns();
             this.gridArtworkReqDetail.AutoResizeColumns();
-            Authority();
+            this.Authority();
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -160,17 +157,21 @@ where 1=1
         private void btnApprove_Click(object sender, EventArgs e)
         {
             this.gridArtworkReq.ValidateControl();
-            DataSet ds = (DataSet)listControlBindingSource1.DataSource;
+            DataSet ds = (DataSet)this.listControlBindingSource1.DataSource;
             DataTable dt = ds.Tables["Master"];
             DataTable dt2 = ds.Tables["Detail"];
             DualResult result;
             string sqlcmd = string.Empty;
             string strStatus;
 
-            if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return; 
+            if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0)
+            {
+                return;
+            }
 
             var query = dt.AsEnumerable().Where(x => x["Selected"].EqualString("1")).Select(x => x.Field<string>("ID"));
-            if (query.Count() == 0) {
+            if (query.Count() == 0)
+            {
                 MyUtility.Msg.WarningBox("Please select data first.", "Warning");
                 return;
             }
@@ -179,7 +180,7 @@ where 1=1
             foreach (DataRow dr in drSelect)
             {
                 // Status = New
-                if (boolDeptApv)
+                if (this.boolDeptApv)
                 {
                     // 判斷irregular Reason沒寫不能存檔
                     DataTable dtDetail = dt2.AsEnumerable().Where(x => x["ID"].EqualString(dr["id"].ToString())).CopyToDataTable();
@@ -214,6 +215,7 @@ set [Status] = '{strStatus}'
 , editdate=GETDATE()  
 where ID = '{dr["ID"]}' ";
                 }
+
                 // Status = Checked
                 else
                 {
@@ -226,16 +228,15 @@ set [Status] = 'Approved'
 , editdate=GETDATE()  
 where ID = '{dr["ID"]}' ";
                 }
-
             }
-           
 
-            if (!(result = DBProxy.Current.Execute(null, sqlcmd))) {
-                ShowErr(sqlcmd, result);
+            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
+            {
+                this.ShowErr(sqlcmd, result);
                 return;
             }
 
-            Query();
+            this.Query();
             MyUtility.Msg.InfoBox("Successful.");
             this.delegateAct();
         }
@@ -276,14 +277,14 @@ order by aq.ID, aqd.OrderID
                 return;
             }
 
-            MyUtility.Excel.CopyToXls(printData, "", "Subcon_P05_BatchApprove.xltx");
+            MyUtility.Excel.CopyToXls(printData, string.Empty, "Subcon_P05_BatchApprove.xltx");
         }
 
         private void Authority()
         {
-            if ((canConfrim & canCheck) || Env.User.IsAdmin)
+            if ((this.canConfrim & this.canCheck) || Env.User.IsAdmin)
             {
-                if (boolDeptApv)
+                if (this.boolDeptApv)
                 {
                     this.linkLabelDept.Enabled = false;
                     this.linkLabelMg.Enabled = true;
@@ -293,24 +294,23 @@ order by aq.ID, aqd.OrderID
                     this.linkLabelDept.Enabled = true;
                     this.linkLabelMg.Enabled = false;
                 }
-                
             }
             else
             {
-                boolDeptApv = canCheck ? true : false;
+                this.boolDeptApv = this.canCheck ? true : false;
             }
         }
 
         private void LinkLabelDept_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            boolDeptApv = true;
-            Query();
+            this.boolDeptApv = true;
+            this.Query();
         }
 
         private void LinkLabelMg_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            boolDeptApv = false;
-            Query();
+            this.boolDeptApv = false;
+            this.Query();
         }
     }
 }

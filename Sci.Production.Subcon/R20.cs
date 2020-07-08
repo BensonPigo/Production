@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Win;
 using Sci.Data;
-using static Sci.MyUtility;
-using Excel = Microsoft.Office.Interop.Excel;
-using System.Runtime.InteropServices;
 using Sci.Utility.Excel;
 
 namespace Sci.Production.Subcon
@@ -21,11 +15,13 @@ namespace Sci.Production.Subcon
         private string supplier;
         private string SelectedType;
         private DataTable dtPrint;
+
         public R20(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            //下拉選單設定方式：Thread,Thread→一個代表Text、一個代表Value，全部串在一個字串即可
+            this.InitializeComponent();
+
+            // 下拉選單設定方式：Thread,Thread→一個代表Text、一個代表Value，全部串在一個字串即可
             MyUtility.Tool.SetupCombox(this.comboBoxType, 2, 1, "Thread,Thread,Carton,Carton");
             this.comboBoxType.SelectedIndex = 0;
         }
@@ -33,17 +29,18 @@ namespace Sci.Production.Subcon
         protected override bool ValidateInput()
         {
             // 預設一個Type "Thread", 之後可能會有Label,Carton....
-            switch (comboBoxType.Text)
+            switch (this.comboBoxType.Text)
             {
                 case "Thread":
-                    type = @"'SP_THREAD','EMB_THREAD'";
+                    this.type = @"'SP_THREAD','EMB_THREAD'";
                     break;
                 case "Carton":
-                    type = @"'Carton'";
+                    this.type = @"'Carton'";
                     break;
             }
-            SelectedType = comboBoxType.Text;
-            supplier = this.txtlocalSupp.TextBox1.Text;
+
+            this.SelectedType = this.comboBoxType.Text;
+            this.supplier = this.txtlocalSupp.TextBox1.Text;
             return base.ValidateInput();
         }
 
@@ -51,22 +48,22 @@ namespace Sci.Production.Subcon
         {
             #region Filter
             List<string> listSQLFilter = new List<string>();
-            if (!MyUtility.Check.Empty(type))
+            if (!MyUtility.Check.Empty(this.type))
             {
-                listSQLFilter.Add($"and l.Category in ({type})");
+                listSQLFilter.Add($"and l.Category in ({this.type})");
             }
 
-            if (!MyUtility.Check.Empty(supplier))
+            if (!MyUtility.Check.Empty(this.supplier))
             {
-                listSQLFilter.Add($"and l.LocalSuppid='{supplier}'");
+                listSQLFilter.Add($"and l.LocalSuppid='{this.supplier}'");
             }
             #endregion
 
             #region SqlCmd
             string strcmd = string.Empty;
 
-            //根據選擇的Type撈資料
-            switch (SelectedType)
+            // 根據選擇的Type撈資料
+            switch (this.SelectedType)
             {
                 case "Thread":
                     strcmd = $@"
@@ -151,17 +148,18 @@ namespace Sci.Production.Subcon
             }
             #endregion
 
-            DualResult res = DBProxy.Current.Select(string.Empty, strcmd, out dtPrint);
+            DualResult res = DBProxy.Current.Select(string.Empty, strcmd, out this.dtPrint);
             if (!res)
             {
-                ShowErr(res);
+                this.ShowErr(res);
             }
+
             return Result.True;
         }
 
         protected override bool OnToExcel(ReportDefinition report)
         {
-            if (dtPrint.Rows.Count < 1)
+            if (this.dtPrint.Rows.Count < 1)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -169,38 +167,39 @@ namespace Sci.Production.Subcon
 
             this.ShowWaitMessage("Excel Processing...");
 
-            this.SetCount(dtPrint.Rows.Count);
+            this.SetCount(this.dtPrint.Rows.Count);
 
-            //建立範本物件
+            // 建立範本物件
             Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("SubCon_R20.xltx")
             {
-                BoOpenFile = true
+                BoOpenFile = true,
             };
-            //建立範本物件
+
+            // 建立範本物件
             SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(this.dtPrint)
             {
-                ShowHeader = false,   //表頭範本有了所以False
-                BoAutoFitColumn=true  //自動調整欄寬
+                ShowHeader = false,   // 表頭範本有了所以False
+                BoAutoFitColumn = true,  // 自動調整欄寬
             };
 
             Microsoft.Office.Interop.Excel.Application excel = xl.ExcelApp;
-            //刪掉沒被選的Type的Sheet
-            switch (SelectedType)
+
+            // 刪掉沒被選的Type的Sheet
+            switch (this.SelectedType)
             {
                 case "Thread":
-                    
-                    xl.DicDatas.Add("##R20Tread", xdt_All);                   
+
+                    xl.DicDatas.Add("##R20Tread", xdt_All);
                     excel.Worksheets[2].Delete();
-                    
+
                     break;
 
                 case "Carton":
 
-                    xl.DicDatas.Add("##R20Carton", xdt_All);                    
-                    excel.Worksheets[1].Delete();                    
+                    xl.DicDatas.Add("##R20Carton", xdt_All);
+                    excel.Worksheets[1].Delete();
                     break;
             }
-
 
             xl.Save(Sci.Production.Class.MicrosoftFile.GetName("SubCon_R20"));
             this.HideWaitMessage();

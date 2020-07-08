@@ -1,10 +1,7 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -82,6 +79,7 @@ namespace Sci.Production.Packing
         // 驗證輸入條件
         private string _ScanName;
         private string _Barcode;
+
         /// <summary>
         /// ValidateInput
         /// </summary>

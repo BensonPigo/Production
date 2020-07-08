@@ -3,15 +3,12 @@ using Sci.Data;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using System.Data.SqlClient;
 using Ict.Win.UI;
-
 
 namespace Sci.Production.Quality
 {
@@ -22,38 +19,36 @@ namespace Sci.Production.Quality
         bool FirstTime = true;
 
         // (menuitem, args= 參數)
-        public P30(ToolStripMenuItem menuitem,String history) : base(menuitem) 
+        public P30(ToolStripMenuItem menuitem, string history) : base(menuitem)
         {
-            InitializeComponent();
-            thisSize = this.Size;
-            FirstTime = false;
-           
+            this.InitializeComponent();
+            this.thisSize = this.Size;
+            this.FirstTime = false;
 
-            //設定init()
+            // 設定init()
             string MDivisionID = Sci.Env.User.Keyword;
             if (history == "1".ToString())
             {
                 this.DefaultFilter = string.Format("MDivisionID= '{0}' and MDClose is null and orders.IsForecast<>1", MDivisionID);
                 this.Text = "P30 .MD Master List";
-               
             }
             else if (history == "2".ToString())
             {
                 this.DefaultFilter = string.Format("MDivisionID= '{0}' and MDClose is not null", MDivisionID);
                 this.Text = "P31 .MD Master List(History)";
                 this.IsSupportEdit = false;
-            }                    
+            }
         }
-        
+
         protected override void OnEditModeChanged()
         {
-            if (FirstTime)
+            if (this.FirstTime)
             {
                 return;
             }
-            base.OnEditModeChanged();
-            button_enable();
 
+            base.OnEditModeChanged();
+            this.button_enable();
         }
 
         public void colorSelect_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -66,17 +61,23 @@ namespace Sci.Production.Quality
             this.colorSelect_CellMouseClick(e.Button, e.RowIndex);
         }
 
-        public void colorSelect_CellMouseClick(System.Windows.Forms.MouseButtons eButton ,int eRowIndex){
+        public void colorSelect_CellMouseClick(System.Windows.Forms.MouseButtons eButton, int eRowIndex)
+        {
             if (eButton == System.Windows.Forms.MouseButtons.Right)
             {
-                
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(eRowIndex);
-                if (null == dr) { return; }
-                if ((dr.ItemArray[1].ToString()).ToUpper() == "CUTPARTS" || (dr.ItemArray[1].ToString()).ToUpper() == "GARMENT")
+                if (dr == null)
                 {
                     return;
                 }
-                string sqlcmd = string.Format(@" 
+
+                if (dr.ItemArray[1].ToString().ToUpper() == "CUTPARTS" || dr.ItemArray[1].ToString().ToUpper() == "GARMENT")
+                {
+                    return;
+                }
+
+                string sqlcmd = string.Format(
+                    @" 
 select ColorID
 from (
 	select distinct ColorID = dbo.GetColorMultipleID(a.BrandId, ColorID)
@@ -90,11 +91,15 @@ from (
 		  and a.ColorID != ''
 	Group by ColorID, a.BrandID
 )x
-order by RowNum", txtSP.Text.ToString());
+order by RowNum", this.txtSP.Text.ToString());
                 SelectItem item = new SelectItem(sqlcmd, "30", dr["ColorID"].ToString());
                 DialogResult result = item.ShowDialog();
-                if (result == DialogResult.Cancel) { return; }
-                dr["Colorid"] = item.GetSelectedString(); 
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                dr["Colorid"] = item.GetSelectedString();
             }
         }
 
@@ -115,23 +120,37 @@ order by RowNum", txtSP.Text.ToString());
             {
                 return;
             }
-            
+
             if (eButton == System.Windows.Forms.MouseButtons.Right)
             {
-                if (!this.EditMode) return;
-               // DataRow dr1 = this.detailgrid.GetDataRow<DataRow>(eRowIndex);
-                if (null == dr1) { return; }
-                if ((dr1.ItemArray[1].ToString()).ToUpper() == "CUTPARTS" || (dr1.ItemArray[1].ToString()).ToUpper() == "GARMENT")
+                if (!this.EditMode)
                 {
                     return;
                 }
-                string sqlcmd1 = string.Format(@"select distinct refno from PO_Supp_Detail a WITH (NOLOCK) ,Orders b WITH (NOLOCK)  where a.id=b.POID and a.fabrictype='A'
+
+                // DataRow dr1 = this.detailgrid.GetDataRow<DataRow>(eRowIndex);
+                if (dr1 == null)
+                {
+                    return;
+                }
+
+                if (dr1.ItemArray[1].ToString().ToUpper() == "CUTPARTS" || dr1.ItemArray[1].ToString().ToUpper() == "GARMENT")
+                {
+                    return;
+                }
+
+                string sqlcmd1 = string.Format(
+                    @"select distinct refno from PO_Supp_Detail a WITH (NOLOCK) ,Orders b WITH (NOLOCK)  where a.id=b.POID and a.fabrictype='A'
                 and a.Scirefno is not null 
-                and b.id='{0}' group by a.refno"
-                    ,txtSP.Text.ToString());
+                and b.id='{0}' group by a.refno",
+                    this.txtSP.Text.ToString());
                 SelectItem item1 = new SelectItem(sqlcmd1, "30", dr1["Item"].ToString());
                 DialogResult result1 = item1.ShowDialog();
-                if (result1 == DialogResult.Cancel) { return; }
+                if (result1 == DialogResult.Cancel)
+                {
+                    return;
+                }
+
                 dr1["Item"] = item1.GetSelectedString();
             }
         }
@@ -148,7 +167,7 @@ order by RowNum", txtSP.Text.ToString());
             colorSelect.EditingMouseDown += this.colorSelect_CellMouseClick;
             itemSelect.CellEditable += (s, e) =>
             {
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 if (dr["Type"].ToString().ToUpper() == "ACCESSORY ITEMS")
                 {
                     e.IsEditable = true;
@@ -157,39 +176,50 @@ order by RowNum", txtSP.Text.ToString());
                 {
                     e.IsEditable = false;
                 }
-            
             };
 
             itemSelect.CellValidating += (s, e) =>
             {
-                if (!this.EditMode) return;//非編輯模式 
-                if (e.RowIndex == -1) return; //沒東西 return
-                if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                DataRow dr1;
-                string sqlcmd = string.Format(@"select  refno from PO_Supp_Detail a WITH (NOLOCK) ,Orders b WITH (NOLOCK) where a.id=b.POID and a.fabrictype='A'
-                and a.Scirefno is not null 
-                and b.id='{0}' and a.refno='{1}'"
-                   , txtSP.Text.ToString(),e.FormattedValue);
+                if (!this.EditMode)
+                {
+                    return; // 非編輯模式
+                }
 
-                if (MyUtility.Check.Seek(sqlcmd,out dr1))
+                if (e.RowIndex == -1)
+                {
+                    return; // 沒東西 return
+                }
+
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return; // 沒資料 return
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                DataRow dr1;
+                string sqlcmd = string.Format(
+                    @"select  refno from PO_Supp_Detail a WITH (NOLOCK) ,Orders b WITH (NOLOCK) where a.id=b.POID and a.fabrictype='A'
+                and a.Scirefno is not null 
+                and b.id='{0}' and a.refno='{1}'",
+                    this.txtSP.Text.ToString(), e.FormattedValue);
+
+                if (MyUtility.Check.Seek(sqlcmd, out dr1))
                 {
                     dr["Item"] = e.FormattedValue;
                 }
                 else
                 {
-                    dr["Item"] = "";
+                    dr["Item"] = string.Empty;
                     dr.EndEdit();
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Item: {0}> does not exist!", e.FormattedValue));
                     return;
                 }
-
             };
             colorSelect.CellEditable += (s, e) =>
             {
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-               
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+
                 if (dr["Type"].ToString().ToUpper() == "ACCESSORY ITEMS")
                 {
                     e.IsEditable = true;
@@ -202,12 +232,21 @@ order by RowNum", txtSP.Text.ToString());
 
             colorSelect.CellValidating += (s, e) =>
             {
-                if (this.EditMode == false) return;
-                if (MyUtility.Check.Empty(e.FormattedValue)) return;
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 DataRow dr1;
 
-                string sqlcmd = string.Format(@" 
+                string sqlcmd = string.Format(
+                    @" 
 select ColorID
 from (
 	select distinct ColorID = dbo.GetColorMultipleID(a.BrandId, ColorID)
@@ -220,14 +259,14 @@ from (
 		  and a.ColorID != ''
 	Group by ColorID, a.BrandID
 )x
-where ColorID = '{1}'", txtSP.Text.ToString(), e.FormattedValue);
-                if (MyUtility.Check.Seek(sqlcmd,out dr1))
+where ColorID = '{1}'", this.txtSP.Text.ToString(), e.FormattedValue);
+                if (MyUtility.Check.Seek(sqlcmd, out dr1))
                 {
                     dr["Colorid"] = e.FormattedValue;
                 }
                 else
                 {
-                    dr["Colorid"] = "";
+                    dr["Colorid"] = string.Empty;
                     dr.EndEdit();
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Color: {0}> does not exist!", e.FormattedValue));
@@ -235,43 +274,39 @@ where ColorID = '{1}'", txtSP.Text.ToString(), e.FormattedValue);
                 }
             };
 
-
-            //colorSelect.EditingMouseDown
-
+            // colorSelect.EditingMouseDown
             itemSelect.CellMouseClick += this.itemSelect_CellMouseClick;
-            itemSelect.EditingMouseDown += this.itemSelect_CellMouseClick;                     
-      
-            #endregion                         
-             
+            itemSelect.EditingMouseDown += this.itemSelect_CellMouseClick;
 
-            //設定Grid屬性 text 對應欄位值 header :顯示欄位名稱
+            #endregion
 
-            Helper.Controls.Grid.Generator(this.detailgrid)               
+            // 設定Grid屬性 text 對應欄位值 header :顯示欄位名稱
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("Type", header: "Main Item NO", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true, iseditable: true, settings: typeSetting)
-            .Text("Item", header: "SEQ Ref", width: Ict.Win.Widths.AnsiChars(15),settings: itemSelect)
+            .Text("Item", header: "SEQ Ref", width: Ict.Win.Widths.AnsiChars(15), settings: itemSelect)
             .Text("Colorid", header: "Color", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true, settings: colorSelect)
             .Date("inspdate", header: "Inspdate", width: Ict.Win.Widths.AnsiChars(10))
             .Text("Result", header: "Result", width: Ict.Win.Widths.AnsiChars(20));
-            detailgrid.ValidateControl();
+            this.detailgrid.ValidateControl();
 
             this.detailgrid.RowPostPaint += (s, e) =>
             {
-                if(this.EditMode == true)
+                if (this.EditMode == true)
                 {
                     this.detailgrid.Rows[e.RowIndex].Cells["Colorid"].Style.ForeColor = Color.Red;
-                }else
+                }
+                else
                 {
                     this.detailgrid.Rows[e.RowIndex].Cells["Colorid"].Style.ForeColor = Color.Black;
                 }
             };
         }
-        
+
         // When click Edit button and Grid is empty then New 5 column in GridView
-        //choice ClickEditAfter becauser Transaction problemm
+        // choice ClickEditAfter becauser Transaction problemm
         protected override void ClickEditAfter()
         {
-            
-            #region 設定表頭欄位只能Readonly        
+            #region 設定表頭欄位只能Readonly
                 this.txtSP.ReadOnly = true;
                 this.txtBrand.ReadOnly = true;
                 this.txtStyle.ReadOnly = true;
@@ -292,97 +327,100 @@ where ColorID = '{1}'", txtSP.Text.ToString(), e.FormattedValue);
                 this.checkCancelledOrder.ReadOnly = true;
 
             #endregion
-            DataRow row = this.detailgrid.GetDataRow(this.detailgridbs.Position);
-            if (MyUtility.Check.Empty(row))
+                DataRow row = this.detailgrid.GetDataRow(this.detailgridbs.Position);
+                if (MyUtility.Check.Empty(row))
             {
                 string id = this.txtSP.Text;
 
-                
                 DataTable detailDt = (DataTable)this.detailgridbs.DataSource;
-                
-                //Row 1
-                DataRow newRow1 = detailDt.NewRow();               
+
+                // Row 1
+                DataRow newRow1 = detailDt.NewRow();
                 newRow1["Type"] = "Accessory Items";
                 newRow1["ID"] = id;
                 detailDt.Rows.Add(newRow1);
                 this.DetailDatas.Add(newRow1);
-                //Row 2
+
+                // Row 2
                 DataRow newRow2 = detailDt.NewRow();
                 newRow2["Type"] = "Accessory Items";
                 newRow2["ID"] = id;
                 detailDt.Rows.Add(newRow2);
                 this.DetailDatas.Add(newRow2);
-                //Row 3
+
+                // Row 3
                 DataRow newRow3 = detailDt.NewRow();
                 newRow3["Type"] = "CutParts";
                 newRow3["ID"] = id;
                 detailDt.Rows.Add(newRow3);
                 this.DetailDatas.Add(newRow3);
-                //Row 4
+
+                // Row 4
                 DataRow newRow4 = detailDt.NewRow();
                 newRow4["Type"] = "Garment";
                 newRow4["Item"] = "First MD";
                 newRow4["ID"] = id;
                 detailDt.Rows.Add(newRow4);
                 this.DetailDatas.Add(newRow4);
-                //Row 5
+
+                // Row 5
                 DataRow newRow5 = detailDt.NewRow();
                 newRow5["Type"] = "Garment";
                 newRow5["Item"] = "If Open carton";
                 newRow5["ID"] = id;
                 detailDt.Rows.Add(newRow5);
                 this.DetailDatas.Add(newRow5);
-
             }
-            base.ClickEditAfter();        
+
+                base.ClickEditAfter();
         }
 
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
-            DataTable dt = (DataTable)detailgridbs.DataSource;
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
-            CurrentDetailData["Type"] = "Accessory items";         
-
+            this.CurrentDetailData["Type"] = "Accessory items";
         }
-        
+
         protected override void OnDetailGridDelete()
         {
-
             if (this.CurrentDetailData["Type"].StrStartsWith("Cutparts") || this.CurrentDetailData["Type"].StrStartsWith("Garment"))
             {
                 MyUtility.Msg.WarningBox("If <Main item no> is Cutparts or Garment cannot delete");
                 return;
             }
+
             base.OnDetailGridDelete();
         }
 
         // delete rows when the pk value is empty
         protected override DualResult ClickSavePre()
         {
-            if (!MyUtility.Check.Empty(CurrentMaintain["ID"]))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
             {
                 DataTable detailDt = (DataTable)this.detailgridbs.DataSource;
-                DataRow row = this.detailgrid.GetDataRow(this.detailgridbs.Position);                
-                int t =detailDt.Rows.Count;
-                for (int i = t-1; i >= 0; i--)
+                DataRow row = this.detailgrid.GetDataRow(this.detailgridbs.Position);
+                int t = detailDt.Rows.Count;
+                for (int i = t - 1; i >= 0; i--)
                 {
-                    //MD.PK都要有值才能save
-                    if (detailDt.Rows[i].RowState != DataRowState.Deleted && (detailDt.Rows[i]["Type"].ToString().ToUpper() == "ACCESSORY ITEMS" && detailDt.Rows[i]["Item"].ToString() == ""))
+                    // MD.PK都要有值才能save
+                    if (detailDt.Rows[i].RowState != DataRowState.Deleted && (detailDt.Rows[i]["Type"].ToString().ToUpper() == "ACCESSORY ITEMS" && detailDt.Rows[i]["Item"].ToString() == string.Empty))
                     {
-                        //刪除
-                        detailDt.Rows[i].Delete();                        
-                    }                 
-                }        
+                        // 刪除
+                        detailDt.Rows[i].Delete();
+                    }
+                }
             }
+
             return Result.True;
         }
 
-        //表頭combobox
+        // 表頭combobox
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.Size = thisSize;
+            this.Size = this.thisSize;
 
             DataTable dtCategory;
             Ict.DualResult cbResult;
@@ -392,82 +430,85 @@ where ColorID = '{1}'", txtSP.Text.ToString(), e.FormattedValue);
                 this.comboCategory.DisplayMember = "Name";
                 this.comboCategory.ValueMember = "ID";
             }
-            else 
+            else
             {
-                ShowErr(cbResult); 
+                this.ShowErr(cbResult);
             }
-            
         }
 
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            button_enable();          
+            this.button_enable();
         }
 
         protected override bool ClickSaveBefore()
         {
-
             int a = this.detailgrid.Rows.Count;
             var tab = (DataTable)this.detailgridbs.DataSource;
             int b = tab.Rows.Count;
             DualResult upResult = new DualResult(true);
-                  
-                DataTable detailDt = (DataTable)this.detailgridbs.DataSource;
-                DataRow row = this.detailgrid.GetDataRow(this.detailgridbs.Position);
 
-                int t = detailDt.Rows.Count;
+            DataTable detailDt = (DataTable)this.detailgridbs.DataSource;
+            DataRow row = this.detailgrid.GetDataRow(this.detailgridbs.Position);
 
-                for (int i = t - 1; i >= 0; i--)
+            int t = detailDt.Rows.Count;
+
+            for (int i = t - 1; i >= 0; i--)
                 {
                     if (detailDt.Rows[i].RowState != DataRowState.Deleted && MyUtility.Check.Empty(detailDt.Rows[i]["ID"].ToString()))
                     {
                         MyUtility.Msg.WarningBox("<ID> cannot be null !");
                         return false;
                     }
+
                     if (detailDt.Rows[i].RowState != DataRowState.Deleted && MyUtility.Check.Empty(detailDt.Rows[i]["Type"].ToString()))
                     {
                         MyUtility.Msg.WarningBox("<Main Item NO> cannot be null !");
                         return false;
                     }
                 }
+
             return base.ClickSaveBefore();
         }
 
         private void button_enable()
         {
             DataTable dt;
-            string cmd = string.Format("select MDClose from orders where id='{0}' ", txtSP.Text);
+            string cmd = string.Format("select MDClose from orders where id='{0}' ", this.txtSP.Text);
             DBProxy.Current.Select(null, cmd, out dt);
-            if (dt.Rows.Count>0)
+            if (dt.Rows.Count > 0)
             {
                 this.btnFinished.Text = MyUtility.Check.Empty(dt.Rows[0]["MDClose"]) ? "Finished" : "Back to Master List";
                 this.dateMDFinished.Value = MyUtility.Convert.GetDate(dt.Rows[0]["MDClose"]);
             }
-            btnFinished.Enabled = !this.EditMode;
-            
-        }       
+
+            this.btnFinished.Enabled = !this.EditMode;
+        }
 
         protected override DualResult ClickSave()
         {
-                     
             return base.ClickSave();
         }
 
         // Button Finished
         private void btnFinished_Click(object sender, EventArgs e)
         {
-            if (this.btnFinished.Text=="Finished")
+            if (this.btnFinished.Text == "Finished")
             {
                  DialogResult buttonFinished = MyUtility.Msg.QuestionBox("Do you want to finished this order!", "Question", MessageBoxButtons.YesNo);
-            //訊息方塊選擇"NO" MDClose清空
+
+            // 訊息方塊選擇"NO" MDClose清空
                  if (buttonFinished == DialogResult.Yes)
                  {
                      string sqlCmdUpdate = "update orders  set MDClose= CONVERT(VARCHAR(20), GETDATE(), 120)  where id=@MdID";
                      List<SqlParameter> spam = new List<SqlParameter>();
-                     spam.Add(new SqlParameter("@MdID", txtSP.Text));
+                     spam.Add(new SqlParameter("@MdID", this.txtSP.Text));
                      DualResult result = DBProxy.Current.Execute("Production", sqlCmdUpdate, spam);
-                     if (!result) { return; }
+                     if (!result)
+                    {
+                        return;
+                    }
                  }
                  else
                  {
@@ -477,36 +518,41 @@ where ColorID = '{1}'", txtSP.Text.ToString(), e.FormattedValue);
             else
             {
                 DialogResult buttonFinished = MyUtility.Msg.QuestionBox("Do you want to back to master list?", "Question", MessageBoxButtons.YesNo);
-                if (buttonFinished== DialogResult.Yes)
+                if (buttonFinished == DialogResult.Yes)
                 {
                       string sqlCmdUpdate = "update orders  set MDClose= Null  where id=@MdID";
-                    
-                    List<SqlParameter> spam = new List<SqlParameter>();
-                    spam.Add(new SqlParameter("@MdID", this.txtSP.Text));
-                    DualResult result = DBProxy.Current.Execute("Production", sqlCmdUpdate,spam);
-                    
-                    if (!result) { return; }
+
+                      List<SqlParameter> spam = new List<SqlParameter>();
+                      spam.Add(new SqlParameter("@MdID", this.txtSP.Text));
+                      DualResult result = DBProxy.Current.Execute("Production", sqlCmdUpdate, spam);
+
+                      if (!result)
+                        {
+                            return;
+                        }
                 }
                 else
                 {
                     return;
                 }
             }
-            OnDetailEntered();
-            
+
+            this.OnDetailEntered();
+
             int rowindex = 0;
-            for (int i = 0; i < CurrentDataRow.Table.Rows.Count; i++)
-            {                
-                if (CurrentDataRow.Table.Rows[i]["id"].ToString() == this.txtSP.Text)
+            for (int i = 0; i < this.CurrentDataRow.Table.Rows.Count; i++)
+            {
+                if (this.CurrentDataRow.Table.Rows[i]["id"].ToString() == this.txtSP.Text)
                 {
                     rowindex = i;
                     break;
-                }                
-            }            
-            CurrentDataRow["id"] = CurrentDataRow.Table.Rows[rowindex+1]["id"].ToString();
-            RenewData();
-            ReloadDatas();
-            gridbs.Position = rowindex;        
+                }
+            }
+
+            this.CurrentDataRow["id"] = this.CurrentDataRow.Table.Rows[rowindex + 1]["id"].ToString();
+            this.RenewData();
+            this.ReloadDatas();
+            this.gridbs.Position = rowindex;
         }
 
         private void btnFabricInspectionList_Click(object sender, EventArgs e)

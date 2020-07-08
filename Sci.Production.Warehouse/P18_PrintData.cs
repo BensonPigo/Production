@@ -1,21 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sci.Production.Warehouse
+﻿namespace Sci.Production.Warehouse
 {
     class P18_PrintData
     {
         public string POID { get; set; }
+
         public string SEQ { get; set; }
+
         public string Roll { get; set; }
+
         public string DYELOT { get; set; }
+
         public string DESC { get; set; }
+
         public string GW { get; set; }
+
         public string QTY { get; set; }
+
         public string Unit { get; set; }
+
         public string Location { get; set; }
     }
 }

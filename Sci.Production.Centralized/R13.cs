@@ -3,11 +3,9 @@ using Sci.Data;
 using Sci.Utility.Excel;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Linq;
 using System.Xml.Linq;
@@ -425,7 +423,7 @@ order by BrandID
                     listSummary = string.Format(listSummary, string.Join(",", ftyAmt), string.Join(",", ftyList));
 
                     // 執行pivot
-                     result = DBProxy.Current.SelectByConn(conn, listSummary, out this.dt_Tmp);
+                    result = DBProxy.Current.SelectByConn(conn, listSummary, out this.dt_Tmp);
                     if (!result)
                     {
                         return result;
@@ -520,8 +518,8 @@ order by BrandID
                 this.SetLoadingText(
                     string.Format(
                         "Load data from connection {0}/{1} ",
-                   i + 1,
-                   connectionString.Count));
+                        i + 1,
+                        connectionString.Count));
                 SqlConnection conn;
                 using (conn = new SqlConnection(conString))
                 {

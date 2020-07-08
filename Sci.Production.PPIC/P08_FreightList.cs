@@ -2,12 +2,7 @@
 using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
 {
@@ -17,7 +12,7 @@ namespace Sci.Production.PPIC
 
         public P08_FreightList(DataRow master)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.Master = master;
         }
 

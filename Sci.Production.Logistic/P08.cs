@@ -5,7 +5,6 @@ using Sci.Production.Class;
 using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
@@ -197,6 +196,7 @@ from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c
                 {
                     intChkUpdateOriLocation = 1;
                 }
+
                 DualResult selectResult;
                 if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out this.selectDataTable)))
                 {
@@ -418,7 +418,7 @@ and p2.CustCTN='{sl[2]}'
 and p2.DisposeFromClog= 0
 order by p2.ID,p2.CTNStartNo
 ";
-                                if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                               if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {
                                     dr["selected"] = 1;
                                     dr["ID"] = seekData["ID"].ToString().Trim();
@@ -578,7 +578,6 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
 
                     if (updateCmds.Count > 0 && insertCmds.Count > 0)
                     {
-
                         DualResult prgResult = Prgs.UpdateOrdersCTN(selectData);
 
                         if (result1 && result2 && prgResult)

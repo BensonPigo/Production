@@ -2,10 +2,8 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -359,7 +357,7 @@ order by p2.ID,p2.CTNStartNo
                             }
                             else
                             {
-                               string  sqlCmd = $@"
+                               string sqlCmd = $@"
 select distinct
 [selected] = 1
 ,CFANeedInsp
@@ -401,7 +399,7 @@ and (po.Status = 'New' or po.Status is null)
 and p2.CustCTN='{sl[1]}'
 order by p2.ID,p2.CTNStartNo
 ";
-                                if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                               if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {
                                     dr["selected"] = 1;
                                     dr["CFANeedInsp"] = (bool)seekData["CFANeedInsp"] ? "Y" : string.Empty;
@@ -452,6 +450,7 @@ order by p2.ID,p2.CTNStartNo
                     }
                 }
             }
+
             this.HideWaitMessage();
         }
 

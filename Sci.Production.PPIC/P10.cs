@@ -794,14 +794,13 @@ WHERE l.ID='{this.CurrentMaintain["ID"]}'
                 string content = this.CurrentMaintain["ID"].ToString();
 
                 var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, content, true, true);
-               email.ShowDialog();
+                email.ShowDialog();
 
                 if (email.SendMailResult)
                 {
                     MyUtility.Msg.InfoBox("Send mail successful.");
                 }
             }
-
         }
 
         /// <inheritdoc/>

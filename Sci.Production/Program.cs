@@ -1,12 +1,6 @@
-﻿using Ict.Win;
-using Sci.Data;
+﻿using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Windows.Forms;
-using Ict;
 using System.Configuration;
 
 namespace Sci.Production
@@ -19,60 +13,60 @@ namespace Sci.Production
         [STAThread]
         static void Main(string[] args = null)
         {
-            //Application.EnableVisualStyles();
+            // Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            
-            Sci.Env.AppInit();
-            DBProxy.Current.DefaultTimeout = 300;  //加長時間為5分鐘，避免timeout
 
-            bool ClearTaipeiServer = true;
+            Sci.Env.AppInit();
+            DBProxy.Current.DefaultTimeout = 300;  // 加長時間為5分鐘，避免timeout
+
+            bool clearTaipeiServer = true;
             if (args != null && args.Length != 0)
             {
                 foreach (string arg in args)
                 {
                     if (arg.Contains("TaipeiServer:'true'"))
                     {
-                        ClearTaipeiServer = false;
-                        //若是傳送參數則排除,Tradedb_TSR防止使用者修改到資料
-                        ConfigurationManager.AppSettings["PMSDBServer"] = ConfigurationManager.AppSettings["PMSDBServer"].ToString().Replace(",PMSDB_TSR", "");
-                        ConfigurationManager.AppSettings["TestingServer"] = ConfigurationManager.AppSettings["TestingServer"].ToString().Replace(",testing_TSR", "");
+                        clearTaipeiServer = false;
+
+                        // 若是傳送參數則排除,Tradedb_TSR防止使用者修改到資料
+                        ConfigurationManager.AppSettings["PMSDBServer"] = ConfigurationManager.AppSettings["PMSDBServer"].ToString().Replace(",PMSDB_TSR", string.Empty);
+                        ConfigurationManager.AppSettings["TestingServer"] = ConfigurationManager.AppSettings["TestingServer"].ToString().Replace(",testing_TSR", string.Empty);
                         ConfigurationManager.AppSettings["TaipeiServer"] = ConfigurationManager.AppSettings["PMSDBServer"];
                     }
                 }
             }
-            if (ClearTaipeiServer && DBProxy.Current.DefaultModuleName != "bin" && DBProxy.Current.DefaultModuleName != "x86")
+
+            if (clearTaipeiServer && DBProxy.Current.DefaultModuleName != "bin" && DBProxy.Current.DefaultModuleName != "x86")
             {
-                ConfigurationManager.AppSettings["TaipeiServer"] = "";
+                ConfigurationManager.AppSettings["TaipeiServer"] = string.Empty;
             }
 
-
-            //Logs.UI.LogInfo(string.Format("args = [{0}]", "         -----------xxx"));
-            //args = new string[] { "userid:'MIS'", "formName:'Sci.Trade.Basic.B03,Sci.Trade.Basic'", "menuName:'B03. Country'", "args:''" };
-            //if (args != null && args.Length != 0)
-            //{
+            // Logs.UI.LogInfo(string.Format("args = [{0}]", "         -----------xxx"));
+            // args = new string[] { "userid:'MIS'", "formName:'Sci.Trade.Basic.B03,Sci.Trade.Basic'", "menuName:'B03. Country'", "args:''" };
+            // if (args != null && args.Length != 0)
+            // {
             //    DirectOpenForm(args);
-            //}
-            //else
-            //{
+            // }
+            // else
+            // {
+            Application.Run(new Main());
 
-                Application.Run(new Main());
-            //}
-
+            // }
             Sci.Env.AppShutdown();
         }
 
-        //public static void DirectOpenForm(string[] args)
-        //{
+        // public static void DirectOpenForm(string[] args)
+        // {
 
-        //    //args = new string[] { "userid:C6001305", "factoryID:FA2", "formName:Sci.Sample.Basic.B10,Sci.Sample.Basic", "menuName:B09. Supplier (Taiwan)", "args:" };
-            
-        //    string userid = "";
+        // //args = new string[] { "userid:C6001305", "factoryID:FA2", "formName:Sci.Sample.Basic.B10,Sci.Sample.Basic", "menuName:B09. Supplier (Taiwan)", "args:" };
+
+        // string userid = "";
         //    string factoryID = "";
         //    string formName = "";
         //    string menuName = "";
         //    string arguments = "";
-            
-        //    foreach (string arg in args)
+
+        // foreach (string arg in args)
         //    {
         //        var strArg = arg.Split(new char[] { ':' }, 2);
         //        if (strArg[0].EqualString("userid"))
@@ -97,7 +91,7 @@ namespace Sci.Production
         //        }
         //    }
 
-        //    List<System.Data.SqlClient.SqlParameter> sqlPars = new List<System.Data.SqlClient.SqlParameter>();
+        // List<System.Data.SqlClient.SqlParameter> sqlPars = new List<System.Data.SqlClient.SqlParameter>();
         //    sqlPars.Add(new System.Data.SqlClient.SqlParameter("@UserID", userid));
         //    System.Data.DataTable data;
         //    var result1 = Sci.Data.DBProxy.Current.Select("", "select id,password from dbo.Pass1 where id = @UserID", sqlPars, out data);
@@ -109,15 +103,15 @@ namespace Sci.Production
         //    var arrArg = string.IsNullOrWhiteSpace(arguments) ? new Object[1] { menuItem } : new Object[2] { menuItem, arguments };
         //    Form formClass = (Form)Activator.CreateInstance(typeofControl, arrArg);
 
-        //    Application.Run(formClass); //load Trade 
+        // Application.Run(formClass); //load Trade
         //    Sci.Env.AppShutdown();
         //    return;
 
-        //}
+        // }
     }
 
-    //static class Program
-    //{
+    // static class Program
+    // {
     //    public static List<Process> innerProcess = new List<Process>();
     //    /// <summary>
     //    /// 應用程式的主要進入點。
@@ -142,22 +136,22 @@ namespace Sci.Production
     //            }
     //        }
 
-    //        Application.Run(new Main()); //load Trade 
+    // Application.Run(new Main()); //load Trade
     //        Sci.Env.AppShutdown();
 
-    //    }
+    // }
 
-    //    public static void SetFormName(Form form) {
+    // public static void SetFormName(Form form) {
 
-    //        //if (!DBProxy.Current.DefaultModuleName.ToUpper().Contains("FORMAL"))
+    // //if (!DBProxy.Current.DefaultModuleName.ToUpper().Contains("FORMAL"))
     //        //    form.Text = "(" + DBProxy.Current.DefaultModuleName + ") " + form.Text;
     //        if (!MyUtility.Check.Empty(Sci.Env.User))
     //            form.Text = "(" + Sci.Env.User.Factory + ") - (" + DBProxy.Current.DefaultModuleName + ")" + form.Text + " - (" + Sci.Env.User.UserID + " - " + Sci.Env.User.UserName + ")";
     //    }
-    //}
+    // }
 
-    //public class RemoteStartup
-    //{        
+    // public class RemoteStartup
+    // {
     //    public string Username { get; set; }
     //    public string Password { get; set; }
     //    public ToolStripMenuItem MenuItem { get; set; }
@@ -167,7 +161,7 @@ namespace Sci.Production
     //    public string FormTextSufix { get; set; }
     //    public string Factory { get; set; }
 
-    //    [Serializable]
+    // [Serializable]
     //    private class SerializeBag
     //    {
     //        public string Username;
@@ -202,7 +196,7 @@ namespace Sci.Production
     //        }
     //    }
 
-    //    public static RemoteStartup Deserialized(string serializedText)
+    // public static RemoteStartup Deserialized(string serializedText)
     //    {
     //        RemoteStartup ins;
     //        var se = new System.Runtime.Serialization.DataContractSerializer(typeof(SerializeBag));
@@ -230,11 +224,11 @@ namespace Sci.Production
     //        }
     //    }
 
-    //    public object Start()
+    // public object Start()
     //    {
     //        Object[] arrArg = null;
 
-    //        //這時候Env.User是Null表示是從Program進來的
+    // //這時候Env.User是Null表示是從Program進來的
     //        if (Env.User == null)
     //        {
     //            var mainForm = new Sci.Production.Main();
@@ -245,7 +239,7 @@ namespace Sci.Production
     //                new Object[1] { this.MenuItem } :
     //                new Object[2] { this.MenuItem, StrArg };
 
-    //            Form frm;
+    // Form frm;
     //            if (TypeofControl.GetConstructor(new Type[] { typeof(ToolStripMenuItem), typeof(string) }) != null)
     //                frm = ((Sci.Win.Tems.Base)Activator.CreateInstance(TypeofControl, arrArg));
     //            else
@@ -274,7 +268,7 @@ namespace Sci.Production
     //                    frm = ((ToolStripMenuItem)parent).Owner.FindForm();
     //                    frm.Invoke((Action<ToolStripMenuItem>)((m) => m.Enabled = false), menuItemInput);
 
-    //                    Process p = null;
+    // Process p = null;
     //                    do
     //                    {
     //                        try
@@ -289,7 +283,7 @@ namespace Sci.Production
     //                        }
     //                    } while (p == null);
 
-    //                    while (true)
+    // while (true)
     //                    {
     //                        if (p.WaitForExit(500) == false)
     //                        {
@@ -308,7 +302,7 @@ namespace Sci.Production
     //                        }
     //                    }
 
-    //                })).Start(new object[] { this.MenuItem, this.Serialized() });
+    // })).Start(new object[] { this.MenuItem, this.Serialized() });
     //                return null;
     //            }
     //            else
@@ -327,6 +321,5 @@ namespace Sci.Production
     //        }
     //    }
 
-    //}
-    
+    // }
 }

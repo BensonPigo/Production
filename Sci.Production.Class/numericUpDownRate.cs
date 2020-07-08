@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sci.Production.Class
+﻿namespace Sci.Production.Class
 {
     public class numericUpDownRate : Sci.Win.UI.NumericUpDown
     {
@@ -13,6 +6,5 @@ namespace Sci.Production.Class
         {
             this.Text = this.Value.ToString() + "%";
         }
-
     }
 }

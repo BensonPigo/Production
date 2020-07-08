@@ -3,12 +3,8 @@ using Ict.Win;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Transactions;
 using System.Data.SqlClient;
@@ -20,21 +16,22 @@ namespace Sci.Production.Warehouse
     public partial class P61 : Sci.Win.Tems.Input6
     {
         public P61(ToolStripMenuItem menuitem)
-            :base(menuitem)
+            : base(menuitem)
         {
-            InitializeComponent();
-            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword); //
-            gridicon.Append.Enabled = false;
-            gridicon.Append.Visible = false;
-            gridicon.Insert.Enabled = false;
-            gridicon.Insert.Visible = false;
+            this.InitializeComponent();
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.gridicon.Append.Enabled = false;
+            this.gridicon.Append.Visible = false;
+            this.gridicon.Insert.Enabled = false;
+            this.gridicon.Insert.Visible = false;
             this.InsertDetailGridOnDoubleClick = false;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string ID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"
+            string ID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
+            this.DetailSelectCommand = string.Format(
+                @"
 select  LID.ID
         , LID.OrderID
         , LID.Refno
@@ -65,7 +62,8 @@ where   LI.ID = '{0}'
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataTable selectDt;
-                    string strSelectSqlCmd = string.Format(@"
+                    string strSelectSqlCmd = string.Format(
+                        @"
 select  distinct refno
 from LocalInventory
 where OrderID = '{0}'", this.CurrentDetailData["OrderID"]);
@@ -73,7 +71,11 @@ where OrderID = '{0}'", this.CurrentDetailData["OrderID"]);
 
                     Sci.Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "refno", "20", this.CurrentDetailData["Refno"].ToString());
                     DialogResult result = selectItem.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     this.CurrentDetailData["Refno"] = selectItem.GetSelectedString();
                     this.CurrentDetailData.EndEdit();
                 }
@@ -85,12 +87,13 @@ where OrderID = '{0}'", this.CurrentDetailData["OrderID"]);
                 this.CurrentDetailData["Refno"] = strNewRefno;
 
                 #region check Refno
-                string strCheckRefno = string.Format(@"
+                string strCheckRefno = string.Format(
+                    @"
 select  distinct refno
 from LocalInventory
 where   orderID = '{0}'
-        and refno = '{1}'", this.CurrentDetailData["OrderID"]
-                          , strNewRefno);
+        and refno = '{1}'", this.CurrentDetailData["OrderID"],
+                    strNewRefno);
 
                 if (!strNewRefno.Empty() && !MyUtility.Check.Seek(strCheckRefno))
                 {
@@ -99,44 +102,47 @@ where   orderID = '{0}'
                     return;
                 }
                 #endregion
-                #region set Desc 
+                #region set Desc
                 if (strNewRefno.Empty())
                 {
-                    this.CurrentDetailData["desc"] = "";                    
+                    this.CurrentDetailData["desc"] = string.Empty;
                 }
                 else
                 {
-                    string strDescValue = string.Format(@"
+                    string strDescValue = string.Format(
+                        @"
 select Description
 from LocalItem
 where refno = '{0}'", strNewRefno);
                     this.CurrentDetailData["desc"] = MyUtility.GetValue.Lookup(strDescValue);
                 }
-                #endregion 
+                #endregion
                 #region set Location
-                string strLocationValue = string.Format(@"
+                string strLocationValue = string.Format(
+                    @"
 select ALocation
 from LocalInventory
 where   OrderID = '{0}'
         and refno = '{1}'
-        and ThreadColorID = '{2}'", this.CurrentDetailData["OrderID"]
-              , strNewRefno
-              , this.CurrentDetailData["ThreadColorID"]);
+        and ThreadColorID = '{2}'", this.CurrentDetailData["OrderID"],
+                    strNewRefno,
+                    this.CurrentDetailData["ThreadColorID"]);
                 this.CurrentDetailData["Location"] = MyUtility.GetValue.Lookup(strLocationValue);
                 #endregion
 
                 this.CurrentDetailData.EndEdit();
             };
-            #endregion 
+            #endregion
             #region ThreadColor Setting
             DataGridViewGeneratorTextColumnSettings setThreadColor = new DataGridViewGeneratorTextColumnSettings();
-            
+
             setThreadColor.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataTable selectDt;
-                    string strSelectSqlCmd = string.Format(@"
+                    string strSelectSqlCmd = string.Format(
+                        @"
 select  distinct ThreadColorID
 from LocalInventory
 where OrderID = '{0}'", this.CurrentDetailData["OrderID"]);
@@ -144,7 +150,11 @@ where OrderID = '{0}'", this.CurrentDetailData["OrderID"]);
 
                     Sci.Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "ThreadColorID", "20", this.CurrentDetailData["ThreadColorID"].ToString());
                     DialogResult result = selectItem.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     this.CurrentDetailData["ThreadColorID"] = selectItem.GetSelectedString();
                     this.CurrentDetailData.EndEdit();
                 }
@@ -156,12 +166,13 @@ where OrderID = '{0}'", this.CurrentDetailData["OrderID"]);
                 this.CurrentDetailData["ThreadColorID"] = strNewThreadColor;
 
                 #region check ThreadColor
-                string strCheckThreadColor = string.Format(@"
+                string strCheckThreadColor = string.Format(
+                    @"
 select  distinct ThreadColorID
 from LocalInventory
 where   orderID = '{0}'
-        and ThreadColorID = '{1}'", this.CurrentDetailData["OrderID"]
-                          , strNewThreadColor);
+        and ThreadColorID = '{1}'", this.CurrentDetailData["OrderID"],
+                    strNewThreadColor);
 
                 if (!strNewThreadColor.Empty() && !MyUtility.Check.Seek(strCheckThreadColor))
                 {
@@ -171,14 +182,15 @@ where   orderID = '{0}'
                 }
                 #endregion
                 #region set Location
-                string strLocationValue = string.Format(@"
+                string strLocationValue = string.Format(
+                    @"
 select ALocation
 from LocalInventory
 where   OrderID = '{0}'
         and refno = '{1}'
-        and ThreadColorID = '{2}'", this.CurrentDetailData["OrderID"]
-              , this.CurrentDetailData["Refno"]
-              , strNewThreadColor);
+        and ThreadColorID = '{2}'", this.CurrentDetailData["OrderID"],
+                    this.CurrentDetailData["Refno"],
+                    strNewThreadColor);
                 this.CurrentDetailData["Location"] = MyUtility.GetValue.Lookup(strLocationValue);
                 #endregion
 
@@ -193,17 +205,22 @@ where   OrderID = '{0}'
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataTable selectDt;
-                    string strSelectSqlCmd = string.Format(@"
+                    string strSelectSqlCmd = string.Format(
+                        @"
 select  distinct unit = UnitID
 from LocalInventory
 where   OrderID = '{0}'
-        and refno = '{1}'", this.CurrentDetailData["OrderID"]
-                              , this.CurrentDetailData["Refno"]);
+        and refno = '{1}'", this.CurrentDetailData["OrderID"],
+                        this.CurrentDetailData["Refno"]);
                     DBProxy.Current.Select(null, strSelectSqlCmd, out selectDt);
 
                     Sci.Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "Unit", "20", this.CurrentDetailData["unit"].ToString());
                     DialogResult result = selectItem.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     this.CurrentDetailData["unit"] = selectItem.GetSelectedString();
                     this.CurrentDetailData.EndEdit();
                 }
@@ -215,14 +232,15 @@ where   OrderID = '{0}'
                 this.CurrentDetailData["unit"] = strNewUnit;
 
                 #region check ThreadColor
-                string strCheckUnit = string.Format(@"
+                string strCheckUnit = string.Format(
+                    @"
 select  distinct UnitID
 from LocalInventory
 where   orderID = '{0}'
         and Refno = '{1}'
-        and UnitID = '{2}'", this.CurrentDetailData["OrderID"]
-                         , this.CurrentDetailData["Refno"]
-                         , strNewUnit);
+        and UnitID = '{2}'", this.CurrentDetailData["OrderID"],
+                    this.CurrentDetailData["Refno"],
+                    strNewUnit);
 
                 if (!strNewUnit.Empty() && !MyUtility.Check.Seek(strCheckUnit))
                 {
@@ -245,13 +263,14 @@ where   orderID = '{0}'
                 {
                     validateValue = 99999999;
                 }
-                CurrentDetailData["Qty"] = validateValue;
-                CurrentDetailData.EndEdit();
+
+                this.CurrentDetailData["Qty"] = validateValue;
+                this.CurrentDetailData.EndEdit();
             };
             #endregion
 
             #region Set Grid
-            Helper.Controls.Grid.Generator(this.detailgrid)
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: setRefno)
                 .Text("ThreadColorID", header: "ThreadColor", width: Widths.AnsiChars(4), iseditingreadonly: false, settings: setThreadColor)
@@ -259,30 +278,31 @@ where   orderID = '{0}'
                 .Text("unit", header: "Unit", width: Widths.AnsiChars(6), iseditingreadonly: false, settings: setUnit)
                 .Numeric("Qty", header: "Issue Qty", iseditingreadonly: false, settings: setIssueQty)
                 .EditText("Location", header: "Bulk Location", width: Widths.AnsiChars(10), iseditingreadonly: true);
-            #endregion 
+            #endregion
 
-            for (int i = 0; i < detailgrid.Columns.Count; i++)
+            for (int i = 0; i < this.detailgrid.Columns.Count; i++)
             {
-                detailgrid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                this.detailgrid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
         }
 
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            CurrentMaintain["Status"] = "New";
-            CurrentMaintain["IssueDate"] = DateTime.Now;
+            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["IssueDate"] = DateTime.Now;
         }
 
         protected override bool ClickEditBefore()
         {
-            if (CurrentMaintain["Status"].EqualString("confirmed"))
+            if (this.CurrentMaintain["Status"].EqualString("confirmed"))
             {
                 MyUtility.Msg.InfoBox("Data is confirmed, can't modify.", "Warning");
                 return false;
             }
+
             return base.ClickEditBefore();
         }
 
@@ -310,15 +330,16 @@ where   orderID = '{0}'
             #region 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IO", "LocalIssue", (DateTime)CurrentMaintain["Issuedate"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IO", "LocalIssue", (DateTime)this.CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
                     return false;
                 }
-                CurrentMaintain["id"] = tmpId;
+
+                this.CurrentMaintain["id"] = tmpId;
             }
-            #endregion 
+            #endregion
             return base.ClickSaveBefore();
         }
 
@@ -327,7 +348,7 @@ where   orderID = '{0}'
             base.ClickConfirm();
             DualResult result;
             List<SqlParameter> listPar = new List<SqlParameter>();
-            listPar.Add(new SqlParameter("@ID", CurrentMaintain["ID"]));
+            listPar.Add(new SqlParameter("@ID", this.CurrentMaintain["ID"]));
             listPar.Add(new SqlParameter("@UserID", Env.User.UserID));
             #region Check 庫存
             DataTable dataTable;
@@ -346,17 +367,23 @@ from (
 where s.StockQty < 0";
             if (!(result = DBProxy.Current.Select(null, checkStockQty, listPar, out dataTable)))
             {
-                ShowErr(checkStockQty, result);
+                this.ShowErr(checkStockQty, result);
                 return;
-            } else
+            }
+            else
             {
-                if(dataTable != null && dataTable.Rows.Count > 0){
+                if (dataTable != null && dataTable.Rows.Count > 0)
+                {
                     List<string> listErr = new List<string>();
                     foreach (DataRow dr in dataTable.Rows)
                     {
-                        listErr.Add(string.Format("<SP#>:{0}, <Refno>:{1}, <ThreadColor>:{2}"
-                                                  , dr["OrderID"].ToString().Trim(), dr["Refno"].ToString().Trim(), dr["ThreadColorID"].ToString().Trim()));
+                        listErr.Add(string.Format(
+                            "<SP#>:{0}, <Refno>:{1}, <ThreadColor>:{2}",
+                            dr["OrderID"].ToString().Trim(),
+                            dr["Refno"].ToString().Trim(),
+                            dr["ThreadColorID"].ToString().Trim()));
                     }
+
                     MyUtility.Msg.InfoBox(listErr.JoinToString("\n\r") + "\n\r Local Stock Quantity can not less then zero!!", "Local Stock Quantity can not less then zero!!");
                     return;
                 }
@@ -384,30 +411,35 @@ where LID.ID = @ID";
             TransactionScope transactionScope = new TransactionScope();
             using (transactionScope)
             {
-                try {
+                try
+                {
                     if (!(result = DBProxy.Current.Execute(null, strUpdateLocalIssue, listPar)))
                     {
                         transactionScope.Dispose();
-                        ShowErr(strUpdateLocalIssue, result);
+                        this.ShowErr(strUpdateLocalIssue, result);
                         return;
                     }
+
                     if (!(result = DBProxy.Current.Execute(null, strUpdateLocalInv, listPar)))
                     {
                         transactionScope.Dispose();
-                        ShowErr(strUpdateLocalInv, result);
+                        this.ShowErr(strUpdateLocalInv, result);
                         return;
                     }
+
                     transactionScope.Complete();
                     transactionScope.Dispose();
                     MyUtility.Msg.InfoBox("Confirmed successful");
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     transactionScope.Dispose();
-                    ShowErr("Commit transcation error.", e);
+                    this.ShowErr("Commit transcation error.", e);
                     return;
                 }
             }
-            #endregion 
-           
+            #endregion
+
         }
 
         protected override void ClickUnconfirm()
@@ -415,7 +447,7 @@ where LID.ID = @ID";
             base.ClickUnconfirm();
             DualResult result;
             List<SqlParameter> listPar = new List<SqlParameter>();
-            listPar.Add(new SqlParameter("@ID", CurrentMaintain["ID"]));
+            listPar.Add(new SqlParameter("@ID", this.CurrentMaintain["ID"]));
             listPar.Add(new SqlParameter("@UserID", Env.User.UserID));
             #region Check 庫存
             DataTable dataTable;
@@ -434,7 +466,7 @@ from (
 where s.StockQty < 0";
             if (!(result = DBProxy.Current.Select(null, checkStockQty, listPar, out dataTable)))
             {
-                ShowErr(checkStockQty, result);
+                this.ShowErr(checkStockQty, result);
                 return;
             }
             else
@@ -444,9 +476,11 @@ where s.StockQty < 0";
                     List<string> listErr = new List<string>();
                     foreach (DataRow dr in dataTable.Rows)
                     {
-                        listErr.Add(string.Format("< SP# > : {0}, < Refno > : {1}, < ThreadColor > : {2}"
-                                                  , dr["OrderID"], dr["Refno"], dr["ThreadColorID"]));
+                        listErr.Add(string.Format(
+                            "< SP# > : {0}, < Refno > : {1}, < ThreadColor > : {2}",
+                            dr["OrderID"], dr["Refno"], dr["ThreadColorID"]));
                     }
+
                     MyUtility.Msg.InfoBox(listErr.JoinToString("/n/r"), "Local Stock Quantity can not less then zero!!");
                     return;
                 }
@@ -479,15 +513,17 @@ where LID.ID = @ID";
                     if (!(result = DBProxy.Current.Execute(null, strUpdateLocalIssue, listPar)))
                     {
                         transactionScope.Dispose();
-                        ShowErr(strUpdateLocalIssue, result);
+                        this.ShowErr(strUpdateLocalIssue, result);
                         return;
                     }
+
                     if (!(result = DBProxy.Current.Execute(null, strUpdateLocalInv, listPar)))
                     {
                         transactionScope.Dispose();
-                        ShowErr(strUpdateLocalInv, result);
+                        this.ShowErr(strUpdateLocalInv, result);
                         return;
                     }
+
                     transactionScope.Complete();
                     transactionScope.Dispose();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
@@ -495,37 +531,41 @@ where LID.ID = @ID";
                 catch (Exception e)
                 {
                     transactionScope.Dispose();
-                    ShowErr("Commit transcation error.", e);
+                    this.ShowErr("Commit transcation error.", e);
                     return;
                 }
             }
-            #endregion 
-            
+            #endregion
+
         }
 
         private void btnFind_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
-            int index = detailgridbs.Find("OrderID", txtLocateForSP.Text.TrimEnd());
+            if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
+            {
+                return;
+            }
+
+            int index = this.detailgridbs.Find("OrderID", this.txtLocateForSP.Text.TrimEnd());
             if (index == -1)
-            { 
-                MyUtility.Msg.InfoBox("Data was not found!!"); 
+            {
+                MyUtility.Msg.InfoBox("Data was not found!!");
             }
             else
-            { 
-                detailgridbs.Position = index; 
+            {
+                this.detailgridbs.Position = index;
             }
         }
 
         private void btnClearEmpty_Click(object sender, EventArgs e)
         {
-            detailgrid.ValidateControl();
-            ((DataTable)detailgridbs.DataSource).Select("qty=0.00 or qty is null").ToList().ForEach(r => r.Delete());
+            this.detailgrid.ValidateControl();
+            ((DataTable)this.detailgridbs.DataSource).Select("qty=0.00 or qty is null").ToList().ForEach(r => r.Delete());
         }
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P61_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
+            var frm = new Sci.Production.Warehouse.P61_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }
@@ -533,45 +573,47 @@ where LID.ID = @ID";
         protected override bool ClickDeleteBefore()
         {
             #region Check Status
-            if (CurrentMaintain["Status"].EqualString("Confirmed"))
+            if (this.CurrentMaintain["Status"].EqualString("Confirmed"))
             {
                 MyUtility.Msg.InfoBox("Data is confirmed, can't delete.", "Warning");
                 return false;
             }
-            #endregion 
+            #endregion
             return base.ClickDeleteBefore();
         }
 
         protected override bool ClickPrint()
         {
             #region Check Status
-            if (!CurrentMaintain["Status"].EqualString("Confirmed"))
+            if (!this.CurrentMaintain["Status"].EqualString("Confirmed"))
             {
                 MyUtility.Msg.InfoBox("Data is not confirmed, can't print.", "Warning");
                 return false;
             }
-            #endregion 
+            #endregion
             ReportDefinition report = new ReportDefinition();
-            string MDivisonName = MyUtility.GetValue.Lookup(string.Format(@"
+            string MDivisonName = MyUtility.GetValue.Lookup(string.Format(
+                @"
 select NameEN
 from factory
 where id = '{0}'", Sci.Env.User.Keyword));
             #region Set RDLC_Title Data
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("MDivision", MDivisonName));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", CurrentMaintain["ID"].ToString()));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryID", CurrentMaintain["FactoryID"].ToString()));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CDate", string.Format("{0:yyyy-MM-dd}", CurrentMaintain["IssueDate"])));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", CurrentMaintain["Remark"].ToString()));
-            #endregion 
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", this.CurrentMaintain["ID"].ToString()));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryID", this.CurrentMaintain["FactoryID"].ToString()));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CDate", string.Format("{0:yyyy-MM-dd}", this.CurrentMaintain["IssueDate"])));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", this.CurrentMaintain["Remark"].ToString()));
+            #endregion
             #region Set RDLC_Detail Data
-            List<P61_PrintData> data = detailgrid.GetTable().AsEnumerable()
-                .Select(row => new P61_PrintData(){
+            List<P61_PrintData> data = this.detailgrid.GetTable().AsEnumerable()
+                .Select(row => new P61_PrintData()
+                {
                     POID = row["OrderID"].ToString().Trim(),
                     Refno = row["Refno"].ToString().Trim(),
                     DESCRIPTION = row["Desc"].ToString().Trim(),
                     ThreadColorID = row["ThreadColorID"].ToString().Trim(),
                     QTY = row["Qty"].ToString().Trim(),
-                    Location = row["Location"].ToString().Trim()
+                    Location = row["Location"].ToString().Trim(),
                 }).ToList();
 
             report.ReportDataSource = data;
@@ -587,12 +629,13 @@ where id = '{0}'", Sci.Env.User.Keyword));
             {
                 return false;
             }
+
             report.ReportResource = reportresource;
 
             var form = new Sci.Win.Subs.ReportView(report);
-            form.MdiParent = MdiParent;
+            form.MdiParent = this.MdiParent;
             form.Show();
-            #endregion 
+            #endregion
             return true;
         }
     }

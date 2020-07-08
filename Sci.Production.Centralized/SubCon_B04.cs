@@ -1,13 +1,7 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Centralized
@@ -22,7 +16,7 @@ namespace Sci.Production.Centralized
 
         protected override bool ClickSaveBefore()
         {
-            if ( MyUtility.Check.Empty(this.CurrentMaintain["Reason"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Reason"]))
             {
                 MyUtility.Msg.WarningBox("< Reason > can not be empty!");
                 return false;

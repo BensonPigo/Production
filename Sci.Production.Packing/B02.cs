@@ -6,11 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Packing
@@ -242,7 +238,7 @@ FROM StickerSize WITH (NOLOCK)
                 catch (System.IO.IOException exception)
                 {
                     MyUtility.Msg.ErrorBox("Error: update file fail. Original error: " + exception.Message);
-                    return new DualResult(false,exception);
+                    return new DualResult(false, exception);
                 }
 
                 this.Upload_flag = false;
@@ -322,7 +318,7 @@ and Side = '{this.CurrentMaintain["Side"]}'
 
         private void ComboStickerSize_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if ( this.comboStickerSize.SelectedIndex == -1)
+            if (this.comboStickerSize.SelectedIndex == -1)
             {
                 return;
             }

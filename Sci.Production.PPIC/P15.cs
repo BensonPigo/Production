@@ -2,13 +2,10 @@
 using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
@@ -23,6 +20,7 @@ namespace Sci.Production.PPIC
         private Color green = Color.FromArgb(204, 255, 204);
         private Color gray = Color.FromArgb(224, 224, 224);
         private DataTable dt_result = new DataTable();
+
         /// <summary>
         /// P15
         /// </summary>
@@ -218,7 +216,7 @@ where l.status <> 'New' ";
 
             DualResult result = DBProxy.Current.Select(null, query_sql, out this.dt_result);
             if (result)
-            { 
+            {
                 this.detailbs.DataSource = null;
                 this.detailbs.DataSource = this.dt_result;
             }

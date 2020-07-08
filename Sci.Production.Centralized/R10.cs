@@ -1,12 +1,8 @@
 ﻿using Ict;
 using Sci.Data;
-using Sci.Production.Class.Commons;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Linq;
 using System.Data.SqlClient;
@@ -249,7 +245,7 @@ order by FactoryID
                 }
 
                 var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
-            connectionString.Add(connections);
+                connectionString.Add(connections);
             }
 
             if (connectionString == null || connectionString.Count == 0)
@@ -266,8 +262,8 @@ order by FactoryID
                 this.SetLoadingText(
                     string.Format(
                         "Load data from connection {0}/{1} ",
-                    i + 1,
-                    connectionString.Count));
+                        i + 1,
+                        connectionString.Count));
 
                 // 跨資料庫連線，將所需資料存到TempTable，再給不同資料庫使用
                 SqlConnection pmsConn;

@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 
 namespace Sci.Production.Class
 {
@@ -12,7 +7,7 @@ namespace Sci.Production.Class
     {
         public PictureSubPage(Image img)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.pbPicture.Image = img;
         }
 

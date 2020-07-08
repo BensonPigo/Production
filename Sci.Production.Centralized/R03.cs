@@ -1,18 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-
-using System.Reflection;
 using Microsoft.Office.Interop.Excel;
 
 using Sci.Data;
 using Ict;
-using Ict.Win;
-using Sci.Production.Class.Commons;
 using Sci.Win;
 using System.Xml.Linq;
 using System.Configuration;
@@ -35,7 +28,7 @@ namespace Sci.Production.Centralized
         private string gstrMRTeam = string.Empty;
 
         private string gstrCategory = string.Empty;
-        
+
         private System.Data.DataTable gdtData1o;
         private System.Data.DataTable gdtData2o;
         private System.Data.DataTable gdtData3o;
@@ -239,10 +232,10 @@ and ((o.LocalOrder = 1 and o.SubconInType in ('1','2')) or (o.LocalOrder = 0 and
                     strSQL += string.Format(" and o.SCIDelivery  <= '{0}'", ((DateTime)this.dateRange3.Value2).ToString("yyyy-MM-dd"));
                 }
 
-                //if (this.txtSeason1.Text != string.Empty)
-                //{
+                // if (this.txtSeason1.Text != string.Empty)
+                // {
                 //    strSQL += string.Format(" AND o.SeasonID = '{0}' ", this.txtSeason1.Text);
-                //}
+                // }
                 if (this.txtmultiSeason.Text != string.Empty)
                 {
                     strSQL += string.Format(" AND o.SeasonID IN ('{0}') ", this.txtmultiSeason.Text.Replace(",", "','"));
@@ -347,7 +340,7 @@ from #stmp a
 group by a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.FactoryID, a.POID , a.Category, a.CdCodeID ,a.BuyerDelivery, a.SCIDelivery, a.SewingLineID 
 , a.CDDesc, a.StyleDesc,a.ComboType,a.ModularParent, a.ProductionFamilyID,OutputDate, Category, Shift, SewingLineID, Team, orderid, ComboType, SCategory, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,FtyZone
 ";
-                #region 1.	By Factory
+                #region 1.  By Factory
                 string strFactory = string.Format(@"{0} Select A=FtyZone,B=FactoryID, QARate, TotalCPUOut, TotalManHour FROM #tmpz ", strSQL);
                 foreach (string conString in connectionString)
                 {
@@ -371,9 +364,9 @@ group by a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.FactoryID, a.PO
 from #tmp Group BY A,B order by A,B ";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData1o, string.Empty, sqlcmd, out this.gdtData1);
-                #endregion 1.	By Factory
+                #endregion 1.   By Factory
 
-                #region 2.	By Brand
+                #region 2.  By Brand
                 string strBrand = string.Format(@"{0}  Select BrandID AS A, QARate,TotalCPUOut,TotalManHour FROM #tmpz ", strSQL);
                 foreach (string conString in connectionString)
                 {
@@ -396,15 +389,15 @@ E=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManH
 F=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) from #tmp Group BY A order by A";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData2o, string.Empty, sqlcmd, out this.gdtData2);
-                #endregion 2.	By Brand
+                #endregion 2.   By Brand
 
-                #region 3.	By Brand + Factory
+                #region 3.  By Brand + Factory
                 string strFBrand = string.Format(
                     @"
 {0} 
 Select A=BrandID, B=FtyZone,C=FactoryID, QARate, TotalCPUOut,TotalManHour
 FROM #tmpz ",
-strSQL);
+                    strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -427,16 +420,16 @@ strSQL);
 from #tmp Group BY A,B,C order by A,B,C";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData3o, string.Empty, sqlcmd, out this.gdtData3);
-                #endregion 3.	By Brand + Factory
+                #endregion 3.   By Brand + Factory
 
-                #region 4.	By Style
+                #region 4.  By Style
                 string strStyle = string.Format(
                     @"
 {0} 
 Select StyleID AS A, BrandID AS B, CDCodeID AS C, CDDesc AS D, StyleDesc AS E, SeasonID AS F
 , QARate, TotalCPUOut,TotalManHour, ModularParent AS L, CPUAdjusted AS M
 FROM #tmpz ",
-strSQL);
+                    strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -463,9 +456,9 @@ strSQL);
 from #tmp Group BY A,B,C,D,E,F,L,M order by A,B,C,E";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData4o, string.Empty, sqlcmd, out this.gdtData4);
-                #endregion 4.	By Style
+                #endregion 4.   By Style
 
-                #region 5.	By CD
+                #region 5.  By CD
                 string strCdCodeID = string.Format(@"{0}  Select CdCodeID AS A, CDDesc AS B, QARate, TotalCPUOut,TotalManHour FROM #tmpz ", strSQL);
                 foreach (string conString in connectionString)
                 {
@@ -489,9 +482,9 @@ from #tmp Group BY A,B,C,D,E,F,L,M order by A,B,C,E";
 from #tmp Group BY A,B order by A";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData5o, string.Empty, sqlcmd, out this.gdtData5);
-                #endregion 5.	By CD
+                #endregion 5.   By CD
 
-                #region 6.	By Factory Line
+                #region 6.  By Factory Line
                 string strFactoryLine = string.Format(@"{0}  Select A=FtyZone,B=FactoryID,C=SewingLineID, QARate, TotalCPUOut,TotalManHour FROM #tmpz ", strSQL);
                 foreach (string conString in connectionString)
                 {
@@ -515,9 +508,9 @@ from #tmp Group BY A,B order by A";
 from #tmp Group BY A,B,C order by A,B,C";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData6o, string.Empty, sqlcmd, out this.gdtData6);
-                #endregion 6.	By Factory Line
+                #endregion 6.   By Factory Line
 
-                #region 7.	By Factory, Brand , CDCode
+                #region 7.  By Factory, Brand , CDCode
                 string strFBCDCode = string.Format(
                     @"{0}  Select A=BrandID, B=FtyZone,C=FactoryID, D=CdCodeID,E=CDDesc, QARate, TotalCPUOut,TotalManHour
 FROM #tmpz  ",
@@ -544,15 +537,15 @@ FROM #tmpz  ",
 from #tmp Group BY A,B,C,D,E order by A,B,C,D,E";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData7o, string.Empty, sqlcmd, out this.gdtData7);
-                #endregion 7.	By Factory, Brand , CDCode
+                #endregion 7.   By Factory, Brand , CDCode
 
-                #region 8.	By PO Combo
+                #region 8.  By PO Combo
                 string strPOCombo = string.Format(
                     @"
 {0} 
 Select A=FtyZone,POID AS B, StyleID AS C, BrandID AS D, CdCodeID AS E, CDDesc AS F,G=ProductionFamilyID, StyleDesc AS H, SeasonID AS I, ProgramID AS J, QARate, TotalCPUOut, TotalManHour
 FROM #tmpz  ",
-strSQL);
+                    strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -576,9 +569,9 @@ strSQL);
 from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,G";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData8o, string.Empty, sqlcmd, out this.gdtData8);
-                #endregion 8.	By PO Combo
+                #endregion 8.   By PO Combo
 
-                #region 9.	By Program
+                #region 9.  By Program
                 string strProgram = string.Format(@"{0}  Select ProgramID AS A, StyleID AS B, C=FtyZone,D=FactoryID, BrandID AS E, CdCodeID AS F, CDDesc AS G,H=ProductionFamilyID, StyleDesc AS I, SeasonID AS J, QARate,TotalCPUOut, TotalManHour FROM #tmpz ", strSQL);
                 foreach (string conString in connectionString)
                 {
@@ -603,7 +596,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,G";
 from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData9o, string.Empty, sqlcmd, out this.gdtData9);
-                #endregion 9.	By Program
+                #endregion 9.   By Program
 
                 if (((this.gdtData1 != null) && (this.gdtData1.Rows.Count > 0)) || ((this.gdtData2 != null) && (this.gdtData2.Rows.Count > 0)) || ((this.gdtData3 != null) && (this.gdtData3.Rows.Count > 0))
                      || ((this.gdtData4 != null) && (this.gdtData4.Rows.Count > 0)) || ((this.gdtData5 != null) && (this.gdtData5.Rows.Count > 0)) || ((this.gdtData6 != null) && (this.gdtData6.Rows.Count > 0))
@@ -642,7 +635,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                 }
 
                 Microsoft.Office.Interop.Excel.Worksheet wsSheet;
-                #region 1.	By Factory
+                #region 1.  By Factory
                 int intRowsCount = this.gdtData1.Rows.Count;
                 int intRowsStart = 2; // 匯入起始位置
                 int rownum = intRowsStart; // 每筆資料匯入之位置
@@ -665,9 +658,9 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                     wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
                     wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
                 }
-                #endregion 1.	By Factory
+                #endregion 1.   By Factory
 
-                #region 2.	By Brand
+                #region 2.  By Brand
                 if ((this.gdtData2 != null) && (this.gdtData2.Rows.Count > 0))
                 {
                     intColumns = 6; // 匯入欄位數
@@ -687,9 +680,9 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                     wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
                     wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
                 }
-                #endregion 2.	By Brand
+                #endregion 2.   By Brand
 
-                #region 3.	By Brand-Factory
+                #region 3.  By Brand-Factory
                 if ((this.gdtData3 != null) && (this.gdtData3.Rows.Count > 0))
                 {
                     intColumns = 8; // 匯入欄位數
@@ -709,9 +702,9 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                     wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
                     wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
                 }
-                #endregion 3.	By Brand-Factory
+                #endregion 3.   By Brand-Factory
 
-                #region 4.	By Style
+                #region 4.  By Style
                 if ((this.gdtData4 != null) && (this.gdtData4.Rows.Count > 0))
                 {
                     intColumns = 13; // 匯入欄位數
@@ -731,9 +724,9 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                     wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
                     wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
                 }
-                #endregion 4.	By Style
+                #endregion 4.   By Style
 
-                #region 5.	By CD
+                #region 5.  By CD
                 if ((this.gdtData5 != null) && (this.gdtData5.Rows.Count > 0))
                 {
                     intColumns = 7; // 匯入欄位數
@@ -753,9 +746,9 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                     wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
                     wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
                 }
-                #endregion 5.	By CD
+                #endregion 5.   By CD
 
-                #region 6.	By Factory Line
+                #region 6.  By Factory Line
                 if ((this.gdtData6 != null) && (this.gdtData6.Rows.Count > 0))
                 {
                     intColumns = 8; // 匯入欄位數
@@ -775,9 +768,9 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                     wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
                     wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
                 }
-                #endregion 6.	By Factory Line
+                #endregion 6.   By Factory Line
 
-                #region 7.	By Brand-Factory-CD
+                #region 7.  By Brand-Factory-CD
                 if ((this.gdtData7 != null) && (this.gdtData7.Rows.Count > 0))
                 {
                     intColumns = 10; // 匯入欄位數
@@ -797,9 +790,9 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                     wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
                     wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
                 }
-                #endregion 7.	By Brand-Factory-CD
+                #endregion 7.   By Brand-Factory-CD
 
-                #region 8.	By PO Combo
+                #region 8.  By PO Combo
                 if ((this.gdtData8 != null) && (this.gdtData8.Rows.Count > 0))
                 {
                     intColumns = 15; // 匯入欄位數
@@ -819,9 +812,9 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                     wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
                     wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
                 }
-                #endregion 8.	By PO Combo
+                #endregion 8.   By PO Combo
 
-                #region 9.	By Program
+                #region 9.  By Program
                 if ((this.gdtData9 != null) && (this.gdtData9.Rows.Count > 0))
                 {
                     intColumns = 15; // 匯入欄位數
@@ -841,7 +834,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                     wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
                     wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
                 }
-                #endregion 9.	By Program
+                #endregion 9.   By Program
 
                 #region Save & Show Excel
                 this.excel.Visible = true;

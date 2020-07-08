@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 
 namespace Sci.Production.Subcon
@@ -22,33 +18,31 @@ namespace Sci.Production.Subcon
 
         public P10_ImportFromPO(DataRow master, DataTable detail)
         {
-            InitializeComponent();
-            dr_artworkAp = master;
-            dt_artworkApDetail = detail;
-            this.Text += string.Format(" : {0} - {1}", dr_artworkAp["artworktypeid"].ToString(), dr_artworkAp["localsuppid"].ToString());
-            displayBox1.BackColor = Color.Yellow;
+            this.InitializeComponent();
+            this.dr_artworkAp = master;
+            this.dt_artworkApDetail = detail;
+            this.Text += string.Format(" : {0} - {1}", this.dr_artworkAp["artworktypeid"].ToString(), this.dr_artworkAp["localsuppid"].ToString());
+            this.displayBox1.BackColor = Color.Yellow;
         }
 
-        //Find Now Button
+        // Find Now Button
         private void btnFindNow_Click(object sender, EventArgs e)
         {
-            String sp_b = this.txtSPNoStart.Text;
-            String sp_e = this.txtSPNoEnd.Text;
-            String poid_b = this.txtArtworkPOIDStart.Text;
-            String poid_e = this.txtArtworkPOIDEnd.Text;
+            string sp_b = this.txtSPNoStart.Text;
+            string sp_e = this.txtSPNoEnd.Text;
+            string poid_b = this.txtArtworkPOIDStart.Text;
+            string poid_e = this.txtArtworkPOIDEnd.Text;
 
             if (MyUtility.Check.Empty(sp_b) && MyUtility.Check.Empty(sp_e) && MyUtility.Check.Empty(poid_b) && MyUtility.Check.Empty(poid_e))
             {
                 MyUtility.Msg.WarningBox("SP# and Artwork POID can't be emtpqy");
-                txtSPNoStart.Focus();
+                this.txtSPNoStart.Focus();
                 return;
             }
             else
             {
                 // 建立可以符合回傳的Cursor
-
                 string strSQLCmd = string.Empty;
-
 
                 strSQLCmd += $@"
 SELECT  bd.QTY 
@@ -63,12 +57,13 @@ FROM Bundle_Detail bd WITH (NOLOCK)
 INNER JOIN Bundle bdl WITH (NOLOCK)  ON bdl.id=bd.id
 INNER JOIN BundleInOut bio WITH (NOLOCK)  ON bio.BundleNo = bd.BundleNo
 INNER JOIN SubProcess s WITH (NOLOCK)  ON s.id= bio.SubProcessId
-WHERE s.ArtworkTypeId='{dr_artworkAp["artworktypeid"]}' AND bio.RFIDProcessLocationID=''
+WHERE s.ArtworkTypeId='{this.dr_artworkAp["artworktypeid"]}' AND bio.RFIDProcessLocationID=''
 ";
                 if (!MyUtility.Check.Empty(sp_b))
                 {
                     strSQLCmd += $@" AND bdl.Orderid >= @sp1 ";
                 }
+
                 if (!MyUtility.Check.Empty(sp_e))
                 {
                     strSQLCmd += $@" AND bdl.Orderid <= @sp2";
@@ -105,7 +100,7 @@ AND bdl.Orderid IN (
 ";
                 }
 
-                strSQLCmd  += $@"
+                strSQLCmd += $@"
 
 Select 1 as Selected
         ,b.id as artworkpoid
@@ -166,13 +161,13 @@ OUTER APPLY(
 		where ad.OrderID= b.OrderID
 		and ad.PatternCode=b.PatternCode
 		and ad.PatternDesc =b.PatternDesc
-		and apo.ArtworkTypeID = '{dr_artworkAp["artworktypeid"]}' 
+		and apo.ArtworkTypeID = '{this.dr_artworkAp["artworktypeid"]}' 
 	)tmp
 )LocalSuppCtn
 where a.status='Approved' 
 --and b.apqty < b.farmin
-and a.artworktypeid = '{dr_artworkAp["artworktypeid"]}' 
-and a.localsuppid = '{dr_artworkAp["localsuppid"]}' 
+and a.artworktypeid = '{this.dr_artworkAp["artworktypeid"]}' 
+and a.localsuppid = '{this.dr_artworkAp["localsuppid"]}' 
 and a.mdivisionid='{Sci.Env.User.Keyword}'
 
 ";
@@ -180,6 +175,7 @@ and a.mdivisionid='{Sci.Env.User.Keyword}'
                 {
                     strSQLCmd += $@" AND b.Orderid >= @sp1 ";
                 }
+
                 if (!MyUtility.Check.Empty(sp_e))
                 {
                     strSQLCmd += $@" AND b.Orderid <= @sp2";
@@ -189,11 +185,11 @@ and a.mdivisionid='{Sci.Env.User.Keyword}'
                 {
                     strSQLCmd += $@" AND b.id >= @artworkpoid1 ";
                 }
+
                 if (!MyUtility.Check.Empty(poid_e))
                 {
                     strSQLCmd += $@" AND b.id <= @artworkpoid2";
                 }
-
 
                 strSQLCmd += @" 
 ORDER BY b.id,b.ukey   
@@ -224,12 +220,14 @@ DROP TABLE #Bundle
                 #endregion
 
                 Ict.DualResult result;
-                if (result = DBProxy.Current.Select(null, strSQLCmd,cmds, out dtArtwork))
+                if (result = DBProxy.Current.Select(null, strSQLCmd, cmds, out this.dtArtwork))
                 {
-                    if (dtArtwork.Rows.Count == 0)
-                    { MyUtility.Msg.WarningBox("Data not found!!"); }
-                    listControlBindingSource1.DataSource = dtArtwork;
+                    if (this.dtArtwork.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.WarningBox("Data not found!!");
+                    }
 
+                    this.listControlBindingSource1.DataSource = this.dtArtwork;
 
                     for (int i = 0; i < this.gridImportFromPO.Rows.Count; i++)
                     {
@@ -240,8 +238,12 @@ DROP TABLE #Bundle
                         }
                     }
                 }
-                else { ShowErr(strSQLCmd, result); }
+                else
+                {
+                    this.ShowErr(strSQLCmd, result);
+                }
             }
+
             this.gridImportFromPO.AutoResizeColumns();
         }
 
@@ -254,7 +256,7 @@ DROP TABLE #Bundle
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    DataRow ddr = gridImportFromPO.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow ddr = this.gridImportFromPO.GetDataRow<DataRow>(e.RowIndex);
                     if ((decimal)e.FormattedValue > (decimal)ddr["balance"])
                     {
                         e.Cancel = true;
@@ -269,44 +271,41 @@ DROP TABLE #Bundle
                         return;
                     }
 
-                    //if ((decimal)e.FormattedValue > (decimal)ddr["PoQty"])
-                    //{
+                    // if ((decimal)e.FormattedValue > (decimal)ddr["PoQty"])
+                    // {
                     //    e.Cancel = true;
                     //    MyUtility.Msg.WarningBox("<Qty> can not over PO qty!!");
                     //    return;
-                    //}
+                    // }
                     ddr["Amount"] = (decimal)e.FormattedValue * (decimal)ddr["Price"];
                     ddr["ApQty"] = e.FormattedValue;
                 }
-
             };
 
-
-            this.gridImportFromPO.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridImportFromPO.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridImportFromPO)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
+            this.gridImportFromPO.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridImportFromPO.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridImportFromPO)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk) // 0
                 .Text("artworkpoid", header: "Artwork PO", iseditingreadonly: true)
                 .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
-                 .Text("artworkid", header: "Artwork", iseditingreadonly: true)      //3
-                 .Numeric("Stitch", header: "Stitch", iseditable: true)    //4
+                 .Text("artworkid", header: "Artwork", iseditingreadonly: true) // 3
+                 .Numeric("Stitch", header: "Stitch", iseditable: true) // 4
                  .Text("PatternCode", header: "Cutpart Id", iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cutpart Name", iseditingreadonly: true)
-                .Numeric("UnitPrice", header: "Unit Price", iseditingreadonly: true, decimal_places: 4, integer_places: 4)  //7
-                .Numeric("qtygarment", header: "Qty/GMT", iseditingreadonly: true, integer_places: 2) //8
-                .Numeric("Price", header: "Price/GMT", iseditingreadonly: true, decimal_places: 4, integer_places: 5)  //9
+                .Numeric("UnitPrice", header: "Unit Price", iseditingreadonly: true, decimal_places: 4, integer_places: 4) // 7
+                .Numeric("qtygarment", header: "Qty/GMT", iseditingreadonly: true, integer_places: 2) // 8
+                .Numeric("Price", header: "Price/GMT", iseditingreadonly: true, decimal_places: 4, integer_places: 5) // 9
                 .Numeric("poqty", header: "PO Qty", iseditingreadonly: true)
                 .Numeric("FarmOut", header: "Farm Out", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Numeric("FarmIn", header: "Farm In", iseditingreadonly: true)
                 .Numeric("AccumulatedQty", header: "Accu. Paid Qty", iseditingreadonly: true)
                 .Numeric("Balance", header: "Balance", iseditingreadonly: true)
-                .Numeric("ApQty", header: "Qty",settings:ns)//14
+                .Numeric("ApQty", header: "Qty", settings: ns) // 14
                 .Numeric("amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 4, integer_places: 14)
                 .Numeric("LocalSuppCtn", header: "LocalSuppCtn", width: Widths.AnsiChars(0));
 
-            this.gridImportFromPO.Columns["apqty"].DefaultCellStyle.BackColor = Color.Pink;  //Qty
+            this.gridImportFromPO.Columns["apqty"].DefaultCellStyle.BackColor = Color.Pink;  // Qty
             this.gridImportFromPO.Columns["LocalSuppCtn"].Visible = false;
-
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -316,22 +315,24 @@ DROP TABLE #Bundle
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            listControlBindingSource1.EndEdit();
-            gridImportFromPO.ValidateControl();
-            
-            DataTable dtImport = (DataTable)listControlBindingSource1.DataSource;
-            
-            if (MyUtility.Check.Empty(dtImport)|| dtImport.Rows.Count == 0) return;
+            this.listControlBindingSource1.EndEdit();
+            this.gridImportFromPO.ValidateControl();
+
+            DataTable dtImport = (DataTable)this.listControlBindingSource1.DataSource;
+
+            if (MyUtility.Check.Empty(dtImport) || dtImport.Rows.Count == 0)
+            {
+                return;
+            }
 
             DataRow[] dr2 = dtImport.Select("Selected = 1");
             if (dr2.Length > 0)
             {
                 foreach (DataRow tmp in dr2)
                 {
-                    DataRow[] findrow = dt_artworkApDetail.Select($" orderid = '{tmp["orderid"].ToString()}' and ArtworkId = '{ tmp["ArtworkId"].ToString()}' and patterncode = '{tmp["patterncode"].ToString()}' and artworkpoid='{tmp["artworkpoid"].ToString()}' AND ArtworkPo_DetailUkey = {tmp["ArtworkPO_Detailukey"]} ");
+                    DataRow[] findrow = this.dt_artworkApDetail.Select($" orderid = '{tmp["orderid"].ToString()}' and ArtworkId = '{tmp["ArtworkId"].ToString()}' and patterncode = '{tmp["patterncode"].ToString()}' and artworkpoid='{tmp["artworkpoid"].ToString()}' AND ArtworkPo_DetailUkey = {tmp["ArtworkPO_Detailukey"]} ");
                     if (findrow.Length > 0)
                     {
-                       
                         findrow[0]["Price"] = tmp["Price"];
                         findrow[0]["poqty"] = tmp["poqty"];
                         findrow[0]["farmin"] = tmp["farmin"];
@@ -343,10 +344,10 @@ DROP TABLE #Bundle
                     }
                     else
                     {
-                        tmp["id"] = dr_artworkAp["id"];
+                        tmp["id"] = this.dr_artworkAp["id"];
                         tmp.AcceptChanges();
                         tmp.SetAdded();
-                        dt_artworkApDetail.ImportRow(tmp);
+                        this.dt_artworkApDetail.ImportRow(tmp);
                     }
                 }
             }
@@ -355,6 +356,7 @@ DROP TABLE #Bundle
                 MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
                 return;
             }
+
             this.Close();
         }
     }

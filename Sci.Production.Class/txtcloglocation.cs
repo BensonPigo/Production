@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sci.Win.UI;
 using Sci.Data;
 using Ict.Win;
 using Ict;
-using Sci.Win.Tools;
 
 namespace Sci.Production.Class
 {
@@ -24,17 +18,21 @@ namespace Sci.Production.Class
         }
 
         private Control mDivisionObject;
+
         [Category("Custom Properties")]
         public Control MDivisionObjectName
         {
-            set { this.mDivisionObject = value; }
             get { return this.mDivisionObject; }
+            set { this.mDivisionObject = value; }
         }
 
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
-        {            
+        {
             base.OnPopUp(e);
-            if (e.IsHandled) return;
+            if (e.IsHandled)
+            {
+                return;
+            }
 
             Sci.Win.Tems.Base myform = (Sci.Win.Tems.Base)this.FindForm();
             if (myform.EditMode)
@@ -44,12 +42,17 @@ namespace Sci.Production.Class
                 {
                     sql = string.Format("select ID,Description,MDivisionID from ClogLocation WITH (NOLOCK) where MDivisionID = '{0}' and junk=0 order by ID", this.mDivisionObject.Text);
                 }
+
                 DataTable tbClogLocation;
                 DBProxy.Current.Select("Production", sql, out tbClogLocation);
                 Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbClogLocation, "ID,Description,MDivisionID", "10,40,10", this.Text, "ID,Description,M");
 
                 DialogResult result = item.ShowDialog();
-                if (result == DialogResult.Cancel) { return; }
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
                 this.Text = item.GetSelectedString();
                 e.IsHandled = true;
             }
@@ -66,7 +69,7 @@ namespace Sci.Production.Class
                 {
                     if (MyUtility.Check.Seek(str, "ClogLocation", "id") == false)
                     {
-                        this.Text = "";
+                        this.Text = string.Empty;
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox(string.Format("< ClogLocation : {0} > not found!!!", str));
                         return;
@@ -81,7 +84,7 @@ namespace Sci.Production.Class
                             string selectCommand = string.Format("select ID from ClogLocation WITH (NOLOCK) where MDivisionID = '{0}' and ID = '{1}'", (string)this.mDivisionObject.Text, str);
                             if (!MyUtility.Check.Seek(selectCommand, null))
                             {
-                                this.Text = "";
+                                this.Text = string.Empty;
                                 e.Cancel = true;
                                 MyUtility.Msg.WarningBox(string.Format("< ClogLocation : {0} > not found!!!", str));
                                 return;
@@ -94,36 +97,51 @@ namespace Sci.Production.Class
     }
 
     public class CellClogLocation : DataGridViewGeneratorTextColumnSettings
-    {   
+    {
         public static DataGridViewGeneratorTextColumnSettings GetGridCell(string mdivisionID)
         {
-            //pur 為ture 表示需判斷PurchaseFrom
+            // pur 為ture 表示需判斷PurchaseFrom
             CellClogLocation ts = new CellClogLocation();
             ts.EditingMouseDown += (s, e) =>
-            {   
+            {
                 // 右鍵彈出功能
                 if (e.Button == MouseButtons.Right)
                 {
                     DataGridView grid = ((DataGridViewColumn)s).DataGridView;
-                    // Parent form 若是非編輯狀態就 return 
-                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
+
+                    // Parent form 若是非編輯狀態就 return
+                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                    {
+                        return;
+                    }
+
                     DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
-                    DataTable tbClogLocation;                    
+                    DataTable tbClogLocation;
                     string sql = $@"select ID,Description,MDivisionID from ClogLocation WITH (NOLOCK) where MDivisionID = '{mdivisionID.ToString().Trim()}' and junk=0 order by ID ";
                     DBProxy.Current.Select("Production", sql, out tbClogLocation);
                     Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbClogLocation, "ID,Description,MDivisionID", "10,40,10", row["ClogLocationID"].ToString(), "ID,Description,M");
                     DialogResult result = item.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     var sellist = item.GetSelecteds();
-                    e.EditingControl.Text = item.GetSelectedString();              
+                    e.EditingControl.Text = item.GetSelectedString();
                 }
             };
+
             // 正確性檢查
             ts.CellValidating += (s, e) =>
             {
                 DataGridView grid = ((DataGridViewColumn)s).DataGridView;
-                // Parent form 若是非編輯狀態就 return 
-                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
+
+                // Parent form 若是非編輯狀態就 return
+                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                {
+                    return;
+                }
+
                 // 右鍵彈出功能
                 DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
                 String oldValue = row["ClogLocationID"].ToString();
@@ -135,7 +153,7 @@ namespace Sci.Production.Class
                 {
                     if (!MyUtility.Check.Seek(sql))
                     {
-                        row["ClogLocationID"] = "";
+                        row["ClogLocationID"] = string.Empty;
                         row.EndEdit();
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox($"< ClogLocation : {newValue}> not found.");
@@ -145,7 +163,5 @@ namespace Sci.Production.Class
             };
             return ts;
         }
-
     }
-
 }

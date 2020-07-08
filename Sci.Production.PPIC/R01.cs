@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
-using System.Linq;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 
@@ -105,8 +102,7 @@ namespace Sci.Production.PPIC
 
             if (MyUtility.Check.Empty(this.SewingDate1) && MyUtility.Check.Empty(this.SewingDate2) &&
                 MyUtility.Check.Empty(this.buyerDelivery1) && MyUtility.Check.Empty(this.buyerDelivery2) &&
-                MyUtility.Check.Empty(this.sciDelivery1) && MyUtility.Check.Empty(this.sciDelivery2)
-                )
+                MyUtility.Check.Empty(this.sciDelivery1) && MyUtility.Check.Empty(this.sciDelivery2))
             {
                 MyUtility.Msg.WarningBox("Date can't be all empty!");
                 return false;
@@ -170,9 +166,10 @@ namespace Sci.Production.PPIC
             if (this.type == "StylePerEachSewingDate")
             {
                 objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R01_Style_PerEachSewingDate.xltx"); // 預先開啟excel app
-//#if DEBUG
+
+// #if DEBUG
 //                objApp.Visible = true;
-//#endif
+// #endif
 
                 // 關閉Excel提示訊息
                 objApp.DisplayAlerts = false;
@@ -649,7 +646,7 @@ drop table #tmpFinal_step1
 
 ";
                     DataTable[] dtGanttSumery;
-                    resultCmd = MyUtility.Tool.ProcessWithDatatable(this.printData, "", sqlcmd2, out dtGanttSumery);
+                    resultCmd = MyUtility.Tool.ProcessWithDatatable(this.printData, string.Empty, sqlcmd2, out dtGanttSumery);
                     if (!resultCmd)
                     {
                         this.ShowErr(resultCmd);

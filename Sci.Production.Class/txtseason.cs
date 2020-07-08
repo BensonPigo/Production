@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows.Forms;
 using Sci.Win.UI;
-using Sci.Data;
-using Ict;
-using Sci.Win.Tools;
-
 
 namespace Sci.Production.Class
 {
@@ -23,11 +12,12 @@ namespace Sci.Production.Class
         }
 
         private Control brandObject;
+
         [Category("Custom Properties")]
         public Control BrandObjectName
         {
-            set { this.brandObject = value; }
             get { return this.brandObject; }
+            set { this.brandObject = value; }
         }
 
         protected override void OnValidating(CancelEventArgs e)
@@ -37,9 +27,9 @@ namespace Sci.Production.Class
             string textValue = this.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.OldValue)
             {
-                if (!MyUtility.Check.Seek(textValue, "Season", "Id","Production"))
+                if (!MyUtility.Check.Seek(textValue, "Season", "Id", "Production"))
                 {
-                    this.Text = "";
+                    this.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Season : {0} > not found!!!", textValue));
                     return;
@@ -53,7 +43,7 @@ namespace Sci.Production.Class
                             string selectCommand = string.Format("select ID from Season WITH (NOLOCK) where BrandID = '{0}' and ID = '{1}'", (string)this.brandObject.Text, this.Text.ToString());
                             if (!MyUtility.Check.Seek(selectCommand, "Production"))
                             {
-                                this.Text = "";
+                                this.Text = string.Empty;
                                 e.Cancel = true;
                                 MyUtility.Msg.WarningBox(string.Format("< Season: {0} > not found!!!", textValue));
                                 return;
@@ -74,10 +64,15 @@ namespace Sci.Production.Class
             {
                 selectCommand = string.Format("select distinct ID from Production.dbo.Season WITH (NOLOCK) where BrandID = '{0}' order by id desc", this.brandObject.Text);
             }
+
             item = new Sci.Win.Tools.SelectItem(selectCommand, "11", this.Text);
             item.Width = 300;
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.Text = item.GetSelectedString();
         }
     }

@@ -619,14 +619,14 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     OrderQty = row.Field<int>("OrderQty"),
                     PullQty = row.Field<int>("OnTimeQty"),
                     FailQty = row.Field<int>("FailQty"),
-                    P = row.Field<int>("P")
+                    P = row.Field<int>("P"),
                 }).GroupBy(group => new { group.PoId, group.P }).Select(g => new
                 {
                     PoID = g.Key.PoId,
                     sumOrderQty = g.Sum(r => r.OrderQty),
                     sumPullQty = g.Sum(r => r.PullQty),
                     sumFailQty = g.Sum(r => r.FailQty),
-                    sumP = g.Key.P // 出貨次數, 在SQL撈取時改為OrderID去計算次數, 不論OrderShipmodeSeq有沒有被撈出來
+                    sumP = g.Key.P, // 出貨次數, 在SQL撈取時改為OrderID去計算次數, 不論OrderShipmodeSeq有沒有被撈出來
                 }).ToArray();
 
                 IDictionary<string, IList<DataRow>> dictionary_TradeHis_OrderIDs = dtTradeHis_Order.ToDictionaryList((x) => x.Val<string>("ID"));
@@ -1132,7 +1132,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                                             isDevSample = data.Field<string>("isDevSample"),
                                             FOC = data.Field<int>("FOC"),
                                             SewLastDate = data.Field<string>("SewLastDate"),
-                                            CTNLastReceiveDate = data.Field<string>("CTNLastReceiveDate")
+                                            CTNLastReceiveDate = data.Field<string>("CTNLastReceiveDate"),
                                         };
                     if ((gdtFailDetail != null) && (gdtFailDetail.Count() > 0))
                     {
@@ -1222,6 +1222,4 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
             }
         }
     }
-
-
 }

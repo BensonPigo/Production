@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
-using System.Runtime.InteropServices;
 
 namespace Sci.Production.Packing
 {
@@ -249,7 +245,6 @@ select 1 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
             }
 
             PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dt, this.radioFormA.Checked ? "1" : "2", dsPrintdata, dsctnDim, dsqtyBDown);
-
 
             this.HideWaitMessage();
             MyUtility.Msg.InfoBox("Complete.");

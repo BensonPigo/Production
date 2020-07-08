@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Xml.Linq;
@@ -600,8 +596,8 @@ drop table #tmp
             this.ShowWaitMessage("Starting EXCEL...");
             string excelFile = "Centralized_R05.xltx";
             Microsoft.Office.Interop.Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + excelFile); // 開excelapp
-            //excelApp.Visible = true;
 
+            // excelApp.Visible = true;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
             if (this.Date == "1")
             {
@@ -611,6 +607,7 @@ drop table #tmp
             {
                 worksheet.Cells[3, 1] = "Buyer delivery";
             }
+
             // 複製分頁
             Excel.Worksheet worksheet1 = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[1];
             Excel.Worksheet newSummarySheet;

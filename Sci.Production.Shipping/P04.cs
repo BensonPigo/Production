@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
@@ -57,7 +55,7 @@ from FtyExport_Detail ed WITH (NOLOCK)
 left join FtyExport fe WITH (NOLOCK) on fe.ID = ed.ID
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 where ed.ID = '{0}'", masterID);
-            return base.OnDetailSelectCommandPrepare(e);
+             return base.OnDetailSelectCommandPrepare(e);
         }
 
         protected override void OnDetailEntered()

@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Win;
-using System.Data.SqlClient;
 using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
@@ -23,7 +18,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            txtMdivision.Text = Sci.Env.User.Keyword;
+            this.txtMdivision.Text = Sci.Env.User.Keyword;
         }
 
         protected override void OnFormLoaded()

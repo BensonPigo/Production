@@ -63,7 +63,7 @@ namespace Sci.Production.Logistic
                 DataRow dr = this.gridReceiveDate.GetDataRow<DataRow>(e.RowIndex);
                 dr["selected"] = e.FormattedValue;
                 dr.EndEdit();
-                int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1"+ (this.chkOnlyReqCarton.Checked ? "AND FtyReqReturnDate IS NOT NULL" : string.Empty)).Length;
+                int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1" + (this.chkOnlyReqCarton.Checked ? "AND FtyReqReturnDate IS NOT NULL" : string.Empty)).Length;
                 this.numSelectedCTNQty.Value = sint;
             };
 
@@ -295,6 +295,7 @@ order by rn ");
             {
                 this.numSelectedCTNQty.Value = 0;
                 this.numTotalCTNQty.Value = 0;
+
                 // 先將Grid的結構給開出來
                 string selectCommand = @"
 Select distinct '' as ID
@@ -841,6 +842,7 @@ from #tmp t ;
             {
                 this.listControlBindingSource1.DataSource = null;
             }
+
             this.Countselectcount();
         }
 
@@ -909,10 +911,7 @@ from #tmp t ;
                         this.numSelectedCTNQty.Value = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1 AND FtyReqReturnDate IS NOT NULL ").Count();
                         break;
                 }
-
-
             }
         }
-
     }
 }

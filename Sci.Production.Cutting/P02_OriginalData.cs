@@ -1,29 +1,18 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Production.Class;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Sci.Win;
 using Sci.Data;
-using System.Transactions;
-using Sci.Win.Tools;
-using Ict.Data;
-using System.Linq;
-using System.Collections;
 
 namespace Sci.Production.Cutting
 {
     public partial class P02_OriginalData : Sci.Win.Tems.QueryForm
     {
         DataRow CurrDataRow;
+
         public P02_OriginalData(DataRow currDataRow)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.CurrDataRow = currDataRow;
         }
 
@@ -32,7 +21,7 @@ namespace Sci.Production.Cutting
             base.OnFormLoaded();
 
             #region set grid
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.Helper.Controls.Grid.Generator(this.grid1)
             .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6))
             .Numeric("Cutno", header: "Cut#", width: Widths.AnsiChars(5), integer_places: 3)
             .Text("MarkerName", header: "Marker\r\nName", width: Widths.AnsiChars(5))
@@ -68,7 +57,7 @@ namespace Sci.Production.Cutting
             .MaskedText("CurvedLengthNew", "000Yd00\"00", "CurvedLength", width: Widths.AnsiChars(16))
             ;
 
-            Helper.Controls.Grid.Generator(this.grid2)
+            this.Helper.Controls.Grid.Generator(this.grid2)
             .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6))
             .Numeric("Cutno", header: "Cut#", width: Widths.AnsiChars(5), integer_places: 3)
             .Text("MarkerName", header: "Marker\r\nName", width: Widths.AnsiChars(5))
@@ -104,40 +93,40 @@ namespace Sci.Production.Cutting
             .MaskedText("CurvedLengthNew", "000Yd00\"00", "CurvedLength", width: Widths.AnsiChars(16))
             ;
 
-            Helper.Controls.Grid.Generator(this.grid3)
+            this.Helper.Controls.Grid.Generator(this.grid3)
             .Text("PatternPanel", header: "Pattern Panel", width: Widths.AnsiChars(2))
             .Text("FabricPanelCode", header: "Fab_Panel Code", width: Widths.AnsiChars(2))
             ;
 
-            Helper.Controls.Grid.Generator(this.grid4)
+            this.Helper.Controls.Grid.Generator(this.grid4)
             .Text("PatternPanel", header: "Pattern Panel", width: Widths.AnsiChars(2))
             .Text("FabricPanelCode", header: "Fab_Panel Code", width: Widths.AnsiChars(2))
             ;
 
-            Helper.Controls.Grid.Generator(this.grid5)
+            this.Helper.Controls.Grid.Generator(this.grid5)
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(5))
             .Numeric("Qty", header: "Ratio", width: Widths.AnsiChars(5), integer_places: 6)
             ;
 
-            Helper.Controls.Grid.Generator(this.grid6)
+            this.Helper.Controls.Grid.Generator(this.grid6)
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(5))
             .Numeric("Qty", header: "Ratio", width: Widths.AnsiChars(5), integer_places: 6)
             ;
 
-            Helper.Controls.Grid.Generator(this.grid7)
+            this.Helper.Controls.Grid.Generator(this.grid7)
             .Text("orderid", header: "SP#", width: Widths.AnsiChars(15))
             .Text("article", header: "article", width: Widths.AnsiChars(8))
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(4))
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(3), integer_places: 6)
             ;
 
-            Helper.Controls.Grid.Generator(this.grid8)
+            this.Helper.Controls.Grid.Generator(this.grid8)
             .Text("orderid", header: "SP#", width: Widths.AnsiChars(15))
             .Text("article", header: "article", width: Widths.AnsiChars(8))
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(4))
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(3), integer_places: 6)
             ;
-            
+
             #endregion
 
             this.Query();
@@ -320,10 +309,11 @@ where wdd.workorderukey = '{this.CurrDataRow["ukey"]}'
             {
                 this.ShowErr(result);
             }
+
             this.listControlBindingSource1.DataSource = wdtO;
             if (wdtO.Rows.Count > 0)
             {
-                displayTime.Text = MyUtility.Convert.GetString(wdtO.Rows[0]["SandCTime"]);
+                this.displayTime.Text = MyUtility.Convert.GetString(wdtO.Rows[0]["SandCTime"]);
             }
             #endregion
             #region WorkOrder Now
@@ -336,6 +326,7 @@ where wdd.workorderukey = '{this.CurrDataRow["ukey"]}'
             {
                 inUkey = $"'{this.CurrDataRow["ukey"]}'";
             }
+
             sqlcmd = $@"
 Select
 	a.*
@@ -498,6 +489,7 @@ where a.ukey in ({inUkey})
             {
                 this.ShowErr(result);
             }
+
             this.listControlBindingSource2.DataSource = wdtN;
             #endregion
 
@@ -511,6 +503,7 @@ where w.workorderukey = '{this.CurrDataRow["ukey"]}' ";
             {
                 this.ShowErr(result);
             }
+
             this.listControlBindingSource3.DataSource = pdtO;
 
             sqlcmd = $@"
@@ -521,6 +514,7 @@ where WorkOrderUkey in ({inUkey}) ";
             {
                 this.ShowErr(result);
             }
+
             this.listControlBindingSource4.DataSource = pdtN;
             #endregion
 
@@ -535,6 +529,7 @@ where w.workorderukey = '{this.CurrDataRow["ukey"]}' ";
             {
                 this.ShowErr(result);
             }
+
             this.listControlBindingSource5.DataSource = sdtO;
 
             sqlcmd = $@"Select * from Workorder_SizeRatio WITH (NOLOCK) where WorkOrderUkey in ({inUkey})";
@@ -543,6 +538,7 @@ where w.workorderukey = '{this.CurrDataRow["ukey"]}' ";
             {
                 this.ShowErr(result);
             }
+
             this.listControlBindingSource6.DataSource = sdtN;
             #endregion
 
@@ -557,6 +553,7 @@ where w.workorderukey = '{this.CurrDataRow["ukey"]}'";
             {
                 this.ShowErr(result);
             }
+
             this.listControlBindingSource7.DataSource = ddtO;
 
             sqlcmd = $@"Select * From Workorder_distribute WITH (NOLOCK) where WorkOrderUkey in ({inUkey}) ";
@@ -565,6 +562,7 @@ where w.workorderukey = '{this.CurrDataRow["ukey"]}'";
             {
                 this.ShowErr(result);
             }
+
             this.listControlBindingSource8.DataSource = ddtN;
             #endregion
 
@@ -578,34 +576,34 @@ where w.workorderukey = '{this.CurrDataRow["ukey"]}'";
             dataSet.Tables.Add(pdtN);
             dataSet.Tables.Add(sdtN);
             dataSet.Tables.Add(ddtN);
-            DataRelation relation = new DataRelation("rel1"
-                , new DataColumn[] { wdtN.Columns["ukey"] }
-                , new DataColumn[] { pdtN.Columns["WorkOrderUkey"] }
-            );
+            DataRelation relation = new DataRelation(
+                "rel1",
+                new DataColumn[] { wdtN.Columns["ukey"] },
+                new DataColumn[] { pdtN.Columns["WorkOrderUkey"] });
             dataSet.Relations.Add(relation);
 
-            DataRelation relation2 = new DataRelation("rel2"
-                , new DataColumn[] { wdtN.Columns["ukey"] }
-                , new DataColumn[] { sdtN.Columns["WorkOrderUkey"] }
-            );
+            DataRelation relation2 = new DataRelation(
+                "rel2",
+                new DataColumn[] { wdtN.Columns["ukey"] },
+                new DataColumn[] { sdtN.Columns["WorkOrderUkey"] });
             dataSet.Relations.Add(relation2);
 
-            DataRelation relation3 = new DataRelation("rel3"
-                , new DataColumn[] { wdtN.Columns["ukey"] }
-                , new DataColumn[] { ddtN.Columns["WorkOrderUkey"] }
-            );
+            DataRelation relation3 = new DataRelation(
+                "rel3",
+                new DataColumn[] { wdtN.Columns["ukey"] },
+                new DataColumn[] { ddtN.Columns["WorkOrderUkey"] });
             dataSet.Relations.Add(relation3);
 
-            listControlBindingSource2.DataSource = dataSet;
-            listControlBindingSource2.DataMember = "Master";
-            listControlBindingSource4.DataSource = listControlBindingSource2;
-            listControlBindingSource4.DataMember = "rel1";
-            listControlBindingSource6.DataSource = listControlBindingSource2;
-            listControlBindingSource6.DataMember = "rel2";
-            listControlBindingSource8.DataSource = listControlBindingSource2;
-            listControlBindingSource8.DataMember = "rel3";
+            this.listControlBindingSource2.DataSource = dataSet;
+            this.listControlBindingSource2.DataMember = "Master";
+            this.listControlBindingSource4.DataSource = this.listControlBindingSource2;
+            this.listControlBindingSource4.DataMember = "rel1";
+            this.listControlBindingSource6.DataSource = this.listControlBindingSource2;
+            this.listControlBindingSource6.DataMember = "rel2";
+            this.listControlBindingSource8.DataSource = this.listControlBindingSource2;
+            this.listControlBindingSource8.DataMember = "rel3";
 
-            displayTimeN.DataBindings.Add("Text", listControlBindingSource2, "SandCTime", true, DataSourceUpdateMode.OnPropertyChanged);
+            this.displayTimeN.DataBindings.Add("Text", this.listControlBindingSource2, "SandCTime", true, DataSourceUpdateMode.OnPropertyChanged);
             #endregion
         }
     }

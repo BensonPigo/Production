@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
+﻿using System.ComponentModel;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sci.Win.UI;
 using Sci.Data;
@@ -22,7 +16,11 @@ namespace Sci.Production.Class
             DBProxy.Current.Select("Production", sql, out tbCurrency);
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbCurrency, "ID,NameCH,NameEn", "5,14,30", this.Text, "ID,NameCH,NameEn");
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.Text = item.GetSelectedString();
             this.ValidateText();
         }
@@ -34,9 +32,9 @@ namespace Sci.Production.Class
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                if (MyUtility.Check.Seek(str,"currency","id","Production")==false)
+                if (MyUtility.Check.Seek(str, "currency", "id", "Production") == false)
                 {
-                    this.Text = "";
+                    this.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Currency : {0} > not found!!!", str));
                     return;

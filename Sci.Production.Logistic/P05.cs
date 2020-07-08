@@ -169,7 +169,6 @@ WHERE       cr.MDivisionID = '{Sci.Env.User.Keyword}'
             and cr.ReceiveDate <= '{0}'", Convert.ToDateTime(this.dateReceiveDate.Value2).ToString("d")));
             }
 
-
             sqlCmd.Append(
                 @"
 select  1 as selected
@@ -412,7 +411,6 @@ group by a.orderid,o.CustPONo", out dtPrint);
             objApp.Visible = true;
             Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(objApp);
-
         }
     }
 }

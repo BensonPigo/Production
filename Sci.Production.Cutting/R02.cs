@@ -2,21 +2,24 @@
 using Sci.Data;
 using Sci.Win.Tools;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using System.Linq;
-using System.IO;
+
 namespace Sci.Production.Cutting
 {
     public partial class R02 : Sci.Win.Tems.PrintForm
     {
         DataTable[] printData;
-        string MD, Factory, CutCell1, CutCell2 ,SpreadingNo1 ,SpreadingNo2;
+        string MD;
+        string Factory;
+        string CutCell1;
+        string CutCell2;
+        string SpreadingNo1;
+        string SpreadingNo2;
         string[] cuttings;
         DateTime? dateR_CuttingDate1, dateR_CuttingDate2;
         StringBuilder condition_CuttingDate = new StringBuilder();
@@ -27,190 +30,228 @@ namespace Sci.Production.Cutting
         public R02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable WorkOrder;
-            //Set ComboM
+
+            // Set ComboM
             DBProxy.Current.Select(null, @"Select Distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out WorkOrder);
-            MyUtility.Tool.SetupCombox(comboM, 1, WorkOrder);
-            comboM.Text = Sci.Env.User.Keyword;
-            
-            //Set ComboFactory
+            MyUtility.Tool.SetupCombox(this.comboM, 1, WorkOrder);
+            this.comboM.Text = Sci.Env.User.Keyword;
+
+            // Set ComboFactory
             this.setComboFactory();
-            comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Sci.Env.User.Factory;
         }
 
         private void radioByOneDayDetial_CheckedChanged(object sender, EventArgs e)
         {
-            dateCuttingDate.Control2.Visible = !radioByOneDayDetial.Checked;
-            if (radioByOneDayDetial.Checked)
-                dateCuttingDate.Control2.Text = "";
+            this.dateCuttingDate.Control2.Visible = !this.radioByOneDayDetial.Checked;
+            if (this.radioByOneDayDetial.Checked)
+            {
+                this.dateCuttingDate.Control2.Text = string.Empty;
+            }
             else
-                dateCuttingDate.Value2 = dateCuttingDate.Value1;
+            {
+                this.dateCuttingDate.Value2 = this.dateCuttingDate.Value1;
+            }
         }
 
         private void dateCuttingDate_Leave(object sender, EventArgs e)
         {
-            if (radioBySummary.Checked || radioByDetail.Checked)
-                if (MyUtility.Check.Empty(dateCuttingDate.Value2))
-                    dateCuttingDate.Value2 = dateCuttingDate.Value1;
+            if (this.radioBySummary.Checked || this.radioByDetail.Checked)
+            {
+                if (MyUtility.Check.Empty(this.dateCuttingDate.Value2))
+                {
+                    this.dateCuttingDate.Value2 = this.dateCuttingDate.Value1;
+                }
+            }
         }
-        
+
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateCuttingDate.Value1))
+            if (MyUtility.Check.Empty(this.dateCuttingDate.Value1))
             {
                 MyUtility.Msg.WarningBox("Cutting Date can't empty!!");
                 return false;
             }
 
-            switch (selected_splitWorksheet)
+            switch (this.selected_splitWorksheet)
             {
                 case "CutCell":
-                    if (MyUtility.Check.Empty(txtCutCellStart.Text.Trim()) && MyUtility.Check.Empty(txtCutCellEnd.Text.Trim()))
+                    if (MyUtility.Check.Empty(this.txtCutCellStart.Text.Trim()) && MyUtility.Check.Empty(this.txtCutCellEnd.Text.Trim()))
                     {
                         MyUtility.Msg.WarningBox("Cut Cell can't empty!!");
                         return false;
                     }
+
                     break;
                 case "SpreadingNo":
-                    if (MyUtility.Check.Empty(txtSpreadingNoStart.Text.Trim()) && MyUtility.Check.Empty(txtSpreadingNoEnd.Text.Trim()))
+                    if (MyUtility.Check.Empty(this.txtSpreadingNoStart.Text.Trim()) && MyUtility.Check.Empty(this.txtSpreadingNoEnd.Text.Trim()))
                     {
-
                         MyUtility.Msg.WarningBox("Spreading No. can't empty!!");
                         return false;
                     }
+
                     break;
                 default:
                     break;
             }
 
-            Factory = comboFactory.Text;
-            MD = comboM.Text;
-            dateR_CuttingDate1 = dateCuttingDate.Value1;
-            dateR_CuttingDate2 = dateCuttingDate.Value2;
+            this.Factory = this.comboFactory.Text;
+            this.MD = this.comboM.Text;
+            this.dateR_CuttingDate1 = this.dateCuttingDate.Value1;
+            this.dateR_CuttingDate2 = this.dateCuttingDate.Value2;
 
-            //select distinct cutcellid from cutplan order by cutcellid 不只有數字,where條件要''單引號,且mask是00
+            // select distinct cutcellid from cutplan order by cutcellid 不只有數字,where條件要''單引號,且mask是00
 
-            //避免1、2這樣的條件再>=、<=的篩選有誤，因此補0成01、02
-            //若包含文字符號則不處理
-
+            // 避免1、2這樣的條件再>=、<=的篩選有誤，因此補0成01、02
+            // 若包含文字符號則不處理
             int Cell1, Cell2, Spreading1, Spreading2;
             bool IsCell1Number, IsCell2Number, IsSpreading1Number, IsSpreading2Number;
 
-            //this.CutCell1
-            IsCell1Number = int.TryParse(txtCutCellStart.Text.Trim(), out Cell1);
-            if (IsCell1Number) this.CutCell1 = Cell1.ToString("D2");
-            else this.CutCell1 = txtCutCellStart.Text.Trim();
-
-            //this.CutCell2
-            IsCell2Number = int.TryParse(txtCutCellEnd.Text.Trim(), out Cell2);
-            if (IsCell2Number) this.CutCell2 = Cell2.ToString("D2");
-            else this.CutCell2 = txtCutCellEnd.Text.Trim();
-
-            //SpreadingNo1
-            IsSpreading1Number = int.TryParse(txtSpreadingNoStart.Text.Trim(), out Spreading1);
-            if (IsSpreading1Number) this.SpreadingNo1 = Spreading1.ToString("D2");
-            else this.SpreadingNo1 = txtSpreadingNoStart.Text.Trim();
-
-            //SpreadingNo2
-            IsSpreading2Number = int.TryParse(txtSpreadingNoEnd.Text.Trim(), out Spreading2);
-            if (IsSpreading2Number) this.SpreadingNo2 = Spreading2.ToString("D2");
-            else this.SpreadingNo2 = txtSpreadingNoEnd.Text.Trim();
-            
-            return base.ValidateInput();
-        }
-
-        //非同步讀取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
-        {
-            NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
-            //準備CutCell包含非數字
-            string scell;
-            scell = $@"
-select  distinct  {(selected_splitWorksheet== "CutCell" ? "CutCellID" : "SpreadingNoID")}
-from Cutplan WITH (NOLOCK) 
-inner join Cutting on CutPlan.CuttingID = Cutting.ID
-where   Cutplan.MDivisionID ='{MD}'";
-
-            if (radioByDetail.Checked || radioBySummary.Checked)
+            // this.CutCell1
+            IsCell1Number = int.TryParse(this.txtCutCellStart.Text.Trim(), out Cell1);
+            if (IsCell1Number)
             {
-                //                scell = string.Format(@"
-                //select  distinct CutCellID 
-                //from Cutplan WITH (NOLOCK) 
-                //inner join Cutting on CutPlan.CuttingID = Cutting.ID
-                //where   Cutplan.EstCutdate >= '{0}' 
-                //        and Cutplan.EstCutdate <= '{1}'
-                //        and Cutplan.MDivisionID ='{2}' 
-                //        and Cutplan.CutCellID >= '{3}' 
-                //        and Cutplan.CutCellID <='{4}' 
-                //        {5}
-                //order by CutCellID"
-                //, Convert.ToDateTime(dateR_CuttingDate1).ToString("d")
-                //, Convert.ToDateTime(dateR_CuttingDate2).ToString("d")
-                //, MD
-                //, CutCell1
-                //, CutCell2
-                //, (Factory.Empty() ? "" : string.Format("and Cutting.FactoryID = '{0}'", Factory)));
-                scell += Environment.NewLine + $"        and Cutplan.EstCutdate >= '{Convert.ToDateTime(dateR_CuttingDate1).ToString("d")}'";
-                scell += Environment.NewLine + $"        and Cutplan.EstCutdate <= '{Convert.ToDateTime(dateR_CuttingDate2).ToString("d")}'";
+                this.CutCell1 = Cell1.ToString("D2");
             }
             else
             {
-//                scell = string.Format(@"
-//select  distinct CutCellID 
-//from Cutplan WITH (NOLOCK) 
-//inner join Cutting on CutPlan.CuttingID = Cutting.ID
-//where   Cutplan.EstCutdate = '{0}'
-//        and Cutplan.MDivisionID ='{1}' 
-//        and Cutplan.CutCellID >= '{2}' 
-//        and Cutplan.CutCellID <='{3}' 
+                this.CutCell1 = this.txtCutCellStart.Text.Trim();
+            }
+
+            // this.CutCell2
+            IsCell2Number = int.TryParse(this.txtCutCellEnd.Text.Trim(), out Cell2);
+            if (IsCell2Number)
+            {
+                this.CutCell2 = Cell2.ToString("D2");
+            }
+            else
+            {
+                this.CutCell2 = this.txtCutCellEnd.Text.Trim();
+            }
+
+            // SpreadingNo1
+            IsSpreading1Number = int.TryParse(this.txtSpreadingNoStart.Text.Trim(), out Spreading1);
+            if (IsSpreading1Number)
+            {
+                this.SpreadingNo1 = Spreading1.ToString("D2");
+            }
+            else
+            {
+                this.SpreadingNo1 = this.txtSpreadingNoStart.Text.Trim();
+            }
+
+            // SpreadingNo2
+            IsSpreading2Number = int.TryParse(this.txtSpreadingNoEnd.Text.Trim(), out Spreading2);
+            if (IsSpreading2Number)
+            {
+                this.SpreadingNo2 = Spreading2.ToString("D2");
+            }
+            else
+            {
+                this.SpreadingNo2 = this.txtSpreadingNoEnd.Text.Trim();
+            }
+
+            return base.ValidateInput();
+        }
+
+        // 非同步讀取資料
+        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        {
+            this.NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
+
+            // 準備CutCell包含非數字
+            string scell;
+            scell = $@"
+select  distinct  {(this.selected_splitWorksheet == "CutCell" ? "CutCellID" : "SpreadingNoID")}
+from Cutplan WITH (NOLOCK) 
+inner join Cutting on CutPlan.CuttingID = Cutting.ID
+where   Cutplan.MDivisionID ='{this.MD}'";
+
+            if (this.radioByDetail.Checked || this.radioBySummary.Checked)
+            {
+                // scell = string.Format(@"
+                // select  distinct CutCellID
+                // from Cutplan WITH (NOLOCK)
+                // inner join Cutting on CutPlan.CuttingID = Cutting.ID
+                // where   Cutplan.EstCutdate >= '{0}'
+                //        and Cutplan.EstCutdate <= '{1}'
+                //        and Cutplan.MDivisionID ='{2}'
+                //        and Cutplan.CutCellID >= '{3}'
+                //        and Cutplan.CutCellID <='{4}'
+                //        {5}
+                // order by CutCellID"
+                // , Convert.ToDateTime(dateR_CuttingDate1).ToString("d")
+                // , Convert.ToDateTime(dateR_CuttingDate2).ToString("d")
+                // , MD
+                // , CutCell1
+                // , CutCell2
+                // , (Factory.Empty() ? "" : string.Format("and Cutting.FactoryID = '{0}'", Factory)));
+                scell += Environment.NewLine + $"        and Cutplan.EstCutdate >= '{Convert.ToDateTime(this.dateR_CuttingDate1).ToString("d")}'";
+                scell += Environment.NewLine + $"        and Cutplan.EstCutdate <= '{Convert.ToDateTime(this.dateR_CuttingDate2).ToString("d")}'";
+            }
+            else
+            {
+// scell = string.Format(@"
+// select  distinct CutCellID
+// from Cutplan WITH (NOLOCK)
+// inner join Cutting on CutPlan.CuttingID = Cutting.ID
+// where   Cutplan.EstCutdate = '{0}'
+//        and Cutplan.MDivisionID ='{1}'
+//        and Cutplan.CutCellID >= '{2}'
+//        and Cutplan.CutCellID <='{3}'
 //        {4}
-//order by CutCellID"
-//, Convert.ToDateTime(dateR_CuttingDate1).ToString("d")
-//, MD
-//, CutCell1
-//, CutCell2
-//, (Factory.Empty() ? "" : string.Format("and Cutting.FactoryID = '{0}'", Factory)));
-
-                scell += Environment.NewLine + $"        and Cutplan.EstCutdate = '{Convert.ToDateTime(dateR_CuttingDate1).ToString("d")}'";
+// order by CutCellID"
+// , Convert.ToDateTime(dateR_CuttingDate1).ToString("d")
+// , MD
+// , CutCell1
+// , CutCell2
+// , (Factory.Empty() ? "" : string.Format("and Cutting.FactoryID = '{0}'", Factory)));
+                scell += Environment.NewLine + $"        and Cutplan.EstCutdate = '{Convert.ToDateTime(this.dateR_CuttingDate1).ToString("d")}'";
             }
 
-            if (!MyUtility.Check.Empty(Factory))
+            if (!MyUtility.Check.Empty(this.Factory))
             {
-                scell += Environment.NewLine + $"        and Cutting.FactoryID = '{Factory}'";
-            }
-            if (!MyUtility.Check.Empty(CutCell1))
-            {
-                scell += Environment.NewLine + $"        and  Cutplan.CutCellID >=  '{CutCell1}'";
-            }
-            if (!MyUtility.Check.Empty(CutCell2))
-            {
-                scell += Environment.NewLine + $"        and  Cutplan.CutCellID <=  '{CutCell2}'";
-            }
-            if (!MyUtility.Check.Empty(SpreadingNo1))
-            {
-                scell += Environment.NewLine + $"        and  Cutplan.SpreadingNoID >=  '{SpreadingNo1}'";
-            }
-            if (!MyUtility.Check.Empty(SpreadingNo2))
-            {
-                scell += Environment.NewLine + $"        and  Cutplan.SpreadingNoID <=  '{SpreadingNo2}'";
+                scell += Environment.NewLine + $"        and Cutting.FactoryID = '{this.Factory}'";
             }
 
-            scell += Environment.NewLine + "ORDER BY " + (selected_splitWorksheet == "CutCell" ? "CutCellID" : "SpreadingNoID");
+            if (!MyUtility.Check.Empty(this.CutCell1))
+            {
+                scell += Environment.NewLine + $"        and  Cutplan.CutCellID >=  '{this.CutCell1}'";
+            }
 
+            if (!MyUtility.Check.Empty(this.CutCell2))
+            {
+                scell += Environment.NewLine + $"        and  Cutplan.CutCellID <=  '{this.CutCell2}'";
+            }
 
-            DBProxy.Current.Select(null, scell, out Maintb);
-            
-            int SheetsCount = Maintb.Rows.Count;//CutCel總數
+            if (!MyUtility.Check.Empty(this.SpreadingNo1))
+            {
+                scell += Environment.NewLine + $"        and  Cutplan.SpreadingNoID >=  '{this.SpreadingNo1}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.SpreadingNo2))
+            {
+                scell += Environment.NewLine + $"        and  Cutplan.SpreadingNoID <=  '{this.SpreadingNo2}'";
+            }
+
+            scell += Environment.NewLine + "ORDER BY " + (this.selected_splitWorksheet == "CutCell" ? "CutCellID" : "SpreadingNoID");
+
+            DBProxy.Current.Select(null, scell, out this.Maintb);
+
+            int SheetsCount = this.Maintb.Rows.Count; // CutCel總數
 
             if (SheetsCount == 0)
+            {
                 return Result.F("Data not found!");
+            }
 
             StringBuilder sqlCmd = new StringBuilder();
 
             #region radiobtnByM
-            if (radioByDetail.Checked)
+            if (this.radioByDetail.Checked)
             {
                 for (int i = 0; i < SheetsCount; i++)
                 {
@@ -296,29 +337,34 @@ outer apply(
 ) as ms
 where 1 = 1
 ");
-                    if (!MyUtility.Check.Empty(dateR_CuttingDate1))
+                    if (!MyUtility.Check.Empty(this.dateR_CuttingDate1))
                     {
-                        sqlCmd.Append(string.Format(" and Cutplan.EstCutdate >= '{0}' ", Convert.ToDateTime(dateR_CuttingDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and Cutplan.EstCutdate >= '{0}' ", Convert.ToDateTime(this.dateR_CuttingDate1).ToString("d")));
                     }
-                    if (!MyUtility.Check.Empty(dateR_CuttingDate2))
+
+                    if (!MyUtility.Check.Empty(this.dateR_CuttingDate2))
                     {
-                        sqlCmd.Append(string.Format(" and Cutplan.EstCutdate <= '{0}' ", Convert.ToDateTime(dateR_CuttingDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and Cutplan.EstCutdate <= '{0}' ", Convert.ToDateTime(this.dateR_CuttingDate2).ToString("d")));
                     }
-                    if (!MyUtility.Check.Empty(MD))
+
+                    if (!MyUtility.Check.Empty(this.MD))
                     {
-                        sqlCmd.Append(string.Format(" and Cutplan.MDivisionID ='{0}' ", MD));
+                        sqlCmd.Append(string.Format(" and Cutplan.MDivisionID ='{0}' ", this.MD));
                     }
-                    if (!MyUtility.Check.Empty(Factory))
+
+                    if (!MyUtility.Check.Empty(this.Factory))
                     {
-                        sqlCmd.Append(string.Format(" and cut.FactoryID = '{0}' ", Factory));
+                        sqlCmd.Append(string.Format(" and cut.FactoryID = '{0}' ", this.Factory));
                     }
-                    if (!MyUtility.Check.Empty(CutCell1) || !MyUtility.Check.Empty(CutCell2))
+
+                    if (!MyUtility.Check.Empty(this.CutCell1) || !MyUtility.Check.Empty(this.CutCell2))
                     {
-                        sqlCmd.Append(string.Format(" and Cutplan.CutCellID = '{0}' ", Maintb.Rows[i][0].ToString()));
+                        sqlCmd.Append(string.Format(" and Cutplan.CutCellID = '{0}' ", this.Maintb.Rows[i][0].ToString()));
                     }
-                    if (!MyUtility.Check.Empty(SpreadingNo1) || !MyUtility.Check.Empty(SpreadingNo2))
+
+                    if (!MyUtility.Check.Empty(this.SpreadingNo1) || !MyUtility.Check.Empty(this.SpreadingNo2))
                     {
-                        sqlCmd.Append(string.Format(" and Cutplan.SpreadingNoID = '{0}' ", Maintb.Rows[i][0].ToString()));
+                        sqlCmd.Append(string.Format(" and Cutplan.SpreadingNoID = '{0}' ", this.Maintb.Rows[i][0].ToString()));
                     }
 
                     sqlCmd.Append(@"order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#]");
@@ -377,7 +423,7 @@ drop table #tmpall");
             #endregion
 
             #region radioBtnByCutCell
-            if (radioByOneDayDetial.Checked)
+            if (this.radioByOneDayDetial.Checked)
             {
                 for (int i = 0; i < SheetsCount; i++)
                 {
@@ -503,25 +549,29 @@ outer apply(
 ) as ms
 where 1 = 1 --??? AND fe.ETA IS NOT NULL
 ");
-                    if (!MyUtility.Check.Empty(dateR_CuttingDate1))
+                    if (!MyUtility.Check.Empty(this.dateR_CuttingDate1))
                     {
-                        sqlCmd.Append(string.Format(" and Cutplan.EstCutdate = '{0}' ", Convert.ToDateTime(dateR_CuttingDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and Cutplan.EstCutdate = '{0}' ", Convert.ToDateTime(this.dateR_CuttingDate1).ToString("d")));
                     }
-                    if (!MyUtility.Check.Empty(MD))
+
+                    if (!MyUtility.Check.Empty(this.MD))
                     {
-                        sqlCmd.Append(string.Format(" and Cutplan.MDivisionID ='{0}' ", MD));
+                        sqlCmd.Append(string.Format(" and Cutplan.MDivisionID ='{0}' ", this.MD));
                     }
-                    if (!MyUtility.Check.Empty(Factory))
+
+                    if (!MyUtility.Check.Empty(this.Factory))
                     {
-                        sqlCmd.Append(string.Format(" and cut.FactoryID = '{0}' ", Factory));
+                        sqlCmd.Append(string.Format(" and cut.FactoryID = '{0}' ", this.Factory));
                     }
-                    if (!MyUtility.Check.Empty(CutCell1) || !MyUtility.Check.Empty(CutCell2))
+
+                    if (!MyUtility.Check.Empty(this.CutCell1) || !MyUtility.Check.Empty(this.CutCell2))
                     {
-                        sqlCmd.Append(string.Format(" and Cutplan.CutCellID = '{0}' ", Maintb.Rows[i][0].ToString()));
+                        sqlCmd.Append(string.Format(" and Cutplan.CutCellID = '{0}' ", this.Maintb.Rows[i][0].ToString()));
                     }
-                    if (!MyUtility.Check.Empty(SpreadingNo1) || !MyUtility.Check.Empty(SpreadingNo2))
+
+                    if (!MyUtility.Check.Empty(this.SpreadingNo1) || !MyUtility.Check.Empty(this.SpreadingNo2))
                     {
-                        sqlCmd.Append(string.Format(" and Cutplan.SpreadingNoID = '{0}' ", Maintb.Rows[i][0].ToString()));
+                        sqlCmd.Append(string.Format(" and Cutplan.SpreadingNoID = '{0}' ", this.Maintb.Rows[i][0].ToString()));
                     }
 
                     sqlCmd.Append(@"order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]");
@@ -579,7 +629,7 @@ drop table #tmpall");
             #endregion
 
             #region radiobtn By Summary
-            if (radioBySummary.Checked)
+            if (this.radioBySummary.Checked)
             {
                 for (int i = 0; i < SheetsCount; i++)
                 {
@@ -709,30 +759,36 @@ outer apply(select p.PatternUkey from dbo.GetPatternUkey(o.POID,'',w.MarkerNo,o.
 
 where 1 = 1
 ");
-                    if (!MyUtility.Check.Empty(dateR_CuttingDate1))
+                    if (!MyUtility.Check.Empty(this.dateR_CuttingDate1))
                     {
-                        sqlCmd.Append(string.Format(" and c.EstCutdate >= '{0}' ", Convert.ToDateTime(dateR_CuttingDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and c.EstCutdate >= '{0}' ", Convert.ToDateTime(this.dateR_CuttingDate1).ToString("d")));
                     }
-                    if (!MyUtility.Check.Empty(dateR_CuttingDate2))
+
+                    if (!MyUtility.Check.Empty(this.dateR_CuttingDate2))
                     {
-                        sqlCmd.Append(string.Format(" and c.EstCutdate <= '{0}' ", Convert.ToDateTime(dateR_CuttingDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and c.EstCutdate <= '{0}' ", Convert.ToDateTime(this.dateR_CuttingDate2).ToString("d")));
                     }
-                    if (!MyUtility.Check.Empty(MD))
+
+                    if (!MyUtility.Check.Empty(this.MD))
                     {
-                        sqlCmd.Append(string.Format(" and c.MDivisionID ='{0}' ", MD));
+                        sqlCmd.Append(string.Format(" and c.MDivisionID ='{0}' ", this.MD));
                     }
-                    if (!MyUtility.Check.Empty(Factory))
+
+                    if (!MyUtility.Check.Empty(this.Factory))
                     {
-                        sqlCmd.Append(string.Format(" and cut.FactoryID = '{0}' ", Factory));
+                        sqlCmd.Append(string.Format(" and cut.FactoryID = '{0}' ", this.Factory));
                     }
-                    if (!MyUtility.Check.Empty(CutCell1) || !MyUtility.Check.Empty(CutCell2))
+
+                    if (!MyUtility.Check.Empty(this.CutCell1) || !MyUtility.Check.Empty(this.CutCell2))
                     {
-                        sqlCmd.Append(string.Format(" and c.CutCellID = '{0}' ", Maintb.Rows[i][0].ToString()));
+                        sqlCmd.Append(string.Format(" and c.CutCellID = '{0}' ", this.Maintb.Rows[i][0].ToString()));
                     }
-                    if (!MyUtility.Check.Empty(SpreadingNo1) || !MyUtility.Check.Empty(SpreadingNo2))
+
+                    if (!MyUtility.Check.Empty(this.SpreadingNo1) || !MyUtility.Check.Empty(this.SpreadingNo2))
                     {
-                        sqlCmd.Append(string.Format(" and c.SpreadingNoID = '{0}' ", Maintb.Rows[i][0].ToString()));
+                        sqlCmd.Append(string.Format(" and c.SpreadingNoID = '{0}' ", this.Maintb.Rows[i][0].ToString()));
                     }
+
                     sqlCmd.Append($@"
 select 	
 	[Request#],[Factory],[Line#],[SP#],[SewInline],[Seq#],[Style#],[FabRef#],[Fab Desc],[Color],Artwork.Artwork
@@ -758,93 +814,97 @@ outer apply(
 order by [Request#],Factory,[Line#],[SP#],[Seq#]
 drop table #tmp{i}
 ");
-
                 }
             }
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
-            cuttings = new string[SheetsCount];
+
+            this.cuttings = new string[SheetsCount];
             for (int i = 0; i < SheetsCount; i++)
             {
-                cuttings[i] = printData[i].Rows.Count.ToString() + " cuttings";                
+                this.cuttings[i] = this.printData[i].Rows.Count.ToString() + " cuttings";
             }
             #region Bydetail OR Byonedaydetial OR Byonedaydetial依狀況插入列
-            if (radioByDetail.Checked || radioByOneDayDetial.Checked)
+            if (this.radioByDetail.Checked || this.radioByOneDayDetial.Checked)
             {
-                for (int i = 0; i < printData.Count(); i++)
+                for (int i = 0; i < this.printData.Count(); i++)
                 {
-                    int l = 0,q =0;
+                    int l = 0, q = 0;
                     decimal dm = 0, dsum = 0;
                     DataTable tmps = new DataTable();
-                    tmps = printData[i].Copy();
-                    printData[i].Clear();
+                    tmps = this.printData[i].Copy();
+                    this.printData[i].Clear();
                     for (int j = 0; j < tmps.Rows.Count; j++)
                     {
                         int.TryParse(tmps.Rows[j]["total_qty1"].ToString(), out q);
                         l += q;
                         decimal.TryParse(tmps.Rows[j]["Fab Cons."].ToString(), out dm);
                         dsum += dm;
-                        DataRow drr = printData[i].NewRow();
+                        DataRow drr = this.printData[i].NewRow();
                         drr = tmps.Rows[j];
-                        printData[i].ImportRow(drr);
+                        this.printData[i].ImportRow(drr);
 
-                        //做到倒數第二row
+                        // 做到倒數第二row
                         if (j < tmps.Rows.Count - 1)
                         {
-                            //若下個SP#有值則塞row
+                            // 若下個SP#有值則塞row
                             if (!tmps.Rows[j + 1]["SP#1"].Empty())
                             {
-                                DataRow tabrow = printData[i].NewRow();
+                                DataRow tabrow = this.printData[i].NewRow();
                                 tabrow["Colorway1"] = "Total Cut Qty";
                                 tabrow["Color1"] = l;
-                                //tabrow[13] = "Total Cons.";//此欄在Datatable是Decimal無法放入string
+
+                                // tabrow[13] = "Total Cons.";//此欄在Datatable是Decimal無法放入string
                                 tabrow["Fab Cons."] = dsum;
-                                printData[i].Rows.Add(tabrow);
+                                this.printData[i].Rows.Add(tabrow);
 
                                 l = 0;
                                 dm = 0;
                                 dsum = 0;
                             }
                         }
-                        //若到最後一row塞row
+
+                        // 若到最後一row塞row
                         if (j == tmps.Rows.Count - 1)
                         {
-                            DataRow tabrow = printData[i].NewRow();
+                            DataRow tabrow = this.printData[i].NewRow();
                             tabrow["Colorway1"] = "Total Cut Qty";
                             tabrow["Color1"] = l;
-                            //tabrow[13] = "Total Cons.";
+
+                            // tabrow[13] = "Total Cons.";
                             tabrow["Fab Cons."] = dsum;
-                            printData[i].Rows.Add(tabrow);
+                            this.printData[i].Rows.Add(tabrow);
                         }
                     }
-                    printData[i].Columns.RemoveAt(printData[i].Columns.Count-1);
+
+                    this.printData[i].Columns.RemoveAt(this.printData[i].Columns.Count - 1);
                 }
             }
 
             #endregion
             #region By summary
-            if (radioBySummary.Checked)
+            if (this.radioBySummary.Checked)
             {
-                for (int i = 0; i < printData.Count(); i++)
+                for (int i = 0; i < this.printData.Count(); i++)
                 {
-                    int l = 0, q = 0;
+                    // int l = 0, q = 0;
                     decimal dm = 0, dsum = 0;
                     DataTable tmps = new DataTable();
-                    tmps = printData[i].Copy();
-                    printData[i].Clear();
+                    tmps = this.printData[i].Copy();
+                    this.printData[i].Clear();
                     for (int j = 0; j < tmps.Rows.Count; j++)
                     {
                         decimal.TryParse(tmps.Rows[j]["Total Fab Cons"].ToString(), out dm);
                         dsum += dm;
-                        DataRow drr = printData[i].NewRow();
+                        DataRow drr = this.printData[i].NewRow();
                         drr = tmps.Rows[j];
-                        printData[i].ImportRow(drr);
+                        this.printData[i].ImportRow(drr);
 
                         string id = MyUtility.Convert.GetString(tmps.Rows[j]["Request#"]);
                         string sp = MyUtility.Convert.GetString(tmps.Rows[j]["SP#"]);
@@ -862,35 +922,35 @@ drop table #tmp{i}
 
                         if (id != id2 || sp != sp2 || seq != seq2)
                         {
-                            DataRow tabrow = printData[i].NewRow();
+                            DataRow tabrow = this.printData[i].NewRow();
                             tabrow["Colorway"] = "Subtotal";
                             tabrow["Total Fab Cons"] = dsum;
-                            printData[i].Rows.Add(tabrow);
+                            this.printData[i].Rows.Add(tabrow);
 
                             dm = 0;
                             dsum = 0;
                         }
                     }
-                    printData[i].Columns.RemoveAt(printData[i].Columns.Count - 1);
+
+                    this.printData[i].Columns.RemoveAt(this.printData[i].Columns.Count - 1);
                 }
             }
             #endregion
             return Result.True;
         }
 
-        bool boolshowexcel = false;
         bool boolsend = false;
 
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            SetCount(printData[0].Rows.Count);            
-            
-            int CutCellcount = Maintb.Rows.Count;//CutCel總數
+            this.SetCount(this.printData[0].Rows.Count);
+
+            int CutCellcount = this.Maintb.Rows.Count; // CutCel總數
             bool countrow = false;
             for (int i = 0; i < CutCellcount; i++)
             {
-                if (printData[i].Rows.Count > 0)
+                if (this.printData[i].Rows.Count > 0)
                 {
                     countrow = true;
                 }
@@ -899,62 +959,68 @@ drop table #tmp{i}
             if (!countrow)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
-                    return false;
+                return false;
             }
 
             #region radiobtn_Bydetail
-            if (radioByDetail.Checked)
+            if (this.radioByDetail.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportBydetail.xltx"); //預先開啟excel app
-                objApp.DisplayAlerts = false;//設定Excel的警告視窗是否彈出
-                objApp.Cells[1, 1] = NameEN;
-                //先準備複製幾頁
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportBydetail.xltx"); // 預先開啟excel app
+                objApp.DisplayAlerts = false; // 設定Excel的警告視窗是否彈出
+                objApp.Cells[1, 1] = this.NameEN;
+
+                // 先準備複製幾頁
                 for (int i = 0; i < CutCellcount; i++)
                 {
                     if (i > 0)
                     {
-                        Microsoft.Office.Interop.Excel.Worksheet worksheet1 = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1]);
-                        Microsoft.Office.Interop.Excel.Worksheet worksheetn = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1]);
+                        Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1];
+                        Microsoft.Office.Interop.Excel.Worksheet worksheetn = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1];
                         worksheet1.Copy(worksheetn);
                     }
                 }
 
                 for (int i = 0; i < CutCellcount; i++)
                 {
-                    if (printData[i].Rows.Count == 0)
+                    if (this.printData[i].Rows.Count == 0)
+                    {
                         continue;
-                    
-                    Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];   // 取得工作表
-                    MyUtility.Excel.CopyToXls(printData[i], null, "Cutting_R02_CuttingDailyPlanSummaryReportBydetail.xltx", headerRow: 5, excelApp: objApp, wSheet: objSheets, showExcel: false, showSaveMsg: false);//將datatable copy to excel
+                    }
 
-                    foreach (DataRow dr in printData[i].Rows)
+                    Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];   // 取得工作表
+                    MyUtility.Excel.CopyToXls(this.printData[i], null, "Cutting_R02_CuttingDailyPlanSummaryReportBydetail.xltx", headerRow: 5, excelApp: objApp, wSheet: objSheets, showExcel: false, showSaveMsg: false); // 將datatable copy to excel
+
+                    foreach (DataRow dr in this.printData[i].Rows)
                     {
                         dr["Fab Desc1"] = dr["Fab Desc1"].ToString().Trim();
                     }
-                    
-                    for (int j = 0; j < printData[i].Rows.Count; j++)
+
+                    for (int j = 0; j < this.printData[i].Rows.Count; j++)
                     {
-                        if (!printData[i].Rows[j]["Request#1"].Empty())
+                        if (!this.printData[i].Rows[j]["Request#1"].Empty())
                         {
-                            objSheets.get_Range("A" + (8 + j), "B" + (8 + j)).Merge(false);//合併欄位
-                            objSheets.get_Range("A" + (8 + j), "A" + (8 + j)).Font.Bold = true;//指定粗體
-                            if (!MyUtility.Check.Empty(printData[i].Rows[j]["SCI Delivery"]))
-                                objSheets.Cells[7 + j, 1] = "SCI Delivery: " + Convert.ToDateTime(printData[i].Rows[j]["SCI Delivery"]).ToString("d");
+                            objSheets.get_Range("A" + (8 + j), "B" + (8 + j)).Merge(false); // 合併欄位
+                            objSheets.get_Range("A" + (8 + j), "A" + (8 + j)).Font.Bold = true; // 指定粗體
+                            if (!MyUtility.Check.Empty(this.printData[i].Rows[j]["SCI Delivery"]))
+                            {
+                                objSheets.Cells[7 + j, 1] = "SCI Delivery: " + Convert.ToDateTime(this.printData[i].Rows[j]["SCI Delivery"]).ToString("d");
+                            }
                         }
 
-                        if (printData[i].Rows[j]["Ref#"].Empty())
+                        if (this.printData[i].Rows[j]["Ref#"].Empty())
                         {
-                            objSheets.get_Range("L" + (6 + j), "O" + (6 + j)).Font.Bold = true;//指定粗體
+                            objSheets.get_Range("L" + (6 + j), "O" + (6 + j)).Font.Bold = true; // 指定粗體
                             objSheets.Cells[6 + j, 14] = "Total Cons.";
                         }
                     }
+
                     objSheets.Columns["U"].Clear();
-                    objSheets.Name = (selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + (Maintb.Rows[i][0].ToString());//工作表名稱
-                    objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(dateR_CuttingDate2).ToString("d"); //查詢日期
-                    objSheets.Cells[3, 5] = (selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No");//CutCell或SpreadingNo
-                    objSheets.Cells[3, 6] = (Maintb.Rows[i][0].ToString());//CutCell或SpreadingNo
-                    objSheets.Cells[3, 9] = MD;
-                    objSheets.Cells[4, 1] = cuttings[i];
+                    objSheets.Name = (this.selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + this.Maintb.Rows[i][0].ToString(); // 工作表名稱
+                    objSheets.Cells[3, 2] = Convert.ToDateTime(this.dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(this.dateR_CuttingDate2).ToString("d"); // 查詢日期
+                    objSheets.Cells[3, 5] = this.selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No"; // CutCell或SpreadingNo
+                    objSheets.Cells[3, 6] = this.Maintb.Rows[i][0].ToString(); // CutCell或SpreadingNo
+                    objSheets.Cells[3, 9] = this.MD;
+                    objSheets.Cells[4, 1] = this.cuttings[i];
                     objSheets.get_Range("A1").ColumnWidth = 14.25;
                     objSheets.get_Range("B1").ColumnWidth = 14;
                     objSheets.get_Range("C1").ColumnWidth = 7.88;
@@ -976,72 +1042,76 @@ drop table #tmp{i}
                     objSheets.get_Range("T1").ColumnWidth = 41;
                     objSheets.Rows.AutoFit();
 
-                    Marshal.ReleaseComObject(objSheets); //釋放sheet                    
+                    Marshal.ReleaseComObject(objSheets); // 釋放sheet
                 }
 
                 #region Save Excel
-                strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R02_CuttingDailyPlanSummaryReportBydetail");
+                this.strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R02_CuttingDailyPlanSummaryReportBydetail");
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
-                workbook.SaveAs(strExcelName);
+                workbook.SaveAs(this.strExcelName);
                 workbook.Close();
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);
                 Marshal.ReleaseComObject(workbook);
-                #endregion 
-                if (!boolsend)
+                #endregion
+                if (!this.boolsend)
                 {
-                    strExcelName.OpenFile();
+                    this.strExcelName.OpenFile();
                 }
             }
             #endregion
 
             #region radioBtn_Byonedaydetial
-            if (radioByOneDayDetial.Checked)
+            if (this.radioByOneDayDetial.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportByonedaydetail.xltx"); //預先開啟excel app
-                objApp.DisplayAlerts = false;//設定Excel的警告視窗是否彈出
-                objApp.Cells[1, 1] = NameEN;
-                //先準備複製幾頁
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportByonedaydetail.xltx"); // 預先開啟excel app
+                objApp.DisplayAlerts = false; // 設定Excel的警告視窗是否彈出
+                objApp.Cells[1, 1] = this.NameEN;
+
+                // 先準備複製幾頁
                 for (int i = 0; i < CutCellcount; i++)
                 {
                     if (i > 0)
                     {
-                        Microsoft.Office.Interop.Excel.Worksheet worksheet1 = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1]);
-                        Microsoft.Office.Interop.Excel.Worksheet worksheetn = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1]);
+                        Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1];
+                        Microsoft.Office.Interop.Excel.Worksheet worksheetn = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1];
                         worksheet1.Copy(worksheetn);
                     }
                 }
 
                 for (int i = 0; i < CutCellcount; i++)
                 {
-                    if (printData[i].Rows.Count == 0)
-                        continue;
-
-                    Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];   // 取得工作表                    
-                    MyUtility.Excel.CopyToXls(printData[i], null, "Cutting_R02_CuttingDailyPlanSummaryReportByonedaydetail.xltx", headerRow: 5, excelApp: objApp, wSheet: objSheets, showExcel: false, showSaveMsg: false);//將datatable copy to excel
-
-                    for (int j = 0; j < printData[i].Rows.Count; j++)
+                    if (this.printData[i].Rows.Count == 0)
                     {
-                        if (!printData[i].Rows[j]["Request#1"].Empty())
+                        continue;
+                    }
+
+                    Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];   // 取得工作表
+                    MyUtility.Excel.CopyToXls(this.printData[i], null, "Cutting_R02_CuttingDailyPlanSummaryReportByonedaydetail.xltx", headerRow: 5, excelApp: objApp, wSheet: objSheets, showExcel: false, showSaveMsg: false); // 將datatable copy to excel
+
+                    for (int j = 0; j < this.printData[i].Rows.Count; j++)
+                    {
+                        if (!this.printData[i].Rows[j]["Request#1"].Empty())
                         {
-                            objSheets.get_Range("A" + (8 + j), "B" + (8 + j)).Merge(false);//合併欄位
-                            objSheets.get_Range("A" + (8 + j), "A" + (8 + j)).Font.Bold = true;//指定粗體
-                            objSheets.Cells[7 + j, 1] = "SCI Delivery: " + Convert.ToDateTime(printData[i].Rows[j]["SCI Delivery"]).ToString("d");
+                            objSheets.get_Range("A" + (8 + j), "B" + (8 + j)).Merge(false); // 合併欄位
+                            objSheets.get_Range("A" + (8 + j), "A" + (8 + j)).Font.Bold = true; // 指定粗體
+                            objSheets.Cells[7 + j, 1] = "SCI Delivery: " + Convert.ToDateTime(this.printData[i].Rows[j]["SCI Delivery"]).ToString("d");
                         }
 
-                        if (printData[i].Rows[j]["Ref#"].Empty())
+                        if (this.printData[i].Rows[j]["Ref#"].Empty())
                         {
-                            objSheets.get_Range("L" + (6 + j), "Q" + (6 + j)).Font.Bold = true;//指定粗體
+                            objSheets.get_Range("L" + (6 + j), "Q" + (6 + j)).Font.Bold = true; // 指定粗體
                             objSheets.Cells[6 + j, 16] = "Total Cons.";
                         }
                     }
+
                     objSheets.Columns["W"].Clear();
-                    objSheets.Name = (selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + (Maintb.Rows[i][0].ToString());//工作表名稱
-                    objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d"); //查詢日期
-                    objSheets.Cells[3, 5] = (selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No");//CutCell或SpreadingNo
-                    objSheets.Cells[3, 6] = (Maintb.Rows[i][0].ToString());//CutCell或SpreadingNo
-                    objSheets.Cells[3, 9] = MD;
-                    objSheets.Cells[4, 1] = cuttings[i];
+                    objSheets.Name = (this.selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + this.Maintb.Rows[i][0].ToString(); // 工作表名稱
+                    objSheets.Cells[3, 2] = Convert.ToDateTime(this.dateR_CuttingDate1).ToString("d"); // 查詢日期
+                    objSheets.Cells[3, 5] = this.selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No"; // CutCell或SpreadingNo
+                    objSheets.Cells[3, 6] = this.Maintb.Rows[i][0].ToString(); // CutCell或SpreadingNo
+                    objSheets.Cells[3, 9] = this.MD;
+                    objSheets.Cells[4, 1] = this.cuttings[i];
                     objSheets.get_Range("A1").ColumnWidth = 15.75;
                     objSheets.get_Range("B1").ColumnWidth = 11.75;
                     objSheets.get_Range("C1").ColumnWidth = 8.25;
@@ -1064,66 +1134,70 @@ drop table #tmp{i}
                     objSheets.get_Range("T1").ColumnWidth = 12.88;
                     objSheets.get_Range("V1").ColumnWidth = 41;
                     objSheets.Rows.AutoFit();
-                    
-                    Marshal.ReleaseComObject(objSheets); //釋放sheet                     
+
+                    Marshal.ReleaseComObject(objSheets); // 釋放sheet
                 }
 
                 #region Save Excel
-                strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R02_CuttingDailyPlanSummaryReportByonedaydetail");
+                this.strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R02_CuttingDailyPlanSummaryReportByonedaydetail");
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
-                workbook.SaveAs(strExcelName);
+                workbook.SaveAs(this.strExcelName);
                 workbook.Close();
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);
                 Marshal.ReleaseComObject(workbook);
-                #endregion 
-                if (!boolsend)
+                #endregion
+                if (!this.boolsend)
                 {
-                    strExcelName.OpenFile();
+                    this.strExcelName.OpenFile();
                 }
             }
             #endregion
 
             #region radioBtn_BySUMMY
-            if (radioBySummary.Checked)
+            if (this.radioBySummary.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx"); //預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx"); // 預先開啟excel app
                 Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx", objApp);
-                objApp.DisplayAlerts = false;//設定Excel的警告視窗是否彈出
-                objApp.Cells[1, 1] = NameEN;
-                //先準備複製幾頁
+                objApp.DisplayAlerts = false; // 設定Excel的警告視窗是否彈出
+                objApp.Cells[1, 1] = this.NameEN;
+
+                // 先準備複製幾頁
                 for (int i = 0; i < CutCellcount; i++)
                 {
                     if (i > 0)
                     {
-                        Microsoft.Office.Interop.Excel.Worksheet worksheet1 = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1]);
-                        Microsoft.Office.Interop.Excel.Worksheet worksheetn = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1]);
+                        Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1];
+                        Microsoft.Office.Interop.Excel.Worksheet worksheetn = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1];
                         worksheet1.Copy(worksheetn);
                     }
                 }
 
                 for (int i = 0; i < CutCellcount; i++)
                 {
-                    if (printData[i].Rows.Count == 0)
+                    if (this.printData[i].Rows.Count == 0)
+                    {
                         continue;
-                    foreach (DataRow dr in printData[i].Rows)
+                    }
+
+                    foreach (DataRow dr in this.printData[i].Rows)
                     {
                         dr["Fab Desc"] = dr["Fab Desc"].ToString().Trim();
                     }
 
-                    Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];   // 取得工作表  
+                    Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];   // 取得工作表
                     ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Sheets[i + 1]).Select();
-                    //MyUtility.Excel.CopyToXls(printData[i], null, "Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx", headerRow: 5, excelApp: objApp, wSheet: objSheets, showExcel: false, showSaveMsg: false);//將datatable copy to excel
-                    
-                    com.WriteTable(printData[i],6);
 
+                    // MyUtility.Excel.CopyToXls(printData[i], null, "Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx", headerRow: 5, excelApp: objApp, wSheet: objSheets, showExcel: false, showSaveMsg: false);//將datatable copy to excel
+                    com.WriteTable(this.printData[i], 6);
 
-                    objSheets.Name = (selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + (Maintb.Rows[i][0].ToString());//工作表名稱
-                    objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(dateR_CuttingDate2).ToString("d"); //查詢日期
-                    objSheets.Cells[3, 5] = (selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No");//CutCell或SpreadingNo
-                    objSheets.Cells[3, 6] = (Maintb.Rows[i][0].ToString());//CutCell或SpreadingNo
-                    objSheets.Cells[3, 9] = MD;
-                    //objSheets.Columns.AutoFit();
+                    objSheets.Name = (this.selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + this.Maintb.Rows[i][0].ToString(); // 工作表名稱
+                    objSheets.Cells[3, 2] = Convert.ToDateTime(this.dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(this.dateR_CuttingDate2).ToString("d"); // 查詢日期
+                    objSheets.Cells[3, 5] = this.selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No"; // CutCell或SpreadingNo
+                    objSheets.Cells[3, 6] = this.Maintb.Rows[i][0].ToString(); // CutCell或SpreadingNo
+                    objSheets.Cells[3, 9] = this.MD;
+
+                    // objSheets.Columns.AutoFit();
                     objSheets.Columns[7].ColumnWidth = 47;
                     objSheets.Columns[11].ColumnWidth = 8;
                     objSheets.Columns[12].ColumnWidth = 13;
@@ -1131,38 +1205,37 @@ drop table #tmp{i}
                     objSheets.Columns[14].ColumnWidth = 10;
                     objSheets.Columns[15].ColumnWidth = 20;
                     objSheets.Columns[16].ColumnWidth = 41;
-                    Marshal.ReleaseComObject(objSheets);    //釋放sheet                    
+                    Marshal.ReleaseComObject(objSheets);    // 釋放sheet
                 }
                 #region Save Excel
-                strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R02_CuttingDailyPlanSummaryReportBySummary");
+                this.strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R02_CuttingDailyPlanSummaryReportBySummary");
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
-                workbook.SaveAs(strExcelName);
+                workbook.SaveAs(this.strExcelName);
                 workbook.Close();
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);
                 Marshal.ReleaseComObject(workbook);
-                #endregion 
-                if (!boolsend)
+                #endregion
+                if (!this.boolsend)
                 {
-                    strExcelName.OpenFile();
+                    this.strExcelName.OpenFile();
                 }
             }
             #endregion
 
-            if (boolsend)
+            if (this.boolsend)
             {
-                Send_Mail();
+                this.Send_Mail();
             }
 
-            boolsend = false;
+            this.boolsend = false;
             return true;
         }
 
         private void btnSendMail_Click(object sender, EventArgs e)
         {
-            boolshowexcel = false;
-            boolsend = true;
-            this.toexcel.PerformClick();            
+            this.boolsend = true;
+            this.toexcel.PerformClick();
         }
 
         private void Send_Mail()
@@ -1170,35 +1243,40 @@ drop table #tmp{i}
             StringBuilder CuttingDate = new StringBuilder();
             StringBuilder cutcell = new StringBuilder();
             CuttingDate.Clear();
-            if (!MyUtility.Check.Empty(dateR_CuttingDate1))
+            if (!MyUtility.Check.Empty(this.dateR_CuttingDate1))
             {
-                CuttingDate.Append(string.Format(@"{0}", Convert.ToDateTime(dateR_CuttingDate1).ToString("d")));
+                CuttingDate.Append(string.Format(@"{0}", Convert.ToDateTime(this.dateR_CuttingDate1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(dateR_CuttingDate2))
+
+            if (!MyUtility.Check.Empty(this.dateR_CuttingDate2))
             {
-                CuttingDate.Append(string.Format(@"~{0}", Convert.ToDateTime(dateR_CuttingDate2).ToString("d")));
+                CuttingDate.Append(string.Format(@"~{0}", Convert.ToDateTime(this.dateR_CuttingDate2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(CutCell1))
+
+            if (!MyUtility.Check.Empty(this.CutCell1))
             {
-                cutcell.Append(string.Format(@"{0}", CutCell1));
+                cutcell.Append(string.Format(@"{0}", this.CutCell1));
             }
-            if (!MyUtility.Check.Empty(CutCell2))
+
+            if (!MyUtility.Check.Empty(this.CutCell2))
             {
-                cutcell.Append(string.Format(@"~{0}", CutCell2));
+                cutcell.Append(string.Format(@"~{0}", this.CutCell2));
             }
+
             string mailcmd = "select * from mailto WITH (NOLOCK) where id = '005'";
             DataTable maildt;
             DBProxy.Current.Select(null, mailcmd, out maildt);
             string ToAddress = MyUtility.Convert.GetString(maildt.Rows[0]["ToAddress"]);
             string CcAddress = MyUtility.Convert.GetString(maildt.Rows[0]["CcAddress"]);
-            string Subject = MyUtility.Convert.GetString(maildt.Rows[0]["Subject"]) +"-"+ CuttingDate;
+            string Subject = MyUtility.Convert.GetString(maildt.Rows[0]["Subject"]) + "-" + CuttingDate;
 
             var email = new MailTo(Sci.Env.Cfg.MailFrom, ToAddress, CcAddress,
                 Subject,
                 this.strExcelName,
-                "\r\nFilter as below description:\r\nCutting Date: " + CuttingDate + "\r\nCut Cell: " + cutcell + "\r\nM: " + MD, false, true);
+                "\r\nFilter as below description:\r\nCutting Date: " + CuttingDate + "\r\nCut Cell: " + cutcell + "\r\nM: " + this.MD, false, true);
             email.ShowDialog(this);
-            //tmpFile
+
+            // tmpFile
             System.IO.FileInfo fi = new System.IO.FileInfo(this.strExcelName);
             try
             {
@@ -1212,17 +1290,18 @@ drop table #tmp{i}
 
         private void setComboFactory()
         {
-            string sqlCmd = string.Format(@"
+            string sqlCmd = string.Format(
+                @"
 select '' ID
 union
 Select Distinct ID 
 from Factory
 where   junk = 0 
-        and MDivisionID = '{0}'", comboM.Text);
+        and MDivisionID = '{0}'", this.comboM.Text);
             DataTable Factory;
             DBProxy.Current.Select(null, sqlCmd, out Factory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, Factory);
-            comboFactory.Text = "";
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, Factory);
+            this.comboFactory.Text = string.Empty;
         }
 
         private void comboM_TextChanged(object sender, EventArgs e)
@@ -1230,22 +1309,21 @@ where   junk = 0
             this.setComboFactory();
         }
 
-
         private void radioByCutCell_CheckedChanged(object sender, EventArgs e)
         {
-            ByCutCell_SpreadingNo_change();
+            this.ByCutCell_SpreadingNo_change();
         }
 
         private void radioBySpreadingNo_CheckedChanged(object sender, EventArgs e)
         {
-            ByCutCell_SpreadingNo_change();
+            this.ByCutCell_SpreadingNo_change();
         }
-        
+
         private void radioGroup1_Paint(object sender, PaintEventArgs e)
         {
-            //把GroupBox的框線改成透明
+            // 把GroupBox的框線改成透明
             GroupBox box = sender as GroupBox;
-            DrawGroupBox(box, e.Graphics, Color.Transparent, Color.Transparent);
+            this.DrawGroupBox(box, e.Graphics, Color.Transparent, Color.Transparent);
         }
 
         private void DrawGroupBox(GroupBox box, Graphics g, Color textColor, Color borderColor)
@@ -1256,10 +1334,11 @@ where   junk = 0
                 Brush borderBrush = new SolidBrush(borderColor);
                 Pen borderPen = new Pen(borderBrush);
                 SizeF strSize = g.MeasureString(box.Text, box.Font);
-                Rectangle rect = new Rectangle(box.ClientRectangle.X,
-                                               box.ClientRectangle.Y + (int)(strSize.Height / 2),
-                                               box.ClientRectangle.Width - 1,
-                                               box.ClientRectangle.Height - (int)(strSize.Height / 2) - 1);
+                Rectangle rect = new Rectangle(
+                    box.ClientRectangle.X,
+                    box.ClientRectangle.Y + (int)(strSize.Height / 2),
+                    box.ClientRectangle.Width - 1,
+                    box.ClientRectangle.Height - (int)(strSize.Height / 2) - 1);
 
                 // Clear text and border
                 g.Clear(this.BackColor);
@@ -1268,19 +1347,23 @@ where   junk = 0
                 g.DrawString(box.Text, box.Font, textBrush, box.Padding.Left, 0);
 
                 // Drawing Border
-                //Left
+                // Left
                 g.DrawLine(borderPen, rect.Location, new Point(rect.X, rect.Y + rect.Height));
-                //Right
+
+                // Right
                 g.DrawLine(borderPen, new Point(rect.X + rect.Width, rect.Y), new Point(rect.X + rect.Width, rect.Y + rect.Height));
-                //Bottom
+
+                // Bottom
                 g.DrawLine(borderPen, new Point(rect.X, rect.Y + rect.Height), new Point(rect.X + rect.Width, rect.Y + rect.Height));
-                //Top1
+
+                // Top1
                 g.DrawLine(borderPen, new Point(rect.X, rect.Y), new Point(rect.X + box.Padding.Left, rect.Y));
-                //Top2
-                g.DrawLine(borderPen, new Point(rect.X + box.Padding.Left + (int)(strSize.Width), rect.Y), new Point(rect.X + rect.Width, rect.Y));
+
+                // Top2
+                g.DrawLine(borderPen, new Point(rect.X + box.Padding.Left + (int)strSize.Width, rect.Y), new Point(rect.X + rect.Width, rect.Y));
             }
         }
-        
+
         private void ByCutCell_SpreadingNo_change()
         {
             if (this.radioByCutCell.Checked)
@@ -1290,23 +1373,22 @@ where   junk = 0
                 this.txtCutCellStart.IsSupportEditMode = true;
                 this.txtCutCellStart.IsSupportEditMode = true;
 
-
                 this.txtSpreadingNoStart.Text = string.Empty;
                 this.txtSpreadingNoEnd.Text = string.Empty;
                 this.txtSpreadingNoStart.ReadOnly = true;
                 this.txtSpreadingNoEnd.ReadOnly = true;
                 this.txtSpreadingNoStart.IsSupportEditMode = false;
                 this.txtSpreadingNoEnd.IsSupportEditMode = false;
-                
+
                 this.selected_splitWorksheet = "CutCell";
             }
+
             if (this.radioBySpreadingNo.Checked)
             {
                 this.txtCutCellStart.ReadOnly = true;
                 this.txtCutCellEnd.ReadOnly = true;
                 this.txtCutCellStart.IsSupportEditMode = false;
                 this.txtCutCellStart.IsSupportEditMode = false;
-
 
                 this.txtCutCellStart.Text = string.Empty;
                 this.txtCutCellEnd.Text = string.Empty;

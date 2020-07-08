@@ -5,7 +5,6 @@ using Sci.Production.PublicPrg;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
@@ -25,17 +24,17 @@ namespace Sci.Production.Warehouse
         public P12(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            //MDivisionID 是 P12 寫入 => Sci.Env.User.Keyword
+            this.InitializeComponent();
+
+            // MDivisionID 是 P12 寫入 => Sci.Env.User.Keyword
             this.DefaultFilter = string.Format("Type='C' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
-            //
-            detailgrid.StatusNotification += (s, e) =>
+            this.detailgrid.StatusNotification += (s, e) =>
             {
-                if (this.EditMode&&e.Notification == Ict.Win.UI.DataGridViewStatusNotification.NoMoreRowOnEnterPress)
+                if (this.EditMode && e.Notification == Ict.Win.UI.DataGridViewStatusNotification.NoMoreRowOnEnterPress)
                 {
-                    DataRow tmp = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
+                    DataRow tmp = this.detailgrid.GetDataRow(this.detailgrid.GetSelectedRowIndex());
                     this.OnDetailGridInsert();
-                    DataRow newrow = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
+                    DataRow newrow = this.detailgrid.GetDataRow(this.detailgrid.GetSelectedRowIndex());
                     newrow.ItemArray = tmp.ItemArray;
                 }
             };
@@ -44,7 +43,7 @@ namespace Sci.Production.Warehouse
         public P12(ToolStripMenuItem menuitem, string transID)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.DefaultFilter = string.Format("Type='C' and id='{0}'", transID);
             this.IsSupportNew = false;
             this.IsSupportEdit = false;
@@ -56,43 +55,45 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            gridicon.Append.Enabled = false;
-            gridicon.Append.Visible = false;
-            gridicon.Insert.Enabled = false;
-            gridicon.Insert.Visible = false;
+            this.gridicon.Append.Enabled = false;
+            this.gridicon.Append.Visible = false;
+            this.gridicon.Insert.Enabled = false;
+            this.gridicon.Insert.Visible = false;
         }
 
         // 新增時預設資料
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            CurrentMaintain["Status"] = "New";
-            CurrentMaintain["Type"] = "C";
-            CurrentMaintain["IssueDate"] = DateTime.Now;
+            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["Type"] = "C";
+            this.CurrentMaintain["IssueDate"] = DateTime.Now;
         }
 
         // delete前檢查
         protected override bool ClickDeleteBefore()
         {
-            if (CurrentMaintain["Status"].EqualString("CONFIRMED"))
+            if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
             {
                 MyUtility.Msg.WarningBox("Data is confirmed, can't delete.", "Warning");
                 return false;
             }
+
             return base.ClickDeleteBefore();
         }
 
         // edit前檢查
         protected override bool ClickEditBefore()
         {
-            //!EMPTY(APVName) OR !EMPTY(Closed)，只能編輯remark欄。
-            if (CurrentMaintain["Status"].EqualString("CONFIRMED"))
+            // !EMPTY(APVName) OR !EMPTY(Closed)，只能編輯remark欄。
+            if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
             {
                 MyUtility.Msg.WarningBox("Data is confirmed, can't modify.", "Warning");
                 return false;
             }
+
             return base.ClickEditBefore();
         }
 
@@ -103,52 +104,56 @@ namespace Sci.Production.Warehouse
 
             #region 必輸檢查
 
-            if (MyUtility.Check.Empty(CurrentMaintain["IssueDate"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["IssueDate"]))
             {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
-                dateIssueDate.Focus();
+                this.dateIssueDate.Focus();
                 return false;
             }
 
             #endregion 必輸檢查
 
-            foreach (DataRow row in DetailDatas)
+            foreach (DataRow row in this.DetailDatas)
             {
                 if (MyUtility.Check.Empty(row["seq1"]) || MyUtility.Check.Empty(row["seq2"]))
                 {
-                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} can't be empty"
-                        , row["poid"], row["seq1"], row["seq2"])
+                    warningmsg.Append(string.Format(
+                        @"SP#: {0} Seq#: {1}-{2} can't be empty",
+                        row["poid"], row["seq1"], row["seq2"])
                         + Environment.NewLine);
                 }
 
                 if (MyUtility.Check.Empty(row["Qty"]))
                 {
-                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Issue Qty can't be empty"
-                        , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
+                    warningmsg.Append(string.Format(
+                        @"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Issue Qty can't be empty",
+                        row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
                 }
             }
+
             if (!MyUtility.Check.Empty(warningmsg.ToString()))
             {
                 MyUtility.Msg.WarningBox(warningmsg.ToString());
                 return false;
             }
 
-            if (DetailDatas.Count == 0)
+            if (this.DetailDatas.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
                 return false;
             }
 
-            //取單號
+            // 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IP", "Issue", (DateTime)CurrentMaintain["Issuedate"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IP", "Issue", (DateTime)this.CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
                     return false;
                 }
-                CurrentMaintain["id"] = tmpId;
+
+                this.CurrentMaintain["id"] = tmpId;
             }
 
             return base.ClickSaveBefore();
@@ -162,6 +167,7 @@ namespace Sci.Production.Warehouse
             {
                 return resultBarcodeNo;
             }
+
             return base.ClickSavePre();
         }
 
@@ -171,12 +177,12 @@ namespace Sci.Production.Warehouse
             return base.OnRenewDataDetailPost(e);
         }
 
-        //refresh
+        // refresh
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
             #region Status Label
-            labelNotApprove.Text = CurrentMaintain["status"].ToString();
+            this.labelNotApprove.Text = this.CurrentMaintain["status"].ToString();
             #endregion Status Label
         }
 
@@ -189,25 +195,25 @@ namespace Sci.Production.Warehouse
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
-            Color backDefaultColor = detailgrid.DefaultCellStyle.BackColor;
+            Color backDefaultColor = this.detailgrid.DefaultCellStyle.BackColor;
             #region SP# Vaild 判斷
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
 
             ts4.CellValidating += (s, e) =>
             {
-                if (this.EditMode && string.Compare(CurrentDetailData["poid"].ToString(),e.FormattedValue.ToString()) != 0)
+                if (this.EditMode && string.Compare(this.CurrentDetailData["poid"].ToString(), e.FormattedValue.ToString()) != 0)
                 {
                     if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po WITH (NOLOCK) where id = '{0}')", e.FormattedValue), null))
                     {
-                        
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox("SP# is not exist!!", "Data not found");
                         return;
                     }
-                    CurrentDetailData["poid"] = e.FormattedValue;
-                    CurrentDetailData["seq"]="";
-                    CurrentDetailData["seq1"] = "";
-                    CurrentDetailData["seq2"] = "";
+
+                    this.CurrentDetailData["poid"] = e.FormattedValue;
+                    this.CurrentDetailData["seq"] = string.Empty;
+                    this.CurrentDetailData["seq1"] = string.Empty;
+                    this.CurrentDetailData["seq2"] = string.Empty;
                 }
             };
 
@@ -222,9 +228,13 @@ namespace Sci.Production.Warehouse
                 {
                     IList<DataRow> x;
 
-                    Sci.Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(CurrentDetailData["poid"].ToString(), CurrentDetailData["seq"].ToString(), "f.MDivisionID = '{1}' and fabrictype !='F' and ProductionType = 'Packing'");
+                    Sci.Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(this.CurrentDetailData["poid"].ToString(), this.CurrentDetailData["seq"].ToString(), "f.MDivisionID = '{1}' and fabrictype !='F' and ProductionType = 'Packing'");
                     DialogResult result = selepoitem.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     x = selepoitem.GetSelecteds();
                     string productiontype = MyUtility.GetValue.Lookup(string.Format(@"select productiontype from fabric WITH (NOLOCK) inner join mtltype WITH (NOLOCK) on fabric.mtltypeid = mtltype.id where SCIRefno = '{0}'", x[0]["scirefno"]), null);
                     if (productiontype.ToUpper().TrimEnd() != "PACKING")
@@ -234,42 +244,49 @@ namespace Sci.Production.Warehouse
                     }
                     else
                     {
-                        CurrentDetailData["seq"] = x[0]["seq"];
-                        CurrentDetailData["seq1"] = x[0]["seq1"];
-                        CurrentDetailData["seq2"] = x[0]["seq2"];
-                        CurrentDetailData["stockunit"] = x[0]["stockunit"];
-                        CurrentDetailData["Description"] = x[0]["Description"];
+                        this.CurrentDetailData["seq"] = x[0]["seq"];
+                        this.CurrentDetailData["seq1"] = x[0]["seq1"];
+                        this.CurrentDetailData["seq2"] = x[0]["seq2"];
+                        this.CurrentDetailData["stockunit"] = x[0]["stockunit"];
+                        this.CurrentDetailData["Description"] = x[0]["Description"];
                     }
-                    CurrentDetailData.EndEdit();
+
+                    this.CurrentDetailData.EndEdit();
                 }
             };
             ts.CellValidating += (s, e) =>
                 {
-                    if (!this.EditMode) return;
-                    if (String.Compare(e.FormattedValue.ToString(), CurrentDetailData["seq"].ToString()) != 0)
+                    if (!this.EditMode)
+                    {
+                        return;
+                    }
+
+                    if (string.Compare(e.FormattedValue.ToString(), this.CurrentDetailData["seq"].ToString()) != 0)
                     {
                         if (MyUtility.Check.Empty(e.FormattedValue))
                         {
-                            CurrentDetailData["seq"] = "";
-                            CurrentDetailData["seq1"] = "";
-                            CurrentDetailData["seq2"] = "";
-                            CurrentDetailData["stockunit"] = "";
-                            CurrentDetailData["Description"] = "";
+                            this.CurrentDetailData["seq"] = string.Empty;
+                            this.CurrentDetailData["seq1"] = string.Empty;
+                            this.CurrentDetailData["seq2"] = string.Empty;
+                            this.CurrentDetailData["stockunit"] = string.Empty;
+                            this.CurrentDetailData["Description"] = string.Empty;
                         }
                         else
                         {
-                            //check Seq Length
+                            // check Seq Length
                             string[] seq = e.FormattedValue.ToString().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                             if (seq.Length < 2)
                             {
-                                
-                                e.Cancel = true;MyUtility.Msg.WarningBox("Data not found!", "Seq");
+                                e.Cancel = true;
+                                MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 return;
                             }
 
                             DataRow dr;
-                            if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd() +
-                                    @"and f.MDivisionID = '{1}' and p.seq1 ='{2}' and p.seq2 = '{3}'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
+                            if (!MyUtility.Check.Seek(
+                                string.Format(
+                                Prgs.selePoItemSqlCmd() +
+                                    @"and f.MDivisionID = '{1}' and p.seq1 ='{2}' and p.seq2 = '{3}'", this.CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
                             {
                                 e.Cancel = true;
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
@@ -281,16 +298,16 @@ namespace Sci.Production.Warehouse
                                 if (productiontype.ToUpper().TrimEnd() != "PACKING")
                                 {
                                     e.Cancel = true;
-                                    MyUtility.Msg.WarningBox(string.Format("Seq ({1}) : Production type is  {0}  not packing!!", productiontype,e.FormattedValue), "Seq");
+                                    MyUtility.Msg.WarningBox(string.Format("Seq ({1}) : Production type is  {0}  not packing!!", productiontype, e.FormattedValue), "Seq");
                                     return;
                                 }
                                 else
                                 {
-                                    CurrentDetailData["seq"] = seq[0] + " " + seq[1];
-                                    CurrentDetailData["seq1"] = seq[0];
-                                    CurrentDetailData["seq2"] = seq[1];
-                                    CurrentDetailData["stockunit"] = dr["stockunit"];
-                                    CurrentDetailData["Description"] = dr["description"];
+                                    this.CurrentDetailData["seq"] = seq[0] + " " + seq[1];
+                                    this.CurrentDetailData["seq1"] = seq[0];
+                                    this.CurrentDetailData["seq2"] = seq[1];
+                                    this.CurrentDetailData["stockunit"] = dr["stockunit"];
+                                    this.CurrentDetailData["Description"] = dr["description"];
                                 }
                             }
                         }
@@ -306,66 +323,77 @@ namespace Sci.Production.Warehouse
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation("B", CurrentDetailData["location"].ToString());
+                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation("B", this.CurrentDetailData["location"].ToString());
                     DialogResult result = item.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
-                    CurrentDetailData["location"] = item.GetSelectedString();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    this.CurrentDetailData["location"] = item.GetSelectedString();
                 }
             };
 
             #endregion Location 右鍵開窗
 
             #region 欄位設定
-            Helper.Controls.Grid.Generator(this.detailgrid)
-                .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), CheckMDivisionID: true)  //0
-                .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts)  //1
-                .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //2
-                .Text("stockunit", header: "Unit", iseditingreadonly: true)    //3
-                .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //4
-                .Text("Location", header: "Bulk Location", iseditingreadonly: true)    //5
-            ;     //
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
+                .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), CheckMDivisionID: true) // 0
+                .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts) // 1
+                .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 2
+                .Text("stockunit", header: "Unit", iseditingreadonly: true) // 3
+                .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 4
+                .Text("Location", header: "Bulk Location", iseditingreadonly: true) // 5
+            ;
             #endregion 欄位設定
 
-            detailgrid.RowsAdded += (s, e) =>
+            this.detailgrid.RowsAdded += (s, e) =>
             {
-                if (e.RowIndex < 0) return;
+                if (e.RowIndex < 0)
+                {
+                    return;
+                }
 
                 #region 變色規則，若 stockunit != '' 則需變回預設的 Color
                 int index = e.RowIndex;
                 for (int i = 0; i < e.RowCount; i++)
                 {
-                    DataGridViewRow dr = detailgrid.Rows[index];
-                    dr.DefaultCellStyle.BackColor = (MyUtility.Check.Empty(dr.Cells["stockunit"].Value)) ? Color.FromArgb(255, 192, 203) : backDefaultColor;
+                    DataGridViewRow dr = this.detailgrid.Rows[index];
+                    dr.DefaultCellStyle.BackColor = MyUtility.Check.Empty(dr.Cells["stockunit"].Value) ? Color.FromArgb(255, 192, 203) : backDefaultColor;
                     index++;
                 }
                 #endregion
             };
         }
 
-        //Confirm
+        // Confirm
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
             var dr = this.CurrentMaintain;
-            if (null == dr) return;
+            if (dr == null)
+            {
+                return;
+            }
 
             StringBuilder sqlupd2 = new StringBuilder();
-            String sqlcmd = "", sqlupd3 = "", ids = "";
+            string sqlcmd = string.Empty, sqlupd3 = string.Empty, ids = string.Empty;
             DualResult result, result2;
             DataTable datacheck;
             StringBuilder sqlupd2_B = new StringBuilder();
-            string sqlupd2_FIO = "";
+            string sqlupd2_FIO = string.Empty;
 
             #region 檢查庫存項lock
-            sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
+            sqlcmd = string.Format(
+                @"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
 from dbo.Issue_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.Dyelot = f.Dyelot
-where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
+where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
-                ShowErr(sqlcmd, result2);
+                this.ShowErr(sqlcmd, result2);
                 return;
             }
             else
@@ -374,9 +402,11 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine
-                            , tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["Dyelot"]);
+                        ids += string.Format(
+                            "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine,
+                            tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["Dyelot"]);
                     }
+
                     MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
                     return;
                 }
@@ -385,15 +415,16 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             #region 檢查負數庫存
 
-            sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
+            sqlcmd = string.Format(
+                @"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
 from dbo.Issue_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.Dyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
+where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
-                ShowErr(sqlcmd, result2);
+                this.ShowErr(sqlcmd, result2);
                 return;
             }
             else
@@ -402,9 +433,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than issue qty: {5}" + Environment.NewLine
-                            , tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
+                        ids += string.Format(
+                            "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than issue qty: {5}" + Environment.NewLine,
+                            tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
                     }
+
                     MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
                     return;
                 }
@@ -414,31 +447,33 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
             #region 更新表頭狀態資料
 
-            sqlupd3 = string.Format(@"update Issue set status='Confirmed', editname = '{0}' , editdate = GETDATE()
-                                where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+            sqlupd3 = string.Format(
+                @"update Issue set status='Confirmed', editname = '{0}' , editdate = GETDATE()
+                                where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
 
             #endregion 更新表頭狀態資料
 
             #region 更新庫存數量  ftyinventory
-            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+            var bs1 = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
                            poid = b.Field<string>("poid"),
                            seq1 = b.Field<string>("seq1"),
                            seq2 = b.Field<string>("seq2"),
-                           stocktype = b.Field<string>("stocktype")
-                       } into m
+                           stocktype = b.Field<string>("stocktype"),
+                       }
+                        into m
                        select new Prgs_POSuppDetailData
                        {
                            poid = m.First().Field<string>("poid"),
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
                            stocktype = m.First().Field<string>("stocktype"),
-                           qty = m.Sum(w => w.Field<decimal>("qty"))
+                           qty = m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, true));
 
-            var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+            var bsfio = (from m in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                          select new
                          {
                              poid = m.Field<string>("poid"),
@@ -459,23 +494,25 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 try
                 {
                     DataTable resulttb;
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B.ToString(), out resulttb
-                        , "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B.ToString(), out resulttb,
+                        "#TmpSource")))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(result);
+                        this.ShowErr(result);
                         return;
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
+
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(result);
+                        this.ShowErr(result);
                         return;
                     }
+
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(sqlupd3, result);
+                        this.ShowErr(sqlupd3, result);
                         return;
                     }
 
@@ -486,40 +523,50 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 catch (Exception ex)
                 {
                     _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
+
             _transactionscope.Dispose();
             _transactionscope = null;
-           
         }
 
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
             DataTable datacheck;
-            DataTable dt = (DataTable)detailgridbs.DataSource;
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unconfirme it?");
-            if (dResult.ToString().ToUpper() == "NO") return;
-            var dr = this.CurrentMaintain; if (null == dr) return;
+            if (dResult.ToString().ToUpper() == "NO")
+            {
+                return;
+            }
+
+            var dr = this.CurrentMaintain;
+            if (dr == null)
+            {
+                return;
+            }
+
             StringBuilder sqlupd2 = new StringBuilder();
-            string sqlcmd = "", sqlupd3 = "", ids = "";
+            string sqlcmd = string.Empty, sqlupd3 = string.Empty, ids = string.Empty;
             DualResult result, result2;
             StringBuilder sqlupd2_B = new StringBuilder();
-            string sqlupd2_FIO = "";
+            string sqlupd2_FIO = string.Empty;
 
             #region 檢查庫存項lock
-            sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
+            sqlcmd = string.Format(
+                @"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
 from dbo.Issue_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.Dyelot = f.Dyelot
-where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
+where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
-                ShowErr(sqlcmd, result2);
+                this.ShowErr(sqlcmd, result2);
                 return;
             }
             else
@@ -528,9 +575,11 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine
-                            , tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["Dyelot"]);
+                        ids += string.Format(
+                            "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine,
+                            tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["Dyelot"]);
                     }
+
                     MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
                     return;
                 }
@@ -539,15 +588,16 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             #region 檢查負數庫存
 
-            sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
+            sqlcmd = string.Format(
+                @"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
 from dbo.Issue_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.Dyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
+where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
-                ShowErr(sqlcmd, result2);
+                this.ShowErr(sqlcmd, result2);
                 return;
             }
             else
@@ -556,9 +606,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than issue qty: {5}" + Environment.NewLine
-                            , tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
+                        ids += string.Format(
+                            "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than issue qty: {5}" + Environment.NewLine,
+                            tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
                     }
+
                     MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
                     return;
                 }
@@ -568,37 +620,39 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             #region 更新表頭狀態資料
 
-            sqlupd3 = string.Format(@"update Issue set status='New', editname = '{0}' , editdate = GETDATE()
-                                where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+            sqlupd3 = string.Format(
+                @"update Issue set status='New', editname = '{0}' , editdate = GETDATE()
+                                where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
 
             #endregion 更新表頭狀態資料
 
             #region 更新庫存數量  ftyinventory
-            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+            var bs1 = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
                            poid = b.Field<string>("poid"),
                            seq1 = b.Field<string>("seq1"),
                            seq2 = b.Field<string>("seq2"),
-                           stocktype = b.Field<string>("stocktype")
-                       } into m
+                           stocktype = b.Field<string>("stocktype"),
+                       }
+                        into m
                        select new Prgs_POSuppDetailData
                        {
                            poid = m.First().Field<string>("poid"),
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
                            stocktype = m.First().Field<string>("stocktype"),
-                           qty = - (m.Sum(w => w.Field<decimal>("qty")))
+                           qty = -m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, false));
-            var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+            var bsfio = (from m in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                          select new
                          {
                              poid = m.Field<string>("poid"),
                              seq1 = m.Field<string>("seq1"),
                              seq2 = m.Field<string>("seq2"),
                              stocktype = m.Field<string>("stocktype"),
-                             qty = - (m.Field<decimal>("qty")),
+                             qty = -m.Field<decimal>("qty"),
                              location = m.Field<string>("location"),
                              roll = m.Field<string>("roll"),
                              dyelot = m.Field<string>("dyelot"),
@@ -612,23 +666,25 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 try
                 {
                     DataTable resulttb;
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B.ToString(), out resulttb
-                        , "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B.ToString(), out resulttb,
+                        "#TmpSource")))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(result);
+                        this.ShowErr(result);
                         return;
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
+
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(result);
+                        this.ShowErr(result);
                         return;
                     }
+
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(sqlupd3, result);
+                        this.ShowErr(sqlupd3, result);
                         return;
                     }
 
@@ -639,20 +695,21 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 catch (Exception ex)
                 {
                     _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
+
             _transactionscope.Dispose();
             _transactionscope = null;
-          
         }
 
-        //寫明細撈出的sql command
+        // 寫明細撈出的sql command
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id, a.mdivisionid, a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+            string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
+            this.DetailSelectCommand = string.Format(
+                @"select a.id, a.mdivisionid, a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,p1.FabricType
 ,p1.stockunit
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
@@ -671,31 +728,39 @@ Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        //delete all
+        // delete all
         private void btnClearQtyIsEmpty_Click(object sender, EventArgs e)
         {
-            detailgrid.ValidateControl();
-            //detailgridbs.EndEdit();
-            ((DataTable)detailgridbs.DataSource).Select("qty=0.00 or qty is null").ToList().ForEach(r => r.Delete());
-            
+            this.detailgrid.ValidateControl();
+
+            // detailgridbs.EndEdit();
+            ((DataTable)this.detailgridbs.DataSource).Select("qty=0.00 or qty is null").ToList().ForEach(r => r.Delete());
         }
 
-        //Import
+        // Import
         private void btnImport_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P12_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
+            var frm = new Sci.Production.Warehouse.P12_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }
 
         private void btnFind_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
-            int index = detailgridbs.Find("poid", txtLocateForSP.Text.TrimEnd());
+            if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
+            {
+                return;
+            }
+
+            int index = this.detailgridbs.Find("poid", this.txtLocateForSP.Text.TrimEnd());
             if (index == -1)
-            { MyUtility.Msg.WarningBox("Data was not found!!"); }
+            {
+                MyUtility.Msg.WarningBox("Data was not found!!");
+            }
             else
-            { detailgridbs.Position = index; }
+            {
+                this.detailgridbs.Position = index;
+            }
         }
 
         protected override bool ClickPrint()
@@ -710,11 +775,15 @@ Where a.id = '{0}'", masterID);
             pars.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
-            DualResult result = DBProxy.Current.Select("", @"
+            DualResult result = DBProxy.Current.Select(string.Empty, @"
 select NameEn
 from MDivision
 where id = @MDivision", pars, out dt);
-            if (!result) { this.ShowErr(result); }
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+
             string RptTitle = dt.Rows[0]["NameEn"].ToString();
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
@@ -727,7 +796,7 @@ where id = @MDivision", pars, out dt);
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtt;
-            result = DBProxy.Current.Select("", @"
+            result = DBProxy.Current.Select(string.Empty, @"
 select a.POID
         ,a.Seq1+'-'+a.seq2 as SEQ
 	        ,IIF((b.ID =   lag(b.ID,1,'') over (order by b.ID,b.seq1,b.seq2) 
@@ -742,15 +811,18 @@ left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 an
 left join FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2 and a.Dyelot = fi.Dyelot
     and a.roll = fi.roll and a.stocktype = fi.stocktype
 where a.id= @ID", pars, out dtt);
-            if (!result) { this.ShowErr(result); }
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
 
             if (dtt == null || dtt.Rows.Count == 0)
             {
-                MyUtility.Msg.InfoBox("Data not found !!!", "");
+                MyUtility.Msg.InfoBox("Data not found !!!", string.Empty);
                 return false;
             }
 
-            // 傳 list 資料            
+            // 傳 list 資料
             List<P12_PrintData> data = dtt.AsEnumerable()
                 .Select(row1 => new P12_PrintData()
                 {
@@ -759,7 +831,7 @@ where a.id= @ID", pars, out dtt);
                     DESC = row1["DESC"].ToString(),
                     unit = row1["unit"].ToString(),
                     QTY = row1["QTY"].ToString(),
-                    BULKLocation = row1["BULKLocation"].ToString()
+                    BULKLocation = row1["BULKLocation"].ToString(),
                 }).ToList();
 
             report.ReportDataSource = data;
@@ -767,7 +839,8 @@ where a.id= @ID", pars, out dtt);
 
             // 指定是哪個 RDLC
             #region  指定是哪個 RDLC
-            //DualResult result;
+
+            // DualResult result;
             Type ReportResourceNamespace = typeof(P12_PrintData);
             Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
             string ReportResourceName = "P12_Print.rdlc";
@@ -775,19 +848,19 @@ where a.id= @ID", pars, out dtt);
             IReportResource reportresource;
             if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
             {
-                //this.ShowException(result);
+                // this.ShowException(result);
                 return false;
             }
 
             report.ReportResource = reportresource;
             #endregion
+
             // 開啟 report view
             var frm = new Sci.Win.Subs.ReportView(report);
-            frm.MdiParent = MdiParent;
+            frm.MdiParent = this.MdiParent;
             frm.Show();
-  
-           return true;
 
+            return true;
         }
     }
 }

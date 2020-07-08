@@ -1,13 +1,8 @@
 ﻿using Ict;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sci.Win;
 using Sci.Data;
@@ -21,7 +16,6 @@ namespace Sci.Production.PPIC
     /// </summary>
     public partial class R13 : Win.Tems.PrintForm
     {
-
         private string tsql;
         private List<SqlParameter> sqlpar = new List<SqlParameter>();
         private DataTable[] dts;
@@ -57,8 +51,8 @@ namespace Sci.Production.PPIC
 
             if (this.dateRangeBuyerDelivery.HasValue)
             {
-                //this.sqlpar.Add(new SqlParameter("@inputReadyDateFrom", this.dateRangeReadyDate.DateBox1.Value));
-                //this.sqlpar.Add(new SqlParameter("@inputReadyDateTo", this.dateRangeReadyDate.DateBox2.Value));
+                // this.sqlpar.Add(new SqlParameter("@inputReadyDateFrom", this.dateRangeReadyDate.DateBox1.Value));
+                // this.sqlpar.Add(new SqlParameter("@inputReadyDateTo", this.dateRangeReadyDate.DateBox2.Value));
                 whereBuyer += $@" and O.BuyerDelivery between '{((DateTime)this.dateRangeBuyerDelivery.DateBox1.Value).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateRangeBuyerDelivery.DateBox2.Value).ToString("yyyy/MM/dd")}'";
             }
 
@@ -136,7 +130,7 @@ delete #WorkDate where datepart(WEEKDAY,ReadyDate) = 1 ";
             #endregion
 
             #region main sql
-            
+
             this.tsql = $@"
 declare @time time = '{(this.txtTime.Text.Equals(":") ? "00:00:00" : this.txtTime.Text)}'
 declare @GAP int = @inputGAP
@@ -475,8 +469,9 @@ drop table #detailResult,#tmpOrderOffLine
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             DBProxy.Current.DefaultTimeout = 2700;
-            return DBProxy.Current.Select(string.Empty, this.tsql, sqlpar, out this.dts);
+            DualResult result = DBProxy.Current.Select(string.Empty, this.tsql, this.sqlpar, out this.dts);
             DBProxy.Current.DefaultTimeout = 300;
+            return result;
         }
 
         /// <inheritdoc/>

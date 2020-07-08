@@ -7,8 +7,6 @@ using System.Transactions;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Win;
-using System.Reflection;
 using System.IO;
 
 namespace Sci.Production.Quality
@@ -27,10 +25,11 @@ namespace Sci.Production.Quality
         private BindingSource comboxbs1;
         private BindingSource comboxbs2;
         private string selectDataTable_DefaultView_Sort = string.Empty;
+
         public P27(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         protected override void OnFormLoaded()
@@ -97,6 +96,7 @@ namespace Sci.Production.Quality
                 MyUtility.Msg.WarningBox("< SP# > or < Pack ID > or < PO# > can not empty!");
                 return;
             }
+
             this.numSelectQty.Value = 0;
             this.numTTLCTNQty.Value = 0;
             this.gridData = null;
@@ -107,7 +107,7 @@ namespace Sci.Production.Quality
                 return;
             }
         }
-        
+
         private void BtnUpdateAllLocation_Click(object sender, EventArgs e)
         {
             string location = this.txtCFALocation.Text.Trim();
@@ -173,7 +173,7 @@ namespace Sci.Production.Quality
 
                             DualResult result1CHK = DBProxy.Current.Select(null, chkCmd, out tmpTable);
 
-                            string updateCmd = "";
+                            string updateCmd = string.Empty;
 
                             if (tmpTable.Rows[0]["CFALocationID"].ToString() != currentRow["CFALocationID"].ToString())
                             {
@@ -196,7 +196,7 @@ namespace Sci.Production.Quality
                             System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
                             sp3.ParameterName = "@id";
                             sp3.Value = currentRow["ID"].ToString();
-                            
+
                             System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
                             sp5.ParameterName = "@ctnStartNo";
                             sp5.Value = currentRow["CTNStartNo"].ToString();
@@ -214,6 +214,7 @@ namespace Sci.Production.Quality
                                 sp8.ParameterName = "@EditCFALocationName";
                                 sp8.Value = Sci.Env.User.UserID;
                             }
+
                             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                             cmds.Add(sp1);
                             cmds.Add(sp3);
@@ -370,7 +371,7 @@ namespace Sci.Production.Quality
                 }
             }
         }
-        
+
         private string whereS;
 
         private void BtnImportFromBarcode_Click(object sender, EventArgs e)
@@ -383,6 +384,7 @@ namespace Sci.Production.Quality
             {
                 this.numSelectQty.Value = 0;
                 this.numTTLCTNQty.Value = 0;
+
                 // 讀檔案
                 string wheresql = string.Empty;
                 this.whereS = string.Empty;

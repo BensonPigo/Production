@@ -8,8 +8,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -40,6 +38,7 @@ namespace Sci.Production.SubProcess
 
         private Ict.Win.UI.DataGridViewNumericBoxColumn setEarlyInlinecolor;
         private Ict.Win.UI.DataGridViewTextBoxColumn setPPAInlinecolor;
+
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
@@ -640,10 +639,11 @@ end
                 this.listControlBindingSourceRemark.DataSource = dtGridData[5];
 
                 #region Set Remark Color
-                //foreach (DataRow dr in ((DataTable)this.listControlBindingSourceRemark.DataSource).Rows)
-                //{
+
+                // foreach (DataRow dr in ((DataTable)this.listControlBindingSourceRemark.DataSource).Rows)
+                // {
                 //    this.RemarkColorChange(dr);
-                //}
+                // }
                 #endregion
                 #endregion
 
@@ -732,7 +732,6 @@ end
         //        }
         //    }
         // }
-
         private string EditRemark(string strRemark)
         {
             Win.Tools.EditMemo editUi = new Win.Tools.EditMemo(strRemark, "P10_Remark", true, null);
@@ -1855,7 +1854,10 @@ or Manpower = {fint}";
                     MyUtility.Msg.WarningBox("Data not Found.");
                     return;
                 }
-                else { this.index = 0; }
+                else
+                {
+                    this.index = 0;
+                }
             }
             else
             {

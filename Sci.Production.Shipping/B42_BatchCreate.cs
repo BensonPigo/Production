@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
@@ -10,7 +9,6 @@ using Ict;
 using Sci.Data;
 using System.Transactions;
 using Sci.Production.PublicPrg;
-using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -158,7 +156,7 @@ namespace Sci.Production.Shipping
             parData.Style = this.txtstyle.Text;
             parData.Category = this.comboCategory.Text;
             parData.BrandID = this.txtbrand.Text;
-            parData.ContractID = "";
+            parData.ContractID = string.Empty;
             DualResult result = Prgs.GetVNConsumption_Detail_Detail(parData, out this.AllDetailData);
             if (!result)
             {
@@ -806,20 +804,20 @@ Insert into VNConsumption_Article (
 
                         for (int i = 0; i < selectedData.Length; i++)
                         {
-                            DataRow[] selectedDetailData = this.AllDetailData.Select(string.Format(@"
+                            DataRow[] selectedDetailData = this.AllDetailData.Select(string.Format(
+                                @"
 StyleUKey = {0} 
 and SizeCode = '{1}' 
 and Article = '{2}' 
 and NLCode = '{3}'  
 and Category = '{4}' 
-and (VNContractID = '{5}' or VNContractID ='NA')"
-                            , MyUtility.Convert.GetString(dr["StyleUKey"])
-                            , MyUtility.Convert.GetString(dr["SizeCode"])
-                            , MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(','))
-                            , MyUtility.Convert.GetString(selectedData[i]["NLCode"])
-                            , MyUtility.Convert.GetString(dr["Category"])
-                            , MyUtility.Convert.GetString(dr["VNContractID"])
-                            ));
+and (VNContractID = '{5}' or VNContractID ='NA')",
+                                MyUtility.Convert.GetString(dr["StyleUKey"]),
+                                MyUtility.Convert.GetString(dr["SizeCode"]),
+                                MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(',')),
+                                MyUtility.Convert.GetString(selectedData[i]["NLCode"]),
+                                MyUtility.Convert.GetString(dr["Category"]),
+                                MyUtility.Convert.GetString(dr["VNContractID"])));
                             #region 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
                             bool isVNConsumption_Detail_DetailHasDupData = !Prgs.CheckVNConsumption_Detail_Dup(selectedDetailData, false);
                             if (isVNConsumption_Detail_DetailHasDupData)
@@ -853,8 +851,7 @@ Insert into VNConsumption_Detail_Detail (
                                         MyUtility.Convert.GetString(selectedDetailData[j]["BrandID"]),
                                         MyUtility.Convert.GetString(selectedDetailData[j]["FabricType"]),
                                         MyUtility.Convert.GetString(selectedDetailData[j]["UsageQty"]),
-                                        MyUtility.Convert.GetString(selectedDetailData[j]["UsageUnit"])
-                                        ));
+                                        MyUtility.Convert.GetString(selectedDetailData[j]["UsageUnit"])));
                                 }
                             }
                         }

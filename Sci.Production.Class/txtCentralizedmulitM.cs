@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sci.Data;
 using Sci.Win.UI;
@@ -52,6 +47,7 @@ namespace Sci.Production.Class
             for (int i = 0; i < connectionString.Count; i++)
             {
                 string conString = connectionString[i];
+
                 // 跨資料庫連線，將所需資料存到TempTable，再給不同資料庫使用
                 SqlConnection con;
                 using (con = new SqlConnection(conString))
@@ -63,15 +59,21 @@ namespace Sci.Production.Class
                     {
                         return;
                     }
+
                     foreach (DataRow row in Data.Rows)
                     {
                         FactoryData.ImportRow(row);
-                    }                    
+                    }
                 }
             }
+
             Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(FactoryData, "M", "M", "5", this.Text);
             DialogResult dialogResult = item.ShowDialog();
-            if (dialogResult == DialogResult.Cancel) { return; }
+            if (dialogResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.Text = item.GetSelectedString();
             this.ValidateText();
         }

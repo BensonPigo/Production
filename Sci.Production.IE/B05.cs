@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.IE
@@ -39,7 +35,7 @@ namespace Sci.Production.IE
                 this.btnThreadRatio.ForeColor = Control.DefaultForeColor;
             }
 
-            //this.displayGroupID.Text = this.grid.SelectedRows[0].Cells["MachineGroup"].Value.ToString();
+            // this.displayGroupID.Text = this.grid.SelectedRows[0].Cells["MachineGroup"].Value.ToString();
         }
 
         private void BtnThreadRatio_Click(object sender, EventArgs e)

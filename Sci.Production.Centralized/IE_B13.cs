@@ -1,13 +1,10 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Centralized
@@ -17,7 +14,7 @@ namespace Sci.Production.Centralized
         public IE_B13(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         protected override void OnFormLoaded()
@@ -85,7 +82,6 @@ namespace Sci.Production.Centralized
             this.HideWaitMessage();
 
             // 匯入到DB
-
             string sqlUpdate = $@"
 merge ProductionTPE.dbo.OperationDesc as t
 using (
@@ -131,7 +127,6 @@ when not matched by target then
                 MyUtility.Msg.InfoBox("import excel successful!");
                 this.ReloadDatas();
             }
-
         }
 
         protected override void ClickEditAfter()
@@ -159,12 +154,10 @@ when not matched by target then
             string sqlCmd = $"SELECT DescEN FROM Operation WHERE ID='{this.CurrentMaintain["ID"]}' ";
 
             this.txtOperationtitle.Text = MyUtility.GetValue.Lookup(sqlCmd, "Production");
-
         }
 
         protected override bool ClickPrint()
         {
-
             this.ShowWaitMessage("Processing...");
 
             DualResult result;
@@ -190,7 +183,7 @@ FROM OperationDesc WITH (NOLOCK)
 
             for (int i = 0; i < printData.Rows.Count - 1; i++)
             {
-                printData.Rows[i]["OperationTitle"] = MyUtility.GetValue.Lookup($"SELECT DescEN FROM Operation WITH (NOLOCK) WHERE ID='{ printData.Rows[i]["ID"]}' ", "Production");
+                printData.Rows[i]["OperationTitle"] = MyUtility.GetValue.Lookup($"SELECT DescEN FROM Operation WITH (NOLOCK) WHERE ID='{printData.Rows[i]["ID"]}' ", "Production");
             }
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Centralized_IE_B13.xltx"); // 預先開啟excel app
@@ -212,7 +205,6 @@ FROM OperationDesc WITH (NOLOCK)
             this.HideWaitMessage();
 
             return true;
-
         }
     }
 }

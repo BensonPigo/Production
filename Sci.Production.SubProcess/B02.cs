@@ -2,13 +2,10 @@
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Data;
-using System.Text;
 using Ict;
 using Ict.Win;
-using Sci.Win.Tems;
 using Sci.Data;
 using System.Transactions;
-using System.Linq;
 
 namespace Sci.Production.SubProcess
 {
@@ -71,14 +68,14 @@ where styleUkey = '{0}'",
                  if (this.EditMode && e.Button == MouseButtons.Right)
                  {
                     Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"select  Id,ArtworkTypeId  from  subprocess  where isselection=1 and Junk=0  order by Id", "10,20", null);
-                     DialogResult result = item.ShowDialog();
-                     if (result == DialogResult.Cancel)
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel)
                      {
                          return;
                      }
 
-                     var x = item.GetSelecteds();
-                     this.CurrentDetailData["Type"] = x[0]["ID"].ToString();
+                    var x = item.GetSelecteds();
+                    this.CurrentDetailData["Type"] = x[0]["ID"].ToString();
                  }
              };
 
@@ -94,7 +91,7 @@ where styleUkey = '{0}'",
                      if (!MyUtility.Check.Seek(
                          string.Format(
                              @"Select  Id  from  subprocess  where isselection=1 and Junk=0 and id='{0}'",
-                         e.FormattedValue),
+                             e.FormattedValue),
                          out find))
                      {
                          MyUtility.Msg.WarningBox(string.Format(@"<Type: {0}> not found!", e.FormattedValue));
@@ -136,8 +133,8 @@ where styleUkey = '{0}'",
                     if (!MyUtility.Check.Seek(
                         string.Format(
                             @"Select  Feature  from  SubProcessFeature where Type='{0}' and Junk=0 and Feature='{1}'",
-                        this.CurrentDetailData["Type"],
-                        e.FormattedValue),
+                            this.CurrentDetailData["Type"],
+                            e.FormattedValue),
                         out find))
                     {
                         MyUtility.Msg.WarningBox(string.Format(@"<Feature: {0}> not found!", e.FormattedValue));
@@ -346,7 +343,6 @@ order by td.Seq";
                             transactionscope.Dispose();
                         }
                     }
-
                 }
             };
             gridSMV.CellValidating += (s, e) =>
@@ -369,7 +365,7 @@ order by td.Seq";
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("Type", header: "Type", width: Widths.AnsiChars(10),  settings: gridType)
             .Text("Feature", header: "Feature", width: Widths.AnsiChars(30),  settings: gridFeature)
-            .Numeric("SMV", header: "SMV", width: Widths.AnsiChars(8), integer_places: 7,  decimal_places: 4,maximum: 999, settings: gridSMV)
+            .Numeric("SMV", header: "SMV", width: Widths.AnsiChars(8), integer_places: 7,  decimal_places: 4, maximum: 999, settings: gridSMV)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), settings: gridRemark)
             .Text("AddName", header: "AddName", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .DateTime("AddDate", header: "AddDate", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -390,7 +386,6 @@ order by td.Seq";
             this.CurrentDetailData["AddName"] = this.user;
             this.CurrentDetailData["AddDate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
             this.CurrentDetailData["NewUkey"] = this.newUkey + 1;
-
         }
 
         /// <summary>

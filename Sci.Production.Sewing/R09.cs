@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Win;
@@ -48,6 +45,7 @@ namespace Sci.Production.Sewing
             {
                 where += "\r\n" + $"and o.FtyGroup='{this.txtfactory1.Text}'";
             }
+
             if (!MyUtility.Check.Empty(this.txtSP1.Text) || !MyUtility.Check.Empty(this.txtSP2.Text))
             {
                 if (!MyUtility.Check.Empty(this.txtSP1.Text) && !MyUtility.Check.Empty(this.txtSP2.Text))

@@ -14,7 +14,6 @@ namespace Sci.Production.Planning
     /// </summary>
     public partial class R02 : Sci.Win.Tems.PrintForm
     {
-        private int selectindex = 0;
         private string factory;
         private string mdivision;
         private string spno1;

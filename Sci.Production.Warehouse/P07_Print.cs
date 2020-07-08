@@ -2,18 +2,12 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using System.Linq;
-//using System.Data.SqlClient;
+
+// using System.Data.SqlClient;
 using Sci.Win;
-using Sci;
-using Sci.Production;
-using Sci.Utility.Excel;
 using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
@@ -21,60 +15,73 @@ namespace Sci.Production.Warehouse
     public partial class P07_Print : Sci.Win.Tems.PrintForm
     {
         DataTable dt;
-        string id, Date1, Date2, ETA, Invoice, Wk, FTYID;
-        public P07_Print(List<String> polist)
+        string id;
+        string Date1;
+        string Date2;
+        string ETA;
+        string Invoice;
+        string Wk;
+        string FTYID;
+
+        public P07_Print(List<string> polist)
         {
-            InitializeComponent();
-            CheckControlEnable();
+            this.InitializeComponent();
+            this.CheckControlEnable();
             this.poidList = polist;
         }
-        List<String> poidList;
+
+        List<string> poidList;
 
         protected override bool ValidateInput()
         {
-
-            if (ReportResourceName == "P07_Report2.rdlc")
+            if (this.ReportResourceName == "P07_Report2.rdlc")
             {
-                if (!MyUtility.Check.Empty(txtSPNo.Text) && !poidList.Contains(this.txtSPNo.Text.TrimEnd(), StringComparer.OrdinalIgnoreCase))
+                if (!MyUtility.Check.Empty(this.txtSPNo.Text) && !this.poidList.Contains(this.txtSPNo.Text.TrimEnd(), StringComparer.OrdinalIgnoreCase))
                 {
                     MyUtility.Msg.ErrorBox("SP# is not found.");
                     return false;
                 }
             }
+
             return base.ValidateInput();
         }
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DataRow row = this.CurrentDataRow;
-            id = row["ID"].ToString();
-            Date1 = (MyUtility.Check.Empty(row["PackingReceive"])) ? "" : ((DateTime)MyUtility.Convert.GetDate(row["PackingReceive"])).ToShortDateString();
-            Date2 = (MyUtility.Check.Empty(row["WhseArrival"])) ? "" : ((DateTime)MyUtility.Convert.GetDate(row["WhseArrival"])).ToShortDateString();
-            ETA = MyUtility.Check.Empty(row["ETA"]) ? "" : ((DateTime)MyUtility.Convert.GetDate(row["ETA"])).ToShortDateString();
-            Invoice = row["invno"].ToString();
-            Wk = row["exportid"].ToString();
-            FTYID = row["Mdivisionid"].ToString();
-         
+            this.id = row["ID"].ToString();
+            this.Date1 = MyUtility.Check.Empty(row["PackingReceive"]) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(row["PackingReceive"])).ToShortDateString();
+            this.Date2 = MyUtility.Check.Empty(row["WhseArrival"]) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(row["WhseArrival"])).ToShortDateString();
+            this.ETA = MyUtility.Check.Empty(row["ETA"]) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(row["ETA"])).ToShortDateString();
+            this.Invoice = row["invno"].ToString();
+            this.Wk = row["exportid"].ToString();
+            this.FTYID = row["Mdivisionid"].ToString();
+
             List<SqlParameter> pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
-           
+            pars.Add(new SqlParameter("@ID", this.id));
+
             DataTable dtTitle;
-            DualResult titleResult = DBProxy.Current.Select("",
-           @"select m.nameEN
+            DualResult titleResult = DBProxy.Current.Select(
+                string.Empty,
+                @"select m.nameEN
              from  dbo.Receiving r WITH (NOLOCK) 
              left join dbo.MDivision m WITH (NOLOCK) 
              on m.id = r.MDivisionID 
              where m.id = r.MDivisionID
              and r.id = @ID", pars, out dtTitle);
-            if (!titleResult) { this.ShowErr(titleResult); }
+            if (!titleResult)
+            {
+                this.ShowErr(titleResult);
+            }
+
             string RptTitle = dtTitle.Rows[0]["nameEN"].ToString();
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
-          
-            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ETA", ETA));
-            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Invoice", Invoice));
-            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Wk", Wk));
-            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FTYID", FTYID));
-   
+
+            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ETA", this.ETA));
+            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Invoice", this.Invoice));
+            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Wk", this.Wk));
+            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FTYID", this.FTYID));
+
             string sql = @"
 select  
 	R.Roll
@@ -121,19 +128,24 @@ OUTER APPLY(
 )Color
 where R.id = @ID";
 
-            if (!MyUtility.Check.Empty(txtSPNo.Text))
+            if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
-                pars.Add(new SqlParameter("@poid", txtSPNo.Text));
+                pars.Add(new SqlParameter("@poid", this.txtSPNo.Text));
                 sql += " and R.Poid = @poid";
             }
 
-            DualResult result = DBProxy.Current.Select("",
-            sql, pars, out dt);
-            if (!result) { return result; }
-            if (ReportResourceName == "P07_Report2.rdlc")
+            DualResult result = DBProxy.Current.Select(
+                string.Empty,
+                sql, pars, out this.dt);
+            if (!result)
             {
-                e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Date2", Date2));
-                List<P07_PrintData> data = dt.AsEnumerable()
+                return result;
+            }
+
+            if (this.ReportResourceName == "P07_Report2.rdlc")
+            {
+                e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Date2", this.Date2));
+                List<P07_PrintData> data = this.dt.AsEnumerable()
                                 .Select(row1 => new P07_PrintData()
                                 {
                                     Roll = row1["Roll"].ToString(),
@@ -148,18 +160,15 @@ where R.id = @ID";
                                     StockUnit = row1["StockUnit"].ToString(),
                                     SubStockQty = row1["SubStockQty"].ToString(),
                                     SubQty = row1["SubQty"].ToString(),
-                                    Remark = row1["Remark"].ToString()
-
+                                    Remark = row1["Remark"].ToString(),
                                 }).ToList();
 
                 e.Report.ReportDataSource = data;
-
             }
             else
             {
-
-                e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Date1", Date1));
-                List<P07_PrintData> data = dt.AsEnumerable()
+                e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Date1", this.Date1));
+                List<P07_PrintData> data = this.dt.AsEnumerable()
                                .Select(row1 => new P07_PrintData()
                                {
                                    POID = row1["PoId"].ToString(),
@@ -176,12 +185,11 @@ where R.id = @ID";
                                    SubGW = row1["SubGW"].ToString(),
                                    SubAW = row1["SubAW"].ToString(),
                                    SubVaniance = row1["SubVaniance"].ToString(),
-                                   Remark = row1["Remark"].ToString()
+                                   Remark = row1["Remark"].ToString(),
                                }).ToList();
                 e.Report.ReportDataSource = data;
-
             }
-                                 
+
             return Result.True;
         }
 
@@ -190,47 +198,47 @@ where R.id = @ID";
         private void radioGroup1_ValueChanged(object sender, EventArgs e)
         {
             this.ReportResourceNamespace = typeof(P07_PrintData);
-            this.ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            this.ReportResourceAssembly = this.ReportResourceNamespace.Assembly;
             this.ReportResourceName = this.radioPanel1.Value == this.radioPLRcvReport.Value ? "P07_Report1.rdlc" : "P07_Report2.rdlc";
         }
 
         private void radioPLRcvReport_CheckedChanged(object sender, EventArgs e)
         {
-            CheckControlEnable();
+            this.CheckControlEnable();
         }
 
         private void CheckControlEnable()
         {
-            if (radioPLRcvReport.Checked == true)
+            if (this.radioPLRcvReport.Checked == true)
             {
-                txtSPNo.Enabled = false;
+                this.txtSPNo.Enabled = false;
             }
             else
-            {              
-                txtSPNo.Enabled = true;                                            
+            {
+                this.txtSPNo.Enabled = true;
             }
         }
 
         protected override bool OnToExcel(ReportDefinition report)
         {
-            if (dt.Rows.Count <= 0)
+            if (this.dt.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
-            if (ReportResourceName == "P07_Report2.rdlc")
+            if (this.ReportResourceName == "P07_Report2.rdlc")
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P07_ArriveWearhouseReport.xltx"); //預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P07_ArriveWearhouseReport.xltx"); // 預先開啟excel app
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
                 int nRow = 7;
 
-                objSheets.Cells[3, 1] = Date2;
-                objSheets.Cells[4, 1] = "ETA:" + ETA;
-                objSheets.Cells[5, 1] = "Invoice#:" + Invoice + "   From FTY ID:" + FTYID;
-                objSheets.Cells[5, 11] = "WK#:" + Wk;              
-                foreach (DataRow dr in dt.Rows)
+                objSheets.Cells[3, 1] = this.Date2;
+                objSheets.Cells[4, 1] = "ETA:" + this.ETA;
+                objSheets.Cells[5, 1] = "Invoice#:" + this.Invoice + "   From FTY ID:" + this.FTYID;
+                objSheets.Cells[5, 11] = "WK#:" + this.Wk;
+                foreach (DataRow dr in this.dt.Rows)
                 {
                     objSheets.Cells[nRow, 1] = dr["Roll"].ToString();
                     objSheets.Cells[nRow, 2] = dr["Dyelot"].ToString();
@@ -243,7 +251,7 @@ where R.id = @ID";
                     objSheets.Cells[nRow, 9] = dr["BrandID"].ToString();
                     objSheets.Cells[nRow, 10] = dr["Desc"].ToString();
                     objSheets.Cells[nRow, 11] = dr["Weight"].ToString();
-                    objSheets.Cells[nRow, 12] = dr["ShipQty"].ToString()+" " + dr["POUnit"].ToString();
+                    objSheets.Cells[nRow, 12] = dr["ShipQty"].ToString() + " " + dr["POUnit"].ToString();
                     objSheets.Cells[nRow, 13] = dr["ActualQty"].ToString() + " " + dr["POUnit"].ToString();
                     objSheets.Cells[nRow, 14] = dr["StockQty"].ToString() + " " + dr["StockUnit"].ToString();
                     objSheets.Cells[nRow, 15] = MyUtility.Check.Empty(dr["TotalReceivingQty"]) ?
@@ -265,16 +273,16 @@ where R.id = @ID";
             }
             else
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P07_PackingListReveivingReport.xltx"); //預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P07_PackingListReveivingReport.xltx"); // 預先開啟excel app
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
                 int nRow = 7;
 
-                objSheets.Cells[3, 1] = Date1;
-                objSheets.Cells[4, 1] = "ETA:" + ETA;
-                objSheets.Cells[5, 1] = "Invoice#:" + Invoice + "   From FTY ID:" + FTYID;
-                objSheets.Cells[5, 10] = "WK#:" + Wk;
-                foreach (DataRow dr in dt.Rows)
+                objSheets.Cells[3, 1] = this.Date1;
+                objSheets.Cells[4, 1] = "ETA:" + this.ETA;
+                objSheets.Cells[5, 1] = "Invoice#:" + this.Invoice + "   From FTY ID:" + this.FTYID;
+                objSheets.Cells[5, 10] = "WK#:" + this.Wk;
+                foreach (DataRow dr in this.dt.Rows)
                 {
                     objSheets.Cells[nRow, 1] = dr["Roll"].ToString();
                     objSheets.Cells[nRow, 2] = dr["Dyelot"].ToString();
@@ -303,7 +311,6 @@ where R.id = @ID";
                 strExcelName.OpenFile();
                 #endregion
             }
-            
 
             return true;
         }

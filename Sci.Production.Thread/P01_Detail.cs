@@ -1,20 +1,13 @@
 ﻿using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Sci;
-using Sci.Win;
 using Sci.Win.Tools;
 using Ict;
-using Ict.Data;
 using Sci.Production.Class;
-using Sci.Production.PublicPrg;
-using System.Collections;
 using System.Transactions;
 
 namespace Sci.Production.Thread

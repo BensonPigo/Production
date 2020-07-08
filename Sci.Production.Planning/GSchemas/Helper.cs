@@ -424,7 +424,7 @@ namespace Sci.Production.Report.GSchemas
             var paras = new List<SqlParameter>()
             {
                 new SqlParameter("ID", iD),
-                new SqlParameter("Category", category)
+                new SqlParameter("Category", category),
             };
             string cmdtext = "SELECT  * from getSCI(@ID,@Category)  ";
 
@@ -447,7 +447,7 @@ namespace Sci.Production.Report.GSchemas
             DualResult result;
             var paras = new List<SqlParameter>()
             {
-                new SqlParameter("ID", iD)
+                new SqlParameter("ID", iD),
             };
             string cmdtext = "SELECT  * from getship_Order(@ID)  ";
 
@@ -474,7 +474,7 @@ namespace Sci.Production.Report.GSchemas
             {
                 new SqlParameter("ID", iD),
                 new SqlParameter("SEQ1", sEQ1),
-                new SqlParameter("SEQ2", sEQ2)
+                new SqlParameter("SEQ2", sEQ2),
             };
             string cmdtext = "SELECT  * from GetDescMtl_ByPoDetail(@ID,@SEQ1,@SEQ2)  ";
 
@@ -503,7 +503,7 @@ namespace Sci.Production.Report.GSchemas
                 new SqlParameter("ID", iD),
                 new SqlParameter("Seq1", seq1),
                 new SqlParameter("Seq2", seq2),
-                new SqlParameter("Exclude", exclude)
+                new SqlParameter("Exclude", exclude),
             };
             string cmdtext = "SELECT  * from GetApQty_AllStatus(@ID,@Seq1,@Seq2,@Exclude)  ";
 

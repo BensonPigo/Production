@@ -707,7 +707,7 @@ where	a.Finished = 0
                        select new
                        {
                            Supplier = grouprows.Key.localsuppid + "-" + grouprows.Key.suppnm,
-                           TotalQty = grouprows.Sum(r => (r.Field<int>("OrderQty") - r.Field<int>("qaqty")) * r.Field<decimal>("qty"))
+                           TotalQty = grouprows.Sum(r => (r.Field<int>("OrderQty") - r.Field<int>("qaqty")) * r.Field<decimal>("qty")),
                        }).ToList();
 
             var bs2 = (from rows in ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable()
@@ -715,7 +715,7 @@ where	a.Finished = 0
                        select new
                        {
                            Supplier = grouprows.Key.localsuppid,
-                           TotalQty = grouprows.Sum(r => (r.Field<int>("OrderQty") - r.Field<int>("qaqty")) * r.Field<decimal>("qty"))
+                           TotalQty = grouprows.Sum(r => (r.Field<int>("OrderQty") - r.Field<int>("qaqty")) * r.Field<decimal>("qty")),
                        }).ToList();
             bs1.AddRange(bs2);
             this.gridSupplier.DataSource = bs1;

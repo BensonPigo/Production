@@ -748,7 +748,7 @@ end
 
             try
             {
-                TransactionOptions tOpt = new TransactionOptions();
+                TransactionOptions tOpt = default(TransactionOptions);
                 tOpt.Timeout = new TimeSpan(0, 5, 0);
                 using (TransactionScope scope = new TransactionScope(TransactionScopeOption.RequiresNew, tOpt))
                 {
@@ -1190,7 +1190,7 @@ inner join #tmp t on t.[UKey] = sod.[UKey]
                                     Article = s["Article"].ToString(),
                                     SizeCode = s["SizeCode"].ToString(),
                                     PackingQty = MyUtility.Convert.GetInt(s["PackingQty"]),
-                                    DisplayFromSewingQty = MyUtility.Convert.GetInt(s["DisplayFromSewingQty"])
+                                    DisplayFromSewingQty = MyUtility.Convert.GetInt(s["DisplayFromSewingQty"]),
                                 })
                                 .Select(g => new
                                 {
@@ -1200,7 +1200,7 @@ inner join #tmp t on t.[UKey] = sod.[UKey]
                                     g.Key.SizeCode,
                                     g.Key.PackingQty,
                                     g.Key.DisplayFromSewingQty,
-                                    TransferQty = g.Sum(s => MyUtility.Convert.GetInt(s["TransferQty"]))
+                                    TransferQty = g.Sum(s => MyUtility.Convert.GetInt(s["TransferQty"])),
                                 });
 
             var listSewingQtyOver = listCheckDataBase.Where(w => w.TransferQty > w.DisplayFromSewingQty);
@@ -1235,7 +1235,7 @@ inner join #tmp t on t.[UKey] = sod.[UKey]
                 ToArticle = s["ToArticle"].ToString(),
                 ToSizeCode = s["ToSizeCode"].ToString(),
                 DisplayToSewingQty = MyUtility.Convert.GetInt(s["DisplayToSewingQty"]),
-                OrderQtyUpperlimit = MyUtility.Convert.GetInt(s["OrderQtyUpperlimit"])
+                OrderQtyUpperlimit = MyUtility.Convert.GetInt(s["OrderQtyUpperlimit"]),
             })
             .Select(g => new
             {
@@ -1245,7 +1245,7 @@ inner join #tmp t on t.[UKey] = sod.[UKey]
                 g.Key.ToSizeCode,
                 g.Key.DisplayToSewingQty,
                 g.Key.OrderQtyUpperlimit,
-                TransferQty = g.Sum(s => MyUtility.Convert.GetInt(s["TransferQty"]))
+                TransferQty = g.Sum(s => MyUtility.Convert.GetInt(s["TransferQty"])),
             }).Where(w => w.TransferQty + w.DisplayToSewingQty > w.OrderQtyUpperlimit).ToList();
 
             if (list2.Count > 0)

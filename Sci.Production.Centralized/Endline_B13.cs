@@ -2,13 +2,7 @@
 using Sci.Data;
 using Sci.Production.PublicPrg;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Centralized
@@ -17,6 +11,7 @@ namespace Sci.Production.Centralized
     public partial class Endline_B13 : Sci.Win.Tems.Input1
     {
         private string reasonType = "DP";
+
         /// <inheritdoc/>
         public Endline_B13(ToolStripMenuItem menuitem)
             : base(menuitem)

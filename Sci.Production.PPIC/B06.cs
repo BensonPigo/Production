@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
@@ -14,6 +10,7 @@ namespace Sci.Production.PPIC
     public partial class B06 : Sci.Win.Tems.Input1
     {
         private string useAPS;
+
         /// <summary>
         /// B06
         /// </summary>
@@ -23,6 +20,7 @@ namespace Sci.Production.PPIC
         {
             string sqlCommand = "select UseAPS from factory WITH (NOLOCK) where ID = '" + Sci.Env.User.Factory + "'";
             this.useAPS = MyUtility.GetValue.Lookup(sqlCommand, null);
+
             // string sqlCommand2 = "select IsSampleRoom from factory where ID = '" + Sci.Env.User.Factory + "'";
             // string IsSampleRoom = MyUtility.GetValue.Lookup(sqlCommand2, null);
             // if (IsSampleRoom == "False")

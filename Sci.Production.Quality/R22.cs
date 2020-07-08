@@ -1,10 +1,6 @@
 ﻿using Ict;
-using Microsoft.Office.Interop.Excel;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -14,70 +10,72 @@ namespace Sci.Production.Quality
 {
     public partial class R22 : Sci.Win.Tems.PrintForm
     {
-        DateTime? AuditDate1, AuditDate2;
+        DateTime? AuditDate1;
+        DateTime? AuditDate2;
         System.Data.DataTable printData;
 
         public R22(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            dateAuditDate.Control2.Enabled = false;
+            this.InitializeComponent();
+            this.dateAuditDate.Control2.Enabled = false;
         }
 
-        //radio改變
+        // radio改變
         private void radioPerBrand_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioPerBrand.Checked)
+            if (this.radioPerBrand.Checked)
             {
-                dateAuditDate.IsRequired = false;
-                dateAuditDate.Control2.Text = "";
-                dateAuditDate.Control2.Enabled = false;
+                this.dateAuditDate.IsRequired = false;
+                this.dateAuditDate.Control2.Text = string.Empty;
+                this.dateAuditDate.Control2.Enabled = false;
             }
         }
 
         private void radioPerDateFactory_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioPerDateFactory.Checked)
+            if (this.radioPerDateFactory.Checked)
             {
-                dateAuditDate.IsRequired = true;
-                dateAuditDate.Control2.Enabled = true;
+                this.dateAuditDate.IsRequired = true;
+                this.dateAuditDate.Control2.Enabled = true;
             }
         }
 
         private void radioPerDateBrand_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioPerDateBrand.Checked)
+            if (this.radioPerDateBrand.Checked)
             {
-                dateAuditDate.IsRequired = true;
-                dateAuditDate.Control2.Enabled = true;
+                this.dateAuditDate.IsRequired = true;
+                this.dateAuditDate.Control2.Enabled = true;
             }
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            AuditDate1 = dateAuditDate.Value1;
-            AuditDate2 = dateAuditDate.Value2;
+            this.AuditDate1 = this.dateAuditDate.Value1;
+            this.AuditDate2 = this.dateAuditDate.Value2;
 
             return base.ValidateInput();
         }
 
-        //非同步取資料
+        // 非同步取資料
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            string d1 = "", d2 = "";
-            if (!MyUtility.Check.Empty(AuditDate1))
+            string d1 = string.Empty, d2 = string.Empty;
+            if (!MyUtility.Check.Empty(this.AuditDate1))
             {
-                d1 = Convert.ToDateTime(AuditDate1).ToString("d");
+                d1 = Convert.ToDateTime(this.AuditDate1).ToString("d");
             }
-            if (!MyUtility.Check.Empty(AuditDate2))
+
+            if (!MyUtility.Check.Empty(this.AuditDate2))
             {
-                d2 = Convert.ToDateTime(AuditDate2).ToString("d");
+                d2 = Convert.ToDateTime(this.AuditDate2).ToString("d");
             }
 
             #region radioPerBrand
-            if (radioPerBrand.Checked)
+            if (this.radioPerBrand.Checked)
             {
                 #region P1
                 sqlCmd.Append(@"
@@ -99,7 +97,7 @@ and a.Status = 'Confirmed'
 ");
                 #endregion
                 #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(AuditDate1))
+                if (!MyUtility.Check.Empty(this.AuditDate1))
                 {
                     sqlCmd.Append(string.Format(@" and cdate = '{0}'", d1));
                 }
@@ -179,7 +177,7 @@ and a.Status = ''Confirmed''
 ");
                 #endregion
                 #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(AuditDate1))
+                if (!MyUtility.Check.Empty(this.AuditDate1))
                 {
                     sqlCmd.Append(string.Format(@" and cdate = ''{0}''", d1));
                 }
@@ -285,7 +283,7 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
             #endregion
 
             #region radioPerDateFactory
-            if (radioPerDateFactory.Checked)
+            if (this.radioPerDateFactory.Checked)
             {
                 #region P1
                 sqlCmd.Append(@"
@@ -308,11 +306,12 @@ and a.Status = 'Confirmed'
 ");
                 #endregion
                 #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(AuditDate1))
+                if (!MyUtility.Check.Empty(this.AuditDate1))
                 {
                     sqlCmd.Append(string.Format(@" and cdate >= '{0}'", d1));
                 }
-                if (!MyUtility.Check.Empty(AuditDate2))
+
+                if (!MyUtility.Check.Empty(this.AuditDate2))
                 {
                     sqlCmd.Append(string.Format(@" and cdate <= '{0}'", d2));
                 }
@@ -395,11 +394,12 @@ and a.Status = ''Confirmed''
 ");
                 #endregion
                 #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(AuditDate1))
+                if (!MyUtility.Check.Empty(this.AuditDate1))
                 {
                     sqlCmd.Append(string.Format(@" and cdate >= ''{0}''", d1));
                 }
-                if (!MyUtility.Check.Empty(AuditDate2))
+
+                if (!MyUtility.Check.Empty(this.AuditDate2))
                 {
                     sqlCmd.Append(string.Format(@" and cdate <= ''{0}''", d2));
                 }
@@ -505,7 +505,7 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
             #endregion
 
             #region radioPerDateBrand
-            if (radioPerDateBrand.Checked)
+            if (this.radioPerDateBrand.Checked)
             {
                 #region P1
                 sqlCmd.Append(@"
@@ -527,11 +527,12 @@ and a.Status = 'Confirmed'
 ");
                 #endregion
                 #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(AuditDate1))
+                if (!MyUtility.Check.Empty(this.AuditDate1))
                 {
                     sqlCmd.Append(string.Format(@" and cdate >= '{0}'", d1));
                 }
-                if (!MyUtility.Check.Empty(AuditDate2))
+
+                if (!MyUtility.Check.Empty(this.AuditDate2))
                 {
                     sqlCmd.Append(string.Format(@" and cdate <= '{0}'", d2));
                 }
@@ -613,11 +614,12 @@ and a.Status = ''Confirmed''
 ");
                 #endregion
                 #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(AuditDate1))
+                if (!MyUtility.Check.Empty(this.AuditDate1))
                 {
                     sqlCmd.Append(string.Format(@" and cdate >= ''{0}''", d1));
                 }
-                if (!MyUtility.Check.Empty(AuditDate2))
+
+                if (!MyUtility.Check.Empty(this.AuditDate2))
                 {
                     sqlCmd.Append(string.Format(@" and cdate <= ''{0}''", d2));
                 }
@@ -722,7 +724,7 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
             }
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -732,11 +734,11 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
             return Result.True;
         }
 
-        protected string intToExcelcolumn(int cc)//將數字轉換EXCEL的英文欄位;例27→AA
+        protected string intToExcelcolumn(int cc) // 將數字轉換EXCEL的英文欄位;例27→AA
         {
             int cc1 = 0, cc2 = 0;
-            string c3 = "";
-            if (cc > 26)//將欄位數轉成英文字元
+            string c3 = string.Empty;
+            if (cc > 26) // 將欄位數轉成英文字元
             {
                 cc1 = cc / 26;
                 char C = Convert.ToChar(64 + cc1);
@@ -749,68 +751,70 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                 char C2 = Convert.ToChar(64 + cc);
                 c3 = C2.ToString();
             }
+
             return c3;
         }
 
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            //int cc1 = 0, cc2 = 0;
-            //int cc = printData.Columns.Count;
-            //string c3 = "";
+            // int cc1 = 0, cc2 = 0;
+            // int cc = printData.Columns.Count;
+            // string c3 = "";
+            string d1 = string.Empty, d2 = string.Empty;
+            if (!MyUtility.Check.Empty(this.AuditDate1))
+            {
+                d1 = Convert.ToDateTime(this.AuditDate1).ToString("d");
+            }
 
-            string d1 = "", d2 = "";
-            if (!MyUtility.Check.Empty(AuditDate1))
+            if (!MyUtility.Check.Empty(this.AuditDate1))
             {
-                d1 = Convert.ToDateTime(AuditDate1).ToString("d");
+                d2 = Convert.ToDateTime(this.AuditDate1).ToString("d");
             }
-            if (!MyUtility.Check.Empty(AuditDate1))
-            {
-                d2 = Convert.ToDateTime(AuditDate1).ToString("d");
-            }
+
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
             #region radioPerBrand
-            if (radioPerBrand.Checked)
+            if (this.radioPerBrand.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R22_PerBrand.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(printData, "", "Quality_R22_PerBrand.xltx", 4, false, null, objApp);// 將datatable copy to excel
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R22_PerBrand.xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R22_PerBrand.xltx", 4, false, null, objApp); // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
-                objSheets.Cells[2, 2] = "Audit Date:" + d1;//加入日期條件
+                objSheets.Cells[2, 2] = "Audit Date:" + d1; // 加入日期條件
 
-                objSheets.get_Range("A1", intToExcelcolumn(printData.Columns.Count) + "1").Merge(false);//合併欄位,要合併到哪個欄位並加入Pass Rate字串
-                objSheets.Cells[1, 1] = "Pass Rate";//加入Pass Rate
+                objSheets.get_Range("A1", this.intToExcelcolumn(this.printData.Columns.Count) + "1").Merge(false); // 合併欄位,要合併到哪個欄位並加入Pass Rate字串
+                objSheets.Cells[1, 1] = "Pass Rate"; // 加入Pass Rate
 
                 #region 依據欄位數量,指定合併,框線,底色
-                for (int i = 1; i < (printData.Columns.Count - 4) / 3 + 1; i++)//第4列,在summary之後要做幾次合併
+                for (int i = 1; i < ((this.printData.Columns.Count - 4) / 3) + 1; i++) // 第4列,在summary之後要做幾次合併
                 {
-                    string s1 = intToExcelcolumn(2 + i * 3) + "4";
-                    string s2 = intToExcelcolumn(4 + i * 3) + "4";
-                    string s3 = intToExcelcolumn(4 + i * 3);
-                    objSheets.get_Range(s1, s2).Merge(false);//合併欄位
-                    objSheets.get_Range(s1, s2).Interior.Color = Color.FromArgb(222, 186, 252);//設定指定儲存格背景色
-                    string[] cname = printData.Columns[2 + i * 3].ToString().Split('_');//把欄位名稱以_字元分割
-                    objSheets.Cells[4, 2 + i * 3] = cname[0];//加入品名
-                    objSheets.Cells[3, 2 + i * 3] = "Total Times PO Inspected";
-                    objSheets.Cells[3, 3 + i * 3] = "Total Times P.O Passed";
-                    objSheets.Cells[3, 4 + i * 3] = "PASS RATE";
-                    objSheets.get_Range(s1, s2).ColumnWidth = 8;//設定單一儲存格寬度，因自動調整會很亂
-                    objSheets.get_Range(s3+":"+s3, Type.Missing).NumberFormat = "0.00%";
+                    string s1 = this.intToExcelcolumn(2 + (i * 3)) + "4";
+                    string s2 = this.intToExcelcolumn(4 + (i * 3)) + "4";
+                    string s3 = this.intToExcelcolumn(4 + (i * 3));
+                    objSheets.get_Range(s1, s2).Merge(false); // 合併欄位
+                    objSheets.get_Range(s1, s2).Interior.Color = Color.FromArgb(222, 186, 252); // 設定指定儲存格背景色
+                    string[] cname = this.printData.Columns[2 + (i * 3)].ToString().Split('_'); // 把欄位名稱以_字元分割
+                    objSheets.Cells[4, 2 + (i * 3)] = cname[0]; // 加入品名
+                    objSheets.Cells[3, 2 + (i * 3)] = "Total Times PO Inspected";
+                    objSheets.Cells[3, 3 + (i * 3)] = "Total Times P.O Passed";
+                    objSheets.Cells[3, 4 + (i * 3)] = "PASS RATE";
+                    objSheets.get_Range(s1, s2).ColumnWidth = 8; // 設定單一儲存格寬度，因自動調整會很亂
+                    objSheets.get_Range(s3 + ":" + s3, Type.Missing).NumberFormat = "0.00%";
                 }
                 #endregion
-                objSheets.get_Range("D" + 5, "D" + (4 + printData.Rows.Count)).Interior.Color = Color.FromArgb(204, 255, 102);//summary_PASS RATE儲存格背景色
-                string lastright = intToExcelcolumn(printData.Columns.Count) + (4 + printData.Rows.Count);
-                objSheets.get_Range("A" + (4 + printData.Rows.Count), lastright).Interior.Color = Color.FromArgb(204, 255, 102);//最後一列儲存格背景色
-                objSheets.get_Range("A3", lastright).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;//設定有資料範圍所有框線
-                objSheets.get_Range("A3", lastright).EntireRow.AutoFit();//自動調整列高
+                objSheets.get_Range("D" + 5, "D" + (4 + this.printData.Rows.Count)).Interior.Color = Color.FromArgb(204, 255, 102); // summary_PASS RATE儲存格背景色
+                string lastright = this.intToExcelcolumn(this.printData.Columns.Count) + (4 + this.printData.Rows.Count);
+                objSheets.get_Range("A" + (4 + this.printData.Rows.Count), lastright).Interior.Color = Color.FromArgb(204, 255, 102); // 最後一列儲存格背景色
+                objSheets.get_Range("A3", lastright).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous; // 設定有資料範圍所有框線
+                objSheets.get_Range("A3", lastright).EntireRow.AutoFit(); // 自動調整列高
 
                 #region Save & Show Excel
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R22_PerBrand");
@@ -820,45 +824,45 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                 Marshal.ReleaseComObject(objSheets);
 
                 strExcelName.OpenFile();
-                #endregion 
+                #endregion
             }
             #endregion
 
             #region radioPerDateFactory
-            if (radioPerDateFactory.Checked)
+            if (this.radioPerDateFactory.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R22_PerDate(Factory).xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(printData, "", "Quality_R22_PerDate(Factory).xltx", 3, false, null, objApp);// 將datatable copy to excel
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R22_PerDate(Factory).xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R22_PerDate(Factory).xltx", 3, false, null, objApp); // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                
+
                 #region 依據欄位數量,指定合併,框線,底色
-                for (int i = 1; i < (printData.Columns.Count - 1) / 3 + 1; i++)//第3列,在date之後要做幾次合併
+                for (int i = 1; i < ((this.printData.Columns.Count - 1) / 3) + 1; i++) // 第3列,在date之後要做幾次合併
                 {
-                    string s1 = intToExcelcolumn(-1 + i * 3) + "3";
-                    string s2 = intToExcelcolumn(1 + i * 3) + "3";
-                    string s3 = intToExcelcolumn(1 + i * 3);
-                    objSheets.get_Range(s1,s2).Merge(false);//合併欄位
-                    objSheets.get_Range(s1, s2).Interior.Color = Color.FromArgb(222, 186, 252);//設定指定儲存格背景色
-                    string[] cname = printData.Columns[i * 3-1].ToString().Split('_');//把欄位名稱以_字元分割
-                    objSheets.Cells[3, i * 3-1] = cname[0];//加入group欄位名稱
-                    objSheets.Cells[2, -1 + i * 3] = "Total Times PO Inspected";
+                    string s1 = this.intToExcelcolumn(-1 + (i * 3)) + "3";
+                    string s2 = this.intToExcelcolumn(1 + (i * 3)) + "3";
+                    string s3 = this.intToExcelcolumn(1 + (i * 3));
+                    objSheets.get_Range(s1, s2).Merge(false); // 合併欄位
+                    objSheets.get_Range(s1, s2).Interior.Color = Color.FromArgb(222, 186, 252); // 設定指定儲存格背景色
+                    string[] cname = this.printData.Columns[(i * 3) - 1].ToString().Split('_'); // 把欄位名稱以_字元分割
+                    objSheets.Cells[3, (i * 3) - 1] = cname[0]; // 加入group欄位名稱
+                    objSheets.Cells[2, -1 + (i * 3)] = "Total Times PO Inspected";
                     objSheets.Cells[2, i * 3] = "Total Times P.O Passed";
-                    objSheets.Cells[2, 1 + i * 3] = "PASS RATE";
-                    objSheets.get_Range(s1, s2).ColumnWidth = 8;//設定單一儲存格寬度，因自動調整會很亂
+                    objSheets.Cells[2, 1 + (i * 3)] = "PASS RATE";
+                    objSheets.get_Range(s1, s2).ColumnWidth = 8; // 設定單一儲存格寬度，因自動調整會很亂
                     objSheets.get_Range(s3 + ":" + s3, Type.Missing).NumberFormat = "0.00%";
                 }
                 #endregion
-                string right = intToExcelcolumn(printData.Columns.Count);
-                string lastright = intToExcelcolumn(printData.Columns.Count) + (3 + printData.Rows.Count);
+                string right = this.intToExcelcolumn(this.printData.Columns.Count);
+                string lastright = this.intToExcelcolumn(this.printData.Columns.Count) + (3 + this.printData.Rows.Count);
 
-                objSheets.Cells[printData.Rows.Count+3,1]="Total";
+                objSheets.Cells[this.printData.Rows.Count + 3, 1] = "Total";
 
-                objSheets.get_Range(intToExcelcolumn(printData.Columns.Count - 2) + 3, right + 3).Interior.Color = Color.FromArgb(204, 255, 102);//summary儲存格背景色
+                objSheets.get_Range(this.intToExcelcolumn(this.printData.Columns.Count - 2) + 3, right + 3).Interior.Color = Color.FromArgb(204, 255, 102); // summary儲存格背景色
 
-                objSheets.get_Range(right + 4, right+(printData.Rows.Count+3)).Interior.Color = Color.FromArgb(204, 255, 102);//summary_PASS RATE儲存格背景色
-                objSheets.get_Range("A" + (3 + printData.Rows.Count), lastright).Interior.Color = Color.FromArgb(204, 255, 102);//最後一列儲存格背景色
-                objSheets.get_Range("A2", lastright).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;//設定有資料範圍所有框線
-                objSheets.get_Range("A2", lastright).EntireRow.AutoFit();//自動調整列高
+                objSheets.get_Range(right + 4, right + (this.printData.Rows.Count + 3)).Interior.Color = Color.FromArgb(204, 255, 102); // summary_PASS RATE儲存格背景色
+                objSheets.get_Range("A" + (3 + this.printData.Rows.Count), lastright).Interior.Color = Color.FromArgb(204, 255, 102); // 最後一列儲存格背景色
+                objSheets.get_Range("A2", lastright).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous; // 設定有資料範圍所有框線
+                objSheets.get_Range("A2", lastright).EntireRow.AutoFit(); // 自動調整列高
                 objSheets.Columns.AutoFit();
 
                 #region Save & Show Excel
@@ -869,45 +873,45 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                 Marshal.ReleaseComObject(objSheets);
 
                 strExcelName.OpenFile();
-                #endregion 
+                #endregion
             }
             #endregion
 
             #region radioPerDateBrand
-            if (radioPerDateBrand.Checked)
+            if (this.radioPerDateBrand.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R22_PerDate(Brand).xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(printData, "", "Quality_R22_PerDate(Brand).xltx", 3, false, null, objApp);// 將datatable copy to excel
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R22_PerDate(Brand).xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R22_PerDate(Brand).xltx", 3, false, null, objApp); // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
                 #region 依據欄位數量,指定合併,框線,底色
-                for (int i = 1; i < (printData.Columns.Count - 1) / 3 + 1; i++)//第3列,在date之後要做幾次合併
+                for (int i = 1; i < ((this.printData.Columns.Count - 1) / 3) + 1; i++) // 第3列,在date之後要做幾次合併
                 {
-                    string s1 = intToExcelcolumn(-1 + i * 3) + "3";
-                    string s2 = intToExcelcolumn(1 + i * 3) + "3";
-                    string s3 = intToExcelcolumn(1 + i * 3);
-                    objSheets.get_Range(s1, s2).Merge(false);//合併欄位
-                    objSheets.get_Range(s1, s2).Interior.Color = Color.FromArgb(222, 186, 252);//設定指定儲存格背景色
-                    string[] cname = printData.Columns[i * 3 - 1].ToString().Split('_');//把欄位名稱以_字元分割
-                    objSheets.Cells[3, i * 3 - 1] = cname[0];//加入group欄位名稱
-                    objSheets.Cells[2, -1 + i * 3] = "Total Times PO Inspected";
+                    string s1 = this.intToExcelcolumn(-1 + (i * 3)) + "3";
+                    string s2 = this.intToExcelcolumn(1 + (i * 3)) + "3";
+                    string s3 = this.intToExcelcolumn(1 + (i * 3));
+                    objSheets.get_Range(s1, s2).Merge(false); // 合併欄位
+                    objSheets.get_Range(s1, s2).Interior.Color = Color.FromArgb(222, 186, 252); // 設定指定儲存格背景色
+                    string[] cname = this.printData.Columns[(i * 3) - 1].ToString().Split('_'); // 把欄位名稱以_字元分割
+                    objSheets.Cells[3, (i * 3) - 1] = cname[0]; // 加入group欄位名稱
+                    objSheets.Cells[2, -1 + (i * 3)] = "Total Times PO Inspected";
                     objSheets.Cells[2, i * 3] = "Total Times P.O Passed";
-                    objSheets.Cells[2, 1 + i * 3] = "PASS RATE";
-                    objSheets.get_Range(s1, s2).ColumnWidth = 8;//設定單一儲存格寬度，因自動調整會很亂
+                    objSheets.Cells[2, 1 + (i * 3)] = "PASS RATE";
+                    objSheets.get_Range(s1, s2).ColumnWidth = 8; // 設定單一儲存格寬度，因自動調整會很亂
                     objSheets.get_Range(s3 + ":" + s3, Type.Missing).NumberFormat = "0.00%";
                 }
                 #endregion
-                string right = intToExcelcolumn(printData.Columns.Count);
-                string lastright = intToExcelcolumn(printData.Columns.Count) + (3 + printData.Rows.Count);
+                string right = this.intToExcelcolumn(this.printData.Columns.Count);
+                string lastright = this.intToExcelcolumn(this.printData.Columns.Count) + (3 + this.printData.Rows.Count);
 
-                objSheets.Cells[printData.Rows.Count + 3, 1] = "Total";
+                objSheets.Cells[this.printData.Rows.Count + 3, 1] = "Total";
 
-                objSheets.get_Range(intToExcelcolumn(printData.Columns.Count - 2) + 3, right + 3).Interior.Color = Color.FromArgb(204, 255, 102);//summary儲存格背景色
+                objSheets.get_Range(this.intToExcelcolumn(this.printData.Columns.Count - 2) + 3, right + 3).Interior.Color = Color.FromArgb(204, 255, 102); // summary儲存格背景色
 
-                objSheets.get_Range(right + 4, right + (printData.Rows.Count + 3)).Interior.Color = Color.FromArgb(204, 255, 102);//summary_PASS RATE儲存格背景色
-                objSheets.get_Range("A" + (3 + printData.Rows.Count), lastright).Interior.Color = Color.FromArgb(204, 255, 102);//最後一列儲存格背景色
-                objSheets.get_Range("A2", lastright).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;//設定有資料範圍所有框線
-                objSheets.get_Range("A2", lastright).EntireRow.AutoFit();//自動調整列高
+                objSheets.get_Range(right + 4, right + (this.printData.Rows.Count + 3)).Interior.Color = Color.FromArgb(204, 255, 102); // summary_PASS RATE儲存格背景色
+                objSheets.get_Range("A" + (3 + this.printData.Rows.Count), lastright).Interior.Color = Color.FromArgb(204, 255, 102); // 最後一列儲存格背景色
+                objSheets.get_Range("A2", lastright).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous; // 設定有資料範圍所有框線
+                objSheets.get_Range("A2", lastright).EntireRow.AutoFit(); // 自動調整列高
 
                 #region Save & Show Excel
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R22_PerDate(Brand)");
@@ -917,7 +921,7 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                 Marshal.ReleaseComObject(objSheets);
 
                 strExcelName.OpenFile();
-                #endregion 
+                #endregion
             }
             #endregion
 

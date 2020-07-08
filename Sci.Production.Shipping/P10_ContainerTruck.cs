@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
@@ -55,8 +52,16 @@ namespace Sci.Production.Shipping
 
             id.EditingMouseDown += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                if (this.EditMode == false)
+                {
+                    return;
+                }
+
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataTable selectDt;
@@ -72,7 +77,11 @@ and g.CYCFS = 'CY-CY'";
 
                     Sci.Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "GB#,LoadingType", "20,10", this.CurrentData["ID"].ToString());
                     DialogResult result = selectItem.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     this.CurrentData["ID"] = selectItem.GetSelectedString();
                     this.CurrentData["CYCFS"] = selectItem.GetSelecteds()[0]["LoadingType"];
                     this.CurrentData["BrandGroup"] = selectItem.GetSelecteds()[0]["BrandGroup"];
@@ -162,7 +171,7 @@ and g.CYCFS = 'CY-CY'
             #endregion
 
             #region 若相同Brand, Forwarder, Loading Type, Cut-Off Date才能放在同一個Container#
-            string inCTNRNo = "'" + string.Join("','", dt.AsEnumerable().Where(w =>w.RowState != DataRowState.Deleted).Select(s => MyUtility.Convert.GetString(s["CTNRNo"]))) + "'";
+            string inCTNRNo = "'" + string.Join("','", dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Select(s => MyUtility.Convert.GetString(s["CTNRNo"]))) + "'";
             string inPkey = "'" + string.Join("','", dt.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Select(s => MyUtility.Convert.GetString(s["id"]) + MyUtility.Convert.GetString(s["CTNRNo"]) + MyUtility.Convert.GetString(s["TruckNo"]))) + "'";
             string sqlchk = $@"
 select distinct gc.CTNRNo,b.BrandGroup,g.Forwarder,g.CYCFS,g.CutOffDate
@@ -202,8 +211,7 @@ and concat(gc.id, gc.CTNRNo,gc.TruckNo)not in ({inPkey})
                     if (!MyUtility.Convert.GetString(dr["BrandGroup"]).EqualString(MyUtility.Convert.GetString(drs["BrandGroup"])) ||
                         !MyUtility.Convert.GetString(dr["Forwarder"]).EqualString(MyUtility.Convert.GetString(drs["Forwarder"])) ||
                         !MyUtility.Convert.GetString(dr["CYCFS"]).EqualString(MyUtility.Convert.GetString(drs["CYCFS"])) ||
-                        !MyUtility.Convert.GetString(dr["CutOffDate"]).EqualString(MyUtility.Convert.GetString(drs["CutOffDate"]))
-                        )
+                        !MyUtility.Convert.GetString(dr["CutOffDate"]).EqualString(MyUtility.Convert.GetString(drs["CutOffDate"])))
                     {
                         MyUtility.Msg.WarningBox("GB# can be added to the same Container# only GBs with the same Brand、Forwarder、Loading Type and Cut-Off Date");
                         return false;

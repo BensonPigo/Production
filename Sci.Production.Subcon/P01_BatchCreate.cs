@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -11,8 +10,6 @@ using Ict;
 using Ict.Win;
 using System.Linq;
 using System.Transactions;
-using MsExcel = Microsoft.Office.Interop.Excel;
-using System.Reflection;
 using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Subcon
@@ -20,37 +17,43 @@ namespace Sci.Production.Subcon
     public partial class P01_BatchCreate : Sci.Win.Subs.Base
     {
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        private string poType, isArtwork;
+        private string poType;
+        private string isArtwork;
         protected DataTable dtArtwork;
-        string apvdate_b, apvdate_e, sciDelivery_b, sciDelivery_e, sp_b, sp_e, artworktype;
+        string apvdate_b;
+        string apvdate_e;
+        string sciDelivery_b;
+        string sciDelivery_e;
+        string sp_b;
+        string sp_e;
+        string artworktype;
         bool isNeedPlanningB03Quote = false;
 
         public P01_BatchCreate()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         public P01_BatchCreate(string fuc)
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             if (fuc == "P01")
             {
-                poType = "O";
+                this.poType = "O";
                 this.Text += " (Sub-con Purchase Order)";
             }
             else
             {
-                poType = "I";
+                this.poType = "I";
                 this.Text += " (In-House Requisition)";
             }
 
-            dateIssueDate.Value = DateTime.Today;
-            dateDelivery.Value = DateTime.Today;
-
+            this.dateIssueDate.Value = DateTime.Today;
+            this.dateDelivery.Value = DateTime.Today;
         }
 
-        //Find Now Button
+        // Find Now Button
         private void btnFindNow_Click(object sender, EventArgs e)
         {
             this.FindData(true);
@@ -69,40 +72,54 @@ namespace Sci.Production.Subcon
             this.sciDelivery_b = null;
             this.sciDelivery_e = null;
 
-            if (dateApproveDate.Value1 != null) apvdate_b = this.dateApproveDate.Text1;
-            if (dateApproveDate.Value2 != null) { apvdate_e = this.dateApproveDate.Text2; }
-            if (dateSCIDelivery.Value1 != null) sciDelivery_b = this.dateSCIDelivery.Text1;
-            if (dateSCIDelivery.Value2 != null) { sciDelivery_e = this.dateSCIDelivery.Text2; }
+            if (this.dateApproveDate.Value1 != null)
+            {
+                this.apvdate_b = this.dateApproveDate.Text1;
+            }
 
+            if (this.dateApproveDate.Value2 != null)
+            {
+                this.apvdate_e = this.dateApproveDate.Text2;
+            }
+
+            if (this.dateSCIDelivery.Value1 != null)
+            {
+                this.sciDelivery_b = this.dateSCIDelivery.Text1;
+            }
+
+            if (this.dateSCIDelivery.Value2 != null)
+            {
+                this.sciDelivery_e = this.dateSCIDelivery.Text2;
+            }
 
             this.sp_b = this.txtSPNoStart.Text;
             this.sp_e = this.txtSPNoEnd.Text;
-            this.artworktype = txtartworktype_ftyArtworkType.Text;
+            this.artworktype = this.txtartworktype_ftyArtworkType.Text;
 
-            if ((apvdate_b == null && apvdate_e == null) &&
-                (sciDelivery_b == null && sciDelivery_e == null) &&
-                string.IsNullOrWhiteSpace(sp_b) && string.IsNullOrWhiteSpace(sp_e))
+            if ((this.apvdate_b == null && this.apvdate_e == null) &&
+                (this.sciDelivery_b == null && this.sciDelivery_e == null) &&
+                string.IsNullOrWhiteSpace(this.sp_b) && string.IsNullOrWhiteSpace(this.sp_e))
             {
                 MyUtility.Msg.WarningBox("< Approve Date > or < SCI Delivery > or < SP# > can't be empty!!");
-                dateApproveDate.Focus1();
+                this.dateApproveDate.Focus1();
                 return;
             }
 
-            if (!MyUtility.Check.Empty(apvdate_e))
+            if (!MyUtility.Check.Empty(this.apvdate_e))
             {
-                apvdate_e = Convert.ToDateTime(apvdate_e).AddDays(1).ToString("yyyyMMdd");
+                this.apvdate_e = Convert.ToDateTime(this.apvdate_e).AddDays(1).ToString("yyyyMMdd");
             }
 
             string SqlCmd;
             #region 組query sqlcmd
-            if (string.IsNullOrWhiteSpace(artworktype))
+            if (string.IsNullOrWhiteSpace(this.artworktype))
             {
                 MyUtility.Msg.WarningBox("< Artwork Type > can't be empty!!");
-                txtartworktype_ftyArtworkType.Focus();
+                this.txtartworktype_ftyArtworkType.Focus();
                 return;
             }
 
-            if (poType == "O")
+            if (this.poType == "O")
             {
                 this.isNeedPlanningB03Quote = Prgs.CheckNeedPlanningP03Quote(this.txtartworktype_ftyArtworkType.Text);
             }
@@ -119,21 +136,24 @@ namespace Sci.Production.Subcon
             #endregion
 
             Ict.DualResult result;
-            if (result = DBProxy.Current.Select(null, SqlCmd, out dtArtwork))
+            if (result = DBProxy.Current.Select(null, SqlCmd, out this.dtArtwork))
             {
-                DualResult resultGetSpecialRecordData = GetSpecialRecordData();
+                DualResult resultGetSpecialRecordData = this.GetSpecialRecordData();
                 if (!resultGetSpecialRecordData)
                 {
                     this.ShowErr(resultGetSpecialRecordData);
                 }
 
-                if (dtArtwork.Rows.Count == 0 && showNoDataMsg)
-                { MyUtility.Msg.WarningBox("Data not found!!"); }
-                listControlBindingSource1.DataSource = dtArtwork;
+                if (this.dtArtwork.Rows.Count == 0 && showNoDataMsg)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!!");
+                }
+
+                this.listControlBindingSource1.DataSource = this.dtArtwork;
             }
             else
             {
-                ShowErr(SqlCmd, result);
+                this.ShowErr(SqlCmd, result);
             }
         }
 
@@ -141,15 +161,15 @@ namespace Sci.Production.Subcon
         {
             base.OnFormLoaded();
             #region -- Grid 設定 --
-            this.gridBatchCreateFromSubProcessData.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridBatchCreateFromSubProcessData.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridBatchCreateFromSubProcessData)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
-                .Text("FTYGroup", header: "Fty", iseditingreadonly: true)   //1
-                .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))   //2
-                .Text("Styleid", header: "Style", iseditingreadonly: true)  //3
-                .Text("SeasonID", header: "Season", iseditingreadonly: true)    //4
-                .Text("orderTypeId", header: "Order Type", iseditingreadonly: true)    //5
+            this.gridBatchCreateFromSubProcessData.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridBatchCreateFromSubProcessData.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridBatchCreateFromSubProcessData)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk) // 0
+                .Text("FTYGroup", header: "Fty", iseditingreadonly: true) // 1
+                .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) // 2
+                .Text("Styleid", header: "Style", iseditingreadonly: true) // 3
+                .Text("SeasonID", header: "Season", iseditingreadonly: true) // 4
+                .Text("orderTypeId", header: "Order Type", iseditingreadonly: true) // 5
                 .Date("SciDelivery", header: "Sci Delivery", iseditingreadonly: true)
                 .Text("Article", header: "Article", iseditingreadonly: true)
                 .Text("ArtworkTypeID", header: "Artwork Type", iseditingreadonly: true)
@@ -166,9 +186,8 @@ namespace Sci.Production.Subcon
                 .Text("message", header: "Message", iseditingreadonly: true, width: Widths.AnsiChars(30))
                 ;
             #endregion
-            this.gridBatchCreateFromSubProcessData.Columns[12].Visible = poType == "O";
-            this.gridBatchCreateFromSubProcessData.Columns[13].Visible = poType == "O";
-
+            this.gridBatchCreateFromSubProcessData.Columns[12].Visible = this.poType == "O";
+            this.gridBatchCreateFromSubProcessData.Columns[13].Visible = this.poType == "O";
         }
 
         // Cancel
@@ -180,26 +199,30 @@ namespace Sci.Production.Subcon
         // Create
         private void btnImport_Click(object sender, EventArgs e)
         {
-            listControlBindingSource1.EndEdit();
+            this.listControlBindingSource1.EndEdit();
             string issuedate, delivery;
-            issuedate = dateIssueDate.Text;
-            delivery = dateDelivery.Text;
+            issuedate = this.dateIssueDate.Text;
+            delivery = this.dateDelivery.Text;
 
-            if (dateIssueDate.Value == null)
+            if (this.dateIssueDate.Value == null)
             {
                 MyUtility.Msg.WarningBox("< Issue Date > can't be empty!!");
-                dateIssueDate.Focus();
-                return;
-            }
-            if (dateDelivery.Value == null)
-            {
-                MyUtility.Msg.WarningBox("< Delivery > can't be empty!!");
-                dateDelivery.Focus();
+                this.dateIssueDate.Focus();
                 return;
             }
 
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-            if (dt == null || dt.Rows.Count == 0) return;
+            if (this.dateDelivery.Value == null)
+            {
+                MyUtility.Msg.WarningBox("< Delivery > can't be empty!!");
+                this.dateDelivery.Focus();
+                return;
+            }
+
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return;
+            }
 
             DataRow[] find;
 
@@ -210,7 +233,7 @@ namespace Sci.Production.Subcon
                 return;
             }
 
-            if (poType == "O")  // 外發加工需核可且外發單價 > 0
+            if (this.poType == "O") // 外發加工需核可且外發單價 > 0
             {
                 find = dt.Select("(unitprice = 0 or (PriceApv <> 'Y' and IsArtwork = 1)) and Selected = 1");
                 if (find.Length > 0)
@@ -219,41 +242,44 @@ namespace Sci.Production.Subcon
                     {
                         dr["message"] = "Unit price = 0 or Price not approved";
                     }
+
                     MyUtility.Msg.WarningBox("Unit Price can't be zero or empty or Price still not approved", "Warning");
-                    gridBatchCreateFromSubProcessData.Sort(gridBatchCreateFromSubProcessData.Columns[16], ListSortDirection.Descending);
+                    this.gridBatchCreateFromSubProcessData.Sort(this.gridBatchCreateFromSubProcessData.Columns[16], ListSortDirection.Descending);
                     return;
                 }
             }
 
             #region -- 表頭資料 query --- LINQ
-            var query = (from row in dt.AsEnumerable()
+            var query = from row in dt.AsEnumerable()
                          where row.Field<int>("Selected").ToString() == "1"
                          group row by new
                          {
                              t1 = row.Field<string>("ftygroup"),
                              t2 = row.Field<string>("localsuppid"),
-                             t3 = row.Field<string>("artworktypeid")
-                         } into m
+                             t3 = row.Field<string>("artworktypeid"),
+                         }
+                        into m
                          select new
                          {
                              ftygroup = m.Key.t1,
                              localsuppid = m.Key.t2,
-                             artworktypeid = m.Key.t3
-                         });
+                             artworktypeid = m.Key.t3,
+                         };
             #endregion
 
             if (query.ToList().Count > 0)
             {
-
                 ITableSchema tableSchema = null;
                 DualResult result;
-                //result = new DualResult(false, "Get Schema(dbo.Artworkpo) Faild!!, Please re-try it later!!",);
+
+                // result = new DualResult(false, "Get Schema(dbo.Artworkpo) Faild!!, Please re-try it later!!",);
                 result = DBProxy.Current.GetTableSchema(null, "Artworkpo", out tableSchema);
                 if (!result)
                 {
                     MyUtility.Msg.WarningBox("Get Schema(dbo.Artworkpo) Faild!!, Please re-try it later!!");
                     return;
                 }
+
                 string sqlcmd;
 
                 foreach (var q in query.ToList())
@@ -263,23 +289,24 @@ namespace Sci.Production.Subcon
                     {
                         try
                         {
-                            //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
+                            // 取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
                             string ftyKeyWord = MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where id='{0}'", q.ftygroup));
 
-                            string id = Sci.MyUtility.GetValue.GetID(ftyKeyWord + "OS", "artworkpo", DateTime.Parse(dateIssueDate.Text));
+                            string id = Sci.MyUtility.GetValue.GetID(ftyKeyWord + "OS", "artworkpo", DateTime.Parse(this.dateIssueDate.Text));
                             if (MyUtility.Check.Empty(id))
                             {
                                 _transactionscope.Dispose();
                                 MyUtility.Msg.WarningBox("Get Id Faild!!, Please re-try it later!!");
                                 return;
                             }
+
                             decimal ttlamt = 0;
-                            string currency = "";
-                            string str = "";
+                            string currency = string.Empty;
+                            string str = string.Empty;
                             int exact = 0;
 
                             #region -- 加總明細金額至表頭 --
-                            if (poType == "O")
+                            if (this.poType == "O")
                             {
                                 currency = MyUtility.GetValue.Lookup("CurrencyID", q.localsuppid, "LocalSupp", "ID");
                                 str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", currency), null);
@@ -287,9 +314,10 @@ namespace Sci.Production.Subcon
                                 {
                                     continue;
                                 }
+
                                 exact = int.Parse(str);
 
-                                var query3 = (from row in dt.AsEnumerable()
+                                var query3 = from row in dt.AsEnumerable()
                                               where row.Field<int>("Selected").ToString() == "1"
                                                      && row.Field<string>("ftygroup").ToString() == q.ftygroup
                                                     && row.Field<string>("localsuppid").ToString() == q.localsuppid
@@ -297,14 +325,14 @@ namespace Sci.Production.Subcon
                                               {
                                                   t1 = row.Field<string>("ftygroup"),
                                                   t2 = row.Field<string>("localsuppid"),
-                                                  t3 = row.Field<string>("artworktypeid")
-                                              } into m
+                                                  t3 = row.Field<string>("artworktypeid"),
+                                              }
+                                                into m
                                               select new
                                               {
                                                   amount = m.Sum(n => n.Field<decimal?>("poqty") * n.Field<decimal?>("unitprice") *
-                                                                            (n.Field<decimal?>("qtygarment") == 0 || n.Field<decimal?>("qtygarment") == null ? 1 : n.Field<decimal?>("qtygarment"))
-                                                                )
-                                              });
+                                                                            (n.Field<decimal?>("qtygarment") == 0 || n.Field<decimal?>("qtygarment") == null ? 1 : n.Field<decimal?>("qtygarment"))),
+                                              };
                                 foreach (var q3 in query3)
                                 {
                                     ttlamt = (decimal)q3.amount;
@@ -318,7 +346,6 @@ namespace Sci.Production.Subcon
                                          where row.Field<int>("Selected").ToString() == "1"
                                                && row.Field<string>("ftygroup").ToString() == q.ftygroup
                                                && row.Field<string>("localsuppid").ToString() == q.localsuppid
-
                                          group row by new
                                          {
                                              t1 = row.Field<string>("orderid"),
@@ -330,11 +357,12 @@ namespace Sci.Production.Subcon
                                              t7 = row.Field<decimal>("stitch"),
                                              t8 = row.Field<decimal>("cost"),
                                              t9 = row.Field<decimal>("unitprice"),
-                                             t10 = (row.Field<decimal>("QtyGarment") == 0 ? 1 : row.Field<decimal>("QtyGarment")),
+                                             t10 = row.Field<decimal>("QtyGarment") == 0 ? 1 : row.Field<decimal>("QtyGarment"),
                                              t11 = row.Field<string>("ArtworkReqID"),
                                              t12 = MyUtility.Convert.GetDecimal(row["FarmOut"]),
-                                             t13 = MyUtility.Convert.GetDecimal(row["FarmIn"])
-                                         } into m
+                                             t13 = MyUtility.Convert.GetDecimal(row["FarmIn"]),
+                                         }
+                                        into m
                                          select new
                                          {
                                              orderid = m.Key.t1,
@@ -350,12 +378,13 @@ namespace Sci.Production.Subcon
                                              poqty = m.Sum(n => n.Field<decimal>("poqty")),
                                              ArtworkReqID = m.Key.t11,
                                              FarmOut = m.Key.t12,
-                                             FarmIn = m.Key.t13
+                                             FarmIn = m.Key.t13,
                                          };
 
                             #endregion
                             #region 表頭sql
-                            sqlcmd = string.Format(@"INSERT INTO [dbo].[ArtworkPO]
+                            sqlcmd = string.Format(
+                                @"INSERT INTO [dbo].[ArtworkPO]
                                                     ([ID]
                                                     ,[MdivisionId]
                                                     ,[FactoryId]      
@@ -387,9 +416,9 @@ namespace Sci.Production.Subcon
                                                     ,'{10}'  
                                                     ,'{11}'
                                                     ,getdate(),'New')",
-                                        id, q.ftygroup, q.localsuppid, issuedate, delivery, q.artworktypeid,
-                                        currency, MyUtility.Math.Round(ttlamt, exact),
-                                        "'by batch create!'", Env.User.UserID, poType, Env.User.UserID, Env.User.Keyword);
+                                id, q.ftygroup, q.localsuppid, issuedate, delivery, q.artworktypeid,
+                                currency, MyUtility.Math.Round(ttlamt, exact),
+                                "'by batch create!'", Env.User.UserID, this.poType, Env.User.UserID, Env.User.Keyword);
 
                             #endregion
 
@@ -400,14 +429,15 @@ namespace Sci.Production.Subcon
                                 break;
                             }
 
-                            //若是EMB則QTYGarment=1,View_order_artworks.Qty->Coststich&Stich
+                            // 若是EMB則QTYGarment=1,View_order_artworks.Qty->Coststich&Stich
                             StringBuilder sqlcmd2 = new StringBuilder();
-                            if (txtartworktype_ftyArtworkType.Text == "EMBROIDERY")
+                            if (this.txtartworktype_ftyArtworkType.Text == "EMBROIDERY")
                             {
                                 foreach (var q2 in query2.ToList()) // 明細資料
                                 {
                                     #region 新增明細 Sql Command
-                                    sqlcmd2.Append(string.Format(@"INSERT INTO [dbo].[ArtworkPO_Detail]
+                                    sqlcmd2.Append(string.Format(
+                                        @"INSERT INTO [dbo].[ArtworkPO_Detail]
                                     ([ID]
                                     ,[OrderID]    
                                     ,[ArtworkId]  
@@ -441,13 +471,13 @@ namespace Sci.Production.Subcon
                                     ,'{14}'
                                     ,'{15}'
                                     ,'{16}'
-)", id, q2.orderid, q2.artworkid, q2.PatternCode, q2.PatternDesc
-                                    , q2.coststitch, q2.stitch, q2.unitprice, q2.cost
-                                    , 1
-                                    , q2.unitprice * q2.QtyGarment
-                                    , q2.poqty * q2.unitprice * q2.QtyGarment
-                                    , q2.poqty
-                                    , q2.ArtworkTypeID, q2.ArtworkReqID,q2.FarmOut,q2.FarmIn));
+)", id, q2.orderid, q2.artworkid, q2.PatternCode, q2.PatternDesc,
+                                        q2.coststitch, q2.stitch, q2.unitprice, q2.cost,
+                                        1,
+                                        q2.unitprice * q2.QtyGarment,
+                                        q2.poqty * q2.unitprice * q2.QtyGarment,
+                                        q2.poqty,
+                                        q2.ArtworkTypeID, q2.ArtworkReqID, q2.FarmOut, q2.FarmIn));
                                     #endregion
                                 }
                             }
@@ -456,7 +486,8 @@ namespace Sci.Production.Subcon
                                 foreach (var q2 in query2.ToList()) // 明細資料
                                 {
                                     #region 新增明細 Sql Command
-                                    sqlcmd2.Append(string.Format(@"INSERT INTO [dbo].[ArtworkPO_Detail]
+                                    sqlcmd2.Append(string.Format(
+                                        @"INSERT INTO [dbo].[ArtworkPO_Detail]
                                     ([ID]
                                     ,[OrderID]    
                                     ,[ArtworkId]  
@@ -489,11 +520,11 @@ namespace Sci.Production.Subcon
                                     ,'{13}'
                                     ,'{14}'
                                     ,'{15}'
-                                    ,'{16}')", id, q2.orderid, q2.artworkid, q2.PatternCode, q2.PatternDesc
-                                    , q2.coststitch, q2.stitch, q2.unitprice, q2.cost, q2.QtyGarment
-                                    , q2.unitprice * q2.QtyGarment
-                                    , q2.poqty * q2.unitprice * q2.QtyGarment
-                                    , q2.poqty, q2.ArtworkTypeID, q2.ArtworkReqID, q2.FarmOut, q2.FarmIn));
+                                    ,'{16}')", id, q2.orderid, q2.artworkid, q2.PatternCode, q2.PatternDesc,
+                                        q2.coststitch, q2.stitch, q2.unitprice, q2.cost, q2.QtyGarment,
+                                        q2.unitprice * q2.QtyGarment,
+                                        q2.poqty * q2.unitprice * q2.QtyGarment,
+                                        q2.poqty, q2.ArtworkTypeID, q2.ArtworkReqID, q2.FarmOut, q2.FarmIn));
                                     #endregion
                                 }
                             }
@@ -521,7 +552,7 @@ namespace Sci.Production.Subcon
                         {
                             _transactionscope.Dispose();
                             result = new DualResult(false, "Commit transaction error.", ex);
-                            ShowErr("Commit transaction error.", ex);
+                            this.ShowErr("Commit transaction error.", ex);
                             return;
                         }
                     }
@@ -532,26 +563,28 @@ namespace Sci.Production.Subcon
             }
         }
 
-        //excel
+        // excel
         private void btnToExcel_Click(object sender, EventArgs e)
         {
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
             sdExcel.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_P01_BatchCreate"));
         }
 
         private void txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
         {
-            isArtwork = MyUtility.GetValue.Lookup(string.Format("select isartwork from artworktype WITH (NOLOCK) where id = '{0}'"
-                , ((Sci.Production.Class.txtartworktype_fty)sender).Text), null);
+            this.isArtwork = MyUtility.GetValue.Lookup(
+                string.Format(
+                "select isartwork from artworktype WITH (NOLOCK) where id = '{0}'",
+                ((Sci.Production.Class.txtartworktype_fty)sender).Text), null);
         }
 
         private string QuoteFromPlanningB03()
         {
             string SqlCmd = string.Empty;
             SqlCmd += $@"
-Declare @sp1 varchar(16)= '{sp_b}'
-Declare @sp2 varchar(16)= '{sp_e}'
+Declare @sp1 varchar(16)= '{this.sp_b}'
+Declare @sp2 varchar(16)= '{this.sp_e}'
 
 SELECT  bd.QTY 
 	,bdl.Orderid 
@@ -571,17 +604,19 @@ WHERE bio.RFIDProcessLocationID=''
             {
                 SqlCmd += $@" AND s.ArtworkTypeId='{this.artworktype}'";
             }
-            if (!MyUtility.Check.Empty(sp_b))
+
+            if (!MyUtility.Check.Empty(this.sp_b))
             {
                 SqlCmd += $@" AND bdl.Orderid >= @sp1 ";
             }
-            if (!MyUtility.Check.Empty(sp_e))
+
+            if (!MyUtility.Check.Empty(this.sp_e))
             {
                 SqlCmd += $@" AND bdl.Orderid <= @sp2";
             }
 
-
-            SqlCmd += string.Format(@"
+            SqlCmd += string.Format(
+                @"
 SELECT distinct	Selected = 0 
 		, orders.FTYGroup
 		, orderid = Orders.ID
@@ -661,13 +696,33 @@ WHERE 	 orders.IsForecast = 0
 		AND factory.mdivisionid = '{0}'
 		AND factory.IsProduceFty = 1
         AND orders.Category in ('S','B')
-		", Sci.Env.User.Keyword, artworktype);
+		", Sci.Env.User.Keyword, this.artworktype);
 
-            if (!(string.IsNullOrWhiteSpace(apvdate_b))) { SqlCmd += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", apvdate_b); }
-            if (!(string.IsNullOrWhiteSpace(apvdate_e))) { SqlCmd += string.Format(" and ((ar.DeptApvDate < '{0}' and ar.Exceed = 0) or (ar.MgApvDate < '{0}' and ar.Exceed = 1)) ", apvdate_e); }
-            if (!(string.IsNullOrWhiteSpace(sciDelivery_b))) { SqlCmd += string.Format("and  Orders.SciDelivery >= '{0}' ", sciDelivery_b); }
-            if (!(string.IsNullOrWhiteSpace(sciDelivery_e))) { SqlCmd += string.Format("and  Orders.SciDelivery <= '{0}' ", sciDelivery_e); }
-            if (!(string.IsNullOrWhiteSpace(sp_b))) { SqlCmd += string.Format(" and orders.ID between '{0}' and '{1}'", sp_b, sp_e); }
+            if (!string.IsNullOrWhiteSpace(this.apvdate_b))
+            {
+                SqlCmd += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", this.apvdate_b);
+            }
+
+            if (!string.IsNullOrWhiteSpace(this.apvdate_e))
+            {
+                SqlCmd += string.Format(" and ((ar.DeptApvDate < '{0}' and ar.Exceed = 0) or (ar.MgApvDate < '{0}' and ar.Exceed = 1)) ", this.apvdate_e);
+            }
+
+            if (!string.IsNullOrWhiteSpace(this.sciDelivery_b))
+            {
+                SqlCmd += string.Format("and  Orders.SciDelivery >= '{0}' ", this.sciDelivery_b);
+            }
+
+            if (!string.IsNullOrWhiteSpace(this.sciDelivery_e))
+            {
+                SqlCmd += string.Format("and  Orders.SciDelivery <= '{0}' ", this.sciDelivery_e);
+            }
+
+            if (!string.IsNullOrWhiteSpace(this.sp_b))
+            {
+                SqlCmd += string.Format(" and orders.ID between '{0}' and '{1}'", this.sp_b, this.sp_e);
+            }
+
             if (!MyUtility.Check.Empty(this.txtIrregularQtyReason.TextBox1.Text))
             {
                 string whereReasonID = this.txtIrregularQtyReason.WhereString();
@@ -715,7 +770,6 @@ from #quoteDetail main
 
 ";
 
-
             return SqlCmd;
         }
 
@@ -723,8 +777,8 @@ from #quoteDetail main
         {
             string SqlCmd = string.Empty;
             SqlCmd += $@"
-Declare @sp1 varchar(16)= '{sp_b}'
-Declare @sp2 varchar(16)= '{sp_e}'
+Declare @sp1 varchar(16)= '{this.sp_b}'
+Declare @sp2 varchar(16)= '{this.sp_e}'
 
 SELECT  bd.QTY 
 	,bdl.Orderid 
@@ -744,18 +798,21 @@ WHERE bio.RFIDProcessLocationID=''
             {
                 SqlCmd += $@" AND s.ArtworkTypeId='{this.artworktype}'";
             }
-            if (!MyUtility.Check.Empty(sp_b))
+
+            if (!MyUtility.Check.Empty(this.sp_b))
             {
                 SqlCmd += $@" AND bdl.Orderid >= @sp1 ";
             }
-            if (!MyUtility.Check.Empty(sp_e))
+
+            if (!MyUtility.Check.Empty(this.sp_e))
             {
                 SqlCmd += $@" AND bdl.Orderid <= @sp2";
             }
-            // 建立可以符合回傳的Cursor
 
+            // 建立可以符合回傳的Cursor
             #region -- 非ArtworK類 的sql command --
-            SqlCmd += string.Format(@"
+            SqlCmd += string.Format(
+                @"
 SELECT 	Selected = 0 
 		, Orders.FTYGroup
 		, orderid = Order_TmsCost.ID 
@@ -817,9 +874,9 @@ WHERE 	ard.ArtworkPOID = '' and
 		and (Orders.Junk=0 or Orders.Junk=1 and Orders.NeedProduction=1)
 		and Order_TmsCost.localsuppid !=''		
         --and Orders.PulloutComplete = 0
-		", poType, Sci.Env.User.Keyword, artworktype);
-            SqlCmd += string.Format(" and Order_TmsCost.InhouseOSP = '{0}'", poType);
-            switch (poType)
+		", this.poType, Sci.Env.User.Keyword, this.artworktype);
+            SqlCmd += string.Format(" and Order_TmsCost.InhouseOSP = '{0}'", this.poType);
+            switch (this.poType)
             {
                 case "O":
                     SqlCmd += $@" 
@@ -833,12 +890,37 @@ WHERE 	ard.ArtworkPOID = '' and
         and orders.Category in ('S','B') ";
                     break;
             }
-            if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and ar.ArtworkTypeID = '{0}'", artworktype); }
-            if (!(string.IsNullOrWhiteSpace(apvdate_b))) { SqlCmd += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", apvdate_b); }
-            if (!(string.IsNullOrWhiteSpace(apvdate_e))) { SqlCmd += string.Format(" and ((ar.DeptApvDate < '{0}' and ar.Exceed = 0) or (ar.MgApvDate < '{0}' and ar.Exceed = 1)) ", apvdate_e); }
-            if (!(string.IsNullOrWhiteSpace(sciDelivery_b))) { SqlCmd += string.Format("and  Orders.SciDelivery >= '{0}' ", sciDelivery_b); }
-            if (!(string.IsNullOrWhiteSpace(sciDelivery_e))) { SqlCmd += string.Format("and  Orders.SciDelivery <= '{0}' ", sciDelivery_e); }
-            if (!(string.IsNullOrWhiteSpace(sp_b))) { SqlCmd += string.Format(" and orders.ID between '{0}' and '{1}'", sp_b, sp_e); }
+
+            if (!string.IsNullOrWhiteSpace(this.artworktype))
+            {
+                SqlCmd += string.Format(" and ar.ArtworkTypeID = '{0}'", this.artworktype);
+            }
+
+            if (!string.IsNullOrWhiteSpace(this.apvdate_b))
+            {
+                SqlCmd += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", this.apvdate_b);
+            }
+
+            if (!string.IsNullOrWhiteSpace(this.apvdate_e))
+            {
+                SqlCmd += string.Format(" and ((ar.DeptApvDate < '{0}' and ar.Exceed = 0) or (ar.MgApvDate < '{0}' and ar.Exceed = 1)) ", this.apvdate_e);
+            }
+
+            if (!string.IsNullOrWhiteSpace(this.sciDelivery_b))
+            {
+                SqlCmd += string.Format("and  Orders.SciDelivery >= '{0}' ", this.sciDelivery_b);
+            }
+
+            if (!string.IsNullOrWhiteSpace(this.sciDelivery_e))
+            {
+                SqlCmd += string.Format("and  Orders.SciDelivery <= '{0}' ", this.sciDelivery_e);
+            }
+
+            if (!string.IsNullOrWhiteSpace(this.sp_b))
+            {
+                SqlCmd += string.Format(" and orders.ID between '{0}' and '{1}'", this.sp_b, this.sp_e);
+            }
+
             if (!MyUtility.Check.Empty(this.txtIrregularQtyReason.TextBox1.Text))
             {
                 string whereReasonID = this.txtIrregularQtyReason.WhereString();
@@ -853,11 +935,31 @@ WHERE 	ard.ArtworkPOID = '' and
         private DualResult GetSpecialRecordData()
         {
             string sqlWhere = string.Empty;
-            if (!(dateSCIDelivery.Value1 == null)) { sqlWhere += string.Format(" and o.SciDelivery >= '{0}' ", sciDelivery_b); }
-            if (!(dateSCIDelivery.Value2 == null)) { sqlWhere += string.Format(" and o.SciDelivery <= '{0}' ", sciDelivery_e); }
-            if (!(dateApproveDate.Value1 == null)) { sqlWhere += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", apvdate_b); }
-            if (!(dateApproveDate.Value2 == null)) { sqlWhere += string.Format(" and ((ar.DeptApvDate < '{0}' and ar.Exceed = 0) or (ar.MgApvDate < '{0}' and ar.Exceed = 1)) ", apvdate_e); }
-            if (!(string.IsNullOrWhiteSpace(sp_b))) { sqlWhere += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
+            if (!(this.dateSCIDelivery.Value1 == null))
+            {
+                sqlWhere += string.Format(" and o.SciDelivery >= '{0}' ", this.sciDelivery_b);
+            }
+
+            if (!(this.dateSCIDelivery.Value2 == null))
+            {
+                sqlWhere += string.Format(" and o.SciDelivery <= '{0}' ", this.sciDelivery_e);
+            }
+
+            if (!(this.dateApproveDate.Value1 == null))
+            {
+                sqlWhere += string.Format(" and ((ar.DeptApvDate >= '{0}' and ar.Exceed = 0) or (ar.MgApvDate >= '{0}' and ar.Exceed = 1)) ", this.apvdate_b);
+            }
+
+            if (!(this.dateApproveDate.Value2 == null))
+            {
+                sqlWhere += string.Format(" and ((ar.DeptApvDate < '{0}' and ar.Exceed = 0) or (ar.MgApvDate < '{0}' and ar.Exceed = 1)) ", this.apvdate_e);
+            }
+
+            if (!string.IsNullOrWhiteSpace(this.sp_b))
+            {
+                sqlWhere += string.Format("     and o.ID between '{0}' and '{1}'", this.sp_b, this.sp_e);
+            }
+
             if (!MyUtility.Check.Empty(this.txtIrregularQtyReason.TextBox1.Text))
             {
                 string whereReasonID = this.txtIrregularQtyReason.WhereString();
@@ -865,8 +967,8 @@ WHERE 	ard.ArtworkPOID = '' and
             }
 
             string sqlGetSpecialRecordData = $@"
-Declare @sp1 varchar(16)= '{sp_b}'
-Declare @sp2 varchar(16)= '{sp_e}'
+Declare @sp1 varchar(16)= '{this.sp_b}'
+Declare @sp2 varchar(16)= '{this.sp_e}'
 
 SELECT  bd.QTY 
 	,bdl.Orderid 
@@ -886,11 +988,13 @@ WHERE bio.RFIDProcessLocationID=''
             {
                 sqlGetSpecialRecordData += $@" AND s.ArtworkTypeId='{this.artworktype}'";
             }
-            if (!MyUtility.Check.Empty(sp_b))
+
+            if (!MyUtility.Check.Empty(this.sp_b))
             {
                 sqlGetSpecialRecordData += $@" AND bdl.Orderid >= @sp1 ";
             }
-            if (!MyUtility.Check.Empty(sp_e))
+
+            if (!MyUtility.Check.Empty(this.sp_e))
             {
                 sqlGetSpecialRecordData += $@" AND bdl.Orderid <= @sp2";
             }
@@ -954,7 +1058,7 @@ OUTER APPLY(
 	AND bd.PatternDesc =ard.PatternDesc
 	AND bd.InComing IS NOT NULL
 )FarmIn
-where  ar.ArtworkTypeID = '{artworktype}' and ar.Status = 'Approved' and  ard.ArtworkPOID = '' and
+where  ar.ArtworkTypeID = '{this.artworktype}' and ar.Status = 'Approved' and  ard.ArtworkPOID = '' and
     (
 	(o.Category = 'B' and at.IsSubprocess = 1 and at.isArtwork = 0 and at.Classify = 'O') 
 	or 
@@ -982,7 +1086,6 @@ where  ar.ArtworkTypeID = '{artworktype}' and ar.Status = 'Approved' and  ard.Ar
 
         private void DetalGridCellEditChange(int index)
         {
-
             #region 檢查Qty欄位是否可編輯
             string orderCategory = this.gridBatchCreateFromSubProcessData.GetDataRow(index)["Category"].ToString();
 
@@ -990,21 +1093,21 @@ where  ar.ArtworkTypeID = '{artworktype}' and ar.Status = 'Approved' and  ard.Ar
             {
                 this.gridBatchCreateFromSubProcessData.Rows[index].Cells["unitprice"].ReadOnly = true;
                 this.gridBatchCreateFromSubProcessData.Rows[index].Cells["unitprice"].Style.ForeColor = Color.Black;
-                this.gridBatchCreateFromSubProcessData.Rows[index].Cells["unitprice"].Style.BackColor = Color.White; //Unit Price
+                this.gridBatchCreateFromSubProcessData.Rows[index].Cells["unitprice"].Style.BackColor = Color.White; // Unit Price
 
                 decimal unitPrice = (decimal)this.gridBatchCreateFromSubProcessData.GetDataRow(index)["unitprice"];
                 if (unitPrice == 0)
                 {
                     this.gridBatchCreateFromSubProcessData.Rows[index].Cells["Selected"].ReadOnly = true;
                     this.gridBatchCreateFromSubProcessData.Rows[index].DefaultCellStyle.BackColor = Color.FromArgb(229, 108, 126);
-                    this.gridBatchCreateFromSubProcessData.Rows[index].Cells["unitprice"].Style.BackColor = Color.FromArgb(229, 108, 126); //Unit Price
+                    this.gridBatchCreateFromSubProcessData.Rows[index].Cells["unitprice"].Style.BackColor = Color.FromArgb(229, 108, 126); // Unit Price
                 }
             }
             else
             {
                 this.gridBatchCreateFromSubProcessData.Rows[index].Cells["unitprice"].ReadOnly = false;
                 this.gridBatchCreateFromSubProcessData.Rows[index].Cells["unitprice"].Style.ForeColor = Color.Red;
-                this.gridBatchCreateFromSubProcessData.Rows[index].Cells["unitprice"].Style.BackColor = Color.Pink; //Unit Price
+                this.gridBatchCreateFromSubProcessData.Rows[index].Cells["unitprice"].Style.BackColor = Color.Pink; // Unit Price
             }
 
             #endregion

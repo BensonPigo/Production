@@ -1,14 +1,8 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
@@ -194,7 +188,7 @@ drop table #Orders, #PD_Detail, #Detail
 
 IF object_id('tempdb..#tmp_InspectionOrderId') IS NOT NULL drop table #tmp_InspectionOrderId
 ",
-            sqlWhere);
+                sqlWhere);
 
             DBProxy.Current.DefaultTimeout = 900;  // timeout時間改為15分鐘
             DualResult result = DBProxy.Current.Select(string.Empty, sqlCmd, out this.printData);

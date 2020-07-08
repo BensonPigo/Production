@@ -1,11 +1,8 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -14,80 +11,91 @@ namespace Sci.Production.Subcon
 {
     public partial class R42 : Win.Tems.PrintForm
     {
-        DataTable printData;
         StringBuilder sqlCmd;
-        string SubProcess, SP, M, Factory, CutRef1, CutRef2;
+        string SubProcess;
+        string SP;
+        string M;
+        string Factory;
+        string CutRef1;
+        string CutRef2;
         string processLocation;
-        DateTime? dateBundle1, dateBundle2, dateBundleTransDate1, dateBundleTransDate2;
-
+        DateTime? dateBundle1;
+        DateTime? dateBundle2;
+        DateTime? dateBundleTransDate1;
+        DateTime? dateBundleTransDate2;
 
         public R42(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            comboload();
+            this.InitializeComponent();
+            this.comboload();
             this.comboFactory.setDataSource();
             this.comboRFIDProcessLocation.setDataSource();
             this.comboRFIDProcessLocation.SelectedIndex = 0;
         }
 
-        //string date = "";
+        // string date = "";
         private void comboload()
         {
-            //DataTable dtSubprocessID;
+            // DataTable dtSubprocessID;
             DualResult Result;
-            //if (Result = DBProxy.Current.Select(null, "select 'ALL' as id,1 union select id,2 from Subprocess WITH (NOLOCK) where Junk = 0 ",
+
+            // if (Result = DBProxy.Current.Select(null, "select 'ALL' as id,1 union select id,2 from Subprocess WITH (NOLOCK) where Junk = 0 ",
             //    out dtSubprocessID))
-            //{
+            // {
             //    this.comboSubProcess.DataSource = dtSubprocessID;
             //    this.comboSubProcess.DisplayMember = "ID";
-            //}
-            //else { ShowErr(Result); }
-
+            // }
+            // else { ShowErr(Result); }
             DataTable dtfactory;
             if (Result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory WITH (NOLOCK) ", out dtfactory))
             {
                 this.comboM.DataSource = dtfactory;
                 this.comboM.DisplayMember = "ID";
             }
-            else { ShowErr(Result); }
+            else
+            {
+                this.ShowErr(Result);
+            }
         }
 
         #region ToExcel3步驟
+
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateBundleCDate.Value1) && MyUtility.Check.Empty(dateBundleCDate.Value2) &&
-                MyUtility.Check.Empty(dateBundleTransDate.Value1) && MyUtility.Check.Empty(dateBundleTransDate.Value2))
+            if (MyUtility.Check.Empty(this.dateBundleCDate.Value1) && MyUtility.Check.Empty(this.dateBundleCDate.Value2) &&
+                MyUtility.Check.Empty(this.dateBundleTransDate.Value1) && MyUtility.Check.Empty(this.dateBundleTransDate.Value2))
             {
                 MyUtility.Msg.WarningBox("Bundel CDate or Bundle Trans date can't empty!!");
                 return false;
             }
-            SubProcess = this.txtsubprocess.Text;
-            SP = this.txtSPNo.Text;
-            M = this.comboM.Text;
-            Factory = this.comboFactory.Text;
-            CutRef1 = this.txtCutRefStart.Text;
-            CutRef2 = this.txtCutRefEnd.Text;
-            dateBundle1 = this.dateBundleCDate.Value1;
-            dateBundle2 = this.dateBundleCDate.Value2;
-            dateBundleTransDate1 = this.dateBundleTransDate.Value1;
-            dateBundleTransDate2 = this.dateBundleTransDate.Value2;
+
+            this.SubProcess = this.txtsubprocess.Text;
+            this.SP = this.txtSPNo.Text;
+            this.M = this.comboM.Text;
+            this.Factory = this.comboFactory.Text;
+            this.CutRef1 = this.txtCutRefStart.Text;
+            this.CutRef2 = this.txtCutRefEnd.Text;
+            this.dateBundle1 = this.dateBundleCDate.Value1;
+            this.dateBundle2 = this.dateBundleCDate.Value2;
+            this.dateBundleTransDate1 = this.dateBundleTransDate.Value1;
+            this.dateBundleTransDate2 = this.dateBundleTransDate.Value2;
             this.processLocation = this.comboRFIDProcessLocation.Text;
             return base.ValidateInput();
         }
 
-        //非同步讀取資料
+        // 非同步讀取資料
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.sqlCmd = new StringBuilder();
 
             // 因為BundleTransfer 的table太肥，如果有用到這個條件則修改寫法
-            if (dateBundleTransDate1 == null && dateBundleTransDate2 == null)
+            if (this.dateBundleTransDate1 == null && this.dateBundleTransDate2 == null)
             {
                 #region sqlcmd
 
-                sqlCmd.Append(@"
+                this.sqlCmd.Append(@"
 Select
             [Bundle#] = bt.BundleNo,
             [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
@@ -174,52 +182,61 @@ Select
             ");
                 #endregion
                 #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(SubProcess))
-                {//();
-                    sqlCmd.Append($@" and (bt.SubprocessId in ('{SubProcess.Replace(",", "','")}') or '{SubProcess}'='')");
+                if (!MyUtility.Check.Empty(this.SubProcess))
+                {// ();
+                    this.sqlCmd.Append($@" and (bt.SubprocessId in ('{this.SubProcess.Replace(",", "','")}') or '{this.SubProcess}'='')");
                 }
-                if (!MyUtility.Check.Empty(CutRef1) && (!MyUtility.Check.Empty(CutRef1)))
+
+                if (!MyUtility.Check.Empty(this.CutRef1) && (!MyUtility.Check.Empty(this.CutRef1)))
                 {
-                    sqlCmd.Append(string.Format(@" and b.CutRef between '{0}' and '{1}'", CutRef1, CutRef2));
+                    this.sqlCmd.Append(string.Format(@" and b.CutRef between '{0}' and '{1}'", this.CutRef1, this.CutRef2));
                 }
-                if (!MyUtility.Check.Empty(SP))
+
+                if (!MyUtility.Check.Empty(this.SP))
                 {
-                    sqlCmd.Append(string.Format(@" and b.Orderid = '{0}'", SP));
+                    this.sqlCmd.Append(string.Format(@" and b.Orderid = '{0}'", this.SP));
                 }
-                if (!MyUtility.Check.Empty(dateBundle1))
+
+                if (!MyUtility.Check.Empty(this.dateBundle1))
                 {
-                    sqlCmd.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(dateBundle1).ToString("d")));
+                    this.sqlCmd.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(this.dateBundle1).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(dateBundle2))
+
+                if (!MyUtility.Check.Empty(this.dateBundle2))
                 {
-                    sqlCmd.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(dateBundle2).ToString("d")));
+                    this.sqlCmd.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(this.dateBundle2).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(dateBundleTransDate1))
+
+                if (!MyUtility.Check.Empty(this.dateBundleTransDate1))
                 {
-                    sqlCmd.Append(string.Format(@" and bt.TransferDate >= '{0}'", Convert.ToDateTime(dateBundleTransDate1).ToString("d")));
+                    this.sqlCmd.Append(string.Format(@" and bt.TransferDate >= '{0}'", Convert.ToDateTime(this.dateBundleTransDate1).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(dateBundleTransDate2))
+
+                if (!MyUtility.Check.Empty(this.dateBundleTransDate2))
                 {
                     // TransferDate 是 datetime, 直接用日期做判斷的話要加一天才不會漏掉最後一天的資料
-                    sqlCmd.Append(string.Format(@" and bt.TransferDate <= '{0}'", Convert.ToDateTime(((DateTime)dateBundleTransDate2).AddDays(1)).ToString("d")));
+                    this.sqlCmd.Append(string.Format(@" and bt.TransferDate <= '{0}'", Convert.ToDateTime(((DateTime)this.dateBundleTransDate2).AddDays(1)).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(M))
+
+                if (!MyUtility.Check.Empty(this.M))
                 {
-                    sqlCmd.Append(string.Format(@" and b.MDivisionid = '{0}'", M));
+                    this.sqlCmd.Append(string.Format(@" and b.MDivisionid = '{0}'", this.M));
                 }
-                if (!MyUtility.Check.Empty(Factory))
+
+                if (!MyUtility.Check.Empty(this.Factory))
                 {
-                    sqlCmd.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
+                    this.sqlCmd.Append(string.Format(@" and o.FtyGroup = '{0}'", this.Factory));
                 }
+
                 if (this.processLocation != "ALL")
                 {
-                    sqlCmd.Append(string.Format(@" and bt.RFIDProcessLocationID = '{0}'", this.processLocation));
+                    this.sqlCmd.Append(string.Format(@" and bt.RFIDProcessLocationID = '{0}'", this.processLocation));
                 }
                 #endregion
             }
             else
             {
-                sqlCmd.Append($@"
+                this.sqlCmd.Append($@"
 
 --Replace1
 
@@ -297,72 +314,81 @@ outer apply(
 )FabricKind
 where 1=1
 ");
-                if (!MyUtility.Check.Empty(SubProcess))
-                {//();
-                    sqlCmd.Append($@" and (bt.SubprocessId in ('{SubProcess.Replace(",", "','")}') or '{SubProcess}'='')" + Environment.NewLine);
+                if (!MyUtility.Check.Empty(this.SubProcess))
+                {// ();
+                    this.sqlCmd.Append($@" and (bt.SubprocessId in ('{this.SubProcess.Replace(",", "','")}') or '{this.SubProcess}'='')" + Environment.NewLine);
                 }
 
                 if (this.processLocation != "ALL")
                 {
-                    sqlCmd.Append($@" and bt.RFIDProcessLocationID = '{this.processLocation}'" + Environment.NewLine);
+                    this.sqlCmd.Append($@" and bt.RFIDProcessLocationID = '{this.processLocation}'" + Environment.NewLine);
                 }
-                if (!MyUtility.Check.Empty(dateBundleTransDate1))
+
+                if (!MyUtility.Check.Empty(this.dateBundleTransDate1))
                 {
-                    sqlCmd.Append( $@" and bt.TransferDate >= '{Convert.ToDateTime(dateBundleTransDate1).ToString("d")}'" + Environment.NewLine);
+                    this.sqlCmd.Append($@" and bt.TransferDate >= '{Convert.ToDateTime(this.dateBundleTransDate1).ToString("d")}'" + Environment.NewLine);
                 }
-                if (!MyUtility.Check.Empty(dateBundleTransDate2))
+
+                if (!MyUtility.Check.Empty(this.dateBundleTransDate2))
                 {
                     // TransferDate 是 datetime, 直接用日期做判斷的話要加一天才不會漏掉最後一天的資料
-                    sqlCmd.Append( $@" and bt.TransferDate <= '{Convert.ToDateTime(((DateTime)dateBundleTransDate2).AddDays(1)).ToString("d")}'" + Environment.NewLine + Environment.NewLine);
+                    this.sqlCmd.Append($@" and bt.TransferDate <= '{Convert.ToDateTime(((DateTime)this.dateBundleTransDate2).AddDays(1)).ToString("d")}'" + Environment.NewLine + Environment.NewLine);
                 }
-                if (!MyUtility.Check.Empty(CutRef1) && (!MyUtility.Check.Empty(CutRef1)))
+
+                if (!MyUtility.Check.Empty(this.CutRef1) && (!MyUtility.Check.Empty(this.CutRef1)))
                 {
-                    sqlCmd.Append(string.Format(@" and b.CutRef between '{0}' and '{1}'", CutRef1, CutRef2));
+                    this.sqlCmd.Append(string.Format(@" and b.CutRef between '{0}' and '{1}'", this.CutRef1, this.CutRef2));
                 }
-                if (!MyUtility.Check.Empty(SP))
+
+                if (!MyUtility.Check.Empty(this.SP))
                 {
-                    sqlCmd.Append(string.Format(@" and b.Orderid = '{0}'", SP));
+                    this.sqlCmd.Append(string.Format(@" and b.Orderid = '{0}'", this.SP));
                 }
-                if (!MyUtility.Check.Empty(dateBundle1))
+
+                if (!MyUtility.Check.Empty(this.dateBundle1))
                 {
-                    sqlCmd.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(dateBundle1).ToString("d")));
+                    this.sqlCmd.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(this.dateBundle1).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(dateBundle2))
+
+                if (!MyUtility.Check.Empty(this.dateBundle2))
                 {
-                    sqlCmd.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(dateBundle2).ToString("d")));
+                    this.sqlCmd.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(this.dateBundle2).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(M))
+
+                if (!MyUtility.Check.Empty(this.M))
                 {
-                    sqlCmd.Append(string.Format(@" and b.MDivisionid = '{0}'", M));
+                    this.sqlCmd.Append(string.Format(@" and b.MDivisionid = '{0}'", this.M));
                 }
-                if (!MyUtility.Check.Empty(Factory))
+
+                if (!MyUtility.Check.Empty(this.Factory))
                 {
-                    sqlCmd.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
+                    this.sqlCmd.Append(string.Format(@" and o.FtyGroup = '{0}'", this.Factory));
                 }
             }
 
-            DBProxy.Current.DefaultTimeout = 1800;  //加長時間為30分鐘，避免timeout
+            DBProxy.Current.DefaultTimeout = 1800;  // 加長時間為30分鐘，避免timeout
             return Result.True;
         }
 
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
-        {            
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R42_Bundle Transaction detail (RFID).xltx"); //預先開啟excel app
+        {
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R42_Bundle Transaction detail (RFID).xltx"); // 預先開啟excel app
             decimal excelMaxrow = 1000000;
 
-            Microsoft.Office.Interop.Excel.Worksheet worksheet1 = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1]);
-            Microsoft.Office.Interop.Excel.Worksheet worksheetn = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[2]);
+            Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1];
+            Microsoft.Office.Interop.Excel.Worksheet worksheetn = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[2];
             worksheet1.Copy(worksheetn);
 
             int sheet = 1;
-            //因為一次載入太多筆資料到DataTable 會造成程式佔用大量記憶體，改為每1萬筆載入一次並貼在excel上
+
+            // 因為一次載入太多筆資料到DataTable 會造成程式佔用大量記憶體，改為每1萬筆載入一次並貼在excel上
             #region 分段抓取資料填入excel
             this.ShowLoadingText($"Data Loading , please wait …");
             DataTable tmpDatas = new DataTable();
             SqlConnection conn = null;
             DBProxy.Current.OpenConnection(this.ConnectionName, out conn);
-            var cmd = new SqlCommand(sqlCmd.ToString(), conn);
+            var cmd = new SqlCommand(this.sqlCmd.ToString(), conn);
             cmd.CommandTimeout = 3000;
             var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             int loadCounts = 0;
@@ -386,26 +412,28 @@ where 1=1
                     if (loadCounts % eachCopy == 0)
                     {
                         this.ShowLoadingText($"Data Loading – {loadCounts} , please wait …");
-                        MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", loadCounts2 - (eachCopy-1), false, null, objApp, wSheet: objApp.Sheets[sheet]);// 將datatable copy to excel
+                        MyUtility.Excel.CopyToXls(tmpDatas, string.Empty, "Subcon_R42_Bundle Transaction detail (RFID).xltx", loadCounts2 - (eachCopy - 1), false, null, objApp, wSheet: objApp.Sheets[sheet]); // 將datatable copy to excel
 
                         this.DataTableClearAll(tmpDatas);
                         for (int i = 0; i < reader.FieldCount; i++)
                         {
                             tmpDatas.Columns.Add(reader.GetName(i), reader.GetFieldType(i));
                         }
+
                         if (loadCounts % excelMaxrow == 0)
                         {
-                            Microsoft.Office.Interop.Excel.Worksheet worksheetA = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[sheet + 1]);
-                            Microsoft.Office.Interop.Excel.Worksheet worksheetB = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[sheet + 2]);
+                            Microsoft.Office.Interop.Excel.Worksheet worksheetA = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[sheet + 1];
+                            Microsoft.Office.Interop.Excel.Worksheet worksheetB = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[sheet + 2];
                             worksheetA.Copy(worksheetB);
                             sheet++;
                             loadCounts2 = 0;
                         }
                     }
                 }
+
                 if (loadCounts > 0)
                 {
-                    MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", loadCounts2 - (loadCounts2 % eachCopy) + 1, false, null, objApp, wSheet: objApp.Sheets[sheet]);// 將datatable copy to excel
+                    MyUtility.Excel.CopyToXls(tmpDatas, string.Empty, "Subcon_R42_Bundle Transaction detail (RFID).xltx", loadCounts2 - (loadCounts2 % eachCopy) + 1, false, null, objApp, wSheet: objApp.Sheets[sheet]); // 將datatable copy to excel
                     this.DataTableClearAll(tmpDatas);
                 }
                 else
@@ -415,7 +443,8 @@ where 1=1
                     return false;
                 }
             }
-            SetCount((long)loadCounts);
+
+            this.SetCount((long)loadCounts);
             objApp.DisplayAlerts = false;
             ((Microsoft.Office.Interop.Excel.Worksheet)objApp.Sheets[sheet + 1]).Delete();
             ((Microsoft.Office.Interop.Excel.Worksheet)objApp.Sheets[1]).Select();
@@ -429,14 +458,16 @@ where 1=1
             workbook.SaveAs(strExcelName);
             workbook.Close();
             objApp.Quit();
-            Marshal.ReleaseComObject(objApp);          //釋放objApp
+            Marshal.ReleaseComObject(objApp);          // 釋放objApp
             Marshal.ReleaseComObject(workbook);
-            //printData.Clear();
-            //printData.Dispose();
+
+            // printData.Clear();
+            // printData.Dispose();
             strExcelName.OpenFile();
-            #endregion             
+            #endregion
             return true;
         }
+
         #endregion
         private void DataTableClearAll(DataTable target)
         {

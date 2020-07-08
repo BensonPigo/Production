@@ -4,11 +4,9 @@ using Sci.Data;
 using Sci.Production.Class;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
-using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -360,7 +358,7 @@ drop table #tmp
             DualResult result;
             DataTable dtResult;
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-            if (dt == null || dt.Rows.Count < 1 )
+            if (dt == null || dt.Rows.Count < 1)
             {
                 return;
             }

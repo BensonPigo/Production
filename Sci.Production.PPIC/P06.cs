@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
@@ -8,8 +7,6 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci;
-using System.Linq;
 
 namespace Sci.Production.PPIC
 {
@@ -144,9 +141,9 @@ and o.Finished = 0
 and (o.Junk=0 or (o.Junk=1 and o.NeedProduction=1))
 and (oq.EstPulloutDate <= '{1}' or oq.EstPulloutDate is null or iif(o.PulloutDate is null, dateadd(day,4,o.SewOffLine) , o.PulloutDate) <= '{1}')
 and o.Category in ({2})",
-            Sci.Env.User.Keyword,
-            Convert.ToDateTime(this.dateExpPoutDate.Value).ToString("d"),
-            category));
+                Sci.Env.User.Keyword,
+                Convert.ToDateTime(this.dateExpPoutDate.Value).ToString("d"),
+                category));
 
             sqlCmd.Append(@"
 

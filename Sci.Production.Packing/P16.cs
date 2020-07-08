@@ -14,8 +14,6 @@ namespace Sci.Production.Packing
     /// </summary>
     public partial class P16 : Sci.Win.Tems.QueryForm
     {
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-
         /// <summary>
         /// P16
         /// </summary>

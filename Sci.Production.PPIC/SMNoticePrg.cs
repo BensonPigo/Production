@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using Ict;
 using Sci.Data;
-using Sci.Production.Class;
 using Sci.Utility;
 using Sci.Win.UI;
 
@@ -501,7 +498,7 @@ Exists (
             /// <summary>
             /// Order
             /// </summary>
-            Order
+            Order,
         }
 
         /// <summary>
@@ -560,6 +557,7 @@ Exists (
                 pageHBreakList.Add(rowPosition);
                 PrintSMNoticeBlock10(mainSheet, iD, ref rowPosition, enuType); // Block10: formal table for sign
                 PrintSMNoticeBlock11(mainSheet, iD, ref rowPosition, pageHBreakList, enuType); // Block11: FabricColor TrimCard
+
                 // 把分業符號整理好，自動產生的移除，加入指定位置的分頁設定
                 // mainSheet.PageSetup.PrintArea = "$A$1:$AC$" + rowPosition;
                 // while (mainSheet.VPageBreaks.Count > 0)
@@ -2501,6 +2499,7 @@ order by x.tp, x.PNO
                 PrintGarmentListBlock2(mainSheet, uKey, ref rowPosition, out articleCount); // Block2: Garment List
                 PrintGarmentListBlock3(mainSheet, uKey, ref rowPosition, articleCount, bmpFolder); // Block3: Cutting Piece
                 PrintGarmentListBlock4(mainSheet, uKey, ref rowPosition, articleCount); // Block4: Remark
+
                 // mainSheet.UsedRange.Rows.AutoFit();
                 mainSheet.Cells[1, 1].Select();
                 mainSheet.Protect(Env.User.UserPassword);

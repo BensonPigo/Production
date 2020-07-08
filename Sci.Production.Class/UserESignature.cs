@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
 using Sci.Data;
-using System.Configuration;
 
 namespace Sci.Production.Class
 {
@@ -27,9 +22,9 @@ namespace Sci.Production.Class
                 {
                     Directory.CreateDirectory(picPath);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    //MyUtility.Msg.ErrorBox(e.ToString());
+                    // MyUtility.Msg.ErrorBox(e.ToString());
                     return null;
                 }
             }

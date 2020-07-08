@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Win;
 using System.Data.SqlClient;
 using Sci.Data;
-using Msg = Sci.MyUtility.Msg;
 using Sci.Utility.Excel;
 using Sci.Production.Prg;
 using System.Xml.Linq;
@@ -119,15 +115,15 @@ namespace Sci.Production.Centralized
             for (int i = 0; i < connectionString.Count; i++)
             {
                  string conString = connectionString[i];
-                this.SetLoadingText(
+                 this.SetLoadingText(
                     string.Format(
                         "Load data from connection {0}/{1} ",
-                    i + 1,
-                    connectionString.Count));
+                        i + 1,
+                        connectionString.Count));
 
                 // 跨資料庫連線，將所需資料存到TempTable，再給不同資料庫使用
-                SqlConnection con;
-                using (con = new SqlConnection(conString))
+                 SqlConnection con;
+                 using (con = new SqlConnection(conString))
                 {
                     con.Open();
                     DataTable tmpData3, tmpData4, all_tmpData4, tmpStyleDetail, tmpOrderDetail;
@@ -290,8 +286,8 @@ full join (
 ) c on c.Country = final.Country and c.data = final.SMVEFFX and c.{0} = final.{0}
 order by {0} , Country , data
 ",
-select,
-groupBy);
+                        select,
+                        groupBy);
 
                     this.All_SqlData4 = @"
 ;with final as (
@@ -463,7 +459,7 @@ full join (
 ) c on c.Country = final.Country and c.data = final.SMVEFFX and c.{0} = final.{0}
 order by {0} , Country , data", select,
                     groupBy),
-                   out this.FinalDetailData);
+                    out this.FinalDetailData);
 
 #pragma warning disable SA1118 // Parameter must not span multiple lines
                 result = DBProxy.Current.SelectByConn(
@@ -492,7 +488,7 @@ full join (
 	 select data from dbo.SplitString('A,B,C,D,E,F,G,H',',')
 ) c on c.Data = final.SMVEFFX
 order by data",
-out this.FinalALLData);
+                    out this.FinalALLData);
 
 #pragma warning restore SA1118 // Parameter must not span multiple lines
                 sqlConn.Close();

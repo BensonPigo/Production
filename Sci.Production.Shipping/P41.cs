@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
@@ -219,6 +218,7 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'",
                 MyUtility.Msg.WarningBox("This record already junked, can't edit!!");
                 return false;
             }
+
             return base.ClickEditBefore();
         }
 

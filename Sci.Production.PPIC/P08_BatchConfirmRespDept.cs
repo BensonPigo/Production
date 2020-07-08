@@ -1,17 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
-using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
-using System.Data.SqlClient;
-using System.Runtime.InteropServices;
 using System.Linq;
 
 namespace Sci.Production.PPIC

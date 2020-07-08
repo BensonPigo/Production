@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -1285,7 +1282,7 @@ where f.Junk = 0",
                 return false;
             }
 
-            //excel.Visible = true;
+            // excel.Visible = true;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[2, 1] = string.Format("{0}", this.factoryName);
@@ -1407,7 +1404,7 @@ where f.Junk = 0",
             #endregion
 
             // Subcon
-            int RevenueStartRow = 0;
+            int revenueStartRow = 0;
             insertRow = insertRow + 2;
             int insertSubconIn = 0, insertSubconOut = 0;
             objArray = new object[1, 3];
@@ -1434,7 +1431,7 @@ where f.Junk = 0",
                         if (this.subprocessSubconInData.AsEnumerable().Where(s => s["Company"].Equals(dr["Company"])).Any())
                         {
                             insertRow++;
-                            RevenueStartRow = insertRow;
+                            revenueStartRow = insertRow;
 
                             // title
                             worksheet.Cells[insertRow, 1] = "Sub-Process Total Revenue";
@@ -1467,9 +1464,9 @@ where f.Junk = 0",
                             }
 
                             // 畫框線
-                            rngBorders = worksheet.get_Range(string.Format("A{0}:K{1}", MyUtility.Convert.GetString(RevenueStartRow), MyUtility.Convert.GetString(insertRow)), Type.Missing);
+                            rngBorders = worksheet.get_Range(string.Format("A{0}:K{1}", MyUtility.Convert.GetString(revenueStartRow), MyUtility.Convert.GetString(insertRow)), Type.Missing);
                             rngBorders.BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, System.Drawing.Color.Black.ToArgb());     // 給單元格加邊框
-                            rngBorders = worksheet.get_Range(string.Format("A{0}:K{0}", MyUtility.Convert.GetString(RevenueStartRow)), Type.Missing);
+                            rngBorders = worksheet.get_Range(string.Format("A{0}:K{0}", MyUtility.Convert.GetString(revenueStartRow)), Type.Missing);
                             rngBorders.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = 1;
                             rngBorders.Borders[Excel.XlBordersIndex.xlEdgeBottom].Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
 
@@ -1507,7 +1504,7 @@ where f.Junk = 0",
                         if (this.subprocessSubconOutData.AsEnumerable().Where(s => s["Company"].Equals(dr["Company"])).Any())
                         {
                             insertRow++;
-                            RevenueStartRow = insertRow;
+                            revenueStartRow = insertRow;
 
                             // title
                             worksheet.Cells[insertRow, 1] = "Sub-Process Total Revenue";
@@ -1540,9 +1537,9 @@ where f.Junk = 0",
                             }
 
                             // 畫框線
-                            rngBorders = worksheet.get_Range(string.Format("A{0}:K{1}", MyUtility.Convert.GetString(RevenueStartRow), MyUtility.Convert.GetString(insertRow)), Type.Missing);
+                            rngBorders = worksheet.get_Range(string.Format("A{0}:K{1}", MyUtility.Convert.GetString(revenueStartRow), MyUtility.Convert.GetString(insertRow)), Type.Missing);
                             rngBorders.BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, System.Drawing.Color.Black.ToArgb());     // 給單元格加邊框
-                            rngBorders = worksheet.get_Range(string.Format("A{0}:K{0}", MyUtility.Convert.GetString(RevenueStartRow)), Type.Missing);
+                            rngBorders = worksheet.get_Range(string.Format("A{0}:K{0}", MyUtility.Convert.GetString(revenueStartRow)), Type.Missing);
                             rngBorders.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = 1;
                             rngBorders.Borders[Excel.XlBordersIndex.xlEdgeBottom].Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
                         }
@@ -1625,8 +1622,8 @@ where f.Junk = 0",
                             objArray[0, 11] = pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().SewTtlManpower;
                             objArray[0, 12] = pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().SewTtlManhours;
 
-                            string Holiday = (pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().Holiday == 1) ? "Y" : "";
-                            objArray[0, 14] = Holiday;
+                            string holiday = (pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().Holiday == 1) ? "Y" : string.Empty;
+                            objArray[0, 14] = holiday;
                         }
                         else
                         {

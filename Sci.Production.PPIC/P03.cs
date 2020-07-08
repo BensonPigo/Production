@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
@@ -139,7 +138,7 @@ and sp.ProductionKitsGroup='{Sci.Env.User.Keyword}'
                sqlCmd.Append(string.Format(" and sp.SendDate = '{0}'", Convert.ToDateTime(this.dateSendDate.Value).ToString("d")));
             }
 
-             sqlCmd.Append(@" order by FactoryID, StyleID");
+            sqlCmd.Append(@" order by FactoryID, StyleID");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gridData);
 

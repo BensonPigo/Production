@@ -1,14 +1,9 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Logistic
@@ -20,6 +15,7 @@ namespace Sci.Production.Logistic
     {
         private DataTable printData;
         private StringBuilder sqlWHERE = new StringBuilder();
+
         /// <summary>R03</summary>
         public R03(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -104,7 +100,7 @@ namespace Sci.Production.Logistic
         /// <returns>Result</returns>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            StringBuilder sqlcmd = new StringBuilder(); 
+            StringBuilder sqlcmd = new StringBuilder();
             #region "SQL"
             sqlcmd.Append(
                 $@"
@@ -198,7 +194,7 @@ group by o.MDivisionID,o.FactoryID,o.ID,pd.ID,cd.CTNStartNO,cd.ID,c.DisposeDate,
                 return false;
             }
 
-            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Logistic_R03.xltx", 1, false, null, excel);// 將datatable copy to excel 
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Logistic_R03.xltx", 1, false, null, excel); // 將datatable copy to excel
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Logistic_R03");

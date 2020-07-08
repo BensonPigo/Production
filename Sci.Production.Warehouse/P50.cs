@@ -1,20 +1,13 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Transactions;
 using System.Windows.Forms;
-using System.Reflection;
 using Microsoft.Reporting.WinForms;
-using System.Data.SqlClient;
-using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
@@ -23,81 +16,82 @@ namespace Sci.Production.Warehouse
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
         protected ReportViewer viewer;
+
         public P50(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            InsertDetailGridOnDoubleClick = false;
-            viewer = new ReportViewer();
-            viewer.Dock = DockStyle.Fill;
-            Controls.Add(viewer);
+            this.InitializeComponent();
+            this.InsertDetailGridOnDoubleClick = false;
+            this.viewer = new ReportViewer();
+            this.viewer.Dock = DockStyle.Fill;
+            this.Controls.Add(this.viewer);
 
             this.DefaultFilter = string.Format("Type='F' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
-            di_fabrictype.Add("F", "Fabric");
-            di_fabrictype.Add("A", "Accessory");
-            gridicon.Append.Enabled = false;
-            gridicon.Append.Visible = false;
-            gridicon.Insert.Enabled = false;
-            gridicon.Insert.Visible = false;
-            //
+            this.di_fabrictype.Add("F", "Fabric");
+            this.di_fabrictype.Add("A", "Accessory");
+            this.gridicon.Append.Enabled = false;
+            this.gridicon.Append.Visible = false;
+            this.gridicon.Insert.Enabled = false;
+            this.gridicon.Insert.Visible = false;
         }
 
         public P50(ToolStripMenuItem menuitem, string transID)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.DefaultFilter = string.Format("Type='F' and id='{0}'", transID);
-            di_fabrictype.Add("F", "Fabric");
-            di_fabrictype.Add("A", "Accessory");
+            this.di_fabrictype.Add("F", "Fabric");
+            this.di_fabrictype.Add("A", "Accessory");
             this.IsSupportNew = false;
             this.IsSupportEdit = false;
             this.IsSupportDelete = false;
             this.IsSupportConfirm = false;
             this.IsSupportUnconfirm = false;
-            gridicon.Append.Enabled = false;
-            gridicon.Append.Visible = false;
-            gridicon.Insert.Enabled = false;
-            gridicon.Insert.Visible = false;
-
+            this.gridicon.Append.Enabled = false;
+            this.gridicon.Append.Visible = false;
+            this.gridicon.Insert.Enabled = false;
+            this.gridicon.Insert.Visible = false;
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            MyUtility.Tool.SetupCombox(comboStockType, 2, 1, "B,Bulk,I,Inventory");
+            MyUtility.Tool.SetupCombox(this.comboStockType, 2, 1, "B,Bulk,I,Inventory");
         }
 
         // 新增時預設資料
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            CurrentMaintain["Status"] = "New";
-            CurrentMaintain["Type"] = "F";
-            CurrentMaintain["IssueDate"] = DateTime.Now;
-            CurrentMaintain["stocktype"] = "B";
+            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["Type"] = "F";
+            this.CurrentMaintain["IssueDate"] = DateTime.Now;
+            this.CurrentMaintain["stocktype"] = "B";
         }
 
         // delete前檢查
         protected override bool ClickDeleteBefore()
         {
-            if (CurrentMaintain["Status"].EqualString("CONFIRMED"))
+            if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
             {
                 MyUtility.Msg.WarningBox("Data is confirmed, can't delete.", "Warning");
                 return false;
             }
+
             return base.ClickDeleteBefore();
         }
 
         // edit前檢查
         protected override bool ClickEditBefore()
         {
-            if (CurrentMaintain["Status"].EqualString("CONFIRMED"))
+            if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
             {
                 MyUtility.Msg.WarningBox("Data is confirmed, can't modify.", "Warning");
                 return false;
             }
+
             return base.ClickEditBefore();
         }
 
@@ -113,47 +107,49 @@ namespace Sci.Production.Warehouse
 
             #region 必輸檢查
 
-            if (MyUtility.Check.Empty(CurrentMaintain["IssueDate"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["IssueDate"]))
             {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
-                dateIssueDate.Focus();
+                this.dateIssueDate.Focus();
                 return false;
             }
 
-
             #endregion 必輸檢查
 
-            foreach (DataRow row in DetailDatas)
+            foreach (DataRow row in this.DetailDatas)
             {
                 if (MyUtility.Check.Empty(row["seq1"]) || MyUtility.Check.Empty(row["seq2"]))
                 {
-                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} can't be empty"
-                        , row["poid"], row["seq1"], row["seq2"])
+                    warningmsg.Append(string.Format(
+                        @"SP#: {0} Seq#: {1}-{2} can't be empty",
+                        row["poid"], row["seq1"], row["seq2"])
                         + Environment.NewLine);
                 }
             }
+
             if (!MyUtility.Check.Empty(warningmsg.ToString()))
             {
                 MyUtility.Msg.WarningBox(warningmsg.ToString());
                 return false;
             }
 
-            if (DetailDatas.Count == 0)
+            if (this.DetailDatas.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
                 return false;
             }
 
-            //取單號
+            // 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "SF", "StockTaking", (DateTime)CurrentMaintain["Issuedate"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "SF", "StockTaking", (DateTime)this.CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
                     return false;
                 }
-                CurrentMaintain["id"] = tmpId;
+
+                this.CurrentMaintain["id"] = tmpId;
             }
 
             return base.ClickSaveBefore();
@@ -165,13 +161,13 @@ namespace Sci.Production.Warehouse
             return base.OnRenewDataDetailPost(e);
         }
 
-        //refresh
+        // refresh
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
             #region Status Label
 
-            label25.Text = CurrentMaintain["status"].ToString();
+            this.label25.Text = this.CurrentMaintain["status"].ToString();
 
             #endregion Status Label
         }
@@ -187,34 +183,38 @@ namespace Sci.Production.Warehouse
         {
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_fabrictype;
             #region 欄位設定
-            Helper.Controls.Grid.Generator(this.detailgrid)
-            .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
-            .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //1
-            .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
-            .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)  //3
-            .Text("Location", header: "Book Location", iseditingreadonly: true)    //4
-            .Numeric("qtybefore", header: "Book Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //5
-            .Numeric("qtyafter", header: "Actual Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //6
-            .Numeric("variance", header: "Variance", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //7
-            .Text("refno", header: "Ref#", iseditingreadonly: true)    //8
-            .Text("Colorid", header: "Color", iseditingreadonly: true)    //9
-            .Text("stockunit", header: "Stock Unit", iseditingreadonly: true)    //10
-            .ComboBox("FabricType", header: "Material Type", iseditable: false).Get(out cbb_fabrictype)    //11
-            .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //12
-            
-            ;     //
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
+            .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
+            .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
+            .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
+            .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
+            .Text("Location", header: "Book Location", iseditingreadonly: true) // 4
+            .Numeric("qtybefore", header: "Book Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 5
+            .Numeric("qtyafter", header: "Actual Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 6
+            .Numeric("variance", header: "Variance", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 7
+            .Text("refno", header: "Ref#", iseditingreadonly: true) // 8
+            .Text("Colorid", header: "Color", iseditingreadonly: true) // 9
+            .Text("stockunit", header: "Stock Unit", iseditingreadonly: true) // 10
+            .ComboBox("FabricType", header: "Material Type", iseditable: false).Get(out cbb_fabrictype) // 11
+            .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 12
+
+            ;
             #endregion 欄位設定
-            cbb_fabrictype.DataSource = new BindingSource(di_fabrictype, null);
+            cbb_fabrictype.DataSource = new BindingSource(this.di_fabrictype, null);
             cbb_fabrictype.ValueMember = "Key";
             cbb_fabrictype.DisplayMember = "Value";
         }
 
-        //Confirm
+        // Confirm
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
             var dr = this.CurrentMaintain;
-            if (null == dr) return;
+            if (dr == null)
+            {
+                return;
+            }
+
             DualResult result;
             #region store procedure parameters
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
@@ -233,23 +233,23 @@ namespace Sci.Production.Warehouse
             System.Data.SqlClient.SqlParameter sp_loginid = new System.Data.SqlClient.SqlParameter();
             sp_loginid.ParameterName = "@loginid";
             sp_loginid.Value = Sci.Env.User.UserID;
-            cmds.Add(sp_loginid);           
+            cmds.Add(sp_loginid);
             #endregion
-            if (!(result = DBProxy.Current.ExecuteSP("", "dbo.usp_StocktakingEncode",cmds)))
+            if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_StocktakingEncode", cmds)))
             {
-                //MyUtility.Msg.WarningBox(result.Messages[1].ToString()); 
+                // MyUtility.Msg.WarningBox(result.Messages[1].ToString());
                 Exception ex = result.GetException();
                 MyUtility.Msg.WarningBox(ex.Message);
                 return;
             }
-            
         }
-      
-        //寫明細撈出的sql command
+
+        // 寫明細撈出的sql command
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id
+            string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
+            this.DetailSelectCommand = string.Format(
+                @"select a.id
 ,a.PoId,a.Seq1,a.Seq2
 ,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Roll
@@ -274,21 +274,21 @@ Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        //Import
+        // Import
         private void btngenerate_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P50_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
+            var frm = new Sci.Production.Warehouse.P50_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
         }
 
         private void comboStockType_Validating(object sender, CancelEventArgs e)
         {
-            if (this.EditMode && !MyUtility.Check.Empty(comboStockType.SelectedValue) && comboStockType.SelectedValue != comboStockType.OldValue)
+            if (this.EditMode && !MyUtility.Check.Empty(this.comboStockType.SelectedValue) && this.comboStockType.SelectedValue != this.comboStockType.OldValue)
             {
-                if (detailgridbs.DataSource != null)
+                if (this.detailgridbs.DataSource != null)
                 {
-                    ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
+                    ((DataTable)this.detailgridbs.DataSource).Rows.Clear();  // 清空表身資料
                 }
             }
         }
@@ -298,6 +298,6 @@ Where a.id = '{0}'", masterID);
             P50_Print p = new P50_Print(this.CurrentDataRow);
             p.ShowDialog();
             return true;
-        }       
+        }
     }
 }

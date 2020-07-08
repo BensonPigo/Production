@@ -1,12 +1,6 @@
-﻿using Ict;
-using Ict.Win;
-using System;
-using System.Collections.Generic;
+﻿using Ict.Win;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.SubProcess
@@ -23,7 +17,7 @@ namespace Sci.Production.SubProcess
         public B04(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         // Type 右鍵開窗

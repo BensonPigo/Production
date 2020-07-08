@@ -457,12 +457,12 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                 @"Select top 1 Target from ChgOverTarget WITH (NOLOCK) 
                                                                         where Type = 'COPT' and MDivisionID = '{0}' and EffectiveDate <= '{1}' 
                                                                         Order by EffectiveDate desc", mDivisionID,
-                           inline.ToShortDateString()));
+                inline.ToShortDateString()));
             string target_COT = MyUtility.GetValue.Lookup(string.Format(
                 @"Select top 1 Target from ChgOverTarget WITH (NOLOCK) 
                                                                         where Type = 'COT' and MDivisionID = '{0}' and EffectiveDate <= '{1}' 
                                                                         Order by EffectiveDate desc", mDivisionID,
-                           inline.ToShortDateString()));
+                inline.ToShortDateString()));
             #endregion
 
             string cDCodeID = this.dt1.Rows[0]["CDCodeID"].ToString().Trim();
@@ -496,21 +496,21 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                 this.dt1.Rows[0]["FactoryID"],
                 this.dt1.Rows[0]["SewingLineID"],
                 this.dt1.Rows[0]["SewingCell"]);
-                DualResult result2 = DBProxy.Current.Select(null, exceldt2, out this.dt2);
-                if (!result2)
+            DualResult result2 = DBProxy.Current.Select(null, exceldt2, out this.dt2);
+            if (!result2)
                 {
                     this.ShowErr(result2);
                 }
 
-                string previous_BrandID = MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders WITH (NOLOCK) where ID = '{0}'", this.dt2.Rows[0]["OrderID"].ToString().Trim()));
-                string previous_StyleID = this.dt2.Rows[0]["StyleID"].ToString().Trim();
-                string previous_SeasonID = this.dt2.Rows[0]["SeasonID"].ToString().Trim();
-                previous_CPU = MyUtility.GetValue.Lookup(string.Format("select CPU from Style WITH (NOLOCK) where BrandID='{0}' and ID='{1}' and SeasonID='{2}'", previous_BrandID, previous_StyleID, previous_SeasonID));
+            string previous_BrandID = MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders WITH (NOLOCK) where ID = '{0}'", this.dt2.Rows[0]["OrderID"].ToString().Trim()));
+            string previous_StyleID = this.dt2.Rows[0]["StyleID"].ToString().Trim();
+            string previous_SeasonID = this.dt2.Rows[0]["SeasonID"].ToString().Trim();
+            previous_CPU = MyUtility.GetValue.Lookup(string.Format("select CPU from Style WITH (NOLOCK) where BrandID='{0}' and ID='{1}' and SeasonID='{2}'", previous_BrandID, previous_StyleID, previous_SeasonID));
 
                 // Previous_TYPE = GetType(PreviousDR["ComboType"].ToString().Trim(), PreviousDR["CDCodeID"].ToString().Trim());
             #endregion
 
-                string cmdsql = string.Format("SELECT TOP 1 'CHANGEOVER REPORT'  FROM ChgOver WITH (NOLOCK) where 1=1");
+            string cmdsql = string.Format("SELECT TOP 1 'CHANGEOVER REPORT'  FROM ChgOver WITH (NOLOCK) where 1=1");
             DualResult dResult = DBProxy.Current.Select(null, cmdsql, out dtTitle);
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\IE_P02_ChangeoverReport.xltx"); // 預先開啟excel app
@@ -613,7 +613,7 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                     @"Select top 1 Target from ChgOverTarget  WITH (NOLOCK) 
                                                                     where Type = 'EFF.' and MDivisionID = '{0}' and EffectiveDate <= '{1}' 
                                                                     Order by EffectiveDate desc", mDivisionID,
-                           inline.ToShortDateString()));
+                    inline.ToShortDateString()));
                 string outputCMP_A = MyUtility.GetValue.Lookup(string.Format(
                     @"Select Sum(b.QAQty)  
                                                                     from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK)  

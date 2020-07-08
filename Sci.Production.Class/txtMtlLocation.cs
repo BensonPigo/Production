@@ -5,20 +5,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Class
 {
     public partial class txtMtlLocation : Sci.Win.UI.TextBox
     {
-        private string stockTypeFilte = "";
+        private string stockTypeFilte = string.Empty;
 
         /// <summary>
-        /// 篩選 StockType 
+        /// 篩選 StockType
         /// </summary>
         [Category("Custom Properties")]
         [Description(
@@ -27,20 +24,20 @@ EX : 只需要 Type = C, 'C'
             Type = B or C, 'B,C'")]
         public string StockTypeFilte
         {
-            set { this.stockTypeFilte = value; }
             get { return this.stockTypeFilte; }
+            set { this.stockTypeFilte = value; }
         }
 
         public txtMtlLocation()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         public txtMtlLocation(IContainer container)
         {
             container.Add(this);
 
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private void txtLocation_Validating(object sender, CancelEventArgs e)
@@ -53,11 +50,12 @@ EX : 只需要 Type = C, 'C'
                 #endregion
                 #region SQL Filte
                 Dictionary<string, string> dicSQLFilte = new Dictionary<string, string>();
-                string strStockType = stockTypeFilte.Split(',').Where(row => !row.Empty()).Select(row => row = string.Format("'{0}'", row)).JoinToString(",");
-                dicSQLFilte.Add("StockType", (strStockType.Empty()) ? "" : string.Format("and StockType in ({0})", strStockType));
+                string strStockType = this.stockTypeFilte.Split(',').Where(row => !row.Empty()).Select(row => row = string.Format("'{0}'", row)).JoinToString(",");
+                dicSQLFilte.Add("StockType", strStockType.Empty() ? string.Empty : string.Format("and StockType in ({0})", strStockType));
                 #endregion
                 #region SQL Commend
-                string strSQLCmd = string.Format(@"
+                string strSQLCmd = string.Format(
+                    @"
 SELECT ID
 	   , StockType 
 FROM MtlLocation 
@@ -78,11 +76,12 @@ WHERE Junk = 0
         {
             #region SQL Filte
             Dictionary<string, string> dicSQLFilte = new Dictionary<string, string>();
-            string strStockType = stockTypeFilte.Split(',').Where(row => !row.Empty()).Select(row => row = string.Format("'{0}'", row)).JoinToString(",");
-            dicSQLFilte.Add("StockType", (strStockType.Empty()) ? "" : string.Format("and StockType in ({0})", strStockType));
+            string strStockType = this.stockTypeFilte.Split(',').Where(row => !row.Empty()).Select(row => row = string.Format("'{0}'", row)).JoinToString(",");
+            dicSQLFilte.Add("StockType", strStockType.Empty() ? string.Empty : string.Format("and StockType in ({0})", strStockType));
             #endregion
             #region SQL Commend
-            string strSQLCmd = string.Format(@"
+            string strSQLCmd = string.Format(
+                @"
 SELECT ID
 	   , StockType 
 FROM MtlLocation 
@@ -94,7 +93,11 @@ ORDER BY ID, StockType", dicSQLFilte["StockType"]);
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(strSQLCmd, "15,5", this.Text);
             item.Size = new System.Drawing.Size(400, 530);
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.Text = item.GetSelectedString();
         }
     }
@@ -109,7 +112,7 @@ ORDER BY ID, StockType", dicSQLFilte["StockType"]);
             #region SQL Filte
             Dictionary<string, string> dicSQLFilte = new Dictionary<string, string>();
             string strStockType = strstockTypeFilte.Split(',').Where(row => !row.Empty()).Select(row => row = string.Format("'{0}'", row)).JoinToString(",");
-            dicSQLFilte.Add("StockType", (strStockType.Empty()) ? "" : $@"and StockType in ({strStockType})");
+            dicSQLFilte.Add("StockType", strStockType.Empty() ? string.Empty : $@"and StockType in ({strStockType})");
             #endregion
 
             ts.EditingMouseDown += (s, e) =>
@@ -119,14 +122,16 @@ ORDER BY ID, StockType", dicSQLFilte["StockType"]);
                 {
                     DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
-                    // Parent form 若是非編輯狀態就 return 
+                    // Parent form 若是非編輯狀態就 return
                     if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
                     {
                         return;
                     }
+
                     DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
                     SelectItem sele;
-                    sele = new SelectItem($@"
+                    sele = new SelectItem(
+                        $@"
 SELECT ID
        , StockType
 FROM MtlLocation
@@ -141,6 +146,7 @@ ORDER BY ID, StockType", "15,5", row["tolocation"].ToString(), false, ",");
                     {
                         return;
                     }
+
                     e.EditingControl.Text = sele.GetSelectedString();
                     row["tolocation"] = sele.GetSelectedString();
                 }
@@ -150,19 +156,22 @@ ORDER BY ID, StockType", "15,5", row["tolocation"].ToString(), false, ",");
             ts.CellValidating += (s, e) =>
             {
                 DataGridView grid = ((DataGridViewColumn)s).DataGridView;
-                // Parent form 若是非編輯狀態就 return 
+
+                // Parent form 若是非編輯狀態就 return
                 if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
                 {
                     return;
                 }
+
                 // 右鍵彈出功能
                 DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
                 String oldValue = row["tolocation"].ToString();
                 String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
-                
+
                 List<SqlParameter> listSQLPara = new List<SqlParameter>();
                 listSQLPara.Add(new SqlParameter("@checkLocation", newValue));
-                string strSQLCmd = string.Format(@"
+                string strSQLCmd = string.Format(
+                    @"
 SELECT ID
 	   , StockType 
 FROM MtlLocation 
@@ -181,7 +190,5 @@ WHERE Junk = 0
             };
             return ts;
         }
-
     }
-
 }

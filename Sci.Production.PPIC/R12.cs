@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
-using System.Linq;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -129,12 +127,32 @@ namespace Sci.Production.PPIC
             }
 
             List<string> category = new List<string>();
-            if (this.bulk) category.Add("'B'");
-            if (this.sample) category.Add("'S'");
-            if (this.material) category.Add("'M'");
-            //if (this.forecast) category.Add("''");
-            if (this.garment) category.Add("'G'");
-            if (this.smtl) category.Add("'T'");
+            if (this.bulk)
+            {
+                category.Add("'B'");
+            }
+
+            if (this.sample)
+            {
+                category.Add("'S'");
+            }
+
+            if (this.material)
+            {
+                category.Add("'M'");
+            }
+
+            // if (this.forecast) category.Add("''");
+            if (this.garment)
+            {
+                category.Add("'G'");
+            }
+
+            if (this.smtl)
+            {
+                category.Add("'T'");
+            }
+
             string categorys = string.Join(",", category);
 
             if (category.Count > 0)
@@ -282,7 +300,6 @@ drop table #tmp,#tmp2,#tmp3,#mondt
             excel.DisplayAlerts = false;
 
             // excel.Visible = true;
-
             MyUtility.Excel.CopyToXls(this.printData[1], string.Empty, filename, 1, false, null, excel, wSheet: excel.Sheets[2]);
             MyUtility.Excel.CopyToXls(this.printData[0], string.Empty, filename, 1, false, null, excel, wSheet: excel.Sheets[3]);
 

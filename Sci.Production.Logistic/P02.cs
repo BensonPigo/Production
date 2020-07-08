@@ -190,13 +190,13 @@ order by rn
 
 drop table #tmp_TransferToClog
 ", Sci.Env.User.Keyword,
-            dicSqlFilte["PackingList ID"],
-            dicSqlFilte["Order ID"],
-            dicSqlFilte["Orders CustPONo"],
-            dicSqlFilte["Orders FtyGroup"],
-            dicSqlFilte["TransferToClog AddDate Start"],
-            dicSqlFilte["TransferToClog AddDate End"],
-            dicSqlFilte["TransferToClog TransferSlipNo"]);
+                dicSqlFilte["PackingList ID"],
+                dicSqlFilte["Order ID"],
+                dicSqlFilte["Orders CustPONo"],
+                dicSqlFilte["Orders FtyGroup"],
+                dicSqlFilte["TransferToClog AddDate Start"],
+                dicSqlFilte["TransferToClog AddDate End"],
+                dicSqlFilte["TransferToClog TransferSlipNo"]);
 
             DualResult selectResult;
             if (selectResult = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.selectDataTable))
@@ -236,6 +236,7 @@ drop table #tmp_TransferToClog
             {
                 this.numSelectedCTNQty.Value = 0;
                 this.numTotalCTNQty.Value = 0;
+
                 // 先將Grid的結構給開出來
                 string selectCommand = @"
 Select distinct '' as ID, 0 as selected, b.TransferDate, b.Id as PackingListID, b.OrderID, 
@@ -696,7 +697,7 @@ where   ID = '{0}'
         {
             this.gridImport.ValidateControl();
             DataGridViewColumn column = this.gridImport.Columns["Selected"];
-            if (!MyUtility.Check.Empty(column) && !MyUtility.Check.Empty(listControlBindingSource1.DataSource))
+            if (!MyUtility.Check.Empty(column) && !MyUtility.Check.Empty(this.listControlBindingSource1.DataSource))
             {
                 int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").Length;
                 this.numSelectedCTNQty.Value = sint;

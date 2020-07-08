@@ -23,7 +23,6 @@ namespace Sci.Production.Sewing
         private DateTime? SewingMonthlyLockDate;
         private decimal systemTMS = 0;
         private decimal? oldttlqaqty;
-        private decimal? oldManHour;
 
         /// <summary>
         /// P02
@@ -496,7 +495,6 @@ where   mo.Junk = 0
             }
             #endregion
 
-
             #region 若status = Sent ，表身[QA Qty]總和與[Manhours]必為相同
 
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Sent"))
@@ -778,7 +776,7 @@ WHERE ID = 'SCIMIS'
 ");
 
                 #region 填寫Mail需要的資料
-                string ccAddress = "";
+                string ccAddress = string.Empty;
                 string subject = "Unlock Sewing(Mockup)";
                 string od = string.Empty;
 
@@ -827,8 +825,8 @@ values('{this.CurrentMaintain["ID"]}' ,'{callReason.ReturnReason}' ,'{callReason
         /// <summary>
         /// email畫面關閉後額外塞入CC人員
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">sender</param>
+        /// <param name="e">e</param>
         private void Email_SendingBefore(object sender, MailTo.SendMailBeforeArg e)
         {
             e.Mail.CC.Add("planning@sportscity.com.tw");
@@ -917,7 +915,6 @@ where 1=1
                 return;
             }
 
-
             if (MyUtility.Msg.QuestionBox("Unlock sewing data?") == DialogResult.No)
             {
                 return;
@@ -974,6 +971,5 @@ WHERE ID = '{this.CurrentMaintain["ID"]}'
 
             MyUtility.Msg.InfoBox("Unlock data successfully!");
         }
-
     }
 }

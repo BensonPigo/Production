@@ -170,9 +170,9 @@ from Orders a
 LEFT JOIN Brand Br ON a.BrandID = Br.ID 
 where poid = @poid
 and (SMnorderApv is not null or MnorderApv is not null)
-order by ID"
-, new List<SqlParameter> { new SqlParameter("poid", poid) }
-, out dt);
+order by ID",
+new List<SqlParameter> { new SqlParameter("poid", poid) },
+out dt);
                 if (!getIds && dt.Rows.Count <= 0)
                 {
                     DualResult failResult = new DualResult(false, "Error:" + getIds.ToString());

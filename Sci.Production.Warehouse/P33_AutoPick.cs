@@ -14,46 +14,51 @@ namespace Sci.Production.Warehouse
     public partial class P33_AutoPick : Sci.Win.Subs.Base
     {
         StringBuilder sbSizecode;
-        string poid, issueid, orderid;
+        string poid;
+        string issueid;
+        string orderid;
         public DataTable BOA, BOA_Orderlist, BOA_PO, BOA_PO_Size, dtIssueBreakDown;
         public DataRow[] importRows;
         public List<IssueQtyBreakdown> _IssueQtyBreakdownList = new List<IssueQtyBreakdown>();
         bool combo;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         public Dictionary<DataRow, DataTable> dictionaryDatas = new Dictionary<DataRow, DataTable>();
+
         public P33_AutoPick(string _issueid, string _poid, string _orderid, DataTable _dtIssueBreakDown, StringBuilder _sbSizecode, bool _combo, List<IssueQtyBreakdown> IssueQtyBreakdownList)
         {
-            InitializeComponent();
-            poid = _poid;
-            issueid = _issueid;
-            //cutplanid = _cutplanid;
-            orderid = _orderid;
-            dtIssueBreakDown = _dtIssueBreakDown;
-            sbSizecode = _sbSizecode;
-            combo = _combo;
-            this._IssueQtyBreakdownList = IssueQtyBreakdownList;
-            this.Text += string.Format(" ({0})", poid);
+            this.InitializeComponent();
+            this.poid = _poid;
+            this.issueid = _issueid;
 
+            // cutplanid = _cutplanid;
+            this.orderid = _orderid;
+            this.dtIssueBreakDown = _dtIssueBreakDown;
+            this.sbSizecode = _sbSizecode;
+            this.combo = _combo;
+            this._IssueQtyBreakdownList = IssueQtyBreakdownList;
+            this.Text += string.Format(" ({0})", this.poid);
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-            if (dtIssueBreakDown == null)
+            if (this.dtIssueBreakDown == null)
             {
                 MyUtility.Msg.WarningBox("IssueBreakdown data no data!", "Warning");
                 this.Close();
                 return;
             }
 
-            Decimal sum = 0;
-            foreach (DataRow dr in dtIssueBreakDown.Rows)
+            decimal sum = 0;
+            foreach (DataRow dr in this.dtIssueBreakDown.Rows)
             {
-                foreach (DataColumn dc in dtIssueBreakDown.Columns)
+                foreach (DataColumn dc in this.dtIssueBreakDown.Columns)
                 {
-                    if (Object.ReferenceEquals(sum.GetType(), dr[dc].GetType()))
-                        sum += (Decimal)dr[dc];
+                    if (object.ReferenceEquals(sum.GetType(), dr[dc].GetType()))
+                    {
+                        sum += (decimal)dr[dc];
+                    }
                 }
             }
 
@@ -68,28 +73,30 @@ namespace Sci.Production.Warehouse
             DataSet dataSet = new DataSet();
             DataTable result = null;
 
-            BOA = null;
-            BOA_Orderlist = null;
-            BOA_PO = null;
-            BOA_PO_Size = null;
+            this.BOA = null;
+            this.BOA_Orderlist = null;
+            this.BOA_PO = null;
+            this.BOA_PO_Size = null;
 
             // 整理出#tmp傳進 SQL 使用
             DataTable IssueBreakDown_Dt = new DataTable();
-            //IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "OrderID", DataType = typeof(string) });
+
+            // IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "OrderID", DataType = typeof(string) });
             IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Article", DataType = typeof(string) });
             IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "Qty", DataType = typeof(int) });
 
-            var groupByData = _IssueQtyBreakdownList.GroupBy(o => new { o.Article }).Select(o => new
+            var groupByData = this._IssueQtyBreakdownList.GroupBy(o => new { o.Article }).Select(o => new
             {
                 o.Key.Article,
-                Qty = o.Sum(x => x.Qty)
+                Qty = o.Sum(x => x.Qty),
             }).ToList();
             foreach (var model in groupByData)
             {
                 if (model.Qty > 0)
                 {
                     DataRow newDr = IssueBreakDown_Dt.NewRow();
-                    //newDr["OrderID"] = model.OrderID;
+
+                    // newDr["OrderID"] = model.OrderID;
                     newDr["Article"] = model.Article;
                     newDr["Qty"] = model.Qty;
 
@@ -296,21 +303,26 @@ DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final,#final2,#tmp,#tmp_s
 
             try
             {
-                //SqlConnection conn;
+                // SqlConnection conn;
                 DBProxy.Current.OpenConnection(null, out sqlConnection);
                 var dualResult = MyUtility.Tool.ProcessWithDatatable(IssueBreakDown_Dt, string.Empty, sqlcmd, out result, "#tmp", conn: sqlConnection);
 
-                if (!dualResult) ShowErr(dualResult);
-                if (!dualResult) return;
+                if (!dualResult)
+                {
+                    this.ShowErr(dualResult);
+                }
 
-                BOA_PO = result;
+                if (!dualResult)
+                {
+                    return;
+                }
+
+                this.BOA_PO = result;
                 this.listControlBindingSource1.DataSource = result;
-
             }
             catch (Exception ex)
             {
                 MyUtility.Msg.ErrorBox(ex.GetBaseException().ToString(), "Error");
-
             }
             finally
             {
@@ -318,22 +330,20 @@ DROP TABLE #step1,#step2 ,#SelectList1 ,#SelectList2 ,#final,#final2,#tmp,#tmp_s
                 sqlConnection.Close();
             }
 
-            this.gridAutoPick.DataSource = listControlBindingSource1;
+            this.gridAutoPick.DataSource = this.listControlBindingSource1;
 
             this.gridAutoPick.AutoResizeColumns();
-
-
 
             Ict.Win.DataGridViewGeneratorNumericColumnSettings Qty = new DataGridViewGeneratorNumericColumnSettings();
 
             Qty.CellMouseDoubleClick += (s, e) =>
             {
-                DataTable detail = (DataTable)listControlBindingSource1.DataSource;
+                DataTable detail = (DataTable)this.listControlBindingSource1.DataSource;
                 DataRow currentRow = detail.Rows[e.RowIndex];
 
                 string SCIRefNo = currentRow["SCIRefNo"].ToString();
                 string ColorID = currentRow["ColorID"].ToString();
-                List<string> Articles = _IssueQtyBreakdownList.Where(o => o.Qty > 0).Select(o => o.Article).Distinct().ToList();
+                List<string> Articles = this._IssueQtyBreakdownList.Where(o => o.Qty > 0).Select(o => o.Article).Distinct().ToList();
                 string cmd = $@"
 
 SELECT Article, [Qty]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance *Segment))) 
@@ -358,10 +368,10 @@ GROUP BY Article
 
             #region --設定Grid1的顯示欄位--
 
-            this.gridAutoPick.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridAutoPick.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridAutoPick)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+            this.gridAutoPick.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridAutoPick.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridAutoPick)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                  .Text("SCIRefno", header: "SCIRefno", width: Widths.AnsiChars(25), iseditingreadonly: true)
                  .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("ColorID", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)
@@ -376,7 +386,7 @@ GROUP BY Article
                  .Numeric("Output Qty(Garment)", header: "Output Qty\r\n(Garment)", width: Widths.AnsiChars(6), decimal_places: 0, iseditingreadonly: true)
                  .Text("Bulk Balance(Stock Unit)", header: "Bulk Balance\r\n(Stock Unit)", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  ;
-            gridAutoPick.Columns["Selected"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridAutoPick.Columns["Selected"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
 
         }
@@ -387,8 +397,8 @@ GROUP BY Article
             DataRow dr = target;
             if (tmpDt != null)
             {
-                var Output = "";
-                Decimal SumQTY = 0;
+                var Output = string.Empty;
+                decimal SumQTY = 0;
                 foreach (DataRow dr2 in tmpDt.ToList())
                 {
                     if (Convert.ToDecimal(dr2["qty"]) != 0)
@@ -397,12 +407,19 @@ GROUP BY Article
                         SumQTY += Convert.ToDecimal(dr2["qty"]);
                     }
                 }
+
                 dr["Output"] = Output;
                 dr["qty"] = Math.Round(SumQTY, 2);
             }
-            if (Convert.ToDecimal(dr["qty"]) > 0) dr["Selected"] = 1;
-            else dr["Selected"] = 0;
 
+            if (Convert.ToDecimal(dr["qty"]) > 0)
+            {
+                dr["Selected"] = 1;
+            }
+            else
+            {
+                dr["Selected"] = 0;
+            }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -412,15 +429,16 @@ GROUP BY Article
 
         private void btnPick_Click(object sender, EventArgs e)
         {
-            gridAutoPick.ValidateControl();
-            DataRow[] dr2 = BOA_PO.Select("Selected = 1");
+            this.gridAutoPick.ValidateControl();
+            DataRow[] dr2 = this.BOA_PO.Select("Selected = 1");
             if (dr2.Length == 0)
             {
                 MyUtility.Msg.InfoBox("Please select rows first!", "Warnning");
                 return;
             }
-            importRows = dr2;
-            DialogResult = System.Windows.Forms.DialogResult.OK;
+
+            this.importRows = dr2;
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
         }
 
         public static void ProcessWithDatatable2(DataTable source, string tmp_columns, string sqlcmd, out DataTable[] result, string temptablename = "#tmp")
@@ -435,10 +453,15 @@ GROUP BY Article
             {
                 sb.Append(string.Format("create table #{0} (", temptablename));
             }
+
             string[] cols = tmp_columns.Split(',');
             for (int i = 0; i < cols.Length; i++)
             {
-                if (MyUtility.Check.Empty(cols[i])) continue;
+                if (MyUtility.Check.Empty(cols[i]))
+                {
+                    continue;
+                }
+
                 switch (Type.GetTypeCode(source.Columns[cols[i]].DataType))
                 {
                     case TypeCode.Boolean:
@@ -471,8 +494,13 @@ GROUP BY Article
                     default:
                         break;
                 }
-                if (i < cols.Length - 1) { sb.Append(","); }
+
+                if (i < cols.Length - 1)
+                {
+                    sb.Append(",");
+                }
             }
+
             sb.Append(")");
 
             System.Data.SqlClient.SqlConnection conn;
@@ -481,7 +509,12 @@ GROUP BY Article
             try
             {
                 DualResult result2 = DBProxy.Current.ExecuteByConn(conn, sb.ToString());
-                if (!result2) { MyUtility.Msg.ShowException(null, result2); return; }
+                if (!result2)
+                {
+                    MyUtility.Msg.ShowException(null, result2);
+                    return;
+                }
+
                 using (System.Data.SqlClient.SqlBulkCopy bulkcopy = new System.Data.SqlClient.SqlBulkCopy(conn))
                 {
                     bulkcopy.BulkCopyTimeout = 60;
@@ -498,12 +531,17 @@ GROUP BY Article
                     {
                         bulkcopy.ColumnMappings.Add(cols[i], cols[i]);
                     }
+
                     bulkcopy.WriteToServer(source);
                     bulkcopy.Close();
                 }
-                result2 = DBProxy.Current.SelectByConn(conn, sqlcmd, out result);
-                if (!result2) { MyUtility.Msg.ShowException(null, result2); return; }
 
+                result2 = DBProxy.Current.SelectByConn(conn, sqlcmd, out result);
+                if (!result2)
+                {
+                    MyUtility.Msg.ShowException(null, result2);
+                    return;
+                }
             }
             catch (Exception ex)
             {
@@ -517,7 +555,7 @@ GROUP BY Article
 
         public DataTable getAutoDetailDataTable(int RowIndex)
         {
-            DataTable tmpDt = dictionaryDatas[gridAutoPick.GetDataRow(RowIndex)];
+            DataTable tmpDt = this.dictionaryDatas[this.gridAutoPick.GetDataRow(RowIndex)];
             return tmpDt;
         }
 
@@ -535,32 +573,35 @@ GROUP BY Article
 
         public void dictionaryDatasRejectChanges()
         {
-            var d = dictionaryDatas.AsEnumerable().ToList();
+            var d = this.dictionaryDatas.AsEnumerable().ToList();
             for (int i = 0; i < d.Count; i++)
             {
                 d[i].Value.RejectChanges();
             }
+
             return;
             ////批次RejectChanges
-            //foreach (KeyValuePair<DataRow, DataTable> item in dictionaryDatas)
-            //{
+            // foreach (KeyValuePair<DataRow, DataTable> item in dictionaryDatas)
+            // {
             //    item.Value.RejectChanges();
-            //}
+            // }
         }
 
         public void dictionaryDatasAcceptChanges()
         {
-            //批次RejectChanges
-            var d = dictionaryDatas.AsEnumerable().ToList();
+            // 批次RejectChanges
+            var d = this.dictionaryDatas.AsEnumerable().ToList();
             for (int i = 0; i < d.Count; i++)
             {
                 d[i].Value.AcceptChanges();
             }
+
             return;
-            //foreach (KeyValuePair<DataRow, DataTable> item in dictionaryDatas)
-            //{
+
+            // foreach (KeyValuePair<DataRow, DataTable> item in dictionaryDatas)
+            // {
             //    item.Value.AcceptChanges();
-            //}
+            // }
         }
     }
 }

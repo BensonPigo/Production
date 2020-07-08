@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 using Ict;
 
@@ -15,18 +9,20 @@ namespace Sci.Production.Warehouse
     public partial class P03_InventoryStatus : Sci.Win.Subs.Base
     {
         DataRow dr;
+
         public P03_InventoryStatus(DataRow data)
         {
-            InitializeComponent();
-            dr = data;
-            this.Text += " ("+dr["id"].ToString() + "-" + dr["seq1"].ToString() + "-" + dr["seq2"].ToString()+")";
+            this.InitializeComponent();
+            this.dr = data;
+            this.Text += " (" + this.dr["id"].ToString() + "-" + this.dr["seq1"].ToString() + "-" + this.dr["seq2"].ToString() + ")";
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             string selectCommand1
-                = string.Format(@"with tmp
+                = string.Format(
+                    @"with tmp
 as
 (select b.Roll,b.Dyelot,sum(b.StockQty) Receiving,0 A2B,0 C2B,0 TransIn,0 BackIn,0 ReturnIn,0 B2A,0 B2C,0 TransOut,0 BorrowOut,0 Adjust
 from Receiving a WITH (NOLOCK) inner join Receiving_Detail b WITH (NOLOCK) on a.Id= b.id
@@ -127,20 +123,23 @@ group by tmp.roll,tmp.Dyelot
 union all
 select '','Total',sum(tmp.Receiving) Receiving,sum(tmp.A2B) A2B,sum(tmp.C2B) C2B,sum(tmp.TransIn) TransIn,sum(tmp.BackIn) BackIn
 ,sum(tmp.ReturnIn) ReturnIn,sum(tmp.B2A) B2A,sum(tmp.B2C) B2C,sum(tmp.TransOut) TransOut,sum(tmp.BorrowOut) BorrowOut,sum(tmp.Adjust) Adjust,''
-from TMP"
-                , dr["id"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString());
+from TMP",
+                    this.dr["id"].ToString(), this.dr["seq1"].ToString(), this.dr["seq2"].ToString());
             DataTable selectDataTable1;
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
-            if (selectResult1 == false) ShowErr(selectCommand1, selectResult1);
+            if (selectResult1 == false)
+            {
+                this.ShowErr(selectCommand1, selectResult1);
+            }
             else
             {
-                bindingSource1.DataSource = selectDataTable1;
+                this.bindingSource1.DataSource = selectDataTable1;
             }
 
-            //設定Grid1的顯示欄位
+            // 設定Grid1的顯示欄位
             this.gridInventoryStatus.IsEditingReadOnly = true;
-            this.gridInventoryStatus.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.gridInventoryStatus)
+            this.gridInventoryStatus.DataSource = this.bindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridInventoryStatus)
                  .Text("roll", header: "Roll#", width: Widths.AnsiChars(8))
                  .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8))
                  .Numeric("receiving", header: "Rcv.", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
@@ -157,7 +156,7 @@ from TMP"
                  .Text("Location", header: "Location", width: Widths.AnsiChars(8))
                  ;
 
-            gridInventoryStatus.Columns[1].Frozen = true;  //Fabric Type
+            this.gridInventoryStatus.Columns[1].Frozen = true;  // Fabric Type
         }
 
         private void btnClose_Click(object sender, EventArgs e)

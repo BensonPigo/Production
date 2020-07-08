@@ -3,15 +3,10 @@ using Ict.Win;
 using Sci.Production.Class;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Sci.Win;
 using Sci.Data;
 using System.Transactions;
-using Sci.Win.Tools;
 
 namespace Sci.Production.Cutting
 {
@@ -19,21 +14,23 @@ namespace Sci.Production.Cutting
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
-        DataTable gridTable, detailTable;
+        DataTable gridTable;
+        DataTable detailTable;
+
         public P04_Import()
         {
-            InitializeComponent();
-            txtCutCell.MDivisionID = keyWord;
-
+            this.InitializeComponent();
+            this.txtCutCell.MDivisionID = this.keyWord;
         }
+
         protected override void OnFormLoaded()
         {
-            DBProxy.Current.Select(null, "Select 0 as Sel, '' as poid,'' as cuttingid,'' as brandid,'' as styleid,'' as cutcellid,'' as cutref ,'' as SpreadingNoID from cutplan where 1=0", out gridTable);
+            DBProxy.Current.Select(null, "Select 0 as Sel, '' as poid,'' as cuttingid,'' as brandid,'' as styleid,'' as cutcellid,'' as cutref ,'' as SpreadingNoID from cutplan where 1=0", out this.gridTable);
             base.OnFormLoaded();
-            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridImport.DataSource = gridTable;
-            Helper.Controls.Grid.Generator(this.gridImport)
-            .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+            this.gridImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = this.gridTable;
+            this.Helper.Controls.Grid.Generator(this.gridImport)
+            .CheckBox("Sel", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("POID", header: "PO#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Cuttingid", header: "Cutting SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Brandid", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -43,10 +40,10 @@ namespace Sci.Production.Cutting
             .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(40), iseditingreadonly: true);
             this.gridImport.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
 
-            //預設MDivision = 使用者登入的 MDivision
+            // 預設MDivision = 使用者登入的 MDivision
             this.txtSpreadingNo.MDivision = Sci.Env.User.Keyword;
-
         }
+
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -54,16 +51,17 @@ namespace Sci.Production.Cutting
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(dateEstCutDate.Value))
+            if (MyUtility.Check.Empty(this.dateEstCutDate.Value))
             {
                 MyUtility.Msg.WarningBox("<Est. Cut Date> can not be empty.");
                 return;
             }
-            gridTable.Rows.Clear();  //開始查詢前先清空資料
-            string factory = txtfactory.Text;
-            string estcutdate = dateEstCutDate.Text;
-            string cutcellid = txtCutCell.Text;
-            string spreadingNo = txtSpreadingNo.Text;
+
+            this.gridTable.Rows.Clear();  // 開始查詢前先清空資料
+            string factory = this.txtfactory.Text;
+            string estcutdate = this.dateEstCutDate.Text;
+            string cutcellid = this.txtCutCell.Text;
+            string spreadingNo = this.txtSpreadingNo.Text;
             string sqlcmd = $@"Select 
 a.*
 ,'' as orderid_b
@@ -75,28 +73,31 @@ from Workorder a
 where (cutplanid='' or cutplanid is null) 
 and cutcellid!='' 
 and a.CutRef != ''  
-and mDivisionid ='{keyWord}' 
+and mDivisionid ='{this.keyWord}' 
 and estcutdate = '{estcutdate}'";
 
             if (!MyUtility.Check.Empty(cutcellid))
             {
                 sqlcmd = sqlcmd + string.Format(" and cutcellid = '{0}'", cutcellid);
             }
+
             if (!MyUtility.Check.Empty(factory))
             {
                 sqlcmd = sqlcmd + string.Format(" and a.factoryid = '{0}'", factory);
             }
+
             if (!MyUtility.Check.Empty(spreadingNo))
             {
                 sqlcmd = sqlcmd + string.Format(" and a.spreadingNoID = '{0}'", spreadingNo);
             }
+
             DataRow queryRow, ordersRow;
-            DualResult dResult = DBProxy.Current.Select(null, sqlcmd, out detailTable);
+            DualResult dResult = DBProxy.Current.Select(null, sqlcmd, out this.detailTable);
             if (dResult)
             {
-                if (detailTable.Rows.Count != 0)
+                if (this.detailTable.Rows.Count != 0)
                 {
-                    foreach (DataRow dr in detailTable.Rows)
+                    foreach (DataRow dr in this.detailTable.Rows)
                     {
                         if (MyUtility.Check.Seek(string.Format("Select top(1) * from WorkOrder_Distribute where workorderukey='{0}' and orderid !='' and orderid !='Excess'", dr["Ukey"]), null, out queryRow))
                         {
@@ -104,24 +105,26 @@ and estcutdate = '{estcutdate}'";
                             dr["article_b"] = queryRow["article"];
                             dr["sizecode"] = queryRow["sizecode"];
                         }
+
                         string line = MyUtility.GetValue.Lookup(string.Format("Select SewingLineid from Sewingschedule_Detail Where Orderid = '{0}' and article ='{1}' and sizecode = '{2}'", dr["orderid_b"], dr["article_b"], dr["sizecode"]), null);
                         if (MyUtility.Check.Empty(line))
                         {
                             line = MyUtility.GetValue.Lookup(string.Format("Select SewingLineid from Sewingschedule_Detail Where Orderid = '{0}' ", dr["orderid_b"]), null);
                         }
+
                         dr["Sewinglineid"] = line;
 
-                        //SpreadingNoID可能是DBNULL或空字串，對User來說都一樣，因此放進OR
+                        // SpreadingNoID可能是DBNULL或空字串，對User來說都一樣，因此放進OR
                         string selwhere = $@"
 cuttingid = '{dr["id"]}' 
 and cutcellid ='{dr["cutcellid"]}' 
 and (SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR SpreadingNoID = '' " : "='" + dr["SpreadingNoID"].ToString() + "'")})
 ";
-                        DataRow[] griddray = gridTable.Select(selwhere);
+                        DataRow[] griddray = this.gridTable.Select(selwhere);
 
                         if (griddray.Length == 0)
                         {
-                            DataRow newdr = gridTable.NewRow();
+                            DataRow newdr = this.gridTable.NewRow();
                             newdr["sel"] = 1;
                             MyUtility.Check.Seek(string.Format("Select * from orders where id='{0}'", dr["ID"]), out ordersRow);
                             newdr["POID"] = ordersRow["poid"];
@@ -131,7 +134,7 @@ and (SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR Sp
                             newdr["SpreadingNoID"] = dr["SpreadingNoID"];
                             newdr["Cutcellid"] = dr["cutcellid"];
                             newdr["cutref"] = dr["cutref"];
-                            gridTable.Rows.Add(newdr);
+                            this.gridTable.Rows.Add(newdr);
                         }
                         else
                         {
@@ -143,22 +146,27 @@ and (SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR Sp
                 {
                     MyUtility.Msg.WarningBox("Data not found!!");
                 }
-
             }
             else
             {
-                ShowErr(sqlcmd, dResult);
+                this.ShowErr(sqlcmd, dResult);
                 return;
             }
         }
-        public List<String> importedIDs = new List<string>();
+
+        public List<string> importedIDs = new List<string>();
+
         private void btnImport_Click(object sender, EventArgs e)
         {
-            if (gridTable.Rows.Count == 0) return;
-            importedIDs.Clear();
+            if (this.gridTable.Rows.Count == 0)
+            {
+                return;
+            }
+
+            this.importedIDs.Clear();
             DataRow[] importay;
 
-            string id = MyUtility.GetValue.GetID(keyWord + "CP", "Cutplan");
+            string id = MyUtility.GetValue.GetID(this.keyWord + "CP", "Cutplan");
             int idnum = MyUtility.Convert.GetInt(id.Substring(id.Length - 4));
 
             string iu = string.Empty;
@@ -166,21 +174,22 @@ and (SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR Sp
             {
                 string remark;
                 DataTable cutplan_DetailTb;
-                foreach (DataRow dr in gridTable.Rows)
+                foreach (DataRow dr in this.gridTable.Rows)
                 {
-                    remark = "";
+                    remark = string.Empty;
                     if (dr["sel"].ToString() == "1")
                     {
                         if (!string.IsNullOrWhiteSpace(id))
                         {
-                            iu += string.Format(@"
+                            iu += string.Format(
+                                @"
 insert into Cutplan(id,cuttingid,mDivisionid,CutCellid,EstCutDate,Status,AddName,AddDate,POID,SpreadingNoID) Values('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GetDate(),'{7}','{8}');
-", id, dr["CuttingID"], keyWord, dr["cutcellid"], dateEstCutDate.Text, "New", loginID, dr["POId"], dr["SpreadingNoID"]);
-                            importay = detailTable.Select($@"id = '{dr["CuttingID"]}' 
+", id, dr["CuttingID"], this.keyWord, dr["cutcellid"], this.dateEstCutDate.Text, "New", this.loginID, dr["POId"], dr["SpreadingNoID"]);
+                            importay = this.detailTable.Select($@"id = '{dr["CuttingID"]}' 
 and cutcellid = '{dr["cutcellid"]}' 
 and (SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR SpreadingNoID = '' " : "='" + dr["SpreadingNoID"].ToString() + "'")})");
-                                                                
-                            importedIDs.Add(id);
+
+                            this.importedIDs.Add(id);
                             if (importay.Length > 0)
                             {
                                 foreach (DataRow ddr in importay)
@@ -188,31 +197,33 @@ and (SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR Sp
                                     DualResult Result = DBProxy.Current.Select(null, string.Format("Select * from WorkOrder_Distribute Where workorderukey = '{0}'", ddr["Ukey"]), out cutplan_DetailTb);
                                     if (!Result)
                                     {
-                                        ShowErr(Result);
+                                        this.ShowErr(Result);
                                         return;
                                     }
 
                                     if (cutplan_DetailTb != null)
                                     {
-                                        remark = string.Empty;  //組remark前先清空 
+                                        remark = string.Empty;  // 組remark前先清空
                                         foreach (DataRow cdr in cutplan_DetailTb.Rows)
                                         {
                                             remark = remark + cdr["Orderid"].ToString().Trim() + "\\" + cdr["Article"].ToString().Trim() + "\\" + cdr["SizeCode"].ToString().Trim() + "\\" + cdr["Qty"].ToString() + ",";
                                         }
                                     }
 
-                                    iu = iu + string.Format(@"
+                                    iu = iu + string.Format(
+                                        @"
 insert into Cutplan_Detail(ID,Sewinglineid,cutref,cutno,orderid,styleid,colorid,cons,WorkOrderUkey,POID,Remark) values('{0}','{1}','{2}',{3},'{4}','{5}','{6}',{7},'{8}','{9}','{10}');
 ", id, ddr["Sewinglineid"], ddr["Cutref"], ddr["Cutno"], ddr["OrderID"], dr["styleid"], ddr["Colorid"], ddr["Cons"], ddr["Ukey"], dr["POID"], remark);
-
                                 }
 
-                                //265: CUTTING_P04_Import_Import From Work Order，將id回寫至Workorder.CutplanID
-                                iu += string.Format(@"
+                                // 265: CUTTING_P04_Import_Import From Work Order，將id回寫至Workorder.CutplanID
+                                iu += string.Format(
+                                    @"
 update Workorder set CutplanID = '{0}' 
 where (cutplanid='' or cutplanid is null) and id='{1}' and cutcellid='{2}' and mDivisionid ='{3}' and estcutdate = '{4}' and isnull(SpreadingNoID,'') = '{5}' ;
-", id, dr["CuttingID"], dr["cutcellid"], keyWord, dateEstCutDate.Text, dr["SpreadingNoID"]);
+", id, dr["CuttingID"], dr["cutcellid"], this.keyWord, this.dateEstCutDate.Text, dr["SpreadingNoID"]);
                             }
+
                             idnum++;
                             id = id.Substring(0, id.Length - 4) + idnum.ToString().PadLeft(4, '0');
                         }
@@ -221,8 +232,8 @@ where (cutplanid='' or cutplanid is null) and id='{1}' and cutcellid='{2}' and m
             }
             catch (Exception ex)
             {
-                ShowErr(ex);
-                importedIDs.Clear();
+                this.ShowErr(ex);
+                this.importedIDs.Clear();
                 return;
             }
 

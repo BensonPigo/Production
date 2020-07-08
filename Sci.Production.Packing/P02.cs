@@ -1666,8 +1666,8 @@ IF @@ERROR <> 0
 	ROLLBACK TRANSACTION
 ELSE
 	COMMIT TRANSACTION",
-        this.CurrentMaintain["ID"].ToString(),
-        Sci.Env.User.UserID);
+                        this.CurrentMaintain["ID"].ToString(),
+                        Sci.Env.User.UserID);
                     #endregion
                 }
                 else
@@ -2254,8 +2254,8 @@ IF @@ERROR <> 0
 	ROLLBACK TRANSACTION
 ELSE
 	COMMIT TRANSACTION",
-        this.CurrentMaintain["ID"].ToString(),
-        Sci.Env.User.UserID);
+                        this.CurrentMaintain["ID"].ToString(),
+                        Sci.Env.User.UserID);
                     #endregion
                 }
                 else

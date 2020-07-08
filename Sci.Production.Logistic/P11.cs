@@ -1,16 +1,10 @@
 ﻿using Ict;
 using Sci.Production.PublicPrg;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
-using Sci.Win.Tems;
 using Ict.Win;
 using Sci.Data;
 using System.IO;
@@ -328,7 +322,6 @@ where exists (select 1 from ClogGarmentDispose_Detail t where t.ID = '{this.Curr
 
         private void btnDownloadExcel_Click(object sender, EventArgs e)
         {
-
             // 呼叫執行檔絕對路徑
             DirectoryInfo dir = new DirectoryInfo(System.Windows.Forms.Application.StartupPath);
 

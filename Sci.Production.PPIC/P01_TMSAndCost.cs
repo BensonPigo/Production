@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Data;
 using Ict.Win;
 using Ict;
 using Sci.Data;
@@ -99,7 +93,7 @@ and ot.ID = '{0}'", this.KeyValue1);
             sqlCmd = string.Format(
                 @"select a.* from (
 select a.ID,a.Classify,a.Seq,a.ArtworkUnit,a.IsTMS,a.IsPrice,a.IsTtlTMS,isnull(ot.ID,'') as OrderID
-from ArtworkType a WITH (NOLOCK) 
+from ArtworkType a WITH (NOLOCK)
 left join Order_TmsCost ot WITH (NOLOCK) on a.ID = ot.ArtworkTypeID and ot.ID = '{0}'
 where a.SystemType = 'T' and a.Junk = 0) a
 where a.OrderID = ''", this.KeyValue1);
@@ -132,7 +126,7 @@ where a.OrderID = ''", this.KeyValue1);
                 datas.Rows.Add(newdr);
             }
             #endregion
-            */        
+            */
 
             datas.DefaultView.Sort = "Seq";
         }

@@ -2,13 +2,9 @@
 using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -19,6 +15,7 @@ namespace Sci.Production.Warehouse
         private string poID;
         private DataTable dtScrapHistory;
         private DataTable dtBulk;
+
         public P01_ReTransferMtlToScrap(string poID)
         {
             this.InitializeComponent();
@@ -32,7 +29,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
 
-            Helper.Controls.Grid.Generator(this.gridScrapHistory)
+            this.Helper.Controls.Grid.Generator(this.gridScrapHistory)
            .Text("fabrictype", header: "Type", iseditingreadonly: true, width: Widths.AnsiChars(8))
            .Text("FromSeq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
            .Text("FromSeq2", header: "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
@@ -43,7 +40,7 @@ namespace Sci.Production.Warehouse
            .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)
            ;
 
-            Helper.Controls.Grid.Generator(this.gridBulk)
+            this.Helper.Controls.Grid.Generator(this.gridBulk)
             .CheckBox("select", trueValue: 1, falseValue: 0, iseditable: true)
             .Text("fabrictype", header: "Type", iseditingreadonly: true, width: Widths.AnsiChars(8))
             .Text("Seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
@@ -56,7 +53,7 @@ namespace Sci.Production.Warehouse
             .Text("Lock", header: "Lock", width: Widths.AnsiChars(5), iseditingreadonly: true)
             ;
 
-            Query();
+            this.Query();
         }
 
         private void Query()
@@ -160,13 +157,14 @@ and o.MDivisionID='{Env.User.Keyword}' and f.POID = '{this.poID}'
 
             using (TransactionScope transactionScope = new TransactionScope())
             {
-                DualResult result = PublicPrg.Prgs.ReTransferMtlToScrapByPO(poID, selectedBulk);
+                DualResult result = PublicPrg.Prgs.ReTransferMtlToScrapByPO(this.poID, selectedBulk);
                 if (!result)
                 {
                     transactionScope.Dispose();
                     this.ShowErr(result);
                     return;
                 }
+
                 transactionScope.Complete();
             }
 

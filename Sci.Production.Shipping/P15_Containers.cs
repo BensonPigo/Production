@@ -3,7 +3,6 @@ using Ict.Win;
 using Sci.Data;
 using System;
 using System.Data;
-using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {

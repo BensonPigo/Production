@@ -1,14 +1,10 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -17,24 +13,26 @@ namespace Sci.Production.Subcon
     public partial class B01_BatchApprove : Sci.Win.Forms.Base
     {
         Action aa;
+
         public B01_BatchApprove(Action aa)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.EditMode = true;
             this.aa = aa;
         }
 
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk2 = new Ict.Win.UI.DataGridViewCheckBoxColumn();
-        DataTable master, detail;
+        DataTable master;
+        DataTable detail;
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
             this.grid1.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(this.grid1)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out col_chk)
+            this.Helper.Controls.Grid.Generator(this.grid1)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out this.col_chk)
                 .Text("Category", header: "Category", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Description", header: "Description", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -48,9 +46,9 @@ namespace Sci.Production.Subcon
                 .Text("NewCurrency", header: "New Currency", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Numeric("NewPrice", header: "New Price", width: Widths.AnsiChars(6), decimal_places: 4, iseditingreadonly: true)
                 ;
-            
-            Helper.Controls.Grid.Generator(this.grid2)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out col_chk2)
+
+            this.Helper.Controls.Grid.Generator(this.grid2)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out this.col_chk2)
                 .Text("LocalSuppID", header: "Supp", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SuppAbb", header: "Supp Abb", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -69,17 +67,19 @@ namespace Sci.Production.Subcon
             {
                 this.grid2.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
-            query();
+
+            this.query();
             this.listControlBindingSource1.Filter = "IsApproved='N'";
         }
-        
-        public string sqlcmd(string Refno = "",string ukey = "")
+
+        public string sqlcmd(string Refno = "", string ukey = "")
         {
             string wheresql = string.Empty;
             if (!MyUtility.Check.Empty(Refno))
             {
                 wheresql = $" and l.RefNo = '{Refno}'";
             }
+
             if (!MyUtility.Check.Empty(ukey))
             {
                 wheresql = $" and lq.ukey = '{ukey}'";
@@ -135,7 +135,7 @@ left join LocalSupp lsn on l.NewSupp = lsn.ID
             this.master = null;
             this.detail = null;
             #region
-            string sqlCmd = sqlcmd() +
+            string sqlCmd = this.sqlcmd() +
                 $@"
 select	lq.RefNo
 		, lq.IssueDate
@@ -215,31 +215,32 @@ order by Ukey, seq
 drop table #bas
 ";
             #endregion
-            if (!SQL.Selects("", sqlCmd, out datas))
+            if (!SQL.Selects(string.Empty, sqlCmd, out datas))
             {
                 MyUtility.Msg.WarningBox(sqlCmd, "DB error!!");
                 return;
             }
 
-            if (listControlBindingSource1.DataSource != null)
+            if (this.listControlBindingSource1.DataSource != null)
             {
-                listControlBindingSource1.DataSource = null;
-            }
-            if (listControlBindingSource2.DataSource != null)
-            {
-                listControlBindingSource2.DataSource = null;
+                this.listControlBindingSource1.DataSource = null;
             }
 
-            //var query = from t in datas.Tables[0].AsEnumerable()
+            if (this.listControlBindingSource2.DataSource != null)
+            {
+                this.listControlBindingSource2.DataSource = null;
+            }
+
+            // var query = from t in datas.Tables[0].AsEnumerable()
             //            group t by new { t1 = MyUtility.Convert.GetString(t["Refno"]) } into m
             //            select new
             //            {
             //                refno = m.Key.t1,
             //                ct = m.Count()
             //            };
-            //List<string> msg = new List<string>();
-            //if (query.ToList().Count > 0)
-            //{
+            // List<string> msg = new List<string>();
+            // if (query.ToList().Count > 0)
+            // {
             //    query.ToList().ForEach(q =>
             //    {
             //        if (q.ct > 1)
@@ -250,13 +251,13 @@ drop table #bas
             //                item.Delete();
             //            }
 
-            //            foreach (var item in datas.Tables[1].Select($"Refno = '{q.refno}'"))
+            // foreach (var item in datas.Tables[1].Select($"Refno = '{q.refno}'"))
             //            {
             //                item.Delete();
             //            }
             //        }
             //    });
-            //}
+            // }
             datas.Tables[0].AcceptChanges();
             datas.Tables[1].AcceptChanges();
 
@@ -265,36 +266,35 @@ drop table #bas
                 return;
             }
 
-            master = datas.Tables[0];
-            master.TableName = "Master";
+            this.master = datas.Tables[0];
+            this.master.TableName = "Master";
 
-            detail = datas.Tables[1];
-            detail.TableName = "Detail";
+            this.detail = datas.Tables[1];
+            this.detail.TableName = "Detail";
 
-            //DataRelation relation = new DataRelation("rel1"
+            // DataRelation relation = new DataRelation("rel1"
             //        , new DataColumn[] { master.Columns["Refno"] }
             //        , new DataColumn[] { detail.Columns["Refno"] }
             //        );
-            DataRelation relation = new DataRelation("rel1"
-                 , new DataColumn[] { master.Columns["Ukey"] }
-                 , new DataColumn[] { detail.Columns["Ukey"] }
-                 );
-
+            DataRelation relation = new DataRelation(
+                "rel1",
+                new DataColumn[] { this.master.Columns["Ukey"] },
+                new DataColumn[] { this.detail.Columns["Ukey"] });
 
             datas.Relations.Add(relation);
 
-            listControlBindingSource1.DataSource = datas;
-            listControlBindingSource1.DataMember = "Master";
-            listControlBindingSource2.DataSource = listControlBindingSource1;
-            listControlBindingSource2.DataMember = "rel1";
+            this.listControlBindingSource1.DataSource = datas;
+            this.listControlBindingSource1.DataMember = "Master";
+            this.listControlBindingSource2.DataSource = this.listControlBindingSource1;
+            this.listControlBindingSource2.DataMember = "rel1";
             this.grid1.AutoResizeColumns();
             this.grid1.Columns["Description"].Width = 100;
-            //            if (msg.Count > 0)
+
+            // if (msg.Count > 0)
             //            {
             //                MyUtility.Msg.WarningBox($@"Refno have more than one new quotation, please handle those individually.
-            //Refno {string.Join(",", msg)} ");
+            // Refno {string.Join(",", msg)} ");
             //            }
-
             for (int i = 0; i < this.grid1.Rows.Count; i++)
             {
                 if (this.grid1.Rows[i].Cells["IsApproved"].Value.ToString() == "Y")
@@ -302,12 +302,11 @@ drop table #bas
                     this.grid1.Rows[i].DefaultCellStyle.BackColor = Color.LightGray;
                 }
             }
-
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            query();
+            this.query();
         }
 
         private void btnconfirm_Click(object sender, EventArgs e)
@@ -316,13 +315,15 @@ drop table #bas
             {
                 return;
             }
+
             this.grid1.ValidateControl();
-            if (master.Select("Selected = 1 AND IsApproved='N'").Length == 0)
+            if (this.master.Select("Selected = 1 AND IsApproved='N'").Length == 0)
             {
                 MyUtility.Msg.WarningBox("Must select datas!");
                 return;
             }
-            DataTable selectdt = master.Select("Selected = 1 AND IsApproved='N'").CopyToDataTable();
+
+            DataTable selectdt = this.master.Select("Selected = 1 AND IsApproved='N'").CopyToDataTable();
 
             List<string> chkmsg = new List<string>();
             foreach (DataRow drow in selectdt.Rows)
@@ -340,8 +341,8 @@ drop table #bas
                 return;
             }
 
-            confirm(selectdt);
-            query();
+            this.confirm(selectdt);
+            this.query();
 
             this.aa();
         }
@@ -485,6 +486,5 @@ when matched then update set
                 }
             }
         }
-
     }
 }

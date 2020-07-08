@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
-using Ict.Win;
-using Sci;
 using Sci.Data;
 using System.Data.SqlClient;
 using Sci.Production.PublicPrg;
@@ -19,27 +14,27 @@ namespace Sci.Production.Warehouse
         public B02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable combos = new DataTable();
             combos.ColumnsStringAdd("Key");
             combos.ColumnsStringAdd("Value");
             combos.Rows.Add(new object[] { "I", "Inventory" });
             combos.Rows.Add(new object[] { "B", "Bulk" });
             combos.Rows.Add(new object[] { "O", "Scrap" });
-            //Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
-            //comboBox1_RowSource.Add("I", "Inventory");
-            //comboBox1_RowSource.Add("B", "Bulk");
-            comboStockType.DataSource = combos;//new BindingSource(comboBox1_RowSource, null);
-            comboStockType.ValueMember = "Key";
-            comboStockType.DisplayMember = "Value";
 
+            // Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
+            // comboBox1_RowSource.Add("I", "Inventory");
+            // comboBox1_RowSource.Add("B", "Bulk");
+            this.comboStockType.DataSource = combos; // new BindingSource(comboBox1_RowSource, null);
+            this.comboStockType.ValueMember = "Key";
+            this.comboStockType.DisplayMember = "Value";
 
             // 有新增權限的人才可以按這顆按鈕
             bool canNew = Prgs.GetAuthority(Sci.Env.User.UserID, "B02. Material Location Index", "CanNew");
             this.btnBatchCreate.Enabled = canNew;
         }
 
-        //編輯狀態限制
+        // 編輯狀態限制
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
@@ -54,45 +49,46 @@ namespace Sci.Production.Warehouse
             this.btnBatchCreate.Enabled = !this.EditMode;
         }
 
-        //存檔前檢查
+        // 存檔前檢查
         protected override bool ClickSaveBefore()
         {
-            if (CurrentMaintain["ID"].ToString().IndexOfAny(new char[] {','}, 0) > -1)
+            if (this.CurrentMaintain["ID"].ToString().IndexOfAny(new char[] { ','}, 0) > -1)
             {
                 MyUtility.Msg.WarningBox("< Code > can not have ',' !");
                 this.txtCode.Focus();
                 return false;
             }
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
+
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["ID"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Code > can not be empty!");
                 this.txtCode.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["Stocktype"].ToString()))
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["Stocktype"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Stock Type > can not be empty!");
                 this.comboStockType.Focus();
                 return false;
             }
 
-            if (IsDetailInserting)
+            if (this.IsDetailInserting)
             {
-                if (!checkCode())
+                if (!this.checkCode())
                 {
                     return false;
                 }
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["Description"].ToString()))
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["Description"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Description > can not be empty!");
                 this.txtDescription.Focus();
                 return false;
             }
 
-            CurrentMaintain["ID"] = CurrentMaintain["ID"].ToString().Trim();
+            this.CurrentMaintain["ID"] = this.CurrentMaintain["ID"].ToString().Trim();
             return base.ClickSaveBefore();
         }
 
@@ -104,8 +100,8 @@ namespace Sci.Production.Warehouse
                                 where   mtl.ID = @ID
                                         and mtl.StockType = @StockType";
             List<SqlParameter> listPar = new List<SqlParameter>();
-            listPar.Add(new SqlParameter("@ID", CurrentMaintain["ID"].ToString()));
-            listPar.Add(new SqlParameter("@StockType", CurrentMaintain["Stocktype"].ToString()));
+            listPar.Add(new SqlParameter("@ID", this.CurrentMaintain["ID"].ToString()));
+            listPar.Add(new SqlParameter("@StockType", this.CurrentMaintain["Stocktype"].ToString()));
 
             DataTable dt;
             DualResult result;
@@ -116,9 +112,10 @@ namespace Sci.Production.Warehouse
             }
             else if (dt != null && dt.Rows.Count > 0)
             {
-                MyUtility.Msg.InfoBox(string.Format("This <code> is areadly in {0}", comboStockType.Text.ToString()));
+                MyUtility.Msg.InfoBox(string.Format("This <code> is areadly in {0}", this.comboStockType.Text.ToString()));
                 check = false;
             }
+
             return check;
         }
 
@@ -126,7 +123,7 @@ namespace Sci.Production.Warehouse
         {
             B02_BatchCreate form = new B02_BatchCreate();
             form.ShowDialog();
-            ReloadDatas();
+            this.ReloadDatas();
         }
     }
 }

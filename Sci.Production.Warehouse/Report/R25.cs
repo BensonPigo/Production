@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using System.Data.SqlClient;
 using Ict;
 using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
-using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
@@ -36,7 +31,7 @@ namespace Sci.Production.Warehouse
         public R25(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.comboMDivision1.setDefalutIndex(true);
         }
 
@@ -46,7 +41,11 @@ namespace Sci.Production.Warehouse
             Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlWhere, "Factory", "10", this.txtfactory.Text, null, null, null);
 
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) return;
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.txtfactory.Text = item.GetSelectedString();
         }
 
@@ -56,8 +55,9 @@ namespace Sci.Production.Warehouse
             {
                 return;
             }
+
             string[] str_multi = this.txtfactory.Text.Split(',');
-            string err_factory = "";
+            string err_factory = string.Empty;
             foreach (string chk_str in str_multi)
             {
                 if (MyUtility.Check.Seek(chk_str, "Factory", "ID", "Production") == false)
@@ -66,9 +66,9 @@ namespace Sci.Production.Warehouse
                 }
             }
 
-            if (!err_factory.Equals(""))
+            if (!err_factory.Equals(string.Empty))
             {
-                this.txtfactory.Text = "";
+                this.txtfactory.Text = string.Empty;
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox(string.Format("< Factory : {0} > not found!!!", err_factory.Substring(1)));
                 return;
@@ -77,68 +77,67 @@ namespace Sci.Production.Warehouse
 
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(datekPIETA.Value1) &&
-                MyUtility.Check.Empty(dateWhseArrival.Value1) &&
-                MyUtility.Check.Empty(dateETA.Value1) &&
-                (MyUtility.Check.Empty(txtWK1.Text) && MyUtility.Check.Empty(txtWK2.Text)) &&
-                (MyUtility.Check.Empty(txtSP1.Text) && MyUtility.Check.Empty(txtSP2.Text))
-                )
+            if (MyUtility.Check.Empty(this.datekPIETA.Value1) &&
+                MyUtility.Check.Empty(this.dateWhseArrival.Value1) &&
+                MyUtility.Check.Empty(this.dateETA.Value1) &&
+                (MyUtility.Check.Empty(this.txtWK1.Text) && MyUtility.Check.Empty(this.txtWK2.Text)) &&
+                (MyUtility.Check.Empty(this.txtSP1.Text) && MyUtility.Check.Empty(this.txtSP2.Text)))
             {
                 MyUtility.Msg.WarningBox("KPI L/ETA, Arrive W/H, ETA, WK#, SP# can not all empty!");
                 return false;
             }
-            if (!MyUtility.Check.Empty(datekPIETA.Value1))
+
+            if (!MyUtility.Check.Empty(this.datekPIETA.Value1))
             {
-                KPIETA1 = ((DateTime)datekPIETA.Value1).ToString("d");
-                KPIETA2 = ((DateTime)datekPIETA.Value2).ToString("d");
+                this.KPIETA1 = ((DateTime)this.datekPIETA.Value1).ToString("d");
+                this.KPIETA2 = ((DateTime)this.datekPIETA.Value2).ToString("d");
             }
             else
             {
-                KPIETA1 = string.Empty;
-                KPIETA2 = string.Empty;
+                this.KPIETA1 = string.Empty;
+                this.KPIETA2 = string.Empty;
             }
 
-            if (!MyUtility.Check.Empty(dateWhseArrival.Value1))
+            if (!MyUtility.Check.Empty(this.dateWhseArrival.Value1))
             {
-                WhseArrival1 = ((DateTime)dateWhseArrival.Value1).ToString("d");
-                WhseArrival2 = ((DateTime)dateWhseArrival.Value2).ToString("d");
+                this.WhseArrival1 = ((DateTime)this.dateWhseArrival.Value1).ToString("d");
+                this.WhseArrival2 = ((DateTime)this.dateWhseArrival.Value2).ToString("d");
             }
             else
             {
-                WhseArrival1 = string.Empty;
-                WhseArrival2 = string.Empty;
+                this.WhseArrival1 = string.Empty;
+                this.WhseArrival2 = string.Empty;
             }
 
-            if (!MyUtility.Check.Empty(dateETA.Value1))
+            if (!MyUtility.Check.Empty(this.dateETA.Value1))
             {
-                ETA1 = ((DateTime)dateETA.Value1).ToString("d");
-                ETA2 = ((DateTime)dateETA.Value2).ToString("d");
+                this.ETA1 = ((DateTime)this.dateETA.Value1).ToString("d");
+                this.ETA2 = ((DateTime)this.dateETA.Value2).ToString("d");
             }
             else
             {
-                ETA1 = string.Empty;
-                ETA2 = string.Empty;
+                this.ETA1 = string.Empty;
+                this.ETA2 = string.Empty;
             }
 
-            WK1 = txtWK1.Text;
-            WK2 = txtWK2.Text;
-            SP1 = txtSP1.Text;
-            SP2 = txtSP2.Text;
-            Brand = txtbrand1.Text;
-            Supplier = txtsupplier1.TextBox1.Text;
-            M = comboMDivision1.Text;
+            this.WK1 = this.txtWK1.Text;
+            this.WK2 = this.txtWK2.Text;
+            this.SP1 = this.txtSP1.Text;
+            this.SP2 = this.txtSP2.Text;
+            this.Brand = this.txtbrand1.Text;
+            this.Supplier = this.txtsupplier1.TextBox1.Text;
+            this.M = this.comboMDivision1.Text;
 
             if (!MyUtility.Check.Empty(this.txtfactory.Text))
             {
-
-                Factorys = "'" + this.txtfactory.Text.Replace(",","','") + "'";
+                this.Factorys = "'" + this.txtfactory.Text.Replace(",", "','") + "'";
             }
             else
             {
-                Factorys = string.Empty;
+                this.Factorys = string.Empty;
             }
 
-            MtlType = comboDropDownList1.SelectedValue.ToString();
+            this.MtlType = this.comboDropDownList1.SelectedValue.ToString();
 
             return base.ValidateInput();
         }
@@ -192,76 +191,86 @@ where exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
 and ed.PoType = 'G' 
 
 ";
-            if (!MyUtility.Check.Empty(KPIETA1))
+            if (!MyUtility.Check.Empty(this.KPIETA1))
             {
-                strSql += $@" and o.KPILETA between '{KPIETA1}' and '{KPIETA2}' ";
-            }
-            if (!MyUtility.Check.Empty(WhseArrival1))
-            {
-                strSql += $@" and e.WhseArrival between '{WhseArrival1}' and '{WhseArrival2}' ";
-            }
-            if (!MyUtility.Check.Empty(ETA1))
-            {
-                strSql += $@" and e.eta between '{ETA1}' and '{ETA2}' ";
+                strSql += $@" and o.KPILETA between '{this.KPIETA1}' and '{this.KPIETA2}' ";
             }
 
-            if (!MyUtility.Check.Empty(WK1))
+            if (!MyUtility.Check.Empty(this.WhseArrival1))
             {
-                strSql += $@" and ed.ID >= '{WK1}' ";
-            }
-            if (!MyUtility.Check.Empty(WK2))
-            {
-                strSql += $@" and ed.ID <= '{WK2}' ";
+                strSql += $@" and e.WhseArrival between '{this.WhseArrival1}' and '{this.WhseArrival2}' ";
             }
 
-            if (!MyUtility.Check.Empty(SP1))
+            if (!MyUtility.Check.Empty(this.ETA1))
             {
-                strSql += $@" and ed.PoID >= '{SP1}' ";
-            }
-            if (!MyUtility.Check.Empty(SP2))
-            {
-                strSql += $@" and ed.PoID <= '{SP2}' ";
+                strSql += $@" and e.eta between '{this.ETA1}' and '{this.ETA2}' ";
             }
 
-            if (!MyUtility.Check.Empty(Brand))
+            if (!MyUtility.Check.Empty(this.WK1))
             {
-                strSql += $@" and o.BrandID = '{Brand}' ";
+                strSql += $@" and ed.ID >= '{this.WK1}' ";
             }
 
-            if (!MyUtility.Check.Empty(Supplier))
+            if (!MyUtility.Check.Empty(this.WK2))
             {
-                strSql += $@" and ed.suppid = '{Supplier}' ";
+                strSql += $@" and ed.ID <= '{this.WK2}' ";
             }
 
-            if (!MyUtility.Check.Empty(M))
+            if (!MyUtility.Check.Empty(this.SP1))
             {
-                strSql += $@" and o.MDivisionID = '{M}' ";
+                strSql += $@" and ed.PoID >= '{this.SP1}' ";
             }
 
-            if (!MyUtility.Check.Empty(Factorys))
+            if (!MyUtility.Check.Empty(this.SP2))
             {
-                strSql += $@" and o.FactoryID in ({Factorys}) ";
+                strSql += $@" and ed.PoID <= '{this.SP2}' ";
             }
 
-            strSql += $@" and ed.FabricType in ({MtlType})";
-            #endregion 
+            if (!MyUtility.Check.Empty(this.Brand))
+            {
+                strSql += $@" and o.BrandID = '{this.Brand}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this.Supplier))
+            {
+                strSql += $@" and ed.suppid = '{this.Supplier}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this.M))
+            {
+                strSql += $@" and o.MDivisionID = '{this.M}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this.Factorys))
+            {
+                strSql += $@" and o.FactoryID in ({this.Factorys}) ";
+            }
+
+            strSql += $@" and ed.FabricType in ({this.MtlType})";
+            #endregion
             #region SQL Data Loading...
-            DualResult result = DBProxy.Current.Select(null, strSql,  out dataTable);
+            DualResult result = DBProxy.Current.Select(null, strSql,  out this.dataTable);
             #endregion
 
-            if (result) return Result.True;
-            else return new DualResult(false, "Query data fail\r\n" + result.ToString());
+            if (result)
+            {
+                return Result.True;
+            }
+            else
+            {
+                return new DualResult(false, "Query data fail\r\n" + result.ToString());
+            }
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (dataTable != null && dataTable.Rows.Count > 0)
+            if (this.dataTable != null && this.dataTable.Rows.Count > 0)
             {
-                this.SetCount(dataTable.Rows.Count);
+                this.SetCount(this.dataTable.Rows.Count);
                 this.ShowWaitMessage("Excel Processing...");
 
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R25.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(dataTable, null, "Warehouse_R25.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R25.xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.dataTable, null, "Warehouse_R25.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
                 Excel.Worksheet worksheet = objApp.Sheets[1];
 
                 #region Save & Show Excel
@@ -272,7 +281,7 @@ and ed.PoType = 'G'
                 Marshal.ReleaseComObject(worksheet);
 
                 strExcelName.OpenFile();
-                #endregion 
+                #endregion
                 this.HideWaitMessage();
             }
             else
@@ -280,6 +289,7 @@ and ed.PoType = 'G'
                 this.SetCount(0);
                 MyUtility.Msg.InfoBox("Data not found!!");
             }
+
             return true;
         }
     }

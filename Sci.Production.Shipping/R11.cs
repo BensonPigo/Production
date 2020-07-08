@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 
@@ -129,6 +127,7 @@ where a.ID = '{0}'", this.txtForwarder.Text);
                 this.txtcustcd.Enabled = false;
                 this.dateOnBoardDate.Enabled = false;
             }
+
             this.EnableReportType();
         }
 
@@ -145,7 +144,7 @@ where a.ID = '{0}'", this.txtForwarder.Text);
                 this.rdbtnDetailList.Enabled = true;
                 this.rdbtnMainList.Checked = true;
             }
-            else if(this.radioRawMaterial.Checked)
+            else if (this.radioRawMaterial.Checked)
             {
                 this.rdbtnMainList.Enabled = false;
                 this.rdbtnDetailList.Enabled = false;

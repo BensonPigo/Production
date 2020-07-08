@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Ict.Win;
-using Sci;
 using Sci.Data;
-using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
@@ -22,23 +18,23 @@ namespace Sci.Production.Warehouse
 
         public P37_Import(DataRow master, DataTable detail)
         {
-            InitializeComponent();
-            dr_master = master;
-            dt_detail = detail;
+            this.InitializeComponent();
+            this.dr_master = master;
+            this.dt_detail = detail;
         }
 
-        //Find Now Button
+        // Find Now Button
         private void btnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
-            String sp = this.txtSPNo.Text.TrimEnd();
-            String transid = this.txtTransaction.Text.TrimEnd();
-            String wkno = this.txtWK.Text.TrimEnd();
+            string sp = this.txtSPNo.Text.TrimEnd();
+            string transid = this.txtTransaction.Text.TrimEnd();
+            string wkno = this.txtWK.Text.TrimEnd();
 
             if (MyUtility.Check.Empty(sp) && MyUtility.Check.Empty(transid) && MyUtility.Check.Empty(wkno))
             {
                 MyUtility.Msg.WarningBox("Please fill < SP# > or < Transaction > or < WK# > can't be empty!!");
-                txtSPNo.Focus();
+                this.txtSPNo.Focus();
                 return;
             }
             else
@@ -128,20 +124,20 @@ where   f.InQty - f.OutQty + f.AdjustQty > 0
                     cmds.Add(sp1);
                 }
 
-                seq1.Value = txtSeq.seq1;
-                seq2.Value = txtSeq.seq2;
+                seq1.Value = this.txtSeq.seq1;
+                seq2.Value = this.txtSeq.seq2;
                 cmds.Add(seq1);
                 cmds.Add(seq2);
-                if (!txtSeq.checkSeq1Empty())
+                if (!this.txtSeq.checkSeq1Empty())
                 {
                     strSQLCmd.Append(@"
         and f.seq1 = @seq1");
                 }
-                if (!txtSeq.checkSeq2Empty())
+
+                if (!this.txtSeq.checkSeq2Empty())
                 {
                     strSQLCmd.Append(@" 
         and f.seq2 = @seq2");
-
                 }
 
                 if (!MyUtility.Check.Empty(transid))
@@ -162,27 +158,35 @@ where   f.InQty - f.OutQty + f.AdjustQty > 0
 
                 this.ShowWaitMessage("Data Loading....");
                 Ict.DualResult result;
-                if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), cmds, out dtScrap))
+                if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), cmds, out this.dtScrap))
                 {
-                    if (dtScrap.Rows.Count == 0)
-                    { MyUtility.Msg.WarningBox("Data not found!!"); }
+                    if (this.dtScrap.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.WarningBox("Data not found!!");
+                    }
                     else
                     {
-                        dtScrap.DefaultView.Sort = "poid,seq1,seq2,location,dyelot";
+                        this.dtScrap.DefaultView.Sort = "poid,seq1,seq2,location,dyelot";
                     }
-                    listControlBindingSource1.DataSource = dtScrap;
 
-                    gridImport.Columns["exportid"].Visible = !(MyUtility.Check.Empty(transid) && MyUtility.Check.Empty(wkno));
-                    gridImport.Columns["eta"].Visible = !(MyUtility.Check.Empty(transid) && MyUtility.Check.Empty(wkno));
+                    this.listControlBindingSource1.DataSource = this.dtScrap;
+
+                    this.gridImport.Columns["exportid"].Visible = !(MyUtility.Check.Empty(transid) && MyUtility.Check.Empty(wkno));
+                    this.gridImport.Columns["eta"].Visible = !(MyUtility.Check.Empty(transid) && MyUtility.Check.Empty(wkno));
                 }
-                else { ShowErr(strSQLCmd.ToString(), result); }
+                else
+                {
+                    this.ShowErr(strSQLCmd.ToString(), result);
+                }
+
                 this.HideWaitMessage();
             }
         }
-        //Form Load
+
+        // Form Load
         protected override void OnFormLoaded()
         {
-            base.OnFormLoaded();           
+            base.OnFormLoaded();
 
             #region -- Transfer Qty Valid --
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
@@ -191,16 +195,16 @@ where   f.InQty - f.OutQty + f.AdjustQty > 0
                 {
                     if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["qty"] = e.FormattedValue;
-                        gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["selected"] = true;
+                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["qty"] = e.FormattedValue;
+                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["selected"] = true;
                     }
                 };
             #endregion
-            
+
             Ict.Win.DataGridViewGeneratorTextColumnSettings ns2 = new DataGridViewGeneratorTextColumnSettings();
             ns2.CellFormatting = (s, e) =>
             {
-                DataRow dr = gridImport.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
                 switch (dr["StockType"].ToString())
                 {
                     case "B":
@@ -215,14 +219,14 @@ where   f.InQty - f.OutQty + f.AdjustQty > 0
                 }
             };
 
-            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridImport.DataSource = listControlBindingSource1;
+            this.gridImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = this.listControlBindingSource1;
 
             this.gridImport.CellValueChanged += (s, e) =>
             {
-                if (gridImport.Columns[e.ColumnIndex].Name == col_chk.Name)
+                if (this.gridImport.Columns[e.ColumnIndex].Name == this.col_chk.Name)
                 {
-                    DataRow dr = gridImport.GetDataRow(e.RowIndex);
+                    DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
                     {
                         dr["qty"] = dr["balance"];
@@ -231,41 +235,45 @@ where   f.InQty - f.OutQty + f.AdjustQty > 0
                     {
                         dr["qty"] = 0;
                     }
+
                     dr.EndEdit();
                 }
             };
 
-            Helper.Controls.Grid.Generator(this.gridImport)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
-                .Text("exportid", header: "WK#", iseditingreadonly: true, width: Widths.AnsiChars(14)) //1
-                .Text("eta", header: "ETA", iseditingreadonly: true, width: Widths.AnsiChars(10)) //2
-                .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //3
-                .Text("seq", header: "SEQ", iseditingreadonly: true, width: Widths.AnsiChars(6)) //4
-                .Text("roll", header: "Roll#", iseditingreadonly: true, width: Widths.AnsiChars(8)) //5
-                .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8)) //6
-                .Text("stocktype", header: "stocktype", iseditingreadonly: true, width: Widths.AnsiChars(6), settings: ns2) //7
-                .Numeric("balance", header: "Balance" + Environment.NewLine + "Qty", iseditable: false, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //8
-                .Numeric("Qty", header: "Return" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6))  //9
-                .Text("location", header: "Location", width: Widths.AnsiChars(30), iseditingreadonly: true)    //10
-                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20)) //11
+            this.Helper.Controls.Grid.Generator(this.gridImport)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk) // 0
+                .Text("exportid", header: "WK#", iseditingreadonly: true, width: Widths.AnsiChars(14)) // 1
+                .Text("eta", header: "ETA", iseditingreadonly: true, width: Widths.AnsiChars(10)) // 2
+                .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) // 3
+                .Text("seq", header: "SEQ", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 4
+                .Text("roll", header: "Roll#", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 5
+                .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 6
+                .Text("stocktype", header: "stocktype", iseditingreadonly: true, width: Widths.AnsiChars(6), settings: ns2) // 7
+                .Numeric("balance", header: "Balance" + Environment.NewLine + "Qty", iseditable: false, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) // 8
+                .Numeric("Qty", header: "Return" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6)) // 9
+                .Text("location", header: "Location", width: Widths.AnsiChars(30), iseditingreadonly: true) // 10
+                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20)) // 11
                ;
 
             this.gridImport.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
-        //Close
+        // Close
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        //Import
+        // Import
         private void btnImport_Click(object sender, EventArgs e)
         {
-            string remark = "";
-            gridImport.ValidateControl();
-            DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
-            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
+            string remark = string.Empty;
+            this.gridImport.ValidateControl();
+            DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
+            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0)
+            {
+                return;
+            }
 
             DataRow[] dr2 = dtGridBS1.Select("Selected = 1");
             if (dr2.Length == 0)
@@ -284,8 +292,9 @@ where   f.InQty - f.OutQty + f.AdjustQty > 0
             dr2 = dtGridBS1.Select("qty <> 0 and Selected = 1");
             foreach (DataRow tmp in dr2)
             {
-                DataRow[] findrow = dt_detail.Select(string.Format(@"FtyinventoryUkey = {0} "
-                    ,  tmp["FtyInventoryUkey"]));
+                DataRow[] findrow = this.dt_detail.Select(string.Format(
+                    @"FtyinventoryUkey = {0} ",
+                    tmp["FtyInventoryUkey"]));
 
                 if (findrow.Length > 0)
                 {
@@ -293,17 +302,19 @@ where   f.InQty - f.OutQty + f.AdjustQty > 0
                 }
                 else
                 {
-                    tmp["id"] = dr_master["id"];
+                    tmp["id"] = this.dr_master["id"];
                     tmp.AcceptChanges();
                     tmp.SetAdded();
-                    dt_detail.ImportRow(tmp);
+                    this.dt_detail.ImportRow(tmp);
                 }
+
                 if (!remark.Contains(tmp["exportid"].ToString()))
                 {
                     remark += tmp["exportid"].ToString() + ",";
                 }
             }
-            dr_master["remark"] = remark;
+
+            this.dr_master["remark"] = remark;
             this.Close();
         }
     }

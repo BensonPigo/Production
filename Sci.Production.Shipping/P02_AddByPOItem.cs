@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
@@ -228,11 +227,12 @@ GROUP BY pd.OrderID ,o.StyleUnit,pd.ShipQty ,TtlShipQty.Value ,p.GW
                             this.CurrentData["UnitID"] = dr["UnitID"].ToString();
                             this.CurrentData["Category"] = dr["Category"].ToString();
                             this.comboCategory.SelectedValue = Convert.ToInt32(dr["Category"]);
-                            // ISP20191885 移除自動計算後帶入
-                            //this.CurrentData["CTNNo"] = dr["CTNNo"].ToString();
-                            //this.CurrentData["Qty"] = Convert.ToInt32(dr["TtlQty"]);
 
-                            //this.CurrentData["NW"] = Convert.ToDecimal(dr["NW"]);
+                            // ISP20191885 移除自動計算後帶入
+                            // this.CurrentData["CTNNo"] = dr["CTNNo"].ToString();
+                            // this.CurrentData["Qty"] = Convert.ToInt32(dr["TtlQty"]);
+
+                            // this.CurrentData["NW"] = Convert.ToDecimal(dr["NW"]);
                         }
                     }
                 }

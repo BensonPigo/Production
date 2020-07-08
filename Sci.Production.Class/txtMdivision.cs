@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Sci.Data;
 using Sci.Win.UI;
 using System.Data.SqlClient;
 
@@ -22,7 +15,11 @@ namespace Sci.Production.Class
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from Production.dbo.MDivision WITH (NOLOCK) ", "8", this.Text, false, ",");
             item.Size = new System.Drawing.Size(300, 250);
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.Text = item.GetSelectedString();
             this.ValidateText();
         }
@@ -39,7 +36,7 @@ namespace Sci.Production.Class
             {
                 if (!MyUtility.Check.Seek("select ID from Production.dbo.MDivision WITH (NOLOCK) where id = @MDivision", listSqlPar, null))
                 {
-                    this.Text = "";
+                    this.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< M : {0} > not found!!!", str));
                     return;

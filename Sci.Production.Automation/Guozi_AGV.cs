@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Dynamic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Sci.Production.Automation.UtilityAutomation;
 
 namespace Sci.Production.Automation
@@ -24,7 +22,7 @@ namespace Sci.Production.Automation
             this.automationErrMsg = new AutomationErrMsgPMS()
             {
                 suppID = this.guoziSuppID,
-                moduleName = this.moduleName
+                moduleName = this.moduleName,
             };
         }
 
@@ -87,7 +85,7 @@ namespace Sci.Production.Automation
                         EstCutDate = (DateTime?)dr["EstCutDate"],
                         ID = dr["ID"].ToString(),
                         OrderID = dr["OrderID"].ToString(),
-                        CutCellID = dr["CutCellID"].ToString()
+                        CutCellID = dr["CutCellID"].ToString(),
                     });
             }
 
@@ -188,7 +186,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
                 .Select(s => new
                 {
                     ID = s["ID"].ToString(),
-                    Junk = s["Junk"] == DBNull.Value ? false : (bool)s["Junk"]
+                    Junk = s["Junk"] == DBNull.Value ? false : (bool)s["Junk"],
                 });
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "SubProcess"));
@@ -217,7 +215,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
                 .Select(s => new
                 {
                     ID = s["ID"].ToString(),
-                    Junk = s["Junk"] == DBNull.Value ? false : (bool)s["Junk"]
+                    Junk = s["Junk"] == DBNull.Value ? false : (bool)s["Junk"],
                 });
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "CutCell"));
@@ -246,7 +244,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
                 .Select(s => new
                 {
                     ID = s["ID"].ToString(),
-                    Junk = s["Junk"] == DBNull.Value ? false : (bool)s["Junk"]
+                    Junk = s["Junk"] == DBNull.Value ? false : (bool)s["Junk"],
                 });
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "SewingLine"));
@@ -279,7 +277,7 @@ where bda.BundleNo = '{bundle.BundleNo}'";
                     SewingLineID = s["SewingLineID"].ToString(),
                     Inline = (DateTime?)s["Inline"],
                     Offline = (DateTime?)s["Offline"],
-                    StdOutput = (int)s["StdOutput"]
+                    StdOutput = (int)s["StdOutput"],
                 });
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "SewingSchedule"));

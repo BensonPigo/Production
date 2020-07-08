@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
 using System.Transactions;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Data.SqlClient;
-using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.PPIC
 {
@@ -474,6 +469,5 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle",
 
             ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = stringFilter.ToString();
         }
-
     }
 }

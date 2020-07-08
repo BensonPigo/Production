@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Data;
-using Sci.Data;
 using System.Configuration;
 
 namespace Sci.Production.Class
@@ -44,6 +43,7 @@ namespace Sci.Production.Class
             {
                 strSevers = ConfigurationManager.AppSettings["ServerMatchFtyGeoup"].Split(new char[] { ';' });
             }
+
             foreach (string strServer in strSevers)
             {
                 string[] Factorys = strServer.Split(new char[] { ':', ',' });

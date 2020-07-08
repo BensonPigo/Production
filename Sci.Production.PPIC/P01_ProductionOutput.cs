@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
@@ -55,7 +52,7 @@ isnull((select SUM(c.Qty)
 	   from Orders o WITH (NOLOCK) 
 	   inner join CuttingOutput_WIP c WITH (NOLOCK) on o.ID = c.OrderID
 	   where {1}),0) as CutQty", MyUtility.Convert.GetString(this.masterData["ID"]),
-            string.Format("o.ID = '{0}'", MyUtility.Convert.GetString(this.masterData["ID"])));
+                string.Format("o.ID = '{0}'", MyUtility.Convert.GetString(this.masterData["ID"])));
             DataTable summaryQty;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out summaryQty);
             this.dateLastSewingOutputDate.Value = MyUtility.Convert.GetDate(summaryQty.Rows[0]["LastSewingDate"]);
@@ -290,6 +287,7 @@ order by oa.Seq,os.Seq;",
                 this.ShowErr(result);
                 return;
             }
+
             sqlCmd = string.Format(
                 @"select oq.Article,oq.SizeCode,oq.Qty,sum(c.Qty) as CutQty
 from Orders o WITH (NOLOCK) 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
@@ -394,8 +393,6 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
                 }
             }
 
-
-
             return base.ClickSave();
         }
 
@@ -663,8 +660,8 @@ and c.ClogReceiveCFADate is null
             {
                 updateCmds.Add(string.Format(
                     @"insert into Pullout_History(ID, HisType, NewValue, AddName, AddDate) values ('{0}','Status','Confirmed','{1}',GETDATE());",
-                        MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                        Sci.Env.User.UserID));
+                    MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+                    Sci.Env.User.UserID));
             }
 
             updateCmds.Add(
@@ -799,7 +796,6 @@ where ID = '{orderid}'
                 MyUtility.Msg.WarningBox("Amend fail!!\r\n" + result.ToString());
                 return;
             }
-
         }
 
         // History

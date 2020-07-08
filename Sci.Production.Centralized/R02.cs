@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using System.Reflection;
 using Microsoft.Office.Interop.Excel;
 using Sci.Data;
 using Ict;
-using Ict.Win;
-using Sci.Production.PublicPrg;
 using Sci.Production.Prg;
 using Sci.Win;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -151,7 +145,7 @@ WHERE   1=1
                 strSQL_Loading += $@" 
         and Orders.Category IN ('B', 'S')
         and Factory.KPICode <> ''  
-        and Orders.SCIDELIVERY BETWEEN '{this.gdclYear}/01/08' AND '{(this.gdclYear + 1)}/01/07' ";
+        and Orders.SCIDELIVERY BETWEEN '{this.gdclYear}/01/08' AND '{this.gdclYear + 1}/01/07' ";
 
                 if (!this.chkIncludeCancelOrder.Checked)
                 {
@@ -199,8 +193,8 @@ WHERE   1=1
         and Factory.IsProduceFty = '1'
         and Factory.KPICode <> ''
         and SewingOutput.OutputDate between '{1}/01/01' and '{1}/12/31'",
-        strSQL_Loading_b,
-        this.gdclYear);
+                    strSQL_Loading_b,
+                    this.gdclYear);
                 if (this.txtFactory1.Text != string.Empty)
                 {
                     strSQL_Output += string.Format(
@@ -291,8 +285,8 @@ ORDER BY KPICode, LoadingMonth, STRTYPE",
                     this.SetLoadingText(
                         string.Format(
                             "Load data from connection {0}/{1} ",
-                       i + 1,
-                       connectionString.Count));
+                            i + 1,
+                            connectionString.Count));
                     SqlConnection conn;
                     using (conn = new SqlConnection(conString))
                     {
@@ -546,8 +540,8 @@ WHERE 1 = 0 ";
                         this.SetLoadingText(
                             string.Format(
                                 "Load data from connection {0}/{1} ",
-                           i + 1,
-                           connectionString.Count));
+                                i + 1,
+                                connectionString.Count));
                         SqlConnection conn;
                         using (conn = new SqlConnection(conString))
                         {

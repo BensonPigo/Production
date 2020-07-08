@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -14,8 +11,14 @@ namespace Sci.Production.Warehouse
 {
     public partial class R14 : Sci.Win.Tems.PrintForm
     {
-        //string reason, factory, stocktype, fabrictype, ordertype;
-        string  factory, fabrictype, ordertype;
+        // string reason, factory, stocktype, fabrictype, ordertype;
+        string factory;
+
+        // string reason, factory, stocktype, fabrictype, ordertype;
+        string fabrictype;
+
+        // string reason, factory, stocktype, fabrictype, ordertype;
+        string ordertype;
         int ordertypeindex;
         DateTime? eta1, eta2;
         DataTable printData;
@@ -24,58 +27,63 @@ namespace Sci.Production.Warehouse
         public R14(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            txtfactory.Text = Sci.Env.User.Factory;
-            MyUtility.Tool.SetupCombox(comboFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
-            comboFabricType.SelectedIndex = 0;
-            txtdropdownlistOrderType.SelectedIndex = 0;
+            this.InitializeComponent();
+            this.txtfactory.Text = Sci.Env.User.Factory;
+            MyUtility.Tool.SetupCombox(this.comboFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
+            this.comboFabricType.SelectedIndex = 0;
+            this.txtdropdownlistOrderType.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateWKNoETA.Value1) && MyUtility.Check.Empty(dateWKNoETA.Value2))
+            if (MyUtility.Check.Empty(this.dateWKNoETA.Value1) && MyUtility.Check.Empty(this.dateWKNoETA.Value2))
             {
                 MyUtility.Msg.WarningBox("< WK# ETA > can't be empty!!");
                 return false;
             }
 
-            eta1 = dateWKNoETA.Value1;
-            eta2 = dateWKNoETA.Value2;
-            ordertypeindex = txtdropdownlistOrderType.SelectedIndex;
-            fabrictype = comboFabricType.SelectedValue.ToString();
-            factory = txtfactory.Text;
-            switch (ordertypeindex)
+            this.eta1 = this.dateWKNoETA.Value1;
+            this.eta2 = this.dateWKNoETA.Value2;
+            this.ordertypeindex = this.txtdropdownlistOrderType.SelectedIndex;
+            this.fabrictype = this.comboFabricType.SelectedValue.ToString();
+            this.factory = this.txtfactory.Text;
+            switch (this.ordertypeindex)
             {
                 case 0:
-                    ordertype = "('B')";
+                    this.ordertype = "('B')";
                     break;
                 case 1:
-                    ordertype = "('S')";
+                    this.ordertype = "('S')";
                     break;
                 case 2:
-                    ordertype = "('M')";
+                    this.ordertype = "('M')";
                     break;
                 case 3:
-                    ordertype = "('B','S')";
+                    this.ordertype = "('B','S')";
                     break;
                 case 4:
-                    ordertype = "('B','S')";
+                    this.ordertype = "('B','S')";
                     break;
                 case 5:
-                    ordertype = "('B','S','M')";
+                    this.ordertype = "('B','S','M')";
                     break;
             }
-            condition.Clear();
-            condition.Append(string.Format(@"ETA : {0} ~ {1}" + Environment.NewLine
-                , Convert.ToDateTime(eta1).ToString("d")
-                , Convert.ToDateTime(eta2).ToString("d")));
-            condition.Append(string.Format(@"Fabric Type : {0}" + Environment.NewLine
-                , comboFabricType.Text));
-            condition.Append(string.Format(@"Factory : {0}" + Environment.NewLine
-                , txtfactory.Text));
-            condition.Append(string.Format(@"Order Type : {0}" + Environment.NewLine
-                , txtdropdownlistOrderType.Text));
+
+            this.condition.Clear();
+            this.condition.Append(string.Format(
+                @"ETA : {0} ~ {1}" + Environment.NewLine,
+                Convert.ToDateTime(this.eta1).ToString("d"),
+                Convert.ToDateTime(this.eta2).ToString("d")));
+            this.condition.Append(string.Format(
+                @"Fabric Type : {0}" + Environment.NewLine,
+                this.comboFabricType.Text));
+            this.condition.Append(string.Format(
+                @"Factory : {0}" + Environment.NewLine,
+                this.txtfactory.Text));
+            this.condition.Append(string.Format(
+                @"Order Type : {0}" + Environment.NewLine,
+                this.txtdropdownlistOrderType.Text));
             return base.ValidateInput();
         }
 
@@ -91,7 +99,8 @@ namespace Sci.Production.Warehouse
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"
+            sqlCmd.Append(string.Format(
+                @"
 select  d.FactoryID
         ,wkno_a = b.id 
         ,order_a = b.poid
@@ -117,34 +126,40 @@ outer apply (
     where a1.ExportId = a.id and b1.PoId = b.PoID and b1.seq1 = b.seq1 and b1.seq2 = b.seq2 and a1.Status = 'Confirmed'
     ) x
 inner join dbo.orders d WITH (NOLOCK) on d.id = b.poid
-WHERE  D.Category in {0}", ordertype));
+WHERE  D.Category in {0}", this.ordertype));
 
-            if (!MyUtility.Check.Empty(eta1))
-                sqlCmd.Append(string.Format(" and '{0}' <= a.eta", Convert.ToDateTime(eta1).ToString("d")));
-            if (!MyUtility.Check.Empty(eta2))
-                sqlCmd.Append(string.Format(" and a.eta <= '{0}'", Convert.ToDateTime(eta2).ToString("d")));
+            if (!MyUtility.Check.Empty(this.eta1))
+            {
+                sqlCmd.Append(string.Format(" and '{0}' <= a.eta", Convert.ToDateTime(this.eta1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.eta2))
+            {
+                sqlCmd.Append(string.Format(" and a.eta <= '{0}'", Convert.ToDateTime(this.eta2).ToString("d")));
+            }
             #region --- 條件組合  ---
-            if (!MyUtility.Check.Empty(factory))
+            if (!MyUtility.Check.Empty(this.factory))
             {
                 sqlCmd.Append(" and d.factoryid = @factory");
-                sp_factory.Value = factory;
+                sp_factory.Value = this.factory;
                 cmds.Add(sp_factory);
             }
 
-            if (!MyUtility.Check.Empty(fabrictype))
+            if (!MyUtility.Check.Empty(this.fabrictype))
             {
-                sqlCmd.Append(string.Format(@" and c.fabrictype = '{0}'", fabrictype));
+                sqlCmd.Append(string.Format(@" and c.fabrictype = '{0}'", this.fabrictype));
             }
 
             sqlCmd.Append(" order by b.id, b.poid, b.seq1, b.seq2, b.refno, c.colorid, c.sizeSpec, c.stockunit");
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
@@ -152,17 +167,18 @@ WHERE  D.Category in {0}", ordertype));
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R14.xltx"); //預先開啟excel app            
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R14.xltx"); // 預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.Cells[1, 1] = condition.ToString();   // 條件字串寫入excel
-            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R14.xltx", 2, true, null, objApp);      // 將datatable copy to excel
+            objSheets.Cells[1, 1] = this.condition.ToString();   // 條件字串寫入excel
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Warehouse_R14.xltx", 2, true, null, objApp);      // 將datatable copy to excel
 
             Marshal.ReleaseComObject(objSheets);
             return true;

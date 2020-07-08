@@ -3,12 +3,9 @@ using Ict.Win;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Transactions;
-using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
@@ -18,7 +15,7 @@ namespace Sci.Production.Shipping
 
         public P03_BatchUpload()
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.EditMode = true;
         }
 
@@ -35,7 +32,6 @@ namespace Sci.Production.Shipping
             .Text("Blno", header: "B/L No.", width: Widths.AnsiChars(18), iseditingreadonly: true)
             .Date("PortArrival", header: "Arrive Port Date", width: Widths.AnsiChars(25), iseditingreadonly: true)
             .Date("DocArrival", header: "Dox Rcv Date", width: Widths.AnsiChars(25), iseditingreadonly: true);
-
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -88,7 +84,7 @@ namespace Sci.Production.Shipping
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            Query();
+            this.Query();
         }
 
         private void Query()
@@ -130,7 +126,6 @@ where junk = 0 and (PortArrival is null or DocArrival is null)");
             {
                 MyUtility.Msg.WarningBox("Data not found! ");
             }
-
         }
 
         private void btnSave_Click(object sender, EventArgs e)

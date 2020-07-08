@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
-using System.Transactions;
 
 namespace Sci.Production.Shipping
 {
@@ -20,6 +15,7 @@ namespace Sci.Production.Shipping
         Action reloadParant;
         private DataTable dt;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+
         /// <summary>
         /// P11_BatchImport
         /// </summary>
@@ -37,7 +33,7 @@ namespace Sci.Production.Shipping
             this.Helper.Controls.Grid.Generator(this.grid1)
              .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
             .Text("InvSerial", header: "Invoice Serial", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Numeric("KGS", header: "TTL GRS WEIGHT (KGS)", width: Widths.AnsiChars(15), decimal_places:2, iseditingreadonly: true)
+            .Numeric("KGS", header: "TTL GRS WEIGHT (KGS)", width: Widths.AnsiChars(15), decimal_places: 2, iseditingreadonly: true)
             .Numeric("qty", header: "TTL QTY", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
             .Text("NameEN", header: "COUNTRY OF DESTINATION", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("BIRShipTo", header: "Ship To", width: Widths.AnsiChars(15), iseditingreadonly: true)

@@ -1579,6 +1579,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
             object[,] objArray = new object[tRow + 1, lastCol + 1];
 
             string kPIChangeReasonName;  // CLOUMN[CC]:dr["KPIChangeReason"]+dr["KPIChangeReasonName"]
+
                                          // Dictionary<string, DataRow> tmp_a = orderArtworkData.AsEnumerable().ToDictionary<DataRow, string, DataRow>(r => r["ID"].ToString(),r => r);
             if (this.orderArtworkData == null)
             {

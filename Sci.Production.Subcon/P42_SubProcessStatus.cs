@@ -1,14 +1,10 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
@@ -17,17 +13,22 @@ namespace Sci.Production.Subcon
     {
         DataRow DataRow;
         int SummarType;
+
         public P42_SubProcessStatus(DataRow dataRow, int summarType)
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             this.DataRow = dataRow;
             this.SummarType = summarType;
 
             if (summarType == 0)
+            {
                 this.Text = $"Sub Process Status（SP# : {dataRow["Orderid"]}）";
+            }
             else
+            {
                 this.Text = $"Sub Process Status（SP# : {dataRow["Orderid"]}, Article : {dataRow["Article"]}, Size : {dataRow["SizeCode"]}）";
+            }
 
             this.GridSetup();
         }
@@ -56,16 +57,19 @@ namespace Sci.Production.Subcon
             .Numeric("OutQty", header: "Cut Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("variance", header: "Variance", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
-            Color backDefaultColor = grid2.DefaultCellStyle.BackColor;
-            grid2.RowsAdded += (s, e) =>
+            Color backDefaultColor = this.grid2.DefaultCellStyle.BackColor;
+            this.grid2.RowsAdded += (s, e) =>
             {
-                if (e.RowIndex < 0) return;
+                if (e.RowIndex < 0)
+                {
+                    return;
+                }
 
                 int index = e.RowIndex;
                 for (int i = 0; i < e.RowCount; i++)
                 {
-                    DataGridViewRow dr = grid2.Rows[index];
-                    dr.DefaultCellStyle.BackColor = (dr.Cells[4].Value.ToString().EqualString("=")) ? Color.Pink : backDefaultColor;
+                    DataGridViewRow dr = this.grid2.Rows[index];
+                    dr.DefaultCellStyle.BackColor = dr.Cells[4].Value.ToString().EqualString("=") ? Color.Pink : backDefaultColor;
                     index++;
                 }
             };
@@ -169,9 +173,10 @@ drop table #tmp,#tmp2
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (!result)
             {
-                ShowErr(result);
+                this.ShowErr(result);
                 return;
             }
+
             if (dt.Rows.Count > 0)
             {
                 this.numericBox2.Value = MyUtility.Convert.GetDecimal(dt.Rows[0]["Qty"]);
@@ -200,7 +205,7 @@ select ID from SubProcess s where s.IsRFIDProcess=1 and s.IsRFIDDefault=1
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (!result)
             {
-                ShowErr(result);
+                this.ShowErr(result);
                 return;
             }
 
@@ -259,7 +264,7 @@ drop table #tmpSubProcessID
             result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (!result)
             {
-                ShowErr(result);
+                this.ShowErr(result);
                 return;
             }
 
@@ -314,12 +319,11 @@ drop table #tmp
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (!result)
             {
-                ShowErr(result);
+                this.ShowErr(result);
                 return;
             }
 
             this.listControlBindingSource2.DataSource = dt;
-
         }
     }
 }

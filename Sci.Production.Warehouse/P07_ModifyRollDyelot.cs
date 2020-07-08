@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 using Ict;
-using Sci.Production.PublicPrg;
 using System.Linq;
 using System.Transactions;
 
@@ -19,7 +15,7 @@ namespace Sci.Production.Warehouse
     {
         DataTable source;
         DataTable dtGridDyelot;
-        string docno = "";
+        string docno = string.Empty;
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
         Ict.Win.UI.DataGridViewTextBoxColumn col_roll;
         Ict.Win.UI.DataGridViewTextBoxColumn col_dyelot;
@@ -27,71 +23,79 @@ namespace Sci.Production.Warehouse
 
         public P07_ModifyRollDyelot(object data, string data2)
         {
-            InitializeComponent();
-            source = (DataTable)data;
-            docno = data2;
-            this.Text += " - " + docno;
+            this.InitializeComponent();
+            this.source = (DataTable)data;
+            this.docno = data2;
+            this.Text += " - " + this.docno;
             this.EditMode = true;
         }
 
         protected override void OnFormLoaded()
         {
-            base.OnFormLoaded();            
-            di_stocktype.Add("B", "Bulk");
-            di_stocktype.Add("I", "Inventory");
-            listControlBindingSource1.DataSource = source;
+            base.OnFormLoaded();
+            this.di_stocktype.Add("B", "Bulk");
+            this.di_stocktype.Add("I", "Inventory");
+            this.listControlBindingSource1.DataSource = this.source;
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
             Ict.Win.DataGridViewGeneratorNumericColumnSettings actqty = new DataGridViewGeneratorNumericColumnSettings();
             actqty.CellValidating += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                DataRow dr = gridModifyRoll.GetDataRow(e.RowIndex);
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridModifyRoll.GetDataRow(e.RowIndex);
                 string oldvalue = MyUtility.Convert.GetString(dr["ActualQty"]);
                 string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
-                if (oldvalue == newvalue) return;
+                if (oldvalue == newvalue)
+                {
+                    return;
+                }
+
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     dr["Actualqty"] = e.FormattedValue;
                     if (!MyUtility.Check.Empty(dr["pounit"]) && !MyUtility.Check.Empty(dr["stockunit"]))
                     {
-                        string rate = MyUtility.GetValue.Lookup(string.Format(@"select RateValue from dbo.View_Unitrate v
+                        string rate = MyUtility.GetValue.Lookup(string.Format(
+                            @"select RateValue from dbo.View_Unitrate v
                     where v.FROM_U ='{0}' and v.TO_U='{1}'", dr["pounit"], dr["stockunit"]));
                         dr["stockqty"] = MyUtility.Math.Round(decimal.Parse(e.FormattedValue.ToString()) * decimal.Parse(rate), 2);
                     }
                 }
             };
 
-            //設定Grid1的顯示欄位
-            this.gridModifyRoll.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridModifyRoll)
-            .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //1
-            .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
-            .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: false).Get(out col_roll)    //3
-            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: false).Get(out col_dyelot)   //4
-            .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(11), iseditingreadonly: false, decimal_places: 2, integer_places: 10, maximum: 999999999.99M, minimum: 0, settings: actqty).Get(out col_ActQty)    //5
-            .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true)    //6
-            .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //7
-            .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5))    //8
-            .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype)   //9
-            .Text("Location", header: "Location", iseditingreadonly: true)    //10
-            .Text("remark", header: "Remark", iseditingreadonly: true)    //11
-            ;     //
+            // 設定Grid1的顯示欄位
+            this.gridModifyRoll.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridModifyRoll)
+            .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 1
+            .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
+            .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: false).Get(out this.col_roll) // 3
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: false).Get(out this.col_dyelot) // 4
+            .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(11), iseditingreadonly: false, decimal_places: 2, integer_places: 10, maximum: 999999999.99M, minimum: 0, settings: actqty).Get(out this.col_ActQty) // 5
+            .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true) // 6
+            .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 7
+            .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5)) // 8
+            .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype) // 9
+            .Text("Location", header: "Location", iseditingreadonly: true) // 10
+            .Text("remark", header: "Remark", iseditingreadonly: true) // 11
+            ;
 
-            cbb_stocktype.DataSource = new BindingSource(di_stocktype, null);
+            cbb_stocktype.DataSource = new BindingSource(this.di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";
             cbb_stocktype.DisplayMember = "Value";
 
-            
-            Helper.Controls.Grid.Generator(this.gridDyelot)
+            this.Helper.Controls.Grid.Generator(this.gridDyelot)
             .Date("IssueDate", header: "IssueDate", width: Widths.AnsiChars(9), iseditingreadonly: true)
             .Text("ID", header: "ID", width: Widths.AnsiChars(14), iseditingreadonly: true)
             .Text("Name", header: "Name", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Numeric("InQty", header: "InQty", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
             .Numeric("OutQty", header: "OutQty", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
-            .Text("remark", header: "Remark", iseditingreadonly: true,width:Widths.AnsiChars(15))
+            .Text("remark", header: "Remark", iseditingreadonly: true, width: Widths.AnsiChars(15))
             .Text("Location", header: "Location", iseditingreadonly: true)
             .Numeric("balance", header: "Balance", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
-            ;     //
+            ;
 
             this.LoadDate();
             this.setCloumn();
@@ -101,12 +105,16 @@ namespace Sci.Production.Warehouse
         private void changeeditable()
         {
             #region roll
-            col_roll.EditingControlShowing += (s, e) =>
+            this.col_roll.EditingControlShowing += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                DataRow dr = gridModifyRoll.GetDataRow(e.RowIndex);
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
 
-                if (dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0)
+                DataRow dr = this.gridModifyRoll.GetDataRow(e.RowIndex);
+
+                if (this.dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0)
                 {
                     ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
                 }
@@ -115,12 +123,16 @@ namespace Sci.Production.Warehouse
                     ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
                 }
             };
-            col_roll.CellFormatting += (s, e) =>
+            this.col_roll.CellFormatting += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                DataRow dr = gridModifyRoll.GetDataRow(e.RowIndex);
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
 
-                if (dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0)
+                DataRow dr = this.gridModifyRoll.GetDataRow(e.RowIndex);
+
+                if (this.dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0)
                 {
                     e.CellStyle.BackColor = Color.White;
                 }
@@ -131,12 +143,16 @@ namespace Sci.Production.Warehouse
             };
             #endregion
             #region dyelot
-            col_dyelot.EditingControlShowing += (s, e) =>
+            this.col_dyelot.EditingControlShowing += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                DataRow dr = gridModifyRoll.GetDataRow(e.RowIndex);
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
 
-                if (dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0)
+                DataRow dr = this.gridModifyRoll.GetDataRow(e.RowIndex);
+
+                if (this.dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0)
                 {
                     ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
                 }
@@ -145,12 +161,16 @@ namespace Sci.Production.Warehouse
                     ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
                 }
             };
-            col_dyelot.CellFormatting += (s, e) =>
+            this.col_dyelot.CellFormatting += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                DataRow dr = gridModifyRoll.GetDataRow(e.RowIndex);
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
 
-                if (dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0)
+                DataRow dr = this.gridModifyRoll.GetDataRow(e.RowIndex);
+
+                if (this.dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0)
                 {
                     e.CellStyle.BackColor = Color.White;
                 }
@@ -162,12 +182,16 @@ namespace Sci.Production.Warehouse
             #endregion
 
             #region ActQty
-            col_ActQty.EditingControlShowing += (s, e) =>
+            this.col_ActQty.EditingControlShowing += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                DataRow dr = gridModifyRoll.GetDataRow(e.RowIndex);
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
 
-                if (dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0)
+                DataRow dr = this.gridModifyRoll.GetDataRow(e.RowIndex);
+
+                if (this.dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0)
                 {
                     ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = true;
                 }
@@ -176,12 +200,16 @@ namespace Sci.Production.Warehouse
                     ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = false;
                 }
             };
-            col_ActQty.CellFormatting += (s, e) =>
+            this.col_ActQty.CellFormatting += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-                DataRow dr = gridModifyRoll.GetDataRow(e.RowIndex);
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
 
-                if (dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0)
+                DataRow dr = this.gridModifyRoll.GetDataRow(e.RowIndex);
+
+                if (this.dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0)
                 {
                     e.CellStyle.BackColor = Color.White;
                 }
@@ -208,7 +236,7 @@ namespace Sci.Production.Warehouse
         {
             foreach (DataGridViewRow item in this.gridModifyRoll.Rows)
             {
-                bool existsDetail = dtGridDyelot.AsEnumerable()
+                bool existsDetail = this.dtGridDyelot.AsEnumerable()
                  .Where(s => s["poid"].Equals(item.Cells["poid"].Value) &&
                              s["seq"].Equals(item.Cells["seq"].Value) &&
                              s["roll"].Equals(item.Cells["roll"].Value) &&
@@ -224,7 +252,8 @@ namespace Sci.Production.Warehouse
         {
             #region sql command
             string selectCommand1 =
-                string.Format(@"
+                string.Format(
+                    @"
 SELECT DISTINCT POID,Seq1,Seq2,Roll,Dyelot,id into #tmp FROM Receiving_Detail WHERE id = '{0}'
 
 select IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,POID,Seq1,Seq2, Roll,Dyelot,[Seq] = Seq1 + ' ' + Seq2
@@ -415,15 +444,15 @@ from (
 
 ) tmp
             order by IssueDate,name,id
-            "
-                , docno);
+            ",
+                    this.docno);
             #endregion
 
             DualResult result;
             this.ShowWaitMessage("Data Loading...");
-            if (!(result = DBProxy.Current.Select(null, selectCommand1, out dtGridDyelot)))
+            if (!(result = DBProxy.Current.Select(null, selectCommand1, out this.dtGridDyelot)))
             {
-                ShowErr(selectCommand1, result);
+                this.ShowErr(selectCommand1, result);
             }
 
             this.HideWaitMessage();
@@ -431,24 +460,29 @@ from (
 
         private void grid1_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-            if (dtGridDyelot == null)
+            if (this.dtGridDyelot == null)
             {
                 this.GetgridDyelotData();
             }
 
-            if (dtGridDyelot.Rows.Count == 0)
+            if (this.dtGridDyelot.Rows.Count == 0)
             {
                 return;
             }
 
-            if (e.RowIndex == -1) return;
-            DataRow dr = gridModifyRoll.GetDataRow(e.RowIndex);
+            if (e.RowIndex == -1)
+            {
+                return;
+            }
+
+            DataRow dr = this.gridModifyRoll.GetDataRow(e.RowIndex);
 
             // 上下grid連動, Balance需要依照IssueDate , ID 排序後重新計算
             DataTable dt = new DataTable();
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtGridDyelot
- , string.Empty
- , $@"
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(
+                this.dtGridDyelot,
+                string.Empty,
+                $@"
             select  IssueDate,inqty = iif(adjust>0,inqty+adjust,inqty),outqty = iif(adjust < 0,abs(adjust) + abs(outqty), abs(outqty))
             ,adjust,id,Remark,location,name,POID,Seq1,Seq2, Roll,Dyelot,[Seq] 
             ,[balance] = sum(inqty - abs(outqty) + adjust) over (order by convert(date,IssueDate),convert(varchar(15),id))
@@ -460,21 +494,19 @@ from (
             ", out dt);
             if (dt.Rows.Count == 0)
             {
-                gridDyelot.DataSource = null;
+                this.gridDyelot.DataSource = null;
             }
             else
             {
-                gridDyelot.DataSource = dt;
+                this.gridDyelot.DataSource = dt;
             }
-            
-            
-            gridDyelot.AutoResizeColumns();
 
+            this.gridDyelot.AutoResizeColumns();
         }
 
         private void btnCommit_Click(object sender, EventArgs e)
         {
-            var modifyDrList = source.AsEnumerable().Where(s => s.RowState == DataRowState.Modified);
+            var modifyDrList = this.source.AsEnumerable().Where(s => s.RowState == DataRowState.Modified);
             if (modifyDrList.Count() == 0)
             {
                 MyUtility.Msg.InfoBox("No data has been changed!");
@@ -487,20 +519,20 @@ from (
                 return;
             }
 
-            var allDatas= modifyDrList = source.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted);
-            if (allDatas.GroupBy(o => new {
-                                            POID = o["POID"].ToString()
-                                            , Seq = o["Seq"].ToString()
-                                            , Roll = o["Roll"].ToString()
-                                            , Dyelot = o["Dyelot"].ToString() })
-                    .Select(g => new { g.Key.POID, g.Key.Seq, g.Key.Roll, g.Key.Dyelot, ct = g.Count() })
-                    .Any(r => r.ct > 1)
-               )
+            var allDatas = modifyDrList = this.source.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted);
+            if (allDatas.GroupBy(o => new
             {
-                //modifyDrList.GroupBy(o => new { POID = o["POID"].ToString(), Seq = o["Seq"].ToString(), Roll = o["Roll"].ToString(), Dyelot = o["Dyelot"].ToString() })
+                                            POID = o["POID"].ToString(),
+                                            Seq = o["Seq"].ToString(),
+                                            Roll = o["Roll"].ToString(),
+                                            Dyelot = o["Dyelot"].ToString(),
+            })
+                    .Select(g => new { g.Key.POID, g.Key.Seq, g.Key.Roll, g.Key.Dyelot, ct = g.Count() })
+                    .Any(r => r.ct > 1))
+            {
+                // modifyDrList.GroupBy(o => new { POID = o["POID"].ToString(), Seq = o["Seq"].ToString(), Roll = o["Roll"].ToString(), Dyelot = o["Dyelot"].ToString() })
                 //    .Select(g => new { g.Key.POID, g.Key.Seq, g.Key.Roll, g.Key.Dyelot, ct = g.Count() }).Any(r => r.ct > 1)
-                var CheckList = allDatas.GroupBy(o => new { POID = o["POID"].ToString(), Seq = o["Seq"].ToString(), Roll = o["Roll"].ToString(), Dyelot = o["Dyelot"].ToString() }).Select(g => new { g.Key.POID, g.Key.Seq, g.Key.Roll, g.Key.Dyelot, ct = g.Count() }).Where(o=>o.ct > 1).ToList();
-
+                var CheckList = allDatas.GroupBy(o => new { POID = o["POID"].ToString(), Seq = o["Seq"].ToString(), Roll = o["Roll"].ToString(), Dyelot = o["Dyelot"].ToString() }).Select(g => new { g.Key.POID, g.Key.Seq, g.Key.Roll, g.Key.Dyelot, ct = g.Count() }).Where(o => o.ct > 1).ToList();
 
                 List<string> _duplicateList = new List<string>();
 
@@ -509,17 +541,15 @@ from (
                     _duplicateList.Add($"{item.POID}-{item.Seq}-{item.Roll}-{item.Dyelot}");
                 }
 
-
                 MyUtility.Msg.WarningBox(@"Roll# & Dyelot# already existed!!"
 + Environment.NewLine
 + "Duplicate list SP# - Seq - Roll# - Dyelot as below."
 + Environment.NewLine
 + _duplicateList.JoinToString(Environment.NewLine));
 
-                //MyUtility.Msg.WarningBox("Roll# & Dyelot# can not  duplicate!!");
+                // MyUtility.Msg.WarningBox("Roll# & Dyelot# can not  duplicate!!");
                 return;
             }
-
 
             string sqlcmd;
             string sqlupd1 = string.Empty;
@@ -531,19 +561,20 @@ from (
             foreach (var drModify in modifyDrList)
             {
                 // 只修改ActualQty時，判斷Roll# & Dyelot#是否重複,須排除自己
-                sqlcmd = string.Format(@"
+                sqlcmd = string.Format(
+                    @"
 select 1 from dbo.Receiving_Detail WITH (NOLOCK) 
 where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and dyelot='{5}' and ( roll!='{4}' and dyelot!='{5}')
-", docno, drModify["poid"], drModify["seq1"], drModify["seq2"], drModify["roll"], drModify["dyelot"]);
+", this.docno, drModify["poid"], drModify["seq1"], drModify["seq2"], drModify["roll"], drModify["dyelot"]);
 
                 if (MyUtility.Check.Seek(sqlcmd, null))
                 {
-                    duplicateList.Add($"{drModify["poid"]}-{(drModify["seq1"].ToString() + " " + drModify["seq2"].ToString())}-{drModify["roll"]}-{drModify["dyelot"]}");
+                    duplicateList.Add($"{drModify["poid"]}-{drModify["seq1"].ToString() + " " + drModify["seq2"].ToString()}-{drModify["roll"]}-{drModify["dyelot"]}");
                 }
             }
+
             if (duplicateList.Count() > 0)
             {
-
                 MyUtility.Msg.WarningBox(@"Roll# & Dyelot# already existed!!"
 + Environment.NewLine
 + "Duplicate list SP# - Seq - Roll# - Dyelot as below."
@@ -552,10 +583,9 @@ where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and d
                 return;
             }
 
-            //修改到Roll或Dyelot時。因為主索引鍵被修改，需要檢查
+            // 修改到Roll或Dyelot時。因為主索引鍵被修改，需要檢查
             foreach (var drModify in modifyDrList)
             {
-
                 string Original_Roll = drModify["roll", DataRowVersion.Original].ToString();
                 string Current_Roll = drModify["roll", DataRowVersion.Current].ToString();
 
@@ -564,9 +594,9 @@ where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and d
 
                 if (Original_Roll != Current_Roll || Original_Dyelot != Current_Dyelot)
                 {
-
                         // 只修改ActualQty時，判斷Roll# & Dyelot#是否重複,須排除自己
-                        sqlcmd = string.Format(@"
+                        sqlcmd = string.Format(
+                            @"
     SELECT   [FirID]=f.ID
 		    ,[Roll]=r.Roll
 		    ,[Dyelot]=r.Dyelot
@@ -577,19 +607,18 @@ where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and d
     INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f.SEQ2=r.Seq2
     WHERE r.ID='{0}' AND p.FabricType='F' AND p.FabricType='F' AND  roll='{1}' AND dyelot='{2}'
     and r.seq1='{3}' and r.seq2='{4}' and r.poid='{5}' 
-    ", docno, drModify["roll"], drModify["dyelot"], drModify["Seq1"], drModify["Seq2"] , drModify["poid"]);
+    ", this.docno, drModify["roll"], drModify["dyelot"], drModify["Seq1"], drModify["Seq2"], drModify["poid"]);
 
-                    if (MyUtility.Check.Seek(sqlcmd, null))
+                        if (MyUtility.Check.Seek(sqlcmd, null))
                     {
-                        duplicateList.Add($"{drModify["poid"]} - {(drModify["seq1"].ToString()+" "+ drModify["seq2"].ToString())} - {drModify["roll"]} - {drModify["dyelot"]}");
+                        duplicateList.Add($"{drModify["poid"]} - {drModify["seq1"].ToString() + " " + drModify["seq2"].ToString()} - {drModify["roll"]} - {drModify["dyelot"]}");
                     }
                 }
             }
 
             if (duplicateList.Count() > 0)
             {
-
-                MyUtility.Msg.WarningBox(@"Roll# & Dyelot# already existed!!" 
+                MyUtility.Msg.WarningBox(@"Roll# & Dyelot# already existed!!"
 + Environment.NewLine
 + "Duplicate list SP# - Seq - Roll# - Dyelot as below."
 + Environment.NewLine
@@ -605,15 +634,13 @@ where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and d
                 string Original_Dyelot = drModify["dyelot", DataRowVersion.Original].ToString();
                 string Current_Dyelot = drModify["dyelot", DataRowVersion.Current].ToString();
 
-
                 string FirID = MyUtility.GetValue.Lookup($@"
 SELECT   [FirID]=f.ID
 FROM Receiving_Detail r
 INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
 INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f.SEQ2=r.Seq2
-WHERE r.ID='{docno}' AND p.FabricType='F' AND ROLL='{drModify["roll"]}' AND  r.Dyelot='{ drModify["dyelot"]}'
+WHERE r.ID='{this.docno}' AND p.FabricType='F' AND ROLL='{drModify["roll"]}' AND  r.Dyelot='{drModify["dyelot"]}'
 ");
-
 
                 sqlupd1 += $@"
 update dbo.receiving_detail 
@@ -645,7 +672,6 @@ WHERE  roll='{Original_Roll}' AND dyelot='{Original_Dyelot}' AND ID='{FirID}'
 ";
             }
 
-            
             DualResult result1, result2;
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -656,14 +682,14 @@ WHERE  roll='{Original_Roll}' AND dyelot='{Original_Dyelot}' AND ID='{FirID}'
                     if (!(result1 = DBProxy.Current.Execute(null, sqlupd1)))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(sqlupd1, result1);
+                        this.ShowErr(sqlupd1, result1);
                         return;
                     }
 
                     if (!(result2 = DBProxy.Current.Execute(null, sqlupd2)))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(sqlupd2, result2);
+                        this.ShowErr(sqlupd2, result2);
                         return;
                     }
 
@@ -674,16 +700,18 @@ WHERE  roll='{Original_Roll}' AND dyelot='{Original_Dyelot}' AND ID='{FirID}'
                 catch (Exception ex)
                 {
                     _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
+
             _transactionscope.Dispose();
             _transactionscope = null;
 
             DataTable dt;
             DualResult result;
-            string selectCommand1 = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+            string selectCommand1 = string.Format(
+                @"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.shipqty
 ,a.Weight
 ,a.ActualWeight
@@ -699,11 +727,11 @@ WHERE  roll='{Original_Roll}' AND dyelot='{Original_Dyelot}' AND ID='{FirID}'
 ,a.ukey
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
-Where a.id = '{0}' and p1.FabricType='F'", docno);
+Where a.id = '{0}' and p1.FabricType='F'", this.docno);
 
             if (!(result = DBProxy.Current.Select(null, selectCommand1, out dt)))
             {
-                ShowErr(selectCommand1, result);
+                this.ShowErr(selectCommand1, result);
             }
             else
             {
@@ -723,13 +751,14 @@ and POID='{dr["Poid"]}'
 and SEQ1='{dr["Seq1"]}' and SEQ2='{dr["Seq2"]}'
 ";
                 }
-                if (!(result = DBProxy.Current.Execute(string.Empty,sqlupdate)))
+
+                if (!(result = DBProxy.Current.Execute(string.Empty, sqlupdate)))
                 {
-                    ShowErr(sqlupdate, result);
+                    this.ShowErr(sqlupdate, result);
                 }
 
-                source = dt;
-                gridModifyRoll.DataSource = dt;
+                this.source = dt;
+                this.gridModifyRoll.DataSource = dt;
                 this.LoadDate();
 
                 this.Close();

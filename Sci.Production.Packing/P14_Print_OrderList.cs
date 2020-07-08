@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Sci;
-using Sci.Data;
 using Ict;
 using Ict.Win;
 using Sci.Win;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -127,7 +121,7 @@ from (
                             {
                                 PackingListID = p["PackingListID"].ToString(),
                                 OrderID = p["OrderID"].ToString(),
-                                TransferSlipNo = p["TransferSlipNo"].ToString()
+                                TransferSlipNo = p["TransferSlipNo"].ToString(),
                             }
 
 into m
@@ -140,7 +134,7 @@ into m
                                 Dest = m.First()["Dest"].ToString(),
                                 BuyerDelivery = m.First()["BuyerDelivery"].ToString(),
                                 CartonNum = string.Join(", ", m.Select(r => r["CTNStartNo"].ToString().Trim())),
-                                TransferSlipNo = m.First()["TransferSlipNo"].ToString()
+                                TransferSlipNo = m.First()["TransferSlipNo"].ToString(),
                             }).ToList();
                 string sql = @"
 select  t.TTL_Qty, 
@@ -204,7 +198,7 @@ outer apply(
                    Dest = row1["Dest"].ToString().Trim(),
                    Factory = row1["FactoryID"].ToString().Trim(),
                    BuyerDelivery = row1["BuyerDelivery"].ToString().Trim(),
-                   AddDate = ((DateTime)row1["AddDate"]).ToString("yyyy/MM/dd").Trim()
+                   AddDate = ((DateTime)row1["AddDate"]).ToString("yyyy/MM/dd").Trim(),
                }).ToList();
 
                 report.ReportDataSource = data;
@@ -280,7 +274,7 @@ from #tmp";
                             {
                                 PackingListID = p["PackingListID"].ToString(),
                                 OrderID = p["OrderID"].ToString(),
-                                TransferSlipNo = p["TransferSlipNo"].ToString()
+                                TransferSlipNo = p["TransferSlipNo"].ToString(),
                             }
 
                             into m
@@ -296,7 +290,7 @@ from #tmp";
                                 CartonNum = string.Join(", ", m.Select(r => r["CTNStartNo"].ToString().Trim())),
                                 TransferSlipNo = m.First()["TransferSlipNo"].ToString(),
                                 Customize1 = m.First()["Customize1"].ToString(),
-                                SeasonID = m.First()["SeasonID"].ToString()
+                                SeasonID = m.First()["SeasonID"].ToString(),
                             }).ToList();
 
                 sqlcmd = @"
@@ -346,7 +340,7 @@ outer apply(
                   SeasonID = row1["SeasonID"].ToString().Trim(),
               }).ToList();
 
-            report.ReportDataSource = data;
+                report.ReportDataSource = data;
 
                 reportResourceNamespace = typeof(P14_PrintData_SLIP);
 
@@ -578,7 +572,6 @@ outer apply(
             /// Dest
             /// </summary>
             public string Dest { get; set; }
-
 
             /// <summary>
             /// Dest

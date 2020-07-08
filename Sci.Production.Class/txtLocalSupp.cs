@@ -1,12 +1,6 @@
 ﻿using Ict;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Class
@@ -15,14 +9,13 @@ namespace Sci.Production.Class
     {
         public txtLocalSupp()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         protected override void OnPaint(PaintEventArgs pe)
         {
             base.OnPaint(pe);
         }
-
 
         public Sci.Win.UI.TextBox TextBox1
         {
@@ -38,15 +31,15 @@ namespace Sci.Production.Class
         [Bindable(true)]
         public string TextBox1Binding
         {
+            get { return this.textBox1.Text; }
             set { this.textBox1.Text = value;  }
-            get { return textBox1.Text; }
         }
 
         [Bindable(true)]
         public string DisplayBox1Binding
         {
-            set { this.displayBox1.Text = value; }
             get { return this.displayBox1.Text; }
+            set { this.displayBox1.Text = value; }
         }
 
         public virtual void textBox1_Validating(object sender, CancelEventArgs e)
@@ -63,34 +56,41 @@ WHERE  l.ID = '{textValue}'
 and l.Junk=0 
 "))
                 {
-                    this.textBox1.Text = "";
+                    this.textBox1.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< LocalSupplier Code: {0} > not found!!!", textValue));
                     return;
                 }
             }
+
             this.ValidateControl();
         }
-
-      
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
-            if (myForm.EditMode == false || textBox1.ReadOnly == true) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem($@"
+            if (myForm.EditMode == false || this.textBox1.ReadOnly == true)
+            {
+                return;
+            }
+
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                $@"
 select l.ID,l.Name,l.Abb 
 from LocalSupp l WITH (NOLOCK) 
 WHERE l.Junk=0 
-order by l.ID"
-, "8,30,20", this.textBox1.Text);
+order by l.ID",
+                "8,30,20", this.textBox1.Text);
             item.Width = 650;
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.textBox1.Text = item.GetSelectedString();
             this.ValidateControl();
             this.displayBox1.Text = item.GetSelecteds()[0]["Name"].ToString().TrimEnd();
-            
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)

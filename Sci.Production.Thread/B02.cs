@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+﻿using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace Sci.Production.Thread
@@ -45,11 +40,15 @@ namespace Sci.Production.Thread
 
         private void TxtThreadColorGroupID_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
-                        (@"Select ID,description  from ThreadColorGroup WITH (NOLOCK) where JUNK=0 order by ID", "10,45", null);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                        @"Select ID,description  from ThreadColorGroup WITH (NOLOCK) where JUNK=0 order by ID", "10,45", null);
             item.Size = new System.Drawing.Size(630, 535);
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.CurrentMaintain["ThreadColorGroupID"] = item.GetSelectedString();
         }
 

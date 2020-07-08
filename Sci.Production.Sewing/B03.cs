@@ -1,15 +1,10 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Win.Tems;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
@@ -252,7 +247,7 @@ and a.ProductionDate  = '{1}'",
                             g.Key.LineLocationID,
                             g.Key.SewingLineID,
                             g.Key.Team,
-                            count = g.Count()
+                            count = g.Count(),
                         };
 
             foreach (var item in query)

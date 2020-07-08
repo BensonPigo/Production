@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Sci.Production.PublicPrg;
 using Ict;
@@ -16,8 +13,6 @@ namespace Sci.Production.Shipping
     /// </summary>
     public partial class B03 : Sci.Win.Tems.Input1
     {
-        private bool Junk;
-
         /// <summary>
         /// B03
         /// </summary>
@@ -189,6 +184,7 @@ namespace Sci.Production.Shipping
         }
 
         Form batchapprove;
+
         private void BtnBatchApprove_Click(object sender, EventArgs e)
         {
             if (!this.Perm.Confirm)
@@ -197,14 +193,14 @@ namespace Sci.Production.Shipping
                 return;
             }
 
-            if (batchapprove == null || batchapprove.IsDisposed)
+            if (this.batchapprove == null || this.batchapprove.IsDisposed)
             {
-                batchapprove = new Sci.Production.Shipping.B03_BatchApprove(reload);
-                batchapprove.Show();
+                this.batchapprove = new Sci.Production.Shipping.B03_BatchApprove(this.reload);
+                this.batchapprove.Show();
             }
             else
             {
-                batchapprove.Activate();
+                this.batchapprove.Activate();
             }
         }
 
@@ -216,12 +212,11 @@ namespace Sci.Production.Shipping
 
         private void B03_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (batchapprove != null)
+            if (this.batchapprove != null)
             {
-                batchapprove.Dispose();
+                this.batchapprove.Dispose();
             }
         }
-
 
         private void B03_FormLoaded(object sender, EventArgs e)
         {

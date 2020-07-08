@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
-using Sci.Data;
 
 namespace Sci.Production.Packing
 {
@@ -26,12 +23,13 @@ namespace Sci.Production.Packing
         /// </summary>
         /// <param name="detailData">DetailData</param>
         /// <param name="brandID">BrandID</param>
-        public P04_ExcelImport(DataTable detailData, string brandID, string ShipModeID)
+        /// <param name="shipModeID">shipModeID</param>
+        public P04_ExcelImport(DataTable detailData, string brandID, string shipModeID)
         {
             this.InitializeComponent();
             this.detailData = detailData;
             this.mBrandID = brandID;
-            this.mShipModeID = ShipModeID;
+            this.mShipModeID = shipModeID;
         }
 
         /// <summary>
@@ -267,7 +265,7 @@ left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = oq.Id and oqd.Seq =
 WHERE o.Category = 'S'
 ";
 
-                DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource2.DataSource, "OrderID,BuyerDelivery,ShipmodeID,Article,ColorID,SizeCode,Qty", sqlcmd, out tmpPackData);
+            DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource2.DataSource, "OrderID,BuyerDelivery,ShipmodeID,Article,ColorID,SizeCode,Qty", sqlcmd, out tmpPackData);
 
             if (result == false)
             {

@@ -1,20 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data;
 using Sci.Data;
-using Sci;
 using Ict;
-using Ict.Win;
 
 namespace Sci.Production.PublicPrg
 {
-
     public static partial class Prgs
     {
         #region GetItemDesc
+
         /// <summary>
         /// GetItemDesc()
         /// </summary>
@@ -23,13 +16,18 @@ namespace Sci.Production.PublicPrg
         /// <returns>String Desc</returns>
         public static string GetItemDesc(string category, string refno)
         {
-            string desc = MyUtility.GetValue.Lookup(string.Format(@"
+            string desc = MyUtility.GetValue.Lookup(string.Format(
+                @"
                     select description from localitem WITH (NOLOCK) where refno = '{0}' and category = '{1}'", refno.Replace("'", "''"), category));
             string[] descs = desc.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             if (descs.Length == 0)
-                return "";
+            {
+                return string.Empty;
+            }
             else
+            {
                 return descs[0];
+            }
         }
         #endregion
 
@@ -72,9 +70,10 @@ update ard  set ard.ArtworkPOID = '{artworkPOID}'
         public enum CallFormAction
         {
             Save = 1,
-            Confirm = 2
+            Confirm = 2,
         }
-        public static DualResult CheckLocalSupp_BankStatus(string suppID, CallFormAction callFormAction )
+
+        public static DualResult CheckLocalSupp_BankStatus(string suppID, CallFormAction callFormAction)
         {
             string sqlCheck = $@"select top 1 Status from dbo.LocalSupp_Bank where ID = '{suppID}' order by Adddate desc";
             string localSupp_BankStatus = MyUtility.GetValue.Lookup(sqlCheck);
@@ -96,10 +95,7 @@ update ard  set ard.ArtworkPOID = '{artworkPOID}'
                         MyUtility.Msg.WarningBox(hintMsg);
                         return new DualResult(false, hintMsg);
                     }
-                    
             }
-
         }
     }
-
 }

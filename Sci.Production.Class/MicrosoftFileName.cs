@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sci.Production.Class
 {
     public static class ExcelFileNameExtension
     {
-        public const string Xlsm = ".xlsm", Xlsx = ".xlsx";
+        public const string Xlsm = ".xlsm";
+        public const string Xlsx = ".xlsx";
     }
 
     public static class WordFileeNameExtension

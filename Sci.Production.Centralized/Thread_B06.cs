@@ -2,11 +2,8 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Linq;
 using System.Data.SqlClient;
@@ -242,12 +239,12 @@ when not matched then
             DBProxy.Current.OpenConnection(this.ConnectionName, out sqlConn);
             DualResult result = MyUtility.Tool.ProcessWithDatatable(
                 (DataTable)this.bindingSource1.DataSource,
-                                                                        null,
-                                                                        strUpdateTable,
-                                                                        out dtResult,
-                                                                        paramters: listSqlParameter,
-                                                                        conn: sqlConn);
-                if (result == false)
+                null,
+                strUpdateTable,
+                out dtResult,
+                paramters: listSqlParameter,
+                conn: sqlConn);
+            if (result == false)
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
                     return;

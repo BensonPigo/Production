@@ -56,6 +56,7 @@ namespace Sci.Production.PPIC
 
             this.btnBatchReCalculateResponsibilityDeptAmt.Enabled = this.Perm.Edit;
             this.btnBatch.Enabled = this.Perm.Confirm;
+
             // GridReplacement 欄位設定
             this.Helper.Controls.Grid.Generator(this.gridReplacement)
           .Text("SP", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -357,6 +358,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
             }
 
             int count = 0; // 紀錄表身筆數
+
             // 刪除表身Grid的Seq為空資料
             foreach (DataRow dr in this.DetailDatas)
             {

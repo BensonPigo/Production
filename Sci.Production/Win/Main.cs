@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using Sci.Production.Basic;
 using System.Configuration;
 using Ict;
 using Ict.Win;
@@ -19,6 +16,7 @@ namespace Sci.Production
     public partial class Main : Sci.Win.Apps.Base
     {
         delegate Sci.Win.Tems.Base CREATETEMPLATE(ToolStripMenuItem menuitem);
+
         static Dictionary<Process, ToolStripMenuItem> proList = new Dictionary<Process, ToolStripMenuItem>();
         private static string strMaxVerDirName = string.Empty;
 
@@ -28,64 +26,69 @@ namespace Sci.Production
             public CREATETEMPLATE create;
             public ToolStripMenuItem menuitem;
         }
+
         public Main()
         {
             Sci.Env.App = this;
-            InitializeComponent();
-            //if (Debugger.IsAttached)
-            //{
-                ToolStripMenuItem winmenu;
-                menus.Items.Add(winmenu = new ToolStripMenuItem("Window")
-                {
-                    Name = "WINDOW",
-                    Alignment = ToolStripItemAlignment.Right,
-                });
-                DirectoryInfo DI = new DirectoryInfo(Sci.Env.Cfg.XltPathDir);
-                if (System.IO.File.Exists(DI.Parent.Parent.FullName + "\\Logo.bmp"))
-                {
-                    Image Image = Image.FromFile(DI.Parent.Parent.FullName + "\\Logo.bmp");
-                    this.BackgroundImage = Image;
-                    this.BackgroundImageLayout = ImageLayout.Tile;
-                }
-                if (System.IO.File.Exists(DI.Parent.Parent.FullName + "\\Logo.jpg"))
-                {
-                    Image Image = Image.FromFile(DI.Parent.Parent.FullName + "\\Logo.jpg");
-                    this.BackgroundImage = Image;
-                    this.BackgroundImageLayout = ImageLayout.Tile;
-                }
-                
-            //}
+            this.InitializeComponent();
+
+            // if (Debugger.IsAttached)
+            // {
+            ToolStripMenuItem winmenu;
+            this.menus.Items.Add(winmenu = new ToolStripMenuItem("Window")
+            {
+                Name = "WINDOW",
+                Alignment = ToolStripItemAlignment.Right,
+            });
+            DirectoryInfo dI = new DirectoryInfo(Sci.Env.Cfg.XltPathDir);
+            if (System.IO.File.Exists(dI.Parent.Parent.FullName + "\\Logo.bmp"))
+            {
+                Image image = Image.FromFile(dI.Parent.Parent.FullName + "\\Logo.bmp");
+                this.BackgroundImage = image;
+                this.BackgroundImageLayout = ImageLayout.Tile;
+            }
+
+            if (System.IO.File.Exists(dI.Parent.Parent.FullName + "\\Logo.jpg"))
+            {
+                Image image1 = Image.FromFile(dI.Parent.Parent.FullName + "\\Logo.jpg");
+                this.BackgroundImage = image1;
+                this.BackgroundImageLayout = ImageLayout.Tile;
+            }
+
+            // }
         }
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
             if (!Env.DesignTime)
             {
-                this.Shown+=(s,e)=>{
-                    if (null == Env.User)
+                this.Shown += (s, e) =>
+                {
+                    if (Env.User == null)
                     {
-                        OpenLogin();
+                        this.OpenLogin();
                     }
                 };
             }
 
             this.OnLineHelpID = "Production";
         }
+
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             base.OnFormClosing(e);
 
-            if (!IsGeneralClosing)
+            if (!this.IsGeneralClosing)
             {
-                if (!OnExit())
+                if (!this.OnExit())
                 {
                     e.Cancel = true;
                     return;
                 }
             }
         }
-
 
         ToolStripMenuItem progmenu = null;
         ToolStripMenuItem subMenu = null;
@@ -100,22 +103,34 @@ namespace Sci.Production
 
         int _isgeneralclosing;
         IList<TemplateInfo> _templates = new List<TemplateInfo>();
-        public static string FormTextSufix = "";
+        public static string FormTextSufix = string.Empty;
 
         #region 屬性
-        private bool IsGeneralClosing { get { return 0 < _isgeneralclosing; } }
+        private bool IsGeneralClosing
+        {
+            get { return this._isgeneralclosing > 0; }
+        }
+
         #endregion
         #region 應用函式
         public DualResult DoLogin(IUserInfo user)
         {
-            if (null == user) return Result.F_ArgNull("user");
-            if (!OnLogout()) return new DualResult(false, "Cannot logout current user.");
+            if (user == null)
+            {
+                return Result.F_ArgNull("user");
+            }
 
-            if (!(result = Sci.Data.DBProxy.Current.Select(null, "SELECT * FROM Menu ORDER BY MenuNo, IsSubMenu", out dtMenu)))
+            if (!this.OnLogout())
+            {
+                return new DualResult(false, "Cannot logout current user.");
+            }
+
+            if (!(this.result = Sci.Data.DBProxy.Current.Select(null, "SELECT * FROM Menu ORDER BY MenuNo, IsSubMenu", out this.dtMenu)))
             {
                 return new DualResult(false, "Can't get Menu table!");
             }
-            if (!(result = Sci.Data.DBProxy.Current.Select(null, "SELECT * FROM MenuDetail ORDER BY Ukey, BarNo", out dtMenuDetail)))
+
+            if (!(this.result = Sci.Data.DBProxy.Current.Select(null, "SELECT * FROM MenuDetail ORDER BY Ukey, BarNo", out this.dtMenuDetail)))
             {
                 return new DualResult(false, "Can't get Menu table!");
             }
@@ -123,35 +138,49 @@ namespace Sci.Production
             // 中英文轉換
             if (Sci.Env.Cfg.CodePage == 950)
             {
-                if (!(result = Sci.Data.DBProxy.Current.Select(null, "SELECT * FROM DDTable", out dtDDTable)))
+                if (!(this.result = Sci.Data.DBProxy.Current.Select(null, "SELECT * FROM DDTable", out this.dtDDTable)))
                 {
-                    return new DualResult(false, "Can't get DDTable table!"); ;
+                    return new DualResult(false, "Can't get DDTable table!");
                 }
-                DDConvert();
+
+                this.DDConvert();
             }
 
             Env.User = user;
 
             // 產生Menu
-            foreach (DataRow dr in dtMenu.Rows)
-            {               
-                if (!MyUtility.Check.Empty(dr["ForMISOnly"]) && !Sci.Env.User.IsMIS) continue;
-                if (!MyUtility.Check.Empty(dr["IsSubMenu"])) continue;
-                if (dr["MenuName"].ToString().Contains("Centralized") && ConfigurationManager.AppSettings["TaipeiServer"] == "") continue;
+            foreach (DataRow dr in this.dtMenu.Rows)
+            {
+                if (!MyUtility.Check.Empty(dr["ForMISOnly"]) && !Sci.Env.User.IsMIS)
+                {
+                    continue;
+                }
 
-                progmenu = new ToolStripMenuItem(dr["MenuName"].ToString());
-                progmenu.Overflow = ToolStripItemOverflow.AsNeeded;
-                menus.Items.Add(progmenu);
-                progmenu.DropDownItemClicked += progmenu_DropDownItemClicked;
+                if (!MyUtility.Check.Empty(dr["IsSubMenu"]))
+                {
+                    continue;
+                }
 
-                drs = dtMenuDetail.Select(string.Format("UKey = '{0}'", dr["PKey"].ToString().Trim()));
-                GenerateMenu(progmenu, drs);
+                if (dr["MenuName"].ToString().Contains("Centralized") && ConfigurationManager.AppSettings["TaipeiServer"] == string.Empty)
+                {
+                    continue;
+                }
+
+                this.progmenu = new ToolStripMenuItem(dr["MenuName"].ToString())
+                {
+                    Overflow = ToolStripItemOverflow.AsNeeded,
+                };
+                this.menus.Items.Add(this.progmenu);
+                this.progmenu.DropDownItemClicked += this.Progmenu_DropDownItemClicked;
+
+                this.drs = this.dtMenuDetail.Select(string.Format("UKey = '{0}'", dr["PKey"].ToString().Trim()));
+                this.GenerateMenu(this.progmenu, this.drs);
             }
 
-            if (!(result = SetTemplatePerm()))
+            if (!(this.result = this.SetTemplatePerm()))
             {
-                OnLogout();
-                return result;
+                this.OnLogout();
+                return this.result;
             }
 
             return Result.True;
@@ -159,32 +188,34 @@ namespace Sci.Production
 
         private void DDConvert()
         {
-            foreach (DataRow dr in dtMenu.Rows)
+            foreach (DataRow dr in this.dtMenu.Rows)
             {
-                drs = dtDDTable.Select(string.Format("ID = '{0}'", dr["MenuName"].ToString().Trim()));
-                if (drs.Length > 0)
+                this.drs = this.dtDDTable.Select(string.Format("ID = '{0}'", dr["MenuName"].ToString().Trim()));
+                if (this.drs.Length > 0)
                 {
-                    dr["MenuName"] = drs[0]["Name950"].ToString();
+                    dr["MenuName"] = this.drs[0]["Name950"].ToString();
                 }
             }
 
-            foreach (DataRow dr in dtMenuDetail.Rows)
+            foreach (DataRow dr in this.dtMenuDetail.Rows)
             {
                 switch (dr["ObjectCode"].ToString())
                 {
                     case "0": // Form
-                        drs = dtDDTable.Select(string.Format("ID = '{0}'", dr["FormName"].ToString().Trim()));
-                        if (drs.Length > 0)
+                        this.drs = this.dtDDTable.Select(string.Format("ID = '{0}'", dr["FormName"].ToString().Trim()));
+                        if (this.drs.Length > 0)
                         {
-                            dr["BarPrompt"] = drs[0]["Name950"].ToString();
+                            dr["BarPrompt"] = this.drs[0]["Name950"].ToString();
                         }
+
                         break;
                     case "1": // SubMenu
-                        drs = dtDDTable.Select(string.Format("ID = '{0}'", dr["BarPrompt"].ToString().Trim()));
-                        if (drs.Length > 0)
+                        this.drs = this.dtDDTable.Select(string.Format("ID = '{0}'", dr["BarPrompt"].ToString().Trim()));
+                        if (this.drs.Length > 0)
                         {
-                            dr["BarPrompt"] = drs[0]["Name950"].ToString();
+                            dr["BarPrompt"] = this.drs[0]["Name950"].ToString();
                         }
+
                         break;
                 }
             }
@@ -193,57 +224,69 @@ namespace Sci.Production
         private void GenerateMenu(ToolStripMenuItem menu, DataRow[] details)
         {
             DataRow[] arrayDrs = null;
-            string pKey = "";
-            string dllName = "";
+            string pKey = string.Empty;
+            string dllName = string.Empty;
 
             foreach (DataRow dr in details)
             {
                 switch (dr["ObjectCode"].ToString())
                 {
                     case "0": // Form
-                        if (MyUtility.Check.Empty(dr["BarPrompt"]) || MyUtility.Check.Empty(dr["FormName"])) break;
-                        if (!MyUtility.Check.Empty(dr["ForMISOnly"]) && !Sci.Env.User.IsMIS) break;
+                        if (MyUtility.Check.Empty(dr["BarPrompt"]) || MyUtility.Check.Empty(dr["FormName"]))
+                        {
+                            break;
+                        }
+
+                        if (!MyUtility.Check.Empty(dr["ForMISOnly"]) && !Sci.Env.User.IsMIS)
+                        {
+                            break;
+                        }
 
                         dllName = dr["FormName"].ToString().Substring(0, dr["FormName"].ToString().LastIndexOf("."));
+
                         // PublicClass的Dll Name為Sci.Proj
-                        if (dllName == "Sci.Win.UI") dllName = "Sci.Proj";
+                        if (dllName == "Sci.Win.UI")
+                        {
+                            dllName = "Sci.Proj";
+                        }
 
                         string typeName = dr["FormName"].ToString() + "," + dllName;
                         Type typeofControl = Type.GetType(typeName);
-                        AddTemplate(menu
-                            , dr["BarPrompt"].ToString()
-                            , (menuitem) => (Sci.Win.Tems.Base)CreateFormObject(
-                                    menuitem
-                                    , typeofControl
-                                    , dr["FormParameter"].ToString()
-                                    , typeName)
-                             );
+                        this.AddTemplate(
+                            menu,
+                            dr["BarPrompt"].ToString(),
+                            (menuitem) => (Sci.Win.Tems.Base)this.CreateFormObject(
+                                    menuitem,
+                                    typeofControl,
+                                    dr["FormParameter"].ToString(),
+                                    typeName));
                         break;
 
-                    case "1": //SubMenu
-                        subMenu = AddMenu(menu, dr["BarPrompt"].ToString());
-                        subMenu.DropDownItemClicked += progmenu_DropDownItemClicked;
-                        arrayDrs = dtMenu.Select(string.Format("MenuName = '{0}'", dr["BarPrompt"].ToString().Trim()));
+                    case "1": // SubMenu
+                        this.subMenu = this.AddMenu(menu, dr["BarPrompt"].ToString());
+                        this.subMenu.DropDownItemClicked += this.Progmenu_DropDownItemClicked;
+                        arrayDrs = this.dtMenu.Select(string.Format("MenuName = '{0}'", dr["BarPrompt"].ToString().Trim()));
                         if (arrayDrs.Length > 0)
                         {
                             pKey = arrayDrs[0]["PKey"].ToString();
-                            arrayDrs = dtMenuDetail.Select(string.Format("UKey = {0}", pKey));
-                            GenerateMenu(subMenu, arrayDrs);
+                            arrayDrs = this.dtMenuDetail.Select(string.Format("UKey = {0}", pKey));
+                            this.GenerateMenu(this.subMenu, arrayDrs);
                         }
+
                         break;
 
-                    case "2":  //Seperator
-                        menu.DropDownItems.Add(separator = new ToolStripSeparator());
+                    case "2": // Seperator
+                        menu.DropDownItems.Add(this.separator = new ToolStripSeparator());
                         break;
                 }
             }
         }
 
-        private Object CreateFormObject(ToolStripMenuItem menuItem, Type typeofControl, String strArg)
+        private object CreateFormObject(ToolStripMenuItem menuItem, Type typeofControl, string strArg)
         {
-            Object[] arrArg = null;
-            arrArg = string.IsNullOrWhiteSpace(strArg) ? new Object[1] { menuItem } : new Object[2] { menuItem, strArg };
-            Object formClass = null;
+            object[] arrArg = null;
+            arrArg = string.IsNullOrWhiteSpace(strArg) ? new object[1] { menuItem } : new object[2] { menuItem, strArg };
+            object formClass = null;
             try
             {
                 formClass = Activator.CreateInstance(typeofControl, arrArg);
@@ -252,20 +295,21 @@ namespace Sci.Production
                     Sci.Win.IForm iform = (Sci.Win.IForm)formClass;
                     iform.FormParameter = strArg;
                 }
-
             }
             catch (Exception e)
             {
-                this.ShowErr(e);                
+                this.ShowErr(e);
             }
+
             return formClass;
         }
 
-        private Object CreateFormObject(ToolStripMenuItem menuItem, Type typeofControl, String strArg, string formName)
+        private object CreateFormObject(ToolStripMenuItem menuItem, Type typeofControl, string strArg, string formName)
         {
-            bool isSwitchFactory = formName.IndexOf(typeof(Sci.Production.Tools.SwitchFactory).FullName,StringComparison.OrdinalIgnoreCase)>=0;
-            if (isSwitchFactory) { 
-                var formObj = CreateFormObject( menuItem,  typeofControl,  strArg);
+            bool isSwitchFactory = formName.IndexOf(typeof(Sci.Production.Tools.SwitchFactory).FullName, StringComparison.OrdinalIgnoreCase) >= 0;
+            if (isSwitchFactory)
+            {
+                var formObj = this.CreateFormObject(menuItem, typeofControl, strArg);
 
                 var form = (Form)formObj;
                 form.FormClosed += (s, e) =>
@@ -278,8 +322,9 @@ namespace Sci.Production
 
                 return formObj;
             }
-            //else if (!Debugger.IsAttached)
-            //{
+
+            // else if (!Debugger.IsAttached)
+            // {
             //    try
             //    {
             //        string cmd = string.Format("\"userid:{0}\" \"factoryID:{1}\" \"formName:{2}\" \"menuName:{3}\" \"args:{4}\""
@@ -302,22 +347,20 @@ namespace Sci.Production
             //            menuItem.Enabled = false;
             //        }
             //    }
-            //    catch 
+            //    catch
             //    {
 
-            //    }
+            // }
             //    return null;
-            //}
+            // }
             else
             {
-                var formObj = CreateFormObject(menuItem, typeofControl, strArg);
+                var formObj = this.CreateFormObject(menuItem, typeofControl, strArg);
                 return formObj;
             }
-
         }
 
-
-        void myProcess_Exited(object sender, EventArgs e)
+        void MyProcess_Exited(object sender, EventArgs e)
         {
             Process p = (Process)sender;
 
@@ -327,8 +370,8 @@ namespace Sci.Production
                 proList.Remove(p);
                 this.Invoke(() => { menuItem.Enabled = true; });
 
-                //Cross-thread operation not valid: Control '' accessed from a thread other than the thread it was created on.
-                //this.proList[p].Enabled = true;
+                // Cross-thread operation not valid: Control '' accessed from a thread other than the thread it was created on.
+                // this.proList[p].Enabled = true;
             }
         }
 
@@ -336,17 +379,16 @@ namespace Sci.Production
         {
             Kill_Process();
             base.OnClosed(e);
-
         }
-        
+
         public static void Kill_Process()
         {
             var processArray = proList.Keys.Where(p => !p.HasExited).ToArray();
             foreach (var p in processArray)
             {
                 p.Kill();
-
             }
+
             proList.Clear();
         }
 
@@ -360,72 +402,102 @@ namespace Sci.Production
                 }
             }
 
-            if (!OnLogout()) return;
+            if (!this.OnLogout())
+            {
+                return;
+            }
 
-            OpenLogin();
+            this.OpenLogin();
         }
+
         private bool OnLogout()
         {
-            if (!CloseTemplates()) return false;
-
-            if (null != progmenu)
+            if (!this.CloseTemplates())
             {
-                menus.Items.Remove(progmenu);
-                progmenu.Dispose(); progmenu = null;
+                return false;
             }
-            _templates.Clear();
+
+            if (this.progmenu != null)
+            {
+                this.menus.Items.Remove(this.progmenu);
+                this.progmenu.Dispose();
+                this.progmenu = null;
+            }
+
+            this._templates.Clear();
 
             Env.User = null;
             return true;
         }
+
         public void DoExit(bool confirm = true)
         {
-            if (IsFormClosing) return;
+            if (this.IsFormClosing)
+            {
+                return;
+            }
 
-            ++_isgeneralclosing;
+            ++this._isgeneralclosing;
             try
             {
-                if (!OnExit(confirm: confirm)) return;
+                if (!this.OnExit(confirm: confirm))
+                {
+                    return;
+                }
 
-                Close();
+                this.Close();
             }
-            finally { --_isgeneralclosing; }
+            finally
+            {
+                --this._isgeneralclosing;
+            }
         }
+
         private bool OnExit(bool confirm = true)
         {
             if (confirm)
             {
-                if (!MsgHelper.Current.Confirm(this, "Close demo system?")) return false;
+                if (!MsgHelper.Current.Confirm(this, "Close demo system?"))
+                {
+                    return false;
+                }
             }
 
-            if (!CloseTemplates()) return false;
+            if (!this.CloseTemplates())
+            {
+                return false;
+            }
 
             return true;
         }
 
         private void OpenLogin()
         {
-            if (null != login)
+            if (this.login != null)
             {
-                if (login.IsFormClosed)
+                if (this.login.IsFormClosed)
                 {
-                    login.Dispose();
-                    login = null;
+                    this.login.Dispose();
+                    this.login = null;
                 }
                 else
                 {
-                    login.Activate();
+                    this.login.Activate();
                     return;
                 }
             }
 
-            login = new Win.Login(this);
-            login.FormClosed += (s, e) =>
+            this.login = new Win.Login(this);
+            this.login.FormClosed += (s, e) =>
             {
-                if (null == Env.User) DoExit(confirm: false);
+                if (Env.User == null)
+                {
+                    this.DoExit(confirm: false);
+                }
             };
-            OpenForm(login);
+            this.OpenForm(this.login);
         }
+
         private void OpenForm(Sci.Win.Forms.Base form)
         {
             // Check是否是最新版本
@@ -451,8 +523,9 @@ namespace Sci.Production
         private bool AlertForNotLatestVersion()
         {
             System.Windows.Forms.Application.DoEvents();
-            MessageBox.Show(new Form() { TopMost = true }, $@"
-
+            MessageBox.Show(
+                new Form() { TopMost = true },
+                $@"
 New version {strMaxVerDirName} is updated!!!
 
 Please re-login system.
@@ -465,11 +538,13 @@ Thank you
 
 請將手邊事情告一段落後，重新登入系統
 
-謝謝您的配合", "Warnning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+謝謝您的配合",
+                "Warnning",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
 
             return true;
         }
-
 
         internal static bool CheckAppIsNotLatestVersion()
         {
@@ -502,67 +577,92 @@ Thank you
             return true;
         }
 
-
         private ToolStripMenuItem AddMenu(ToolStripMenuItem owner, string text, EventHandler onclick = null)
         {
             var menuitem = new ToolStripMenuItem(text);
-            if (null != onclick) menuitem.Click += onclick;
+            if (onclick != null)
+            {
+                menuitem.Click += onclick;
+            }
 
             owner.DropDownItems.Add(menuitem);
             return menuitem;
         }
+
         private ToolStripMenuItem AddTemplate(ToolStripMenuItem owner, string text, CREATETEMPLATE create)
         {
             var menuitem = new ToolStripMenuItem(text);
 
-            var templateinfo = new TemplateInfo();
-            templateinfo.text = text;
-            templateinfo.create = create;
-            templateinfo.menuitem = menuitem;
+            var templateinfo = new TemplateInfo
+            {
+                text = text,
+                create = create,
+                menuitem = menuitem,
+            };
             menuitem.Tag = templateinfo;
 
             owner.DropDownItems.Add(menuitem);
 
-            _templates.Add(templateinfo);
+            this._templates.Add(templateinfo);
             return menuitem;
         }
+
         private DualResult SetTemplatePerm()
         {
-            if (0 == _templates.Count) return Result.True;
+            if (this._templates.Count == 0)
+            {
+                return Result.True;
+            }
+
             DualResult result;
 
             var sysuser = Env.User;
-            if (null == sysuser)
+            if (sysuser == null)
             {
-                foreach (var it in _templates) it.menuitem.Enabled = false;
+                foreach (var it in this._templates)
+                {
+                    it.menuitem.Enabled = false;
+                }
+
                 return Result.True;
             }
             else if (sysuser.IsAdmin)
             {
-                foreach (var it in _templates) it.menuitem.Enabled = true;
+                foreach (var it in this._templates)
+                {
+                    it.menuitem.Enabled = true;
+                }
+
                 return Result.True;
             }
 
             IList<string> barprompts;
-            if (!(result = Utils.GetAuthorizedMenus(sysuser.UserID, out barprompts))) return result;
+            if (!(result = Utils.GetAuthorizedMenus(sysuser.UserID, out barprompts)))
+            {
+                return result;
+            }
 
-            foreach (var it in _templates)
+            foreach (var it in this._templates)
             {
                 it.menuitem.Enabled = barprompts.Contains(it.text);
             }
+
             return Result.True;
         }
         #endregion
 
-        void progmenu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        void Progmenu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            var templateinfo = e.ClickedItem.Tag as TemplateInfo;
-            if (null != templateinfo)
+            TemplateInfo templateinfo = e.ClickedItem.Tag as TemplateInfo;
+            if (templateinfo != null)
             {
-                if (null != templateinfo.create)
+                if (templateinfo.create != null)
                 {
                     var frm = templateinfo.create((ToolStripMenuItem)e.ClickedItem);
-                    if (null != frm) OpenForm(frm);
+                    if (frm != null)
+                    {
+                        this.OpenForm(frm);
+                    }
                 }
             }
         }

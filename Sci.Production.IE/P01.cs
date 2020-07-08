@@ -369,12 +369,12 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
                             {
                                 ParameterName = "@id",
-                                Value = e.FormattedValue.ToString()
+                                Value = e.FormattedValue.ToString(),
                             };
 
                             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
                             {
-                                sp1
+                                sp1,
                             };
 
                             string sqlCmd = "select DescEN,SMV,MachineTypeID,SeamLength,MoldID,MtlFactorID,Annotation from Operation WITH (NOLOCK) where CalibratedCode = 1 and ID = @id";
@@ -463,8 +463,8 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
 
                     // if (MyUtility.Convert.GetDecimal(e.FormattedValue) == MyUtility.Convert.GetDecimal(dr["SMV"]))
                     // {
-                        dr["SMV"] = e.FormattedValue.ToString();
-                        if (MyUtility.Convert.GetDecimal(e.FormattedValue) == 0)
+                    dr["SMV"] = e.FormattedValue.ToString();
+                    if (MyUtility.Convert.GetDecimal(e.FormattedValue) == 0)
                         {
                             dr["PcsPerHour"] = 0;
                         }
@@ -473,7 +473,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                             dr["PcsPerHour"] = MyUtility.Convert.GetDouble(dr["SMV"]) == 0 ? 0 : MyUtility.Math.Round(3600.0 / MyUtility.Convert.GetDouble(dr["SMV"]), 1);
                         }
 
-                        dr.EndEdit();
+                    dr.EndEdit();
 
                     // }
                 }
@@ -563,12 +563,12 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                         System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
                         {
                             ParameterName = "@id",
-                            Value = MyUtility.Convert.GetString(e.FormattedValue)
+                            Value = MyUtility.Convert.GetString(e.FormattedValue),
                         };
 
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
                         {
-                            sp1
+                            sp1,
                         };
 
                         DataTable moldData;
@@ -606,7 +606,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
 
                     Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Template"].ToString(), null, null, null)
                     {
-                        Width = 666
+                        Width = 666,
                     };
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -823,7 +823,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                 sp1,
                 sp2,
                 sp3,
-                sp4
+                sp4,
             };
             string sqlCmd = "select sl.Location from Style s WITH (NOLOCK) , Style_Location sl WITH (NOLOCK) where s.ID = @styleid and s.SeasonID = @seasonid and s.BrandID = @brandid and s.Ukey = sl.StyleUkey and sl.Location = @combotype";
             DataTable locationData;
@@ -851,7 +851,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             }
             #endregion
             #region 檢查是否為套裝(Style.styleunit <> 'PCS')
-                if (MyUtility.Check.Seek(string.Format(
+            if (MyUtility.Check.Seek(string.Format(
                     @" 
 select 1
 from TimeStudy t
@@ -901,7 +901,7 @@ and s.StyleUnit='PCS'
             {
                 new SqlParameter() { ParameterName = "@id", Value = this.CurrentMaintain["StyleID"].ToString() },
                 new SqlParameter() { ParameterName = "@seasonid", Value = this.CurrentMaintain["SeasonID"].ToString() },
-                new SqlParameter() { ParameterName = "@brandid", Value = this.CurrentMaintain["BrandID"].ToString() }
+                new SqlParameter() { ParameterName = "@brandid", Value = this.CurrentMaintain["BrandID"].ToString() },
             };
             sqlCmd = "select Ukey from Style WITH (NOLOCK) where ID = @id and SeasonID = @seasonid and BrandID = @brandid";
             DataTable styleDT;
@@ -1075,7 +1075,7 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
 
             SelectItem item = new SelectItem(styleData, "ID,SeasonID,Description,BrandID", "14,6,40,10", this.Text, headercaptions: "Style,Season,Description,Brand")
             {
-                Width = 780
+                Width = 780,
             };
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
@@ -1120,8 +1120,8 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
                  new SqlParameter()
                 {
                     ParameterName = "@sytleID",
-                    Value = styleID
-                }
+                    Value = styleID,
+                },
             };
 
             sqlCmd = "select ID, SeasonID, BrandID, Description, UKey from Style WITH (NOLOCK) where ID = @sytleID and Junk = 0 order by ID";
@@ -1146,7 +1146,7 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
             {
                 SelectItem item = new SelectItem(dt, "ID,SeasonID,Description,BrandID", "14,6,40,10", this.Text, headercaptions: "Style,Season,Description,Brand")
                 {
-                    Width = 700
+                    Width = 700,
                 };
 
                 DialogResult returnResult = item.ShowDialog();
@@ -1175,8 +1175,8 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
                  new SqlParameter()
                 {
                     ParameterName = "@UKey",
-                    Value = ukey
-                }
+                    Value = ukey,
+                },
             };
             sqlCmd = "select Location from Style_Location WITH (NOLOCK) where StyleUkey = @UKey";
             result = DBProxy.Current.Select(null, sqlCmd, cmds, out dt);
@@ -1386,7 +1386,7 @@ where ID = {0}",
             {
                 sp1,
                 sp2,
-                sp3
+                sp3,
             };
             if (isComboType)
             {
@@ -1470,7 +1470,7 @@ where ID = {0}",
             {
                 sp1,
                 sp2,
-                sp3
+                sp3,
             };
 
             string sqlCmd = "select Ukey from Style WITH (NOLOCK) where ID = @id and SeasonID = @seasonid and BrandID = @brandid";
@@ -1576,7 +1576,7 @@ where ID = {0}",
             {
                 new SqlParameter() { ParameterName = "@styleid", Value = this.CurrentMaintain["StyleID"].ToString() },
                 new SqlParameter() { ParameterName = "@seasonid", Value = this.CurrentMaintain["SeasonID"].ToString() },
-                new SqlParameter() { ParameterName = "@brandid", Value = this.CurrentMaintain["BrandID"].ToString() }
+                new SqlParameter() { ParameterName = "@brandid", Value = this.CurrentMaintain["BrandID"].ToString() },
             };
 
             this.displayCD.Value = string.Empty;

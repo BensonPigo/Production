@@ -426,7 +426,7 @@ drop table #tmp,#tmp2
                 this.mDivision,
                 this.brand);
 
-            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Logistic_R01_CartonStatusReport.xltx", 3, false, null, excel);// 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Logistic_R01_CartonStatusReport.xltx", 3, false, null, excel); // 將datatable copy to excel
 
             ////此欄位只有 Clog R01 擁有 Confirm 權限的使用者可以『看到』，其餘的則移除該欄位。
             if (!canConfrim)
@@ -453,6 +453,5 @@ drop table #tmp,#tmp2
             this.HideWaitMessage();
             return true;
         }
-
     }
 }

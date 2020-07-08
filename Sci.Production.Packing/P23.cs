@@ -1,14 +1,12 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Win;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
-using System.Reflection;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -27,7 +25,6 @@ namespace Sci.Production.Packing
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
-
             DataTable packingReason;
 
             DBProxy.Current.Select(null, "SELECT [Reason]=ID+'-'+Description  ,[ID]='' FROM PackingReason WHERE Type='FG' AND Junk=0  ORDEr BY ID ", out packingReason);
@@ -45,12 +42,14 @@ namespace Sci.Production.Packing
                 {
                     return;
                 }
+
                 DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
                 if ((bool)e.FormattedValue == false)
                 {
                     dr["FtyReqReturnReason"] = null;
                     dr["ReasonName"] = null;
                 }
+
                 dr["selected"] = e.FormattedValue;
                 dr.EndEdit();
             };
@@ -58,7 +57,6 @@ namespace Sci.Production.Packing
             #region Reason事件
             reasonSetting.EditingMouseDown += (s, e) =>
             {
-
                 if (this.listControlBindingSource.DataSource == null || e.Button != MouseButtons.Right)
                 {
                     return;
@@ -77,7 +75,6 @@ namespace Sci.Production.Packing
 
                 dr["FtyReqReturnReason"] = item.GetSelectedString();
                 dr["ReasonName"] = MyUtility.GetValue.Lookup($"SELECT Description FROM PackingReason WHERE Type='FG' AND Junk=0 AND ID ='{item.GetSelectedString()}'");
-
             };
             reasonSetting.CellValidating += (s, e) =>
              {
@@ -96,15 +93,14 @@ namespace Sci.Production.Packing
 
                  if (MyUtility.Check.Empty(newvalue))
                  {
-
                      dr["FtyReqReturnReason"] = newvalue;
                      dr["ReasonName"] = null;
                      return;
                  }
+
                  List<SqlParameter> paras = new List<SqlParameter>();
                  paras.Add(new SqlParameter("@ID", newvalue));
                  bool exists = !MyUtility.Check.Empty(MyUtility.GetValue.Lookup($"SELECT ID FROM PackingReason WHERE Type='FG' AND Junk=0 AND ID=@ID", paras));
-
 
                  if (!exists)
                  {
@@ -119,7 +115,6 @@ namespace Sci.Production.Packing
                  }
              };
             #endregion
-
 
             base.OnFormLoaded();
             this.grid.IsEditingReadOnly = false;
@@ -153,7 +148,6 @@ namespace Sci.Production.Packing
             {
                 this.grid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
-
         }
 
         private void BtnFind_Click(object sender, EventArgs e)
@@ -439,7 +433,6 @@ WHERE id='{dr["id"]}' AND CTNStartNo ='{dr["CTNStartNo"]}' and DisposeFromClog= 
                 int index = 0;
                 foreach (string orderid in orderIds)
                 {
-
                     foreach (string key in keyArry)
                     {
                         if (key.Contains(orderid + "_"))
@@ -468,6 +461,7 @@ WHERE id='{dr["id"]}' AND CTNStartNo ='{dr["CTNStartNo"]}' and DisposeFromClog= 
                                    ,GETDATE() );" + Environment.NewLine;
                         }
                     }
+
                     index++;
                 }
 
@@ -527,7 +521,6 @@ WHERE id='{dr["id"]}' AND CTNStartNo ='{dr["CTNStartNo"]}' and DisposeFromClog= 
 
         protected override bool ClickPrint()
         {
-
             if (this.listControlBindingSource.DataSource == null)
             {
                 return false;
@@ -560,7 +553,7 @@ WHERE (b.FtyReqReturnDate IS NULL AND a.Selected = 1)   --若FtyReqReturnDate IS
 OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS NOT NULL，表示應該勾選，但在FORM上的沒勾選了 = 有異動
 ", out selectData);
 
-            //有異動，但沒click Save
+            // 有異動，但沒click Save
             if (selectData.Rows.Count > 0)
             {
                 MyUtility.Msg.WarningBox($"Please click save first!!");
@@ -568,7 +561,7 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
                 return false;
             }
             #endregion
-            
+
             List<string> orderidList = new List<string>();
 
             // 將Form的資料整理成報表需要的樣子
@@ -692,7 +685,6 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
 
             #region 宣告
             DataTable dt = (DataTable)this.listControlBindingSource.DataSource;
-            DualResult result;
             string reasonId = string.Empty;
             string reasonName = string.Empty;
             #endregion
@@ -700,6 +692,7 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
             try
             {
                 this.ShowWaitMessage("Data Processing ...");
+
                 // 確認有打勾的選項
                 DataRow[] selectedRows = dt.Select("selected=1");
 
@@ -759,15 +752,16 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
                         dt.Rows[i]["selected"] = 0;
                     }
                 }
-                //else
-                //{
+
+                // else
+                // {
                 //    for (int i = 0; i <= dt.Rows.Count - 1; i++)
                 //    {
                 //        dt.Rows[i]["FtyReqReturnReason"] = null;
                 //        dt.Rows[i]["ReasonName"] = null;
                 //        dt.Rows[i]["selected"] = 1;
                 //    }
-                //}
+                // }
             }
             else
             {
@@ -777,7 +771,6 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
                     dt.Rows[i]["ReasonName"] = null;
                     dt.Rows[i]["selected"] = 0;
                 }
-
             }
 
             this.grid.ValidateControl();

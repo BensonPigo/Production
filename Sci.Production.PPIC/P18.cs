@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
-using Sci.Win.Tems;
 using Ict.Win;
 using Sci.Data;
 using System.Linq;
-using System.Transactions;
 using System.Data.SqlClient;
 using Sci.Win.Tools;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -91,10 +87,17 @@ where a.id='{masterID}'
             Ict.Win.DataGridViewGeneratorTextColumnSettings col_SP = new DataGridViewGeneratorTextColumnSettings();
             col_SP.CellValidating += (s, e) =>
              {
-                 if (this.CurrentDetailData == null) return;
+                 if (this.CurrentDetailData == null)
+                 {
+                     return;
+                 }
+
                  string oldvalue = MyUtility.Convert.GetString(this.CurrentDetailData["OrderID"]);
                  string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
-                 if (oldvalue == newvalue) return;
+                 if (oldvalue == newvalue)
+                 {
+                     return;
+                 }
 
                  if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                  {
@@ -197,14 +200,19 @@ WHERE oq.ID= @id
             Ict.Win.DataGridViewGeneratorTextColumnSettings col_Seq = new DataGridViewGeneratorTextColumnSettings();
             col_Seq.CellValidating += (s, e) =>
             {
-                if (this.CurrentDetailData == null) return;
+                if (this.CurrentDetailData == null)
+                {
+                    return;
+                }
+
                 DataRow dr;
                 if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                 {
                     List<SqlParameter> sqlpara = new List<SqlParameter>();
                     sqlpara.Add(new SqlParameter("@seq", e.FormattedValue));
 
-                    if (MyUtility.Check.Seek($@"
+                    if (MyUtility.Check.Seek(
+                        $@"
 SELECT Seq,ShipmodeID as 'ShipMode',oq.Qty,BuyerDelivery
 ,[TotalCrtns] = isnull(packing.qty,0)
 FROM Order_QtyShip oq
@@ -246,15 +254,24 @@ where oq.id='{this.CurrentDetailData["OrderID"]}' and oq.seq=@seq", sqlpara, out
 
             col_Seq.EditingMouseDown += (s, e) =>
             {
-                if (this.CurrentDetailData == null) return;
+                if (this.CurrentDetailData == null)
+                {
+                    return;
+                }
+
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem sel = new Win.Tools.SelectItem($@"
+                    Sci.Win.Tools.SelectItem sel = new Win.Tools.SelectItem(
+                        $@"
 SELECT Seq,ShipmodeID as 'ShipMode'
 FROM Order_QtyShip
 WHERE ID = '{this.CurrentDetailData["OrderID"]}'", "Seq,ShipMode", this.CurrentDetailData["OrderShipmodeSeq"].ToString(), null);
                     DialogResult res = sel.ShowDialog();
-                    if (res == DialogResult.Cancel) return;
+                    if (res == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     this.CurrentDetailData["OrderShipmodeSeq"] = sel.GetSelecteds()[0]["seq"];
                     this.CurrentDetailData["ShipModeID"] = sel.GetSelecteds()[0]["ShipMode"];
                     this.CurrentDetailData.EndEdit();
@@ -266,13 +283,17 @@ WHERE ID = '{this.CurrentDetailData["OrderID"]}'", "Seq,ShipMode", this.CurrentD
             Ict.Win.DataGridViewGeneratorTextColumnSettings col_ShipMode = new DataGridViewGeneratorTextColumnSettings();
             col_ShipMode.CellValidating += (s, e) =>
             {
-                if (this.CurrentDetailData == null) return;
+                if (this.CurrentDetailData == null)
+                {
+                    return;
+                }
 
                 if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                 {
                     List<SqlParameter> sqlpara = new List<SqlParameter>();
                     sqlpara.Add(new SqlParameter("@ShipmodeID", e.FormattedValue));
-                    if (MyUtility.Check.Seek($@"
+                    if (MyUtility.Check.Seek(
+                        $@"
 select 1 
 from Order_QtyShip where id='{this.CurrentDetailData["OrderID"]}' and ShipmodeID=@ShipmodeID", sqlpara))
                     {
@@ -291,15 +312,24 @@ from Order_QtyShip where id='{this.CurrentDetailData["OrderID"]}' and ShipmodeID
 
             col_ShipMode.EditingMouseDown += (s, e) =>
             {
-                if (this.CurrentDetailData == null) return;
+                if (this.CurrentDetailData == null)
+                {
+                    return;
+                }
+
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem sel = new Win.Tools.SelectItem($@"
+                    Sci.Win.Tools.SelectItem sel = new Win.Tools.SelectItem(
+                        $@"
 SELECT Seq,ShipmodeID as 'ShipMode'
 FROM Order_QtyShip
 WHERE ID = '{this.CurrentDetailData["OrderID"]}'", "Seq,ShipMode", this.CurrentDetailData["OrderShipmodeSeq"].ToString(), null);
                     DialogResult res = sel.ShowDialog();
-                    if (res == DialogResult.Cancel) return;
+                    if (res == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                     this.CurrentDetailData["OrderShipmodeSeq"] = sel.GetSelecteds()[0]["seq"];
                     this.CurrentDetailData["ShipModeID"] = sel.GetSelecteds()[0]["ShipMode"];
                     this.CurrentDetailData.EndEdit();
@@ -312,7 +342,10 @@ WHERE ID = '{this.CurrentDetailData["OrderID"]}'", "Seq,ShipMode", this.CurrentD
 
             col_acc.CellValidating += (s, e) =>
             {
-                if (this.CurrentDetailData == null) return;
+                if (this.CurrentDetailData == null)
+                {
+                    return;
+                }
 
                 if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                 {
@@ -335,12 +368,12 @@ ORDER BY PSD.Refno ";
                     List<string> trueRefno = new List<string>();
                     foreach (string refno in getRefno)
                     {
-                        if (!dt.AsEnumerable().Any(row => row["Refno"].EqualString(refno)) && !(refno.EqualString(string.Empty)))
+                        if (!dt.AsEnumerable().Any(row => row["Refno"].EqualString(refno)) && !refno.EqualString(string.Empty))
                         {
                             selectRefno &= false;
                             errRefno.Add(refno);
                         }
-                        else if (!(refno.EqualString(string.Empty)))
+                        else if (!refno.EqualString(string.Empty))
                         {
                             trueRefno.Add(refno);
                         }
@@ -349,20 +382,26 @@ ORDER BY PSD.Refno ";
                     if (!selectRefno)
                     {
                         e.Cancel = true;
-                        MyUtility.Msg.WarningBox("Acc Lacking : " + string.Join(",", (errRefno).ToArray()) + " Data not found!!", "Data not found");
+                        MyUtility.Msg.WarningBox("Acc Lacking : " + string.Join(",", errRefno.ToArray()) + " Data not found!!", "Data not found");
                     }
+
                     trueRefno.Sort();
-                    this.CurrentDetailData["AccLacking"] = string.Join(",", (trueRefno).ToArray());
+                    this.CurrentDetailData["AccLacking"] = string.Join(",", trueRefno.ToArray());
                     this.CurrentDetailData.EndEdit();
                 }
             };
 
             col_acc.EditingMouseDown += (s, e) =>
              {
-                 if (this.CurrentDetailData == null) return;
+                 if (this.CurrentDetailData == null)
+                 {
+                     return;
+                 }
+
                  if (this.EditMode && e.Button == MouseButtons.Right)
                  {
-                     Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2($@"
+                     Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(
+                         $@"
 SELECT DISTINCT PSD.Refno
 FROM PO_Supp_Detail PSD
 LEFT JOIN Fabric F ON F.SCIRefno = PSD.SCIRefno
@@ -373,7 +412,11 @@ WHERE O.id ='{this.CurrentDetailData["OrderID"]}'
   AND PSD.Junk=0
 ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
                      DialogResult result = item.ShowDialog();
-                     if (result == DialogResult.Cancel) { return; }
+                     if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
                      this.CurrentDetailData["AccLacking"] = item.GetSelectedString();
                      this.CurrentDetailData.EndEdit();
                  }
@@ -587,6 +630,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
                 MyUtility.Msg.WarningBox("The record status is not new, can't modify !!");
                 return false;
             }
+
             return base.ClickEdit();
         }
 
@@ -761,7 +805,7 @@ where a2.id ='{this.CurrentMaintain["id"]}'
                         FinalETA = row1["FinalETA"].ToString(),
                         BuyerDelivery = (row1["BuyerDelivery"] == DBNull.Value) ? string.Empty : ((DateTime)row1["BuyerDelivery"]).ToString("yyyy/MM/dd"),
                         VasShas = row1["VAS"].ToString(),
-                        Alias = row1["Alias"].ToString()
+                        Alias = row1["Alias"].ToString(),
                     }).ToList();
 
                 rd.ReportDataSource = data;
@@ -822,7 +866,7 @@ outer apply(
 )po3
 where a2.id ='{this.CurrentMaintain["id"]}'
 ";
-            DualResult result = DBProxy.Current.Select(null, sqlcmd,out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("data faile.\r\n" + result.ToString());
@@ -857,7 +901,6 @@ where a2.id ='{this.CurrentMaintain["id"]}'
             objApp.Quit();
             Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(objApp);
-
         }
 
         private void btnSendEMail_Click(object sender, EventArgs e)

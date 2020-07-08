@@ -137,7 +137,7 @@
     </Reference>
     <Reference Include="OnBarcode.Barcode.WinForms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=4da8d7f865f70e30, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Sci.Production\OnBarcode.Barcode.WinForms.dll</HintPath>
+      <HintPath>..\_Dll\OnBarcode.Barcode.WinForms.dll</HintPath>
     </Reference>
     <Reference Include="pdfbox-1.8.9, Version=1.8.9.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\_DLL\pdfbox-1.8.9.dll</HintPath>

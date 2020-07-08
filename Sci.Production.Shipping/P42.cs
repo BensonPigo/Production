@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
-using System.Data.SqlClient;
 
 namespace Sci.Production.Shipping
 {
@@ -181,6 +178,7 @@ order by TRY_CONVERT(int, SUBSTRING(vd.NLCode, 3, LEN(vd.NLCode))), vd.NLCode", 
                             dr["usageUnit"] = string.Empty;
                             dr.EndEdit();
                         }
+
                         this.BRT(dr, e);
                     }
                 }
@@ -365,11 +363,13 @@ order by TRY_CONVERT(int, SUBSTRING(vd.NLCode, 3, LEN(vd.NLCode))), vd.NLCode", 
                     MyUtility.Msg.WarningBox("Brand cannot be empty!");
                     return false;
                 }
+
                 if (MyUtility.Check.Empty(dr["Refno"]))
                 {
                     MyUtility.Msg.WarningBox("Ref No. cannot be empty!");
                     return false;
                 }
+
                 if (MyUtility.Check.Empty(dr["FabricType"]))
                 {
                     MyUtility.Msg.WarningBox("FabricType cannot be empty!");
@@ -548,7 +548,7 @@ order by vaqd.NLCode
             Marshal.ReleaseComObject(excelApp);
             Marshal.ReleaseComObject(workbook);
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
             return base.ClickPrint();
         }
 

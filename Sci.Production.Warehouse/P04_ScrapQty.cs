@@ -2,23 +2,21 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
     public partial class P04_ScrapQty : Sci.Win.Subs.Base
     {
-        private string Poid, Refno, Color;
+        private string Poid;
+        private string Refno;
+        private string Color;
+
         public P04_ScrapQty(string Poid, string Refno, string Color)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.Poid = Poid;
             this.Refno = Refno;
             this.Color = Color;
@@ -34,17 +32,19 @@ namespace Sci.Production.Warehouse
                 .Text("Name", header: "Name", iseditingreadonly: true)
                 .Numeric("InQty", header: "In Qty", iseditingreadonly: true)
                 .Numeric("OutQty", header: "Out Qty", iseditingreadonly: true)
-                .Numeric("AdjustQty", header: "Adjust Qty", iseditingreadonly:true)
-                .Numeric("Balance", header: "Balance", iseditingreadonly:true);
+                .Numeric("AdjustQty", header: "Adjust Qty", iseditingreadonly: true)
+                .Numeric("Balance", header: "Balance", iseditingreadonly: true);
             for (int i = 0; i < this.grid.Columns.Count; i++)
+            {
                 this.grid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            #endregion 
+            }
+            #endregion
             #region Sql Parameter
             List<SqlParameter> listSqlParameter = new List<SqlParameter>();
             listSqlParameter.Add(new SqlParameter("@Poid", this.Poid));
             listSqlParameter.Add(new SqlParameter("@Refno", this.Refno));
             listSqlParameter.Add(new SqlParameter("@Color", this.Color));
-            #endregion 
+            #endregion
             #region Sql Command
             string strSqlCmd = @"
 select	a.IssueDate
@@ -108,7 +108,7 @@ from (
 			and a.Type = 'C'
             group by a.IssueDate, a.ID
 ) a";
-            #endregion 
+            #endregion
             #region Data Setting
             DataTable dtSetData;
             DualResult result = DBProxy.Current.Select(null, strSqlCmd, listSqlParameter, out dtSetData);
@@ -121,7 +121,7 @@ from (
                 this.bindingSource.DataSource = null;
                 MyUtility.Msg.WarningBox(result.Description);
             }
-            #endregion 
+            #endregion
         }
 
         private void buttonClose_Click(object sender, EventArgs e)

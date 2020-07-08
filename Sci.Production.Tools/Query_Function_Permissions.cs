@@ -5,9 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Tools
@@ -15,10 +13,11 @@ namespace Sci.Production.Tools
     public partial class Query_Function_Permissions : Sci.Win.Tems.QueryForm
     {
         private DataTable dtQuery;
+
         public Query_Function_Permissions(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.EditMode = true;
         }
 
@@ -56,7 +55,7 @@ namespace Sci.Production.Tools
         private void BtnFind_Click(object sender, EventArgs e)
         {
             string strModule = this.txtModule.Text;
-            string strUserID = this.txtUserID.TextBox1.Text ;
+            string strUserID = this.txtUserID.TextBox1.Text;
             string strFunction = this.txtFunction.Text;
             string strPosition = this.txtPosition.Text;
 
@@ -75,6 +74,7 @@ namespace Sci.Production.Tools
                 {
                     strUserid += ",'" + userID + "'";
                 }
+
                 listSQLFilter.Add($@" and p1.id in ({strUserid.Substring(1)})");
             }
 
@@ -174,11 +174,9 @@ namespace Sci.Production.Tools
             }
             #endregion
 
-
             this.ShowWaitMessage("Data Loading....");
 
             #region Sql Command
-
 
             string strCmd = $@"
 select [UserID] = p1.ID
@@ -259,7 +257,7 @@ ORDER BY p1.id,[Module], [Function]
             this.txtUserID.TextBox1.Text = string.Empty;
             this.txtUserID.DisplayBox1.Text = string.Empty;
             this.txtFunction.Text = string.Empty;
-            this.txtPosition.Text = string.Empty;            
+            this.txtPosition.Text = string.Empty;
             this.chkNew.Checked = false;
             this.chkEdit.Checked = false;
             this.chkDelete.Checked = false;
@@ -286,7 +284,11 @@ order by PKey
 ");
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd,  "15", this.txtModule.Text, false, ",");
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.txtModule.Text = item.GetSelectedString();
         }
 
@@ -300,7 +302,7 @@ select MenuName from Menu WITH (NOLOCK)
 where IsSubMenu = 0 and MenuNo not in ('1400','1500') 
 and MenuName = '{strModul}'") == false)
                 {
-                    this.txtModule.Text = "";
+                    this.txtModule.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Module : {0} > not found!!!", strModul));
                     return;
@@ -334,7 +336,11 @@ order by s.R_MenuNo,s.BarPrompt
 ");
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "40,15", this.txtFunction.Text, false, ",");
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.txtFunction.Text = item.GetSelectedString();
         }
 
@@ -366,7 +372,7 @@ and BarPrompt = '{strFunction}'
 order by s.R_MenuNo,s.BarPrompt
 ") == false)
                 {
-                    this.txtFunction.Text = "";
+                    this.txtFunction.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Function : {0} > not found!!!", strFunction));
                     return;
@@ -381,7 +387,11 @@ select ID,Description from pass0
 ");
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "20,25", this.txtPosition.Text, false, ",");
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.txtPosition.Text = item.GetSelectedString();
         }
 
@@ -395,7 +405,7 @@ select 1
  from pass0
 where id= '{strPosition}'") == false)
                 {
-                    this.txtPosition.Text = "";
+                    this.txtPosition.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Position : {0} > not found!!!", strPosition));
                     return;

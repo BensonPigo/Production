@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace Sci.Production.Basic
 {
@@ -25,12 +19,9 @@ namespace Sci.Production.Basic
 
         /// <inheritdoc/>
         protected override void ClickEditAfter()
-      {
+        {
             base.ClickEditAfter();
             this.txtID.ReadOnly = true;
         }
-
-        /// <inheritdoc/>
-
     }
 }

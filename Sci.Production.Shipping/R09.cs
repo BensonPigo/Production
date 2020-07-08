@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -263,14 +261,15 @@ select AccountID from FtyExportData --where AccountID not in ('61012001','610120
                 }
 
                 StringBuilder allAccno = new StringBuilder();
-                //allAccno.Append("[61012001],[61012002],[61012003],[61012004],[61012005]");
-                allAccno.Append("[" + this.accnoData.AsEnumerable().Select(o => o["Accno"].ToString()).JoinToString("],[") +"]");
-                //foreach (DataRow dr in this.accnoData.Rows)
-                //{
+
+                // allAccno.Append("[61012001],[61012002],[61012003],[61012004],[61012005]");
+                allAccno.Append("[" + this.accnoData.AsEnumerable().Select(o => o["Accno"].ToString()).JoinToString("],[") + "]");
+
+                // foreach (DataRow dr in this.accnoData.Rows)
+                // {
                 //    allAccno.Append(string.Format(",[{0}]", MyUtility.Convert.GetString(dr["Accno"])));
 
-                //}
-
+                // }
                 sqlCmd.Append(string.Format(
                     @"),
 tmpAllData
@@ -565,11 +564,12 @@ select * from FtyExportData");
                     objArray[0, 12] = dr["PortArrival"];
                     objArray[0, 13] = dr["DocArrival"];
                     objArray[0, 14] = dr["CurrencyID"];
-                    //objArray[0, 15] = MyUtility.Check.Empty(dr["61012001"]) ? 0 : dr["61012001"];
-                    //objArray[0, 16] = MyUtility.Check.Empty(dr["61012002"]) ? 0 : dr["61012002"];
-                    //objArray[0, 17] = MyUtility.Check.Empty(dr["61012003"]) ? 0 : dr["61012003"];
-                    //objArray[0, 18] = MyUtility.Check.Empty(dr["61012004"]) ? 0 : dr["61012004"];
-                    //objArray[0, 19] = MyUtility.Check.Empty(dr["61012005"]) ? 0 : dr["61012005"];
+
+                    // objArray[0, 15] = MyUtility.Check.Empty(dr["61012001"]) ? 0 : dr["61012001"];
+                    // objArray[0, 16] = MyUtility.Check.Empty(dr["61012002"]) ? 0 : dr["61012002"];
+                    // objArray[0, 17] = MyUtility.Check.Empty(dr["61012003"]) ? 0 : dr["61012003"];
+                    // objArray[0, 18] = MyUtility.Check.Empty(dr["61012004"]) ? 0 : dr["61012004"];
+                    // objArray[0, 19] = MyUtility.Check.Empty(dr["61012005"]) ? 0 : dr["61012005"];
                     i = 0;
                     foreach (DataRow ddr in this.accnoData.Rows)
                     {

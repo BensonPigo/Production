@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using System.Runtime.InteropServices;
 
 namespace Sci.Production.Quality
 {
@@ -26,7 +25,6 @@ namespace Sci.Production.Quality
 
         private DataTable gridData;
         private string selectDataTable_DefaultView_Sort = string.Empty;
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         /// <summary>
         /// OnFormLoaded()

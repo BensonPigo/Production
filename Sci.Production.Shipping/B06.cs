@@ -2,13 +2,7 @@
 using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
@@ -18,7 +12,7 @@ namespace Sci.Production.Shipping
         public B06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private void BtnClose_Click(object sender, EventArgs e)
@@ -37,7 +31,6 @@ namespace Sci.Production.Shipping
             .Text("ShipModeID", header: "Ship Mode", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Vessel", header: "Vessel Name", width: Widths.AnsiChars(30), iseditingreadonly: true)
             ;
-
         }
 
         private void Query()

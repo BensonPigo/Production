@@ -1,15 +1,10 @@
 ﻿using Ict;
-using Microsoft.ReportingServices.ReportProcessing.OnDemandReportObjectModel;
 using OnBarcode.Barcode;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ZXing;
 using ZXing.QrCode;
@@ -215,7 +210,6 @@ namespace Sci.Production.Packing
                                 tables.Cell(6, 1).Range.Text = sizeQty;
                                 #endregion
                             }
-
                         }
                         #endregion
                         winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
@@ -286,7 +280,8 @@ namespace Sci.Production.Packing
             {
                 document.Activate();
                 Word.Tables table = document.Tables;
-                //winword.Visible = true;
+
+                // winword.Visible = true;
                 #region 計算頁數
                 winword.Selection.Tables[1].Select();
                 winword.Selection.Copy();
@@ -368,7 +363,6 @@ namespace Sci.Production.Packing
             }
 
             return new DualResult(true);
-
         }
 
         public DualResult PrintCustCTN(string packingID, string ctn1, string ctn2, string print_type = "", bool country = false)
@@ -478,6 +472,7 @@ namespace Sci.Production.Packing
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
             }
+
             return new DualResult(true);
         }
 
@@ -508,30 +503,30 @@ namespace Sci.Production.Packing
         private Bitmap NewQRcode(string strBarcode)
         {
             /*
-  Level L (Low)      7%  of codewords can be restored. 
-  Level M (Medium)   15% of codewords can be restored. 
-  Level Q (Quartile) 25% of codewords can be restored. 
-  Level H (High)     30% of codewords can be restored. 
+  Level L (Low)      7%  of codewords can be restored.
+  Level M (Medium)   15% of codewords can be restored.
+  Level Q (Quartile) 25% of codewords can be restored.
+  Level H (High)     30% of codewords can be restored.
 */
             BarcodeWriter writer = new BarcodeWriter
             {
                 Format = BarcodeFormat.QR_CODE,
                 Options = new QrCodeEncodingOptions
                 {
-                    //Create Photo 
+                    // Create Photo
                     Height = 120,
                     Width = 120,
                     Margin = 0,
                     CharacterSet = "UTF-8",
                     PureBarcode = true,
-                    //錯誤修正容量
-                    //L水平    7%的字碼可被修正
-                    //M水平    15%的字碼可被修正
-                    //Q水平    25%的字碼可被修正
-                    //H水平    30%的字碼可被修正
-                    ErrorCorrection = ErrorCorrectionLevel.L
-                }
 
+                    // 錯誤修正容量
+                    // L水平    7%的字碼可被修正
+                    // M水平    15%的字碼可被修正
+                    // Q水平    25%的字碼可被修正
+                    // H水平    30%的字碼可被修正
+                    ErrorCorrection = ErrorCorrectionLevel.L,
+                },
             };
 
             return writer.Write(strBarcode);

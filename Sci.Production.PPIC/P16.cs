@@ -1,19 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
-using Sci;
-using System.Data.SqlClient;
 using Sci.Data;
-using Excel = Microsoft.Office.Interop.Excel;
-using System.Runtime.InteropServices;
 using System.Reflection;
 
 namespace Sci.Production.PPIC
@@ -23,7 +15,7 @@ namespace Sci.Production.PPIC
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_balance;
 
         public P16(ToolStripMenuItem menuitem)
-            :base(menuitem)
+            : base(menuitem)
         {
             this.EditMode = true;
             this.InitializeComponent();
@@ -47,7 +39,7 @@ namespace Sci.Production.PPIC
             qty.CellMouseDoubleClick += (s, e) =>
             {
                 DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                Sci.Production.PPIC.P01_QtyShip callNextForm = new Sci.Production.PPIC.P01_QtyShip(MyUtility.Convert.GetString(dr["ID"]),this.txtSPNo.Text);
+                Sci.Production.PPIC.P01_QtyShip callNextForm = new Sci.Production.PPIC.P01_QtyShip(MyUtility.Convert.GetString(dr["ID"]), this.txtSPNo.Text);
                 callNextForm.ShowDialog(this);
             };
 
@@ -69,10 +61,10 @@ namespace Sci.Production.PPIC
             };
             #region Set Grid1
             this.Helper.Controls.Grid.Generator(this.grid1)
-            .CheckBox("Selected", header: string.Empty, width: Widths.Auto(), iseditable: true, trueValue: 1, falseValue: 0,settings: col_chk)
+            .CheckBox("Selected", header: string.Empty, width: Widths.Auto(), iseditable: true, trueValue: 1, falseValue: 0, settings: col_chk)
             .Text("ID", header: "SP# (Child SP)", iseditingreadonly: true, width: Widths.Auto())
             .Text("Article", header: "Article", iseditingreadonly: true, width: Widths.Auto())
-            .Numeric("OrderQty", header: "Order Qty", iseditingreadonly: true, width: Widths.Auto(), settings:qty)
+            .Numeric("OrderQty", header: "Order Qty", iseditingreadonly: true, width: Widths.Auto(), settings: qty)
             .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true, width: Widths.Auto())
             .Date("SciDelivery", header: "Sci Delivery", iseditingreadonly: true, width: Widths.Auto())
             .Text("SewInLine", header: "Sewing Inline", iseditingreadonly: true, width: Widths.Auto())
@@ -89,12 +81,12 @@ namespace Sci.Production.PPIC
             .Text("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(22))
             .Text("ColorID", header: "Color", iseditingreadonly: true, width: Widths.Auto())
             .Text("ETA", header: "ETA", iseditingreadonly: true, width: Widths.Auto())
-            .Numeric("Qty", header: "Purchase Qty", iseditingreadonly: true, width: Widths.Auto(),decimal_places:2, settings: qty2)
+            .Numeric("Qty", header: "Purchase Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2, settings: qty2)
             .Numeric("Wqty", header: "On Warehouse Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2)
             .Numeric("bqty", header: "On board Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2)
             .Numeric("Uqty", header: "Usable Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2)
             .Numeric("EstUsageQty", header: "Est. Usage Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2)
-            .Numeric("BlanceQty", header: "Blance Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2,minimum:-999999).Get(out this.col_balance)
+            .Numeric("BlanceQty", header: "Blance Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2, minimum: -999999).Get(out this.col_balance)
             ;
             this.grid2.Columns["Description"].Width = 200;
             #endregion
@@ -144,6 +136,7 @@ order by o.BuyerDelivery,o.ID
                 this.ShowErr(result);
                 return;
             }
+
             this.listControlBindingSource1.DataSource = this.dt;
             ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.Sort = "ID";
             this.grid1.AutoResizeColumns();
@@ -221,8 +214,8 @@ drop table #tmp
             }
 
             this.listControlBindingSource2.DataSource = this.dt2;
-            this.grid2.AutoResizeColumns();            
-                      
+            this.grid2.AutoResizeColumns();
+
             #endregion
             #region 3
             if (this.dt.Rows.Count == 0)
@@ -250,6 +243,7 @@ from (
 group by refno,ColorID
 ";
             }
+
             DualResult result3 = DBProxy.Current.Select(null, sqlcmd3, out this.dt3);
             if (!result3)
             {
@@ -261,8 +255,16 @@ group by refno,ColorID
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if (this.dt == null) return;
-            if (this.dt.Rows.Count == 0) return;
+            if (this.dt == null)
+            {
+                return;
+            }
+
+            if (this.dt.Rows.Count == 0)
+            {
+                return;
+            }
+
             foreach (DataRow dr2 in this.dt2.Rows)
             {
                 dr2["Uqty"] = !this.checkBox1.Checked ? dr2["Wqty"] : MyUtility.Convert.GetDecimal(dr2["Wqty"]) + MyUtility.Convert.GetDecimal(dr2["bqty"]);
@@ -310,9 +312,11 @@ group by refno,ColorID
                             dr2["Uqty2"] = MyUtility.Convert.GetDecimal(dr2["Uqty2"]) - MyUtility.Convert.GetDecimal(dr3s[0]["TtlConsPC"]);
                         }
                     }
+
                     dr["selected"] = true;
                 }
             }
+
             this.calEstUsageAndBalance();
             this.grid1.ValidateControl();
             this.grid2.ValidateControl();
@@ -327,7 +331,7 @@ group by refno,ColorID
 
             foreach (DataRow dr in this.dt.Rows)
             {
-                if (MyUtility.Convert.GetInt(dr["selected"])==1)
+                if (MyUtility.Convert.GetInt(dr["selected"]) == 1)
                 {
                     DataTable dt3c = this.dt3[MyUtility.Convert.GetInt(dr["dtkey"])];
                     foreach (DataRow dr2 in this.dt2.Rows)
@@ -340,6 +344,7 @@ group by refno,ColorID
                     }
                 }
             }
+
             this.calBalance();
         }
 
@@ -349,6 +354,7 @@ group by refno,ColorID
             {
                 dr2["BlanceQty"] = MyUtility.Convert.GetDecimal(dr2["Uqty"]) - MyUtility.Convert.GetDecimal(dr2["EstUsageQty"]);
             }
+
             this.Change_Color();
         }
 
@@ -377,6 +383,7 @@ group by refno,ColorID
             {
                 return;
             }
+
             string chk = $@"select 1 from orders where finished = 1 and id = '{this.txtSPNo.Text}'";
             if (MyUtility.Check.Seek(chk))
             {
@@ -401,6 +408,7 @@ group by refno,ColorID
                         break;
                 }
             }
+
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
@@ -412,8 +420,15 @@ group by refno,ColorID
 
         private void btnAutoCalc_Click(object sender, EventArgs e)
         {
-            if (this.dt == null) return;
-            if (this.dt.Rows.Count == 0) return;
+            if (this.dt == null)
+            {
+                return;
+            }
+
+            if (this.dt.Rows.Count == 0)
+            {
+                return;
+            }
 
             foreach (DataRow dr in this.dt.Rows)
             {
@@ -451,9 +466,11 @@ group by refno,ColorID
                             dr2["Uqty2"] = MyUtility.Convert.GetDecimal(dr2["Uqty2"]) - MyUtility.Convert.GetDecimal(dr3s[0]["TtlConsPC"]);
                         }
                     }
+
                     dr["selected"] = true;
                 }
             }
+
             this.calEstUsageAndBalance();
             this.grid1.ValidateControl();
             this.grid2.ValidateControl();

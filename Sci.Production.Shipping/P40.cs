@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
-using System.Data.SqlClient;
 using System.Linq;
 
 namespace Sci.Production.Shipping
@@ -407,7 +404,7 @@ Brand, RefNo, HSCode, Customs Code
                             list = MyUtility.Convert.GetString(s["BrandID"]) + "," +
                                 MyUtility.Convert.GetString(s["RefNo"]) + "," +
                                 MyUtility.Convert.GetString(s["HSCode"]) + "," +
-                                MyUtility.Convert.GetString(s["NLCode"])
+                                MyUtility.Convert.GetString(s["NLCode"]),
                         }).Select(s => s.list.ToString()).ToList();
                     MyUtility.Msg.WarningBox(msg + string.Join("\r\n", dl));
                     return false;
@@ -1159,9 +1156,7 @@ where {0}", sqlWhere);
                                 && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M2"
                                 && MyUtility.Convert.GetString(dr["OriUnit"]).ToUpper() != "M"
                                 && MyUtility.Check.Empty(dr["UnitRate"])
-                                && dr["PcsLength"].ToString().EqualDecimal(0))
-                        )
-                    )
+                                && dr["PcsLength"].ToString().EqualDecimal(0))))
                 {
                     DataRow[] findrow = this.UnitNotFound.Select(string.Format("OriUnit = '{0}' and CustomsUnit = '{1}'", MyUtility.Convert.GetString(dr["OriUnit"]), MyUtility.Convert.GetString(dr["CustomsUnit"])));
                     if (findrow.Length == 0)

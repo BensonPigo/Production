@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -408,7 +405,7 @@ and o.PulloutComplete=0 and o.Qty > 0", whereFCRDate));
         {
             if (this.EditMode && !MyUtility.Check.Empty(this.txtcustcd.Text) && this.txtcustcd.OldValue != this.txtcustcd.Text)
             {
-                this.txtcountryDestination.TextBox1.Text = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", this.txtbrand.Text , this.txtcustcd.Text));
+                this.txtcountryDestination.TextBox1.Text = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", this.txtbrand.Text, this.txtcustcd.Text));
             }
         }
     }

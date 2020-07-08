@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Win;
@@ -16,27 +12,31 @@ namespace Sci.Production.Warehouse
     public partial class R24 : Sci.Win.Tems.PrintForm
     {
         DataTable dt;
-        DateTime? strIssueDate1, strIssueDate2;
-        string strM, strFactory;
+        DateTime? strIssueDate1;
+        DateTime? strIssueDate2;
+        string strM;
+        string strFactory;
+
         public R24(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.EditMode = true;
         }
 
         protected override bool ValidateInput()
         {
-            strIssueDate1 = dateIssueDate.Value1;
-            strIssueDate2 = dateIssueDate.Value2;
-            strM = txtMdivision.Text;
-            strFactory = txtfactory.Text;
+            this.strIssueDate1 = this.dateIssueDate.Value1;
+            this.strIssueDate2 = this.dateIssueDate.Value2;
+            this.strM = this.txtMdivision.Text;
+            this.strFactory = this.txtfactory.Text;
 
-            if (MyUtility.Check.Empty(strIssueDate1) && MyUtility.Check.Empty(strIssueDate2))
+            if (MyUtility.Check.Empty(this.strIssueDate1) && MyUtility.Check.Empty(this.strIssueDate2))
             {
                 MyUtility.Msg.WarningBox("Issue date can't be empty!!");
                 return false;
             }
+
             return base.ValidateInput();
         }
 
@@ -46,17 +46,29 @@ namespace Sci.Production.Warehouse
 
             try
             {
-                string sqlFilter = "";
-                if (!MyUtility.Check.Empty(strIssueDate1))
-                    sqlFilter += string.Format(" and '{0}' <= a.issuedate ", Convert.ToDateTime(strIssueDate1).ToString("d"));
-                if (!MyUtility.Check.Empty(strIssueDate2))
-                    sqlFilter += string.Format(" and a.issuedate <= '{0}'", Convert.ToDateTime(strIssueDate2).ToString("d"));
-                if (!MyUtility.Check.Empty(strM))
-                    sqlFilter += string.Format(" and Orders.MDivisionID = '{0}'", strM);
-                if (!MyUtility.Check.Empty(strFactory))
-                    sqlFilter += string.Format(" and Orders.FtyGroup = '{0}'", strFactory);
+                string sqlFilter = string.Empty;
+                if (!MyUtility.Check.Empty(this.strIssueDate1))
+                {
+                    sqlFilter += string.Format(" and '{0}' <= a.issuedate ", Convert.ToDateTime(this.strIssueDate1).ToString("d"));
+                }
 
-                string sqlcmd = string.Format(@"
+                if (!MyUtility.Check.Empty(this.strIssueDate2))
+                {
+                    sqlFilter += string.Format(" and a.issuedate <= '{0}'", Convert.ToDateTime(this.strIssueDate2).ToString("d"));
+                }
+
+                if (!MyUtility.Check.Empty(this.strM))
+                {
+                    sqlFilter += string.Format(" and Orders.MDivisionID = '{0}'", this.strM);
+                }
+
+                if (!MyUtility.Check.Empty(this.strFactory))
+                {
+                    sqlFilter += string.Format(" and Orders.FtyGroup = '{0}'", this.strFactory);
+                }
+
+                string sqlcmd = string.Format(
+                    @"
 select 	Orders.MDivisionID
         ,Orders.FtyGroup
         ,a.issuedate
@@ -85,20 +97,24 @@ where a.Status = 'Confirmed' and a.type='A'
 group by Orders.MDivisionID, Orders.FtyGroup, a.issuedate, b.FromPOID, b.FromSeq1, b.FromSeq2,b.FromRoll,b.FromDyelot,po3.StockUnit,c.Name,ft.Ukey,b.ToLocation ,a.AddName
 order by Orders.MDivisionID, Orders.FtyGroup, a.issuedate, b.FromPOID, b.FromSeq1, b.FromSeq2
 ", sqlFilter);
-                result = DBProxy.Current.Select(null, sqlcmd, out dt);
-                if (!result) return result;
+                result = DBProxy.Current.Select(null, sqlcmd, out this.dt);
+                if (!result)
+                {
+                    return result;
+                }
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+
             return result;
         }
 
         protected override bool OnToExcel(ReportDefinition report)
         {
-            SetCount(dt.Rows.Count);
-            if (dt.Rows.Count == 0)
+            this.SetCount(this.dt.Rows.Count);
+            if (this.dt.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found!!");
                 return false;
@@ -106,19 +122,24 @@ order by Orders.MDivisionID, Orders.FtyGroup, a.issuedate, b.FromPOID, b.FromSeq
 
             try
             {
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R24.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(dt, "", "Warehouse_R24.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R24.xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Warehouse_R24.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
 
                 this.ShowWaitMessage("Excel Processing...");
                 Excel.Worksheet worksheet = objApp.Sheets[1];
-                for (int i = 1; i <= dt.Rows.Count; i++)
+                for (int i = 1; i <= this.dt.Rows.Count; i++)
                 {
                     string str = worksheet.Cells[i + 1, 8].Value;
                     if (!MyUtility.Check.Empty(str))
+                    {
                         worksheet.Cells[i + 1, 8] = str.Trim();
+                    }
+
                     string str2 = worksheet.Cells[i + 1, 10].Value;
                     if (!MyUtility.Check.Empty(str2))
+                    {
                         worksheet.Cells[i + 1, 10] = str2.Trim();
+                    }
                 }
 
                 #region Save & Show Excel

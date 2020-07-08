@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sci.Data;
-using Sci.Win.UI;
 using System.Data.SqlClient;
 
 namespace Sci.Production.Class
@@ -17,7 +12,7 @@ namespace Sci.Production.Class
     {
         public txttpeuser_canedit()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         public Sci.Win.UI.TextBox TextBox1
@@ -33,15 +28,15 @@ namespace Sci.Production.Class
         [Bindable(true)]
         public string TextBox1Binding
         {
+            get { return this.textBox1.Text; }
             set { this.textBox1.Text = value; }
-            get { return textBox1.Text; }
         }
 
         [Bindable(true)]
         public string DisplayBox1Binding
         {
-            set { this.displayBox1.Text = value; }
             get { return this.displayBox1.Text; }
+            set { this.displayBox1.Text = value; }
         }
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
@@ -64,13 +59,14 @@ namespace Sci.Production.Class
                         {
                             selectCommand = string.Format("select ID, Name, ExtNo from TPEPass1 WITH (NOLOCK) where Name = '{0}' order by ID", textValue.Trim());
                             DBProxy.Current.Select(null, selectCommand, out selectTable);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable,"ID,Name,ExtNo", "15,30,10", this.textBox1.Text);
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo", "15,30,10", this.textBox1.Text);
                             DialogResult returnResult = item.ShowDialog();
-                            if (returnResult == DialogResult.Cancel) 
+                            if (returnResult == DialogResult.Cancel)
                             {
-                                this.textBox1.Text = "";
-                                return; 
+                                this.textBox1.Text = string.Empty;
+                                return;
                             }
+
                             this.textBox1.Text = item.GetSelectedString();
                         }
                         else
@@ -81,15 +77,16 @@ namespace Sci.Production.Class
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
-                                this.textBox1.Text = "";
+                                this.textBox1.Text = string.Empty;
                                 return;
                             }
+
                             this.textBox1.Text = item.GetSelectedString();
                         }
                     }
                     else
                     {
-                        this.textBox1.Text = "";
+                        this.textBox1.Text = string.Empty;
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox(string.Format("< User Id: {0} > not found!!!", textValue));
                         return;
@@ -107,21 +104,38 @@ namespace Sci.Production.Class
                 string name = MyUtility.GetValue.Lookup(selectSql);
                 selectSql = string.Format("Select ExtNo from TPEPass1 WITH (NOLOCK) where id = '{0}'", this.textBox1.Text.ToString());
                 string extNo = MyUtility.GetValue.Lookup(selectSql);
-                if (!string.IsNullOrWhiteSpace(name)) { this.displayBox1.Text = name; }
-                else this.displayBox1.Text = "";
-                if (!string.IsNullOrWhiteSpace(extNo)) { this.displayBox1.Text = name + " #" + extNo; }
+                if (!string.IsNullOrWhiteSpace(name))
+                {
+                    this.displayBox1.Text = name;
+                }
+                else
+                {
+                    this.displayBox1.Text = string.Empty;
+                }
+
+                if (!string.IsNullOrWhiteSpace(extNo))
+                {
+                    this.displayBox1.Text = name + " #" + extNo;
+                }
             }
-           
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
-            if (myForm.EditMode == false || textBox1.ReadOnly == true) return;
+            if (myForm.EditMode == false || this.textBox1.ReadOnly == true)
+            {
+                return;
+            }
+
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) order by ID", "15,30,10", this.textBox1.Text);
             item.Width = 640;
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.textBox1.Text = item.GetSelectedString();
         }
 
@@ -136,14 +150,18 @@ namespace Sci.Production.Class
 		                    Mail = email
                     from Production.dbo.TPEPass1 WITH (NOLOCK) 
                     where id = @id";
-            sqlpar.Add(new SqlParameter("@id", textBox1.Text.ToString()));
+            sqlpar.Add(new SqlParameter("@id", this.textBox1.Text.ToString()));
 
             userData ud = new userData(sql, sqlpar);
 
             if (ud.errMsg == null)
+            {
                 ud.ShowDialog();
+            }
             else
+            {
                 MyUtility.Msg.ErrorBox(ud.errMsg);
+            }
         }
     }
 }

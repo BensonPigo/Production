@@ -236,7 +236,7 @@ OUTER APPLY(
 )LockStatus
 
 where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType = 'A'",
-                        MyUtility.Convert.GetString(
+                            MyUtility.Convert.GetString(
                             this.CurrentMaintain["POID"]),
                             inputString[0],
                             inputString[1],
@@ -964,7 +964,6 @@ where a.id = '{this.CurrentMaintain["ID"]}' and c.lock = 0 and  c.inqty - c.outq
             if (!MyUtility.Check.Empty(msg))
             {
                 MyUtility.Msg.WarningBox("These items are understocked" + Environment.NewLine + msg);
-
             }
             #endregion
 
@@ -1011,7 +1010,9 @@ where a.id = '{this.CurrentMaintain["ID"]}' and c.lock = 0
 
             // 判斷LACKING
             if (type != "Lacking")
-            { strSQLCmd.Append(" and (c.inqty-c.outqty + c.adjustqty) > 0"); }
+            {
+                strSQLCmd.Append(" and (c.inqty-c.outqty + c.adjustqty) > 0");
+            }
             #endregion
 
             using (TransactionScope scope = new TransactionScope())

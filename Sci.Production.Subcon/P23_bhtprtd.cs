@@ -1,40 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.InteropServices;
-using System.Runtime.ExceptionServices;
-using System.Configuration;
-using System.ComponentModel;
 
 namespace Sci.Production.Subcon
 {
     public class DllInvoke
     {
         [DllImport("Kernel32.dll")]
-        private extern static IntPtr LoadLibrary(String path);
+        private extern static IntPtr LoadLibrary(string path);
 
         [DllImport("Kernel32.dll")]
-        private extern static IntPtr GetProcAddress(IntPtr lib, String funcName);
+        private extern static IntPtr GetProcAddress(IntPtr lib, string funcName);
 
         [DllImport("Kernel32.dll")]
         private extern static bool FreeLibrary(IntPtr lib);
 
         private IntPtr hLib;
-        public DllInvoke(String DLLPath)
+
+        public DllInvoke(string DLLPath)
         {
-            hLib = LoadLibrary(DLLPath);
+            this.hLib = LoadLibrary(DLLPath);
         }
 
         ~DllInvoke()
         {
-            FreeLibrary(hLib);
+            FreeLibrary(this.hLib);
         }
 
-        public Delegate Invoke(String APIName, Type t)
+        public Delegate Invoke(string APIName, Type t)
         {
-            IntPtr api = GetProcAddress(hLib, APIName);
+            IntPtr api = GetProcAddress(this.hLib, APIName);
             try
             {
                 return (Delegate)Marshal.GetDelegateForFunctionPointer(api, t);
@@ -50,23 +45,25 @@ namespace Sci.Production.Subcon
     public class P23_bhtprtd
     {
         private delegate int bhtCallVB_func(IntPtr nhWnd, string pcParam, StringBuilder FileNameBuf, int ProtocolType);
+
         DllInvoke dll;
         bhtCallVB_func func;
 
         public P23_bhtprtd()
         {
-            //設定dll黨名稱
-            dll = new DllInvoke(".\\Bhtprtd.dll");
-            //設定dll檔內的function名稱 ExecProtocol
-            func = (bhtCallVB_func)dll.Invoke("ExecProtocol", typeof(bhtCallVB_func)); ;
+            // 設定dll黨名稱
+            this.dll = new DllInvoke(".\\Bhtprtd.dll");
+
+            // 設定dll檔內的function名稱 ExecProtocol
+            this.func = (bhtCallVB_func)this.dll.Invoke("ExecProtocol", typeof(bhtCallVB_func));
         }
 
         public int ExecProtocol(IntPtr nhWnd, string pcParam, StringBuilder FileNameBuf, int ProtocolType)
         {
-            if (func != null)
+            if (this.func != null)
             {
-                //真正執行dll的function的地方
-                return func(nhWnd, pcParam, FileNameBuf, ProtocolType);
+                // 真正執行dll的function的地方
+                return this.func(nhWnd, pcParam, FileNameBuf, ProtocolType);
             }
             else
             {
@@ -76,19 +73,19 @@ namespace Sci.Production.Subcon
 
         private string ErrorMapping(int errorCode)
         {
-            string error_msg = "";
+            string error_msg = string.Empty;
 
             switch (errorCode)
             {
-                case 1: error_msg =  "Designated file not found."; break;
-                case 2: error_msg =  "File name entered in wrong format." ; break;
-                case 3: error_msg =  "Number of records exceeding 32767." ; break;
-                case 4: error_msg =  "Field length is out of range." ; break;
-                case 5: error_msg =  "Number of fields is out of range." ; break;
-                case 6: error_msg =  "Record length is out of range." ; break;
-                case 7: error_msg =  "Parameter mismatch." ; break;
-                case 8: error_msg =  "Field length not found." ; break;
-                case 9: error_msg =  "Option mismatch." ; break;
+                case 1: error_msg = "Designated file not found."; break;
+                case 2: error_msg = "File name entered in wrong format."; break;
+                case 3: error_msg = "Number of records exceeding 32767."; break;
+                case 4: error_msg = "Field length is out of range."; break;
+                case 5: error_msg = "Number of fields is out of range."; break;
+                case 6: error_msg = "Record length is out of range."; break;
+                case 7: error_msg = "Parameter mismatch."; break;
+                case 8: error_msg = "Field length not found."; break;
+                case 9: error_msg = "Option mismatch."; break;
                 case 30: error_msg = "Invalid protocol."; break;
                 case 40: error_msg = "ID error."; break;
                 case 51: error_msg = "Communication error. (Tx timeout)"; break;
@@ -115,14 +112,13 @@ namespace Sci.Production.Subcon
 
             return error_msg;
         }
-        //
+
         public string csharpExecProtocol(IntPtr nhWnd, string Options, int RcvMode, int ProtocolType)
         {
-           
             string pcParam;
             StringBuilder FileNameBuf = new StringBuilder();
 
-            //Set option string
+            // Set option string
             if (RcvMode == 2)
             {
                 pcParam = Options + " +R";
@@ -131,10 +127,12 @@ namespace Sci.Production.Subcon
             {
                 pcParam = Options + " -R";
             }
-            //呼叫自定義方法，名稱命名與dll的function相同
-            int Ret = ExecProtocol(nhWnd, pcParam, FileNameBuf, ProtocolType);
-            //設定回傳訊息
-            string TransferFile = "";
+
+            // 呼叫自定義方法，名稱命名與dll的function相同
+            int Ret = this.ExecProtocol(nhWnd, pcParam, FileNameBuf, ProtocolType);
+
+            // 設定回傳訊息
+            string TransferFile = string.Empty;
             if (Ret == 0)
             {
                 TransferFile = " 0 : Receive Success : " + FileNameBuf.ToString().Trim();
@@ -142,7 +140,7 @@ namespace Sci.Production.Subcon
             else
             {
                 TransferFile = Ret.ToString() + " : Receive Error : " + FileNameBuf.ToString().Trim() + Environment.NewLine +
-                               ErrorMapping(Ret) + Environment.NewLine +
+                               this.ErrorMapping(Ret) + Environment.NewLine +
                                @"Set up scanner steps:
 1.create C:\temp\ floder.
 2.connect scanner to computer.
@@ -151,6 +149,5 @@ namespace Sci.Production.Subcon
 
             return TransferFile;
         }
-
     }
 }

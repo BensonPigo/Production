@@ -2,11 +2,9 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Linq;
 using Sci.Utility.Excel;
@@ -130,8 +128,8 @@ namespace Sci.Production.Centralized
             {
                 sqlWheres.Add(string.Format(
                     "e.CloseDate between '{0}' and '{1}' ",
-                   ((DateTime)this.dateCloseDate1.Value).ToShortDateString(),
-                   ((DateTime)this.dateCloseDate2.Value).ToShortDateString()));
+                    ((DateTime)this.dateCloseDate1.Value).ToShortDateString(),
+                    ((DateTime)this.dateCloseDate2.Value).ToShortDateString()));
                 close_Date = true;
             }
 
@@ -139,8 +137,8 @@ namespace Sci.Production.Centralized
             {
                 sqlWheres.Add(string.Format(
                     "ShippingAP.ApvDate between '{0}' and '{1}' ",
-                   ((DateTime)this.dateApproveDate1.Value).ToShortDateString(),
-                   ((DateTime)this.dateApproveDate2.Value).ToShortDateString()));
+                    ((DateTime)this.dateApproveDate1.Value).ToShortDateString(),
+                    ((DateTime)this.dateApproveDate2.Value).ToShortDateString()));
                 approve_Date = true;
             }
 
@@ -156,8 +154,8 @@ namespace Sci.Production.Centralized
             {
                 sqlWheres.Add(string.Format(
                     "e.ETA between '{0}' and '{1}' ",
-                   ((DateTime)this.dateETA1.Value).ToShortDateString(),
-                   ((DateTime)this.dateETA2.Value).ToShortDateString()));
+                    ((DateTime)this.dateETA1.Value).ToShortDateString(),
+                    ((DateTime)this.dateETA2.Value).ToShortDateString()));
             }
 
             if (!this.txtBrandBranadID.Text.Empty())
@@ -450,8 +448,8 @@ from #data";
                 this.SetLoadingText(
                     string.Format(
                         "Load data from connection {0}/{1} ",
-                   i + 1,
-                   connectionString.Count));
+                        i + 1,
+                        connectionString.Count));
                 SqlConnection conn;
                 using (conn = new SqlConnection(conString))
                 {
@@ -510,8 +508,8 @@ order by BrandID";
                     Logs.UI.LogInfo("listSummary");
                     listSummary = string.Format(
                         listSummary,
-                       string.Join(",", ftyAmt),
-                       string.Join(",", ftyList));
+                        string.Join(",", ftyAmt),
+                        string.Join(",", ftyList));
 
                     // 執行pivot
                     result = DBProxy.Current.SelectByConn(conn, listSummary, out this.dt_Tmp);
@@ -598,8 +596,8 @@ order by BrandID";
                 this.SetLoadingText(
                     string.Format(
                         "Load data from connection {0}/{1} ",
-                   i + 1,
-                   connectionString.Count));
+                        i + 1,
+                        connectionString.Count));
                 SqlConnection conn;
                 using (conn = new SqlConnection(conString))
                 {

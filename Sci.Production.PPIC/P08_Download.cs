@@ -3,13 +3,9 @@ using Ict.Win;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.PPIC
@@ -18,7 +14,7 @@ namespace Sci.Production.PPIC
     {
         DataRow Master;
         string ClipPath;
-        int i = 1;
+
         public P08_Download(DataRow master)
         {
             this.InitializeComponent();
@@ -85,9 +81,10 @@ where TableName = 'ReplacementReport' AND UniqueKey = '{this.Master["ID"]}'";
                 return;
             }
 
-            //string fullpath = Path.Combine(this.ClipPath, dr["FileName"].ToString());
+            // string fullpath = Path.Combine(this.ClipPath, dr["FileName"].ToString());
             FileInfo[] filelist = this.GetFile(diInfo, dr["FileName"].ToString()).ToArray();
-            //if (!File.Exists(fullpath))
+
+            // if (!File.Exists(fullpath))
             if (filelist.Length == 0)
             {
                 MyUtility.Msg.WarningBox("File not Exists!");

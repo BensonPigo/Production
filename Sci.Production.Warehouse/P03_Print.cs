@@ -1,22 +1,10 @@
 ﻿using Ict;
-using Ict.Win;
 using Sci.Data;
-using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Transactions;
-using System.Windows.Forms;
-using System.Reflection;
 using System.Data.SqlClient;
 using Sci.Win;
-using Sci;
-using Sci.Production;
-using Sci.Utility.Excel;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -26,58 +14,62 @@ namespace Sci.Production.Warehouse
     {
         DataTable dt;
         DataRow CurrentDataRow;
-        string order_by = "", junk_where = "";
-        public P03_Print(DataRow row,int sort_by,Boolean chk_includeJunk)
+        string order_by = string.Empty;
+        string junk_where = string.Empty;
+
+        public P03_Print(DataRow row, int sort_by, bool chk_includeJunk)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             if (sort_by == 0)
             {
-                order_by = " order by  a.[Ref#] ,a.[sp] , iif(a.Material_Type='Fabric',1,iif(a.Material_Type='Accessory',2,3)), a.[Color]";
+                this.order_by = " order by  a.[Ref#] ,a.[sp] , iif(a.Material_Type='Fabric',1,iif(a.Material_Type='Accessory',2,3)), a.[Color]";
             }
-            else {
-                order_by = " order by a.sp,a.[SEQ]";
+            else
+            {
+                this.order_by = " order by a.sp,a.[SEQ]";
             }
 
             if (chk_includeJunk == false)
             {
-                junk_where = " where a.junk <> 'true' "; ;
+                this.junk_where = " where a.junk <> 'true' ";
             }
+
             this.CurrentDataRow = row;
-            print.Visible = false;
-            
+            this.print.Visible = false;
+
             // TODO: Complete member initialization
         }
+
        // string outpa;
-        
+
        // string sqlcmd;
-      
         protected override bool ValidateInput()
         {
            // var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
            // saveDialog.ShowDialog();
-           //outpa = saveDialog.FileName;
+           // outpa = saveDialog.FileName;
            // if (outpa.Empty())
            // {
-                
-           //     return false;
+
+           // return false;
            // }
             return base.ValidateInput();
         }
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
-            //string xlt;
+
+            // string xlt;
             DualResult result;
             string sqlcmd = string.Empty;
             if (this.radioPanel1.Value == this.radioMaterialStatus.Value)
             {
-                //xlt = @"Warehouse_P03_Print-1.xltx";
-                //PO_Supp_tmp為了Chinese Abb Fabric_Supp 的suppID如果找不到，請找 PO_Supp_Detail.SCIRefno seq1最小的且suppID在 Fabric_Supp是有資料的那筆
+                // xlt = @"Warehouse_P03_Print-1.xltx";
+                // PO_Supp_tmp為了Chinese Abb Fabric_Supp 的suppID如果找不到，請找 PO_Supp_Detail.SCIRefno seq1最小的且suppID在 Fabric_Supp是有資料的那筆
                 sqlcmd = @"with PO_Supp_tmp as (
                                                      select aa.*,bb.AbbCH from 
                                                      (select a.ID,a.SCIRefno,FIRST_VALUE(b.SuppID) OVER (partition by a.SCIRefno ORDER BY b.SEQ1 ) SuppID ,a.SEQ1 ,a.SEQ2
@@ -214,7 +206,7 @@ namespace Sci.Production.Warehouse
                                                 left join orders o on o.id = l.orderid
                                                 left join LocalItem b on l.Refno=b.RefNo
                                                 left join LocalSupp c on b.LocalSuppid=c.ID
-                                                 where l.OrderID = @ID     ) as a " + junk_where + order_by +
+                                                 where l.OrderID = @ID     ) as a " + this.junk_where + this.order_by +
                                                 @"
                                                 select 
 	                                                [sp] 
@@ -356,61 +348,65 @@ namespace Sci.Production.Warehouse
                                     	  from LocalInventory l
                                         left join LocalItem b on l.Refno=b.RefNo
                                         left join LocalSupp c on b.LocalSuppid=c.ID
-                                         where l.OrderID  = @ID    ) as a   " + junk_where + " order by a.sp,a.[SEQ]";
+                                         where l.OrderID  = @ID    ) as a   " + this.junk_where + " order by a.sp,a.[SEQ]";
             }
-            //SaveXltReportCls xl = new SaveXltReportCls(xlt);
-            //xl.dicDatas.Add("##sp", dt);
-            //xl.Save(outpa, false);
 
-            result = DBProxy.Current.Select("", sqlcmd, pars, out dt);
+            // SaveXltReportCls xl = new SaveXltReportCls(xlt);
+            // xl.dicDatas.Add("##sp", dt);
+            // xl.Save(outpa, false);
+            result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out this.dt);
             return result;
         }
 
         protected override bool OnToExcel(ReportDefinition report)
         {
-            if (dt.Rows.Count <= 0)
+            if (this.dt.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
+
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(dt.Rows.Count);
+            this.SetCount(this.dt.Rows.Count);
             if (this.radioPanel1.Value == this.radioMaterialStatus.Value)
             {
-              
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-1.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(dt, "", "Warehouse_P03_Print-1.xltx", 1, false, null, objApp);      // 將datatable copy to excel
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-1.xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Warehouse_P03_Print-1.xltx", 1, false, null, objApp);      // 將datatable copy to excel
                 Excel.Worksheet worksheet = objApp.Sheets[1];
-              
-                for (int i = 0; i < dt.Rows.Count; i++) {
-                    if (dt.Rows[i]["junk"].ToString().Equals("True")) {
+
+                for (int i = 0; i < this.dt.Rows.Count; i++)
+                {
+                    if (this.dt.Rows[i]["junk"].ToString().Equals("True"))
+                    {
                         worksheet.Range[worksheet.Cells[1][i + 2], worksheet.Cells[41][i + 2]].Interior.ColorIndex = 15;
                     }
                 }
+
                 worksheet.Columns[42].Delete();
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P03");
-                
+
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.ActiveWorkbook.Close(true);
                 objApp.Quit();
                 Marshal.ReleaseComObject(worksheet);
                 Marshal.ReleaseComObject(objApp);
-              
 
                 strExcelName.OpenFile();
             }
-            else {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-2.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(dt, "", "Warehouse_P03_Print-2.xltx", 1, false, null, objApp);      // 將datatable copy to excel
+            else
+            {
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-2.xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Warehouse_P03_Print-2.xltx", 1, false, null, objApp);      // 將datatable copy to excel
                 Excel.Worksheet worksheet = objApp.Sheets[1];
 
-                for (int i = 0; i < dt.Rows.Count; i++)
+                for (int i = 0; i < this.dt.Rows.Count; i++)
                 {
-                    if (dt.Rows[i]["junk"].ToString().Equals("True"))
+                    if (this.dt.Rows[i]["junk"].ToString().Equals("True"))
                     {
                         worksheet.Range[worksheet.Cells[1][i + 2], worksheet.Cells[21][i + 2]].Interior.ColorIndex = 15;
                     }
                 }
+
                 worksheet.Columns[22].Delete();
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P03");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
@@ -418,11 +414,9 @@ namespace Sci.Production.Warehouse
                 objApp.Quit();
                 Marshal.ReleaseComObject(worksheet);
                 Marshal.ReleaseComObject(objApp);
-                
 
                 strExcelName.OpenFile();
             }
-           
 
             return true;
         }

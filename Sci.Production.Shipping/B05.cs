@@ -1,10 +1,6 @@
 ﻿using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 
@@ -18,12 +14,12 @@ namespace Sci.Production.Shipping
             this.InitializeComponent();
         }
 
-        protected override bool ClickSaveBefore()
+      protected override bool ClickSaveBefore()
         {
             return base.ClickSaveBefore();
         }
 
-        protected override DualResult ClickSave()
+      protected override DualResult ClickSave()
         {
             // 修改表身資料,不寫入表頭EditName and EditDate
             ITableSchema pass1Schema;

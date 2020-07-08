@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
-using Sci;
 using System.Data.SqlClient;
 using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -19,27 +13,28 @@ namespace Sci.Production.Warehouse
 {
     public partial class P04 : Sci.Win.Tems.QueryForm
     {
-        DataTable dataTable;        
+        DataTable dataTable;
         string SPNo;
+
         public P04(ToolStripMenuItem menuitem)
-            :base(menuitem)
+            : base(menuitem)
         {
             this.EditMode = true;
-            InitializeComponent();            
+            this.InitializeComponent();
         }
 
-        //Form to Form W/H.P01
+        // Form to Form W/H.P01
         public P04(string P01SPNo, ToolStripMenuItem menuitem)
-            :base(menuitem)
+            : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.EditMode = true;
-            SPNo = P01SPNo;
-            this.txtSPNo.Text = SPNo.Trim();
-            event_Query();
+            this.SPNo = P01SPNo;
+            this.txtSPNo.Text = this.SPNo.Trim();
+            this.event_Query();
         }
 
-        //PPIC_P01 Called
+        // PPIC_P01 Called
         public static void Call(string PPIC_SPNo)
         {
             foreach (Form form in Application.OpenForms)
@@ -53,6 +48,7 @@ namespace Sci.Production.Warehouse
                     return;
                 }
             }
+
             ToolStripMenuItem P04MenuItem = null;
             foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
             {
@@ -64,24 +60,25 @@ namespace Sci.Production.Warehouse
                         {
                             if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P04. Material Status (Local)"))
                             {
-                                P04MenuItem = ((ToolStripMenuItem)subMenuItem);
+                                P04MenuItem = (ToolStripMenuItem)subMenuItem;
                                 break;
                             }
                         }
                     }
                 }
             }
+
             P04 callform = new P04(PPIC_SPNo, P04MenuItem);
-            callform.Show();                       
+            callform.Show();
         }
 
-        //隨著 P01上下筆SP#切換資料
+        // 隨著 P01上下筆SP#切換資料
         public void P04Data(string P01SPNo)
-        {            
+        {
             this.EditMode = true;
-            SPNo = P01SPNo;
-            this.txtSPNo.Text = SPNo.Trim();
-            event_Query();
+            this.SPNo = P01SPNo;
+            this.txtSPNo.Text = this.SPNo.Trim();
+            this.event_Query();
         }
 
         protected override void OnFormLoaded()
@@ -95,7 +92,7 @@ namespace Sci.Production.Warehouse
                 var dataRow = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (dataRow != null)
                 {
-                    var form = new Sci.Production.Warehouse.P04_LocalTransaction(dataRow,"P04");
+                    var form = new Sci.Production.Warehouse.P04_LocalTransaction(dataRow, "P04");
                     form.Show(this);
                 }
             };
@@ -107,14 +104,14 @@ namespace Sci.Production.Warehouse
                 var dataRow = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (dataRow != null)
                 {
-                    //var form = new Sci.Production.Warehouse.P04_ScrapQty(string Poid, string Refno, string Color);
+                    // var form = new Sci.Production.Warehouse.P04_ScrapQty(string Poid, string Refno, string Color);
                     var form = new Sci.Production.Warehouse.P04_ScrapQty(dataRow["sp"].ToString(), dataRow["refno"].ToString(), dataRow["threadColor"].ToString());
                     form.Show(this);
                 }
             };
-            #endregion 
+            #endregion
             #region Set Grid
-            Helper.Controls.Grid.Generator(this.gridMaterialStatus)
+            this.Helper.Controls.Grid.Generator(this.gridMaterialStatus)
                 .Text("sp", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("unit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Text("refno", header: "Refno", iseditingreadonly: true, width: Widths.AnsiChars(10))
@@ -132,34 +129,35 @@ namespace Sci.Production.Warehouse
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            event_Query();
+            this.event_Query();
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (txtSPNo.Focused)
+            if (this.txtSPNo.Focused)
             {
                 switch (keyData)
                 {
                     case Keys.Enter:
-                        event_Query();
+                        this.event_Query();
                         break;
                 }
             }
+
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
         public void event_Query()
         {
             #region check SP#
-            if (txtSPNo.Text.Empty())
+            if (this.txtSPNo.Text.Empty())
             {
                 MyUtility.Msg.WarningBox("SP# can't be empty. Please fill SP# first!");
-                txtSPNo.Focus();
+                this.txtSPNo.Focus();
                 return;
             }
-            #endregion 
-            #region SQL Command & SqlParameter 
+            #endregion
+            #region SQL Command & SqlParameter
             string sql = string.Format(@"
 select OrderID,Refno,ThreadColorID,UnitID
 into #tmp
@@ -187,40 +185,41 @@ order by a.OrderID
 drop table #tmp
 ");
 
-            string spno = txtSPNo.Text.TrimEnd() + "%";
+            string spno = this.txtSPNo.Text.TrimEnd() + "%";
             List<SqlParameter> sqlPar = new List<SqlParameter>();
             sqlPar.Add(new SqlParameter("@spno", spno));
             #endregion
-            
+
             this.ShowWaitMessage("Data Loading....");
             #region SQL Data Loading....
 
             Ict.DualResult result;
 
-            if (result = DBProxy.Current.Select(null, sql, sqlPar, out dataTable))
+            if (result = DBProxy.Current.Select(null, sql, sqlPar, out this.dataTable))
             {
-                if (dataTable == null || dataTable.Rows.Count == 0)
+                if (this.dataTable == null || this.dataTable.Rows.Count == 0)
                 {
                     MyUtility.Msg.InfoBox("Data not found!!");
                 }
-                listControlBindingSource1.DataSource = dataTable;  
+
+                this.listControlBindingSource1.DataSource = this.dataTable;
             }
             else
             {
-                ShowErr(sql, result);
+                this.ShowErr(sql, result);
             }
-            #endregion 
+            #endregion
             this.HideWaitMessage();
         }
 
         private void btnToExcel_Click(object sender, EventArgs e)
         {
-            if (dataTable != null && dataTable.Rows.Count > 0)
+            if (this.dataTable != null && this.dataTable.Rows.Count > 0)
             {
                 this.ShowWaitMessage("Excel Processing...");
 
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P04.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(dataTable, "", "Warehouse_P04.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);                
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P04.xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.dataTable, string.Empty, "Warehouse_P04.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);
                 Excel.Worksheet worksheet = objApp.Sheets[1];
                 worksheet.Rows.AutoFit();
                 worksheet.Columns.AutoFit();
@@ -245,8 +244,8 @@ drop table #tmp
 
         private void btnNewSearch_Click(object sender, EventArgs e)
         {
-            txtSPNo.ResetText();
-            txtSPNo.Select();
+            this.txtSPNo.ResetText();
+            this.txtSPNo.Select();
         }
 
         public void setTxtSPNo(string spNo)

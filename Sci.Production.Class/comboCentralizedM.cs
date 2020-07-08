@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Data;
-using Sci.Data;
 using System.Configuration;
 
 namespace Sci.Production.Class
@@ -37,10 +36,10 @@ namespace Sci.Production.Class
         public void SetDefalutIndex(string defalutValue = null)
         {
            DataTable dtM = new DataTable();
-            DataRow dr;
-            dtM.Columns.Add("M", typeof(string));
-            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchMdvision"].Split(new char[] { ';' });
-            foreach (string strServer in strSevers)
+           DataRow dr;
+           dtM.Columns.Add("M", typeof(string));
+           string[] strSevers = ConfigurationManager.AppSettings["ServerMatchMdvision"].Split(new char[] { ';' });
+           foreach (string strServer in strSevers)
             {
                 string[] MDvisions = strServer.Split(new char[] { ':', ',' });
                 for (int i = 1; i < MDvisions.Length; i++)
@@ -52,15 +51,15 @@ namespace Sci.Production.Class
             }
 
             // 第一筆加入空白
-            dr = dtM.NewRow();
-            dr["M"] = string.Empty;
-            dtM.Rows.Add(dr);
-            dtM.DefaultView.Sort = "M";
-            this.DataSource = dtM;
-            this.ValueMember = "M";
-            this.DisplayMember = "M";
+           dr = dtM.NewRow();
+           dr["M"] = string.Empty;
+           dtM.Rows.Add(dr);
+           dtM.DefaultView.Sort = "M";
+           this.DataSource = dtM;
+           this.ValueMember = "M";
+           this.DisplayMember = "M";
 
-            this.SelectedValue = (defalutValue == null) ? Sci.Env.User.Factory : defalutValue;
+           this.SelectedValue = (defalutValue == null) ? Sci.Env.User.Factory : defalutValue;
         }
     }
 }

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sci.Data;
 using Sci.Win.UI;
@@ -25,11 +21,12 @@ namespace Sci.Production.Class
         }
 
         private Control M;
+
         [Category("Custom Properties")]
         public Control MObjectName
         {
-            set { this.M = value; }
             get { return this.M; }
+            set { this.M = value; }
         }
 
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
@@ -41,7 +38,7 @@ namespace Sci.Production.Class
             DataTable Data;
 
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-            List<string> strSevers = ConfigurationManager.AppSettings["PMSDBServer"].Split( ',' ).ToList();
+            List<string> strSevers = ConfigurationManager.AppSettings["PMSDBServer"].Split(',').ToList();
             strSevers.Remove("PMSDB_TSR");
             List<string> connectionString = new List<string>();
             foreach (string ss in strSevers)
@@ -55,16 +52,19 @@ namespace Sci.Production.Class
                 MyUtility.Msg.WarningBox("no connection loaded.");
                 return;
             }
+
             string whereM = string.Empty;
             if (this.M != null && !MyUtility.Check.Empty(this.M.Text))
             {
                 List<string> mList = this.M.Text.Split(',').ToList();
                 whereM = " where MDivisionID in ('" + string.Join("','", mList) + "')";
             }
+
             // 將所有工廠的資料合併起來
             for (int i = 0; i < connectionString.Count; i++)
             {
                 string conString = connectionString[i];
+
                 // 跨資料庫連線，將所需資料存到TempTable，再給不同資料庫使用
                 SqlConnection con;
                 using (con = new SqlConnection(conString))
@@ -76,15 +76,21 @@ namespace Sci.Production.Class
                     {
                         return;
                     }
+
                     foreach (DataRow row in Data.Rows)
                     {
                         FactoryData.ImportRow(row);
-                    }                    
+                    }
                 }
             }
+
             Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(FactoryData, "Factory", "Factory", "5", this.Text);
             DialogResult dialogResult = item.ShowDialog();
-            if (dialogResult == DialogResult.Cancel) { return; }
+            if (dialogResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.Text = item.GetSelectedString();
             this.ValidateText();
         }

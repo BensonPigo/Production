@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
@@ -33,6 +32,7 @@ namespace Sci.Production.Packing
         }
 
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+
         /// <summary>
         /// OnFormLoaded
         /// </summary>
@@ -307,6 +307,7 @@ namespace Sci.Production.Packing
                                     newRow["styleid"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 23], "C");
                                     newRow["stylename"] = newRow["styleid"] + "-" + MyUtility.GetValue.Lookup($"select stylename from style where id = '{newRow["styleid"]}'");
                                     newRow["CustCTN"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C");
+
                                     // article抓取 - - 中間的值
                                     // **eg01:MTR2315 - FUG / BON - MD 請捉取 FUG/ BON
                                     // **eg02:XXX - 5A6S - 4D5 - XXX 請捉取 A6S-4D5
@@ -552,7 +553,7 @@ order by pd.PackID,pd.Seq
                 StyleID = s["StyleID"].ToString(),
                 Article = s["Article"].ToString(),
                 Size = s["Size"].ToString(),
-                Barcode = s["Barcode"].ToString()
+                Barcode = s["Barcode"].ToString(),
             }).Distinct())
             {
                 string checkorderexists = $@"

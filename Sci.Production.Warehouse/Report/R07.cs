@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Win;
@@ -16,27 +12,31 @@ namespace Sci.Production.Warehouse
     public partial class R07 : Sci.Win.Tems.PrintForm
     {
         DataTable dt;
-        DateTime? strIssueDate1, strIssueDate2;
-        string strM, strFactory;
+        DateTime? strIssueDate1;
+        DateTime? strIssueDate2;
+        string strM;
+        string strFactory;
+
         public R07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.EditMode = true;
         }
 
         protected override bool ValidateInput()
         {
-            strIssueDate1 = dateIssueDate.Value1;
-            strIssueDate2 = dateIssueDate.Value2;
-            strM = txtMdivision.Text;
-            strFactory = txtfactory.Text;
+            this.strIssueDate1 = this.dateIssueDate.Value1;
+            this.strIssueDate2 = this.dateIssueDate.Value2;
+            this.strM = this.txtMdivision.Text;
+            this.strFactory = this.txtfactory.Text;
 
-            if (MyUtility.Check.Empty(strIssueDate1) && MyUtility.Check.Empty(strIssueDate2))
+            if (MyUtility.Check.Empty(this.strIssueDate1) && MyUtility.Check.Empty(this.strIssueDate2))
             {
                 MyUtility.Msg.WarningBox("Issue date can't be empty!!");
                 return false;
             }
+
             return base.ValidateInput();
         }
 
@@ -47,16 +47,28 @@ namespace Sci.Production.Warehouse
             try
             {
                 string sqlFilter = string.Empty;
-                if (!MyUtility.Check.Empty(strIssueDate1))
-                    sqlFilter += string.IsNullOrEmpty(sqlFilter) ? string.Format(" s.IssueDate >= '{0}' ", Convert.ToDateTime(strIssueDate1).ToString("yyyyMMdd")) : string.Format(" and s.IssueDate >= '{0}' ", Convert.ToDateTime(strIssueDate1).ToString("yyyyMMdd"));
-                if (!MyUtility.Check.Empty(strIssueDate2))
-                    sqlFilter += string.IsNullOrEmpty(sqlFilter) ? string.Format(" s.IssueDate <= '{0}'", Convert.ToDateTime(strIssueDate2).ToString("yyyyMMdd")) : string.Format(" and s.IssueDate <= '{0}'", Convert.ToDateTime(strIssueDate2).ToString("yyyyMMdd"));
-                if (!MyUtility.Check.Empty(strM))
-                    sqlFilter += string.Format(" and o.MDivisionID = '{0}'", strM);
-                if (!MyUtility.Check.Empty(strFactory))
-                    sqlFilter += string.Format(" and o.FtyGroup = '{0}'", strFactory);
+                if (!MyUtility.Check.Empty(this.strIssueDate1))
+                {
+                    sqlFilter += string.IsNullOrEmpty(sqlFilter) ? string.Format(" s.IssueDate >= '{0}' ", Convert.ToDateTime(this.strIssueDate1).ToString("yyyyMMdd")) : string.Format(" and s.IssueDate >= '{0}' ", Convert.ToDateTime(this.strIssueDate1).ToString("yyyyMMdd"));
+                }
 
-                string sqlcmd = string.Format(@"
+                if (!MyUtility.Check.Empty(this.strIssueDate2))
+                {
+                    sqlFilter += string.IsNullOrEmpty(sqlFilter) ? string.Format(" s.IssueDate <= '{0}'", Convert.ToDateTime(this.strIssueDate2).ToString("yyyyMMdd")) : string.Format(" and s.IssueDate <= '{0}'", Convert.ToDateTime(this.strIssueDate2).ToString("yyyyMMdd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.strM))
+                {
+                    sqlFilter += string.Format(" and o.MDivisionID = '{0}'", this.strM);
+                }
+
+                if (!MyUtility.Check.Empty(this.strFactory))
+                {
+                    sqlFilter += string.Format(" and o.FtyGroup = '{0}'", this.strFactory);
+                }
+
+                string sqlcmd = string.Format(
+                    @"
 select s.Id
 	,o.MDivisionID
 	,o.FactoryID
@@ -93,20 +105,24 @@ and s.Type = 'B'
 order by s.IssueDate,s.Id,o.MDivisionID,o.FactoryID,sd.FromPOID,sd.FromSeq1,sd.FromSeq2,sd.FromRoll,sd.FromDyelot
 ", sqlFilter);
 
-                result = DBProxy.Current.Select(null, sqlcmd, out dt);
-                if (!result) return result;
+                result = DBProxy.Current.Select(null, sqlcmd, out this.dt);
+                if (!result)
+                {
+                    return result;
+                }
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+
             return result;
         }
 
         protected override bool OnToExcel(ReportDefinition report)
         {
-            SetCount(dt.Rows.Count);
-            if (dt.Rows.Count == 0)
+            this.SetCount(this.dt.Rows.Count);
+            if (this.dt.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found!!");
                 return false;
@@ -114,8 +130,8 @@ order by s.IssueDate,s.Id,o.MDivisionID,o.FactoryID,sd.FromPOID,sd.FromSeq1,sd.F
 
             try
             {
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R07.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(dt, "", "Warehouse_R07.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R07.xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Warehouse_R07.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
 
                 this.ShowWaitMessage("Excel Processing...");
 

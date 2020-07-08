@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Data;
 using Ict;
 using Sci.Data;
 
@@ -15,6 +7,7 @@ namespace Sci.Production.Class
     public partial class comboRFIDProcessLocation : Sci.Win.UI.ComboBox
     {
         private bool includeJunk = false;
+
         public bool IncludeJunk
         {
             get { return this.includeJunk; }
@@ -23,7 +16,7 @@ namespace Sci.Production.Class
 
         public comboRFIDProcessLocation()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         /// <summary>
@@ -39,7 +32,8 @@ namespace Sci.Production.Class
             {
                 whereIncludeJunk = string.Empty;
             }
-            string sqlcmd = string.Empty ;
+
+            string sqlcmd = string.Empty;
             if (isForReport)
             {
                 sqlcmd = @"

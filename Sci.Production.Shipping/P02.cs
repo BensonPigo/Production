@@ -746,7 +746,7 @@ Order by CTNNo,Seq1,Seq2", masterID);
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            if (!( MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "New" ||
+            if (!(MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "New" ||
                    MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Sent" ||
                    MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved"))
             {
@@ -1010,7 +1010,6 @@ outer apply (
                         this.CurrentMaintain["IsSpecialSending"] = false;
                     }
                 }
-
             }
             else
             {
@@ -1564,11 +1563,11 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
                 }
             }
 
-                Sci.Production.Shipping.P02_CTNDimensionAndWeight callNextForm = new Sci.Production.Shipping.P02_CTNDimensionAndWeight(
+            Sci.Production.Shipping.P02_CTNDimensionAndWeight callNextForm = new Sci.Production.Shipping.P02_CTNDimensionAndWeight(
 (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "New" || MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Sent") && (PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["Handle"])) || PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["Manager"]))), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), null, null);
-                callNextForm.ShowDialog(this);
-                this.RenewData();
-                this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            callNextForm.ShowDialog(this);
+            this.RenewData();
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
         }
 
         /// <inheritdoc/>
@@ -1770,7 +1769,7 @@ update Express set Status = 'Approved', StatusUpdateDate = GETDATE(), EditName =
                 return;
             }
 
-                string sqlchk = $@"
+            string sqlchk = $@"
 select PackingListID = concat('FOC PL : ',ed.PackingListID)
 from Express_Detail ed
 inner join PackingList pl on pl.ID = ed.PackingListID and pl.Type = 'F'

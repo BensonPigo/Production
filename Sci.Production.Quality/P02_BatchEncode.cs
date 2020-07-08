@@ -3,13 +3,9 @@ using Ict.Win;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -18,19 +14,20 @@ namespace Sci.Production.Quality
     public partial class P02_BatchEncode : Sci.Win.Tems.QueryForm
     {
         private string masterID;
+
         public P02_BatchEncode(string MasterID)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.masterID = MasterID;
-            Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
-            comboBox1_RowSource.Add("", "");
+            Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
+            comboBox1_RowSource.Add(string.Empty, string.Empty);
             comboBox1_RowSource.Add("Approval", "Approval");
             comboBox1_RowSource.Add("N/A", "N/A");
             comboBox1_RowSource.Add("Pass", "Pass");
             comboBox1_RowSource.Add("Fail", "Fail");
-            comboResult.DataSource = new BindingSource(comboBox1_RowSource, null);
-            comboResult.ValueMember = "Key";
-            comboResult.DisplayMember = "Value";
+            this.comboResult.DataSource = new BindingSource(comboBox1_RowSource, null);
+            this.comboResult.ValueMember = "Key";
+            this.comboResult.DisplayMember = "Value";
 
             this.dateInspectDt.Value = DateTime.Now;
             this.txtInspector.TextBox1Binding = Env.User.UserID;
@@ -41,11 +38,11 @@ namespace Sci.Production.Quality
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            
+
             #region set Grid
 
-            Helper.Controls.Grid.Generator(this.grid)
-                .CheckBox("select",trueValue: 1, falseValue: 0)
+            this.Helper.Controls.Grid.Generator(this.grid)
+                .CheckBox("select", trueValue: 1, falseValue: 0)
                 .Text("SEQ", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: false)
                 .Text("ExportID", header: "WKNO", width: Widths.AnsiChars(13), iseditingreadonly: false)
                 .Date("whseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(10), iseditingreadonly: false)
@@ -71,7 +68,7 @@ namespace Sci.Production.Quality
         private void QueryData()
         {
             DataTable encodeData;
-                
+
             string sqlCmd = $@"
 Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,a.ReceivingID,Refno,SCIRefno,Suppid,C.exportid,
                 ArriveQty,InspDeadline,a.ReplacementReportID,
@@ -119,7 +116,7 @@ Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,a.ReceivingID,Refno,SCIRefno,Suppid,C.
                     }
                 }
             }
-            
+
             this.grid.DataSource = encodeData;
         }
 
@@ -187,18 +184,19 @@ Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,a.ReceivingID,Refno,SCIRefno,Suppid,C.
                         MyUtility.Msg.WarningBox("Update Fail!!");
                         return;
                     }
+
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
-
                 }
                 catch (Exception ex)
                 {
                     _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
+
             this.QueryData();
         }
 
@@ -229,7 +227,7 @@ Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,a.ReceivingID,Refno,SCIRefno,Suppid,C.
                 MyUtility.Msg.WarningBox("<Inspected Qty>,<Result>,<Inspdate>,<Inspector> can not be null");
                 return;
             }
-            
+
             checkResult = selectedData
                                 .Where(s => s["Result"].Equals("Approval"));
             if (checkResult.Count() > 0)
@@ -267,14 +265,13 @@ AND ID<>'{item["ID"].ToString().Trim()}' AND ReceivingID<>'{item["ReceivingID"].
 ", out dt);
                             if (!chkresult)
                             {
-                                ShowErr("Commit transaction error.", chkresult);
+                                this.ShowErr("Commit transaction error.", chkresult);
                                 return;
                             }
 
                             bool isAllPass = false;
 
-
-                            //=1表示有相同POID Seq 1 2，且Result只有Pass一種結果
+                            // =1表示有相同POID Seq 1 2，且Result只有Pass一種結果
                             if (dt.Rows.Count == 1)
                             {
                                 if (dt.Rows[0]["Result"].ToString() == "Pass")
@@ -282,7 +279,8 @@ AND ID<>'{item["ID"].ToString().Trim()}' AND ReceivingID<>'{item["ReceivingID"].
                                     isAllPass = true;
                                 }
                             }
-                            //表示無相同POID Seq 1 2
+
+                            // 表示無相同POID Seq 1 2
                             if (dt.Rows.Count == 0)
                             {
                                 isAllPass = true;
@@ -316,27 +314,26 @@ WHERE f.POID='{item["POID"].ToString().Trim()}' AND f.Seq1='{item["Seq1"].ToStri
                         MyUtility.Msg.WarningBox("Update Fail!!");
                         return;
                     }
+
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
-
                 }
                 catch (Exception ex)
                 {
                     _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
-            //更新PO.FIRInspPercent和AIRInspPercent
-            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'AIR','{masterID}';")))
+            // 更新PO.FIRInspPercent和AIRInspPercent
+            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'AIR','{this.masterID}';")))
             {
-                ShowErr(upResult);
+                this.ShowErr(upResult);
             }
 
-
-            //ISP20200575 Encode全部執行後
+            // ISP20200575 Encode全部執行後
             string sqlcmd = $@"select distinct orderid=o.ID from Orders o with(nolock) inner join #tmp t on t.POID = o.POID";
             DataTable dtid = selectedData.CopyToDataTable();
             DualResult result = MyUtility.Tool.ProcessWithDatatable(dtid, "poid", sqlcmd, out dtid);

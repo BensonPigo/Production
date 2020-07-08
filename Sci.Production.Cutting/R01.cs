@@ -17,11 +17,11 @@ namespace Sci.Production.Cutting
         public R01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
-
-        string MDivisionID, FactoryID;
+        string MDivisionID;
+        string FactoryID;
         DataTable detailData;
         DataTable summaryData;
         DateTime? SewingDate_s, SewingDate_e;
@@ -51,23 +51,23 @@ namespace Sci.Production.Cutting
             this.summaryData = new DataTable();
             this.detailData = new DataTable();
 
-            if (!(SewingDate.Value1.HasValue || SewingDate.Value2.HasValue))
+            if (!(this.SewingDate.Value1.HasValue || this.SewingDate.Value2.HasValue))
             {
                 MyUtility.Msg.InfoBox("<Sewing Date> can’t be empty!!");
                 return false;
             }
 
-
             this.MDivisionID = this.txtMdivision.Text;
             this.FactoryID = this.txtfactory.Text;
-            this.SewingDate_s = SewingDate.Value1.Value;
-            this.SewingDate_e = SewingDate.Value2.Value.AddDays(1).AddSeconds(-1);
+            this.SewingDate_s = this.SewingDate.Value1.Value;
+            this.SewingDate_e = this.SewingDate.Value2.Value.AddDays(1).AddSeconds(-1);
             this.ShowWaitMessage("Checking...");
-            if (!Check_Subprocess_LeadTime())
+            if (!this.Check_Subprocess_LeadTime())
             {
                 this.HideWaitMessage();
                 return false;
             }
+
             this.HideWaitMessage();
             return base.ValidateInput();
         }
@@ -85,15 +85,16 @@ FROM SewingSchedule s WITH(NOLOCK)
 INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID
 WHERE o.LocalOrder = 0
 AND ( 
-	(Cast(s.Inline as Date) >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}' AND Cast( s.Inline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' )
+	(Cast(s.Inline as Date) >= '{this.SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}' AND Cast( s.Inline as Date) <= '{this.SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' )
 	OR
-	(Cast(s.Offline as Date) >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}' AND Cast( s.Offline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' )
+	(Cast(s.Offline as Date) >= '{this.SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}' AND Cast( s.Offline as Date) <= '{this.SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' )
 )
 ";
             if (!MyUtility.Check.Empty(this.MDivisionID))
             {
                 cmd += Environment.NewLine + $@"AND s.MDivisionID='{this.MDivisionID}'";
             }
+
             if (!MyUtility.Check.Empty(this.FactoryID))
             {
                 cmd += Environment.NewLine + $@"AND s.FactoryID='{this.FactoryID}'";
@@ -114,7 +115,8 @@ AND (
             #endregion
 
             #region 準備 this.Days 時間軸 : 用來判斷假日，並非最終顯示範圍
-            //PS:this.Days 準備日期清單,前後可多日期,不影響function中判斷 和 顯示結果(最後會刪除多餘的),但影響效能
+
+            // PS:this.Days 準備日期清單,前後可多日期,不影響function中判斷 和 顯示結果(最後會刪除多餘的),但影響效能
             DateTime MaxOffLine = dt_Schedule.AsEnumerable().Max(o => Convert.ToDateTime(o["offline"])).Date;
 
             int maxLeadTime = this.LeadTimeList.Max(o => o.LeadTimeDay);
@@ -129,27 +131,29 @@ AND (
             this.Days.Clear();
 
             List<PublicPrg.Prgs.Day> daylist1 = PublicPrg.Prgs.GetDays(maxLeadTime, start_where, this.FtyFroup);
-            displayday1 = daylist1.Select(s => s.Date).Min(m => m.Date); // 報表顯示開始日
+            this.displayday1 = daylist1.Select(s => s.Date).Min(m => m.Date); // 報表顯示開始日
             List<PublicPrg.Prgs.Day> daylist2 = PublicPrg.Prgs.GetDays(minLeadTime, end_where, this.FtyFroup);
-            displayday2 = daylist2.Select(s => s.Date).Min(m => m.Date); // 報表顯示結束日
+            this.displayday2 = daylist2.Select(s => s.Date).Min(m => m.Date); // 報表顯示結束日
             foreach (var item in daylist1)
             {
                 this.Days.Add(item);
             }
+
             foreach (var item in daylist2)
             {
                 this.Days.Add(item);
             }
 
             // 若 daylist1 是1/1~1/3, daylist2 是1/10~1/12, 中間也要補上
-            if (start_where < displayday2)
+            if (start_where < this.displayday2)
             {
-                List<PublicPrg.Prgs.Day> daylist3 = PublicPrg.Prgs.GetRangeHoliday(start_where, (DateTime)displayday2, this.FtyFroup);
+                List<PublicPrg.Prgs.Day> daylist3 = PublicPrg.Prgs.GetRangeHoliday(start_where, (DateTime)this.displayday2, this.FtyFroup);
                 foreach (var item in daylist3)
                 {
                     this.Days.Add(item);
                 }
             }
+
             if (start_where < MaxOffLine) // 報表篩選是時間範圍, 狀況是SewingSchedule的最晚OffLine超過條件
             {
                 List<PublicPrg.Prgs.Day> daylist3 = PublicPrg.Prgs.GetRangeHoliday(start_where, MaxOffLine, this.FtyFroup);
@@ -165,7 +169,7 @@ AND (
                 .OrderBy(o => o.Date).ToList();
             #endregion
 
-            this.AllData = GetInOffLineList(dt_Schedule, this.Days, Enddate: displayday2, ori_startdate: start_where, ori_Enddate: end_where);
+            this.AllData = GetInOffLineList(dt_Schedule, this.Days, Enddate: this.displayday2, ori_startdate: start_where, ori_Enddate: end_where);
 
             List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days, this.AllData.OrderBy(o => o.OrderID).ToList());
 
@@ -183,65 +187,68 @@ AND (
             }
 
             this.ShowWaitMessage("Excel processing...");
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R01.xltx"); //預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R01.xltx"); // 預先開啟excel app
             objApp.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet Summary_Sheet = objApp.ActiveWorkbook.Worksheets[1];
             Microsoft.Office.Interop.Excel.Worksheet Detail_Sheet = objApp.ActiveWorkbook.Worksheets[2];
 
             #region 產生橫向日期表格
 
-            //扣除無產出的日期
+            // 扣除無產出的日期
             List<PublicPrg.Prgs.Day> removeDays = new List<PublicPrg.Prgs.Day>();
 
             foreach (var day in this.Days)
             {
-                //如果該日期，不是「有資料」，則刪掉
+                // 如果該日期，不是「有資料」，則刪掉
                 if (!this.AllData.Where(x => x.InOffLines.Where(
-                                                                    y => y.DateWithLeadTime == day.Date
-                                                                ).Any()
-                                       ).Any()
-                    //&& day.IsHoliday
-                    )
+                                                                    y => y.DateWithLeadTime == day.Date)
+                                                                .Any())
+                                       .Any())
+
+                    // && day.IsHoliday
                 {
                     removeDays.Add(day);
                 }
-                if (day.Date < displayday1 || day.Date > displayday2)
+
+                if (day.Date < this.displayday1 || day.Date > this.displayday2)
                 {
                     removeDays.Add(day);
                 }
             }
-            //this.Days.RemoveAll(o => removeDays.Where(x => x.Date == o.Date).Any());
 
-
+            // this.Days.RemoveAll(o => removeDays.Where(x => x.Date == o.Date).Any());
             int dateCount = this.Days.Count;
-            int orderCount = (this.summaryData.Rows.Count);
-            string lastColumnName_detail = "";
+            int orderCount = this.summaryData.Rows.Count;
+            string lastColumnName_detail = string.Empty;
             int dataCount = this.detailData.Rows.Count / 4;
 
-            //Detail Sheet
+            // Detail Sheet
             string columnName = "D";   // 預設值為D開始
             lastColumnName_detail = columnName;
-            for (int i = 4; i <= (dateCount + 3) - 1; i++)  //注意 dateCount + i-1
+            for (int i = 4; i <= (dateCount + 3) - 1; i++) // 注意 dateCount + i-1
             {
                 // 從D開始貼
                 columnName = MyExcelPrg.GetExcelColumnName(i);
                 lastColumnName_detail = columnName;
             }
+
             // 選擇要被貼上的位置
             Microsoft.Office.Interop.Excel.Range PasteRange = Detail_Sheet.get_Range($"D1:{columnName}1", Type.Missing);
+
             // 選取要被複製的資料，然後貼上
             PasteRange.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, Detail_Sheet.get_Range("C1", "C5").Copy(Type.Missing));
 
             // Summary Sheet
-            string lastColumnName_summary = "";
+            string lastColumnName_summary = string.Empty;
             columnName = "C";  // 預設值為C開始
             lastColumnName_summary = columnName;
-            for (int i = 3; i <= (dateCount + 2) - 1; i++) //注意 dateCount + i-1
+            for (int i = 3; i <= (dateCount + 2) - 1; i++) // 注意 dateCount + i-1
             {
                 // 從C開始貼
                 columnName = MyExcelPrg.GetExcelColumnName(i);
                 lastColumnName_summary = columnName;
             }
+
             // 選擇要被貼上的位置
             Microsoft.Office.Interop.Excel.Range PasteRange2 = Summary_Sheet.get_Range($"C1:{columnName}1", Type.Missing);
 
@@ -252,24 +259,24 @@ AND (
 
             #region 產生縱向SP#表格
 
-
             // Detail Sheet
             int rowIndex = (orderCount * 4) + 1;
             Microsoft.Office.Interop.Excel.Range PasteRange3 = Detail_Sheet.get_Range($"A6:A{rowIndex}", Type.Missing);
+
             // 貼上
             PasteRange3.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, Detail_Sheet.get_Range("A2", $"{lastColumnName_detail}5").Copy(Type.Missing));
-
 
             // Summary Sheet
             rowIndex = orderCount + 2;
             Microsoft.Office.Interop.Excel.Range PasteRange4 = Summary_Sheet.get_Range($"A4:A{rowIndex}", Type.Missing);
+
             // 貼上
             PasteRange4.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, Summary_Sheet.get_Range("A3", $"{lastColumnName_summary}3").Copy(Type.Missing));
 
             #endregion
 
-            MyUtility.Excel.CopyToXls(this.detailData, "", "Cutting_R01.xltx", 1, false, null, objApp, false, Detail_Sheet);// 將datatable copy to excel
-            MyUtility.Excel.CopyToXls(this.summaryData, "", "Cutting_R01.xltx", 2, false, null, objApp, false, Summary_Sheet);// 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(this.detailData, string.Empty, "Cutting_R01.xltx", 1, false, null, objApp, false, Detail_Sheet); // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(this.summaryData, string.Empty, "Cutting_R01.xltx", 2, false, null, objApp, false, Summary_Sheet); // 將datatable copy to excel
 
             #region 寫入橫向列的日期
             int ColumnIndex = 3;
@@ -278,21 +285,25 @@ AND (
                 string dateStr = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
 
                 Detail_Sheet.Cells[1, ColumnIndex] = dateStr;
+
                 // 假日的話粉紅色
-                //if (removeDays.Where(o => (o.Date.ToString("MM/dd") + $"({o.Date.DayOfWeek.ToString().Substring(0, 3)}.)") == dateStr && o.IsHoliday).Any())
-                //{
+                // if (removeDays.Where(o => (o.Date.ToString("MM/dd") + $"({o.Date.DayOfWeek.ToString().Substring(0, 3)}.)") == dateStr && o.IsHoliday).Any())
+                // {
                 //    Detail_Sheet.Cells[1, ColumnIndex].Interior.ColorIndex = 38;
-                //}
+                // }
                 if (day.IsHoliday)
                 {
                     Detail_Sheet.Cells[1, ColumnIndex].Interior.ColorIndex = 38;
                 }
+
                 ColumnIndex++;
             }
+
             string colName = MyExcelPrg.GetExcelColumnName(ColumnIndex - 1); // 因為最後一個也有遞增，因此會多加一次，扣回來
             Detail_Sheet.get_Range($"A:{colName}").Columns.AutoFit();
             ColumnIndex = 3;
             int deleteCount = 0;
+
             // 刪除
             foreach (var day in this.Days)
             {
@@ -302,6 +313,7 @@ AND (
                     Detail_Sheet.get_Range($"{str}:{str}").EntireColumn.Delete();
                     deleteCount++;
                 }
+
                 ColumnIndex++;
             }
 
@@ -310,18 +322,20 @@ AND (
             {
                 string dateStr = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
                 Summary_Sheet.Cells[2, ColumnIndex] = dateStr;
-                // 假日的話粉紅色
-                //if (removeDays.Where(o => (o.Date.ToString("MM/dd") + $"({o.Date.DayOfWeek.ToString().Substring(0, 3)}.)") == dateStr && o.IsHoliday).Any())
-                //{
-                //    Summary_Sheet.Cells[2, ColumnIndex].Interior.ColorIndex = 38;
-                //}
 
+                // 假日的話粉紅色
+                // if (removeDays.Where(o => (o.Date.ToString("MM/dd") + $"({o.Date.DayOfWeek.ToString().Substring(0, 3)}.)") == dateStr && o.IsHoliday).Any())
+                // {
+                //    Summary_Sheet.Cells[2, ColumnIndex].Interior.ColorIndex = 38;
+                // }
                 if (day.IsHoliday)
                 {
                     Summary_Sheet.Cells[2, ColumnIndex].Interior.ColorIndex = 38;
                 }
+
                 ColumnIndex++;
             }
+
             colName = MyExcelPrg.GetExcelColumnName(ColumnIndex - 1);
             Summary_Sheet.get_Range($"A1:{colName}1").Merge();
             Summary_Sheet.get_Range($"A:{colName}").Columns.AutoFit();
@@ -336,6 +350,7 @@ AND (
                     Summary_Sheet.get_Range($"{str}:{str}").EntireColumn.Delete();
                     deleteCount++;
                 }
+
                 ColumnIndex++;
             }
             #endregion
@@ -372,15 +387,16 @@ FROM SewingSchedule s WITH(NOLOCK)
 INNER JOIN Orders o WITH(NOLOCK) ON s.OrderID=o.ID
 WHERE o.LocalOrder = 0
 AND ( 
-	(Cast(s.Inline as Date) >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}' AND Cast( s.Inline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' )
+	(Cast(s.Inline as Date) >= '{this.SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}' AND Cast( s.Inline as Date) <= '{this.SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' )
 	OR
-	(Cast(s.Offline as Date) >= '{SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}' AND Cast( s.Offline as Date) <= '{SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' )
+	(Cast(s.Offline as Date) >= '{this.SewingDate_s.Value.ToString("yyyy/MM/dd HH:mm:ss")}' AND Cast( s.Offline as Date) <= '{this.SewingDate_e.Value.ToString("yyyy/MM/dd HH:mm:ss")}' )
 )
 ";
             if (!MyUtility.Check.Empty(this.MDivisionID))
             {
                 cmd += Environment.NewLine + $@"AND s.MDivisionID='{this.MDivisionID}'";
             }
+
             if (!MyUtility.Check.Empty(this.FactoryID))
             {
                 cmd += Environment.NewLine + $@"AND s.FactoryID='{this.FactoryID}'";
@@ -405,7 +421,6 @@ drop table #OrderList
             this.FtyFroup = PoID_dt.AsEnumerable().Select(o => o["FtyGroup"].ToString()).Distinct().ToList();
             List<string> Msg = new List<string>();
 
-
             foreach (DataRow dr in PoID_dt.Rows)
             {
                 string POID = dr["POID"].ToString();
@@ -413,10 +428,9 @@ drop table #OrderList
                 string MDivisionID = dr["MDivisionID"].ToString();
                 string FactoryID = dr["FactoryID"].ToString();
 
-                PublicPrg.Prgs.GetGarmentListTable(string.Empty, POID, "", out GarmentTb);
+                PublicPrg.Prgs.GetGarmentListTable(string.Empty, POID, string.Empty, out GarmentTb);
 
                 List<string> AnnotationList = GarmentTb.AsEnumerable().Where(o => !MyUtility.Check.Empty(o["Annotation"].ToString())).Select(o => o["Annotation"].ToString()).Distinct().ToList();
-
 
                 List<string> AnnotationList_Final = new List<string>();
 
@@ -424,7 +438,7 @@ drop table #OrderList
                 {
                     foreach (var item in Annotation.Split('+'))
                     {
-                        string input = "";
+                        string input = string.Empty;
                         for (int i = 0; i <= item.Length - 1; i++)
                         {
                             // 排除掉數字
@@ -434,6 +448,7 @@ drop table #OrderList
                                 input += item[i].ToString();
                             }
                         }
+
                         if (!AnnotationList_Final.Contains(input) && MyUtility.Check.Seek($"SELECT 1 FROM Subprocess WHERE ID='{input}' "))
                         {
                             AnnotationList_Final.Add(input);
@@ -481,7 +496,7 @@ and s.FactoryID = '{FactoryID}'
                     LeadTime o = new LeadTime()
                     {
                         OrderID = OrderID,
-                        LeadTimeDay = MyUtility.Check.Empty(AnnotationStr) ? 0 : Convert.ToInt32(LeadTime_dt.Rows[0]["LeadTime"]) //加工段為空，LeadTimeDay = 0
+                        LeadTimeDay = MyUtility.Check.Empty(AnnotationStr) ? 0 : Convert.ToInt32(LeadTime_dt.Rows[0]["LeadTime"]), // 加工段為空，LeadTimeDay = 0
                     };
                     this.LeadTimeList.Add(o);
                 }
@@ -498,6 +513,7 @@ When the settings are complete, can be export excel!
                 MyUtility.Msg.InfoBox(message);
                 return false;
             }
+
             return true;
         }
     }

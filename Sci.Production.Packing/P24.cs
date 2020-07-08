@@ -5,12 +5,9 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ict;
 using Sci.Data;
-using Sci.Win.Tems;
 using System.IO;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
@@ -78,7 +75,8 @@ order by pd.SCICtnNo
             .Text("Article", header: "ColorWay", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            //.Text("FileName", header: "Shipping Mark File Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
+
+            // .Text("FileName", header: "Shipping Mark File Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
             .CheckBox("ShippingMark", header: "Shipping Mark", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             .Button("Upload", null, header: string.Empty, width: Widths.AnsiChars(5), onclick: this.BtnUpload)
             .Button("Delete", null, header: string.Empty, width: Widths.AnsiChars(5), onclick: this.BtnDelete)
@@ -129,28 +127,28 @@ order by pd.SCICtnNo
             {
                 if (this.IsTheSameCellValueBefore(dr.Index))
                 {
-                    //dr.Cells[8] = new DataGridViewTextBoxCell();
+                    // dr.Cells[8] = new DataGridViewTextBoxCell();
                     dr.Cells[9] = new DataGridViewTextBoxCell();
                     dr.Cells[10] = new DataGridViewTextBoxCell();
                     dr.Cells[11] = new DataGridViewTextBoxCell();
 
-                    //dr.Cells[8].Style.ForeColor = Color.White;
+                    // dr.Cells[8].Style.ForeColor = Color.White;
                     dr.Cells[9].Style.ForeColor = Color.White;
                     dr.Cells[10].Style.ForeColor = Color.White;
                     dr.Cells[11].Style.ForeColor = Color.White;
 
-                    //dr.Cells[8].Style.SelectionForeColor = Color.White;
+                    // dr.Cells[8].Style.SelectionForeColor = Color.White;
                     dr.Cells[9].Style.SelectionForeColor = Color.White;
                     dr.Cells[10].Style.SelectionForeColor = Color.White;
                     dr.Cells[11].Style.SelectionForeColor = Color.White;
 
-                    //dr.Cells[8].Style.SelectionBackColor = Color.White;
+                    // dr.Cells[8].Style.SelectionBackColor = Color.White;
                     dr.Cells[9].Style.SelectionBackColor = Color.White;
                     dr.Cells[10].Style.SelectionBackColor = Color.White;
                     dr.Cells[11].Style.SelectionBackColor = Color.White;
 
-                    //dr.Cells[8].ReadOnly = true;
-                    //dr.Cells[8].ReadOnly = true;
+                    // dr.Cells[8].ReadOnly = true;
+                    // dr.Cells[8].ReadOnly = true;
                     dr.Cells[9].ReadOnly = true;
                     dr.Cells[10].ReadOnly = true;
                     dr.Cells[11].ReadOnly = true;
@@ -280,9 +278,9 @@ order by pd.SCICtnNo
             {
                 DataTable dtHasFileNameDetail = checkHasFileNameData.CopyToDataTable();
                 DataTable dtCheckResult;
-                //foreach (DataRow drr in dtHasFileNameDetail.Rows)
-                //{
 
+                // foreach (DataRow drr in dtHasFileNameDetail.Rows)
+                // {
                 string sqlCheckDetail = $@"
    /* select distinct o.BrandID,o.CustCDID,t.Refno
     from #tmp t
@@ -309,7 +307,7 @@ order by pd.SCICtnNo
  )
     ";
 
-                //DualResult result = MyUtility.Tool.ProcessWithDatatable(dtHasFileNameDetail, string.Empty, sqlCheckDetail, out dtCheckResult);
+                // DualResult result = MyUtility.Tool.ProcessWithDatatable(dtHasFileNameDetail, string.Empty, sqlCheckDetail, out dtCheckResult);
                 DualResult result = DBProxy.Current.Select(null, sqlCheckDetail, out dtCheckResult);
                 if (!result)
                 {
@@ -329,7 +327,8 @@ order by pd.SCICtnNo
                     MyUtility.Msg.WarningBox(errMsg);
                     return false;
                 }
-                //}
+
+                // }
             }
             #endregion
 
@@ -347,7 +346,7 @@ order by pd.SCICtnNo
                 FileSourcePath = MyUtility.Convert.GetString(a.First()["FileSourcePath"]),
                 local_file_type = MyUtility.Convert.GetString(a.First()["local_file_type"]),
                 FileNameOri = MyUtility.Convert.GetString(a.First()["FileNameOri"]),
-                FileAction = MyUtility.Convert.GetString(a.First()["FileAction"])
+                FileAction = MyUtility.Convert.GetString(a.First()["FileAction"]),
             }).ToList();
             #endregion
 
@@ -386,10 +385,8 @@ order by pd.SCICtnNo
                     string destination_fileName = MyUtility.Convert.GetString(dr["FileName"]);
                     try
                     {
-                        //轉換成Byte存, 不用再存圖片到server上
+                        // 轉換成Byte存, 不用再存圖片到server上
                         string destination = Path.Combine(this.destination_path, destination_fileName);
-
-
 
                         byte[] data = null;
 
@@ -426,17 +423,17 @@ AND sd.SCICtnNo=@SCICtnNo
                             this.ShowErr(result);
                         }
 
-                        //if (System.IO.File.Exists(local_path_file))
-                        //{
+                        // if (System.IO.File.Exists(local_path_file))
+                        // {
                         //    if (System.IO.File.Exists(destination))
                         //    {
                         //        System.IO.File.Delete(destination);
                         //    }
 
-                        //    System.IO.File.Copy(local_path_file, destination, true);
-                        //}
-                        //else
-                        //{
+                        // System.IO.File.Copy(local_path_file, destination, true);
+                        // }
+                        // else
+                        // {
                         //    if (MyUtility.Check.Empty(dr["FileNameOri"]))
                         //    {
                         //        dr["FileName"] = string.Empty;
@@ -446,8 +443,8 @@ AND sd.SCICtnNo=@SCICtnNo
                         //        dr["FileName"] = dr["FileNameOri"];
                         //    }
 
-                        //    //MyUtility.Msg.WarningBox($"File: {local_path_file} not exists!");
-                        //}
+                        // //MyUtility.Msg.WarningBox($"File: {local_path_file} not exists!");
+                        // }
                     }
                     catch (System.IO.IOException exception)
                     {
@@ -505,6 +502,7 @@ delete ShippingMarkPic_Detail where ShippingMarkPicUkey = {this.CurrentMaintain[
                     MyUtility.Msg.ErrorBox("Error: update file fail. Original error: " + exception.Message);
                 }
             }
+
             return DBProxy.Current.Execute(null, sqldelete);
         }
 
@@ -594,7 +592,7 @@ order by SCICtnNo
                 Article = MyUtility.Convert.GetString(a.First()["Article"]),
                 Color = MyUtility.Convert.GetString(a.First()["Color"]),
                 SizeCode = MyUtility.Convert.GetString(a.First()["SizeCode"]),
-                FileName = MyUtility.Convert.GetString(a.First()["FileName"])
+                FileName = MyUtility.Convert.GetString(a.First()["FileName"]),
             }).ToList();
 
             #region To Excel
@@ -703,7 +701,7 @@ order by SCICtnNo
                 var excelist = dtexcel.AsEnumerable().GroupBy(s => s["SCI Ctn No."], (ctn, a) => new
                 {
                     SCICtnNo = ctn,
-                    FileName = a.First()["Shipping Mark Pic File"]
+                    FileName = a.First()["Shipping Mark Pic File"],
                 });
 
                 foreach (var item in excelist)
@@ -808,6 +806,7 @@ order by SCICtnNo
 
             return tb;
         }
+
         /// <summary>
         /// Determine of specified type is nullable
         /// </summary>

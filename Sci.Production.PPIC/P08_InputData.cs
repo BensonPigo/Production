@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 
@@ -38,7 +35,6 @@ namespace Sci.Production.PPIC
             this.labelNoOfRollsOver50.Text = "No. of Rolls over 50\r\npoints per 100y";
             this.labelWidthNoOfRollsWith.Text = "Standard with / Rcvd\r\nwidth / No. of rolls with\r\nnarrow width";
             this.label24.Text = "After Cutting\r\nReplacement\r\nRequest";
-
         }
 
         /// <inheritdoc/>
@@ -395,6 +391,5 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
                 this.CalculateTotalRequest();
             }
         }
-
     }
 }

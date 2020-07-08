@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace Sci.Production.Class
 {
@@ -39,9 +34,10 @@ namespace Sci.Production.Class
         public static Color Green_204_255_204 = Color.FromArgb(204, 255, 204);
 
         /// <summary>
-        /// little yellow 
+        /// little yellow
         /// </summary>
         public static Color Yellow_255_255_128 = Color.FromArgb(255, 255, 128);
+
         /// <summary>
         /// little yellow -2
         /// </summary>
@@ -51,6 +47,7 @@ namespace Sci.Production.Class
         /// Red
         /// </summary>
         public static Color Red_255_0_0 = Color.FromArgb(255, 0, 0);
+
         /// <summary>
         /// Red
         /// </summary>
@@ -69,7 +66,8 @@ namespace Sci.Production.Class
         /// <summary>
         /// Blue
         /// </summary>
-        public static Color Blue_0_0_255 = Color.FromArgb(0,0,255);
+        public static Color Blue_0_0_255 = Color.FromArgb(0, 0, 255);
+
         /// <summary>
         /// Default readonly backColor
         /// </summary>
@@ -79,10 +77,12 @@ namespace Sci.Production.Class
         /// Default Grid Header backColor - mark as Editable
         /// </summary>
         public static Color Blue_30_90_230 = Color.FromArgb(30, 90, 230);
+
         /// <summary>
         /// Blue
         /// </summary>
         public static Color Blue_128_255_255 = Color.FromArgb(128, 255, 255);
+
         /// <summary>
         /// Black
         /// </summary>

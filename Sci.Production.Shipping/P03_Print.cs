@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict;
-using Ict.Win;
 using Sci.Data;
 using System.Runtime.InteropServices;
 
@@ -111,8 +105,7 @@ order by e.ID",
                     MyUtility.Check.Empty(this.eta1) ? string.Empty : " and e.Eta >= '" + this.eta1 + "'",
                     MyUtility.Check.Empty(this.eta2) ? string.Empty : " and e.Eta <= '" + this.eta2 + "'",
                     MyUtility.Check.Empty(this.factory) ? string.Empty : " and e.FactoryID = '" + this.factory + "'",
-                    MyUtility.Check.Empty(this.shipmode) ? string.Empty : " and e.shipmodeID = '" + this.shipmode + "'"
-                    );
+                    MyUtility.Check.Empty(this.shipmode) ? string.Empty : " and e.shipmodeID = '" + this.shipmode + "'");
 
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printData);
                 if (!result)

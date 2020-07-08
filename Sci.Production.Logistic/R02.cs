@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -70,7 +66,6 @@ namespace Sci.Production.Logistic
         /// <returns>Result</returns>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-
             StringBuilder sqlWHERE = new StringBuilder();
             StringBuilder sqlcmd = new StringBuilder();
 

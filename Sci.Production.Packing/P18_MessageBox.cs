@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Packing
@@ -14,7 +7,7 @@ namespace Sci.Production.Packing
     {
         public P18_MessageBox()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private void btnLacking_Click(object sender, EventArgs e)
@@ -29,7 +22,6 @@ namespace Sci.Production.Packing
 
         private void P18_MessageBox_FormClosing(object sender, FormClosingEventArgs e)
         {
-
         }
     }
 }

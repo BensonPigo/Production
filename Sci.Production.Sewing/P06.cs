@@ -7,11 +7,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
@@ -173,7 +170,6 @@ where	pd.CTNStartNo != '' and
                 packDataResult.Dr.Table.Merge(this.dtReceive);
                 this.dtReceive = packDataResult.Dr.Table;
                 this.gridReceive.DataSource = this.dtReceive;
-
             }
             else
             {
@@ -191,35 +187,32 @@ where	pd.CTNStartNo != '' and
             public string errMsg;
         }
 
-        private PackDataResult GetPackData(string PackNo, bool fromCustCTN = false)
+        private PackDataResult GetPackData(string packNo, bool fromCustCTN = false)
         {
-
             string keyWhere = string.Empty;
-            string PackingListID = string.Empty;
-            string CTNStarNo = string.Empty;
+            string packingListID = string.Empty;
+            string cTNStarNo = string.Empty;
 
-
-            if (PackNo.Length > 13)
+            if (packNo.Length > 13)
             {
-                PackingListID = PackNo.Substring(0, 13);
-                CTNStarNo = PackNo.Substring(13, PackNo.Length - 13);
+                packingListID = packNo.Substring(0, 13);
+                cTNStarNo = packNo.Substring(13, packNo.Length - 13);
             }
 
             if (fromCustCTN == true)
             {
-                keyWhere = $"CustCTN = '{PackNo}'";
+                keyWhere = $"CustCTN = '{packNo}'";
             }
             else
             {
-                //keyWhere = $"(ID+CTNStartNo) = '{PackNo}'";
-
-                if (PackNo.Length > 13)
+                // keyWhere = $"(ID+CTNStartNo) = '{PackNo}'";
+                if (packNo.Length > 13)
                 {
-                    keyWhere = $" ID = '{PackingListID}' AND CTNStartNo ='{CTNStarNo}' ";
+                    keyWhere = $" ID = '{packingListID}' AND CTNStartNo ='{cTNStarNo}' ";
                 }
                 else
                 {
-                    keyWhere = $"(ID+CTNStartNo) = '{PackNo}'";
+                    keyWhere = $"(ID+CTNStartNo) = '{packNo}'";
                 }
             }
 
@@ -255,25 +248,25 @@ where	pd.CTNStartNo != '' and
             packDataResult.result = false;
             if (checkBarcode == false)
             {
-                packDataResult.errMsg = $"<CNT#:{PackNo}> does not exist!";
+                packDataResult.errMsg = $"<CNT#:{packNo}> does not exist!";
                 return packDataResult;
             }
 
             if (!MyUtility.Check.Empty(packDataResult.Dr["TransferDate"]))
             {
-                packDataResult.errMsg = $"<CNT#:{PackNo}> has been transferred to Clog!";
+                packDataResult.errMsg = $"<CNT#:{packNo}> has been transferred to Clog!";
                 return packDataResult;
             }
 
             if (!MyUtility.Check.Empty(packDataResult.Dr["DRYReceiveDate"]))
             {
-                packDataResult.errMsg = $"<CNT#:{PackNo}> This CTN# Dehumidifying Room has been received.";
+                packDataResult.errMsg = $"<CNT#:{packNo}> This CTN# Dehumidifying Room has been received.";
                 return packDataResult;
             }
 
             if (packDataResult.Dr["Status"].Equals("Confirmed") || packDataResult.Dr["Status"].Equals("Locked"))
             {
-                packDataResult.errMsg = $"<CNT#:{PackNo}> Already pullout!";
+                packDataResult.errMsg = $"<CNT#:{packNo}> Already pullout!";
                 return packDataResult;
             }
 
@@ -345,7 +338,6 @@ where	pd.CTNStartNo != '' and
                         tmpDetail.Merge(this.dtReceive);
                         this.dtReceive = tmpDetail;
                         this.gridReceive.DataSource = this.dtReceive;
-
                     }
                     catch (Exception err)
                     {

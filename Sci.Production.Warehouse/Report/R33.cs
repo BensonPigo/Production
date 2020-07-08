@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ict;
 using Sci.Data;
@@ -23,7 +18,7 @@ namespace Sci.Production.Warehouse
         public R33(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         protected override bool ValidateInput()
@@ -105,13 +100,12 @@ where I.type= 'E' and I.Status = 'Confirmed'
             return result;
         }
 
-
         protected override bool OnToExcel(ReportDefinition report)
         {
             this.ShowWaitMessage("Excel Processing...");
-            this.SetCount(dtResult.Rows.Count); // 顯示筆數
+            this.SetCount(this.dtResult.Rows.Count); // 顯示筆數
 
-            if (dtResult.Rows.Count == 0)
+            if (this.dtResult.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 this.HideWaitMessage();
@@ -121,7 +115,7 @@ where I.type= 'E' and I.Status = 'Confirmed'
             Excel.Application objApp = new Excel.Application();
             Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R33.xltx", objApp);
             com.UseInnerFormating = false;
-            com.WriteTable(dtResult, 3);
+            com.WriteTable(this.dtResult, 3);
 
             com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
             objApp.Visible = true;

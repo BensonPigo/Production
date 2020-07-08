@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
-using Sci;
 using Sci.Data;
 using Ict;
 
@@ -15,20 +9,22 @@ namespace Sci.Production.Warehouse
     public partial class P03_Scrap : Sci.Win.Subs.Base
     {
         DataRow dr;
+
         public P03_Scrap(DataRow data)
         {
-            InitializeComponent();
-            dr = data;
-            this.Text += string.Format(" ({0}-{1}- {2})", dr["id"].ToString()
-, dr["seq1"].ToString()
-, dr["seq2"].ToString());
+            this.InitializeComponent();
+            this.dr = data;
+            this.Text += string.Format(" ({0}-{1}- {2})", this.dr["id"].ToString(),
+this.dr["seq1"].ToString(),
+this.dr["seq2"].ToString());
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             #region 表頭
-            string selectCommand1 = string.Format(@"
+            string selectCommand1 = string.Format(
+                @"
 select *
 ,[balance] = sum(inqty-outqty+adjustQty)  over (order by issuedate,id,name)
 from 
@@ -67,14 +63,15 @@ and type in ('O','R')
 group by a.id, poid,a.EditDate,type,a.issuedate 
 ) a
 group by IssueDate,EditDate,id,name,inqty,outqty,adjustQty
-order by IssueDate,EditDate,name"
-, dr["id"].ToString()
-, dr["seq1"].ToString()
-, dr["seq2"].ToString(), Sci.Env.User.Keyword);
+order by IssueDate,EditDate,name",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString(), Sci.Env.User.Keyword);
 #endregion
 
             #region DetailGrid
-            string sqlDetail = string.Format(@"
+            string sqlDetail = string.Format(
+                @"
 select *
 ,[balance] = sum(inqty-outqty+adjustQty)  over  (order by issuedate,EditDate, roll,dyelot,inqty)
 from 
@@ -140,25 +137,32 @@ for xml path('')),1,1,'')
     and a.Status='Confirmed'
     and type in ('O','R')
 ) a order by issuedate,EditDate
-"
-, dr["id"].ToString()
-, dr["seq1"].ToString()
-, dr["seq2"].ToString(), Sci.Env.User.Keyword);
+",
+                this.dr["id"].ToString(),
+                this.dr["seq1"].ToString(),
+                this.dr["seq2"].ToString(), Sci.Env.User.Keyword);
             #endregion
 
-            DataTable selectDataTable1,selectDataTable2;
+            DataTable selectDataTable1, selectDataTable2;
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
-            if (selectResult1 == false) ShowErr(selectCommand1, selectResult1);
+            if (selectResult1 == false)
+            {
+                this.ShowErr(selectCommand1, selectResult1);
+            }
 
             DualResult selectResult2 = DBProxy.Current.Select(null, sqlDetail, out selectDataTable2);
-            if (selectResult2 == false) ShowErr(sqlDetail, selectResult2);
+            if (selectResult2 == false)
+            {
+                this.ShowErr(sqlDetail, selectResult2);
+            }
 
-            bindingSource1.DataSource = selectDataTable1;
-            bindingSource2.DataSource = selectDataTable2;
-            //設定gridScrapList的顯示欄位
+            this.bindingSource1.DataSource = selectDataTable1;
+            this.bindingSource2.DataSource = selectDataTable2;
+
+            // 設定gridScrapList的顯示欄位
             this.gridScrapList.IsEditingReadOnly = true;
-            this.gridScrapList.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.gridScrapList)
+            this.gridScrapList.DataSource = this.bindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridScrapList)
                  .Text("issuedate", header: "Date", width: Widths.AnsiChars(10))
                  .Text("ID", header: "Transaction ID", width: Widths.AnsiChars(13))
                  .Text("Name", header: "Name", width: Widths.AnsiChars(35))
@@ -169,10 +173,10 @@ for xml path('')),1,1,'')
                  ;
 
             this.grid_detail.IsEditingReadOnly = true;
-            this.grid_detail.DataSource = bindingSource2;
-            Helper.Controls.Grid.Generator(this.grid_detail)
+            this.grid_detail.DataSource = this.bindingSource2;
+            this.Helper.Controls.Grid.Generator(this.grid_detail)
                  .Text("roll", header: "Roll#", width: Widths.AnsiChars(8))
-                 .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8))                 
+                 .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8))
                  .Numeric("InQty", header: "In Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("OutQty", header: "Out Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("adjustQty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)

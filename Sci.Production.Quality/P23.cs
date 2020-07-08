@@ -4,10 +4,8 @@ using Sci.Data;
 using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -21,12 +19,11 @@ namespace Sci.Production.Quality
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private string selectDataTable_DefaultView_Sort = string.Empty;
         private DataTable selectDataTable;
-        private Ict.Win.UI.DataGridViewTextBoxColumn col_location;
 
         public P23(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         protected override void OnFormLoaded()
@@ -55,7 +52,8 @@ namespace Sci.Production.Quality
                  .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Alias", header: "Destination", width: Widths.AnsiChars(12), iseditingreadonly: true)
                  .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 //.CellCFALocation("CFALocationID", header: "Location No", width: Widths.AnsiChars(10), M: Sci.Env.User.Keyword).Get(out this.col_location)
+
+                 // .CellCFALocation("CFALocationID", header: "Location No", width: Widths.AnsiChars(10), M: Sci.Env.User.Keyword).Get(out this.col_location)
                  .Text("CFALocationID", header: "Location No", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
@@ -174,30 +172,30 @@ and p2.CFAReceiveDate  is null
 and (po.Status ='New' or po.Status is null)
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 order by p2.ID,p2.CTNStartNo";
-            #endregion            
-            DualResult result = DBProxy.Current.Select("", strCmd, listSQLParameter, out selectDataTable);
+            #endregion
+            DualResult result = DBProxy.Current.Select(string.Empty, strCmd, listSQLParameter, out this.selectDataTable);
 
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.ToString());
             }
-            else if (selectDataTable.Rows.Count < 1)
+            else if (this.selectDataTable.Rows.Count < 1)
             {
                 this.listControlBindingSource1.DataSource = null;
                 MyUtility.Msg.InfoBox("Data not found !");
             }
             else
             {
-                this.listControlBindingSource1.DataSource = selectDataTable;
+                this.listControlBindingSource1.DataSource = this.selectDataTable;
             }
 
             this.HideWaitMessage();
             this.calcCTNQty();
         }
-       
+
         private void btnFind_Click(object sender, EventArgs e)
         {
-            Find();
+            this.Find();
         }
 
         private void btnImportFromBarcode_Click(object sender, EventArgs e)
@@ -228,7 +226,7 @@ from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c
                 using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, System.Text.Encoding.UTF8))
                 {
                     DataRow seekData;
-                    DataTable notFoundErr = selectDataTable.Clone();
+                    DataTable notFoundErr = this.selectDataTable.Clone();
                     int insertCount = 0;
                     string line;
                     while ((line = reader.ReadLine()) != null)
@@ -243,7 +241,7 @@ from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c
                         }
                         else
                         {
-                            DataRow dr = selectDataTable.NewRow();
+                            DataRow dr = this.selectDataTable.NewRow();
 
                             // PackingID+CTN# 是連起來的ex: MA2PG180105821 前13碼是PackID 13碼後都是CTN#
                             if (sl[2].Length >= 13)
@@ -305,7 +303,7 @@ order by p2.ID,p2.CTNStartNo
                                     dr["BuyerDelivery"] = seekData["BuyerDelivery"];
                                     dr["CFALocationID"] = seekData["CFALocationID"];
                                     dr["remark"] = seekData["remark"];
-                                    selectDataTable.Rows.Add(dr);
+                                    this.selectDataTable.Rows.Add(dr);
                                     insertCount++;
                                 }
                                 else
@@ -365,7 +363,7 @@ order by p2.ID,p2.CTNStartNo
                                         dr["BuyerDelivery"] = seekData["BuyerDelivery"];
                                         dr["CFALocationID"] = seekData["CFALocationID"];
                                         dr["remark"] = seekData["remark"];
-                                        selectDataTable.Rows.Add(dr);
+                                        this.selectDataTable.Rows.Add(dr);
                                         insertCount++;
                                     }
                                     else
@@ -376,7 +374,7 @@ order by p2.ID,p2.CTNStartNo
                             }
                             else
                             {
-                               string  sqlCmd = $@"
+                               string sqlCmd = $@"
 select distinct
 [selected] = 1
 ,p2.ID
@@ -416,7 +414,7 @@ and (po.Status ='New' or po.Status is null)
 and p2.CustCTN='{sl[2]}'
 order by p2.ID,p2.CTNStartNo
 ";
-                                if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                               if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {
                                     dr["selected"] = 1;
                                     dr["ID"] = seekData["ID"].ToString().Trim();
@@ -431,7 +429,7 @@ order by p2.ID,p2.CTNStartNo
                                     dr["BuyerDelivery"] = seekData["BuyerDelivery"];
                                     dr["CFALocationID"] = seekData["CFALocationID"];
                                     dr["remark"] = seekData["remark"];
-                                    selectDataTable.Rows.Add(dr);
+                                    this.selectDataTable.Rows.Add(dr);
                                     insertCount++;
                                 }
                                 else
@@ -465,6 +463,7 @@ order by p2.ID,p2.CTNStartNo
                         MyUtility.Msg.WarningBox(warningmsg.ToString());
                     }
                 }
+
                 this.calcCTNQty();
             }
         }
@@ -486,6 +485,7 @@ order by p2.ID,p2.CTNStartNo
                 MyUtility.Msg.WarningBox("Please select data first!");
                 return;
             }
+
             this.ShowWaitMessage("Data Processing...");
             DataRow drSelect;
 
@@ -536,6 +536,7 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
                     }
                 }
             }
+
             // Update Orders的資料
             DataTable selectData = null;
             try
@@ -568,7 +569,6 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
 
                     if (updateCmds.Count > 0 && insertCmds.Count > 0)
                     {
-
                         DualResult prgResult = Prgs.UpdateOrdersCTN(selectData);
 
                         if (result1 && result2 && prgResult)
@@ -584,7 +584,6 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
                             return;
                         }
                     }
-
                 }
                 catch (Exception ex)
                 {
@@ -607,6 +606,7 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
             {
                 this.listControlBindingSource1.DataSource = null;
             }
+
             this.HideWaitMessage();
             this.calcCTNQty();
         }

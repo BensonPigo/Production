@@ -1,17 +1,11 @@
 ﻿using Ict.Win;
-using Ict.Win.UI;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Sci.Win.UI;
-using System.Data.SqlClient;
 using System.Windows.Forms;
 using Ict;
 using Sci.Win.Tools;
@@ -21,15 +15,19 @@ namespace Sci.Production.Class
     public partial class comboDropDownList : Sci.Win.UI.ComboBox
     {
         private string type;
+
         [Category("Custom Properties")]
         public string Type
         {
+            get { return this.type; }
+
             set
             {
                 this.type = value;
                 if (!Env.DesignTime)
                 {
-                    string selectCommand = string.Format(@"
+                    string selectCommand = string.Format(
+                        @"
 select ID
        , Name = rtrim(Name)
 from DropDownList WITH (NOLOCK) 
@@ -45,19 +43,18 @@ order by Seq", this.Type);
                     }
                 }
             }
-            get { return this.type; }
         }
 
         public comboDropDownList()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         public comboDropDownList(System.ComponentModel.IContainer container)
         {
             container.Add(this);
 
-            InitializeComponent();
+            this.InitializeComponent();
         }
     }
 
@@ -68,7 +65,8 @@ order by Seq", this.Type);
             cellDropDownList cellcb = new cellDropDownList();
             if (!Env.DesignTime)
             {
-                string selectCommand = string.Format(@"
+                string selectCommand = string.Format(
+                    @"
 select ID
        , Name = rtrim(Name)
 from DropDownList WITH (NOLOCK) 
@@ -78,13 +76,13 @@ order by Seq", Type);
                 DataTable dropDownListTable = new DataTable();
                 Dictionary<string, string> di_dropdown = new Dictionary<string, string>();
                 if (returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable))
-                {   
+                {
                     cellcb.DataSource = dropDownListTable;
                     cellcb.DisplayMember = "Name";
-                    cellcb.ValueMember = "ID";                    
-                   
+                    cellcb.ValueMember = "ID";
                 }
             }
+
             return cellcb;
         }
     }
@@ -92,15 +90,16 @@ order by Seq", Type);
     public partial class txtDropDownList : Sci.Win.UI.TextBox
     {
         private string type;
+
         [Category("Custom Properties")]
         public string Type
         {
+            get { return this.type; }
+
             set
             {
                 this.type = value;
-               
             }
-            get { return this.type; }
         }
 
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
@@ -112,12 +111,16 @@ order by Seq", Type);
 select ID
        , Name = rtrim(Name)
 from DropDownList WITH (NOLOCK) 
-where Type = '{type}' 
+where Type = '{this.type}' 
 order by Seq";
             #endregion
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "ID,Name", this.Text, false, null);
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.Text = item.GetSelectedString();
             this.ValidateText();
         }
@@ -131,7 +134,7 @@ order by Seq";
 select ID
        , Name = rtrim(Name)
 from DropDownList WITH (NOLOCK) 
-where Type = '{type}' 
+where Type = '{this.type}' 
 and id ='{str}'
 order by Seq";
             #endregion
@@ -139,7 +142,7 @@ order by Seq";
             {
                 if (MyUtility.Check.Seek(sqlcmd) == false)
                 {
-                    this.Text = "";
+                    this.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Return TO : {0} > not found!!!", str));
                     return;
@@ -148,12 +151,12 @@ order by Seq";
         }
     }
 
-
     public class cellTextDropDownList : DataGridViewGeneratorTextColumnSettings
     {
         public static DataGridViewGeneratorTextColumnSettings GetGridCell(string ctype)
         {
             cellTextDropDownList ts = new cellTextDropDownList();
+
             // Factory右鍵彈出功能
             ts.EditingMouseDown += (s, e) =>
             {
@@ -161,12 +164,16 @@ order by Seq";
                 {
                     System.Windows.Forms.DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
-                    // Parent form 若是非編輯狀態就 return 
-                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
+                    // Parent form 若是非編輯狀態就 return
+                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                    {
+                        return;
+                    }
+
                     DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
 
                     string Shiftcolname = grid.Columns.Cast<DataGridViewColumn>().Where(o => o.Name.Contains("Shift")).FirstOrDefault().Name;
-                    string NewShiftcolname = grid.Columns.Cast<DataGridViewColumn>().Where(o => o.Name.Contains("NewShift")).FirstOrDefault() == null ? 
+                    string NewShiftcolname = grid.Columns.Cast<DataGridViewColumn>().Where(o => o.Name.Contains("NewShift")).FirstOrDefault() == null ?
                                             string.Empty : grid.Columns.Cast<DataGridViewColumn>().Where(o => o.Name.Contains("NewShift")).FirstOrDefault().Name;
 
                     string colName = string.IsNullOrEmpty(NewShiftcolname) ? Shiftcolname : NewShiftcolname;
@@ -182,20 +189,29 @@ order by Seq";
 
                     SelectItem sele = new SelectItem(sqlcmd, "10,40", row[colName].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
-                    e.EditingControl.Text = sele.GetSelectedString();                    
-                }
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
 
+                    e.EditingControl.Text = sele.GetSelectedString();
+                }
             };
+
             // 正確性檢查
             ts.CellValidating += (s, e) =>
             {
                 System.Windows.Forms.DataGridView grid = ((DataGridViewColumn)s).DataGridView;
-                // Parent form 若是非編輯狀態就 return 
-                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
+
+                // Parent form 若是非編輯狀態就 return
+                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                {
+                    return;
+                }
+
                 DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
 
-                //Cutting P03 使用時，預設值是NewShift，但其他地方沒有NewShift這個欄位名稱，因此動態抓不能寫死
+                // Cutting P03 使用時，預設值是NewShift，但其他地方沒有NewShift這個欄位名稱，因此動態抓不能寫死
                 string Shiftcolname = grid.Columns.Cast<DataGridViewColumn>().Where(o => o.Name.Contains("Shift")).FirstOrDefault().Name;
                 string NewShiftcolname = grid.Columns.Cast<DataGridViewColumn>().Where(o => o.Name.Contains("NewShift")).FirstOrDefault() == null ?
                                             string.Empty : grid.Columns.Cast<DataGridViewColumn>().Where(o => o.Name.Contains("NewShift")).FirstOrDefault().Name;
@@ -219,14 +235,13 @@ order by Seq";
 
                     if (!MyUtility.Check.Seek(sqlcmd))
                     {
-                        row[colName] = "";
+                        row[colName] = string.Empty;
                         row.EndEdit();
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox(string.Format("< Return TO : {0} > not found!!!", newValue));
                         return;
                     }
                 }
-
             };
             return ts;
         }

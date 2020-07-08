@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
-using System.Linq;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Sewing
@@ -48,7 +43,6 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboFactory.Text = Sci.Env.User.Factory;
             this.comboM.Text = Sci.Env.User.Keyword;
-
         }
 
         /// <inheritdoc/>
@@ -188,6 +182,6 @@ where 1=1
 
             this.HideWaitMessage();
             return true;
-        } 
+        }
     }
 }

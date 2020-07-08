@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
@@ -40,7 +38,7 @@ namespace Sci.Production.PPIC
                 @"select *
                             from Style_WeightData sw WITH (NOLOCK) where StyleUkey = '{0}'
                             order by (select seq from Style_SizeCode ss WITH (NOLOCK) where ss.StyleUkey = sw.StyleUkey and ss.SizeCode = sw.SizeCode)",
-                            this.uk);
+                this.uk);
 
             DualResult result;
             return result = DBProxy.Current.Select(null, sql, out datas);

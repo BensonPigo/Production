@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
 using Sci.Production.PublicPrg;
-using Ict.Data;
 using Sci.Win;
 using System.Reflection;
 using System.Linq;
@@ -200,7 +198,7 @@ where sd.ID = '{0}'", masterID);
             List<System.Data.SqlClient.SqlParameter> listPara = new List<System.Data.SqlClient.SqlParameter>()
                 {
                     new System.Data.SqlClient.SqlParameter("@blno", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"])),
-                    new System.Data.SqlClient.SqlParameter("@Reason", MyUtility.Convert.GetString(this.CurrentMaintain["Reason"]))
+                    new System.Data.SqlClient.SqlParameter("@Reason", MyUtility.Convert.GetString(this.CurrentMaintain["Reason"])),
                 };
 
             bool status = MyUtility.Check.Empty(this.CurrentMaintain["Accountant"]);
@@ -209,6 +207,7 @@ where sd.ID = '{0}'", masterID);
             this.btnAcctApprove.ForeColor = status ? Color.Blue : Color.Black;
             this.comboType2.SelectedValue = this.CurrentMaintain["SubType"].ToString();
             this.disExVoucherID.Text = this.CurrentMaintain["ExVoucherID"].ToString();
+
             // Reason description
             this.txtReasonDesc.Text = MyUtility.GetValue.Lookup(
                                 $@"select Description from ShippingReason where id=@Reason 
@@ -218,11 +217,11 @@ where sd.ID = '{0}'", masterID);
             this.disVesselName.Text = this.CurrentMaintain["Type"].ToString().Equals("IMPORT") && !MyUtility.Check.Empty(this.CurrentMaintain["BLNo"]) ? MyUtility.GetValue.Lookup(sql, listPara) : string.Empty;
             this.IncludeFoundryRefresh(MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"]));
 
-            if ( this.CurrentMaintain["Status"].ToString() != "Approved" && this.EditMode)
+            if (this.CurrentMaintain["Status"].ToString() != "Approved" && this.EditMode)
             {
                 string LocalSuppID = this.CurrentMaintain["LocalSuppID"].ToString();
 
-                string IsFactory =MyUtility.GetValue.Lookup($@"SELECT IsFactory FROM LocalSupp WHERE ID = '{LocalSuppID}'");
+                string IsFactory = MyUtility.GetValue.Lookup($@"SELECT IsFactory FROM LocalSupp WHERE ID = '{LocalSuppID}'");
 
                 if (MyUtility.Check.Empty(IsFactory) ? false : Convert.ToBoolean(IsFactory))
                 {
@@ -240,7 +239,6 @@ where sd.ID = '{0}'", masterID);
                 this.txtcurrency.ReadOnly = true;
                 this.txtcurrency.IsSupportEditMode = false;
             }
-
         }
 
         private void IncludeFoundryRefresh(string blNo)
@@ -545,7 +543,6 @@ and Junk = 0",
                 MyUtility.Msg.WarningBox("Invoice# can't be empty!!");
                 return false;
             }
-
 
             #endregion
 
@@ -856,7 +853,7 @@ where ShippingAPID = '{MyUtility.Convert.GetString(this.CurrentMaintain["ID"])}'
                 DataTable factoryData, localSpuuData, report_ShippingAPDetail;
                 string sqlCmd = string.Format(
                     "select NameEN, AddressEN,Tel from factory WITH (NOLOCK) where ID = '{0}'",
-               MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID"]));
+                    MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID"]));
                 result = DBProxy.Current.Select(null, sqlCmd, out factoryData);
                 if (!result)
                 {
@@ -1102,7 +1099,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                     this.comboType2.DataSource = this.subType_1;
                     break;
             }
-            
+
             this.comboType2.SelectedIndex = -1;
         }
 
@@ -1124,7 +1121,6 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             this.txtReason.Text = item.GetSelectedString();
             this.txtReasonDesc.Text = item.GetSelecteds()[0]["Description"].ToString();
-
         }
 
         private void txtReason_Validating(object sender, CancelEventArgs e)
@@ -1212,7 +1208,7 @@ Non SP# Sample/Mock-up
             {
                 List<System.Data.SqlClient.SqlParameter> listPara = new List<System.Data.SqlClient.SqlParameter>()
                 {
-                    new System.Data.SqlClient.SqlParameter("@blno", MyUtility.Convert.GetString(sBLNo))
+                    new System.Data.SqlClient.SqlParameter("@blno", MyUtility.Convert.GetString(sBLNo)),
                 };
                 string sql = "select top 1 Vessel from Export where blno = @blno";
                 this.disVesselName.Text = MyUtility.GetValue.Lookup(sql, listPara);
@@ -1221,7 +1217,6 @@ Non SP# Sample/Mock-up
 
         private void txtSubconSupplier_Validating(object sender, CancelEventArgs e)
         {
-
             string LocalSuppID = this.txtSubconSupplier.TextBox1.Text;
 
             DataTable dt;
@@ -1245,7 +1240,6 @@ Non SP# Sample/Mock-up
                     this.txtcurrency.ReadOnly = true;
                     this.txtcurrency.IsSupportEditMode = false;
                 }
-
             }
             else
             {

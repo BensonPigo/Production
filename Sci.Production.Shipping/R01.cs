@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -77,7 +74,6 @@ namespace Sci.Production.Shipping
             this.invdate2 = this.dateInvoiceDate.Value2;
             this.etd1 = this.dateETD.Value1;
             this.etd2 = this.dateETD.Value2;
-
 
             this.FCRDate1 = this.dateFCR.Value1;
             this.CutOffDate1 = this.dateCutoff.Value1;
@@ -421,7 +417,6 @@ where pl.ID<>'' and 1=1 "));
                 sqlCmd_where.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(this.etd2).ToString("d")));
             }
 
-
             if (!MyUtility.Check.Empty(this.FCRDate1))
             {
                 sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}' ", Convert.ToDateTime(this.FCRDate1).ToString("d")));
@@ -642,6 +637,7 @@ and exists (select 1
                 this.dateDelivery.Value1 = null;
                 this.dateDelivery.Value2 = null;
             }
+
             if (this.radioDetailList.Checked)
             {
                 this.ReportType = "DetailList";

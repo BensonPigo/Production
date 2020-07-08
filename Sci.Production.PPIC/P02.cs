@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci;
-using Sci.Utility.Excel;
 using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
@@ -119,7 +114,7 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) 
         private void QueryDate()
         {
             string factoryID = (string)this.comboFactory.SelectedValue;
-            DateTime? updateDate = (DateTime?) this.dateUpdatedDate.Value;
+            DateTime? updateDate = (DateTime?)this.dateUpdatedDate.Value;
 
             string sqlwhere = string.Empty;
             sqlwhere += MyUtility.Check.Empty(factoryID) ? $@" and oc.MDivisionID = '{Sci.Env.User.Keyword}'" : $@" and oc.FactoryID = '{factoryID}'";
@@ -231,7 +226,7 @@ order by oc.FactoryID,oc.OrderId";
                 number++;
             }
 
-            objApp.get_Range("A" + 4, "A" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft].LineStyle 
+            objApp.get_Range("A" + 4, "A" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft].LineStyle
                 = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             objApp.get_Range("A" + 4, "A" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft].Weight = 2;
 

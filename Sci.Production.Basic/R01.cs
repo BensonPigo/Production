@@ -1,31 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using Sci.Win;
-using System.Data.SqlClient;
-using Sci.Utility.Excel;
 using System.Runtime.InteropServices;
-using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Basic
 {
     public partial class R01 : Sci.Win.Tems.PrintForm
     {
-
         private DataTable printData;
         private StringBuilder sqlWhere = new StringBuilder();
 
-        public R01(ToolStripMenuItem menuitem) 
+        public R01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             #region combo box預設值
 
@@ -57,13 +50,14 @@ order by ID
             {
                 return;
             }
+
             var selectedData = item.GetSelecteds();
             this.txtCode.Text = selectedData[0]["id"].ToString();
         }
 
         protected override bool ValidateInput()
         {
-            sqlWhere.Clear();
+            this.sqlWhere.Clear();
             if (this.dateAdd.Value1.HasValue)
             {
                 this.sqlWhere.Append($"AND l.AddDate >= '{this.dateAdd.Value1.Value.ToShortDateString()}' " + Environment.NewLine);
@@ -99,7 +93,6 @@ order by ID
 
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-
             DualResult result;
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append($@"
@@ -131,7 +124,7 @@ LEFT JOIN Country c ON lbd.CountryID=c.ID
 WHERE 1=1
 
 ");
-            result = DBProxy.Current.Select(null, sqlCmd.Append(sqlWhere).ToString(), out printData);
+            result = DBProxy.Current.Select(null, sqlCmd.Append(this.sqlWhere).ToString(), out this.printData);
 
             if (!result)
             {
@@ -154,7 +147,7 @@ WHERE 1=1
 
             this.ShowWaitMessage("Excel Processing...");
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Basic_R01.xltx"); //預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Basic_R01.xltx"); // 預先開啟excel app
 
             MyUtility.Excel.CopyToXls(this.printData, null, "Basic_R01.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
 

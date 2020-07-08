@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sci.Data;
-using Sci.Win.UI;
-using Sci.Production.Class;
 using System.Data.SqlClient;
 
 namespace Sci.Production.Class
@@ -17,14 +11,18 @@ namespace Sci.Production.Class
     public partial class txtTechnician : Sci.Win.UI._UserControl
     {
         public txtTechnician()
-        {            
-            InitializeComponent();
-            
+        {
+            this.InitializeComponent();
         }
+
         private string myUsername = null;
 
         private string checkColumn;
-        public string CheckColumn { get { return checkColumn; } set { checkColumn = value; } }
+
+        public string CheckColumn
+        {
+            get { return this.checkColumn; } set { this.checkColumn = value; }
+        }
 
         public Sci.Win.UI.TextBox TextBox1
         {
@@ -38,7 +36,7 @@ namespace Sci.Production.Class
 
         private string TechnicianWhere()
         {
-            string result = MyUtility.Check.Empty(checkColumn) ? "ID in (select id from Technician WITH (NOLOCK) where junk = 0 )" : $"ID in (select id from Technician WITH (NOLOCK) where junk = 0 and {checkColumn} = 1)";
+            string result = MyUtility.Check.Empty(this.checkColumn) ? "ID in (select id from Technician WITH (NOLOCK) where junk = 0 )" : $"ID in (select id from Technician WITH (NOLOCK) where junk = 0 and {this.checkColumn} = 1)";
             return result;
         }
 
@@ -46,38 +44,37 @@ namespace Sci.Production.Class
         {
             set
             {
-                textBox1.Text = value;
-                Sci.Production.Class.Commons.UserPrg.GetName(this.TextBox1.Text, out myUsername, Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
-                this.DisplayBox1.Text = myUsername;
+                this.textBox1.Text = value;
+                Sci.Production.Class.Commons.UserPrg.GetName(this.TextBox1.Text, out this.myUsername, Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
+                this.DisplayBox1.Text = this.myUsername;
             }
         }
 
         [Bindable(true)]
         public string TextBox1Binding
         {
-            set 
-            {               
+            get { return this.textBox1.Text; }
+
+            set
+            {
                 this.textBox1.Text = value;
                 if (!Env.DesignTime)
                 {
-                    //if (this.textBox1.Text == "" || MyUtility.Check.Empty(this.textBox1.Text))
-                    //{
+                    // if (this.textBox1.Text == "" || MyUtility.Check.Empty(this.textBox1.Text))
+                    // {
                     //    return;
-                    //}
-                    
-                    Sci.Production.Class.Commons.UserPrg.GetName(this.TextBox1.Text, out myUsername, Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
-                    this.DisplayBox1.Text = myUsername;
-           
+                    // }
+                    Sci.Production.Class.Commons.UserPrg.GetName(this.TextBox1.Text, out this.myUsername, Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
+                    this.DisplayBox1.Text = this.myUsername;
                 }
             }
-            get { return textBox1.Text; }
         }
 
         [Bindable(true)]
         public string DisplayBox1Binding
         {
-            set { this.displayBox1.Text = value; }
             get { return this.displayBox1.Text; }
+            set { this.displayBox1.Text = value; }
         }
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
@@ -86,18 +83,18 @@ namespace Sci.Production.Class
             string textValue = this.textBox1.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
-                //if (!MyUtility.Check.Seek(textValue, "Pass1", "ID"))
-                if (!MyUtility.Check.Seek($"select 1 from pass1 where id = '{textValue}' and {TechnicianWhere()} "))
+                // if (!MyUtility.Check.Seek(textValue, "Pass1", "ID"))
+                if (!MyUtility.Check.Seek($"select 1 from pass1 where id = '{textValue}' and {this.TechnicianWhere()} "))
                     {
                     string alltrimData = textValue.Trim();
                     bool isUserExtNo = MyUtility.Check.Seek(alltrimData, "Pass1", "ExtNo");
                     DataTable dtName;
-                    string selectCommand = string.Format($"select ID, Name, ExtNo, REPLACE(Factory,' ','') Factory from Pass1 WITH (NOLOCK) where Name like '%{0}%' and {TechnicianWhere()} order by ID", textValue.Trim());
-                    var resultName= DBProxy.Current.Select(null, selectCommand, out dtName);
+                    string selectCommand = string.Format($"select ID, Name, ExtNo, REPLACE(Factory,' ','') Factory from Pass1 WITH (NOLOCK) where Name like '%{0}%' and {this.TechnicianWhere()} order by ID", textValue.Trim());
+                    var resultName = DBProxy.Current.Select(null, selectCommand, out dtName);
 
-                    //if (isUserName | isUserExtNo)
+                    // if (isUserName | isUserExtNo)
                     if ((resultName && dtName.Rows.Count > 0) | isUserExtNo)
-                    {                        
+                    {
                         DataTable selectTable;
                         if (dtName.Rows.Count > 0)
                         {
@@ -106,10 +103,11 @@ namespace Sci.Production.Class
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
-                                this.textBox1.Text = "";
+                                this.textBox1.Text = string.Empty;
                                 this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
                                 return;
                             }
+
                             this.textBox1.Text = item.GetSelectedString();
                         }
                         else
@@ -121,44 +119,53 @@ namespace Sci.Production.Class
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
-                                this.textBox1.Text = "";
+                                this.textBox1.Text = string.Empty;
                                 this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
                                 return;
                             }
+
                             this.textBox1.Text = item.GetSelectedString();
                         }
-                    }                   
+                    }
                     else
                     {
-                        this.textBox1.Text = "";
+                        this.textBox1.Text = string.Empty;
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox(string.Format("< User Id: {0} > not found!!!", textValue));
                         this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
-                        this.DisplayBox1.Text = "";
+                        this.DisplayBox1.Text = string.Empty;
                         return;
                     }
                 }
             }
-            
+
             // 強制把binding的Text寫到DataRow
             this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
 
-            Sci.Production.Class.Commons.UserPrg.GetName(this.TextBox1.Text, out myUsername, Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
-            this.DisplayBox1.Text = myUsername;
+            Sci.Production.Class.Commons.UserPrg.GetName(this.TextBox1.Text, out this.myUsername, Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
+            this.DisplayBox1.Text = this.myUsername;
         }
-        
+
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
-            if (myForm.EditMode == false || textBox1.ReadOnly == true) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem($"select ID, Name, ExtNo, replace(Factory,' ','')factory from Pass1 WITH (NOLOCK) where Resign is null  and {TechnicianWhere()}  order by ID", "10,22,5,40", this.textBox1.Text);
+            if (myForm.EditMode == false || this.textBox1.ReadOnly == true)
+            {
+                return;
+            }
+
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem($"select ID, Name, ExtNo, replace(Factory,' ','')factory from Pass1 WITH (NOLOCK) where Resign is null  and {this.TechnicianWhere()}  order by ID", "10,22,5,40", this.textBox1.Text);
             item.Size = new System.Drawing.Size(828, 509);
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.textBox1.Text = item.GetSelectedString();
 
-            Sci.Production.Class.Commons.UserPrg.GetName(this.TextBox1.Text, out myUsername, Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
-            this.DisplayBox1.Text = myUsername;            
+            Sci.Production.Class.Commons.UserPrg.GetName(this.TextBox1.Text, out this.myUsername, Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
+            this.DisplayBox1.Text = this.myUsername;
         }
 
         private void textBox1_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -172,14 +179,18 @@ namespace Sci.Production.Class
 		                    Mail = email
                     from Pass1 WITH (NOLOCK) 
                     where id = @id";
-            sqlpar.Add(new SqlParameter("@id", textBox1.Text.ToString()));
+            sqlpar.Add(new SqlParameter("@id", this.textBox1.Text.ToString()));
 
             userData ud = new userData(sql, sqlpar);
 
             if (ud.errMsg == null)
+            {
                 ud.ShowDialog();
+            }
             else
+            {
                 MyUtility.Msg.ErrorBox(ud.errMsg);
+            }
         }
     }
 }

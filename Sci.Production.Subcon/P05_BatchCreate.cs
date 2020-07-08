@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -11,9 +10,6 @@ using Ict;
 using Ict.Win;
 using System.Linq;
 using System.Transactions;
-using MsExcel = Microsoft.Office.Interop.Excel;
-using System.Reflection;
-using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Subcon
 {
@@ -23,68 +19,92 @@ namespace Sci.Production.Subcon
 
         string isArtwork;
         protected DataTable dtArtwork;
-        string sciDelivery_b, sciDelivery_e, Inline_b, Inline_e, sp_b, sp_e, artworktype;
+        string sciDelivery_b;
+        string sciDelivery_e;
+        string Inline_b;
+        string Inline_e;
+        string sp_b;
+        string sp_e;
+        string artworktype;
 
         public P05_BatchCreate()
         {
-            InitializeComponent();
-            dateReqDate.Value = DateTime.Today;
+            this.InitializeComponent();
+            this.dateReqDate.Value = DateTime.Today;
         }
 
-        //Find Now Button
+        // Find Now Button
         private void btnFindNow_Click(object sender, EventArgs e)
         {
             this.FindData(true);
         }
 
         private void FindData(bool showNoDataMsg)
-        {   
+        {
             this.sciDelivery_b = null;
             this.sciDelivery_e = null;
             this.Inline_b = null;
             this.Inline_e = null;
-            
-            if (dateSCIDelivery.Value1 != null) sciDelivery_b = this.dateSCIDelivery.Text1;
-            if (dateSCIDelivery.Value2 != null) { sciDelivery_e = this.dateSCIDelivery.Text2; }
-            if (dateInlineDate.Value1 != null) Inline_b = this.dateInlineDate.Text1;
-            if (dateInlineDate.Value2 != null) { Inline_e = this.dateInlineDate.Text2; }
 
+            if (this.dateSCIDelivery.Value1 != null)
+            {
+                this.sciDelivery_b = this.dateSCIDelivery.Text1;
+            }
+
+            if (this.dateSCIDelivery.Value2 != null)
+            {
+                this.sciDelivery_e = this.dateSCIDelivery.Text2;
+            }
+
+            if (this.dateInlineDate.Value1 != null)
+            {
+                this.Inline_b = this.dateInlineDate.Text1;
+            }
+
+            if (this.dateInlineDate.Value2 != null)
+            {
+                this.Inline_e = this.dateInlineDate.Text2;
+            }
 
             this.sp_b = this.txtSPNoStart.Text;
             this.sp_e = this.txtSPNoEnd.Text;
-            this.artworktype = txtartworktype_ftyArtworkType.Text;
+            this.artworktype = this.txtartworktype_ftyArtworkType.Text;
 
-            if ((sciDelivery_b == null && sciDelivery_e == null) &&
-                (Inline_b == null && Inline_e == null) &&
-                string.IsNullOrWhiteSpace(sp_b) && string.IsNullOrWhiteSpace(sp_e))
+            if ((this.sciDelivery_b == null && this.sciDelivery_e == null) &&
+                (this.Inline_b == null && this.Inline_e == null) &&
+                string.IsNullOrWhiteSpace(this.sp_b) && string.IsNullOrWhiteSpace(this.sp_e))
             {
                 MyUtility.Msg.WarningBox("< SCI Delivery > or < Sew. Inline > or < SP# > can't be empty!!");
-                txtSPNoStart.Focus();
+                this.txtSPNoStart.Focus();
                 return;
             }
 
             string SqlCmd;
             #region 組query sqlcmd
-            if (string.IsNullOrWhiteSpace(artworktype))
+            if (string.IsNullOrWhiteSpace(this.artworktype))
             {
                 MyUtility.Msg.WarningBox("< Artwork Type > can't be empty!!");
-                txtartworktype_ftyArtworkType.Focus();
+                this.txtartworktype_ftyArtworkType.Focus();
                 return;
             }
+
             SqlCmd = this.QuoteFromTmsCost();
 
             #endregion
 
             Ict.DualResult result;
-            if (result = DBProxy.Current.Select(null, SqlCmd, out dtArtwork))
+            if (result = DBProxy.Current.Select(null, SqlCmd, out this.dtArtwork))
             {
-                if (dtArtwork.Rows.Count == 0 && showNoDataMsg)
-                { MyUtility.Msg.WarningBox("Data not found!!"); }
-                listControlBindingSource1.DataSource = this.FilterResult();
+                if (this.dtArtwork.Rows.Count == 0 && showNoDataMsg)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!!");
+                }
+
+                this.listControlBindingSource1.DataSource = this.FilterResult();
             }
             else
             {
-                ShowErr(SqlCmd, result);
+                this.ShowErr(SqlCmd, result);
             }
         }
 
@@ -92,10 +112,10 @@ namespace Sci.Production.Subcon
         {
             base.OnFormLoaded();
             #region -- Grid 設定 --
-            this.gridBatchCreateFromSubProcessData.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridBatchCreateFromSubProcessData.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridBatchCreateFromSubProcessData)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
+            this.gridBatchCreateFromSubProcessData.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.gridBatchCreateFromSubProcessData.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridBatchCreateFromSubProcessData)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk) // 0
                 .Text("LocalSuppId", header: "Local Supp", iseditingreadonly: true)
                 .Text("orderID", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14))
                 .Numeric("OrderQty", header: "Order Qty", iseditingreadonly: true)
@@ -103,7 +123,7 @@ namespace Sci.Production.Subcon
                 .Numeric("ReqQty", header: "Req. Qty", iseditable: true)
                 .Date("sewinline", header: "Sew. Inline", iseditingreadonly: true)
                 .Date("SciDelivery", header: "SCI Delivery", iseditingreadonly: true)
-                .Text("ArtworkID", header: "Artwork", iseditingreadonly: true, width: Widths.AnsiChars(13))      //5
+                .Text("ArtworkID", header: "Artwork", iseditingreadonly: true, width: Widths.AnsiChars(13)) // 5
                 .Numeric("stitch", header: "PCS/Stitch", iseditingreadonly: true)
                 .Text("PatternCode", header: "Cut. Part", iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cut. Part Name", iseditingreadonly: true, width: Widths.AnsiChars(15))
@@ -131,19 +151,22 @@ namespace Sci.Production.Subcon
         // Create
         private void btnImport_Click(object sender, EventArgs e)
         {
-            listControlBindingSource1.EndEdit();
+            this.listControlBindingSource1.EndEdit();
             string Reqdate;
-            Reqdate = dateReqDate.Text;
+            Reqdate = this.dateReqDate.Text;
 
-            if (dateReqDate.Value == null)
+            if (this.dateReqDate.Value == null)
             {
                 MyUtility.Msg.WarningBox("< Req Date > can't be empty!!");
-                dateReqDate.Focus();
+                this.dateReqDate.Focus();
                 return;
             }
 
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-            if (dt == null || dt.Rows.Count == 0) return;
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return;
+            }
 
             DataRow[] find;
             find = dt.Select("Selected = 1");
@@ -161,27 +184,26 @@ namespace Sci.Production.Subcon
                 return;
             }
 
-
             #region -- 表頭資料 query --- LINQ
-            var query = (from row in dt.AsEnumerable()
+            var query = from row in dt.AsEnumerable()
                          where row.Field<int>("Selected").ToString() == "1"
                          group row by new
                          {
                              t1 = row.Field<string>("ftygroup"),
                              t2 = row.Field<string>("localsuppid"),
-                             t3 = row.Field<string>("artworktypeid")
-                         } into m
+                             t3 = row.Field<string>("artworktypeid"),
+                         }
+                        into m
                          select new
                          {
                              ftygroup = m.Key.t1,
                              localsuppid = m.Key.t2,
-                             artworktypeid = m.Key.t3
-                         });
+                             artworktypeid = m.Key.t3,
+                         };
             #endregion
 
             if (query.ToList().Count > 0)
             {
-
                 ITableSchema tableSchema = null;
                 DualResult result;
                 result = DBProxy.Current.GetTableSchema(null, "ArtworkReq", out tableSchema);
@@ -190,6 +212,7 @@ namespace Sci.Production.Subcon
                     MyUtility.Msg.WarningBox("Get Schema(dbo.ArtworkReq) Faild!!, Please re-try it later!!");
                     return;
                 }
+
                 string sqlcmd;
 
                 foreach (var q in query.ToList())
@@ -201,7 +224,7 @@ namespace Sci.Production.Subcon
                         {
                             string ftyKeyWord = MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where id='{0}'", q.ftygroup));
 
-                            string id = Sci.MyUtility.GetValue.GetID(ftyKeyWord + "OR", "artworkReq", DateTime.Parse(dateReqDate.Text));
+                            string id = Sci.MyUtility.GetValue.GetID(ftyKeyWord + "OR", "artworkReq", DateTime.Parse(this.dateReqDate.Text));
                             if (MyUtility.Check.Empty(id))
                             {
                                 _transactionscope.Dispose();
@@ -214,7 +237,6 @@ namespace Sci.Production.Subcon
                                          where row.Field<int>("Selected").ToString() == "1"
                                                && row.Field<string>("ftygroup").ToString() == q.ftygroup
                                                && row.Field<string>("localsuppid").ToString() == q.localsuppid
-
                                          group row by new
                                          {
                                              t1 = row.Field<string>("orderid"),
@@ -223,9 +245,9 @@ namespace Sci.Production.Subcon
                                              t4 = row.Field<string>("PatternCode"),
                                              t5 = row.Field<string>("PatternDesc"),
                                              t7 = row.Field<int>("stitch"),
-                                             t10 = (row.Field<decimal>("QtyGarment") == 0 ? 1 : row.Field<decimal>("QtyGarment"))
-                                             
-                                         } into m
+                                             t10 = row.Field<decimal>("QtyGarment") == 0 ? 1 : row.Field<decimal>("QtyGarment"),
+                                         }
+                                        into m
                                          select new
                                          {
                                              orderid = m.Key.t1,
@@ -238,29 +260,28 @@ namespace Sci.Production.Subcon
                                              ExceedQty =
                                              MyUtility.Convert.GetDecimal(
                                               (
-                                              MyUtility.Convert.GetDecimal(dt.Compute("sum(ReqQty)"
-                                             , $@"OrderID = '{m.Key.t1}' and ArtworkTypeID = '{m.Key.t2}' and artworkid = '{m.Key.t3}'
+                                              MyUtility.Convert.GetDecimal(dt.Compute(
+                                                  "sum(ReqQty)",
+                                                  $@"OrderID = '{m.Key.t1}' and ArtworkTypeID = '{m.Key.t2}' and artworkid = '{m.Key.t3}'
                                                     and PatternCode = '{m.Key.t4}' and PatternDesc = '{m.Key.t5}' and Selected = 1"))
                                              +
                                              MyUtility.Convert.GetDecimal(m.Sum(n => n.Field<decimal>("AccReqQty")))
-                                             - MyUtility.Convert.GetDecimal(m.Sum(n => n.Field<int>("OrderQty")))
-                                             ) < 0 ? 0 :
-                                              MyUtility.Convert.GetDecimal(dt.Compute("sum(ReqQty)"
-                                             , $@"OrderID = '{m.Key.t1}' and ArtworkTypeID = '{m.Key.t2}' and artworkid = '{m.Key.t3}'
+                                             - MyUtility.Convert.GetDecimal(m.Sum(n => n.Field<int>("OrderQty")))) < 0 ? 0 :
+                                              MyUtility.Convert.GetDecimal(dt.Compute(
+                                                  "sum(ReqQty)",
+                                                  $@"OrderID = '{m.Key.t1}' and ArtworkTypeID = '{m.Key.t2}' and artworkid = '{m.Key.t3}'
                                                     and PatternCode = '{m.Key.t4}' and PatternDesc = '{m.Key.t5}' and Selected = 1"))
                                              +
                                              MyUtility.Convert.GetDecimal(m.Sum(n => n.Field<decimal>("AccReqQty")))
-                                             - MyUtility.Convert.GetDecimal(m.Sum(n => n.Field<int>("OrderQty")))
-                                             ),
-                                             ReqQty = m.Sum(n => n.Field<decimal>("ReqQty"))
-                                            
+                                             - MyUtility.Convert.GetDecimal(m.Sum(n => n.Field<int>("OrderQty")))),
+                                             ReqQty = m.Sum(n => n.Field<decimal>("ReqQty")),
                                          };
 
                             #endregion
 
-                            //若是EMB則QTYGarment=1,View_order_artworks.Qty->Coststich&Stich
+                            // 若是EMB則QTYGarment=1,View_order_artworks.Qty->Coststich&Stich
                             StringBuilder sqlcmd2 = new StringBuilder();
-                            if (txtartworktype_ftyArtworkType.Text == "EMBROIDERY")
+                            if (this.txtartworktype_ftyArtworkType.Text == "EMBROIDERY")
                             {
                                 foreach (var q2 in query2.ToList()) // 明細資料
                                 {
@@ -325,7 +346,7 @@ namespace Sci.Production.Subcon
 
                             #region 表頭sql
                             int Exceed = 0;
-                            Exceed = (query2.Sum(x => x.ExceedQty)) > 0 ? 1 : 0;
+                            Exceed = query2.Sum(x => x.ExceedQty) > 0 ? 1 : 0;
 
                             sqlcmd = string.Format($@"INSERT INTO [dbo].[ArtworkReq]
                                                     ([ID]
@@ -350,8 +371,7 @@ namespace Sci.Production.Subcon
                                                     ,'{Env.User.UserID}'
                                                     ,getdate()
                                                     ,'New'
-                                                    ,{Exceed})"
-                                        );
+                                                    ,{Exceed})");
 
                             if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd)))
                             {
@@ -372,39 +392,41 @@ namespace Sci.Production.Subcon
                             {
                                 _transactionscope.Complete();
                                 _transactionscope.Dispose();
-                                
                             }
                         }
                         catch (Exception ex)
                         {
                             _transactionscope.Dispose();
                             result = new DualResult(false, "Commit transaction error.", ex);
-                            ShowErr("Commit transaction error.", ex);
+                            this.ShowErr("Commit transaction error.", ex);
                             return;
                         }
                     }
+
                     MyUtility.Msg.InfoBox("Complete!");
                     _transactionscope.Dispose();
                     _transactionscope = null;
+
                     // Import 成功重新Query
                     this.FindData(false);
-
                 }
             }
         }
 
-        //excel
+        // excel
         private void btnToExcel_Click(object sender, EventArgs e)
         {
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
             sdExcel.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_P05_BatchCreate"));
         }
 
         private void txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
         {
-            isArtwork = MyUtility.GetValue.Lookup(string.Format("select isartwork from artworktype WITH (NOLOCK) where id = '{0}'"
-                , ((Sci.Production.Class.txtartworktype_fty)sender).Text), null);
+            this.isArtwork = MyUtility.GetValue.Lookup(
+                string.Format(
+                "select isartwork from artworktype WITH (NOLOCK) where id = '{0}'",
+                ((Sci.Production.Class.txtartworktype_fty)sender).Text), null);
         }
 
         private DataTable FilterResult()
@@ -424,33 +446,39 @@ namespace Sci.Production.Subcon
                 return this.dtArtwork;
             }
         }
+
         private string QuoteFromTmsCost()
         {
             string SqlCmd;
             string sqlWhere = string.Empty;
-            if (!(string.IsNullOrWhiteSpace(Inline_b)))
+            if (!string.IsNullOrWhiteSpace(this.Inline_b))
             {
-                sqlWhere += string.Format(" and o.SewInLIne >= '{0}' ", Inline_b);
+                sqlWhere += string.Format(" and o.SewInLIne >= '{0}' ", this.Inline_b);
             }
-            if (!(string.IsNullOrWhiteSpace(Inline_e)))
+
+            if (!string.IsNullOrWhiteSpace(this.Inline_e))
             {
-                sqlWhere += string.Format(" and o.SewInLIne <= '{0}' ", Inline_e);
+                sqlWhere += string.Format(" and o.SewInLIne <= '{0}' ", this.Inline_e);
             }
-            if (!(string.IsNullOrWhiteSpace(sciDelivery_b)))
+
+            if (!string.IsNullOrWhiteSpace(this.sciDelivery_b))
             {
-                sqlWhere += string.Format("and  o.SciDelivery >= '{0}' ", sciDelivery_b);
+                sqlWhere += string.Format("and  o.SciDelivery >= '{0}' ", this.sciDelivery_b);
             }
-            if (!(string.IsNullOrWhiteSpace(sciDelivery_e)))
+
+            if (!string.IsNullOrWhiteSpace(this.sciDelivery_e))
             {
-                sqlWhere += string.Format("and  o.SciDelivery <= '{0}' ", sciDelivery_e);
+                sqlWhere += string.Format("and  o.SciDelivery <= '{0}' ", this.sciDelivery_e);
             }
-            if (!(string.IsNullOrWhiteSpace(sp_b)))
+
+            if (!string.IsNullOrWhiteSpace(this.sp_b))
             {
-                sqlWhere += string.Format(" and o.ID >= '{0}'", sp_b);
+                sqlWhere += string.Format(" and o.ID >= '{0}'", this.sp_b);
             }
-            if (!(string.IsNullOrWhiteSpace(sp_e)))
+
+            if (!string.IsNullOrWhiteSpace(this.sp_e))
             {
-                sqlWhere += string.Format(" and o.ID <= '{0}'", sp_e);
+                sqlWhere += string.Format(" and o.ID <= '{0}'", this.sp_e);
             }
 
             SqlCmd = $@"
@@ -513,8 +541,7 @@ and sao.LocalSuppId is not null
 {sqlWhere}
 group by o.ID,sao.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
             ,oa.PatternDesc, o.StyleID, o.StyleID, o.POID,PoQty.value,ReqQty.value,o.FTYGroup,vsa.ActStitch
-		" ;
-
+		";
 
             return SqlCmd;
         }

@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Transactions;
 using System.Windows.Forms;
@@ -18,16 +17,17 @@ namespace Sci.Production.Cutting
         public P14(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.EditMode = true;
         }
 
         DataTable dt = new DataTable();
+
         private void P14_FormLoaded(object sender, EventArgs e)
         {
             this.grid1.AutoGenerateColumns = true;
-            dt.Columns.Add("msg", typeof(System.String));
-            this.listControlBindingSource1.DataSource = dt;
+            this.dt.Columns.Add("msg", typeof(string));
+            this.listControlBindingSource1.DataSource = this.dt;
         }
 
         private void txtCardNo_KeyPress(object sender, KeyPressEventArgs e)
@@ -39,10 +39,14 @@ namespace Sci.Production.Cutting
                 return;
             }
         }
-        
+
         private void txtBundleNo_Validating(object sender, CancelEventArgs e)
         {
-            if (MyUtility.Check.Empty(this.txtBundleNo.Text)) return;
+            if (MyUtility.Check.Empty(this.txtBundleNo.Text))
+            {
+                return;
+            }
+
             List<SqlParameter> sqlParameters = new List<SqlParameter>();
             sqlParameters.Add(new SqlParameter("@BundleNo", this.txtBundleNo.Text));
             string sqlchk = $@"select 1 from Bundle_Detail with(nolock) where BundleNo = @BundleNo";
@@ -117,7 +121,7 @@ drop table #tmp
                 this.ShowErr(result);
                 return;
             }
-            
+
             MyUtility.Tool.SetupCombox(this.cmdComboType, 1, combotypeDt);
             if (combotypeDt.Rows.Count == 1 && MyUtility.Check.Empty(this.txtBundleNo.Text))
             {
@@ -128,23 +132,32 @@ drop table #tmp
 
         private void txtCardNoBundleNoComboType_Validated(object sender, EventArgs e)
         {
-            if (!checkempty() ) return;
-            InsertDatas();
-            clearall();
+            if (!this.checkempty())
+            {
+                return;
+            }
+
+            this.InsertDatas();
+            this.clearall();
         }
 
         private void cmdComboType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!checkempty()) return;
-            InsertDatas();
-            clearall();
+            if (!this.checkempty())
+            {
+                return;
+            }
+
+            this.InsertDatas();
+            this.clearall();
         }
 
         bool IsSuccessful = true;
+
         private void InsertDatas()
         {
             List<SqlParameter> sqlParameters = new List<SqlParameter>();
-            sqlParameters.Add(new SqlParameter("@SP", this.disSP.Text));            
+            sqlParameters.Add(new SqlParameter("@SP", this.disSP.Text));
             sqlParameters.Add(new SqlParameter("@ComboType", this.cmdComboType.Text));
             sqlParameters.Add(new SqlParameter("@CutNo", this.disCutNo.Text));
             sqlParameters.Add(new SqlParameter("@CardNo", this.txtCardNo.Text));
@@ -202,13 +215,15 @@ End
                     if (!(upResult = DBProxy.Current.Execute("SUNRISEEXCH", sqlupdatacmd, sqlParameters)))
                     {
                         this.ShowErr(upResult);
-                        IsSuccessful = false;
+                        this.IsSuccessful = false;
                         return;
                     }
                 }
+
                 scope.Complete();
             }
-            IsSuccessful = true;
+
+            this.IsSuccessful = true;
         }
 
         private bool checkempty()
@@ -217,28 +232,35 @@ End
             {
                 return false;
             }
+
             return true;
         }
 
         private void addmsg(string msg)
         {
-            DataRow dr = dt.NewRow();
+            DataRow dr = this.dt.NewRow();
             dr[0] = msg;
-            dt.Rows.Add(dr);
-            this.listControlBindingSource1.Position = dt.Rows.Count - 1;
+            this.dt.Rows.Add(dr);
+            this.listControlBindingSource1.Position = this.dt.Rows.Count - 1;
             this.grid1.AutoResizeColumns();
         }
-        
+
         private void grid1_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
         {
-            grid1.Rows[e.RowIndex].Cells[0].Style.ForeColor = IsSuccessful ? Color.Black : Color.Red;
+            this.grid1.Rows[e.RowIndex].Cells[0].Style.ForeColor = this.IsSuccessful ? Color.Black : Color.Red;
         }
 
         private void clearall()
         {
-            if (IsSuccessful) addmsg($"( {DateTime.Now.ToString("HH:mm:ss")} ) Successful Card# : {this.txtCardNo.Text}, Bundle# : {this.txtBundleNo.Text}, Combo Type : {this.cmdComboType.Text}");
-            else addmsg($"( {DateTime.Now.ToString("HH:mm:ss")} ) Not Successful Card# : {this.txtCardNo.Text}, Bundle# : {this.txtBundleNo.Text}, Combo Type : {this.cmdComboType.Text}");
-            
+            if (this.IsSuccessful)
+            {
+                this.addmsg($"( {DateTime.Now.ToString("HH:mm:ss")} ) Successful Card# : {this.txtCardNo.Text}, Bundle# : {this.txtBundleNo.Text}, Combo Type : {this.cmdComboType.Text}");
+            }
+            else
+            {
+                this.addmsg($"( {DateTime.Now.ToString("HH:mm:ss")} ) Not Successful Card# : {this.txtCardNo.Text}, Bundle# : {this.txtBundleNo.Text}, Combo Type : {this.cmdComboType.Text}");
+            }
+
             this.txtCardNo.Text = string.Empty;
             this.txtBundleNo.Text = string.Empty;
             this.cmdComboType.DataSource = null;

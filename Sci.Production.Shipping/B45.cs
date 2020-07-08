@@ -1,11 +1,8 @@
 ﻿using Sci.Win.Tools;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
@@ -176,6 +173,5 @@ namespace Sci.Production.Shipping
                 this.CurrentMaintain[popFrom] = popResult[0][popFrom];
             }
         }
-
     }
 }

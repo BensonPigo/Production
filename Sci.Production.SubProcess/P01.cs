@@ -474,7 +474,7 @@ From Style_Feature
 Where type='{0}'  and styleUkey='{1}'
 Order by Feature",
                     this.CurrentMaintain["TypeID"],
-                     this.CurrentDetailData["styleukey"]);
+                    this.CurrentDetailData["styleukey"]);
 
                 this.CurrentDetailData["Feature"] = e.FormattedValue;
                 DataTable dt;
@@ -1248,6 +1248,5 @@ order by a.OrderId,os.Seq
 
             return true;
         }
-
     }
 }

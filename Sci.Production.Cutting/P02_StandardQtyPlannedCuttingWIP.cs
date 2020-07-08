@@ -1,16 +1,12 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Sci.Production.PublicPrg.Prgs;
 
@@ -25,7 +21,8 @@ namespace Sci.Production.Cutting
         DataTable summaryData;
         DataTable dtG;
         DataTable dtF;
-        DateTime MinInLine, MaxOffLine;
+        DateTime MinInLine;
+        DateTime MaxOffLine;
         List<string> FtyFroup = new List<string>();
         List<InOffLineList> AllDataTmp = new List<InOffLineList>();
         List<InOffLineList> AllData = new List<InOffLineList>();
@@ -34,11 +31,12 @@ namespace Sci.Production.Cutting
         List<PublicPrg.Prgs.Day> Days = new List<PublicPrg.Prgs.Day>();
         List<PublicPrg.Prgs.Day> Days2 = new List<PublicPrg.Prgs.Day>();
         List<LeadTime> LeadTimeList = new List<LeadTime>();
+
         public P02_StandardQtyPlannedCuttingWIP(string id, DataTable distqtyTb)
         {
-            InitializeComponent();
-            ID = id;
-            DistqtyTb = distqtyTb;
+            this.InitializeComponent();
+            this.ID = id;
+            this.DistqtyTb = distqtyTb;
         }
 
         protected override void OnFormLoaded()
@@ -55,14 +53,14 @@ namespace Sci.Production.Cutting
 
         private bool Query1()
         {
-            List<string> orderIDs = DistqtyTb.AsEnumerable()
+            List<string> orderIDs = this.DistqtyTb.AsEnumerable()
                 .Select(s => new { ID = MyUtility.Convert.GetString(s["OrderID"]) })
                 .Where(w => w.ID != "EXCESS")
                 .Distinct()
                 .Select(s => s.ID)
                 .ToList();
 
-            if (!Check_Subprocess_LeadTime(orderIDs))
+            if (!this.Check_Subprocess_LeadTime(orderIDs))
             {
                 return false;
             }
@@ -86,6 +84,7 @@ namespace Sci.Production.Cutting
 
             #region 時間軸
             this.Days.Clear();
+
             // 取出最早InLine / 最晚OffLine
             this.MinInLine = dt_Schedule.AsEnumerable().Min(o => Convert.ToDateTime(o["Inline"]));
             this.MaxOffLine = dt_Schedule.AsEnumerable().Max(o => Convert.ToDateTime(o["offline"]));
@@ -103,11 +102,14 @@ namespace Sci.Production.Cutting
             {
                 this.Days.Add(item);
             }
+
             foreach (var item in daylist2)
             {
                 this.Days.Add(item);
             }
+
             DateTime d2 = daylist2.Select(s => s.Date).Min(m => m.Date);
+
             // 若 daylist1 是1/1~1/3, daylist2 是1/10~1/12, 中間也要補上
             if (start_where < d2)
             {
@@ -124,66 +126,82 @@ namespace Sci.Production.Cutting
                 .OrderBy(o => o.Date).ToList();
             #endregion
 
-            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
+            {
+                return false;
+            }
+
             this.bgWorkerUpdateInfo.ReportProgress(5);
 
             this.AllData = GetInOffLineList(dt_Schedule, this.Days, bw: this.bgWorkerUpdateInfo);
 
-            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
+            {
+                return false;
+            }
+
             this.bgWorkerUpdateInfo.ReportProgress(90);
 
             List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days, this.AllData.OrderBy(o => o.OrderID).ToList());
 
-            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
+            {
+                return false;
+            }
+
             this.bgWorkerUpdateInfo.ReportProgress(95);
 
             this.summaryData = LeadTimeList[0];
             this.detailData = LeadTimeList[1];
 
-            dtG = this.summaryData.Clone();
+            this.dtG = this.summaryData.Clone();
             foreach (DataRow item in this.summaryData.Rows)
             {
                 DataRow drdStdQty = this.detailData.Select($"SP='{item["SP"]}' and [Desc./Sewing Date] = 'Std. Qty'")[0];
-                dtG.ImportRow(drdStdQty);
+                this.dtG.ImportRow(drdStdQty);
                 DataRow drdAccStdQty = this.detailData.Select($"SP='{item["SP"]}' and [Desc./Sewing Date] = 'Accu. Std. Qty'")[0];
 
                 DataRow drdAccCutPlan = this.detailData.Select($"SP='{item["SP"]}' and [Desc./Sewing Date] = 'Accu. Cut Plan Qty'")[0];
                 for (int i = 2; i < this.detailData.Columns.Count; i++) // 2 是日期欄位開始
                 {
                     string bal = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(drdAccCutPlan[i]) - MyUtility.Convert.GetDecimal(drdAccStdQty[i]), 0));
-                    if (MyUtility.Convert.GetString(drdAccCutPlan[i]) == "" && MyUtility.Convert.GetString(drdAccStdQty[i]) == "")
+                    if (MyUtility.Convert.GetString(drdAccCutPlan[i]) == string.Empty && MyUtility.Convert.GetString(drdAccStdQty[i]) == string.Empty)
                     {
                         bal = string.Empty;
                     }
 
                     string wip = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(item[i - 1]), 2));
-                    if (MyUtility.Convert.GetString(item[i - 1]) == "")
+                    if (MyUtility.Convert.GetString(item[i - 1]) == string.Empty)
                     {
                         wip = string.Empty;
                     }
+
                     string srow2 = string.Empty;
-                    if (!(MyUtility.Convert.GetString(bal) == "" && MyUtility.Convert.GetString(wip) == ""))
+                    if (!(MyUtility.Convert.GetString(bal) == string.Empty && MyUtility.Convert.GetString(wip) == string.Empty))
                     {
                         srow2 = wip + " / " + bal;
                     }
+
                     drdAccCutPlan[i] = srow2;
                 }
+
                 drdAccCutPlan["SP"] = string.Empty;
-                dtG.ImportRow(drdAccCutPlan);
+                this.dtG.ImportRow(drdAccCutPlan);
             }
 
             return true;
         }
+
         private bool Query2()
         {
-            List<string> orderIDs = DistqtyTb.AsEnumerable()
+            List<string> orderIDs = this.DistqtyTb.AsEnumerable()
                 .Select(s => new { ID = MyUtility.Convert.GetString(s["OrderID"]) })
                 .Where(w => w.ID != "EXCESS")
                 .Distinct()
                 .Select(s => s.ID)
                 .ToList();
 
-            if (!Check_Subprocess_LeadTime(orderIDs))
+            if (!this.Check_Subprocess_LeadTime(orderIDs))
             {
                 return false;
             }
@@ -206,6 +224,7 @@ namespace Sci.Production.Cutting
 
             #region 時間軸
             this.Days2.Clear();
+
             // 取出最早InLine / 最晚OffLine
             this.MinInLine = dt_Schedule.AsEnumerable().Min(o => Convert.ToDateTime(o["Inline"]));
             this.MaxOffLine = dt_Schedule.AsEnumerable().Max(o => Convert.ToDateTime(o["offline"]));
@@ -223,11 +242,14 @@ namespace Sci.Production.Cutting
             {
                 this.Days2.Add(item);
             }
+
             foreach (var item in daylist2)
             {
                 this.Days2.Add(item);
             }
+
             DateTime d2 = daylist2.Select(s => s.Date).Min(m => m.Date);
+
             // 若 daylist1 是1/1~1/3, daylist2 是1/10~1/12, 中間也要補上
             if (start_where < d2)
             {
@@ -244,60 +266,76 @@ namespace Sci.Production.Cutting
                 .OrderBy(o => o.Date).ToList();
             #endregion
 
-            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
+            {
+                return false;
+            }
+
             this.bgWorkerUpdateInfo.ReportProgress(5);
 
             this.AllData2 = GetInOffLineList_byFabricPanelCode(dt_Schedule, this.Days2, bw: this.bgWorkerUpdateInfo);
 
-            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
+            {
+                return false;
+            }
+
             this.bgWorkerUpdateInfo.ReportProgress(90);
 
             List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days2, this.AllData2.OrderBy(o => o.OrderID).ToList());
 
-            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return false;
+            if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
+            {
+                return false;
+            }
+
             this.bgWorkerUpdateInfo.ReportProgress(95);
 
             this.summaryData = LeadTimeList[0];
             this.detailData = LeadTimeList[1];
 
-            dtF = this.summaryData.Clone();
+            this.dtF = this.summaryData.Clone();
             foreach (DataRow item in this.summaryData.Rows)
             {
                 DataRow drdStdQty = this.detailData.Select($"SP='{item["SP"]}' and [Fab. Panel Code] = '{item["Fab. Panel Code"]}' and [Desc./Sewing Date] = 'Std. Qty'")[0];
-                dtF.ImportRow(drdStdQty);
+                this.dtF.ImportRow(drdStdQty);
                 DataRow drdAccStdQty = this.detailData.Select($"SP='{item["SP"]}' and [Fab. Panel Code] = '{item["Fab. Panel Code"]}' and [Desc./Sewing Date] = 'Accu. Std. Qty'")[0];
 
                 DataRow drdAccCutPlan = this.detailData.Select($"SP='{item["SP"]}' and [Fab. Panel Code] = '{item["Fab. Panel Code"]}' and [Desc./Sewing Date] = 'Accu. Cut Plan Qty'")[0];
                 for (int i = 3; i < this.detailData.Columns.Count; i++) // 2 是日期欄位開始
                 {
                     string bal = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(drdAccCutPlan[i]) - MyUtility.Convert.GetDecimal(drdAccStdQty[i]), 0));
-                    if (MyUtility.Convert.GetString(drdAccCutPlan[i]) == "" && MyUtility.Convert.GetString(drdAccStdQty[i]) == "")
+                    if (MyUtility.Convert.GetString(drdAccCutPlan[i]) == string.Empty && MyUtility.Convert.GetString(drdAccStdQty[i]) == string.Empty)
                     {
                         bal = string.Empty;
                     }
 
                     string wip = MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(item[i - 1]), 2));
-                    if (MyUtility.Convert.GetString(item[i - 1]) == "")
+                    if (MyUtility.Convert.GetString(item[i - 1]) == string.Empty)
                     {
                         wip = string.Empty;
                     }
+
                     string srow2 = string.Empty;
-                    if (!(MyUtility.Convert.GetString(bal) == "" && MyUtility.Convert.GetString(wip) == ""))
+                    if (!(MyUtility.Convert.GetString(bal) == string.Empty && MyUtility.Convert.GetString(wip) == string.Empty))
                     {
                         srow2 = wip + " / " + bal;
                     }
+
                     drdAccCutPlan[i] = srow2;
                 }
+
                 drdAccCutPlan["SP"] = string.Empty;
-                dtF.ImportRow(drdAccCutPlan);
+                this.dtF.ImportRow(drdAccCutPlan);
             }
 
             return true;
         }
+
         private void AfterQuery1()
         {
-            this.listControlBindingSource1.DataSource = dtG;
-            foreach (DataColumn item in dtG.Columns)
+            this.listControlBindingSource1.DataSource = this.dtG;
+            foreach (DataColumn item in this.dtG.Columns)
             {
                 this.Helper.Controls.Grid.Generator(this.gridGarment)
                 .Text(item.ColumnName, header: item.ColumnName, width: Widths.Auto(), iseditingreadonly: true)
@@ -309,39 +347,39 @@ namespace Sci.Production.Cutting
             int ColumnIndex = 1;
             foreach (var day in this.Days)
             {
-                //string dateStr = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
+                // string dateStr = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
 
-                //gridGarment.Columns[ColumnIndex].Name = dateStr;
+                // gridGarment.Columns[ColumnIndex].Name = dateStr;
                 // 假日的話粉紅色
                 if (day.IsHoliday)
                 {
-                    gridGarment.Columns[ColumnIndex].HeaderCell.Style.BackColor = Color.FromArgb(255, 199, 206);
+                    this.gridGarment.Columns[ColumnIndex].HeaderCell.Style.BackColor = Color.FromArgb(255, 199, 206);
                 }
+
                 ColumnIndex++;
             }
 
-            //扣除無產出的日期
+            // 扣除無產出的日期
             List<PublicPrg.Prgs.Day> removeDays = new List<PublicPrg.Prgs.Day>();
 
             foreach (var day in this.Days)
             {
-                //如果該日期，不是「有資料」，則刪掉
+                // 如果該日期，不是「有資料」，則刪掉
                 if (!this.AllData.Where(x => x.InOffLines.Where(y => y.DateWithLeadTime == day.Date
-                                                                && (MyUtility.Convert.GetInt(y.CutQty) > 0 || MyUtility.Convert.GetInt(y.StdQty) > 0) // 不同於R01,是因此只有顯示CutQty,StdQty資料
-                                                               ).Any()
-                                       ).Any()
-                    //&& day.IsHoliday
-                    )
+                                                                && (MyUtility.Convert.GetInt(y.CutQty) > 0 || MyUtility.Convert.GetInt(y.StdQty) > 0)) // 不同於R01,是因此只有顯示CutQty,StdQty資料
+                                                               .Any())
+                                       .Any())
+
+                    // && day.IsHoliday
                 {
                     removeDays.Add(day);
                 }
                 else if (!this.AllData.Where(x => x.InOffLines.Where(
                                                                     y => y.DateWithLeadTime == day.Date
-                                                                    && MyUtility.Convert.GetDecimal(y.CutQty) > 0
-                                                                ).Any()
-                                       ).Any()
-                    && day.IsHoliday
-                    )
+                                                                    && MyUtility.Convert.GetDecimal(y.CutQty) > 0)
+                                                                .Any())
+                                       .Any()
+                    && day.IsHoliday)
                 {
                     removeDays.Add(day);
                 }
@@ -352,8 +390,9 @@ namespace Sci.Production.Cutting
             {
                 if (removeDays.Where(o => o.Date == day.Date).Any())
                 {
-                    gridGarment.Columns[ColumnIndex].Visible = false; // 隱藏,但還在 ColumnIndex不會變
+                    this.gridGarment.Columns[ColumnIndex].Visible = false; // 隱藏,但還在 ColumnIndex不會變
                 }
+
                 ColumnIndex++;
             }
 
@@ -368,10 +407,11 @@ namespace Sci.Production.Cutting
             this.gridGarment.Columns[0].Frozen = true;
             this.gridGarment.Columns[0].HeaderCell.Style.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Bold);
         }
+
         private void AfterQuery2()
         {
-            this.listControlBindingSource2.DataSource = dtF;
-            foreach (DataColumn item in dtF.Columns)
+            this.listControlBindingSource2.DataSource = this.dtF;
+            foreach (DataColumn item in this.dtF.Columns)
             {
                 this.Helper.Controls.Grid.Generator(this.gridFabric_Panel_Code)
                 .Text(item.ColumnName, header: item.ColumnName, width: Widths.Auto(), iseditingreadonly: true)
@@ -381,40 +421,40 @@ namespace Sci.Production.Cutting
             int ColumnIndex = 2;
             foreach (var day in this.Days2)
             {
-                //string dateStr = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
+                // string dateStr = day.Date.ToString("MM/dd") + $"({day.Date.DayOfWeek.ToString().Substring(0, 3)}.)";
 
-                //gridFabric_Panel_Code.Columns[ColumnIndex].Name = dateStr;
+                // gridFabric_Panel_Code.Columns[ColumnIndex].Name = dateStr;
                 // 假日的話粉紅色
                 if (day.IsHoliday)
                 {
-                    gridFabric_Panel_Code.Columns[ColumnIndex].HeaderCell.Style.BackColor = Color.FromArgb(255, 199, 206);
+                    this.gridFabric_Panel_Code.Columns[ColumnIndex].HeaderCell.Style.BackColor = Color.FromArgb(255, 199, 206);
                 }
+
                 ColumnIndex++;
             }
 
-            //扣除無產出的日期
+            // 扣除無產出的日期
             List<PublicPrg.Prgs.Day> removeDays = new List<PublicPrg.Prgs.Day>();
 
             foreach (var day in this.Days2)
             {
-                //如果該日期，不是「有資料」，則刪掉
+                // 如果該日期，不是「有資料」，則刪掉
                 if (!this.AllData2.Where(x => x.InOffLines.Where(
                                                                     y => y.DateWithLeadTime == day.Date
-                                                                    && (MyUtility.Convert.GetInt(y.CutQty) > 0 || MyUtility.Convert.GetInt(y.StdQty) > 0) // 不同於R01,是因此只有顯示CutQty,StdQty資料
-                                                                ).Any()
-                                       ).Any()
-                    //&& day.IsHoliday
-                    )
+                                                                    && (MyUtility.Convert.GetInt(y.CutQty) > 0 || MyUtility.Convert.GetInt(y.StdQty) > 0)) // 不同於R01,是因此只有顯示CutQty,StdQty資料
+                                                                .Any())
+                                       .Any())
+
+                    // && day.IsHoliday
                 {
                     removeDays.Add(day);
                 }
                 else if (!this.AllData.Where(x => x.InOffLines.Where(
                                                                     y => y.DateWithLeadTime == day.Date
-                                                                    && MyUtility.Convert.GetDecimal(y.WIP) > 0
-                                                                ).Any()
-                                       ).Any()
-                    && day.IsHoliday
-                    )
+                                                                    && MyUtility.Convert.GetDecimal(y.WIP) > 0)
+                                                                .Any())
+                                       .Any()
+                    && day.IsHoliday)
                 {
                     removeDays.Add(day);
                 }
@@ -425,8 +465,9 @@ namespace Sci.Production.Cutting
             {
                 if (removeDays.Where(o => o.Date == day.Date).Any())
                 {
-                    gridFabric_Panel_Code.Columns[ColumnIndex].Visible = false; // 隱藏,但還在 ColumnIndex不會變
+                    this.gridFabric_Panel_Code.Columns[ColumnIndex].Visible = false; // 隱藏,但還在 ColumnIndex不會變
                 }
+
                 ColumnIndex++;
             }
 
@@ -488,7 +529,7 @@ drop table #OrderList
                 string MDivisionID = dr["MDivisionID"].ToString();
                 string FactoryID = dr["FactoryID"].ToString();
 
-                PublicPrg.Prgs.GetGarmentListTable(string.Empty, POID, "", out GarmentTb);
+                PublicPrg.Prgs.GetGarmentListTable(string.Empty, POID, string.Empty, out GarmentTb);
 
                 List<string> AnnotationList = GarmentTb.AsEnumerable().Where(o => !MyUtility.Check.Empty(o["Annotation"].ToString())).Select(o => o["Annotation"].ToString()).Distinct().ToList();
 
@@ -498,7 +539,7 @@ drop table #OrderList
                 {
                     foreach (var item in Annotation.Split('+'))
                     {
-                        string input = "";
+                        string input = string.Empty;
                         for (int i = 0; i <= item.Length - 1; i++)
                         {
                             // 排除掉數字
@@ -508,6 +549,7 @@ drop table #OrderList
                                 input += item[i].ToString();
                             }
                         }
+
                         if (!AnnotationList_Final.Contains(input) && MyUtility.Check.Seek($"SELECT 1 FROM Subprocess WHERE ID='{input}' "))
                         {
                             AnnotationList_Final.Add(input);
@@ -555,7 +597,7 @@ and s.FactoryID = '{FactoryID}'
                     LeadTime o = new LeadTime()
                     {
                         OrderID = OrderID,
-                        LeadTimeDay = MyUtility.Check.Empty(AnnotationStr) ? 0 : Convert.ToInt32(LeadTime_dt.Rows[0]["LeadTime"]) //加工段為空，LeadTimeDay = 0
+                        LeadTimeDay = MyUtility.Check.Empty(AnnotationStr) ? 0 : Convert.ToInt32(LeadTime_dt.Rows[0]["LeadTime"]), // 加工段為空，LeadTimeDay = 0
                     };
                     this.LeadTimeList.Add(o);
                 }
@@ -569,16 +611,20 @@ and s.FactoryID = '{FactoryID}'
 When the settings are complete, can be use this function!!
 ";
                 this.finalmsg = message;
-                //MyUtility.Msg.InfoBox(this.finalmsg);
+
+                // MyUtility.Msg.InfoBox(this.finalmsg);
                 return false;
             }
+
             return true;
         }
+
         private void Grid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex > 0)
-                //(e.ColumnIndex > 0 && this.tabControl1.SelectedIndex == 0) ||
-                //(e.ColumnIndex > 0 && this.tabControl1.SelectedIndex == 1))
+
+                // (e.ColumnIndex > 0 && this.tabControl1.SelectedIndex == 0) ||
+                // (e.ColumnIndex > 0 && this.tabControl1.SelectedIndex == 1))
             {
                 return;
             }
@@ -612,6 +658,7 @@ When the settings are complete, can be use this function!!
 
         private int Qend = 0;
         private int Qrun = 1;
+
         private void BgWorkerUpdateInfo_DoWork(object sender, DoWorkEventArgs e)
         {
             if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
@@ -620,31 +667,36 @@ When the settings are complete, can be use this function!!
             }
             else
             {
-                Qend = 0;
-                if (!Query1())
+                this.Qend = 0;
+                if (!this.Query1())
                 {
-                    Qend = 3;
+                    this.Qend = 3;
                     this.bgWorkerUpdateInfo.CancelAsync();
                     this.bgWorkerUpdateInfo.ReportProgress(0);
                     return;
                 }
-                Qend = 1;
 
-                if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true) return;
+                this.Qend = 1;
+
+                if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
+                {
+                    return;
+                }
+
                 this.bgWorkerUpdateInfo.ReportProgress(100);
 
-                Qrun = 2;
-                if (!Query2())
+                this.Qrun = 2;
+                if (!this.Query2())
                 {
-                    Qend = 3;
+                    this.Qend = 3;
                     this.bgWorkerUpdateInfo.CancelAsync();
                     this.bgWorkerUpdateInfo.ReportProgress(0);
                     return;
                 }
-                Qend = 2;
+
+                this.Qend = 2;
                 this.bgWorkerUpdateInfo.ReportProgress(100);
             }
-
         }
 
         private void BgWorkerUpdateInfo_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -655,33 +707,35 @@ When the settings are complete, can be use this function!!
                 {
                     MyUtility.Msg.WarningBox(this.finalmsg);
                 }
+
                 return;
             }
-            if (Qrun == 1)
+
+            if (this.Qrun == 1)
             {
-                progressBar1.Value = e.ProgressPercentage;
+                this.progressBar1.Value = e.ProgressPercentage;
             }
             else
             {
-                progressBar2.Value = e.ProgressPercentage;
+                this.progressBar2.Value = e.ProgressPercentage;
             }
 
-            if (Qend == 1)
+            if (this.Qend == 1)
             {
-                progressBar1.Visible = false;
-                AfterQuery1();
-                Qend = 0;
+                this.progressBar1.Visible = false;
+                this.AfterQuery1();
+                this.Qend = 0;
             }
-            else if (Qend == 2)
+            else if (this.Qend == 2)
             {
-                progressBar2.Visible = false;
-                AfterQuery2();
-                Qend = 0;
+                this.progressBar2.Visible = false;
+                this.AfterQuery2();
+                this.Qend = 0;
             }
-            else if (Qend == 3)
+            else if (this.Qend == 3)
             {
-                progressBar1.Visible = false;
-                progressBar2.Visible = false;
+                this.progressBar1.Visible = false;
+                this.progressBar2.Visible = false;
             }
         }
 
@@ -697,7 +751,7 @@ When the settings are complete, can be use this function!!
         {
             if (e.ColumnIndex > 0 && e.RowIndex > -1)
             {
-                if (e.RowIndex% 4 > 1)
+                if (e.RowIndex % 4 > 1)
                 {
                     e.CellStyle.BackColor = Color.FromArgb(128, 255, 255);
                 }

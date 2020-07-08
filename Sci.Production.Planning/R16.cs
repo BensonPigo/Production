@@ -636,6 +636,7 @@ where o.LocalOrder = 0 {whereIncludeCancelOrder}
                         range.Interior.ColorIndex = 3;
                     }
                 }
+
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["Accessory receiving Reqd CriticalActivity"]))
                 {
                     range = (Excel.Range)objSheet.Cells[i + 3, 55];
@@ -656,6 +657,7 @@ where o.LocalOrder = 0 {whereIncludeCancelOrder}
                         range.Interior.ColorIndex = 3;
                     }
                 }
+
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["Packing material receiving Reqd CriticalActivity"]))
                 {
                     range = (Excel.Range)objSheet.Cells[i + 3, 58];
@@ -675,6 +677,7 @@ where o.LocalOrder = 0 {whereIncludeCancelOrder}
                         range.Interior.ColorIndex = 3;
                     }
                 }
+
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["Material Inspection Reqd CriticalActivity"]))
                 {
                     range = (Excel.Range)objSheet.Cells[i + 3, 61];
@@ -694,6 +697,7 @@ where o.LocalOrder = 0 {whereIncludeCancelOrder}
                         range.Interior.ColorIndex = 3;
                     }
                 }
+
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["Cutting inline Reqd Complete CriticalActivity"]))
                 {
                     range = (Excel.Range)objSheet.Cells[i + 3, 63];
@@ -714,6 +718,7 @@ where o.LocalOrder = 0 {whereIncludeCancelOrder}
                         range.Interior.ColorIndex = 3;
                     }
                 }
+
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["PPMeeting Reqd Complete CriticalActivity"]))
                 {
                     range = (Excel.Range)objSheet.Cells[i + 3, 68];
@@ -734,6 +739,7 @@ where o.LocalOrder = 0 {whereIncludeCancelOrder}
                         range.Interior.ColorIndex = 3;
                     }
                 }
+
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["Wahsing Reqd Complete CriticalActivity"]))
                 {
                     range = (Excel.Range)objSheet.Cells[i + 3, 71];
@@ -754,6 +760,7 @@ where o.LocalOrder = 0 {whereIncludeCancelOrder}
                         range.Interior.ColorIndex = 3;
                     }
                 }
+
                 if (!MyUtility.Check.Empty(this.printData.Rows[i]["Carton Reqd Complete CriticalActivity"]))
                 {
                     range = (Excel.Range)objSheet.Cells[i + 3, 74];

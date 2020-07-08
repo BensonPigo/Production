@@ -5,11 +5,9 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using Sci.Production.PublicPrg;
-using Ict.Win.UI;
 using System.Linq;
 using System.Data.SqlClient;
 
@@ -467,10 +465,10 @@ where pl.ID != '{0}'
       and pld.OrderShipmodeSeq = '{2}'
       and pld.Article = '{3}'
       and pld.SizeCode = '{4}'", dr["ID"],
-                               dr["OrderID"],
-                               dr["OrderShipmodeSeq"],
-                               dr["Article"],
-                               dr["SizeCode"]);
+                            dr["OrderID"],
+                            dr["OrderShipmodeSeq"],
+                            dr["Article"],
+                            dr["SizeCode"]);
 
                         string strInvAdjustSQL = string.Format(
                             @"
@@ -481,9 +479,9 @@ where InvA.OrderID = '{0}'
       and InvA.OrderShipmodeSeq = '{1}'
       and InvAQ.Article = '{2}'
       and InvAQ.SizeCode = '{3}'", dr["OrderID"],
-                                 dr["OrderShipmodeSeq"],
-                                 dr["Article"],
-                                 dr["SizeCode"]);
+                            dr["OrderShipmodeSeq"],
+                            dr["Article"],
+                            dr["SizeCode"]);
 
                         dr["OtherConfirmQty"] = MyUtility.GetValue.Lookup(strOtherConfirmSQL);
                         dr["InvAdjustQty"] = MyUtility.GetValue.Lookup(strInvAdjustSQL);
@@ -624,7 +622,7 @@ select oqd.Id as OrderID
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 where oqd.Id = '{0}'
       and oqd.Seq = '{1}'", dr["OrderID"].ToString(),
-                          dr["OrderShipmodeSeq"].ToString());
+                        dr["OrderShipmodeSeq"].ToString());
                     if (!(selectResult = DBProxy.Current.Select(null, this.sqlCmd, out tmpPackData)))
                     {
                         MyUtility.Msg.WarningBox("Query pack qty fail!");
@@ -670,10 +668,10 @@ where pl.ID != '{0}'
       and pld.OrderShipmodeSeq = '{2}'
       and pld.Article = '{3}'
       and pld.SizeCode = '{4}'", dr["ID"],
-                               dr["OrderID"],
-                               dr["OrderShipmodeSeq"],
-                               dr["Article"],
-                               dr["SizeCode"]);
+                    dr["OrderID"],
+                    dr["OrderShipmodeSeq"],
+                    dr["Article"],
+                    dr["SizeCode"]);
 
                 string strInvAdjustSQL = string.Format(
                     @"
@@ -684,9 +682,9 @@ where InvA.OrderID = '{0}'
       and InvA.OrderShipmodeSeq = '{1}'
       and InvAQ.Article = '{2}'
       and InvAQ.SizeCode = '{3}'", dr["OrderID"],
-                                 dr["OrderShipmodeSeq"],
-                                 dr["Article"],
-                                 dr["SizeCode"]);
+                    dr["OrderShipmodeSeq"],
+                    dr["Article"],
+                    dr["SizeCode"]);
 
                 dr["OtherConfirmQty"] = MyUtility.GetValue.Lookup(strOtherConfirmSQL);
                 dr["InvAdjustQty"] = MyUtility.GetValue.Lookup(strInvAdjustSQL);
@@ -896,7 +894,7 @@ select oqd.Id as OrderID
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 where oqd.Id = '{0}'
 	  and oqd.Seq = '{1}'", dr["OrderID"].ToString(),
-                          dr["OrderShipmodeSeq"].ToString());
+                        dr["OrderShipmodeSeq"].ToString());
                     if (!(selectResult = DBProxy.Current.Select(null, this.sqlCmd, out tmpPackData)))
                     {
                         MyUtility.Msg.WarningBox("Query pack qty fail!");
@@ -990,7 +988,7 @@ where oqd.Id = '{0}'
             }
             else
             {
-                if (!PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), ""))
+                if (!PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), string.Empty))
                 {
                     return false;
                 }

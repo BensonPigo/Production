@@ -7,7 +7,6 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using System.Runtime.InteropServices;
 
 namespace Sci.Production.Logistic
 {
@@ -28,7 +27,6 @@ namespace Sci.Production.Logistic
 
         private DataTable gridData;
         private string selectDataTable_DefaultView_Sort = string.Empty;
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         /// <summary>
         /// OnFormLoaded()

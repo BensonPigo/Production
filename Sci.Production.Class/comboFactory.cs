@@ -1,14 +1,9 @@
 ﻿using Ict;
 using Sci.Data;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sci.Production.Class
 {
@@ -19,26 +14,27 @@ namespace Sci.Production.Class
 
         public bool IssupportJunk
         {
-            get { return _IssupportJunk; }
-            set { _IssupportJunk = value; }
+            get { return this._IssupportJunk; }
+            set { this._IssupportJunk = value; }
         }
+
         public bool FilteMDivision
         {
-            get { return _FilteMDivision; }
-            set { _FilteMDivision = value; }
+            get { return this._FilteMDivision; }
+            set { this._FilteMDivision = value; }
         }
 
         public comboFactory()
         {
-            InitializeComponent();
-            this.Size = new System.Drawing.Size(80, 23);            
+            this.InitializeComponent();
+            this.Size = new System.Drawing.Size(80, 23);
         }
 
         public comboFactory(IContainer container)
         {
             container.Add(this);
-            InitializeComponent();
-            this.Size = new System.Drawing.Size(80, 23);            
+            this.InitializeComponent();
+            this.Size = new System.Drawing.Size(80, 23);
         }
 
         /// <summary>
@@ -59,13 +55,15 @@ namespace Sci.Production.Class
             {
                 listFilte.Add("Junk = 0");
             }
+
             if (this._FilteMDivision)
             {
                 listFilte.Add("MDivisionID = @MDivision");
             }
             #endregion
             #region SQL CMD
-            string sqlcmd = string.Format(@"
+            string sqlcmd = string.Format(
+                @"
 select *
 from (
     Select Factory = ''
@@ -75,7 +73,7 @@ from (
     from Factory WITH (NOLOCK) 
     {0}
 ) a
-order by Factory", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : "");
+order by Factory", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : string.Empty);
             #endregion
             result = DBProxy.Current.Select(null, sqlcmd, listSqlPar, out dtFactoryData);
             if (result && dtFactoryData != null)

@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sci.Data;
-using Sci.Win.UI;
 using System.Configuration;
 using System.Xml.Linq;
 using Ict;
@@ -51,7 +46,7 @@ namespace Sci.Production.Class
             DataTable ZoneData = new DataTable();
             ZoneData.Columns.Add("zone", typeof(string));
             DataTable Data;
-            
+
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
             List<string> strSevers = ConfigurationManager.AppSettings["PMSDBServer"].Split(',').ToList();
             strSevers.Remove("PMSDB_TSR");
@@ -72,6 +67,7 @@ namespace Sci.Production.Class
             for (int i = 0; i < connectionString.Count; i++)
             {
                 string conString = connectionString[i];
+
                 // 跨資料庫連線，將所需資料存到TempTable，再給不同資料庫使用
                 SqlConnection con;
                 using (con = new SqlConnection(conString))
@@ -83,6 +79,7 @@ namespace Sci.Production.Class
                     {
                         return;
                     }
+
                     foreach (DataRow row in Data.Rows)
                     {
                         ZoneData.ImportRow(row);
@@ -92,13 +89,12 @@ namespace Sci.Production.Class
 
             var zonelist = ZoneData.AsEnumerable().Select(s => new { zone = MyUtility.Convert.GetString(s["zone"]) }).Distinct().OrderBy(o => o.zone).ToList();
 
-
             // 第一筆加入空白
             this.DataSource = zonelist;
             this.ValueMember = "zone";
             this.DisplayMember = "zone";
 
-            //this.SelectedValue = (defalutValue == null) ? "" : defalutValue;
+            // this.SelectedValue = (defalutValue == null) ? "" : defalutValue;
         }
     }
 }

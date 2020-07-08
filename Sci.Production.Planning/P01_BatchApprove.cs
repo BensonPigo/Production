@@ -265,7 +265,7 @@ inner join dbo.factory WITH (NOLOCK) on factory.id = ods.factoryid
 where ods.finished=0 and ods.isforecast = 0 and factory.IsProduceFty = 1
 and (ods.category = 'B' or ods.category = 'S')
 and ods.qty > 0 and (ot.qty > 0 or ot.tms > 0) ",
-checkSelect ? 1 : 0);
+                    checkSelect ? 1 : 0);
                 if (!chkApprove)
                 {
                     strSQLCmd += " and  ot.apvdate is null";

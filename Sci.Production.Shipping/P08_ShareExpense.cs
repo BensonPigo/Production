@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
@@ -1073,7 +1071,6 @@ where   ShippingAPID = '{3}'
                     }
                 }
 
-
                 SqlConnection sqlConn = null;
                 DBProxy.Current.OpenConnection(null, out sqlConn);
                 using (TransactionScope transactionScope = new TransactionScope())
@@ -1156,7 +1153,7 @@ select IsFactory = iif(IsFactory = 1, 'True', 'False')
 from LocalSupp
 where ID = '{0}'
 and Junk = 0",
-                       this.LocalSuppID);
+                        this.LocalSuppID);
 
                     // 當AP-Supplier 如果是SCI的工廠 跳過此判斷
                     bool chkIsFactory = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup(sqlGBchk));
@@ -1308,7 +1305,7 @@ select [resultType] = 'OK',
                     listCheckResult.Add(new CheckResult()
                     {
                         resultType = item["resultType"].ToString(),
-                        resultValue = item["resultValue"].ToString()
+                        resultValue = item["resultValue"].ToString(),
                     });
                 }
             }

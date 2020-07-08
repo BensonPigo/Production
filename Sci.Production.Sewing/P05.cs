@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
-using Sci.Win.Tems;
 using Ict.Win;
 using Sci.Data;
 using System.Linq;
@@ -199,7 +194,6 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
             {
                 this.ShowErr(result);
             }
-
         }
 
         private void UpdateAccuOutputQty(DataRow dr)
@@ -224,6 +218,7 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
                 MyUtility.Msg.WarningBox("This Data already confirm, can't delete");
                 return false;
             }
+
             return base.ClickDeleteBefore();
         }
 
@@ -350,6 +345,7 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                     e.Cancel = true;
                     return;
                 }
+
                 this.CurrentDetailData["ComboType"] = e.FormattedValue;
                 this.GetAccuOutputQty();
             };
@@ -449,16 +445,16 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
             #endregion
 
             #region
-            DataGridViewGeneratorNumericColumnSettings LocalUnitPrice = new DataGridViewGeneratorNumericColumnSettings();
-            LocalUnitPrice.CellValidating += (s, e) =>
+            DataGridViewGeneratorNumericColumnSettings localUnitPrice = new DataGridViewGeneratorNumericColumnSettings();
+            localUnitPrice.CellValidating += (s, e) =>
             {
                 this.CurrentDetailData["LocalUnitPrice"] = e.FormattedValue;
                 this.CurrentDetailData["UPIncludeVAT"] = MyUtility.Convert.GetDecimal(this.CurrentDetailData["LocalUnitPrice"]) + MyUtility.Convert.GetDecimal(this.CurrentDetailData["Vat"]);
                 this.CurrentDetailData.EndEdit();
             };
 
-            DataGridViewGeneratorNumericColumnSettings Vat = new DataGridViewGeneratorNumericColumnSettings();
-            Vat.CellValidating += (s, e) =>
+            DataGridViewGeneratorNumericColumnSettings vat = new DataGridViewGeneratorNumericColumnSettings();
+            vat.CellValidating += (s, e) =>
             {
                 this.CurrentDetailData["Vat"] = e.FormattedValue;
                 this.CurrentDetailData["UPIncludeVAT"] = MyUtility.Convert.GetDecimal(this.CurrentDetailData["LocalUnitPrice"]) + MyUtility.Convert.GetDecimal(this.CurrentDetailData["Vat"]);
@@ -484,8 +480,8 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                 .Numeric("PrintingAmt", header: "Printing Amt", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
 
                 .Text("LocalCurrencyID", header: "Currency", width: Widths.AnsiChars(3))
-                .Numeric("LocalUnitPrice", header: "U/P Exclude VAT(Local currency)", width: Widths.AnsiChars(12), decimal_places: 4,settings: LocalUnitPrice)
-                .Numeric("Vat", header: "VAT (Local currency)", width: Widths.AnsiChars(10), decimal_places: 2, settings: Vat)
+                .Numeric("LocalUnitPrice", header: "U/P Exclude VAT(Local currency)", width: Widths.AnsiChars(12), decimal_places: 4, settings: localUnitPrice)
+                .Numeric("Vat", header: "VAT (Local currency)", width: Widths.AnsiChars(10), decimal_places: 2, settings: vat)
                 .Numeric("UPIncludeVAT", header: "U/P Include VAT(Local currency)", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
                 .Numeric("KpiRate", header: "Kpi Rate", width: Widths.AnsiChars(3), maximum: 9, decimal_places: 2)
                 ;
@@ -611,7 +607,6 @@ where o.id = '{this.CurrentDetailData["OrderId"]}'";
                 }
 
                 this.CurrentDetailData["ComboType"] = item.GetSelecteds()[0][0];
-
             }
 
             return result;

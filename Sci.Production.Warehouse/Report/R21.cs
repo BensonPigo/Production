@@ -2,27 +2,34 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
+
 namespace Sci.Production.Warehouse
 {
     public partial class R21 : Sci.Win.Tems.PrintForm
     {
-        string StartSPNo, EndSPNo, MDivision, Factory, StartRefno, EndRefno, Color, MT, ST ,WorkNo;
+        string StartSPNo;
+        string EndSPNo;
+        string MDivision;
+        string Factory;
+        string StartRefno;
+        string EndRefno;
+        string Color;
+        string MT;
+        string ST;
+        string WorkNo;
         private bool bulk;
         private bool sample;
         private bool material;
         private bool smtl;
         private bool complete;
-        DateTime? BuyerDelivery1, BuyerDelivery2;
+        DateTime? BuyerDelivery1;
+        DateTime? BuyerDelivery2;
         DateTime? ETA1, ETA2;
         DateTime? arriveWH1, arriveWH2;
         string sqlcolumn = @"select
@@ -211,81 +218,82 @@ namespace Sci.Production.Warehouse
         public R21(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
+            Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
             comboBox1_RowSource.Add("All", "All");
             comboBox1_RowSource.Add("F", "Fabric");
             comboBox1_RowSource.Add("A", "Accessory");
-            cmbMaterialType.DataSource = new BindingSource(comboBox1_RowSource, null);
-            cmbMaterialType.ValueMember = "Key";
-            cmbMaterialType.DisplayMember = "Value";
-            cmbMaterialType.SelectedIndex = 0;
+            this.cmbMaterialType.DataSource = new BindingSource(comboBox1_RowSource, null);
+            this.cmbMaterialType.ValueMember = "Key";
+            this.cmbMaterialType.DisplayMember = "Value";
+            this.cmbMaterialType.SelectedIndex = 0;
 
-            Dictionary<String, String> comboBox2_RowSource = new Dictionary<string, string>();
+            Dictionary<string, string> comboBox2_RowSource = new Dictionary<string, string>();
             comboBox2_RowSource.Add("All", "All");
             comboBox2_RowSource.Add("B", "Bulk");
             comboBox2_RowSource.Add("I", "Inventory");
             comboBox2_RowSource.Add("O", "Scrap");
-            cmbStockType.DataSource = new BindingSource(comboBox2_RowSource, null);
-            cmbStockType.ValueMember = "Key";
-            cmbStockType.DisplayMember = "Value";
-            cmbStockType.SelectedIndex = 0;
+            this.cmbStockType.DataSource = new BindingSource(comboBox2_RowSource, null);
+            this.cmbStockType.ValueMember = "Key";
+            this.cmbStockType.DisplayMember = "Value";
+            this.cmbStockType.SelectedIndex = 0;
         }
 
         protected override bool ValidateInput()
         {
-            StartSPNo = textStartSP.Text ;
-            EndSPNo = textEndSP.Text;
-            MDivision = txtMdivision1.Text;
-            Factory = txtfactory1.Text;
-            StartRefno = textStartRefno.Text;
-            EndRefno = textEndRefno.Text;
-            Color = textColor.Text;
-            MT = cmbMaterialType.SelectedValue.ToString();
-            ST = cmbStockType.SelectedValue.ToString();
-            _reportType = rdbtnDetail.Checked ? 0 : 1;
-            boolCheckQty = checkQty.Checked;
-            BuyerDelivery1 = dateBuyerDelivery.Value1;
-            BuyerDelivery2 = dateBuyerDelivery.Value2;
-            ETA1 = dateETA.Value1;
-            ETA2 = dateETA.Value2;
-            arriveWH1 = dateArriveDate.Value1;
-            arriveWH2 = dateArriveDate.Value2;
-            WorkNo = txtWorkNo.Text;
+            this.StartSPNo = this.textStartSP.Text;
+            this.EndSPNo = this.textEndSP.Text;
+            this.MDivision = this.txtMdivision1.Text;
+            this.Factory = this.txtfactory1.Text;
+            this.StartRefno = this.textStartRefno.Text;
+            this.EndRefno = this.textEndRefno.Text;
+            this.Color = this.textColor.Text;
+            this.MT = this.cmbMaterialType.SelectedValue.ToString();
+            this.ST = this.cmbStockType.SelectedValue.ToString();
+            this._reportType = this.rdbtnDetail.Checked ? 0 : 1;
+            this.boolCheckQty = this.checkQty.Checked;
+            this.BuyerDelivery1 = this.dateBuyerDelivery.Value1;
+            this.BuyerDelivery2 = this.dateBuyerDelivery.Value2;
+            this.ETA1 = this.dateETA.Value1;
+            this.ETA2 = this.dateETA.Value2;
+            this.arriveWH1 = this.dateArriveDate.Value1;
+            this.arriveWH2 = this.dateArriveDate.Value2;
+            this.WorkNo = this.txtWorkNo.Text;
 
-            bulk = checkBulk.Checked;
-            sample = checkSample.Checked;
-            material = checkMaterial.Checked;
-            smtl = checkSMTL.Checked;
-            complete = chkComplete.Checked;
-            if (MyUtility.Check.Empty(StartSPNo) &&
-                MyUtility.Check.Empty(EndSPNo) &&
-                !dateETA.HasValue &&
-                !dateArriveDate.HasValue &&
-                !dateBuyerDelivery.HasValue &&
-                MyUtility.Check.Empty(StartRefno) &&
-                MyUtility.Check.Empty(EndRefno))
+            this.bulk = this.checkBulk.Checked;
+            this.sample = this.checkSample.Checked;
+            this.material = this.checkMaterial.Checked;
+            this.smtl = this.checkSMTL.Checked;
+            this.complete = this.chkComplete.Checked;
+            if (MyUtility.Check.Empty(this.StartSPNo) &&
+                MyUtility.Check.Empty(this.EndSPNo) &&
+                !this.dateETA.HasValue &&
+                !this.dateArriveDate.HasValue &&
+                !this.dateBuyerDelivery.HasValue &&
+                MyUtility.Check.Empty(this.StartRefno) &&
+                MyUtility.Check.Empty(this.EndRefno))
             {
                 MyUtility.Msg.WarningBox("<SP#>,<ETA>,<Arrive W/H Date>,<Buyer Delivery>,<Refno> at least one entry is required");
                 return false;
             }
+
             return true;
         }
-        
+
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            sqlcmd.Clear();
-            sqlcmd_fin.Clear();
+            this.sqlcmd.Clear();
+            this.sqlcmd_fin.Clear();
 
-            if (_reportType == 0)
+            if (this._reportType == 0)
             {
                 #region 主要sql Detail
-                sqlcmd.Append($@" 
+                this.sqlcmd.Append($@" 
 from Orders o with (nolock)
 inner join PO p with (nolock) on o.id = p.id
 inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id
-{(!string.IsNullOrEmpty(this.WorkNo) ? $"INNER JOIN Export_Detail ed ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{this.WorkNo}'" : "")}
+{(!string.IsNullOrEmpty(this.WorkNo) ? $"INNER JOIN Export_Detail ed ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{this.WorkNo}'" : string.Empty)}
 left join FtyInventory fi with (nolock) on fi.POID = psd.id and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
 left join Fabric WITH (NOLOCK) on psd.SCIRefno = fabric.SCIRefno
 outer apply
@@ -311,11 +319,11 @@ where 1=1
             else
             {
                 #region 主要sql summary
-                sqlcmd.Append($@"
+                this.sqlcmd.Append($@"
 from Orders o with (nolock)
 inner join PO p with (nolock) on o.id = p.id
 inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id
-{(!string.IsNullOrEmpty(this.WorkNo) ? $"INNER JOIN Export_Detail ed ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{this.WorkNo}'" : "")}
+{(!string.IsNullOrEmpty(this.WorkNo) ? $"INNER JOIN Export_Detail ed ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{this.WorkNo}'" : string.Empty)}
 left join MDivisionPoDetail mpd with (nolock) on mpd.POID = psd.id and mpd.Seq1 = psd.SEQ1 and mpd.seq2 = psd.SEQ2
 left join Fabric WITH (NOLOCK) on psd.SCIRefno = fabric.SCIRefno
 outer apply
@@ -336,137 +344,149 @@ where 1=1
             }
 
             #region where條件
-            if (!MyUtility.Check.Empty(StartSPNo))
+            if (!MyUtility.Check.Empty(this.StartSPNo))
             {
-                sqlcmd.Append(string.Format(" and psd.id >= '{0}'", StartSPNo));
-            }
-            if (!MyUtility.Check.Empty(EndSPNo))
-            {
-                sqlcmd.Append(string.Format(" and (psd.id <= '{0}' or psd.id like '{0}%')", EndSPNo));
-            }
-            if (!MyUtility.Check.Empty(MDivision))
-            {
-                sqlcmd.Append(string.Format(" and o.MDivisionID = '{0}'", MDivision));
-            }
-            if (!MyUtility.Check.Empty(Factory))
-            {
-                sqlcmd.Append(string.Format(" and o.FtyGroup = '{0}'", Factory));
-            }
-            if (!MyUtility.Check.Empty(StartRefno))
-            {
-                sqlcmd.Append(string.Format(" and psd.Refno >= '{0}'", StartRefno));
-            }
-            if (!MyUtility.Check.Empty(EndRefno))
-            {
-                sqlcmd.Append(string.Format(" and (psd.Refno <= '{0}' or psd.Refno like '{0}%')", EndRefno));
-            }
-            if (!MyUtility.Check.Empty(Color))
-            {
-                sqlcmd.Append(string.Format(" and psd.ColorID = '{0}'", Color));
+                this.sqlcmd.Append(string.Format(" and psd.id >= '{0}'", this.StartSPNo));
             }
 
-            if (!MyUtility.Check.Empty(MT))
+            if (!MyUtility.Check.Empty(this.EndSPNo))
             {
-                if (MT != "All")
+                this.sqlcmd.Append(string.Format(" and (psd.id <= '{0}' or psd.id like '{0}%')", this.EndSPNo));
+            }
+
+            if (!MyUtility.Check.Empty(this.MDivision))
+            {
+                this.sqlcmd.Append(string.Format(" and o.MDivisionID = '{0}'", this.MDivision));
+            }
+
+            if (!MyUtility.Check.Empty(this.Factory))
+            {
+                this.sqlcmd.Append(string.Format(" and o.FtyGroup = '{0}'", this.Factory));
+            }
+
+            if (!MyUtility.Check.Empty(this.StartRefno))
+            {
+                this.sqlcmd.Append(string.Format(" and psd.Refno >= '{0}'", this.StartRefno));
+            }
+
+            if (!MyUtility.Check.Empty(this.EndRefno))
+            {
+                this.sqlcmd.Append(string.Format(" and (psd.Refno <= '{0}' or psd.Refno like '{0}%')", this.EndRefno));
+            }
+
+            if (!MyUtility.Check.Empty(this.Color))
+            {
+                this.sqlcmd.Append(string.Format(" and psd.ColorID = '{0}'", this.Color));
+            }
+
+            if (!MyUtility.Check.Empty(this.MT))
+            {
+                if (this.MT != "All")
                 {
-                    sqlcmd.Append(string.Format(" and psd.FabricType = '{0}'", MT));
+                    this.sqlcmd.Append(string.Format(" and psd.FabricType = '{0}'", this.MT));
                 }
             }
-            if (!MyUtility.Check.Empty(ST))
+
+            if (!MyUtility.Check.Empty(this.ST))
             {
-                if (ST != "All")
+                if (this.ST != "All")
                 {
-                    if (_reportType == 0)
+                    if (this._reportType == 0)
                     {
                             {
-                            sqlcmd.Append(string.Format(" and fi.StockType = '{0}'", ST));
+                            this.sqlcmd.Append(string.Format(" and fi.StockType = '{0}'", this.ST));
                         }
                         }
                     else
                     {
-                        if (ST == "B")
+                        if (this.ST == "B")
                         {
-                            sqlcmd.Append(" and (round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2)) - round(mpd.LInvQty,2)>0");
+                            this.sqlcmd.Append(" and (round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2)) - round(mpd.LInvQty,2)>0");
                         }
-                        else if (ST == "I")
+                        else if (this.ST == "I")
                         {
-                            sqlcmd.Append(" and round(mpd.LInvQty,2) > 0");
+                            this.sqlcmd.Append(" and round(mpd.LInvQty,2) > 0");
                         }
-                        else if (ST == "O")
+                        else if (this.ST == "O")
                         {
-                            sqlcmd.Append(" and round(mpd.LObQty ,2) > 0");
+                            this.sqlcmd.Append(" and round(mpd.LObQty ,2) > 0");
                         }
                     }
                 }
             }
-            if (boolCheckQty)
+
+            if (this.boolCheckQty)
             {
-                if (_reportType == 0)
-                    sqlcmd.Append(" and (round(fi.InQty,2) - round(fi.OutQty,2) + round(fi.AdjustQty,2))>0");
+                if (this._reportType == 0)
+                {
+                    this.sqlcmd.Append(" and (round(fi.InQty,2) - round(fi.OutQty,2) + round(fi.AdjustQty,2))>0");
+                }
                 else
-                    sqlcmd.Append(" and round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2)>0");
+                {
+                    this.sqlcmd.Append(" and round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2)>0");
+                }
             }
 
-            if (!MyUtility.Check.Empty(BuyerDelivery1))
+            if (!MyUtility.Check.Empty(this.BuyerDelivery1))
             {
-                sqlcmd.Append($" and o.BuyerDelivery >='{((DateTime)BuyerDelivery1).ToString("yyyy/MM/dd")}'");
+                this.sqlcmd.Append($" and o.BuyerDelivery >='{((DateTime)this.BuyerDelivery1).ToString("yyyy/MM/dd")}'");
             }
 
-            if (!MyUtility.Check.Empty(BuyerDelivery2))
+            if (!MyUtility.Check.Empty(this.BuyerDelivery2))
             {
-                sqlcmd.Append($" and o.BuyerDelivery <='{((DateTime)BuyerDelivery2).ToString("yyyy/MM/dd")}'");
+                this.sqlcmd.Append($" and o.BuyerDelivery <='{((DateTime)this.BuyerDelivery2).ToString("yyyy/MM/dd")}'");
             }
 
-            if (!MyUtility.Check.Empty(ETA1))
+            if (!MyUtility.Check.Empty(this.ETA1))
             {
-                sqlcmd.Append($" and psd.FinalETA >='{((DateTime)ETA1).ToString("yyyy/MM/dd")}'");
+                this.sqlcmd.Append($" and psd.FinalETA >='{((DateTime)this.ETA1).ToString("yyyy/MM/dd")}'");
             }
 
-            if (!MyUtility.Check.Empty(ETA2))
+            if (!MyUtility.Check.Empty(this.ETA2))
             {
-                sqlcmd.Append($" and psd.FinalETA <='{((DateTime)ETA2).ToString("yyyy/MM/dd")}'");
+                this.sqlcmd.Append($" and psd.FinalETA <='{((DateTime)this.ETA2).ToString("yyyy/MM/dd")}'");
             }
 
-            if (this.bulk || this.sample || this.material || this.smtl) 
+            if (this.bulk || this.sample || this.material || this.smtl)
             {
-                sqlcmd.Append(" and (1=0");
+                this.sqlcmd.Append(" and (1=0");
                 if (this.bulk)
                 {
-                    sqlcmd.Append(" or o.Category = 'B'");
+                    this.sqlcmd.Append(" or o.Category = 'B'");
                 }
 
                 if (this.sample)
                 {
-                    sqlcmd.Append(" or o.Category = 'S'");
+                    this.sqlcmd.Append(" or o.Category = 'S'");
                 }
 
                 if (this.material)
                 {
-                    sqlcmd.Append(" or o.Category = 'M'");
+                    this.sqlcmd.Append(" or o.Category = 'M'");
                 }
 
                 if (this.smtl)
                 {
-                    sqlcmd.Append(" or o.Category = 'T'");
+                    this.sqlcmd.Append(" or o.Category = 'T'");
                 }
 
-                sqlcmd.Append(")");
+                this.sqlcmd.Append(")");
             }
 
             if (this.complete)
             {
-                sqlcmd.Append(" and psd.Complete = '1'");
+                this.sqlcmd.Append(" and psd.Complete = '1'");
             }
 
-            if (!MyUtility.Check.Empty(arriveWH1) && !MyUtility.Check.Empty(arriveWH2))
+            if (!MyUtility.Check.Empty(this.arriveWH1) && !MyUtility.Check.Empty(this.arriveWH2))
             {
-                sqlcmd.Append($@" 
+                this.sqlcmd.Append($@" 
  and (
 	exists (
 	select 1 from Export_Detail with (nolock) 
 	inner join Export with (nolock) on Export.ID = Export_Detail.ID
 	where   POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
-	and Export.whsearrival between '{((DateTime)arriveWH1).ToString("yyyy/MM/dd")}' and '{((DateTime)arriveWH2).ToString("yyyy/MM/dd")}' )
+	and Export.whsearrival between '{((DateTime)this.arriveWH1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.arriveWH2).ToString("yyyy/MM/dd")}' )
 or
 	exists (	
 	select 1
@@ -474,13 +494,13 @@ or
 	inner join TransferIn_Detail tsd with (nolock) on tsd.ID = ts.ID
 	where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
 	and ts.Status='Confirmed'
-	and ts.IssueDate between '{((DateTime)arriveWH1).ToString("yyyy/MM/dd")}' and '{((DateTime)arriveWH2).ToString("yyyy/MM/dd")}') 
+	and ts.IssueDate between '{((DateTime)this.arriveWH1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.arriveWH2).ToString("yyyy/MM/dd")}') 
 or 
     exists ( 
 	select 1 
     from Receiving r with (nolock) 
     inner join Receiving_detail rd with (nolock) on r.Id = rd.Id
-	where r.WhseArrival between '{((DateTime)arriveWH1).ToString("yyyy/MM/dd")}' and '{((DateTime)arriveWH2).ToString("yyyy/MM/dd")}'
+	where r.WhseArrival between '{((DateTime)this.arriveWH1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.arriveWH2).ToString("yyyy/MM/dd")}'
     and r.Status = 'Confirmed' 
     and r.Type = 'B' 
 	and rd.POID = psd.ID 
@@ -489,15 +509,15 @@ or
 )
 ");
             }
-            else if (!MyUtility.Check.Empty(arriveWH1))
+            else if (!MyUtility.Check.Empty(this.arriveWH1))
             {
-                sqlcmd.Append($@" 
+                this.sqlcmd.Append($@" 
  and (
 	exists (
 	select 1 from Export_Detail with (nolock) 
 	inner join Export with (nolock) on Export.ID = Export_Detail.ID
 	where   POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
-	and Export.whsearrival >= '{((DateTime)arriveWH1).ToString("yyyy/MM/dd")}' )
+	and Export.whsearrival >= '{((DateTime)this.arriveWH1).ToString("yyyy/MM/dd")}' )
 or
 	exists (	
 	select 1
@@ -505,13 +525,13 @@ or
 	inner join TransferIn_Detail tsd with (nolock) on tsd.ID = ts.ID
 	where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
 	and ts.Status='Confirmed'
-	and ts.IssueDate >= '{((DateTime)arriveWH1).ToString("yyyy/MM/dd")}' ) 
+	and ts.IssueDate >= '{((DateTime)this.arriveWH1).ToString("yyyy/MM/dd")}' ) 
 or 
     exists ( 
 	select 1 
     from Receiving r with (nolock) 
     inner join Receiving_detail rd with (nolock) on r.Id = rd.Id
-	where r.WhseArrival >= '{((DateTime)arriveWH1).ToString("yyyy/MM/dd")}'
+	where r.WhseArrival >= '{((DateTime)this.arriveWH1).ToString("yyyy/MM/dd")}'
     and r.Status = 'Confirmed' 
     and r.Type = 'B' 
 	and rd.POID = psd.ID 
@@ -520,15 +540,15 @@ or
 )
 ");
             }
-            else if (!MyUtility.Check.Empty(arriveWH2))
+            else if (!MyUtility.Check.Empty(this.arriveWH2))
             {
-                sqlcmd.Append($@" 
+                this.sqlcmd.Append($@" 
  and (
 	exists (
 	select 1 from Export_Detail with (nolock) 
 	inner join Export with (nolock) on Export.ID = Export_Detail.ID
 	where   POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
-	and Export.whsearrival <= '{((DateTime)arriveWH2).ToString("yyyy/MM/dd")}' )
+	and Export.whsearrival <= '{((DateTime)this.arriveWH2).ToString("yyyy/MM/dd")}' )
 or
 	exists (	
 	select 1
@@ -536,13 +556,13 @@ or
 	inner join TransferIn_Detail tsd with (nolock) on tsd.ID = ts.ID
 	where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
 	and ts.Status='Confirmed'
-	and ts.IssueDate <= '{((DateTime)arriveWH2).ToString("yyyy/MM/dd")}' ) 
+	and ts.IssueDate <= '{((DateTime)this.arriveWH2).ToString("yyyy/MM/dd")}' ) 
 or 
     exists ( 
 	select 1 
     from Receiving r with (nolock) 
     inner join Receiving_detail rd with (nolock) on r.Id = rd.Id
-	where r.WhseArrival <= '{((DateTime)arriveWH1).ToString("yyyy/MM/dd")}'
+	where r.WhseArrival <= '{((DateTime)this.arriveWH1).ToString("yyyy/MM/dd")}'
     and r.Status = 'Confirmed' 
     and r.Type = 'B' 
 	and rd.POID = psd.ID 
@@ -557,66 +577,66 @@ or
             #region Get Data
             DualResult result;
 
-            //先抓出資料筆數 大於100萬筆需另外處理(按年出多excel)
-            if (result = DBProxy.Current.Select(null, sql_cnt + sqlcmd.ToString(), out printData_cnt))
+            // 先抓出資料筆數 大於100萬筆需另外處理(按年出多excel)
+            if (result = DBProxy.Current.Select(null, this.sql_cnt + this.sqlcmd.ToString(), out this.printData_cnt))
             {
-                data_cnt = (int)printData_cnt.Rows[0]["datacnt"];
-             
+                this.data_cnt = (int)this.printData_cnt.Rows[0]["datacnt"];
+
                 return result;
             }
 
             #endregion
             return Result.True;
         }
-        
+
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-
             #region check printData
-            if (data_cnt == 0 )
+            if (this.data_cnt == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found.");
                 return false;
             }
             #endregion
-            this.SetCount(data_cnt);
+            this.SetCount(this.data_cnt);
             this.ShowWaitMessage("Excel Processing");
             #region To Excel
             DualResult result;
-            string reportname = "";
-            if (_reportType == 0)
+            string reportname = string.Empty;
+            if (this._reportType == 0)
             {
-                sqlcmd_fin.Append(sqlcolumn + sqlcmd.ToString());
+                this.sqlcmd_fin.Append(this.sqlcolumn + this.sqlcmd.ToString());
                 reportname = "Warehouse_R21_Detail.xltx";
             }
             else
             {
-                sqlcmd_fin.Append(sqlcolumn_sum + sqlcmd.ToString());
+                this.sqlcmd_fin.Append(this.sqlcolumn_sum + this.sqlcmd.ToString());
                 reportname = "Warehouse_R21_Summary.xltx";
             }
-                
 
-            if (data_cnt > 1000000)
+            if (this.data_cnt > 1000000)
             {
                 string sqlcmd_dtail;
                 Excel.Application objApp;
                 Excel.Worksheet tmpsheep = null;
                 Sci.Utility.Report.ExcelCOM com;
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName((_reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary");
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName((this._reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary");
                 int sheet_cnt = 1;
                 int split_cnt = 500000;
-                result = DBProxy.Current.Select(null, sql_yyyy + sqlcmd, out printData_yyyy);
-                if (!result ) {
+                result = DBProxy.Current.Select(null, this.sql_yyyy + this.sqlcmd, out this.printData_yyyy);
+                if (!result)
+                {
                     this.HideWaitMessage();
                     MyUtility.Msg.ErrorBox(result.Messages.ToString());
                     return result;
                 }
-                string[] exl_name = new string[printData_yyyy.Rows.Count];
+
+                string[] exl_name = new string[this.printData_yyyy.Rows.Count];
                 DataTable tmpTb;
-                for (int i = 0; i < printData_yyyy.Rows.Count; i++)
+                for (int i = 0; i < this.printData_yyyy.Rows.Count; i++)
                 {
-                    sqlcmd_dtail = sqlcmd_fin.ToString() + string.Format("  and o.SciDelivery >= '{0}' and  o.SciDelivery < = '{1}' ", printData_yyyy.Rows[i][0].ToString() + "0101", printData_yyyy.Rows[i][0].ToString() + "1231");
-                    strExcelName = Sci.Production.Class.MicrosoftFile.GetName((_reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary" + printData_yyyy.Rows[i][0].ToString());
+                    sqlcmd_dtail = this.sqlcmd_fin.ToString() + string.Format("  and o.SciDelivery >= '{0}' and  o.SciDelivery < = '{1}' ", this.printData_yyyy.Rows[i][0].ToString() + "0101", this.printData_yyyy.Rows[i][0].ToString() + "1231");
+                    strExcelName = Sci.Production.Class.MicrosoftFile.GetName((this._reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary" + this.printData_yyyy.Rows[i][0].ToString());
                     exl_name[i] = strExcelName;
                     com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + reportname, null);
                     objApp = com.ExcelApp;
@@ -624,21 +644,23 @@ or
                     com.ColumnsAutoFit = false;
                     sheet_cnt = 1;
 
-                    if (DBProxy.Current.Select(null, sqlcmd_dtail, out printData))
+                    if (DBProxy.Current.Select(null, sqlcmd_dtail, out this.printData))
                     {
-                        //如果筆數超過split_cnt再拆一次sheet
-                        if (printData.Rows.Count > split_cnt)
+                        // 如果筆數超過split_cnt再拆一次sheet
+                        if (this.printData.Rows.Count > split_cnt)
                         {
-                            int max_sheet_cnt = (int)Math.Floor((decimal)(printData.Rows.Count / split_cnt));
+                            int max_sheet_cnt = (int)Math.Floor((decimal)(this.printData.Rows.Count / split_cnt));
                             for (int j = 0; j <= max_sheet_cnt; j++)
                             {
-                                if (j < max_sheet_cnt) {
+                                if (j < max_sheet_cnt)
+                                {
                                     ((Excel.Worksheet)objApp.Workbooks[1].Worksheets[sheet_cnt]).Copy(objApp.Workbooks[1].Worksheets[sheet_cnt]);
                                 }
-                                tmpsheep = ((Excel.Worksheet)objApp.Workbooks[1].Worksheets[sheet_cnt]);
-                                tmpsheep.Name = printData_yyyy.Rows[i][0].ToString() + "-" + (j + 1).ToString();
+
+                                tmpsheep = (Excel.Worksheet)objApp.Workbooks[1].Worksheets[sheet_cnt];
+                                tmpsheep.Name = this.printData_yyyy.Rows[i][0].ToString() + "-" + (j + 1).ToString();
                                 ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Sheets[sheet_cnt]).Select();
-                                tmpTb = printData.AsEnumerable().Skip(j * split_cnt).Take(split_cnt).CopyToDataTable();
+                                tmpTb = this.printData.AsEnumerable().Skip(j * split_cnt).Take(split_cnt).CopyToDataTable();
 
                                 DualResult ok = com.WriteTable(tmpTb, 2);
 
@@ -661,41 +683,48 @@ or
                         }
                         else
                         {
-                            //複製sheet
-                            tmpsheep = ((Excel.Worksheet)objApp.Workbooks[1].Worksheets[sheet_cnt]);
-                            tmpsheep.Name = printData_yyyy.Rows[i][0].ToString();
+                            // 複製sheet
+                            tmpsheep = (Excel.Worksheet)objApp.Workbooks[1].Worksheets[sheet_cnt];
+                            tmpsheep.Name = this.printData_yyyy.Rows[i][0].ToString();
                             ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Sheets[sheet_cnt]).Select();
-                            com.WriteTable(printData, 2);
+                            com.WriteTable(this.printData, 2);
                             sheet_cnt++;
                         }
 
-                        if (printData != null)
+                        if (this.printData != null)
                         {
-                            printData.Rows.Clear();
-                            printData.Constraints.Clear();
-                            printData.Columns.Clear();
-                            printData.ExtendedProperties.Clear();
-                            printData.ChildRelations.Clear();
-                            printData.ParentRelations.Clear();
-                            printData.Dispose();
+                            this.printData.Rows.Clear();
+                            this.printData.Constraints.Clear();
+                            this.printData.Columns.Clear();
+                            this.printData.ExtendedProperties.Clear();
+                            this.printData.ChildRelations.Clear();
+                            this.printData.ParentRelations.Clear();
+                            this.printData.Dispose();
 
                             GC.Collect();
                             GC.WaitForPendingFinalizers();
                             GC.Collect();
                         }
                     }
-                    //刪除多餘sheet
+
+                    // 刪除多餘sheet
                     ((Excel.Worksheet)objApp.Workbooks[1].Worksheets[sheet_cnt + 1]).Delete();
                     ((Excel.Worksheet)objApp.Workbooks[1].Worksheets[sheet_cnt]).Delete();
                     objApp.ActiveWorkbook.SaveAs(strExcelName);
-                    if (tmpsheep != null) {
+                    if (tmpsheep != null)
+                    {
                         Marshal.ReleaseComObject(tmpsheep);
                     }
+
                     for (int f = 1; f <= objApp.Workbooks[1].Worksheets.Count; f++)
                     {
                         Excel.Worksheet sheet = objApp.Workbooks[1].Worksheets.Item[f];
-                        if (sheet != null) Marshal.ReleaseComObject(sheet);
+                        if (sheet != null)
+                        {
+                            Marshal.ReleaseComObject(sheet);
+                        }
                     }
+
                     objApp.Workbooks[1].Close();
                     objApp.Quit();
                     Marshal.ReleaseComObject(objApp);
@@ -704,7 +733,7 @@ or
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
                 }
-                
+
                 Marshal.ReleaseComObject(tmpsheep);
                 foreach (string filrstr in exl_name)
                 {
@@ -713,41 +742,43 @@ or
             }
             else
             {
-                result = DBProxy.Current.Select(null,  sqlcmd_fin.ToString(), out printData);
+                result = DBProxy.Current.Select(null,  this.sqlcmd_fin.ToString(), out this.printData);
                 if (!result)
                 {
                     this.HideWaitMessage();
                     MyUtility.Msg.ErrorBox(result.Messages.ToString());
                     return result;
                 }
-                
-                Sci.Utility.Report.ExcelCOM com =  new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + reportname, null); 
+
+                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + reportname, null);
                 Excel.Application objApp = com.ExcelApp;
-                //MyUtility.Excel.CopyToXls(printData, "", reportname, 1, showExcel: false, excelApp: objApp);
-                com.WriteTable(printData, 2);
+
+                // MyUtility.Excel.CopyToXls(printData, "", reportname, 1, showExcel: false, excelApp: objApp);
+                com.WriteTable(this.printData, 2);
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName((_reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary");
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName((this._reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary");
                 for (int f = 1; f <= objApp.Workbooks[1].Worksheets.Count; f++)
                 {
                     Excel.Worksheet sheet = objApp.Workbooks[1].Worksheets.Item[f];
                     sheet.UsedRange.Rows.AutoFit();
-                    if (sheet != null) Marshal.ReleaseComObject(sheet);
+                    if (sheet != null)
+                    {
+                        Marshal.ReleaseComObject(sheet);
+                    }
                 }
 
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Workbooks[1].Close();
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);
-               
+
                 strExcelName.OpenFile();
             }
-
 
             #endregion
             #endregion
             this.HideWaitMessage();
             return true;
         }
-
     }
 }

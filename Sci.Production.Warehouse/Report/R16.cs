@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -15,32 +10,35 @@ namespace Sci.Production.Warehouse
 {
     public partial class R16 : Sci.Win.Tems.PrintForm
     {
-        string mdivision, factory, request1, request2;
+        string mdivision;
+        string factory;
+        string request1;
+        string request2;
         DateTime? issueDate1, issueDate2;
         DataTable printData;
 
         public R16(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            txtMdivision.Text = Sci.Env.User.Keyword;
+            this.InitializeComponent();
+            this.txtMdivision.Text = Sci.Env.User.Keyword;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateIssueDate.Value1) && MyUtility.Check.Empty(dateIssueDate.Value2)) 
+            if (MyUtility.Check.Empty(this.dateIssueDate.Value1) && MyUtility.Check.Empty(this.dateIssueDate.Value2))
             {
                 MyUtility.Msg.WarningBox("Issue date can't be empty!!");
                 return false;
             }
 
-            this.issueDate1 = dateIssueDate.Value1;
-            this.issueDate2 = dateIssueDate.Value2;
-            this.mdivision = txtMdivision.Text;
-            this.factory = txtfactory.Text;
-            this.request1 = txtRquest1.Text;
-            this.request2 = txtRquest2.Text;
+            this.issueDate1 = this.dateIssueDate.Value1;
+            this.issueDate2 = this.dateIssueDate.Value2;
+            this.mdivision = this.txtMdivision.Text;
+            this.factory = this.txtfactory.Text;
+            this.request1 = this.txtRquest1.Text;
+            this.request2 = this.txtRquest2.Text;
 
             return base.ValidateInput();
         }
@@ -54,22 +52,27 @@ namespace Sci.Production.Warehouse
             {
                 where += $@" and i.IssueDate >= '{((DateTime)this.issueDate1).ToString("yyyy/MM/dd")}'";
             }
+
             if (!MyUtility.Check.Empty(this.issueDate2))
             {
                 where += $@" and i.IssueDate <= '{((DateTime)this.issueDate2).ToString("yyyy/MM/dd")}'";
             }
+
             if (!MyUtility.Check.Empty(this.mdivision))
             {
                 where += $@" and o.MDivisionID ='{this.mdivision}' ";
             }
+
             if (!MyUtility.Check.Empty(this.factory))
             {
                 where += $@" and o.FactoryID ='{this.factory}' ";
             }
+
             if (!MyUtility.Check.Empty(this.request1))
             {
                 where += $@" and i.cutplanID >='{this.request1}' ";
             }
+
             if (!MyUtility.Check.Empty(this.request2))
             {
                 where += $@" and i.cutplanID <='{this.request2}' ";
@@ -77,7 +80,7 @@ namespace Sci.Production.Warehouse
 
             #endregion
 
-            string sqlcmd =$@"
+            string sqlcmd = $@"
 select
 	i.Id
 	,o.MDivisionID 
@@ -146,15 +149,17 @@ AND i.Status = 'Confirmed'
 order by IssueDate, ID, SP, Seq, Roll, Dyelot
 ";
 
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, null, out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, null, out this.printData);
             if (!result)
             {
                 return result;
             }
-            foreach (DataRow row in printData.Rows)
+
+            foreach (DataRow row in this.printData.Rows)
             {
                 row["DescDetail"] = MyUtility.Convert.GetString(row["DescDetail"]).Trim();
             }
+
             return Result.True;
         }
 
@@ -162,9 +167,9 @@ order by IssueDate, ID, SP, Seq, Roll, Dyelot
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;

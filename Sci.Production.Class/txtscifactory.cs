@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows.Forms;
-using Sci.Data;
 using Sci.Win.UI;
 
 namespace Sci.Production.Class
@@ -20,7 +12,11 @@ namespace Sci.Production.Class
 
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,NameEN from SCIFty WITH (NOLOCK) where Junk = 0", "8,40", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.Text = item.GetSelectedString();
             this.ValidateText();
         }
@@ -34,7 +30,7 @@ namespace Sci.Production.Class
             {
                 if (MyUtility.Check.Seek(str, "SCIFty", "id") == false)
                 {
-                    this.Text = "";
+                    this.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Factory : {0} > not found!!!", str));
                     return;

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
@@ -13,9 +7,9 @@ namespace Sci.Production.Quality
        public B06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();       
+            this.InitializeComponent();
         }
-      
+
        protected override void ClickNewAfter()
        {
            this.txtAreaCode.ReadOnly = false;
@@ -29,7 +23,6 @@ namespace Sci.Production.Quality
            this.txtAreaCode.ReadOnly = true;
            this.editDescription.ReadOnly = false;
            return base.ClickEditBefore();
-           
        }
 
        protected override void ClickUndo()
@@ -45,14 +38,15 @@ namespace Sci.Production.Quality
                MyUtility.Msg.WarningBox("<Area Code> cannot be empty! ");
                return false;
            }
+
            return base.ClickSaveBefore();
        }
 
        protected override Ict.DualResult ClickSave()
        {
            this.txtAreaCode.ReadOnly = true;
-           
+
            return base.ClickSave();
-       }       
+       }
     }
 }

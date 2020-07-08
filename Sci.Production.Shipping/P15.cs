@@ -15,7 +15,6 @@ namespace Sci.Production.Shipping
             this.InitializeComponent();
             this.DefaultFilter = "ID = MainExportID  AND AddDate > DATEADD(Year,-2,GETDATE())";
             this.detailgrid.AllowUserToOrderColumns = true;
-
         }
 
         protected override void OnDetailEntered()
@@ -164,7 +163,6 @@ and Junk = 0
                 this.disPaEta.Text = dtHeader.Rows[0]["Port_ETA"].ToString();
                 this.disWaEta.Text = dtHeader.Rows[0]["Whse_ETA"].ToString();
                 this.disShipMode.Text = dtHeader.Rows[0]["FormStatus"].ToString();
-
             }
 
             // BLNO 的相關資訊

@@ -4,13 +4,8 @@ using Sci.Data;
 using Sci.Utility.Excel;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Quality
@@ -20,9 +15,9 @@ namespace Sci.Production.Quality
         public R41(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             System.Data.DataTable Year = null;
-            string cmd = (@"
+            string cmd = @"
 declare @y Table (M int);
 
 declare @StartYear int = 2013;
@@ -40,8 +35,8 @@ end
 
 select *
 from @y
-order by M desc");
-            DBProxy.Current.Select("", cmd, out Year);
+order by M desc";
+            DBProxy.Current.Select(string.Empty, cmd, out Year);
             this.comboYear.DataSource = Year;
             this.comboYear.ValueMember = "M";
             this.comboYear.DisplayMember = "M";
@@ -53,8 +48,9 @@ order by M desc");
             }
 
             this.comboBrand.SelectedIndex = 0;
-            print.Enabled = false;
+            this.print.Enabled = false;
         }
+
         string Brand;
         string Year;
         DualResult result;
@@ -62,24 +58,24 @@ order by M desc");
         System.Data.DataTable[] alldt;
         System.Data.DataTable dym = null;
         System.Data.DataTable dy = null;
-        string defect1 = "";
-        string defect2 = "";
+        string defect1 = string.Empty;
+        string defect2 = string.Empty;
         System.Data.DataTable[] dt;
         System.Data.DataTable[] dts;
 
         System.Data.DataTable[] allda;
         System.Data.DataTable sym = null;
         System.Data.DataTable sy = null;
-        string style1 = "";
-        string style2 = "";
+        string style1 = string.Empty;
+        string style2 = string.Empty;
         System.Data.DataTable[] da;
         System.Data.DataTable[] das;
 
         System.Data.DataTable[] alldatb;
         System.Data.DataTable cym = null;
         System.Data.DataTable cy = null;
-        string country1 = "";
-        string country2 = "";
+        string country1 = string.Empty;
+        string country2 = string.Empty;
         System.Data.DataTable[] datb;
         System.Data.DataTable[] datbs;
 
@@ -90,38 +86,47 @@ order by M desc");
 
         protected override bool ValidateInput()
         {
-            Brand = comboBrand.Text.ToString();
-            Year = comboYear.Text.ToString();
+            this.Brand = this.comboBrand.Text.ToString();
+            this.Year = this.comboYear.Text.ToString();
             return base.ValidateInput();
         }
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             List<SqlParameter> lis = new List<SqlParameter>();
-            string sqlWhere = ""; string gb = ""; string gb1 = ""; string gb2 = ""; string gb3 = ""; string ob = ""; string ob1 = ""; string sqlWh1 = "";
+            string sqlWhere = string.Empty;
+            string gb = string.Empty;
+            string gb1 = string.Empty;
+            string gb2 = string.Empty;
+            string gb3 = string.Empty;
+            string ob = string.Empty;
+            string ob1 = string.Empty;
+            string sqlWh1 = string.Empty;
             List<string> sqlWheres = new List<string>();
 
-            if (Brand != "")
+            if (this.Brand != string.Empty)
             {
-                sqlWheres.Add("b.BrandID ='" + Brand + "'");
+                sqlWheres.Add("b.BrandID ='" + this.Brand + "'");
             }
-            if (Year != "")
-            {
-                string Year2 = (Convert.ToInt32(Year) - 2).ToString();
-                sqlWheres.Add("year(a.StartDate)" + "between" + "'" + Year2 + "' " + "and" + "'" + Year + "'");
 
+            if (this.Year != string.Empty)
+            {
+                string Year2 = (Convert.ToInt32(this.Year) - 2).ToString();
+                sqlWheres.Add("year(a.StartDate)" + "between" + "'" + Year2 + "' " + "and" + "'" + this.Year + "'");
             }
 
             List<string> sqlWh = new List<string>();
 
-            if (Brand != "")
+            if (this.Brand != string.Empty)
             {
-                sqlWh.Add("b.BrandID ='" + Brand + "'");
+                sqlWh.Add("b.BrandID ='" + this.Brand + "'");
             }
-            if (Year != "")
+
+            if (this.Year != string.Empty)
             {
-                sqlWh.Add("year(a.StartDate)='" + Year + "'");
+                sqlWh.Add("year(a.StartDate)='" + this.Year + "'");
             }
+
             gb = "group by A.StartDate, B.DefectMainID, B.DefectSubID,C.SubName";
             ob = "order by Y,M,QTY DESC";
             gb1 = "group by A.StartDate,b.styleid";
@@ -142,8 +147,8 @@ order by M desc");
 
             #region Defect
 
-
-            string sqlcmd = string.Format(@"create table #dRanges(starts int , ends int, name varchar(20))
+            string sqlcmd = string.Format(
+                @"create table #dRanges(starts int , ends int, name varchar(20))
                                                  insert into #dRanges values
                                                   (1,1,'January'),
                                                   (2,2,'February'),
@@ -196,35 +201,48 @@ order by M desc");
 											union all
 											select fg from #temp1) as yy
 
-                                            select * from #temp", Year + "-01-01");
+                                            select * from #temp", this.Year + "-01-01");
             SqlConnection conn;
-            result = DBProxy.Current.OpenConnection("", out conn);
-            if (!result) { return result; }
-
-            //List<SqlParameter> plis = new List<SqlParameter>();
-            //plis.Add(new SqlParameter("@date", Year + "-01-01"));
-
-            result = DBProxy.Current.SelectByConn(conn, sqlcmd, out alldt);
-            if (!result) { return result; }
-            if (alldt[0].Rows.Count <= 0) return new DualResult(false, "No datas");
-
-            dym = alldt[0];
-            for (int i = 0; i < dym.Rows.Count; i++)
+            this.result = DBProxy.Current.OpenConnection(string.Empty, out conn);
+            if (!this.result)
             {
-                string dyear = dym.Rows[i]["cd"].ToString();
-                string dmonth = dym.Rows[i]["name"].ToString();
-                string a = string.Format("SELECT top 10 Defect,Qty, Amount, rnk FROM #temp WHERE y = '{0}' and m  ='{1}'", dyear, dmonth);
-                defect1 += a + ' ' + Environment.NewLine;
+                return this.result;
             }
 
-            result = DBProxy.Current.SelectByConn(conn, defect1, out dt);
-            if (!result) { return result; }
-
-            dy = alldt[1];
-            for (int i = 0; i < dy.Rows.Count; i++)
+            // List<SqlParameter> plis = new List<SqlParameter>();
+            // plis.Add(new SqlParameter("@date", Year + "-01-01"));
+            this.result = DBProxy.Current.SelectByConn(conn, sqlcmd, out this.alldt);
+            if (!this.result)
             {
-                string dyear1 = dy.Rows[i]["yy"].ToString();
-                string b = string.Format(@"
+                return this.result;
+            }
+
+            if (this.alldt[0].Rows.Count <= 0)
+            {
+                return new DualResult(false, "No datas");
+            }
+
+            this.dym = this.alldt[0];
+            for (int i = 0; i < this.dym.Rows.Count; i++)
+            {
+                string dyear = this.dym.Rows[i]["cd"].ToString();
+                string dmonth = this.dym.Rows[i]["name"].ToString();
+                string a = string.Format("SELECT top 10 Defect,Qty, Amount, rnk FROM #temp WHERE y = '{0}' and m  ='{1}'", dyear, dmonth);
+                this.defect1 += a + ' ' + Environment.NewLine;
+            }
+
+            this.result = DBProxy.Current.SelectByConn(conn, this.defect1, out this.dt);
+            if (!this.result)
+            {
+                return this.result;
+            }
+
+            this.dy = this.alldt[1];
+            for (int i = 0; i < this.dy.Rows.Count; i++)
+            {
+                string dyear1 = this.dy.Rows[i]["yy"].ToString();
+                string b = string.Format(
+                    @"
 select top 10
     [Defect] = C.SubName
     ,[Qty] = SUM(B.QTY)
@@ -237,19 +255,23 @@ where a.Junk=0
 AND b.BrandID ='{1}' 
 AND year(a.StartDate) = '{0}'
 group by B.DefectMainID, B.DefectSubID,C.SubName 
-order by  SUM(B.Qty) desc,SUM(B.ValueinUSD) desc"
-                    , dyear1, Brand);
-                defect2 += b + ' ' + Environment.NewLine;
+order by  SUM(B.Qty) desc,SUM(B.ValueinUSD) desc",
+                    dyear1, this.Brand);
+                this.defect2 += b + ' ' + Environment.NewLine;
             }
 
-            result = DBProxy.Current.SelectByConn(conn, defect2, out dts);
-            if (!result) { return result; }
+            this.result = DBProxy.Current.SelectByConn(conn, this.defect2, out this.dts);
+            if (!this.result)
+            {
+                return this.result;
+            }
 
             #endregion
 
             #region Style
 
-            string scmd = string.Format(@"create table #dRanges(starts int , ends int, name varchar(20))
+            string scmd = string.Format(
+                @"create table #dRanges(starts int , ends int, name varchar(20))
                                                  insert into #dRanges values
                                                   (1,1,'January'),
                                                   (2,2,'February'),
@@ -300,42 +322,54 @@ order by  SUM(B.Qty) desc,SUM(B.ValueinUSD) desc"
 											union all
 											select fg from #temp1) as yy
 
-                                            select * from #temp", Year + "-01-01");
+                                            select * from #temp", this.Year + "-01-01");
             SqlConnection con;
-            result = DBProxy.Current.OpenConnection("", out con);
-            if (!result) { return result; }
-
-            result = DBProxy.Current.SelectByConn(con, scmd, out allda);
-            if (!result) { return result; }
-
-
-            sym = allda[0];
-            for (int i = 0; i < sym.Rows.Count; i++)
+            this.result = DBProxy.Current.OpenConnection(string.Empty, out con);
+            if (!this.result)
             {
-                string syear = sym.Rows[i]["cd"].ToString();
-                string smonth = sym.Rows[i]["name"].ToString();
+                return this.result;
+            }
+
+            this.result = DBProxy.Current.SelectByConn(con, scmd, out this.allda);
+            if (!this.result)
+            {
+                return this.result;
+            }
+
+            this.sym = this.allda[0];
+            for (int i = 0; i < this.sym.Rows.Count; i++)
+            {
+                string syear = this.sym.Rows[i]["cd"].ToString();
+                string smonth = this.sym.Rows[i]["name"].ToString();
                 string a = string.Format("SELECT top 10 Style,SUM(Qty) AS Qty, SUM(Amount) AS Amount ,row_number() over (order by SUM(Qty) desc) as rnk FROM #temp WHERE y = '{0}' and m  ='{1}' GROUP BY style ORDER BY SUM(Qty) DESC,SUM(Amount) DESC ", syear, smonth);
-                style1 += a + ' ' + Environment.NewLine;
+                this.style1 += a + ' ' + Environment.NewLine;
             }
 
-            result = DBProxy.Current.SelectByConn(con, style1, out da);
-            if (!result) { return result; }
-
-            sy = allda[1];
-            for (int i = 0; i < sy.Rows.Count; i++)
+            this.result = DBProxy.Current.SelectByConn(con, this.style1, out this.da);
+            if (!this.result)
             {
-                string syear1 = sy.Rows[i]["yy"].ToString();
-                string b = string.Format("SELECT top 10 Style,SUM(Qty) AS Qty, SUM(Amount) AS Amount ,row_number() over (order by SUM(Qty) desc) as rnk FROM #temp WHERE y = '{0}' GROUP BY Style ORDER BY SUM(Qty) DESC,SUM(Amount) DESC", syear1);
-                style2 += b + ' ' + Environment.NewLine;
+                return this.result;
             }
 
-            result = DBProxy.Current.SelectByConn(con, style2, out das);
-            if (!result) { return result; }
+            this.sy = this.allda[1];
+            for (int i = 0; i < this.sy.Rows.Count; i++)
+            {
+                string syear1 = this.sy.Rows[i]["yy"].ToString();
+                string b = string.Format("SELECT top 10 Style,SUM(Qty) AS Qty, SUM(Amount) AS Amount ,row_number() over (order by SUM(Qty) desc) as rnk FROM #temp WHERE y = '{0}' GROUP BY Style ORDER BY SUM(Qty) DESC,SUM(Amount) DESC", syear1);
+                this.style2 += b + ' ' + Environment.NewLine;
+            }
+
+            this.result = DBProxy.Current.SelectByConn(con, this.style2, out this.das);
+            if (!this.result)
+            {
+                return this.result;
+            }
             #endregion
 
             #region Country
 
-            string sqcmd = string.Format(@"create table #dRanges(starts int , ends int, name varchar(20))
+            string sqcmd = string.Format(
+                @"create table #dRanges(starts int , ends int, name varchar(20))
                                                  insert into #dRanges values
                                                   (1,1,'January'),
                                                   (2,2,'February'),
@@ -386,42 +420,53 @@ order by  SUM(B.Qty) desc,SUM(B.ValueinUSD) desc"
 											union all
 											select fg from #temp1) as yy
 
-                                            select * from #temp", Year + "-01-01");
+                                            select * from #temp", this.Year + "-01-01");
             SqlConnection connection;
-            result = DBProxy.Current.OpenConnection("", out connection);
-            if (!result) { return result; }
-
-            result = DBProxy.Current.SelectByConn(connection, sqcmd, out alldatb);
-            if (!result) { return result; }
-
-
-            cym = alldatb[0];
-            for (int i = 0; i < cym.Rows.Count; i++)
+            this.result = DBProxy.Current.OpenConnection(string.Empty, out connection);
+            if (!this.result)
             {
-                string cyear = cym.Rows[i]["cd"].ToString();
-                string cmonth = cym.Rows[i]["name"].ToString();
+                return this.result;
+            }
+
+            this.result = DBProxy.Current.SelectByConn(connection, sqcmd, out this.alldatb);
+            if (!this.result)
+            {
+                return this.result;
+            }
+
+            this.cym = this.alldatb[0];
+            for (int i = 0; i < this.cym.Rows.Count; i++)
+            {
+                string cyear = this.cym.Rows[i]["cd"].ToString();
+                string cmonth = this.cym.Rows[i]["name"].ToString();
                 string a = string.Format("SELECT top 10 Country,SUM(Qty) AS Qty, SUM(Amount) AS Amount ,row_number() over (order by SUM(Qty) desc) as rnk FROM #temp WHERE y = '{0}' and m  ='{1}' GROUP BY Country ORDER BY SUM(Qty) DESC,SUM(Amount) DESC", cyear, cmonth);
-                country1 += a + ' ' + Environment.NewLine;
+                this.country1 += a + ' ' + Environment.NewLine;
             }
 
-            result = DBProxy.Current.SelectByConn(connection, country1, out datb);
-            if (!result) { return result; }
-
-            cy = alldatb[1];
-            for (int i = 0; i < cy.Rows.Count; i++)
+            this.result = DBProxy.Current.SelectByConn(connection, this.country1, out this.datb);
+            if (!this.result)
             {
-                string cyear1 = cy.Rows[i]["yy"].ToString();
-                string b = string.Format("SELECT top 10 Country,SUM(Qty) AS Qty, SUM(Amount) AS Amount ,row_number() over (order by SUM(Qty) desc) as rnk FROM #temp WHERE y = '{0}' GROUP BY Country ORDER BY SUM(Qty) DESC,SUM(Amount) DESC", cyear1);
-                country2 += b + ' ' + Environment.NewLine;
+                return this.result;
             }
 
-            result = DBProxy.Current.SelectByConn(connection, country2, out datbs);
-            if (!result) { return result; }
+            this.cy = this.alldatb[1];
+            for (int i = 0; i < this.cy.Rows.Count; i++)
+            {
+                string cyear1 = this.cy.Rows[i]["yy"].ToString();
+                string b = string.Format("SELECT top 10 Country,SUM(Qty) AS Qty, SUM(Amount) AS Amount ,row_number() over (order by SUM(Qty) desc) as rnk FROM #temp WHERE y = '{0}' GROUP BY Country ORDER BY SUM(Qty) DESC,SUM(Amount) DESC", cyear1);
+                this.country2 += b + ' ' + Environment.NewLine;
+            }
+
+            this.result = DBProxy.Current.SelectByConn(connection, this.country2, out this.datbs);
+            if (!this.result)
+            {
+                return this.result;
+            }
 
             #endregion
 
             #region Factory
-            dicFTY.Clear();
+            this.dicFTY.Clear();
             string scd = string.Format(@"create table #dRanges(starts int , ends int, name varchar(20))
                                                  insert into #dRanges values
                                                   (1,1,'January'),
@@ -479,19 +524,25 @@ order by  SUM(B.Qty) desc,SUM(B.ValueinUSD) desc"
 
 												select * from #defect1");
             SqlConnection connction;
-            result = DBProxy.Current.OpenConnection("", out connction);
-            if (!result) { return result; }
-
-            result = DBProxy.Current.SelectByConn(connction, scd, out alldatatable);
-            if (!result) { return result; }
-
-
-            fm = alldatatable[0];
-            for (int i = 0; i < fm.Rows.Count; i++)
+            this.result = DBProxy.Current.OpenConnection(string.Empty, out connction);
+            if (!this.result)
             {
-                string factory = fm.Rows[i]["fty"].ToString();
+                return this.result;
+            }
+
+            this.result = DBProxy.Current.SelectByConn(connction, scd, out this.alldatatable);
+            if (!this.result)
+            {
+                return this.result;
+            }
+
+            this.fm = this.alldatatable[0];
+            for (int i = 0; i < this.fm.Rows.Count; i++)
+            {
+                string factory = this.fm.Rows[i]["fty"].ToString();
                 #region 撈完全準備好的Datatable By factory做不同Sheet
-                string a = string.Format(@"
+                string a = string.Format(
+                    @"
 --準備主要資料
 SELECT
 	c.name,
@@ -625,39 +676,40 @@ select 'GRAND TOTAL',null,
 	sum(YTD_Q),			format(sum(YTD_P),'P2'),		format(sum(YTD_A),'C2')
 from #last
 drop table #tmp,#t_all,#t_qty,#t_Amount,#last
-"
-                    , Brand, Year, factory);
-                DualResult r = DBProxy.Current.Select(null, a,out datatab);
+",
+                    this.Brand, this.Year, factory);
+                DualResult r = DBProxy.Current.Select(null, a, out this.datatab);
                 if (!r)
                 {
                     MyUtility.Msg.ErrorBox("SQL command Error!");
                 }
                 #endregion
-                dicFTY.Add(factory, datatab);
+                this.dicFTY.Add(factory, this.datatab);
             }
 
-
-            if (!result) { return result; }
-
-            if (null == dt_All || 0 == dt_All.Rows.Count)
+            if (!this.result)
             {
+                return this.result;
+            }
 
-                dt_All = datatab;
+            if (this.dt_All == null || this.dt_All.Rows.Count == 0)
+            {
+                this.dt_All = this.datatab;
             }
             else
             {
-                dt_All.Merge(datatab);
+                this.dt_All.Merge(this.datatab);
             }
 
-            if (!result)
+            if (!this.result)
             {
-                //return result;
-                this.ShowErr(result);
+                // return result;
+                this.ShowErr(this.result);
             }
 
             #endregion
 
-            return result;
+            return this.result;
         }
 
         Dictionary<string, System.Data.DataTable> dicFTY = new Dictionary<string, System.Data.DataTable>();
@@ -667,18 +719,17 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
 
             SaveXltReportCls sxc = new SaveXltReportCls("Quality_R41.xltx");
-            //SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(dt_All);
 
+            // SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(dt_All);
             #region Defect
 
-            //for (int i = 0; i < dt.Rows.Count; i++)
-            for (int i = 0; i < dym.Rows.Count; i++)
+            // for (int i = 0; i < dt.Rows.Count; i++)
+            for (int i = 0; i < this.dym.Rows.Count; i++)
             {
-                string dyear = dym.Rows[i]["cd"].ToString();
-                string dmonth = dym.Rows[i]["name"].ToString();
+                string dyear = this.dym.Rows[i]["cd"].ToString();
+                string dmonth = this.dym.Rows[i]["name"].ToString();
 
-
-                SaveXltReportCls.XltRptTable dxt = new SaveXltReportCls.XltRptTable(dt[i]);
+                SaveXltReportCls.XltRptTable dxt = new SaveXltReportCls.XltRptTable(this.dt[i]);
                 dxt.Columns.RemoveAt(dxt.Columns.Count - 1);
                 dxt.BoAddNewRow = false;
 
@@ -701,16 +752,14 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                 dxt.Borders.OutsideVertical = true;
                 dxt.ShowHeader = true;
                 sxc.DicDatas.Add("##defect" + i, dxt);
-
-
             }
 
-            //for (int a = 0; a < dts.Length; a++)
-            for (int a = 0; a < dy.Rows.Count; a++)
+            // for (int a = 0; a < dts.Length; a++)
+            for (int a = 0; a < this.dy.Rows.Count; a++)
             {
-                string dyear1 = dy.Rows[a]["yy"].ToString();
+                string dyear1 = this.dy.Rows[a]["yy"].ToString();
 
-                SaveXltReportCls.XltRptTable alldxtb = new SaveXltReportCls.XltRptTable(dts[a]);
+                SaveXltReportCls.XltRptTable alldxtb = new SaveXltReportCls.XltRptTable(this.dts[a]);
                 alldxtb.Columns.RemoveAt(alldxtb.Columns.Count - 1);
                 alldxtb.BoAddNewRow = false;
 
@@ -728,28 +777,27 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                 Dictionary<string, string> dic2 = new Dictionary<string, string>();
                 dic2.Add(dyear1, "1,3");
 
-
                 alldxtb.LisTitleMerge.Add(dic);
                 alldxtb.LisTitleMerge.Add(dic2);
                 alldxtb.Borders.AllCellsBorders = false;
                 alldxtb.Borders.OutsideVertical = true;
                 alldxtb.ShowHeader = true;
                 sxc.DicDatas.Add("##adefect" + a, alldxtb);
-
             }
-            SaveXltReportCls.ReplaceAction adr = addrow;
+
+            SaveXltReportCls.ReplaceAction adr = this.addrow;
             sxc.DicDatas.Add("##addRow", adr);
             #endregion
 
             #region Style
-            //for (int i = 0; i < da.Length; i++)
-            for (int i = 0; i < sym.Rows.Count; i++)
+
+            // for (int i = 0; i < da.Length; i++)
+            for (int i = 0; i < this.sym.Rows.Count; i++)
             {
-                string syear = sym.Rows[i]["cd"].ToString();
-                string smonth = sym.Rows[i]["name"].ToString();
+                string syear = this.sym.Rows[i]["cd"].ToString();
+                string smonth = this.sym.Rows[i]["name"].ToString();
 
-
-                SaveXltReportCls.XltRptTable sxt = new SaveXltReportCls.XltRptTable(da[i]);
+                SaveXltReportCls.XltRptTable sxt = new SaveXltReportCls.XltRptTable(this.da[i]);
                 sxt.Columns.RemoveAt(sxt.Columns.Count - 1);
                 sxt.BoAddNewRow = false;
 
@@ -760,7 +808,6 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                         sxt.Rows.Add();
                     }
                 }
-
 
                 Dictionary<string, string> dic = new Dictionary<string, string>();
                 dic.Add(smonth, "1,3");
@@ -775,12 +822,12 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                 sxc.DicDatas.Add("##style" + i, sxt);
             }
 
-            //for (int a = 0; a < das.Length; a++)
-            for (int a = 0; a < sy.Rows.Count; a++)
+            // for (int a = 0; a < das.Length; a++)
+            for (int a = 0; a < this.sy.Rows.Count; a++)
             {
-                string syear1 = sy.Rows[a]["yy"].ToString();
+                string syear1 = this.sy.Rows[a]["yy"].ToString();
 
-                SaveXltReportCls.XltRptTable allsxtb = new SaveXltReportCls.XltRptTable(das[a]);
+                SaveXltReportCls.XltRptTable allsxtb = new SaveXltReportCls.XltRptTable(this.das[a]);
                 allsxtb.Columns.RemoveAt(allsxtb.Columns.Count - 1);
                 allsxtb.BoAddNewRow = false;
 
@@ -791,6 +838,7 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                         allsxtb.Rows.Add();
                     }
                 }
+
                 Dictionary<string, string> dic = new Dictionary<string, string>();
                 dic.Add("OVERALL", "1,3");
 
@@ -807,14 +855,13 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
 
             #region Country
 
-            //for (int i = 0; i < datb.Length; i++)
-            for (int i = 0; i < cym.Rows.Count; i++)
+            // for (int i = 0; i < datb.Length; i++)
+            for (int i = 0; i < this.cym.Rows.Count; i++)
             {
-                string cyear = cym.Rows[i]["cd"].ToString();
-                string cmonth = cym.Rows[i]["name"].ToString();
+                string cyear = this.cym.Rows[i]["cd"].ToString();
+                string cmonth = this.cym.Rows[i]["name"].ToString();
 
-
-                SaveXltReportCls.XltRptTable cxt = new SaveXltReportCls.XltRptTable(datb[i]);
+                SaveXltReportCls.XltRptTable cxt = new SaveXltReportCls.XltRptTable(this.datb[i]);
                 cxt.Columns.RemoveAt(cxt.Columns.Count - 1);
                 cxt.BoAddNewRow = false;
                 if (cxt.Rows.Count <= 0)
@@ -839,12 +886,12 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                 sxc.DicDatas.Add("##country" + i, cxt);
             }
 
-            //for (int a = 0; a < datbs.Length; a++)
-            for (int a = 0; a < cy.Rows.Count; a++)
+            // for (int a = 0; a < datbs.Length; a++)
+            for (int a = 0; a < this.cy.Rows.Count; a++)
             {
-                string cyear1 = cy.Rows[a]["yy"].ToString();
+                string cyear1 = this.cy.Rows[a]["yy"].ToString();
 
-                SaveXltReportCls.XltRptTable allcxtb = new SaveXltReportCls.XltRptTable(datbs[a]);
+                SaveXltReportCls.XltRptTable allcxtb = new SaveXltReportCls.XltRptTable(this.datbs[a]);
                 allcxtb.Columns.RemoveAt(allcxtb.Columns.Count - 1);
                 allcxtb.BoAddNewRow = false;
 
@@ -871,13 +918,14 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
             #endregion
 
             #region Factory
-            foreach (var item in dicFTY)
+            foreach (var item in this.dicFTY)
             {
                 string fty = item.Key;
                 SaveXltReportCls.XltRptTable x_All = new SaveXltReportCls.XltRptTable(item.Value);
                 sxc.DicDatas.Add("##SUPSheetName" + fty, item.Key);
                 sxc.DicDatas.Add("##psd" + fty, x_All);
-                //凍結窗格
+
+                // 凍結窗格
                 x_All.BoFreezePanes = true;
                 x_All.IntFreezeColumn = 2;
 
@@ -888,51 +936,51 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
 
             sxc.VarToSheetName = "##SUPSheetName";
 
-            SaveXltReportCls.ReplaceAction c = CopySheet;
+            SaveXltReportCls.ReplaceAction c = this.CopySheet;
             sxc.DicDatas.Add("##copysupsheet", c);
 
-            SaveXltReportCls.ReplaceAction d = addfilter;
+            SaveXltReportCls.ReplaceAction d = this.addfilter;
             sxc.DicDatas.Add("##addfilter", d);
 
             sxc.Save(Sci.Production.Class.MicrosoftFile.GetName("Quality_R41"));
             #endregion
-            clearall();
+            this.clearall();
             return true;
         }
 
         private void clearall()
         {
-            Brand = null;
-            Year = null;
+            this.Brand = null;
+            this.Year = null;
 
-            alldt = null;
-            dym = null;
-            dy = null;
-            defect1 = "";
-            defect2 = "";
-            dt = null;
-            dts = null;
+            this.alldt = null;
+            this.dym = null;
+            this.dy = null;
+            this.defect1 = string.Empty;
+            this.defect2 = string.Empty;
+            this.dt = null;
+            this.dts = null;
 
-            allda = null;
-            sym = null;
-            sy = null;
-            style1 = "";
-            style2 = "";
-            da = null;
-            das = null;
+            this.allda = null;
+            this.sym = null;
+            this.sy = null;
+            this.style1 = string.Empty;
+            this.style2 = string.Empty;
+            this.da = null;
+            this.das = null;
 
-            alldatb = null;
-            cym = null;
-            cy = null;
-            country1 = "";
-            country2 = "";
-            datb = null;
-            datbs = null;
+            this.alldatb = null;
+            this.cym = null;
+            this.cy = null;
+            this.country1 = string.Empty;
+            this.country2 = string.Empty;
+            this.datb = null;
+            this.datbs = null;
 
-            alldatatable = null;
-            fm = null;
-            datatab = null;
-            dt_All = null;
+            this.alldatatable = null;
+            this.fm = null;
+            this.datatab = null;
+            this.dt_All = null;
         }
 
         void CopySheet(Worksheet mySheet, int rowNo, int columnNo)
@@ -945,15 +993,14 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
             Worksheet aftersheet = mySheet;
 
             List<Worksheet> lisWK = new List<Worksheet>();
-            foreach (var item in dicFTY)
+            foreach (var item in this.dicFTY)
             {
-
                 aftersheet = myExcel.Sheets.Add(After: aftersheet);
                 aftersheet.Cells[3, 1] = "##psd" + item.Key;
                 aftersheet.Cells[5, 1] = "##SUPSheetName" + item.Key;
                 aftersheet.Cells[5, 1].Font.Color = Color.Transparent;
                 aftersheet.Cells[6, 1] = "##addfilter";
-                
+
                 lisWK.Add(aftersheet);
             }
 
@@ -963,27 +1010,41 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                 {
                     wkSheet.Cells[2, idx * 3] = "Quality";
                     wkSheet.Columns[idx * 3].HorizontalAlignment = XlHAlign.xlHAlignRight;
-                    wkSheet.Cells[2, idx * 3 + 1] = "Percentage";
-                    wkSheet.Columns[idx * 3 + 1].HorizontalAlignment = XlHAlign.xlHAlignRight;
-                    wkSheet.Cells[2, idx * 3 + 2] = "Amount US$";
-                    wkSheet.Columns[idx * 3 + 2].HorizontalAlignment = XlHAlign.xlHAlignRight;
+                    wkSheet.Cells[2, (idx * 3) + 1] = "Percentage";
+                    wkSheet.Columns[(idx * 3) + 1].HorizontalAlignment = XlHAlign.xlHAlignRight;
+                    wkSheet.Cells[2, (idx * 3) + 2] = "Amount US$";
+                    wkSheet.Columns[(idx * 3) + 2].HorizontalAlignment = XlHAlign.xlHAlignRight;
                 }
 
-                wkSheet.Cells[1, 1] = ""; wkSheet.get_Range("A1:B1").Merge();
-                wkSheet.Cells[1, 2] = "";
-                wkSheet.Cells[1, 3] = "January"; wkSheet.get_Range("C1:E1").Merge();
-                wkSheet.Cells[1, 6] = "Feburary"; wkSheet.get_Range("F1:H1").Merge();
-                wkSheet.Cells[1, 9] = "March"; wkSheet.get_Range("I1:K1").Merge();
-                wkSheet.Cells[1, 12] = "April"; wkSheet.get_Range("L1:N1").Merge();
-                wkSheet.Cells[1, 15] = "May"; wkSheet.get_Range("O1:Q1").Merge();
-                wkSheet.Cells[1, 18] = "June"; wkSheet.get_Range("R1:T1").Merge();
-                wkSheet.Cells[1, 21] = "July"; wkSheet.get_Range("U1:W1").Merge();
-                wkSheet.Cells[1, 24] = "August"; wkSheet.get_Range("X1:Z1").Merge();
-                wkSheet.Cells[1, 27] = "September"; wkSheet.get_Range("AA1:AC1").Merge();
-                wkSheet.Cells[1, 30] = "October"; wkSheet.get_Range("AD1:AF1").Merge();
-                wkSheet.Cells[1, 33] = "November"; wkSheet.get_Range("AG1:AI1").Merge();
-                wkSheet.Cells[1, 36] = "December"; wkSheet.get_Range("AJ1:AL1").Merge();
-                wkSheet.Cells[1, 39] = "YTD"; wkSheet.get_Range("AM1:AO1").Merge();
+                wkSheet.Cells[1, 1] = string.Empty;
+                wkSheet.get_Range("A1:B1").Merge();
+                wkSheet.Cells[1, 2] = string.Empty;
+                wkSheet.Cells[1, 3] = "January";
+                wkSheet.get_Range("C1:E1").Merge();
+                wkSheet.Cells[1, 6] = "Feburary";
+                wkSheet.get_Range("F1:H1").Merge();
+                wkSheet.Cells[1, 9] = "March";
+                wkSheet.get_Range("I1:K1").Merge();
+                wkSheet.Cells[1, 12] = "April";
+                wkSheet.get_Range("L1:N1").Merge();
+                wkSheet.Cells[1, 15] = "May";
+                wkSheet.get_Range("O1:Q1").Merge();
+                wkSheet.Cells[1, 18] = "June";
+                wkSheet.get_Range("R1:T1").Merge();
+                wkSheet.Cells[1, 21] = "July";
+                wkSheet.get_Range("U1:W1").Merge();
+                wkSheet.Cells[1, 24] = "August";
+                wkSheet.get_Range("X1:Z1").Merge();
+                wkSheet.Cells[1, 27] = "September";
+                wkSheet.get_Range("AA1:AC1").Merge();
+                wkSheet.Cells[1, 30] = "October";
+                wkSheet.get_Range("AD1:AF1").Merge();
+                wkSheet.Cells[1, 33] = "November";
+                wkSheet.get_Range("AG1:AI1").Merge();
+                wkSheet.Cells[1, 36] = "December";
+                wkSheet.get_Range("AJ1:AL1").Merge();
+                wkSheet.Cells[1, 39] = "YTD";
+                wkSheet.get_Range("AM1:AO1").Merge();
 
                 wkSheet.Cells[2, 1] = "Description";
                 wkSheet.Cells[2, 2] = "Defect Code";
@@ -1003,8 +1064,7 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                 wkSheet.Cells[1, 39].HorizontalAlignment = XlVAlign.xlVAlignCenter;
             }
 
-            //mySheet.Delete();
-
+            // mySheet.Delete();
         }
 
         void addrow(Worksheet mySheet, int rowNo, int columnNo)
@@ -1072,26 +1132,27 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
             firstRow.Interior.Color = Color.SkyBlue;
             firstRow.Borders.LineStyle = XlLineStyle.xlContinuous;
 
-
             Microsoft.Office.Interop.Excel.Range usedRange = mySheet.UsedRange;
             Microsoft.Office.Interop.Excel.Range rows = usedRange.Rows;
             int count = 0;
 
             foreach (Microsoft.Office.Interop.Excel.Range row in rows)
             {
-
                 if (count > 0 && count < rows.Count - 2)
                 {
                     if (row.Cells[2].value.ToString().Length == 2)
                     {
                         row.Interior.Color = System.Drawing.Color.Gold;
-
                     }
-
                 }
+
                 count++;
 
-                if (row.Cells[1].Value == null) continue;
+                if (row.Cells[1].Value == null)
+                {
+                    continue;
+                }
+
                 if (row.Cells[1].Value.StartsWith("GRAND TOTAL"))
                 {
                     row.Interior.Color = System.Drawing.Color.Aquamarine;
@@ -1099,8 +1160,6 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                     row.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlVAlign.xlVAlignCenter;
                 }
             }
-
-
         }
     }
 }

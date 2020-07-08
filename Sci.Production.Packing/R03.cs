@@ -1,12 +1,8 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -43,9 +39,6 @@ namespace Sci.Production.Packing
         private string _factory;
         private string _bdate1;
         private string _bdate2;
-        private string _scandate1;
-        private string _scandate2;
-        private string _ScanName;
         private DataTable _printData;
 
         /// <summary>
@@ -233,8 +226,15 @@ order by pl.MDivisionID,pl.FactoryID,pl.ID,o.ID
             workbook.Close();
             excelApp.Quit();
 
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);
-            if (excelApp != null) Marshal.FinalReleaseComObject(excelApp);
+            if (worksheet != null)
+            {
+                Marshal.FinalReleaseComObject(worksheet);
+            }
+
+            if (excelApp != null)
+            {
+                Marshal.FinalReleaseComObject(excelApp);
+            }
             #endregion
 
             this.HideWaitMessage();

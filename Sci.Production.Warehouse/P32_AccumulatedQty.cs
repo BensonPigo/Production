@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-
 
 namespace Sci.Production.Warehouse
 {
@@ -16,17 +11,19 @@ namespace Sci.Production.Warehouse
     {
         public Sci.Win.Tems.Base P32;
         protected DataRow dr;
+
         public P32_AccumulatedQty(DataRow data)
         {
-            InitializeComponent();
-            dr = data;
+            this.InitializeComponent();
+            this.dr = data;
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             StringBuilder selectCommand1 = new StringBuilder();
-            selectCommand1.Append(string.Format(@"
+            selectCommand1.Append(string.Format(
+                @"
 with cc as(
   select  d.ToPoid
           ,d.ToSeq1
@@ -74,23 +71,26 @@ left join acc on borrow.FromPoId = acc.ToPoid and borrow.FromSeq1 = acc.ToSeq1 a
 left join cc on borrow.FromPoId = cc.ToPoid and borrow.FromSeq1 = cc.ToSeq1 and borrow.FromSeq2 = cc.ToSeq2
 left join dbo.PO_Supp_Detail p WITH (NOLOCK) on  borrow.FromPoId = p.id and borrow.FromSeq1 = p.SEQ1 and borrow.FromSeq2 = p.SEQ2
 left join Orders o  WITH (NOLOCK) on  p.id = o.id
---inner join color color on color.id=p.ColorID"
-                , dr["id"].ToString(), dr["borrowid"].ToString()));
+--inner join color color on color.id=p.ColorID",
+                this.dr["id"].ToString(), this.dr["borrowid"].ToString()));
 
             DataTable selectDataTable1;
-            P32.ShowWaitMessage("Data Loading...");
+            this.P32.ShowWaitMessage("Data Loading...");
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1.ToString(), out selectDataTable1);
-            
+
             if (selectResult1 == false)
-            { ShowErr(selectCommand1.ToString(), selectResult1); }
-            P32.HideWaitMessage();
+            {
+                this.ShowErr(selectCommand1.ToString(), selectResult1);
+            }
 
-            bindingSource1.DataSource = selectDataTable1;
+            this.P32.HideWaitMessage();
 
-            //設定Grid1的顯示欄位
+            this.bindingSource1.DataSource = selectDataTable1;
+
+            // 設定Grid1的顯示欄位
             this.gridAccumulatedQty.IsEditingReadOnly = true;
-            this.gridAccumulatedQty.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.gridAccumulatedQty)
+            this.gridAccumulatedQty.DataSource = this.bindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridAccumulatedQty)
                  .Text("frompoid", header: "Borrow SP#", width: Widths.AnsiChars(13))
                  .Text("fromseq1", header: "Borrow" + Environment.NewLine + "Seq1", width: Widths.AnsiChars(4))
                  .Text("fromseq2", header: "Borrow" + Environment.NewLine + "Seq2", width: Widths.AnsiChars(3))

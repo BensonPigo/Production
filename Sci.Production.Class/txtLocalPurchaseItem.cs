@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows.Forms;
 using Sci.Win.UI;
-using Sci.Data;
 
 namespace Sci.Production.Class
 {
@@ -25,7 +17,11 @@ namespace Sci.Production.Class
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20,4", this.Text, false, ",");
             item.Size = new System.Drawing.Size(435, 510);
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.Text = item.GetSelectedString();
             this.ValidateText();
         }
@@ -37,20 +33,18 @@ namespace Sci.Production.Class
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-
                 string sqlWhere = string.Format("Where isLocalPurchase = 1 and id='{0}'", str);
                 string sqlCmd = string.Empty;
                 sqlCmd = "select ID, Abbreviation from ArtworkType WITH (NOLOCK)" + sqlWhere;
 
                 if (MyUtility.Check.Seek(sqlCmd) == false)
                 {
-                    this.Text = "";
-                    e.Cancel = true; 
+                    this.Text = string.Empty;
+                    e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Artworktype : {0} > not found!!!", str));
                     return;
                 }
             }
-
         }
 
         public txtLocalPurchaseItem()

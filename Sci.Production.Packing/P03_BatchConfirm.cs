@@ -1,12 +1,8 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Production.PublicPrg;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
@@ -14,9 +10,7 @@ namespace Sci.Production.Packing
 {
     public partial class P03_BatchConfirm : Sci.Win.Subs.Base
     {
-        DataRow dr_master;
         DataTable dt_detail;
-        bool AutoQuery = false;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         public P03_BatchConfirm()
@@ -45,6 +39,7 @@ namespace Sci.Production.Packing
                .Date("PulloutDate", header: "Pullout Date", iseditingreadonly: true)
                .EditText("ErrorMsg", header: "Error Message", iseditingreadonly: true, width: Widths.AnsiChars(20))
               ;
+
             // 設定detailGrid Rows 是否可以編輯
             this.grid.RowEnter += this.Detailgrid_RowEnter;
             this.grid.Columns["Selected"].SortMode = DataGridViewColumnSortMode.NotSortable;
@@ -52,7 +47,7 @@ namespace Sci.Production.Packing
 
         private void Detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0 )
+            if (e.RowIndex < 0)
             {
                 return;
             }
@@ -149,7 +144,10 @@ where 1=1 and p1.Status='New' and p1.MDivisionID='{Sci.Env.User.Keyword}' and p1
                     MyUtility.Msg.WarningBox("Data not found!!");
                 }
             }
-            else { this.ShowErr(strSQLCmd.ToString(), result); }
+            else
+            {
+                this.ShowErr(strSQLCmd.ToString(), result);
+            }
 
             #region 塞入Error Msg
             foreach (DataRow dr in this.dt_detail.Rows)
@@ -177,7 +175,11 @@ where 1=1 and p1.Status='New' and p1.MDivisionID='{Sci.Env.User.Keyword}' and p1
         {
             this.grid.ValidateControl();
             DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
-            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
+            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0)
+            {
+                return;
+            }
+
             DataRow[] dr2 = dtGridBS1.Select("Selected = 1 and ErrorMsg='' ");
             if (dr2.Length == 0)
             {

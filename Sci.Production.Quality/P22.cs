@@ -16,18 +16,19 @@ namespace Sci.Production.Quality
     {
         private DataTable dtDBSource;
         private string excelFile;
+
         public P22(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();            
+            this.InitializeComponent();
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             this.grid.IsEditingReadOnly = false;
-            this.Helper.Controls.Grid.Generator(this.grid)                
-               .CheckBox("CFANeedInsp", header: "", trueValue: 1, falseValue: 0,iseditable:true)
+            this.Helper.Controls.Grid.Generator(this.grid)
+               .CheckBox("CFANeedInsp", header: string.Empty, trueValue: 1, falseValue: 0, iseditable: true)
                .Text("ID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
                .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(7), iseditingreadonly: true)
                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -81,10 +82,8 @@ namespace Sci.Production.Quality
             {
                 listSQLFilter.Add("and p2.id= @PackID");
             }
-            
-            #endregion
 
-          
+            #endregion
 
             #region Sql Command
 
@@ -163,30 +162,30 @@ and p2.DisposeFromClog= 0
 and (po.Status ='New' or po.Status is null)
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 order by p2.ID,p2.Seq";
-            #endregion            
-            DualResult result = DBProxy.Current.Select("", strCmd, listSQLParameter, out dtDBSource);
+            #endregion
+            DualResult result = DBProxy.Current.Select(string.Empty, strCmd, listSQLParameter, out this.dtDBSource);
 
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.ToString());
             }
-            else if (dtDBSource.Rows.Count < 1)
+            else if (this.dtDBSource.Rows.Count < 1)
             {
                 this.listControlBindingSource.DataSource = null;
                 MyUtility.Msg.InfoBox("Data not found !");
             }
             else
             {
-                DataTable dt = dtDBSource.Copy();
+                DataTable dt = this.dtDBSource.Copy();
                 this.listControlBindingSource.DataSource = dt;
-                Grid_Filter();
+                this.Grid_Filter();
             }
         }
 
         private void btnFind_Click(object sender, EventArgs e)
         {
             this.ShowWaitMessage("Data Loading...");
-            Find();
+            this.Find();
             this.HideWaitMessage();
         }
 
@@ -199,9 +198,8 @@ order by p2.ID,p2.Seq";
             {
                 return;
             }
-            this.ShowWaitMessage("Data Processing ...");
 
-         
+            this.ShowWaitMessage("Data Processing ...");
 
             string updateSqlCmd = string.Empty;
 
@@ -210,7 +208,7 @@ order by p2.ID,p2.Seq";
              有不同資料的再跑迴圈
             */
             DataTable selectData = null;
-            MyUtility.Tool.ProcessWithDatatable(dt,string.Empty, @"
+            MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, @"
 select distinct a.* from #tmp a
 inner join PackingList_Detail b on a.id=b.id and a.ctnstartno=b.ctnstartno
 where a.CFANeedInsp <> b.CFANeedInsp and b.DisposeFromClog= 0", out selectData);
@@ -224,10 +222,9 @@ set CFANeedInsp ={CFANeedInsp} ,CFASelectInspDate = GETDATE()
 where id='{dr["id"]}'
 and DisposeFromClog= 0
 and CTNStartNo ='{dr["CTNStartNo"]}'
-";                
-                
+";
             }
-           
+
             if (updateSqlCmd.Length > 0)
             {
                 TransactionScope transactionscope = new TransactionScope();
@@ -238,9 +235,10 @@ and CTNStartNo ='{dr["CTNStartNo"]}'
                         if (!(resule = DBProxy.Current.Execute(null, updateSqlCmd.ToString())))
                         {
                             transactionscope.Dispose();
-                            ShowErr(updateSqlCmd.ToString(), resule);
+                            this.ShowErr(updateSqlCmd.ToString(), resule);
                             return;
                         }
+
                         transactionscope.Complete();
                         transactionscope.Dispose();
                         MyUtility.Msg.InfoBox("Save successful!");
@@ -248,18 +246,20 @@ and CTNStartNo ='{dr["CTNStartNo"]}'
                     catch (Exception ex)
                     {
                         transactionscope.Dispose();
-                        ShowErr("Commit transaction error.", ex);
+                        this.ShowErr("Commit transaction error.", ex);
                         return;
                     }
                 }
+
                 transactionscope.Dispose();
                 transactionscope = null;
             }
+
             this.HideWaitMessage();
 
             // 變更比對用的Datatable
-            dtDBSource.Clear();
-            dtDBSource = ((DataTable)this.listControlBindingSource.DataSource).Copy();
+            this.dtDBSource.Clear();
+            this.dtDBSource = ((DataTable)this.listControlBindingSource.DataSource).Copy();
 
             #region to Excel
 
@@ -268,10 +268,10 @@ select * from #tmp
 where CFANeedInsp = 1 ", out dtToExcel);
             if (dtToExcel != null && dtToExcel.Rows.Count > 0)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P22.xltx"); //預先開啟excel app;
-                MyUtility.Excel.CopyToXls(dtToExcel, "", "Quality_P22.xltx", 2, false, null, objApp);
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P22.xltx"); // 預先開啟excel app;
+                MyUtility.Excel.CopyToXls(dtToExcel, string.Empty, "Quality_P22.xltx", 2, false, null, objApp);
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
+                objApp.Cells.EntireColumn.AutoFit();    // 自動欄寬
                 objApp.Cells.EntireRow.AutoFit();       ////自動欄高
                 Microsoft.Office.Interop.Excel.Range rangeColumnA = objSheets.Columns["A", System.Type.Missing];
                 rangeColumnA.Hidden = true;
@@ -288,7 +288,7 @@ where CFANeedInsp = 1 ", out dtToExcel);
                 {
                     string userEmail = MyUtility.GetValue.Lookup($@"select email from pass1 where id='{Env.User.UserID}'");
 
-                    var email = new MailTo(Sci.Env.Cfg.MailFrom, dr["ToAddress"].ToString(), dr["CCAddress"].ToString() + ";" + userEmail, "["+ DateTime.Now.ToString("yyyy-MM-dd") + "] "+ dr["Subject"].ToString(), excelFile, dr["Content"].ToString(), false, true);
+                    var email = new MailTo(Sci.Env.Cfg.MailFrom, dr["ToAddress"].ToString(), dr["CCAddress"].ToString() + ";" + userEmail, "[" + DateTime.Now.ToString("yyyy-MM-dd") + "] " + dr["Subject"].ToString(), this.excelFile, dr["Content"].ToString(), false, true);
                     email.ShowDialog(this);
                 }
                 else
@@ -306,7 +306,7 @@ where CFANeedInsp = 1 ", out dtToExcel);
 
         private void checkCartonsInClog_CheckedChanged(object sender, EventArgs e)
         {
-            Grid_Filter();
+            this.Grid_Filter();
         }
 
         private void Grid_Filter()

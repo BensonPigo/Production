@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -827,7 +823,7 @@ order by no
                     {
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
                         TotalGSDFormula = $"='{worksheet.Name}'!{(leftDirection ? "C" : "W")}{norow}",
-                        TotalCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "B" : "X")}{norow}"
+                        TotalCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "B" : "X")}{norow}",
                     });
 
                     list_CycleTimeChart.Add(new CycleTimeChart()
@@ -835,7 +831,7 @@ order by no
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
                         ActCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "K" : "R")}{norow}",
                         ActCycleTime = MyUtility.Convert.GetString(nodr["ActCycleTime(average)"]),
-                        TaktFormula = $"=E1"
+                        TaktFormula = $"=E1",
                     });
 
                     if (leftDirection)
@@ -960,7 +956,7 @@ order by no
                     {
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
                         TotalGSDFormula = $"='{worksheet.Name}'!{(rightDirection ? "W" : "C")}{norow}",
-                        TotalCycleFormula = $"='{worksheet.Name}'!{(rightDirection ? "X" : "B")}{norow}"
+                        TotalCycleFormula = $"='{worksheet.Name}'!{(rightDirection ? "X" : "B")}{norow}",
                     });
 
                     list_CycleTimeChart.Add(new CycleTimeChart()
@@ -968,7 +964,7 @@ order by no
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
                         ActCycleFormula = $"='{worksheet.Name}'!{(rightDirection ? "R" : "K")}{norow}",
                         ActCycleTime = MyUtility.Convert.GetString(nodr["ActCycleTime(average)"]),
-                        TaktFormula = $"=E1"
+                        TaktFormula = $"=E1",
                     });
 
                     if (rightDirection)
@@ -1088,7 +1084,7 @@ order by no
                     {
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
                         TotalGSDFormula = $"='{worksheet.Name}'!{(leftDirection ? "C" : "S")}{norow}",
-                        TotalCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "B" : "X")}{norow}"
+                        TotalCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "B" : "X")}{norow}",
                     });
 
                     list_CycleTimeChart.Add(new CycleTimeChart()
@@ -1096,7 +1092,7 @@ order by no
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
                         ActCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "K" : "R")}{norow}",
                         ActCycleTime = MyUtility.Convert.GetString(nodr["ActCycleTime(average)"]),
-                        TaktFormula = $"=E1"
+                        TaktFormula = $"=E1",
                     });
 
                     if (leftDirection)

@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Ict;
-using Ict.Win;
-using Sci;
-using Sci.Data;
+﻿using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
@@ -17,7 +7,7 @@ namespace Sci.Production.Warehouse
         public B05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
     }
 }

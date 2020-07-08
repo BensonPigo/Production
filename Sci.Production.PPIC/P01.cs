@@ -3,26 +3,19 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Reflection;
-using Sci;
 using Sci.Data;
 using Ict;
 using Ict.Win;
-using Sci.Win;
 using Sci.Production.Class.Commons;
 using Microsoft.Office.Interop.Excel;
-using Excel = Microsoft.Office.Interop.Excel;
 using MsExcel = Microsoft.Office.Interop.Excel;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
-using Sci.Utility.Excel;
-using Sci.Utility.Drawing;
 
 using System.Runtime.InteropServices;
 using Sci.Production.PublicForm;
-using System.IO;
 using System.Linq;
 
 namespace Sci.Production.PPIC
@@ -57,7 +50,7 @@ namespace Sci.Production.PPIC
             this.btnBacktoPPICMasterList.Visible = this.dataType != "1"; // Back to P01. PPIC Master List
 
             Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
-            comboBox1_RowSource.Add("0", "");
+            comboBox1_RowSource.Add("0", string.Empty);
             comboBox1_RowSource.Add("1", "Subcon-in from sister factory (same M division)");
             comboBox1_RowSource.Add("2", "Subcon-in from sister factory (different M division)");
             comboBox1_RowSource.Add("3", "Subcon-in from non-sister factory");
@@ -123,7 +116,6 @@ namespace Sci.Production.PPIC
            {
               this.dateSCIDlv.TextBackColor = System.Drawing.Color.FromArgb(183, 227, 225);
            }
-
         }
 
         /// <inheritdoc/>
@@ -174,8 +166,9 @@ namespace Sci.Production.PPIC
             this.CurrentMaintain["ShipModeList"] = dataRow["ShipModeList"];
             this.CurrentMaintain["MCHandle"] = dataRow["MCHandle"];
             this.CurrentMaintain["LocalMR"] = dataRow["LocalMR"];
-            //this.CurrentMaintain["NeedProduction"] = dataRow["NeedProduction"];
-            //this.CurrentMaintain["KeepPanels"] = dataRow["KeepPanels"];
+
+            // this.CurrentMaintain["NeedProduction"] = dataRow["NeedProduction"];
+            // this.CurrentMaintain["KeepPanels"] = dataRow["KeepPanels"];
             this.SetStyleColumn(MyUtility.Convert.GetString(this.CurrentMaintain["StyleID"]));
         }
 
@@ -334,7 +327,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             this.btnOrderRemark.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
             this.BtnBuyBack.ForeColor = MyUtility.Check.Seek(string.Format("select 1 from Order_BuyBack WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
 
-            //若有資料顯示藍色，否則黑色
+            // 若有資料顯示藍色，否則黑色
             this.btnPoRemark.ForeColor = MyUtility.Check.Seek(string.Format("select PoRemark from PO WITH (NOLOCK) where ID = '{0}' AND PoRemark != '' ", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
 
             this.btnFactoryCMT.ForeColor = haveTmsCost ? Color.Blue : Color.Black;
@@ -613,7 +606,8 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 }
                 else
                 {
-                    if (MyUtility.Check.Seek(@"
+                    if (MyUtility.Check.Seek(
+                        @"
 select ID from SCIFty s WITH (NOLOCK)
 where id = @ProgramID
 and exists (select 1 from Factory where id = @FactoryID and s.MDivisionID = MDivisionID)
@@ -683,9 +677,9 @@ select '{0}'as ID,ArtworkTypeID,Article,PatternCode,PatternDesc,ArtworkID,Artwor
 ,(select isnull(MIN(UKey),0) from Order_Artwork)as 'rownumber', Row_Number() OVER( order by PatternCode ) as 'row'
 from Style_Artwork where StyleUkey = '{2}'
 ) x",
-                         MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                         Env.User.UserID,
-                         MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
+                        MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+                        Env.User.UserID,
+                        MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
 
                     result = DBProxy.Current.Execute(null, insertCmd);
                     if (!result)
@@ -952,6 +946,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         private void btnPoRemark_Click(object sender, EventArgs e)
         {
             System.Data.DataTable data;
+
             // 串接規則Orders.ID=PO.ID
             string sqlCmd = string.Format("select PoRemark from PO WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"]);
 
@@ -1169,7 +1164,6 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             bool res = MyUtility.Check.Seek(cmd, new List<SqlParameter> { new SqlParameter("@OrderId", this.CurrentDataRow["ID"]), new SqlParameter("@BrandID", this.CurrentDataRow["BrandID"]) }, out tmp, null);
             if (res && tmp["Kit"] != null)
             {
-
                 this.displayKit.Text = tmp["Kit"].ToString();
             }
             else
@@ -1190,7 +1184,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             this.txtDevSample.Text = isDevSample ? "Y" : string.Empty;
         }
 
-     private DataRow GetTitleDataByCustCD(string poid, string id, bool byCustCD = true)
+        private DataRow GetTitleDataByCustCD(string poid, string id, bool byCustCD = true)
         {
             DataRow drvar;
             string cmd = string.Empty;
@@ -1674,7 +1668,6 @@ and p.Type in ('L', 'B')
 
             this.RenewData();
             this.OnDetailEntered();
-
         }
 
         private void BtnComboType_Click(object sender, EventArgs e)

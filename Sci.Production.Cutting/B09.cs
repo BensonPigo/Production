@@ -1,16 +1,11 @@
 ﻿using Ict;
-using Ict.Win;
 using Sci.Data;
 using Sci.Production.Class;
 using Sci.Win.Tools;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Transactions;
 using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
@@ -28,7 +23,7 @@ namespace Sci.Production.Cutting
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtfactory.MDivision = txtMdivision;
+            this.txtfactory.MDivision = this.txtMdivision;
         }
 
         protected override bool ClickSaveBefore()
@@ -66,6 +61,7 @@ and (select stuff((select concat('+', SubprocessID) from SubprocessLeadTime_Deta
                 MyUtility.Msg.WarningBox("Data duplication, can't save !!");
                 return false;
             }
+
             return base.ClickSaveBefore();
         }
 
@@ -139,10 +135,15 @@ LEFT join ArtworkType a on a.id=s.ArtworkTypeId
 where S.junk=0 and s.IsSelection=1
 order by s.id asc
 ";
-            //SelectItem item = new SelectItem(sqlcmd, string.Empty, this.txtSubprocess.Text, true, "+");
+
+            // SelectItem item = new SelectItem(sqlcmd, string.Empty, this.txtSubprocess.Text, true, "+");
             SelectItem2 item = new SelectItem2(sqlcmd, "Subprocess", "12", this.txtSubprocess.Text, null, null, null);
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.txtSubprocess.Text = item.GetSelectedString().Replace(",", "+");
 
             this.disArtworkType.Text = item.GetSelecteds().AsEnumerable().Select(s => MyUtility.Convert.GetString(s["Artwork Type"])).JoinToString("+");
@@ -197,15 +198,15 @@ order by s.id asc
                 this.ShowErr(result);
                 return;
             }
-            
+
             this.disArtworkType.Text = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["ArtworkTypeId"])).JoinToString("+");
         }
 
         private void txtMdivision_TextChanged(object sender, EventArgs e)
         {
-            if (EditMode)
+            if (this.EditMode)
             {
-                this.CurrentMaintain["MDivisionID"] = txtMdivision.Text.ToString();
+                this.CurrentMaintain["MDivisionID"] = this.txtMdivision.Text.ToString();
                 this.CurrentMaintain["FactoryID"] = string.Empty;
             }
         }

@@ -1,15 +1,11 @@
 ﻿using Ict;
 using Sci.Data;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 
@@ -24,37 +20,39 @@ namespace Sci.Production.Class
 
         public bool IssupportJunk
         {
-            get { return _IssupportJunk; }
-            set { _IssupportJunk = value; }
+            get { return this._IssupportJunk; }
+            set { this._IssupportJunk = value; }
         }
+
         public bool FilteMDivision
         {
-            get { return _FilteMDivision; }
-            set { _FilteMDivision = value; }
+            get { return this._FilteMDivision; }
+            set { this._FilteMDivision = value; }
         }
+
         public string SelectTable
         {
-            get { return _SelectTable; }
-            set { _SelectTable = value; }
+            get { return this._SelectTable; }
+            set { this._SelectTable = value; }
         }
 
         public bool IsIncludeSampleRoom
         {
-            get { return _isIncludeSampleRoom; }
-            set { _isIncludeSampleRoom = value; }
+            get { return this._isIncludeSampleRoom; }
+            set { this._isIncludeSampleRoom = value; }
         }
 
         public comboFtyZone()
         {
-            InitializeComponent();
-            this.Size = new System.Drawing.Size(80, 23);            
+            this.InitializeComponent();
+            this.Size = new System.Drawing.Size(80, 23);
         }
 
         public comboFtyZone(IContainer container)
         {
             container.Add(this);
-            InitializeComponent();
-            this.Size = new System.Drawing.Size(80, 23);            
+            this.InitializeComponent();
+            this.Size = new System.Drawing.Size(80, 23);
         }
 
         /// <summary>
@@ -99,9 +97,11 @@ namespace Sci.Production.Class
             {
                 listFilte.Add("MDivisionID = @MDivision ");
             }
+
             listFilte.Add("isnull(FtyZone,'') <> '' ");
             #endregion
-            string sqlcmd = string.Format(@"
+            string sqlcmd = string.Format(
+                @"
 select *
 from (
     Select FtyZone = ''
@@ -112,8 +112,8 @@ from (
     {0}
 ) a
 order by FtyZone",
-            (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\r and ") : "",
-            _SelectTable);
+                (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\r and ") : string.Empty,
+                this._SelectTable);
 
             return sqlcmd;
         }
@@ -131,6 +131,7 @@ order by FtyZone",
                     connectionString.Add(connections);
                 }
             }
+
             DataTable dtFtyZone = null;
             foreach (string conString in connectionString)
             {
@@ -159,7 +160,6 @@ order by FtyZone",
                 }
             }
 
-            
             List<string> dicFtyZone = dtFtyZone.AsEnumerable().Select(s => s["FtyZone"].ToString()).Distinct().ToList();
             this.DataSource = dicFtyZone;
 

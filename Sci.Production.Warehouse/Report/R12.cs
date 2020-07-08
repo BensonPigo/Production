@@ -15,6 +15,7 @@ namespace Sci.Production.Warehouse
         string sqlCmd = string.Empty;
         List<SqlParameter> listSqlPar = new List<SqlParameter>();
         DataTable dtResult;
+
         public R12(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -34,17 +35,17 @@ namespace Sci.Production.Warehouse
 
             this.listSqlPar.Clear();
             string sqlWhere = string.Empty;
-            
+
             if (this.dateRangeIssueDate.HasValue1)
             {
                 sqlWhere += " and il.IssueDate >= @FromIssueDate ";
-                listSqlPar.Add(new SqlParameter("@FromIssueDate", this.dateRangeIssueDate.DateBox1.Value));
+                this.listSqlPar.Add(new SqlParameter("@FromIssueDate", this.dateRangeIssueDate.DateBox1.Value));
             }
 
             if (this.dateRangeIssueDate.HasValue2)
             {
                 sqlWhere += " and il.IssueDate <= @ToIssueDate ";
-                listSqlPar.Add(new SqlParameter("@ToIssueDate", this.dateRangeIssueDate.DateBox2.Value));
+                this.listSqlPar.Add(new SqlParameter("@ToIssueDate", this.dateRangeIssueDate.DateBox2.Value));
             }
 
             if (this.cbFabricType.Text != "All")
@@ -116,15 +117,15 @@ order by il.IssueDate,il.Id,ild.POID,ild.Seq1,ild.Seq2,ild.Roll,ild.Dyelot
 
         protected override bool OnToExcel(ReportDefinition report)
         {
-            SetCount(dtResult.Rows.Count);
-            if (dtResult.Rows.Count == 0)
+            this.SetCount(this.dtResult.Rows.Count);
+            if (this.dtResult.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found!!");
                 return true;
             }
 
             this.ShowWaitMessage("Excel Processing...");
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R12.xltx"); //預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R12.xltx"); // 預先開啟excel app
             Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R12.xltx", objApp);
             com.WriteTable(this.dtResult, 2);
 

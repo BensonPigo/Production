@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
-using Ict.Win;
-using Sci;
 using Sci.Data;
 using System.Data.SqlClient;
 
@@ -21,29 +17,27 @@ namespace Sci.Production.Subcon
         public B40(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            comboload();
+            this.InitializeComponent();
+            this.comboload();
             this.comboRFIDProcessLocation.setDataSource(false);
         }
 
         private void comboload()
-        {            
-            DataTable dtSubprocessID;
-            //DualResult Result;
-            //if (Result = DBProxy.Current.Select(null, "select ID from Subprocess WITH (NOLOCK) where Junk = '0'", out dtSubprocessID))
-            //{
+        {
+            // DualResult Result;
+            // if (Result = DBProxy.Current.Select(null, "select ID from Subprocess WITH (NOLOCK) where Junk = '0'", out dtSubprocessID))
+            // {
             //    this.comboSubprocess.DataSource = dtSubprocessID;
             //    this.comboSubprocess.DisplayMember = "ID";
-            //}
-            //else { ShowErr(Result); }
-
-            Dictionary<String, String> comboType_RowSource = new Dictionary<string, string>();
+            // }
+            // else { ShowErr(Result); }
+            Dictionary<string, string> comboType_RowSource = new Dictionary<string, string>();
             comboType_RowSource.Add("1", "In");
             comboType_RowSource.Add("2", "Out");
             comboType_RowSource.Add("3", "In/Out");
-            comboStockType.DataSource = new BindingSource(comboType_RowSource, null);
-            comboStockType.ValueMember = "Key";
-            comboStockType.DisplayMember = "Value";
+            this.comboStockType.DataSource = new BindingSource(comboType_RowSource, null);
+            this.comboStockType.ValueMember = "Key";
+            this.comboStockType.DisplayMember = "Value";
 
             this.comboMDivision.setDefalutIndex();
         }
@@ -51,14 +45,14 @@ namespace Sci.Production.Subcon
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            Subprocesslist = null;
+            this.Subprocesslist = null;
 
             string sqlcmd = $@"
 select rp.RFIDReaderID,rp.PanelNo,rp.CutCellID,rp.AddDate,rp.EditDate,AddName=dbo.GetPass1(rp.AddName),EditName=dbo.GetPass1(rp.EditName)
 from RFIDReader_Panel rp with(nolock)
 where rp.RFIDReaderID ='{this.CurrentMaintain["ID"]}'
 ";
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DT_RFIDReader_Panel);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out this.DT_RFIDReader_Panel);
             if (!result)
             {
                 this.ShowErr(result);
@@ -71,23 +65,24 @@ where rp.RFIDReaderID ='{this.CurrentMaintain["ID"]}'
         protected override void ClickCopyAfter()
         {
             this.txtSubprocess.Text = string.Empty;
-            txtID.ReadOnly = false;
+            this.txtID.ReadOnly = false;
         }
 
         protected override bool ClickNew()
         {
-            txtID.ReadOnly = false;
+            this.txtID.ReadOnly = false;
             return base.ClickNew();
         }
 
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(txtID.Text))
+            if (MyUtility.Check.Empty(this.txtID.Text))
             {
                 MyUtility.Msg.WarningBox("ID can not empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(txtSubprocess.Text)|| MyUtility.Check.Empty(comboStockType.Text))
+
+            if (MyUtility.Check.Empty(this.txtSubprocess.Text) || MyUtility.Check.Empty(this.comboStockType.Text))
             {
                 MyUtility.Msg.WarningBox("Sub-process and Stock Type can not empty!");
                 return false;
@@ -104,10 +99,10 @@ where rp.RFIDReaderID ='{this.CurrentMaintain["ID"]}'
 
         protected override DualResult ClickSave()
         {
-            if (Subprocesslist != null)
+            if (this.Subprocesslist != null)
             {
-                DataTable sourceDt = Subprocesslist.CopyToDataTable();
-                System.Data.DataColumn newColumn = new System.Data.DataColumn("RFIDReaderID", typeof(System.String));
+                DataTable sourceDt = this.Subprocesslist.CopyToDataTable();
+                System.Data.DataColumn newColumn = new System.Data.DataColumn("RFIDReaderID", typeof(string));
                 newColumn.DefaultValue = this.CurrentMaintain["ID"];
                 sourceDt.Columns.Add(newColumn);
                 string in_update = $@"
@@ -124,15 +119,16 @@ insert RFIDReader_SubProcess select * from #tmp2
                 }
             }
 
-            if (DT_RFIDReader_Panel != null)
+            if (this.DT_RFIDReader_Panel != null)
             {
-                foreach (DataRow dr in DT_RFIDReader_Panel.Rows)
+                foreach (DataRow dr in this.DT_RFIDReader_Panel.Rows)
                 {
                     if (dr.RowState != DataRowState.Deleted)
                     {
                         dr["RFIDReaderID"] = this.CurrentMaintain["ID"];
                     }
                 }
+
                 string mergeRFIDReader_Panel = $@"
 merge RFIDReader_Panel t
 using #tmp s on t.[RFIDReaderID] = s.[RFIDReaderID] and t.[PanelNo] = s.[PanelNo]
@@ -148,19 +144,20 @@ when not matched by source and t.[RFIDReaderID] = '{this.CurrentMaintain["id"]}'
 ;
 ";
                 DataTable dt;
-                DualResult result = MyUtility.Tool.ProcessWithDatatable(DT_RFIDReader_Panel, string.Empty, mergeRFIDReader_Panel, out dt);
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(this.DT_RFIDReader_Panel, string.Empty, mergeRFIDReader_Panel, out dt);
                 if (!result)
                 {
                     return result;
                 }
             }
+
             return base.ClickSave();
         }
 
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
-            txtID.ReadOnly = true;
+            this.txtID.ReadOnly = true;
         }
 
         protected override void ClickUndo()
@@ -182,7 +179,6 @@ delete RFIDReader_SubProcess where RFIDReaderID =  '{this.CurrentMaintain["ID"]}
         private void txtSewingLine_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             this.txtSewingLine.Text = this.SelectSewingLine(this.txtSewingLine.Text);
-
         }
 
         private string SelectSewingLine(string line)
@@ -215,7 +211,7 @@ delete RFIDReader_SubProcess where RFIDReaderID =  '{this.CurrentMaintain["ID"]}
                 listSQLParameter.Add(new SqlParameter("@FactoryID", Sci.Env.User.Factory));
                 listSQLParameter.Add(new SqlParameter("@ID", this.txtSewingLine.Text));
 
-                string sqlcmd ="Select Distinct ID From SewingLine WITH (NOLOCK) WHERE Junk != 1  AND FactoryID =@FactoryID AND ID=@ID ";
+                string sqlcmd = "Select Distinct ID From SewingLine WITH (NOLOCK) WHERE Junk != 1  AND FactoryID =@FactoryID AND ID=@ID ";
                 if (MyUtility.Check.Seek(sqlcmd, listSQLParameter, out dr) == false)
                 {
                     MyUtility.Msg.WarningBox(string.Format("< Sewing Line ID : {0} > not found!!!", this.txtSewingLine.Text));
@@ -230,7 +226,7 @@ delete RFIDReader_SubProcess where RFIDReaderID =  '{this.CurrentMaintain["ID"]}
         {
             string id = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
 
-            var callfrm = new B40_RFIDReaderSetting(this.EditMode, id, null, null,this.CurrentMaintain, this.DT_RFIDReader_Panel);
+            var callfrm = new B40_RFIDReaderSetting(this.EditMode, id, null, null, this.CurrentMaintain, this.DT_RFIDReader_Panel);
             callfrm.ShowDialog();
             this.DT_RFIDReader_Panel = callfrm.DetailDT;
         }
@@ -240,8 +236,12 @@ delete RFIDReader_SubProcess where RFIDReaderID =  '{this.CurrentMaintain["ID"]}
             string sqlWhere = "select ID from Subprocess WITH (NOLOCK) where Junk = '0'";
             Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlWhere, headercaptions: "Subprocess ID", columnwidths: "30", defaults: this.txtSubprocess.Text, defaultValueColumn: "ID");
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) return;
-            Subprocesslist = item.GetSelecteds();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.Subprocesslist = item.GetSelecteds();
             this.txtSubprocess.Text = item.GetSelectedString();
         }
     }

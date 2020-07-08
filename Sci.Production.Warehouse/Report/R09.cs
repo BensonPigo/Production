@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 
@@ -13,48 +10,68 @@ namespace Sci.Production.Warehouse
 {
     public partial class R09 : Sci.Win.Tems.PrintForm
     {
-        //string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
-        string mdivision, factory, spno1, spno2, refno1, refno2;
-        DateTime? deadline1, deadline2, buyerDelivery1, buyerDelivery2, eta1, eta2;
+        // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
+        string mdivision;
+
+        // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
+        string factory;
+
+        // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
+        string spno1;
+
+        // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
+        string spno2;
+
+        // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
+        string refno1;
+
+        // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
+        string refno2;
+        DateTime? deadline1;
+        DateTime? deadline2;
+        DateTime? buyerDelivery1;
+        DateTime? buyerDelivery2;
+        DateTime? eta1;
+        DateTime? eta2;
         DataTable printData;
         int filterIndex;
 
         public R09(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
-            txtMdivision.Text = Sci.Env.User.Keyword;
-            MyUtility.Tool.SetupCombox(comboFilterCondition, 1, 1, "Actual Inventory Qty < Taipei system,Inventory In  < Taipei InputQty,");
-            comboFilterCondition.SelectedIndex = 0;
+            this.txtMdivision.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(this.comboFilterCondition, 1, 1, "Actual Inventory Qty < Taipei system,Inventory In  < Taipei InputQty,");
+            this.comboFilterCondition.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateDeadLine.Value1) && MyUtility.Check.Empty(dateDeadLine.Value2) &&
-                MyUtility.Check.Empty(dateBuyerDelivery.Value1) && MyUtility.Check.Empty(dateBuyerDelivery.Value2) &&
-                MyUtility.Check.Empty(dateInventoryETA.Value1) && MyUtility.Check.Empty(dateInventoryETA.Value2) &&
-                (MyUtility.Check.Empty(txtSPNoStart.Text) && MyUtility.Check.Empty(txtSPNoEnd.Text)))
+            if (MyUtility.Check.Empty(this.dateDeadLine.Value1) && MyUtility.Check.Empty(this.dateDeadLine.Value2) &&
+                MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) && MyUtility.Check.Empty(this.dateBuyerDelivery.Value2) &&
+                MyUtility.Check.Empty(this.dateInventoryETA.Value1) && MyUtility.Check.Empty(this.dateInventoryETA.Value2) &&
+                (MyUtility.Check.Empty(this.txtSPNoStart.Text) && MyUtility.Check.Empty(this.txtSPNoEnd.Text)))
             {
                 MyUtility.Msg.WarningBox("< Dead Line > & < Buyer Delivery > & < SP# > & < ETA > can't be empty!!");
                 return false;
             }
 
-            deadline1 = dateDeadLine.Value1;
-            deadline2 = dateDeadLine.Value2;
-            buyerDelivery1 = dateBuyerDelivery.Value1;
-            buyerDelivery2 = dateBuyerDelivery.Value2;
-            spno1 = txtSPNoStart.Text;
-            spno2 = txtSPNoEnd.Text;
-            eta1 = dateInventoryETA.Value1;
-            eta2 = dateInventoryETA.Value2;
-            mdivision = txtMdivision.Text;
-            factory = txtfactory.Text;
-            refno1 = txtRefnoStart.Text;
-            refno2 = txtRefnoEnd.Text;
-            filterIndex = comboFilterCondition.SelectedIndex;
+            this.deadline1 = this.dateDeadLine.Value1;
+            this.deadline2 = this.dateDeadLine.Value2;
+            this.buyerDelivery1 = this.dateBuyerDelivery.Value1;
+            this.buyerDelivery2 = this.dateBuyerDelivery.Value2;
+            this.spno1 = this.txtSPNoStart.Text;
+            this.spno2 = this.txtSPNoEnd.Text;
+            this.eta1 = this.dateInventoryETA.Value1;
+            this.eta2 = this.dateInventoryETA.Value2;
+            this.mdivision = this.txtMdivision.Text;
+            this.factory = this.txtfactory.Text;
+            this.refno1 = this.txtRefnoStart.Text;
+            this.refno2 = this.txtRefnoEnd.Text;
+            this.filterIndex = this.comboFilterCondition.SelectedIndex;
 
             return base.ValidateInput();
         }
@@ -81,20 +98,25 @@ namespace Sci.Production.Warehouse
             System.Data.SqlClient.SqlParameter sp_refno2 = new System.Data.SqlClient.SqlParameter();
             sp_refno2.ParameterName = "@refno2";
 
-
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-            if (!MyUtility.Check.Empty(buyerDelivery1) || !MyUtility.Check.Empty(buyerDelivery2))
+            if (!MyUtility.Check.Empty(this.buyerDelivery1) || !MyUtility.Check.Empty(this.buyerDelivery2))
             {
-                string sqlBuyerDelivery = "";
-                if (!MyUtility.Check.Empty(buyerDelivery1))
-                    sqlBuyerDelivery += string.Format(" '{0}' <= o.BuyerDelivery ", Convert.ToDateTime(buyerDelivery1).ToString("d"));
-                if (!MyUtility.Check.Empty(buyerDelivery2))
-                    sqlBuyerDelivery += (MyUtility.Check.Empty(sqlBuyerDelivery) ? "" : " and ") + string.Format(" o.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDelivery2).ToString("d"));
+                string sqlBuyerDelivery = string.Empty;
+                if (!MyUtility.Check.Empty(this.buyerDelivery1))
+                {
+                    sqlBuyerDelivery += string.Format(" '{0}' <= o.BuyerDelivery ", Convert.ToDateTime(this.buyerDelivery1).ToString("d"));
+                }
 
-                sqlCmd.Append(string.Format(@"
+                if (!MyUtility.Check.Empty(this.buyerDelivery2))
+                {
+                    sqlBuyerDelivery += (MyUtility.Check.Empty(sqlBuyerDelivery) ? string.Empty : " and ") + string.Format(" o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDelivery2).ToString("d"));
+                }
+
+                sqlCmd.Append(string.Format(
+                    @"
 ;with cte as 
 (
 	select poid 
@@ -223,105 +245,116 @@ outer apply (
             and StockType = 'I' 
 ) x
 where b.InputQty> 0"));
-
             }
 
             #region --- 條件組合  ---
-            if (!MyUtility.Check.Empty(deadline1) || !MyUtility.Check.Empty(deadline2))
+            if (!MyUtility.Check.Empty(this.deadline1) || !MyUtility.Check.Empty(this.deadline2))
             {
-                if (!MyUtility.Check.Empty(deadline1))
-                    sqlCmd.Append(string.Format(@" and '{0}' <= a.deadline",Convert.ToDateTime(deadline1).ToString("d")));
-                if (!MyUtility.Check.Empty(deadline2))
-                    sqlCmd.Append(string.Format(@" and a.deadline <= '{0}'", Convert.ToDateTime(deadline2).ToString("d")));
+                if (!MyUtility.Check.Empty(this.deadline1))
+                {
+                    sqlCmd.Append(string.Format(@" and '{0}' <= a.deadline", Convert.ToDateTime(this.deadline1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.deadline2))
+                {
+                    sqlCmd.Append(string.Format(@" and a.deadline <= '{0}'", Convert.ToDateTime(this.deadline2).ToString("d")));
+                }
             }
-            if (!MyUtility.Check.Empty(spno1) && !MyUtility.Check.Empty(spno2))
+
+            if (!MyUtility.Check.Empty(this.spno1) && !MyUtility.Check.Empty(this.spno2))
             {
-                //若 sp 兩個都輸入則尋找 sp1 - sp2 區間的資料
+                // 若 sp 兩個都輸入則尋找 sp1 - sp2 區間的資料
                 sqlCmd.Append(" and a.Poid >= @spno1 and a.Poid <= @spno2");
-                sp_spno1.Value = spno1.PadRight(10, '0');
-                sp_spno2.Value = spno2.PadRight(10, 'Z');
+                sp_spno1.Value = this.spno1.PadRight(10, '0');
+                sp_spno2.Value = this.spno2.PadRight(10, 'Z');
                 cmds.Add(sp_spno1);
                 cmds.Add(sp_spno2);
             }
-            else if (!MyUtility.Check.Empty(spno1))
+            else if (!MyUtility.Check.Empty(this.spno1))
             {
-                //只有 sp1 輸入資料
+                // 只有 sp1 輸入資料
                 sqlCmd.Append(" and a.Poid like @spno1 ");
-                sp_spno1.Value = spno1 + "%";
+                sp_spno1.Value = this.spno1 + "%";
                 cmds.Add(sp_spno1);
             }
-            else if (!MyUtility.Check.Empty(spno2))
+            else if (!MyUtility.Check.Empty(this.spno2))
             {
-                //只有 sp2 輸入資料
+                // 只有 sp2 輸入資料
                 sqlCmd.Append(" and a.Poid like @spno2 ");
-                sp_spno2.Value = spno2 + "%";
+                sp_spno2.Value = this.spno2 + "%";
                 cmds.Add(sp_spno2);
             }
 
-            if (!MyUtility.Check.Empty(eta1) || !MyUtility.Check.Empty(eta2))
+            if (!MyUtility.Check.Empty(this.eta1) || !MyUtility.Check.Empty(this.eta2))
             {
-                if (!MyUtility.Check.Empty(eta1))
-                    sqlCmd.Append(string.Format(@" and '{0}' <= b.ShipEta", Convert.ToDateTime(eta1).ToString("d")));
-                if (!MyUtility.Check.Empty(eta2))
-                    sqlCmd.Append(string.Format(@" and b.ShipEta <= '{0}'", Convert.ToDateTime(eta2).ToString("d")));
+                if (!MyUtility.Check.Empty(this.eta1))
+                {
+                    sqlCmd.Append(string.Format(@" and '{0}' <= b.ShipEta", Convert.ToDateTime(this.eta1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.eta2))
+                {
+                    sqlCmd.Append(string.Format(@" and b.ShipEta <= '{0}'", Convert.ToDateTime(this.eta2).ToString("d")));
+                }
             }
 
-            if (!MyUtility.Check.Empty(mdivision))
+            if (!MyUtility.Check.Empty(this.mdivision))
             {
                 sqlCmd.Append(" and d.mdivisionid = @MDivision");
-                sp_mdivision.Value = mdivision;
+                sp_mdivision.Value = this.mdivision;
                 cmds.Add(sp_mdivision);
             }
 
-            if (!MyUtility.Check.Empty(factory))
+            if (!MyUtility.Check.Empty(this.factory))
             {
                 sqlCmd.Append(" and orders.FactoryID = @Factory");
-                sp_factory.Value = factory;
+                sp_factory.Value = this.factory;
                 cmds.Add(sp_factory);
             }
 
-            if (!MyUtility.Check.Empty(refno1) && !MyUtility.Check.Empty(refno2))
+            if (!MyUtility.Check.Empty(this.refno1) && !MyUtility.Check.Empty(this.refno2))
             {
-                //Refno 兩個都輸入則尋找 Refno1 - Refno2 區間的資料
+                // Refno 兩個都輸入則尋找 Refno1 - Refno2 區間的資料
                 sqlCmd.Append(" and b.refno >= @refno1 and b.refno <= @refno2");
-                sp_refno1.Value = refno1;
-                sp_refno2.Value = refno2;
+                sp_refno1.Value = this.refno1;
+                sp_refno2.Value = this.refno2;
                 cmds.Add(sp_refno1);
                 cmds.Add(sp_refno2);
             }
-            else if (!MyUtility.Check.Empty(refno1))
+            else if (!MyUtility.Check.Empty(this.refno1))
             {
-                //只輸入 Refno1
+                // 只輸入 Refno1
                 sqlCmd.Append(" and b.refno like @refno1");
-                sp_refno1.Value = refno1 + "%";
+                sp_refno1.Value = this.refno1 + "%";
                 cmds.Add(sp_refno1);
             }
-            else if (!MyUtility.Check.Empty(refno2))
+            else if (!MyUtility.Check.Empty(this.refno2))
             {
-                //只輸入 Refno2
+                // 只輸入 Refno2
                 sqlCmd.Append(" and b.refno like @refno2");
-                sp_refno2.Value = refno2 + "%";
+                sp_refno2.Value = this.refno2 + "%";
                 cmds.Add(sp_refno2);
             }
 
-            if (filterIndex == 0)
+            if (this.filterIndex == 0)
             {
-                //sqlCmd.Append(" and c.linvQty < (B.InputQty - B.OutputQty) * ISNULL(v.RateValue, 1)");
+                // sqlCmd.Append(" and c.linvQty < (B.InputQty - B.OutputQty) * ISNULL(v.RateValue, 1)");
                 sqlCmd.Append(" and Round((isnull(B.InputQty, 0) - isnull(B.OutputQty, 0)) * isnull(v.RateValue, 1), 2) > isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0)");
             }
 
-            if (filterIndex == 1)
+            if (this.filterIndex == 1)
             {
                 sqlCmd.Append(" and x.InQty < Round(B.InputQty * isnull(v.RateValue, 1), 2)");
             }
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
@@ -329,15 +362,15 @@ where b.InputQty> 0"));
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
-            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R09.xltx", 3);
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Warehouse_R09.xltx", 3);
             return true;
         }
     }

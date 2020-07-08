@@ -1,12 +1,8 @@
-﻿using Ict;
-using Newtonsoft.Json;
-using PmsWebApiUtility20;
+﻿using PmsWebApiUtility20;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 using static PmsWebApiUtility20.WebApiTool;
 using DualResult = Ict.DualResult;
 
@@ -39,13 +35,13 @@ namespace Sci.Production.Automation
             List<SqlParameter> listPar = new List<SqlParameter>()
             {
                new SqlParameter("@SuppID", automationErrMsg.suppID),
-                new SqlParameter("@ModuleName", automationErrMsg.moduleName),
-                new SqlParameter("@APIThread", automationErrMsg.apiThread),
-                new SqlParameter("@SuppAPIThread", automationErrMsg.suppAPIThread),
-                new SqlParameter("@ErrorCode", automationErrMsg.errorCode),
-                new SqlParameter("@ErrorMsg", automationErrMsg.errorMsg),
-                new SqlParameter("@JSON", automationErrMsg.json),
-                new SqlParameter("@AddName", Env.User.UserID)
+               new SqlParameter("@ModuleName", automationErrMsg.moduleName),
+               new SqlParameter("@APIThread", automationErrMsg.apiThread),
+               new SqlParameter("@SuppAPIThread", automationErrMsg.suppAPIThread),
+               new SqlParameter("@ErrorCode", automationErrMsg.errorCode),
+               new SqlParameter("@ErrorMsg", automationErrMsg.errorMsg),
+               new SqlParameter("@JSON", automationErrMsg.json),
+               new SqlParameter("@AddName", Env.User.UserID),
             };
 
             DualResult result = DBProxy.Current.Execute(null, saveSql, listPar);

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace Sci.Production.Class
@@ -19,11 +12,12 @@ namespace Sci.Production.Class
         }
 
         private Control brandObject;
+
         [Category("Custom Properties")]
         public Control BrandObjectName
         {
-            set { this.brandObject = value; }
             get { return this.brandObject; }
+            set { this.brandObject = value; }
         }
 
         protected override void OnPopUp(Win.UI.TextBoxPopUpEventArgs e)
@@ -36,10 +30,15 @@ namespace Sci.Production.Class
             {
                 selectCommand = string.Format("select distinct ID from Production.dbo.Season WITH (NOLOCK) where BrandID = '{0}' order by id desc", this.brandObject.Text);
             }
+
             item = new Sci.Win.Tools.SelectItem2(selectCommand, "Season ID", this.Text, null, null, null);
             item.Width = 300;
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.Text = item.GetSelectedString();
         }
     }

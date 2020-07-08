@@ -5,11 +5,9 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.IO;
-using Sci.Production;
 using System.Data.SqlClient;
 
 namespace Sci.Production.PPIC
@@ -62,7 +60,10 @@ namespace Sci.Production.PPIC
                         where junk <> 1
                     )a ");
             DualResult selectResult = DBProxy.Current.Select(null, sql, out this.dtFinishingProcess);
-            if (!selectResult) { this.ShowErr(sql, selectResult); }
+            if (!selectResult)
+            {
+                this.ShowErr(sql, selectResult);
+            }
 
             sql = string.Format(
                 @" select distinct DM300
@@ -73,7 +74,10 @@ namespace Sci.Production.PPIC
 	                    from FinishingProcess
                     )a ");
             selectResult = DBProxy.Current.Select(null, sql, out this.dtFinishingProcessAll);
-            if (!selectResult) { this.ShowErr(sql, selectResult); }
+            if (!selectResult)
+            {
+                this.ShowErr(sql, selectResult);
+            }
         }
 
         protected override void OnEditModeChanged()

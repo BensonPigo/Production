@@ -1,76 +1,72 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows.Forms;
 using Sci.Win.UI;
-using Sci.Data;
-using Sci;
-using Ict;
-using Sci.Win;
-
 
 namespace Sci.Production.Class
 {
     public partial class txtsewingline : Sci.Win.UI.TextBox
     {
-        private string fty = "";
-        public Control factoryObject = null;	//欄位.存入要取值的<控制項>
+        private string fty = string.Empty;
+        public Control factoryObject = null;    // 欄位.存入要取值的<控制項>
 
         // 屬性. 利用Control來設定要存取的<控制項>
         [Category("Custom Properties")]
         public Control factoryobjectName
         {
-            set
-            {
-                factoryObject = value;
-            }
             get
             {
-                return factoryObject;
+                return this.factoryObject;
+            }
+
+            set
+            {
+                this.factoryObject = value;
             }
         }
+
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
 
-            if (null == factoryObject || MyUtility.Check.Empty(factoryObject.Text))
+            if (this.factoryObject == null || MyUtility.Check.Empty(this.factoryObject.Text))
             {
-                fty = "";
+                this.fty = string.Empty;
             }
             else
             {
-                fty = factoryObject.Text;
+                this.fty = this.factoryObject.Text;
             }
 
-            string ftyWhere = "";
-            if (!fty.Empty())
+            string ftyWhere = string.Empty;
+            if (!this.fty.Empty())
             {
-                ftyWhere = string.Format("Where FactoryId = '{0}'", fty);
+                ftyWhere = string.Format("Where FactoryId = '{0}'", this.fty);
             }
+
             string sql = string.Format("Select ID,FactoryID,Description From Production.dbo.SewingLine WITH (NOLOCK) {0} ", ftyWhere);
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2,6,16", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.Text = item.GetSelectedString();
         }
+
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                if (this.factoryObject == null || MyUtility.Check.Empty(factoryObject.Text))
+                if (this.factoryObject == null || MyUtility.Check.Empty(this.factoryObject.Text))
                 {
-                    string tmp = MyUtility.GetValue.Lookup("ID", str, "SewingLine", "id","Production");
+                    string tmp = MyUtility.GetValue.Lookup("ID", str, "SewingLine", "id", "Production");
                     if (string.IsNullOrWhiteSpace(tmp))
                     {
                         e.Cancel = true;
-                        this.Text = "";
+                        this.Text = string.Empty;
                         MyUtility.Msg.WarningBox(string.Format("< Sewing Line> : {0} not found!!!", str));
                         return;
                     }
@@ -83,7 +79,7 @@ namespace Sci.Production.Class
                         if (!MyUtility.Check.Seek(selectCommand, null))
                         {
                             e.Cancel = true;
-                            this.Text = "";
+                            this.Text = string.Empty;
                             MyUtility.Msg.WarningBox(string.Format("< Sewing Line: {0} > not found!!!", str));
                             return;
                         }

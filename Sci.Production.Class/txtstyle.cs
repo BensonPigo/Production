@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows.Forms;
 using Sci.Win.UI;
-using Sci.Data;
 using Ict;
-using Sci.Win.Tools;
 
 namespace Sci.Production.Class
 {
@@ -22,26 +13,28 @@ namespace Sci.Production.Class
         }
 
         public txtbrand tarBrand { get; set; }
+
         public txtseason tarSeason { get; set; }
 
         private Control brandObject;
+
         [Category("Custom Properties")]
         public Control BrandObjectName
         {
-            set { this.brandObject = value; }
             get { return this.brandObject; }
+            set { this.brandObject = value; }
         }
 
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
- 
+
             string textValue = this.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.OldValue)
             {
                 if (!MyUtility.Check.Seek(textValue, "Style", "ID", "Production"))
                 {
-                    this.Text = "";
+                    this.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Style : {0} > not found!!!", textValue));
                     return;
@@ -55,7 +48,7 @@ namespace Sci.Production.Class
                             string selectCommand = string.Format("select ID from Style WITH (NOLOCK) where BrandID = '{0}' and ID = '{1}'", (string)this.brandObject.Text, this.Text.ToString());
                             if (!MyUtility.Check.Seek(selectCommand, "Production"))
                             {
-                                this.Text = "";
+                                this.Text = string.Empty;
                                 e.Cancel = true;
                                 MyUtility.Msg.WarningBox(string.Format("< Brand + Style: {0} + {1} > not found!!!", (string)this.brandObject.Text, textValue));
                                 return;
@@ -69,7 +62,7 @@ namespace Sci.Production.Class
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
-            
+
             Sci.Win.Tools.SelectItem item;
             string selectCommand;
             selectCommand = "select ID,SeasonID,Description,BrandID from Production.dbo.Style WITH (NOLOCK) where Junk = 0 order by ID";
@@ -77,11 +70,16 @@ namespace Sci.Production.Class
             {
                 selectCommand = string.Format("select ID,SeasonID,Description,BrandID from Production.dbo.Style WITH (NOLOCK) where Junk = 0 and BrandID = '{0}' order by ID", this.brandObject.Text);
             }
+
             item = new Sci.Win.Tools.SelectItem(selectCommand, "12,5,38,10", this.Text);
-           item.Size=new System.Drawing.Size(757, 530);
+            item.Size = new System.Drawing.Size(757, 530);
             DialogResult returnResult = item.ShowDialog();
-            
-            if (returnResult == DialogResult.Cancel) { return; }
+
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.Text = item.GetSelectedString();
             if (this.tarBrand != null && this.tarSeason != null)
             {

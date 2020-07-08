@@ -40,7 +40,7 @@ namespace Sci.Production.Class
             /// <summary>
             /// Blend
             /// </summary>
-            Blend
+            Blend,
         }
 
         /// <summary>

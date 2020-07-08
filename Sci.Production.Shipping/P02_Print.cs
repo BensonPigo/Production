@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict;
-using Ict.Win;
 using Sci.Data;
 using System.Runtime.InteropServices;
 
@@ -49,10 +43,26 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (this.radioDetailList.Checked) this.reportType = "1";
-            if (this.radioPackingList.Checked) this.reportType = "2";
-            if (this.radioDetailPackingList.Checked) this.reportType = "3";
-            if (this.rdbtnDHLcustomsclearance.Checked) this.reportType = "4";
+            if (this.radioDetailList.Checked)
+            {
+                this.reportType = "1";
+            }
+
+            if (this.radioPackingList.Checked)
+            {
+                this.reportType = "2";
+            }
+
+            if (this.radioDetailPackingList.Checked)
+            {
+                this.reportType = "3";
+            }
+
+            if (this.rdbtnDHLcustomsclearance.Checked)
+            {
+                this.reportType = "4";
+            }
+
             return base.ValidateInput();
         }
 
@@ -117,7 +127,6 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
             }
             else if (this.reportType == "4")
             {
-
             }
 
             return Result.True;
@@ -440,8 +449,8 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
 
                 foreach (DataRow dr in this.detailData.Rows)
                 {
-                    //string sSeq1 = MyUtility.Convert.GetString(dr["Seq1"]);
-                    //string sSeq2 = MyUtility.Convert.GetString(dr["Seq2"]);
+                    // string sSeq1 = MyUtility.Convert.GetString(dr["Seq1"]);
+                    // string sSeq2 = MyUtility.Convert.GetString(dr["Seq2"]);
                     int iCategory = MyUtility.Convert.GetInt(dr["Category"]);
                     bool bQty = MyUtility.Check.Empty(dr["Qty"]);
                     bool bPrice = MyUtility.Check.Empty(dr["Price"]);

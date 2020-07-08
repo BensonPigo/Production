@@ -125,7 +125,6 @@ namespace Sci.Production.Logistic
             {
                 rowIndex = e.RowIndex;
                 columIndex = e.ColumnIndex;
-
             };
 
             this.gridPackID.Sorted += (s, e) =>
@@ -165,6 +164,7 @@ namespace Sci.Production.Logistic
                 MyUtility.Msg.WarningBox("< SP# > or < Pack ID > or < TransferSlipNo > or < PO# > can not empty!");
                 return;
             }
+
             this.numSelectQty.Value = 0;
             this.numTTLCTNQty.Value = 0;
             this.gridData = null;
@@ -245,13 +245,13 @@ namespace Sci.Production.Logistic
                             //                                    set ClogLocationId = @clogLocationId, Remark = @remark
                             //                                    where id = @id and CTNStartNo = @ctnStartNo;";
 
-                            //ClogLocationId更新，EditLocationDate才要寫入，不過原本作法全部覆蓋，因此需要自己撈資料來比對
+                            // ClogLocationId更新，EditLocationDate才要寫入，不過原本作法全部覆蓋，因此需要自己撈資料來比對
                             DataTable tmpTable;
-                            string chkCmd =string.Format( @"SELECT ClogLocationId FROM PackingList_Detail PL WITH (NOLOCK) WHERE id ='{0}' AND CTNStartNo = '{1}' ", currentRow["ID"].ToString(), currentRow["CTNStartNo"].ToString());
+                            string chkCmd = string.Format(@"SELECT ClogLocationId FROM PackingList_Detail PL WITH (NOLOCK) WHERE id ='{0}' AND CTNStartNo = '{1}' ", currentRow["ID"].ToString(), currentRow["CTNStartNo"].ToString());
 
                             DualResult result1CHK = DBProxy.Current.Select(null, chkCmd, out tmpTable);
 
-                            string updateCmd="";
+                            string updateCmd = string.Empty;
 
                             if (tmpTable.Rows[0]["ClogLocationId"].ToString() != currentRow["ClogLocationId"].ToString())
                             {
@@ -299,7 +299,8 @@ namespace Sci.Production.Logistic
                                 sp8.ParameterName = "@EditLocationName";
                                 sp8.Value = Sci.Env.User.UserID;
                             }
-                            //EditLocationDate
+
+                            // EditLocationDate
                             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                             cmds.Add(sp1);
 
@@ -496,7 +497,7 @@ namespace Sci.Production.Logistic
                 }
             }
         }
-        
+
         private string whereS;
 
         private void BtnImportFromBarcode_Click(object sender, EventArgs e)
@@ -509,6 +510,7 @@ namespace Sci.Production.Logistic
             {
                 this.numSelectQty.Value = 0;
                 this.numTTLCTNQty.Value = 0;
+
                 // 讀檔案
                 string wheresql = string.Empty;
                 this.whereS = string.Empty;
@@ -524,7 +526,7 @@ namespace Sci.Production.Logistic
                         {
                             if (item.Length >= 13)
                             {
-                                wheresql += $" or (PL.ID = '{item.Substring(0, 13)}' and PLD.CTNStartNo = '{item.Substring(13, item.Length-13)}') ";
+                                wheresql += $" or (PL.ID = '{item.Substring(0, 13)}' and PLD.CTNStartNo = '{item.Substring(13, item.Length - 13)}') ";
                             }
                         }
                     }

@@ -1,13 +1,7 @@
 ﻿using Ict.Win;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Data.SqlClient;
 using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -22,24 +16,23 @@ namespace Sci.Production.Warehouse
         DataTable dataTable;
         List<SqlParameter> sqlPar = new List<SqlParameter>();
 
-        public P04_LocalTransaction(DataRow dataRow,string from_program):base()
+        public P04_LocalTransaction(DataRow dataRow, string from_program) : base()
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.dataRow = dataRow;
 
             if (from_program.Equals("P03"))
             {
-                sqlPar.Add(new SqlParameter("@Poid", dataRow["id"].ToString().Trim()));
-                sqlPar.Add(new SqlParameter("@Refno", dataRow["refno"].ToString().Trim()));
-                sqlPar.Add(new SqlParameter("@ColorID", dataRow["ColorID"].ToString().Trim()));
+                this.sqlPar.Add(new SqlParameter("@Poid", dataRow["id"].ToString().Trim()));
+                this.sqlPar.Add(new SqlParameter("@Refno", dataRow["refno"].ToString().Trim()));
+                this.sqlPar.Add(new SqlParameter("@ColorID", dataRow["ColorID"].ToString().Trim()));
             }
-            else {
-                sqlPar.Add(new SqlParameter("@Poid", dataRow["sp"].ToString().Trim()));
-                sqlPar.Add(new SqlParameter("@Refno", dataRow["refno"].ToString().Trim()));
-                sqlPar.Add(new SqlParameter("@ColorID", dataRow["threadColor"].ToString().Trim()));
+            else
+            {
+                this.sqlPar.Add(new SqlParameter("@Poid", dataRow["sp"].ToString().Trim()));
+                this.sqlPar.Add(new SqlParameter("@Refno", dataRow["refno"].ToString().Trim()));
+                this.sqlPar.Add(new SqlParameter("@ColorID", dataRow["threadColor"].ToString().Trim()));
             }
-            
-         
         }
 
         protected override void OnFormLoaded()
@@ -47,7 +40,7 @@ namespace Sci.Production.Warehouse
             base.OnFormLoaded();
             this.loadData();
             #region Set Grid
-            Helper.Controls.Grid.Generator(this.gridLocalTransaction)
+            this.Helper.Controls.Grid.Generator(this.gridLocalTransaction)
                .Text("date", header: "Date", iseditingreadonly: true, width: Widths.AnsiChars(13))
                .Text("transactionID", header: "Transaction#", iseditingreadonly: true, width: Widths.AnsiChars(25))
                .Text("name", header: "Name", iseditingreadonly: true, width: Widths.AnsiChars(30))
@@ -55,7 +48,7 @@ namespace Sci.Production.Warehouse
                .Numeric("releasedQty", header: "Released Qty", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6))
                .Numeric("balance", header: "Balance", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6))
                .Text("remark", header: "Remark", iseditingreadonly: true, width: Widths.AnsiChars(10));
-            #endregion 
+            #endregion
         }
 
         private void loadData()
@@ -126,9 +119,9 @@ order by s.date, s.Name, arrivedQty, releasedQty
             this.ShowWaitMessage("Data Loading....");
             #region SQL Data Loading....
             Ict.DualResult result;
-            if (result = DBProxy.Current.Select(null, sql, sqlPar, out dataTable))
+            if (result = DBProxy.Current.Select(null, sql, this.sqlPar, out this.dataTable))
             {
-                if (dataTable == null || dataTable.Rows.Count == 0)
+                if (this.dataTable == null || this.dataTable.Rows.Count == 0)
                 {
                     MyUtility.Msg.InfoBox("Data not found!!");
                     this.Close();
@@ -136,33 +129,33 @@ order by s.date, s.Name, arrivedQty, releasedQty
                 else
                 {
                     #region compute BalanceQty
-                    for (int i = 0; i < dataTable.Rows.Count; i++)
+                    for (int i = 0; i < this.dataTable.Rows.Count; i++)
                     {
-                        DataRow dr = dataTable.Rows[i];
+                        DataRow dr = this.dataTable.Rows[i];
                         if (i == 0)
                         {
                             dr["balance"] = Convert.ToDecimal(dr["arrivedQty"]) - Convert.ToDecimal(dr["releasedQty"]);
                         }
                         else
                         {
-                            DataRow drFront = dataTable.Rows[i - 1];
+                            DataRow drFront = this.dataTable.Rows[i - 1];
                             dr["balance"] = Convert.ToDecimal(drFront["balance"]) + Convert.ToDecimal(dr["arrivedQty"]) - Convert.ToDecimal(dr["releasedQty"]);
                         }
                     }
-                    #endregion 
-                    listControlBindingSource1.DataSource = dataTable;
-                    string arrivedQty = dataTable.Compute("sum(arrivedQty)", null).ToString();
-                    string releasedQty = dataTable.Compute("sum(releasedQty)", null).ToString();
+                    #endregion
+                    this.listControlBindingSource1.DataSource = this.dataTable;
+                    string arrivedQty = this.dataTable.Compute("sum(arrivedQty)", null).ToString();
+                    string releasedQty = this.dataTable.Compute("sum(releasedQty)", null).ToString();
                     string balance = (Convert.ToDecimal(arrivedQty) - Convert.ToDecimal(releasedQty)).ToString();
 
-                    this.numArrived.Value = (arrivedQty.Empty()) ? 0 : decimal.Parse(arrivedQty);
-                    this.numReleaced.Value = (releasedQty.Empty()) ? 0 : decimal.Parse(releasedQty);
-                    this.numBalance.Value = (balance.Empty()) ? 0 : decimal.Parse(balance);
+                    this.numArrived.Value = arrivedQty.Empty() ? 0 : decimal.Parse(arrivedQty);
+                    this.numReleaced.Value = releasedQty.Empty() ? 0 : decimal.Parse(releasedQty);
+                    this.numBalance.Value = balance.Empty() ? 0 : decimal.Parse(balance);
                 }
             }
             else
             {
-                ShowErr(sql, result);
+                this.ShowErr(sql, result);
             }
             #endregion
             this.HideWaitMessage();
@@ -229,13 +222,13 @@ WHERE OrderId = @Poid and Refno = @Refno and ThreadColorID = @ColorID
             this.ShowWaitMessage("Data Loading....");
             #region SQL Data Loading....
             Ict.DualResult result;
-            if (result = DBProxy.Current.Execute(null, sql, sqlPar))
+            if (result = DBProxy.Current.Execute(null, sql, this.sqlPar))
             {
                 MyUtility.Msg.InfoBox("Finished");
             }
             else
             {
-                ShowErr(sql, result);
+                this.ShowErr(sql, result);
             }
             #endregion
             this.HideWaitMessage();
@@ -244,12 +237,12 @@ WHERE OrderId = @Poid and Refno = @Refno and ThreadColorID = @ColorID
 
         private void btnToExcel_Click(object sender, EventArgs e)
         {
-            if (dataTable != null && dataTable.Rows.Count > 0)
+            if (this.dataTable != null && this.dataTable.Rows.Count > 0)
             {
                 this.ShowWaitMessage("Excel Processing...");
 
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P04_LocalTransaction.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(dataTable, "", "Warehouse_P04_LocalTransaction.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P04_LocalTransaction.xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.dataTable, string.Empty, "Warehouse_P04_LocalTransaction.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);
                 Excel.Worksheet worksheet = objApp.Sheets[1];
                 worksheet.Rows.AutoFit();
                 worksheet.Columns.AutoFit();
@@ -276,5 +269,5 @@ WHERE OrderId = @Poid and Refno = @Refno and ThreadColorID = @ColorID
         {
             base.OnClosed(e);
         }
-    }    
+    }
 }

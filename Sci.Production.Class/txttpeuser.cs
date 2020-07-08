@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Sci.Data;
-using Sci.Win.UI;
 using System.Data.SqlClient;
 
 namespace Sci.Production.Class
@@ -17,7 +11,7 @@ namespace Sci.Production.Class
     {
         public txttpeuser()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         public Sci.Win.UI.DisplayBox DisplayBox1
@@ -33,15 +27,15 @@ namespace Sci.Production.Class
         [Bindable(true)]
         public string DisplayBox1Binding
         {
-            set { this.displayBox1.Text = value; }
             get { return this.displayBox1.Text; }
+            set { this.displayBox1.Text = value; }
         }
 
         [Bindable(true)]
         public string DisplayBox2Binding
         {
-            set { this.displayBox2.Text = value; }
             get { return this.displayBox2.Text; }
+            set { this.displayBox2.Text = value; }
         }
 
         private void displayBox1_TextChanged(object sender, EventArgs e)
@@ -50,7 +44,7 @@ namespace Sci.Production.Class
             DataRow dr;
             if (MyUtility.Check.Seek(selectSql, out dr, connectionName: "Production"))
             {
-                this.displayBox2.Text = MyUtility.Check.Empty(dr["extNo"]) ? "" : dr["Name"].ToString();
+                this.displayBox2.Text = MyUtility.Check.Empty(dr["extNo"]) ? string.Empty : dr["Name"].ToString();
                 if (!MyUtility.Check.Empty(dr["extNo"]))
                 {
                     this.displayBox2.Text = this.displayBox2.Text + " #" + dr["extNo"].ToString();
@@ -58,7 +52,7 @@ namespace Sci.Production.Class
             }
             else
             {
-                this.displayBox2.Text = "";
+                this.displayBox2.Text = string.Empty;
             }
         }
 
@@ -73,14 +67,18 @@ namespace Sci.Production.Class
 		                    Mail = email
                     from Production.dbo.TPEPass1 WITH (NOLOCK) 
                     where id = @id";
-            sqlpar.Add(new SqlParameter("@id", displayBox1.Text.ToString()));
+            sqlpar.Add(new SqlParameter("@id", this.displayBox1.Text.ToString()));
 
             userData ud = new userData(sql, sqlpar);
 
             if (ud.errMsg == null)
+            {
                 ud.ShowDialog();
+            }
             else
+            {
                 MyUtility.Msg.ErrorBox(ud.errMsg);
+            }
         }
     }
 }

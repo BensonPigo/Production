@@ -1,13 +1,8 @@
 ﻿using Ict.Win;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
-using Sci.Win.Tems;
 using Sci.Data;
 
 namespace Sci.Production.Quality
@@ -15,20 +10,26 @@ namespace Sci.Production.Quality
     public partial class P13 : Sci.Win.Tems.Input6
     {
         // 宣告Context Menu Item
-        ToolStripMenuItem add, edit, delete;
+        ToolStripMenuItem add;
+
+        // 宣告Context Menu Item
+        ToolStripMenuItem edit;
+
+        // 宣告Context Menu Item
+        ToolStripMenuItem delete;
 
         public P13(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.detailgrid.ContextMenuStrip = detailgridmenus;
-            InsertDetailGridOnDoubleClick = false;
+            this.detailgrid.ContextMenuStrip = this.detailgridmenus;
+            this.InsertDetailGridOnDoubleClick = false;
             this.DefaultFilter = "Type = 'S'";
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
+            string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
             string cmd = string.Format(
 @"select 
     md.No,
@@ -46,8 +47,8 @@ from MockupWash_Detail md WITH (NOLOCK)
 outer apply (select Name_Extno from View_ShowName where id = md.Technician) TechnicianName
 outer apply (select Name_Extno from View_ShowName where id = md.MR) MRName
 outer apply (select Name from Pass1 where id = md.EditName) LastEditName
-where ID = '{0}'"
-                , masterID);
+where ID = '{0}'",
+masterID);
             this.DetailSelectCommand = cmd;
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -55,10 +56,10 @@ where ID = '{0}'"
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            detailgridmenus.Items.Clear();//清空原有的Menu Item
-            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Create New Test", onclick: (s, e) => CreateNewTest()).Get(out add);
-            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Record's detail", onclick: (s, e) => EditThisDetail()).Get(out edit);
-            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Delete this Record's detail", onclick: (s, e) => DeleteThisDetail()).Get(out delete);
+            this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
+            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Create New Test", onclick: (s, e) => this.CreateNewTest()).Get(out this.add);
+            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Record's detail", onclick: (s, e) => this.EditThisDetail()).Get(out this.edit);
+            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Delete this Record's detail", onclick: (s, e) => this.DeleteThisDetail()).Get(out this.delete);
         }
 
         // Context Menu選擇Create New test
@@ -68,18 +69,22 @@ where ID = '{0}'"
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
             this.RenewData();
-            OnDetailEntered();
+            this.OnDetailEntered();
         }
 
         // Context Menu選擇Edit This Record's Detail
         private void EditThisDetail()
         {
-            if (this.CurrentDetailData == null) return;
+            if (this.CurrentDetailData == null)
+            {
+                return;
+            }
+
             Sci.Production.Quality.P13_Detail callNewDetailForm = new P13_Detail(true, this.CurrentMaintain["ID"].ToString(), this.CurrentDetailData["ReportNo"].ToString(), null, "Edit");
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
             this.RenewData();
-            OnDetailEntered();
+            this.OnDetailEntered();
         }
 
         // Context Menu選擇Delete This Record's Detail
@@ -89,12 +94,13 @@ where ID = '{0}'"
             {
                 string delelete_cmd = $@"delete MockupWash_Detail where ReportNo = '{this.CurrentDetailData["ReportNo"].ToString()}';
                                         delete MockupWash_Detail_Detail where ReportNo = '{this.CurrentDetailData["ReportNo"].ToString()}';";
-                DualResult result =   DBProxy.Current.Execute(null, delelete_cmd);
+                DualResult result = DBProxy.Current.Execute(null, delelete_cmd);
                 if (!result)
                 {
                     this.ShowErr(result);
                     return;
                 }
+
                 this.RenewData();
             }
         }
@@ -103,7 +109,7 @@ where ID = '{0}'"
         {
             this.detailgrid.IsEditingReadOnly = false;
 
-            Helper.Controls.Grid.Generator(this.detailgrid)
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("No", header: "No.", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("ReportNo", header: "Report No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("SubmitDate", header: "Test Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -115,13 +121,14 @@ where ID = '{0}'"
                 .Text("TechnicianName", header: "Technician Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("MRName", header: "MR Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Text("LastEditName", header: "Last Edit Name", width: Widths.AnsiChars(20), iseditingreadonly: true);
-            
+
             this.detailgrid.CellDoubleClick += (s, e) =>
             {
                 if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
                 {
                     return;
                 }
+
                 Sci.Production.Quality.P13_Detail callNewDetailForm = new P13_Detail(false, this.CurrentMaintain["ID"].ToString(), this.CurrentDetailData["ReportNo"].ToString(), null, "Query");
                 callNewDetailForm.ShowDialog(this);
                 callNewDetailForm.Dispose();
@@ -132,19 +139,18 @@ where ID = '{0}'"
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            if (EditMode)
+            if (this.EditMode)
             {
                 this.detailgrid.ContextMenuStrip = null;
             }
             else
             {
-                this.detailgrid.ContextMenuStrip = detailgridmenus;
+                this.detailgrid.ContextMenuStrip = this.detailgridmenus;
             }
         }
 
         private void txtArticle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-
             string styleUkey;
             styleUkey = MyUtility.GetValue.Lookup($"select ukey from style where ID = '{this.CurrentMaintain["StyleID"].ToString()}' and BrandID = '{this.CurrentMaintain["BrandID"].ToString()}' and SeasonID = '{this.CurrentMaintain["SeasonID"].ToString()}'");
             if (MyUtility.Check.Empty(styleUkey))
@@ -159,7 +165,11 @@ where ID = '{0}'"
             item = new Sci.Win.Tools.SelectItem(selectCommand, "11,33", this.Text);
             item.Width = 520;
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.txtArticle.Text = item.GetSelectedString();
         }
 
@@ -194,43 +204,49 @@ where ID = '{0}'"
 
         protected override bool ClickSaveBefore()
         {
-            //檢查表頭Style#, Season, Brand, Article / Colorway, T1/SubconName必須輸入
+            // 檢查表頭Style#, Season, Brand, Article / Colorway, T1/SubconName必須輸入
             #region 檢查空白欄位
             if (MyUtility.Check.Empty(this.CurrentMaintain["StyleID"]))
             {
                 MyUtility.Msg.WarningBox("<Style#> can not be empty.");
                 return false;
             }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["SeasonID"]))
             {
                 MyUtility.Msg.WarningBox("<Season> can not be empty.");
                 return false;
             }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
             {
                 MyUtility.Msg.WarningBox("<Brand> can not be empty.");
                 return false;
             }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["Article"]))
             {
                 MyUtility.Msg.WarningBox("<Article / Colorway> can not be empty.");
                 return false;
             }
-            //if (MyUtility.Check.Empty(this.CurrentMaintain["T1Subcon"]))
-            //{
+
+            // if (MyUtility.Check.Empty(this.CurrentMaintain["T1Subcon"]))
+            // {
             //    MyUtility.Msg.WarningBox("<T1/SubconName> can not be empty.");
             //    return false;
-            //}
+            // }
             #endregion
 
             #region 檢查欄位正確性
-            //Style,Season,Brand
+
+            // Style,Season,Brand
             if (!MyUtility.Check.Seek($"select 1 from Style WITH (NOLOCK) where ID = '{this.CurrentMaintain["StyleID"]}' and BrandID = '{this.CurrentMaintain["BrandID"]}' and SeasonID = '{this.CurrentMaintain["SeasonID"]}'"))
             {
                 MyUtility.Msg.WarningBox("Style#, Season, Brand not found!");
                 return false;
             }
-            //Article
+
+            // Article
             if (!MyUtility.Check.Seek($"select 1 from Style_Article WITH (NOLOCK) where Article = '{this.txtArticle.Text}' and StyleUkey = (select ukey from style where ID = '{this.CurrentMaintain["StyleID"]}' and BrandID = '{this.CurrentMaintain["BrandID"]}' and SeasonID = '{this.CurrentMaintain["SeasonID"]}')"))
             {
                 MyUtility.Msg.WarningBox("Article not found!");
@@ -242,19 +258,19 @@ where ID = '{0}'"
             #region 取得表頭ID
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "WA" , "MockupWash", DateTime.Now);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "WA", "MockupWash", DateTime.Now);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
                     return false;
                 }
-                CurrentMaintain["ID"] = tmpId;
+
+                this.CurrentMaintain["ID"] = tmpId;
             }
             #endregion
 
             return base.ClickSaveBefore();
         }
-
 
         protected override DualResult ClickDeletePost()
         {
@@ -264,8 +280,8 @@ where ID = '{0}'"
             {
                 this.ShowErr(result);
             }
+
             return base.ClickDeletePost();
         }
-        
     }
 }

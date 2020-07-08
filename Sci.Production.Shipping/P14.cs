@@ -2,15 +2,10 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.PublicPrg;
-using Sci.Win.Tems;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
@@ -29,7 +24,8 @@ namespace Sci.Production.Shipping
         {
             this.InitializeComponent();
             this.detailgrid.Sorted += this.Detailgrid_Sorted;
-            //this.detailgrid.SelectionChanged += this.Detailgrid_SelectionChanged;
+
+            // this.detailgrid.SelectionChanged += this.Detailgrid_SelectionChanged;
             this.detailgrid.RowSelecting += this.Detailgrid_RowSelecting;
             this.canEdit = Prgs.GetAuthority(Sci.Env.User.UserID, "P14. Material C/O Maintenance", "CanEdit");
             this.btnBatchUpdate.Enabled = this.canEdit;
@@ -206,9 +202,9 @@ order by ed.ID
                 if (ftyReceiveDate < (DateTime)this.CurrentDetailData["TPEReceiveDate"])
                 {
                    this.CurrentDetailData["FtyReceiveDate"] = DBNull.Value;
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox("<Fty Receive Date> cannot be earlier than <TPE Receive Date>");
-                    return;
+                   e.Cancel = true;
+                   MyUtility.Msg.WarningBox("<Fty Receive Date> cannot be earlier than <TPE Receive Date>");
+                   return;
                 }
 
                 this.CurrentDetailData["FtyReceiveDate"] = ftyReceiveDate;

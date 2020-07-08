@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.InteropServices;
-using System.Runtime.ExceptionServices;
-using System.Configuration;
-
-namespace Sci.Production.Packing
+﻿namespace Sci.Production.Packing
 {
-
     /// <summary>
     /// P09_IDX_CTRL
     /// </summary>

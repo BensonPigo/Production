@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace Sci.Production.Class
 {
@@ -24,16 +16,20 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
             string sqlWhere = "select ID from Factory WITH (NOLOCK) where Junk = 0 order by ID";
-            if (checkProduceFty)
+            if (this.checkProduceFty)
             {
                 sqlWhere = "select ID from Factory WITH (NOLOCK) where Junk = 0 and IsProduceFty = 1 order by ID";
             }
+
             Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlWhere, "Factory", "10", this.Text, null, null, null);
 
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.Text = item.GetSelectedString();
         }
-
     }
 }
