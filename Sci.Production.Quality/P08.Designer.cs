@@ -55,6 +55,9 @@
             this.comboBoxUpdateTime = new Sci.Win.UI.ComboBox();
             this.btnUpdateTime = new Sci.Win.UI.Button();
             this.dateTimePickerUpdateTime = new System.Windows.Forms.DateTimePicker();
+            this.lbMsg = new System.Windows.Forms.Label();
+            this.lbPackage = new Sci.Win.UI.Label();
+            this.txtPackage = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
@@ -324,11 +327,41 @@
             this.dateTimePickerUpdateTime.TabIndex = 42;
             this.dateTimePickerUpdateTime.Value = new System.DateTime(2017, 6, 1, 14, 42, 7, 0);
             // 
+            // lbMsg
+            // 
+            this.lbMsg.AutoSize = true;
+            this.lbMsg.ForeColor = System.Drawing.Color.Red;
+            this.lbMsg.Location = new System.Drawing.Point(713, 444);
+            this.lbMsg.Name = "lbMsg";
+            this.lbMsg.Size = new System.Drawing.Size(215, 17);
+            this.lbMsg.TabIndex = 43;
+            this.lbMsg.Text = "Display KNIT & WOVEN data only.";
+            // 
+            // lbPackage
+            // 
+            this.lbPackage.Location = new System.Drawing.Point(632, 7);
+            this.lbPackage.Name = "lbPackage";
+            this.lbPackage.Size = new System.Drawing.Size(65, 23);
+            this.lbPackage.TabIndex = 44;
+            this.lbPackage.Text = "Package";
+            // 
+            // txtPackage
+            // 
+            this.txtPackage.BackColor = System.Drawing.Color.White;
+            this.txtPackage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPackage.Location = new System.Drawing.Point(700, 7);
+            this.txtPackage.Name = "txtPackage";
+            this.txtPackage.Size = new System.Drawing.Size(70, 23);
+            this.txtPackage.TabIndex = 45;
+            // 
             // P08
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1142, 479);
+            this.Controls.Add(this.txtPackage);
+            this.Controls.Add(this.lbPackage);
+            this.Controls.Add(this.lbMsg);
             this.Controls.Add(this.dateTimePickerUpdateTime);
             this.Controls.Add(this.btnUpdateTime);
             this.Controls.Add(this.comboBoxUpdateTime);
@@ -380,6 +413,9 @@
             this.Controls.SetChildIndex(this.comboBoxUpdateTime, 0);
             this.Controls.SetChildIndex(this.btnUpdateTime, 0);
             this.Controls.SetChildIndex(this.dateTimePickerUpdateTime, 0);
+            this.Controls.SetChildIndex(this.lbMsg, 0);
+            this.Controls.SetChildIndex(this.lbPackage, 0);
+            this.Controls.SetChildIndex(this.txtPackage, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
@@ -414,5 +450,8 @@
         private Win.UI.Button btnUpdateTime;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.DateTimePicker dateTimePickerUpdateTime;
+        private System.Windows.Forms.Label lbMsg;
+        private Win.UI.Label lbPackage;
+        private Win.UI.TextBox txtPackage;
     }
 }
