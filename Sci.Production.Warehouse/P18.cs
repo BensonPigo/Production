@@ -337,8 +337,9 @@ where a.id = @ID", pars, out dtDetail);
                 MyUtility.Msg.WarningBox(warningmsg.ToString());
                 return false;
             }
-            // Check Roll 是否有重複
-            if (!checkRoll())
+
+            //Check FtyInventory 是否已經存在
+            if (!ChkFtyInventory_Exists())
             {
                 return false;
             }
@@ -455,6 +456,7 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", CurrentDet
                     this.CurrentDetailData["stockunit"] = x[0]["stockunit"];
                     this.CurrentDetailData["Description"] = x[0]["Description"];
                     this.CurrentDetailData["fabrictype"] = x[0]["fabrictype"];
+                    this.CurrentDetailData["fabric"] = MyUtility.Check.Empty(x[0]["fabrictype"]) ? string.Empty : x[0]["fabrictype"].ToString().ToUpper() == "F" ? "Fabric" : "Accessory";
                     CurrentDetailData.EndEdit();
                 }
             };
@@ -463,6 +465,8 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", CurrentDet
             {
                 if (!this.EditMode) return;
                 DataRow dr;
+                string oldValue = CurrentDetailData["seq"].ToString();
+                string newValue = e.FormattedValue.ToString();
                 if (String.Compare(e.FormattedValue.ToString(), CurrentDetailData["seq"].ToString()) != 0)
                 {
                     if (MyUtility.Check.Empty(e.FormattedValue))
@@ -478,6 +482,33 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", CurrentDet
                     }
                     else
                     {
+
+
+                        string poid = MyUtility.Convert.GetString(CurrentDetailData["poid"]);
+                        string seq1 = MyUtility.Convert.GetString(CurrentDetailData["seq1"]);
+                        string seq2 = MyUtility.Convert.GetString(CurrentDetailData["seq2"]);
+                        string roll = MyUtility.Convert.GetString(CurrentDetailData["roll"]);
+                        string dyelot = MyUtility.Convert.GetString(CurrentDetailData["dyelot"]);
+                        string fabricType = MyUtility.Convert.GetString(CurrentDetailData["fabrictype"]);
+                        string stockType = MyUtility.Convert.GetString(CurrentDetailData["stockType"]);
+
+                        // 判斷 物料 是否為 布，布料才需要 Roll &Dyelot
+                        if (fabricType.ToUpper() == "F" && !MyUtility.Check.Empty(poid) && !MyUtility.Check.Empty(seq1) && !MyUtility.Check.Empty(seq2) && !MyUtility.Check.Empty(roll) && !MyUtility.Check.Empty(dyelot))
+                        {
+                            // 判斷 在 FtyInventory 是否存在
+                            bool ChkFtyInventory = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
+
+                            if (!ChkFtyInventory)
+                            {
+                                //e.Cancel = true;
+                                MyUtility.Msg.WarningBox($"The Roll & Dyelot of <SP#>:{poid}, <Seq>:{seq1} {seq2}, <Roll>:{roll}, <Dyelot>:{dyelot} already exists.");
+
+
+                                CurrentDetailData["seq"] = oldValue;
+                                CurrentDetailData["seq1"] = oldValue.Split(' ')[0];
+                                CurrentDetailData["seq2"] = oldValue.Split(' ')[1];
+                            }
+                        }
                         DualResult result = P18_Utility.CheckDetailSeq(e.FormattedValue.ToString(), this.CurrentMaintain["FromFtyID"].ToString(), this.CurrentDetailData);
 
                         if (!result)
@@ -487,8 +518,7 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", CurrentDet
                             return;
                         }
 
-                        //CurrentDetailData["Roll"] = "";
-                        //CurrentDetailData["Dyelot"] = "";
+
                     }
                 }
             };
@@ -575,6 +605,28 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", CurrentDet
                         return;
                     }
 
+                    string poid = MyUtility.Convert.GetString(CurrentDetailData["poid"]);
+                    string seq1 = MyUtility.Convert.GetString(CurrentDetailData["seq1"]);
+                    string seq2 = MyUtility.Convert.GetString(CurrentDetailData["seq2"]);
+                    string roll = MyUtility.Convert.GetString(CurrentDetailData["roll"]);
+                    string dyelot = MyUtility.Convert.GetString(CurrentDetailData["dyelot"]);
+                    string fabricType = MyUtility.Convert.GetString(CurrentDetailData["fabrictype"]);
+                    string stockType = MyUtility.Convert.GetString(CurrentDetailData["stockType"]);
+
+                    // 判斷 物料 是否為 布，布料才需要 Roll &Dyelot
+                    if (fabricType.ToUpper() == "F")
+                    {
+                        // 判斷 在 FtyInventory 是否存在
+                        bool ChkFtyInventory = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
+
+                        if (!ChkFtyInventory)
+                        {
+                            e.Cancel = true;
+                            MyUtility.Msg.WarningBox($"The Roll & Dyelot of <SP#>:{poid}, <Seq>:{seq1} {seq2}, <Roll>:{roll}, <Dyelot>:{dyelot} already exists.");
+                            return;
+                        }
+                    }
+
                     this.CurrentDetailData["seq"] = "";
                     this.CurrentDetailData["seq1"] = "";
                     this.CurrentDetailData["seq2"] = "";
@@ -585,6 +637,89 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", CurrentDet
                 }
             };
 
+            #region Roll驗證
+
+            Ict.Win.DataGridViewGeneratorTextColumnSettings Roll_setting = new DataGridViewGeneratorTextColumnSettings();
+            Roll_setting.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode) return;
+                if (CurrentDetailData == null) return;
+                string oldvalue = MyUtility.Convert.GetString(CurrentDetailData["Roll"]);
+                string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
+                if (oldvalue == newvalue) return;
+
+                CurrentDetailData["Roll"] = newvalue;
+
+                // 開始檢查FtyInventory
+                string poid = MyUtility.Convert.GetString(CurrentDetailData["poid"]);
+                string seq1 = MyUtility.Convert.GetString(CurrentDetailData["seq1"]);
+                string seq2 = MyUtility.Convert.GetString(CurrentDetailData["seq2"]);
+                string roll = MyUtility.Convert.GetString(CurrentDetailData["roll"]);
+                string dyelot = MyUtility.Convert.GetString(CurrentDetailData["dyelot"]);
+                string fabricType = MyUtility.Convert.GetString(CurrentDetailData["fabrictype"]);
+                string stockType = MyUtility.Convert.GetString(CurrentDetailData["stockType"]);
+
+                // 布料，且都有值了才檢查
+                if (fabricType.ToUpper() == "F" && !MyUtility.Check.Empty(poid) && !MyUtility.Check.Empty(seq1) && !MyUtility.Check.Empty(seq2) && !MyUtility.Check.Empty(roll) && !MyUtility.Check.Empty(dyelot))
+                {
+                    bool ChkFtyInventory = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
+
+                    if (!ChkFtyInventory)
+                    {
+                        MyUtility.Msg.WarningBox($"The Roll & Dyelot of <SP#>:{poid}, <Seq>:{seq1} {seq2}, <Roll>:{roll}, <Dyelot>:{dyelot} already exists.");
+
+                        // 未通過驗證 清空欄位
+                        CurrentDetailData["Roll"] = "";
+
+                        CurrentDetailData.EndEdit();
+                        return;
+                    }
+                }
+            };
+            #endregion
+
+            #region Dyelot驗證
+
+            Ict.Win.DataGridViewGeneratorTextColumnSettings Dyelot_setting = new DataGridViewGeneratorTextColumnSettings();
+
+            Dyelot_setting.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode) return;
+                if (CurrentDetailData == null) return;
+                string oldvalue = MyUtility.Convert.GetString(CurrentDetailData["Dyelot"]);
+                string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
+                if (oldvalue == newvalue) return;
+
+                CurrentDetailData["Dyelot"] = newvalue;
+
+                // 開始檢查FtyInventory
+                string poid = MyUtility.Convert.GetString(CurrentDetailData["poid"]);
+                string seq1 = MyUtility.Convert.GetString(CurrentDetailData["seq1"]);
+                string seq2 = MyUtility.Convert.GetString(CurrentDetailData["seq2"]);
+                string roll = MyUtility.Convert.GetString(CurrentDetailData["roll"]);
+                string dyelot = MyUtility.Convert.GetString(CurrentDetailData["dyelot"]);
+                string fabricType = MyUtility.Convert.GetString(CurrentDetailData["fabrictype"]);
+                string stockType = MyUtility.Convert.GetString(CurrentDetailData["stockType"]);
+
+                // 布料，且都有值了才檢查
+                if (fabricType.ToUpper() == "F" && !MyUtility.Check.Empty(poid) && !MyUtility.Check.Empty(seq1) && !MyUtility.Check.Empty(seq2) && !MyUtility.Check.Empty(roll) && !MyUtility.Check.Empty(dyelot))
+                {
+                    bool ChkFtyInventory = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
+
+                    if (!ChkFtyInventory)
+                    {
+                        MyUtility.Msg.WarningBox($"The Roll & Dyelot of <SP#>:{poid}, <Seq>:{seq1} {seq2}, <Roll>:{roll}, <Dyelot>:{dyelot} already exists.");
+
+                        // 未通過驗證 清空欄位
+                        CurrentDetailData["Dyelot"] = "";
+
+                        CurrentDetailData.EndEdit();
+                        return;
+                    }
+                }
+            };
+            #endregion
+
             Ict.Win.UI.DataGridViewTextBoxColumn cbb_Roll;
             Ict.Win.UI.DataGridViewTextBoxColumn cbb_Dyelot;
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
@@ -593,8 +728,8 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", CurrentDet
             .Text("poid", header: "SP#", width: Widths.AnsiChars(13), settings: ts3)  //0
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts)  //1
             .Text("Fabric", header: "Fabric \r\n Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("roll", header: "Roll", width: Widths.AnsiChars(6)).Get(out cbb_Roll)  //2
-            .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8)).Get(out cbb_Dyelot)  //3
+            .Text("roll", header: "Roll", width: Widths.AnsiChars(6),settings: Roll_setting).Get(out cbb_Roll)  //2
+            .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8),settings: Dyelot_setting).Get(out cbb_Dyelot)  //3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
             .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10)    //5
             .Numeric("qty", header: "In Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10)    //6
@@ -632,7 +767,7 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", CurrentDet
             DataTable datacheck;
 
             // Check Roll 是否有重複
-            if (!checkRoll())
+            if (!ChkFtyInventory_Exists())
                 return;
 
             #region -- 檢查庫存項lock --
@@ -1258,23 +1393,34 @@ Where a.id = '{0}'", masterID, fromFty);
             this.txtFromFactory.Text = item.GetSelectedString();
         }
 
-        /// <summary>
-        /// 確認 SP# & Seq 是否已經有重複的 Roll
-        /// </summary>
-        /// <returns>bool</returns>
-        private bool checkRoll()
+
+        private bool ChkFtyInventory_Exists()
         {
             //判斷是否已經收過此種布料SP#,SEQ,Roll不能重複收
             List<string> listMsg = new List<string>();
             List<string> listDyelot = new List<string>();
             foreach (DataRow row in DetailDatas)
             {
-                DualResult result = P18_Utility.CheckRollExists(CurrentMaintain["id"].ToString(), row);
+                string poid = MyUtility.Convert.GetString(row["poid"]);
+                string seq1 = MyUtility.Convert.GetString(row["seq1"]);
+                string seq2 = MyUtility.Convert.GetString(row["seq2"]);
+                string roll = MyUtility.Convert.GetString(row["roll"]);
+                string dyelot = MyUtility.Convert.GetString(row["dyelot"]);
+                string fabricType = MyUtility.Convert.GetString(row["fabrictype"]);
+                string stockType = MyUtility.Convert.GetString(row["stockType"]);
 
-                if (!result)
+                // 判斷 物料 是否為 布，布料才需要 Roll &Dyelot
+                if (fabricType.ToUpper() == "F")
                 {
-                    listMsg.Add(result.Description);
+                    // 判斷 在 FtyInventory 是否存在
+                    bool ChkFtyInventory = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
+
+                    if (!ChkFtyInventory)
+                    {
+                        listMsg.Add($"The Roll & Dyelot of <SP#>:{poid}, <Seq>:{seq1} {seq2}, <Roll>:{roll}, <Dyelot>:{dyelot} already exists.");
+                    }
                 }
+
             }
 
             if (listMsg.Count > 0)
@@ -1284,6 +1430,7 @@ Where a.id = '{0}'", masterID, fromFty);
             }
             return true;
         }
+
         /// <summary>
         /// 表身新增資料,會將上一筆資料copy並填入新增的資料列裡
         /// </summary>

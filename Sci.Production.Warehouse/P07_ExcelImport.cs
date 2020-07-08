@@ -522,13 +522,37 @@ where   stocktype='{0}'
                 //{
                 //    detailData.Rows.Remove(del);
                 //}
-                
+
                 foreach (DataRow dr2 in tmpPacking.Rows)
                 {
                     //刪除 Import 重複的資料 by SP# Seq Carton#
                     DataRow[] checkRow = detailData.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && row["poid"].EqualString(dr2["poid"])
                                                                                 && row["seq1"].EqualString(dr2["seq1"]) && row["seq2"].EqualString(dr2["seq2"])
                                                                                 && row["roll"].EqualString(dr2["roll"]) && row["Dyelot"].EqualString(dr2["Dyelot"])).ToArray();
+
+                    // 開始檢查FtyInventory
+                    string poid = MyUtility.Convert.GetString(dr2["poid"]);
+                    string seq1 = MyUtility.Convert.GetString(dr2["seq1"]);
+                    string seq2 = MyUtility.Convert.GetString(dr2["seq2"]);
+                    string roll = MyUtility.Convert.GetString(dr2["roll"]);
+                    string dyelot = MyUtility.Convert.GetString(dr2["dyelot"]);
+                    string fabricType = MyUtility.Convert.GetString(dr2["fabrictype"]);
+                    string stockType = MyUtility.Convert.GetString(dr2["stockType"]);
+
+
+                    // 布料，且都有值了才檢查該Row
+                    if (fabricType.ToUpper() == "F" && !MyUtility.Check.Empty(poid) && !MyUtility.Check.Empty(seq1) && !MyUtility.Check.Empty(seq2) && !MyUtility.Check.Empty(roll) && !MyUtility.Check.Empty(dyelot))
+                    {
+                        bool ChkFtyInventory = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
+
+                        if (!ChkFtyInventory)
+                        {
+                            MyUtility.Msg.WarningBox($"The Roll & Deylot of <SP#>:{poid}, <Seq>:{seq1} {seq2}, <Roll>:{roll}, <Dyelot>:{dyelot} already exists.");
+
+                            return;
+                        }
+                    }
+
                     if (checkRow.Length == 0)
                     {
                         dr2["id"] = master["id"];

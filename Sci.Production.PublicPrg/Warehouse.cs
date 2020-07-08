@@ -2928,6 +2928,23 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             return DBProxy.Current.Execute(null, sqlRetransferToScrap);
         }
 
+        public static bool ChkFtyInventory(string sp, string seq1, string seq2, string roll, string dyelot, string stockType)
+        {
+            string cmd = $"select COUNT(Ukey) from FtyInventory where POID='{sp}' AND SEQ1='{seq1}' AND SEQ2='{seq2}' AND Roll='{roll}' AND Dyelot='{dyelot}' AND StockType = '{stockType}' AND InQty > 0";
+
+            int ftyCount = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(cmd));
+
+            if (ftyCount > 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+
+        }
+
         private class NowDetail
         {
             public string POID { get; set; }
