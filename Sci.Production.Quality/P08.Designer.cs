@@ -331,11 +331,11 @@
             // 
             this.lbMsg.AutoSize = true;
             this.lbMsg.ForeColor = System.Drawing.Color.Red;
-            this.lbMsg.Location = new System.Drawing.Point(713, 444);
+            this.lbMsg.Location = new System.Drawing.Point(510, 449);
             this.lbMsg.Name = "lbMsg";
-            this.lbMsg.Size = new System.Drawing.Size(215, 17);
+            this.lbMsg.Size = new System.Drawing.Size(229, 17);
             this.lbMsg.TabIndex = 43;
-            this.lbMsg.Text = "Display KNIT & WOVEN data only.";
+            this.lbMsg.Text = "Display KNIT ＆ WOVEN data only.";
             // 
             // lbPackage
             // 
