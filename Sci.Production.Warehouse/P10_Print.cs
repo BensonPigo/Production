@@ -96,7 +96,7 @@ order by psd.Refno,isd.POID,isd.Roll
 
                 this.SetCount(this.dtExcel.Rows.Count);
                 string excelName = "Warehouse_P10_FabricsRelaxationLogsheet.xltx";
-                Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + excelName);
+                Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + excelName);
                 Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
                 worksheet.Cells[3, 3] = MyUtility.Convert.GetString(this.DataRow["cutplanID"]);
                 worksheet.Cells[4, 3] = ((DateTime)MyUtility.Convert.GetDate(this.DataRow["issuedate"])).ToString("d");
@@ -129,7 +129,7 @@ order by psd.Refno,isd.POID,isd.Roll
                 worksheet.Rows[7].RowHeight = 25;
 
                 #region Save Excel
-                string excelFile = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P10_FabricsRelaxationLogsheet");
+                string excelFile = Class.MicrosoftFile.GetName("Warehouse_P10_FabricsRelaxationLogsheet");
                 excelApp.ActiveWorkbook.SaveAs(excelFile);
                 excelApp.Quit();
                 excelFile.OpenFile();
@@ -177,7 +177,7 @@ order by psd.Refno,isd.POID,isd.Roll
 
                 #region  抓表頭資料
                 List<SqlParameter> pars = new List<SqlParameter>();
-                pars.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
+                pars.Add(new SqlParameter("@MDivision", Env.User.Keyword));
                 DataTable dt;
                 result = DBProxy.Current.Select(string.Empty, @"
 select NameEN

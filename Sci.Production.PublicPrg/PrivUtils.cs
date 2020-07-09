@@ -97,7 +97,7 @@ namespace Sci.Production.Prg
             {
                 excel = null;
 
-                if (!System.IO.File.Exists(templatefile))
+                if (!File.Exists(templatefile))
                 {
                     return new DualResult(false, "'{0}' excel template file not exists.".InvariantFormat(templatefile));
                 }
@@ -122,7 +122,7 @@ namespace Sci.Production.Prg
                 {
                     if (templatefile != null && templatefile.Length > 0)
                     {
-                        switch (System.IO.Path.GetExtension(templatefile).ToLowerInvariant())
+                        switch (Path.GetExtension(templatefile).ToLowerInvariant())
                         {
                             case ".xls":
                                 exc.Workbooks.Open(templatefile);
@@ -149,7 +149,7 @@ namespace Sci.Production.Prg
                 }
 
                 excel = exc;
-                return Result.True;
+                return Ict.Result.True;
             }
 
             public static void Unblock(string file)
@@ -255,7 +255,7 @@ namespace Sci.Production.Prg
                     }
                 }
 
-                return Result.True;
+                return Ict.Result.True;
             }
 
             public static void WriteDatas(Worksheet sheet, System.Data.DataTable datas, object[] cols_or_formatters, int rowix_begin)
@@ -264,7 +264,7 @@ namespace Sci.Production.Prg
                 var ecell = ParseCell(cols_or_formatters.Length);
 
                 // 欄位Format 主要針對儲存格格式設定過日期,數值,文字,但未設定到位置之範例檔
-                PrivUtils.Excels.setFormat(sheet, rowix_begin);
+                setFormat(sheet, rowix_begin);
                 foreach (DataRow it in datas.Rows)
                 {
                     var array = ToArray(it, cols_or_formatters);
@@ -311,8 +311,8 @@ namespace Sci.Production.Prg
                     for (int k = 0; k < intColumns - 1; k++)
                     {
                         // wsSheet.get_Range(String.Format("A:{0}", PrivUtils.getPosition(intColumns))).NumberFormatLocal = "yyyy/MM/dd";
-                        string ss = sheet.get_Range(string.Format("{1}{0}:{1}{0}", rowix_begin, PrivUtils.getPosition(k + 1))).NumberFormatLocal;
-                        object val = sheet.get_Range(string.Format("{1}{0}:{1}{0}", rowix_begin - 1, PrivUtils.getPosition(k + 1))).Value;
+                        string ss = sheet.get_Range(string.Format("{1}{0}:{1}{0}", rowix_begin, getPosition(k + 1))).NumberFormatLocal;
+                        object val = sheet.get_Range(string.Format("{1}{0}:{1}{0}", rowix_begin - 1, getPosition(k + 1))).Value;
                         if (val == null || val.ToString().Trim() == string.Empty)
                         {
                             break; // 遇欄位名稱空白-結束
@@ -326,19 +326,19 @@ namespace Sci.Production.Prg
                         // int rowCount = (intRowsCount + rowix_begin - 1) > 65536 ? 65536 : intRowsCount + rowix_begin - 1;
                         if (ss == "yyyy/m/d")
                         {
-                            sheet.get_Range(string.Format("{0}:{0}", PrivUtils.getPosition(k + 1))).HorizontalAlignment = EXCEL.Constants.xlRight;
+                            sheet.get_Range(string.Format("{0}:{0}", getPosition(k + 1))).HorizontalAlignment = Constants.xlRight;
                         }
                         else if (ss.Contains("#,##") || ss.Contains("0"))
                         {
-                            sheet.get_Range(string.Format("{0}:{0}", PrivUtils.getPosition(k + 1))).HorizontalAlignment = EXCEL.Constants.xlRight;
+                            sheet.get_Range(string.Format("{0}:{0}", getPosition(k + 1))).HorizontalAlignment = Constants.xlRight;
                         }
                         else if (ss == "@")
                         {
-                            sheet.get_Range(string.Format("{0}:{0}", PrivUtils.getPosition(k + 1))).HorizontalAlignment = EXCEL.Constants.xlLeft;
+                            sheet.get_Range(string.Format("{0}:{0}", getPosition(k + 1))).HorizontalAlignment = Constants.xlLeft;
                         }
                         else
                         {
-                            sheet.get_Range(string.Format("{0}:{0}", PrivUtils.getPosition(k + 1))).HorizontalAlignment = EXCEL.Constants.xlLeft;
+                            sheet.get_Range(string.Format("{0}:{0}", getPosition(k + 1))).HorizontalAlignment = Constants.xlLeft;
                         }
                     }
                 }
@@ -365,7 +365,7 @@ namespace Sci.Production.Prg
                                 scol += "err msg : 值有=號開頭, 寫入數值格式欄位,誤判為公式錯誤-->"; // Ex. =46=TW=9D
                             }
 
-                            scol += PrivUtils.getPosition(k + 1) + " :: " + objArray[0, k].ToString() + "\r\n ";
+                            scol += getPosition(k + 1) + " :: " + objArray[0, k].ToString() + "\r\n ";
                         }
 
                         return new DualResult(false, "Export excel error.  -> 所有欄位(排序)值 : \r\n" + scol, ex);
@@ -384,7 +384,7 @@ namespace Sci.Production.Prg
                             }
                         }
 
-                        wsSheet.Range[string.Format("A{0}:{2}{1}", rownum, rownum + mm - 1, PrivUtils.getPosition(intColumns))].Value2 = objArray1;
+                        wsSheet.Range[string.Format("A{0}:{2}{1}", rownum, rownum + mm - 1, getPosition(intColumns))].Value2 = objArray1;
                         try
                         {
                             rownum += mm;
@@ -397,7 +397,7 @@ namespace Sci.Production.Prg
                                 }
                             }
 
-                            wsSheet.Range[string.Format("A{0}:{2}{1}", rownum, rownum + kk - 1, PrivUtils.getPosition(intColumns))].Value2 = objArray1;
+                            wsSheet.Range[string.Format("A{0}:{2}{1}", rownum, rownum + kk - 1, getPosition(intColumns))].Value2 = objArray1;
                         }
                         catch (Exception ex1)
                         {
@@ -414,7 +414,7 @@ namespace Sci.Production.Prg
                     return new DualResult(false, "Export excel error.", e);
                 }
 
-                return Result.True;
+                return Ict.Result.True;
             }
 
             const string CELLs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -688,9 +688,9 @@ namespace Sci.Production.Prg
         public static string getPath_XLT(string sPath)
         {
             string rtn = string.Empty;
-            if (Sci.Env.Cfg.XltPathDir != string.Empty)
+            if (Env.Cfg.XltPathDir != string.Empty)
             {
-                rtn = Sci.Env.Cfg.XltPathDir;
+                rtn = Env.Cfg.XltPathDir;
             }
             else
             {
@@ -833,8 +833,8 @@ namespace Sci.Production.Prg
 
             // rngCell.HorizontalAlignment = HorizontalAlignment.Center;
             // rngCell.VerticalAlignment = HorizontalAlignment.Center;
-            rngCell.VerticalAlignment = EXCEL.Constants.xlCenter;
-            rngCell.HorizontalAlignment = EXCEL.Constants.xlCenter;
+            rngCell.VerticalAlignment = Constants.xlCenter;
+            rngCell.HorizontalAlignment = Constants.xlCenter;
         }
 
         public static void SetRangeMerageCell(Range rngCell)
@@ -848,8 +848,8 @@ namespace Sci.Production.Prg
 
             // rngCell.HorizontalAlignment = HorizontalAlignment.Center;
             // rngCell.VerticalAlignment = HorizontalAlignment.Center;
-            rngCell.VerticalAlignment = EXCEL.Constants.xlCenter;
-            rngCell.HorizontalAlignment = EXCEL.Constants.xlCenter;
+            rngCell.VerticalAlignment = Constants.xlCenter;
+            rngCell.HorizontalAlignment = Constants.xlCenter;
         }
 
         /// <summary>

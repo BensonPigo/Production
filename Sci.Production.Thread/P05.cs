@@ -1,13 +1,13 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Production.Class;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Transactions;
 using System.Windows.Forms;
+using Sci.Production.Class;
 
 namespace Sci.Production.Thread
 {
@@ -16,8 +16,8 @@ namespace Sci.Production.Thread
     /// </summary>
     public partial class P05 : Win.Tems.Input6
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
 
         /// <summary>
         /// P05
@@ -55,7 +55,7 @@ namespace Sci.Production.Thread
         /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            DataGridViewGeneratorTextColumnSettings refno = celllocalitem.GetGridCell("Thread", null, "LocalSuppid,Supp,category,Description,ThreadTex,ThreadTypeid");
+            DataGridViewGeneratorTextColumnSettings refno = Txtlocalitem.Celllocalitem.GetGridCell("Thread", null, "LocalSuppid,Supp,category,Description,ThreadTex,ThreadTypeid");
             DataGridViewGeneratorTextColumnSettings thcolor = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings thlocation = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();

@@ -44,7 +44,7 @@ namespace Sci.Production.PPIC
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -152,10 +152,10 @@ where StyleUkey = {0}", this.KeyValue1);
             datas.Columns.Add("EditBy");
             foreach (DataRow gridData in datas.Rows)
             {
-                gridData["CreateBy"] = gridData["AddName"].ToString() + "   " + ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
-                if (gridData["EditDate"] != System.DBNull.Value)
+                gridData["CreateBy"] = gridData["AddName"].ToString() + "   " + ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
+                if (gridData["EditDate"] != DBNull.Value)
                 {
-                    gridData["EditBy"] = gridData["EditName"].ToString() + "   " + ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                    gridData["EditBy"] = gridData["EditName"].ToString() + "   " + ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
                 }
 
                 DataRow[] findrow = artworkUnit.Select(string.Format("ArtworkTypeID = '{0}'", gridData["ArtworkTypeID"].ToString()));
@@ -263,7 +263,7 @@ select * from UpdateData", this.KeyValue1);
                             dr["Price"].ToString(),
                             dr["Cost"].ToString(),
                             dr["Remark"].ToString(),
-                            Sci.Env.User.UserID,
+                            Env.User.UserID,
                             "(select min(Ukey)-1 from Order_Artwork)"));
                     }
                 }
@@ -280,7 +280,7 @@ select * from UpdateData", this.KeyValue1);
                             dr["Price"].ToString(),
                             dr["Cost"].ToString(),
                             dr["Remark"].ToString(),
-                            Sci.Env.User.UserID,
+                            Env.User.UserID,
                             dr["Ukey"].ToString()));
                     }
                     else
@@ -370,7 +370,7 @@ select * from StyleTMSCost", this.KeyValue1);
                             dr["ArtworkUnit"].ToString(),
                             dr["TMS"].ToString(),
                             dr["Cost"].ToString(),
-                            Sci.Env.User.UserID));
+                            Env.User.UserID));
                     }
                     else
                     {
@@ -379,7 +379,7 @@ select * from StyleTMSCost", this.KeyValue1);
                             dr["Stitch"].ToString(),
                             dr["TMS"].ToString(),
                             dr["Cost"].ToString(),
-                            Sci.Env.User.UserID,
+                            Env.User.UserID,
                             dr["OrderID"].ToString(),
                             dr["ArtworkTypeID"].ToString()));
                     }
@@ -397,7 +397,7 @@ select * from StyleTMSCost", this.KeyValue1);
                             dr["ArtworkUnit"].ToString(),
                             dr["TMS"].ToString(),
                             dr["Cost"].ToString(),
-                            Sci.Env.User.UserID));
+                            Env.User.UserID));
                     }
                     else
                     {
@@ -406,7 +406,7 @@ select * from StyleTMSCost", this.KeyValue1);
                             dr["Stitch"].ToString(),
                             dr["TMS"].ToString(),
                             dr["Cost"].ToString(),
-                            Sci.Env.User.UserID,
+                            Env.User.UserID,
                             this.KeyValue1,
                             dr["ArtworkTypeID"].ToString()));
                     }
@@ -424,7 +424,7 @@ select * from StyleTMSCost", this.KeyValue1);
             }
             #endregion
 
-            return Result.True;
+            return Ict.Result.True;
         }
     }
 }

@@ -45,7 +45,7 @@ namespace Sci.Production.Shipping
             #region Current Custom的DbClick
             this.currentcustom.EditingMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     if (e.RowIndex != -1)
                     {
@@ -66,7 +66,7 @@ namespace Sci.Production.Shipping
             #region Contract no 按右鍵與validating
             this.vncontract.EditingMouseDown += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     if (e.RowIndex != -1)
                     {
@@ -102,7 +102,7 @@ namespace Sci.Production.Shipping
             #region Consumption的DbClick
             this.consumption.EditingMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     if (e.RowIndex != -1)
                     {
@@ -741,7 +741,7 @@ where Contract = '' or CustomSPNo <> ''";
                     if (MyUtility.Convert.GetString(dr["Selected"]) == "1" && MyUtility.Check.Empty(dr["ID"]))
                     {
                         insertCmds.Clear();
-                        newID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "SP", "VNConsumption", Convert.ToDateTime(dr["CDate"]), 2, "ID", null);
+                        newID = MyUtility.GetValue.GetID(Env.User.Keyword + "SP", "VNConsumption", Convert.ToDateTime(dr["CDate"]), 2, "ID", null);
                         maxVersion = MyUtility.GetValue.Lookup(string.Format("select isnull(MAX(Version),0) as MaxVersion from VNConsumption WITH (NOLOCK) where StyleUKey = {0}", MyUtility.Convert.GetString(dr["StyleUKey"])));
                         vnMultiple = MyUtility.GetValue.Lookup("select VNMultiple from System WITH (NOLOCK) ");
                         insertCmds.Add(string.Format(

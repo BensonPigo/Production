@@ -39,8 +39,8 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtMdivision.Text = Sci.Env.User.Keyword;
-            this.txtfactory.Text = Sci.Env.User.Keyword;
+            this.txtMdivision.Text = Env.User.Keyword;
+            this.txtfactory.Text = Env.User.Keyword;
             MyUtility.Tool.SetupCombox(this.comboFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
             this.comboFabricType.SelectedIndex = 0;
             this.txtdropdownlistShift.SelectedIndex = 0;
@@ -204,7 +204,7 @@ where (a.Status ='Received' or a.Status = 'Confirmed') "));
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel
@@ -219,14 +219,14 @@ where (a.Status ='Received' or a.Status = 'Confirmed') "));
                 return false;
             }
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R06.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R06.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Warehouse_R06.xltx", 4, showExcel: false, showSaveMsg: false, excelApp: objApp);      // 將datatable copy to excel
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format(
                 @"
 select  NameEN
 from factory
-where id = '{0}'", Sci.Env.User.Keyword));
+where id = '{0}'", Env.User.Keyword));
             objSheets.Cells[2, 1] = @"Fabric/Accessory Lacking & Replacement Report";
 
             // Lacking Date (3, 2)
@@ -263,7 +263,7 @@ where id = '{0}'", Sci.Env.User.Keyword));
             objSheets.Rows.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R06");
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R06");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

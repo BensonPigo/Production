@@ -179,7 +179,7 @@ inner join(
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ inner join(
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\IE_R01_LineMappingList.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\IE_R01_LineMappingList.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -245,7 +245,7 @@ inner join(
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("IE_R01_LineMappingList");
+            string strExcelName = Class.MicrosoftFile.GetName("IE_R01_LineMappingList");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

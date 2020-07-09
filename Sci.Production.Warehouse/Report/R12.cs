@@ -125,11 +125,11 @@ order by il.IssueDate,il.Id,ild.POID,ild.Seq1,ild.Seq2,ild.Roll,ild.Dyelot
             }
 
             this.ShowWaitMessage("Excel Processing...");
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R12.xltx"); // 預先開啟excel app
-            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R12.xltx", objApp);
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R12.xltx"); // 預先開啟excel app
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Warehouse_R12.xltx", objApp);
             com.WriteTable(this.dtResult, 2);
 
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R12");
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R12");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

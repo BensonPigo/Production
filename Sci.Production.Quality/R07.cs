@@ -57,7 +57,7 @@ namespace Sci.Production.Quality
             factory.Rows.Add(new string[] { string.Empty });
             factory.DefaultView.Sort = "FTYGroup";
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
             this.print.Enabled = false;
         }
 
@@ -321,7 +321,7 @@ namespace Sci.Production.Quality
                 excelName = "Quality_R07_byRoll";
             }
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
             MyUtility.Excel.CopyToXls(this.dt, string.Empty, $"{excelName}.xltx", 3, showExcel: false, showSaveMsg: false, excelApp: objApp);
 
             string d1 = MyUtility.Check.Empty(this.DateArrStart) ? string.Empty : Convert.ToDateTime(this.DateArrStart).ToString("yyyy/MM/dd");
@@ -350,7 +350,7 @@ namespace Sci.Production.Quality
             worksheet.Rows.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(excelName);
+            string strExcelName = Class.MicrosoftFile.GetName(excelName);
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

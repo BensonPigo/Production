@@ -473,7 +473,7 @@ from #tmpFinal tf
                 return false;
             }
 
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
+            var saveDialog = Utility.Excel.MyExcelPrg.GetSaveFileDialog(Utility.Excel.MyExcelPrg.Filter_Excel);
 
             Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R01.xltx", keepApp: true);
             Utility.Excel.SaveXltReportCls.XltRptTable dt1 = new Utility.Excel.SaveXltReportCls.XltRptTable(this.dt);
@@ -499,7 +499,7 @@ from #tmpFinal tf
             xl.DicDatas.Add("##body", dt1);
             dt1.ShowHeader = false;
 
-            xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Quality_R01"));
+            xl.Save(Class.MicrosoftFile.GetName("Quality_R01"));
             ((Microsoft.Office.Interop.Excel.Worksheet)xl.ExcelApp.ActiveSheet).Columns.AutoFit();
             xl.FinishSave();
             return true;

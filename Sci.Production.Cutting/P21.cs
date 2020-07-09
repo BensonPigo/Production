@@ -82,7 +82,7 @@ namespace Sci.Production.Cutting
                                     from WorkOrder W 
                                     Left JOIN CuttingOutput_Detail CD on W.Ukey=CD.WorkOrderUkey
                                     Left JOIN CuttingOutput C on CD.ID=C.ID
-                                    where w.CutRef = '{newValue}' AND w.MDivisionId='{Sci.Env.User.Keyword}'
+                                    where w.CutRef = '{newValue}' AND w.MDivisionId='{Env.User.Keyword}'
                                     GROUP BY w.ID,CutCellid,w.FactoryID
                                     ", out dt_CutRef);
 
@@ -378,7 +378,7 @@ WHERE 1=0
             returnResult = DBProxy.Current.GetTableSchema(null, "CuttingOutputFabricRecord", out tableSchema);
             foreach (DataRow dr in noEmptyData)
             {
-                dr["MDivisionId"] = Sci.Env.User.Keyword;
+                dr["MDivisionId"] = Env.User.Keyword;
             }
 
             // 開始UPDATE

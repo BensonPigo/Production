@@ -51,7 +51,7 @@
             this.numEFF = new Sci.Win.UI.NumericBox();
             this.btnShareWworkingHoursToSP = new Sci.Win.UI.Button();
             this.label12 = new Sci.Win.UI.Label();
-            this.txtsewinglineLine = new Sci.Production.Class.txtsewingline();
+            this.txtsewinglineLine = new Sci.Production.Class.Txtsewingline();
             this.btnReqUnlock = new Sci.Win.UI.Button();
             this.btnBatchRecall = new Sci.Win.UI.Button();
             this.lbstatus = new Sci.Win.UI.Label();
@@ -531,7 +531,7 @@
             // 
             this.txtsewinglineLine.BackColor = System.Drawing.Color.White;
             this.txtsewinglineLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
-            this.txtsewinglineLine.factoryobjectName = this.displayFactory;
+            this.txtsewinglineLine.FactoryobjectName = this.displayFactory;
             this.txtsewinglineLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtsewinglineLine.Location = new System.Drawing.Point(61, 31);
             this.txtsewinglineLine.Name = "txtsewinglineLine";
@@ -634,7 +634,7 @@
         private Win.UI.Label labelWHours;
         private Win.UI.Label labelManpower;
         private Win.UI.DisplayBox displayFactory;
-        private Class.txtsewingline txtsewinglineLine;
+        private Class.Txtsewingline txtsewinglineLine;
         private Win.UI.DateBox dateDate;
         private Win.UI.Label labelFactory;
         private Win.UI.Label labelLine;

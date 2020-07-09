@@ -220,7 +220,7 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
         {
             base.ClickNewAfter();
             this.CurrentMaintain["LocalStyle"] = 1;
-            this.CurrentMaintain["LocalMR"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["LocalMR"] = Env.User.UserID;
             this.displayStyleApprove2.Text = string.Empty;
             this.ComboPressing1_SelectedIndexChanged(null, null);
             this.ComboFolding1_SelectedIndexChanged(null, null);
@@ -349,7 +349,7 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
             // 若沒有對應Ukey資料則新增
             if (!MyUtility.Check.Seek(sqlcmd, cmds))
             {
-                cmds.Add(new SqlParameter("@N", Sci.Env.User.UserID));
+                cmds.Add(new SqlParameter("@N", Env.User.UserID));
                 StringBuilder splcmdin = new StringBuilder();
                 splcmdin.Append(@"INSERT INTO Style_TmsCost (Seq,ArtworkTypeID,ArtworkUnit,StyleUkey,AddDate,AddName)
                                 SELECT A.seq,A.ID,A.ArtworkUnit,@k,GETDATE(),@N
@@ -386,7 +386,7 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -490,7 +490,7 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
         // TMS & Cost
         private void BtnTMSCost_Click(object sender, EventArgs e)
         {
-            P04_TMSAndCost callNextForm = new P04_TMSAndCost(PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P04. Style Management", "CanEdit") && MyUtility.Convert.GetString(this.CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"]), null, null, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            P04_TMSAndCost callNextForm = new P04_TMSAndCost(PublicPrg.Prgs.GetAuthority(Env.User.UserID, "P04. Style Management", "CanEdit") && MyUtility.Convert.GetString(this.CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"]), null, null, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
 
             // 按鈕變色
@@ -523,7 +523,7 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
         // Artwork
         private void BtnArtwork_Click(object sender, EventArgs e)
         {
-            P04_Artwork callNextForm = new P04_Artwork(PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P04. Style Management", "CanEdit") && MyUtility.Convert.GetString(this.CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"]), null, null, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["SeasonID"]));
+            P04_Artwork callNextForm = new P04_Artwork(PublicPrg.Prgs.GetAuthority(Env.User.UserID, "P04. Style Management", "CanEdit") && MyUtility.Convert.GetString(this.CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"]), null, null, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["SeasonID"]));
             callNextForm.ShowDialog(this);
 
             // 按鈕變色
@@ -560,7 +560,7 @@ where a.Article is null",
                 MyUtility.Msg.ErrorBox("Insert data to Style_WeightData fail!\r\n" + result.ToString());
             }
 
-            P04_WeightData callNextForm = new P04_WeightData(PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P04. Style Management", "CanEdit"), MyUtility.Convert.GetString(this.CurrentMaintain["UKey"]), null, null);
+            P04_WeightData callNextForm = new P04_WeightData(PublicPrg.Prgs.GetAuthority(Env.User.UserID, "P04. Style Management", "CanEdit"), MyUtility.Convert.GetString(this.CurrentMaintain["UKey"]), null, null);
             callNextForm.ShowDialog(this);
 
             // 按鈕變色
@@ -617,10 +617,10 @@ where a.Article is null",
                             string local_file_type = Path.GetExtension(local_path_file);
                             string destination_fileName = MyUtility.Convert.GetString(this.CurrentMaintain["UKey"]).Trim() + "-1" + local_file_type;
 
-                            System.IO.File.Copy(local_path_file, this.destination_path + destination_fileName, true);
+                            File.Copy(local_path_file, this.destination_path + destination_fileName, true);
 
                             // update picture1 path
-                            DualResult result = Sci.Data.DBProxy.Current.Execute(null, "update Style set Picture1 ='" + destination_fileName.Trim() + "' where ukey=" + this.CurrentMaintain["UKey"]);
+                            DualResult result = DBProxy.Current.Execute(null, "update Style set Picture1 ='" + destination_fileName.Trim() + "' where ukey=" + this.CurrentMaintain["UKey"]);
                             this.CurrentMaintain["Picture1"] = this.destination_path.Trim() + destination_fileName.Trim();
                             this.pictureBox1.ImageLocation = MyUtility.Convert.GetString(this.CurrentMaintain["Picture1"]);
                         }
@@ -637,16 +637,16 @@ where a.Article is null",
         private void BtnPicture1Delete_Click(object sender, EventArgs e)
         {
             DialogResult deleteResult1 = MyUtility.Msg.QuestionBox("Are you sure delete the < Picture1 >?", buttons: MessageBoxButtons.YesNo);
-            if (deleteResult1 == System.Windows.Forms.DialogResult.Yes)
+            if (deleteResult1 == DialogResult.Yes)
             {
-                if (System.IO.File.Exists(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["Picture1"])))
+                if (File.Exists(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["Picture1"])))
                 {
                     try
                     {
-                        System.IO.File.Delete(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["Picture1"]));
+                        File.Delete(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["Picture1"]));
                         this.CurrentMaintain["Picture1"] = string.Empty;
                         this.pictureBox1.ImageLocation = MyUtility.Convert.GetString(this.CurrentMaintain["Picture1"]);
-                        DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Style set Picture1='' where UKey={0}", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"])));
+                        DualResult result = DBProxy.Current.Execute(null, string.Format("update Style set Picture1='' where UKey={0}", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"])));
                         if (!result)
                         {
                             MyUtility.Msg.ErrorBox("Update data fail!!\r\n" + result.ToString());
@@ -662,7 +662,7 @@ where a.Article is null",
                 {
                     this.CurrentMaintain["Picture1"] = string.Empty;
                     this.pictureBox1.ImageLocation = MyUtility.Convert.GetString(this.CurrentMaintain["Picture1"]);
-                    DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Style set Picture1='' where UKey={0}", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"])));
+                    DualResult result = DBProxy.Current.Execute(null, string.Format("update Style set Picture1='' where UKey={0}", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"])));
                     if (!result)
                     {
                         MyUtility.Msg.ErrorBox("Update data fail!!\r\n" + result.ToString());
@@ -694,10 +694,10 @@ where a.Article is null",
                             string local_file_type = Path.GetExtension(local_path_file);
                             string destination_fileName = MyUtility.Convert.GetString(this.CurrentMaintain["UKey"]).Trim() + "-2" + local_file_type;
 
-                            System.IO.File.Copy(local_path_file, this.destination_path + destination_fileName, true);
+                            File.Copy(local_path_file, this.destination_path + destination_fileName, true);
 
                             // update picture1 path
-                            DualResult result = Sci.Data.DBProxy.Current.Execute(null, "update Style set Picture2 ='" + destination_fileName.Trim() + "' where ukey=" + this.CurrentMaintain["UKey"]);
+                            DualResult result = DBProxy.Current.Execute(null, "update Style set Picture2 ='" + destination_fileName.Trim() + "' where ukey=" + this.CurrentMaintain["UKey"]);
                             this.CurrentMaintain["Picture2"] = this.destination_path.Trim() + destination_fileName.Trim();
                             this.pictureBox2.ImageLocation = MyUtility.Convert.GetString(this.CurrentMaintain["Picture2"]);
                         }
@@ -714,16 +714,16 @@ where a.Article is null",
         private void BtnPicture2Delete_Click(object sender, EventArgs e)
         {
             DialogResult deleteResult1 = MyUtility.Msg.QuestionBox("Are you sure delete the < Picture2 >?", buttons: MessageBoxButtons.YesNo);
-            if (deleteResult1 == System.Windows.Forms.DialogResult.Yes)
+            if (deleteResult1 == DialogResult.Yes)
             {
-                if (System.IO.File.Exists(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["Picture2"])))
+                if (File.Exists(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["Picture2"])))
                 {
                     try
                     {
-                        System.IO.File.Delete(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["Picture2"]));
+                        File.Delete(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["Picture2"]));
                         this.CurrentMaintain["Picture2"] = string.Empty;
                         this.pictureBox2.ImageLocation = MyUtility.Convert.GetString(this.CurrentMaintain["Picture2"]);
-                        DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Style set Picture2='' where UKey={0}", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"])));
+                        DualResult result = DBProxy.Current.Execute(null, string.Format("update Style set Picture2='' where UKey={0}", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"])));
                         if (!result)
                         {
                             MyUtility.Msg.ErrorBox("Update data fail!!\r\n" + result.ToString());
@@ -739,7 +739,7 @@ where a.Article is null",
                 {
                     this.CurrentMaintain["Picture2"] = string.Empty;
                     this.pictureBox2.ImageLocation = MyUtility.Convert.GetString(this.CurrentMaintain["Picture2"]);
-                    DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Style set Picture2='' where UKey={0}", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"])));
+                    DualResult result = DBProxy.Current.Execute(null, string.Format("update Style set Picture2='' where UKey={0}", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"])));
                     if (!result)
                     {
                         MyUtility.Msg.ErrorBox("Update data fail!!\r\n" + result.ToString());
@@ -752,7 +752,7 @@ where a.Article is null",
         // Combo Type
         private void BtnComboType_Click(object sender, EventArgs e)
         {
-            P04_ComboType callNextForm = new P04_ComboType(PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P04. Style Management", "CanEdit") && MyUtility.Convert.GetString(this.CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"]), null, null, MyUtility.Convert.GetString(this.CurrentMaintain["StyleUnit"]));
+            P04_ComboType callNextForm = new P04_ComboType(PublicPrg.Prgs.GetAuthority(Env.User.UserID, "P04. Style Management", "CanEdit") && MyUtility.Convert.GetString(this.CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"]), null, null, MyUtility.Convert.GetString(this.CurrentMaintain["StyleUnit"]));
             callNextForm.ShowDialog(this);
 
             // 按鈕變色

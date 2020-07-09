@@ -33,7 +33,7 @@ namespace Sci.Production.Shipping
             DataTable mDivision;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
 
             MyUtility.Tool.SetupCombox(this.comboOrderby, 1, 1, "Supplier,Handle");
             this.comboOrderby.SelectedIndex = 0;
@@ -129,7 +129,7 @@ where s.ApvDate is null
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -145,7 +145,7 @@ where s.ApvDate is null
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R05_OutstandingPaymentList.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_R05_OutstandingPaymentList.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -181,7 +181,7 @@ where s.ApvDate is null
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_R05_OutstandingPaymentList");
+            string strExcelName = Class.MicrosoftFile.GetName("Shipping_R05_OutstandingPaymentList");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

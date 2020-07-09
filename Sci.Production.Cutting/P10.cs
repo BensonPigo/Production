@@ -18,8 +18,8 @@ namespace Sci.Production.Cutting
 {
     public partial class P10 : Win.Tems.Input6
     {
-        string keyword = Sci.Env.User.Keyword;
-        string LoginId = Sci.Env.User.UserID;
+        string keyword = Env.User.Keyword;
+        string LoginId = Env.User.UserID;
         DataTable bundle_Detail_allpart_Tb;
         DataTable bundle_Detail_Art_Tb;
         DataTable bundle_Detail_Qty_Tb;
@@ -38,7 +38,7 @@ namespace Sci.Production.Cutting
                 this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=1) and mDivisionid='{0}'", this.keyword);
             }
 
-            this.DefaultWhere = $@"(select O.FtyGroup from Orders O WITH (NOLOCK) Where O.ID = Bundle.Orderid)  = '{Sci.Env.User.Factory}'";
+            this.DefaultWhere = $@"(select O.FtyGroup from Orders O WITH (NOLOCK) Where O.ID = Bundle.Orderid)  = '{Env.User.Factory}'";
         }
 
         protected override void OnFormLoaded()
@@ -52,14 +52,14 @@ select '' FTYGroup
 union 
 select distinct FTYGroup 
 from Factory WITH (NOLOCK)
-where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+where MDivisionID = '{0}'", Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
 
             // 取得當前登入工廠index
             for (int i = 0; i < queryDT.Rows.Count; i++)
             {
-                if (string.Compare(queryDT.Rows[i]["FTYGroup"].ToString(), Sci.Env.User.Factory) == 0)
+                if (string.Compare(queryDT.Rows[i]["FTYGroup"].ToString(), Env.User.Factory) == 0)
                 {
                     this.queryfors.SelectedIndex = i;
                 }
@@ -866,7 +866,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
             string cuttingsp = MyUtility.GetValue.Lookup("Cuttingsp", newvalue, "Orders", "ID");
             if (!MyUtility.Check.Empty(this.CurrentMaintain["Cutref"]))
             {
-                string findcuttingid = $@"select id from workorder where cutref = '{this.CurrentMaintain["Cutref"]}' and MDivisionId = '{Sci.Env.User.Keyword}' ";
+                string findcuttingid = $@"select id from workorder where cutref = '{this.CurrentMaintain["Cutref"]}' and MDivisionId = '{Env.User.Keyword}' ";
                 string cuttingid = MyUtility.GetValue.Lookup(findcuttingid);
                 if (cuttingsp.Trim() != cuttingid.Trim())
                 {
@@ -876,7 +876,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey",
                     return;
                 }
 
-                string work_cmd = string.Format("Select * from workorder a WITH (NOLOCK) ,workorder_Distribute b WITH (NOLOCK) Where a.ukey = b.workorderukey and a.cutref = '{0}' and b.orderid ='{1}' and a.MDivisionId = '{2}'", this.CurrentMaintain["Cutref"], newvalue, Sci.Env.User.Keyword);
+                string work_cmd = string.Format("Select * from workorder a WITH (NOLOCK) ,workorder_Distribute b WITH (NOLOCK) Where a.ukey = b.workorderukey and a.cutref = '{0}' and b.orderid ='{1}' and a.MDivisionId = '{2}'", this.CurrentMaintain["Cutref"], newvalue, Env.User.Keyword);
                 DataTable articleTb;
                 if (DBProxy.Current.Select(null, work_cmd, out articleTb))
                 {
@@ -1238,7 +1238,7 @@ where Article!='' and WorkorderUkey in ({0}) and Article='{1}'",
 
             string sql = string.Format(
                 @"Select ID,FactoryID,Description  From SewingLine WITH (NOLOCK) 
-                                        where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{0}')", Sci.Env.User.Keyword);
+                                        where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{0}')", Env.User.Keyword);
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "2,8,16", this.Text, false, ",");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
@@ -1271,7 +1271,7 @@ where Article!='' and WorkorderUkey in ({0}) and Article='{1}'",
 
             string sql = string.Format(
                 @"Select ID  From SewingLine WITH (NOLOCK)  
-                    where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{0}') and ID='{1}'", Sci.Env.User.Keyword, newvalue);
+                    where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{0}') and ID='{1}'", Env.User.Keyword, newvalue);
             string tmp = MyUtility.GetValue.Lookup(sql);
             if (string.IsNullOrWhiteSpace(tmp))
             {

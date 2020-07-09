@@ -27,7 +27,7 @@ namespace Sci.Production.Shipping
 
             // this.detailgrid.SelectionChanged += this.Detailgrid_SelectionChanged;
             this.detailgrid.RowSelecting += this.Detailgrid_RowSelecting;
-            this.canEdit = Prgs.GetAuthority(Sci.Env.User.UserID, "P14. Material C/O Maintenance", "CanEdit");
+            this.canEdit = Prgs.GetAuthority(Env.User.UserID, "P14. Material C/O Maintenance", "CanEdit");
             this.btnBatchUpdate.Enabled = this.canEdit;
         }
 

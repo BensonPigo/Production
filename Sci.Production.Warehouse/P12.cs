@@ -27,7 +27,7 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
 
             // MDivisionID 是 P12 寫入 => Sci.Env.User.Keyword
-            this.DefaultFilter = string.Format("Type='C' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("Type='C' and MDivisionID = '{0}'", Env.User.Keyword);
             this.detailgrid.StatusNotification += (s, e) =>
             {
                 if (this.EditMode && e.Notification == Ict.Win.UI.DataGridViewStatusNotification.NoMoreRowOnEnterPress)
@@ -65,8 +65,8 @@ namespace Sci.Production.Warehouse
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "C";
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
@@ -146,7 +146,7 @@ namespace Sci.Production.Warehouse
             // 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IP", "Issue", (DateTime)this.CurrentMaintain["Issuedate"]);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "IP", "Issue", (DateTime)this.CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -286,7 +286,7 @@ namespace Sci.Production.Warehouse
                             if (!MyUtility.Check.Seek(
                                 string.Format(
                                 Prgs.selePoItemSqlCmd() +
-                                    @"and f.MDivisionID = '{1}' and p.seq1 ='{2}' and p.seq2 = '{3}'", this.CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
+                                    @"and f.MDivisionID = '{1}' and p.seq1 ='{2}' and p.seq2 = '{3}'", this.CurrentDetailData["poid"], Env.User.Keyword, seq[0], seq[1]), out dr, null))
                             {
                                 e.Cancel = true;
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
@@ -338,7 +338,7 @@ namespace Sci.Production.Warehouse
 
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), CheckMDivisionID: true) // 0
+                .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), checkMDivisionID: true) // 0
                 .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts) // 1
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 2
                 .Text("stockunit", header: "Unit", iseditingreadonly: true) // 3
@@ -772,7 +772,7 @@ Where a.id = '{0}'", masterID);
 
             #region  抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
+            pars.Add(new SqlParameter("@MDivision", Env.User.Keyword));
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
             DualResult result = DBProxy.Current.Select(string.Empty, @"

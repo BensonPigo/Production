@@ -87,9 +87,9 @@ namespace Sci.Production.Subcon
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            this.CurrentMaintain["issuedate"] = System.DateTime.Today;
-            this.CurrentMaintain["handle"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
+            this.CurrentMaintain["issuedate"] = DateTime.Today;
+            this.CurrentMaintain["handle"] = Env.User.UserID;
             this.CurrentMaintain["Amount"] = 0;
             this.CurrentMaintain["Tax"] = 0;
             this.CurrentMaintain["TaxRate"] = 0;

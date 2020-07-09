@@ -31,7 +31,7 @@ namespace Sci.Production.Quality
             factory.Rows.Add(new string[] { string.Empty });
             factory.DefaultView.Sort = "FTYGroup";
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
             this.radioSummary.Checked = true;
         }
 
@@ -263,7 +263,7 @@ where a.Status = 'Confirmed'");
                 #endregion
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel 必須要有
@@ -280,14 +280,14 @@ where a.Status = 'Confirmed'");
                     return false;
                 }
 
-                Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_Summary.xltx"); // 預先開啟excel app
+                Excel._Application excel = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_Summary.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.SummaryData, string.Empty, "Quality_R21_CFA_InlineReport_Summary.xltx", 2, false, null, excel);
 
                 excel.Cells.EntireColumn.AutoFit();
                 excel.Cells.EntireRow.AutoFit();
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R21_CFA_InlineReport_Summary");
+                string strExcelName = Class.MicrosoftFile.GetName("Quality_R21_CFA_InlineReport_Summary");
                 excel.ActiveWorkbook.SaveAs(strExcelName);
                 excel.Quit();
                 Marshal.ReleaseComObject(excel);
@@ -308,12 +308,12 @@ where a.Status = 'Confirmed'");
 
                 // Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_detail.xltx"); //預先開啟excel app
                // MyUtility.Excel.CopyToXls(DetailData,"", "Quality_R21_CFA_InlineReport_detail.xltx", 2, false, null, excel);
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_detail.xltx");
-                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_detail.xltx", objApp);
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_detail.xltx");
+                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_detail.xltx", objApp);
                 com.WriteTable(this.DetailData, 3);
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R21_CFA_InlineReport_detail");
+                string strExcelName = Class.MicrosoftFile.GetName("Quality_R21_CFA_InlineReport_detail");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);

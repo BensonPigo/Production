@@ -32,7 +32,7 @@ namespace Sci.Production.Packing
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
+            this.DefaultFilter = "MDivisionID = '" + Env.User.Keyword + "'";
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
         }
@@ -97,7 +97,7 @@ where od.ID = '{0}'", this.masterID);
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -168,7 +168,7 @@ where od.ID = '{0}'", this.masterID);
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -230,7 +230,7 @@ where od.ID = '{0}'", this.masterID);
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -287,7 +287,7 @@ where od.ID = '{0}'", this.masterID);
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["CloseDate"] = DateTime.Today;
         }
@@ -390,7 +390,7 @@ where od.ID = '{0}'", this.masterID);
                     {
                         // sql參數
                         System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", this.txtSP.Text);
-                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
+                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Env.User.Keyword);
 
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                         cmds.Add(sp1);
@@ -437,7 +437,7 @@ where od.ID = '{0}'", this.masterID);
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
-            this.sqlCmd = string.Format("update OverrunGMT set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
+            this.sqlCmd = string.Format("update OverrunGMT set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, this.CurrentMaintain["ID"].ToString());
 
             this.result = DBProxy.Current.Execute(null, this.sqlCmd);
             if (!this.result)
@@ -455,12 +455,12 @@ where od.ID = '{0}'", this.masterID);
 
             // 問是否要做Unconfirm，確定才繼續往下做
             this.buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Unconfirm > this data?", "Warning", MessageBoxButtons.YesNo);
-            if (this.buttonResult == System.Windows.Forms.DialogResult.No)
+            if (this.buttonResult == DialogResult.No)
             {
                 return;
             }
 
-            this.sqlCmd = string.Format("update OverrunGMT set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
+            this.sqlCmd = string.Format("update OverrunGMT set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, this.CurrentMaintain["ID"].ToString());
 
             this.result = DBProxy.Current.Execute(null, this.sqlCmd);
             if (!this.result)

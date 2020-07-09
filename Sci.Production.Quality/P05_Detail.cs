@@ -16,8 +16,8 @@ namespace Sci.Production.Quality
 {
     public partial class P05_Detail : Win.Subs.Input4
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string aa = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string aa = Env.User.Keyword;
         private DataRow maindr;
         private string PoID;
         private string ID;
@@ -238,7 +238,7 @@ and a.seq1=@seq1";
             DataGridViewGeneratorTextColumnSettings rollCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings chgCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings staCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings resultCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings resultCell = Prgs.cellResult.GetGridCell();
             DataGridViewGeneratorTextColumnSettings resultChangeCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings resultStainCell = new DataGridViewGeneratorTextColumnSettings();
 
@@ -294,7 +294,7 @@ and a.seq1=@seq1";
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string item_cmd = string.Format("select RTRIM(seq1) +'-'+ RTRIM(seq2) AS SEQ,scirefno,refno,colorid from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and FabricType='F'", this.PoID);
@@ -333,7 +333,7 @@ and a.seq1=@seq1";
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string item_cmd = string.Format("select RTRIM(seq1) +'-'+ RTRIM(seq2) AS SEQ,scirefno,refno,colorid from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and FabricType='F'", this.PoID);
@@ -461,7 +461,7 @@ and a.seq1=@seq1";
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     #region 新資料 不判斷SEQ
@@ -514,7 +514,7 @@ and a.seq1=@seq1";
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     #region 新資料 不判斷SEQ
@@ -622,7 +622,7 @@ and a.seq1=@seq1";
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string item_cmd = "select id from Scale WITH (NOLOCK) where Junk=0 ";
@@ -650,7 +650,7 @@ and a.seq1=@seq1";
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string item_cmd = "select id from Scale WITH (NOLOCK) where Junk=0 ";
@@ -714,7 +714,7 @@ and a.seq1=@seq1";
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string item_cmd = "select id from Scale WITH (NOLOCK) where Junk=0 ";
@@ -742,7 +742,7 @@ and a.seq1=@seq1";
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string item_cmd = "select id from Scale WITH (NOLOCK) where Junk=0 ";
@@ -1000,7 +1000,7 @@ SET IDENTITY_INSERT oven off";
             DualResult result = this.UpdateInspPercent();
             if (!result)
             {
-                return Result.F(result.ToString());
+                return Ict.Result.F(result.ToString());
             }
 
             return base.OnSave();
@@ -1076,7 +1076,7 @@ SET IDENTITY_INSERT oven off";
                 return;
             }
 
-            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            if (e.Button == MouseButtons.Right)
             {
                 string cmd =
                 @"select distinct oq.article 
@@ -1249,7 +1249,7 @@ SET IDENTITY_INSERT oven off";
                 BrandID = dtPo.Rows[0]["BrandID"].ToString();
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Quality_P05_Detail_Report.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Quality_P05_Detail_Report.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -1292,7 +1292,7 @@ SET IDENTITY_INSERT oven off";
             MyUtility.Msg.WaitClear();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P05_Detail_Report");
+            string strExcelName = Class.MicrosoftFile.GetName("Quality_P05_Detail_Report");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
@@ -1353,7 +1353,7 @@ SET IDENTITY_INSERT oven off";
                 BrandID = dtOrders.Rows[0]["BrandID"].ToString();
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Quality_P05_Detail_Report_ToPDF.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Quality_P05_Detail_Report_ToPDF.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -1516,8 +1516,8 @@ SET IDENTITY_INSERT oven off";
             }
 
             #region Save & Show Excel
-            string strFileName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P05_Detail_Report_ToPDF");
-            string strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P05_Detail_Report_ToPDF", Sci.Production.Class.PDFFileNameExtension.PDF);
+            string strFileName = Class.MicrosoftFile.GetName("Quality_P05_Detail_Report_ToPDF");
+            string strPDFFileName = Class.MicrosoftFile.GetName("Quality_P05_Detail_Report_ToPDF", Class.PDFFileNameExtension.PDF);
             excel.ActiveWorkbook.SaveAs(strFileName);
             excel.Quit();
 

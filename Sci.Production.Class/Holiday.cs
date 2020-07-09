@@ -3,10 +3,19 @@ using System.Reflection;
 
 namespace Sci.Production.Class
 {
+    /// <summary>
+    /// Holiday
+    /// </summary>
     public partial class Holiday : Win.UI._UserControl
     {
-        public DateTime Today;
+        /// <summary>
+        /// Today
+        /// </summary>
+        public DateTime Today { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Holiday"/> class.
+        /// </summary>
         public Holiday()
         {
             this.InitializeComponent();

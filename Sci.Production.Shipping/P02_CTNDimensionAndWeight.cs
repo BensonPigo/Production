@@ -68,7 +68,7 @@ namespace Sci.Production.Shipping
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private void Save_Click(object sender, EventArgs e)

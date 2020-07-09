@@ -32,7 +32,7 @@ namespace Sci.Production.IE
             }
             else
             {
-                this.btnThreadRatio.ForeColor = Control.DefaultForeColor;
+                this.btnThreadRatio.ForeColor = DefaultForeColor;
             }
 
             // this.displayGroupID.Text = this.grid.SelectedRows[0].Cells["MachineGroup"].Value.ToString();

@@ -4,40 +4,47 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtartworktype_fty : Win.UI.TextBox
+    /// <summary>
+    /// Txtartworktype_fty
+    /// </summary>
+    public partial class Txtartworktype_fty : Win.UI.TextBox
     {
-        private string m_type = string.Empty;
-        private string m_subprocess = string.Empty;
-
+        /// <summary>
+        /// Classify 值需用單引號包起來；逗點分格。例如：'I','A','S'或單一個值'P'
+        /// </summary>
         [Category("Custom Properties")]
         [Description("Classify 值需用單引號包起來；逗點分格。例如：'I','A','S'或單一個值'P'")]
-        public string cClassify
-        {
-            get { return this.m_type; }
-            set { this.m_type = value; }
-        }
+        public string CClassify { get; set; } = string.Empty;
 
+        /// <summary>
+        /// IsSubprocess 填Y或不填
+        /// </summary>
         [Category("Custom Properties")]
         [Description("IsSubprocess 填Y或不填")]
-        public string cSubprocess
+        public string CSubprocess { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtartworktype_fty"/> class.
+        /// </summary>
+        public Txtartworktype_fty()
         {
-            get { return this.m_subprocess; }
-            set { this.m_subprocess = value; }
+            this.Size = new System.Drawing.Size(140, 23);
         }
 
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "Where Junk = 0";
             string sqlCmd = string.Empty;
 
-            if (!string.IsNullOrWhiteSpace(this.cClassify))
+            if (!string.IsNullOrWhiteSpace(this.CClassify))
             {
-                sqlWhere = sqlWhere + " And Classify in (" + this.cClassify + ")";
+                sqlWhere = sqlWhere + " And Classify in (" + this.CClassify + ")";
             }
 
-            if (!string.IsNullOrWhiteSpace(this.cSubprocess))
+            if (!string.IsNullOrWhiteSpace(this.CSubprocess))
             {
-                if (this.cSubprocess == "Y")
+                if (this.CSubprocess == "Y")
                 {
                     sqlWhere = sqlWhere + " And IsSubprocess =1 ";
                 }
@@ -61,6 +68,7 @@ namespace Sci.Production.Class
             base.OnPopUp(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -71,14 +79,14 @@ namespace Sci.Production.Class
                 string sqlWhere = string.Format("Where Junk = 0 and id='{0}'", str);
                 string sqlCmd = string.Empty;
 
-                if (!string.IsNullOrWhiteSpace(this.cClassify))
+                if (!string.IsNullOrWhiteSpace(this.CClassify))
                 {
-                    sqlWhere = sqlWhere + " And Classify in (" + this.cClassify + ")";
+                    sqlWhere = sqlWhere + " And Classify in (" + this.CClassify + ")";
                 }
 
-                if (!string.IsNullOrWhiteSpace(this.cSubprocess))
+                if (!string.IsNullOrWhiteSpace(this.CSubprocess))
                 {
-                    if (this.cSubprocess == "Y")
+                    if (this.CSubprocess == "Y")
                     {
                         sqlWhere = sqlWhere + " And IsSubprocess =1 ";
                     }
@@ -98,11 +106,6 @@ namespace Sci.Production.Class
                     return;
                 }
             }
-        }
-
-        public txtartworktype_fty()
-        {
-            this.Size = new System.Drawing.Size(140, 23);
         }
     }
 }

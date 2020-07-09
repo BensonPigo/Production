@@ -12,8 +12,8 @@ namespace Sci.Production.Quality
 {
     public partial class P04 : Win.Tems.Input6
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string Factory = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string Factory = Env.User.Keyword;
 
         // 宣告Context Menu Item
         ToolStripMenuItem edit;
@@ -293,7 +293,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr_showname;
                     DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
@@ -324,7 +324,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr_showname;
                     DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
@@ -504,7 +504,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                if (e.Button != System.Windows.Forms.MouseButtons.Right)
+                if (e.Button != MouseButtons.Right)
                 {
                     return;
                 }
@@ -782,7 +782,7 @@ left join Order_Qty c WITH (NOLOCK) on a.ID=c.ID and c.Article=b.Article where a
             string mailcc = string.Empty;
             string subject = "Garment Test - Style #:" + this.displayStyle.Text + ", Season :" + this.displaySeason.Text;
             string content = "Garment Test - Style #:" + this.displayStyle.Text + ", Season :" + this.displaySeason.Text + " had been sent, please receive and confirm";
-            var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailcc, subject, null, content.ToString(), false, true);
+            var email = new MailTo(Env.Cfg.MailFrom, mailto, mailcc, subject, null, content.ToString(), false, true);
             email.ShowDialog(this);
         }
     }

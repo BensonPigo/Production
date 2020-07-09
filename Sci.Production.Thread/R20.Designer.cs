@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
             this.txtSPNoStart = new Sci.Win.UI.TextBox();
-            this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
+            this.comboMDivision = new Sci.Production.Class.ComboMDivision(this.components);
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.dateEstArrived = new Sci.Win.UI.DateRange();
             this.dateEstBooking = new Sci.Win.UI.DateRange();
@@ -271,7 +271,7 @@
         private Win.UI.Label labelEstArrived;
         private Win.UI.Label labelEstBooking;
         private Win.UI.Label labelSPNo;
-        private Class.comboMDivision comboMDivision;
+        private Class.ComboMDivision comboMDivision;
         private Win.UI.TextBox txtSPNoStart;
         private Win.UI.ComboBox comboBoxStatus;
         private Win.UI.Label labelStatus;

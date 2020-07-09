@@ -107,7 +107,7 @@ outer apply(
 	from Order_QtyShip os where os.Id=o.ID 
 	and os.Seq=p2.OrderShipmodeSeq
 )QtyShip
-where 1=1 and p1.Status='New' and p1.MDivisionID='{Sci.Env.User.Keyword}' and p1.Type='B'
+where 1=1 and p1.Status='New' and p1.MDivisionID='{Env.User.Keyword}' and p1.Type='B'
 ";
             if (!MyUtility.Check.Empty(pulloutdate1))
             {
@@ -152,7 +152,7 @@ where 1=1 and p1.Status='New' and p1.MDivisionID='{Sci.Env.User.Keyword}' and p1
             #region 塞入Error Msg
             foreach (DataRow dr in this.dt_detail.Rows)
             {
-                sqlcmd = $@"exec dbo.usp_Packing_P03_Confirm '{dr["id"]}','{Sci.Env.User.Factory}','{Sci.Env.User.UserID}','0'";
+                sqlcmd = $@"exec dbo.usp_Packing_P03_Confirm '{dr["id"]}','{Env.User.Factory}','{Env.User.UserID}','0'";
 
                 DataTable dtSP = new DataTable();
                 if (result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtSP))
@@ -201,7 +201,7 @@ where 1=1 and p1.Status='New' and p1.MDivisionID='{Sci.Env.User.Keyword}' and p1
                 this.ShowWaitMessage($"{cnt}/{dr2.Length}");
 
                 // 有三個參數, PackingList.Id,Factory,UserID,1 = update Status, 0 = 只有Query
-                sqlcmd = $@"exec dbo.usp_Packing_P03_Confirm '{dr["id"]}','{Sci.Env.User.Factory}','{Sci.Env.User.UserID}','1'";
+                sqlcmd = $@"exec dbo.usp_Packing_P03_Confirm '{dr["id"]}','{Env.User.Factory}','{Env.User.UserID}','1'";
 
                 if (!(result = DBProxy.Current.Execute(string.Empty, sqlcmd)))
                 {

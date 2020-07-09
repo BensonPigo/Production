@@ -2,21 +2,31 @@
 
 namespace Sci.Production.Class
 {
-    public partial class txtmultifactory : Win.UI.TextBox
+    /// <summary>
+    /// Txtmultifactory
+    /// </summary>
+    public partial class Txtmultifactory : Win.UI.TextBox
     {
-        public txtmultifactory()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtmultifactory"/> class.
+        /// </summary>
+        public Txtmultifactory()
         {
             this.Size = new System.Drawing.Size(450, 23);
             this.ReadOnly = true;
         }
 
-        public bool checkProduceFty = false;
+        /// <summary>
+        /// check Produce Fty
+        /// </summary>
+        public bool CheckProduceFty { get; set; } = false;
 
+        /// <inheritdoc/>
         protected override void OnPopUp(Win.UI.TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
             string sqlWhere = "select ID from Factory WITH (NOLOCK) where Junk = 0 order by ID";
-            if (this.checkProduceFty)
+            if (this.CheckProduceFty)
             {
                 sqlWhere = "select ID from Factory WITH (NOLOCK) where Junk = 0 and IsProduceFty = 1 order by ID";
             }

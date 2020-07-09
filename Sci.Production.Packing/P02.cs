@@ -37,7 +37,7 @@ namespace Sci.Production.Packing
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
+            this.DefaultFilter = "MDivisionID = '" + Env.User.Keyword + "'";
             this.InsertDetailGridOnDoubleClick = false;
         }
 
@@ -166,8 +166,8 @@ order by e.Seq, f.Seq", masterID);
             }
 
             // Switch to Packing list是否有權限使用
-            this.btnSwitchToPackingList.Enabled = !this.EditMode && Prgs.GetAuthority(Sci.Env.User.UserID, "P02. Packing Guide", "CanEdit");
-            this.btnSwitchToPLByArticle.Enabled = !this.EditMode && Prgs.GetAuthority(Sci.Env.User.UserID, "P02. Packing Guide", "CanEdit");
+            this.btnSwitchToPackingList.Enabled = !this.EditMode && Prgs.GetAuthority(Env.User.UserID, "P02. Packing Guide", "CanEdit");
+            this.btnSwitchToPLByArticle.Enabled = !this.EditMode && Prgs.GetAuthority(Env.User.UserID, "P02. Packing Guide", "CanEdit");
         }
 
         /// <summary>
@@ -350,7 +350,7 @@ where o.ID = @orderid";
         {
             base.ClickNewAfter();
 
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.CurrentMaintain["CTNStartNo"] = 1;
             this.displayStyle.Value = string.Empty;
             this.displaySeason.Value = string.Empty;
@@ -722,7 +722,7 @@ where o.ID = '{0}'
 order by oa.Seq,os.Seq", MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out qtyCtn);
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Packing_P02.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Packing_P02.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -731,7 +731,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(this.CurrentMaintain["Order
 
             this.ShowWaitMessage("Starting to excel...");
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            string nameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
+            string nameEN = MyUtility.GetValue.Lookup("NameEN", Env.User.Factory, "Factory ", "id");
             worksheet.Cells[1, 1] = nameEN;
             worksheet.Cells[3, 2] = MyUtility.Check.Empty(printData.Rows[0]["BuyerDelivery"]) ? string.Empty : Convert.ToDateTime(printData.Rows[0]["BuyerDelivery"]).ToShortDateString();
             worksheet.Cells[3, 19] = Convert.ToDateTime(DateTime.Today).ToString("d");
@@ -961,7 +961,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(this.CurrentMaintain["Order
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P02");
+            string strExcelName = Class.MicrosoftFile.GetName("Packing_P02");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
@@ -1667,7 +1667,7 @@ IF @@ERROR <> 0
 ELSE
 	COMMIT TRANSACTION",
                         this.CurrentMaintain["ID"].ToString(),
-                        Sci.Env.User.UserID);
+                        Env.User.UserID);
                     #endregion
                 }
                 else
@@ -2255,7 +2255,7 @@ IF @@ERROR <> 0
 ELSE
 	COMMIT TRANSACTION",
                         this.CurrentMaintain["ID"].ToString(),
-                        Sci.Env.User.UserID);
+                        Env.User.UserID);
                     #endregion
                 }
                 else

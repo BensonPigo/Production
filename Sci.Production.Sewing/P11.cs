@@ -21,7 +21,7 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = $"FactoryID = '{Sci.Env.User.Factory}'";
+            this.DefaultFilter = $"FactoryID = '{Env.User.Factory}'";
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -592,7 +592,7 @@ end
         {
             base.ClickNewAfter();
             this.CurrentMaintain["CreateDate"] = DateTime.Today;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
         }
 
@@ -723,7 +723,7 @@ end
             #region GetID
             if (this.IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("FtyGroup", Sci.Env.User.Factory, "Factory", "ID") + "OT", "SewingOutputTransfer", DateTime.Today, 3, "Id", null);
+                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("FtyGroup", Env.User.Factory, "Factory", "ID") + "OT", "SewingOutputTransfer", DateTime.Today, 3, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -785,7 +785,7 @@ end
 update SewingOutputTransfer set
     Status ='Confirmed',
     EditDate =GetDate(),
-    EditName = '{Sci.Env.User.UserID}'
+    EditName = '{Env.User.UserID}'
 where id = '{this.CurrentMaintain["ID"]}'
     
 update sotd set
@@ -1065,7 +1065,7 @@ where t.WillTransferQty > 0 -- 找到有更新/新增第3層, 對應第2層
 
 --更新表頭
 update so set
-    so.EditName ='{Sci.Env.User.UserID}',
+    so.EditName ='{Env.User.UserID}',
     so.EditDate = GetDate(),
     so.ReDailyTransferDate = GetDate()    
 from SewingOutput so

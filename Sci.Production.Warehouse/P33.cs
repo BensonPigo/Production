@@ -36,7 +36,7 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
 
             this.gridicon.Location = new Point(this.btnBreakDown.Location.X + 20, 95); // 此gridcon位置會跑掉，需強制設定gridcon位置
-            this.DefaultFilter = $"MDivisionID='{Sci.Env.User.Keyword}' AND Type='E' ";
+            this.DefaultFilter = $"MDivisionID='{Env.User.Keyword}' AND Type='E' ";
 
             this.WorkAlias = "Issue";                        // PK: ID
             this.GridAlias = "Issue_Summary";           // PK: ID+UKey
@@ -1810,7 +1810,7 @@ GROUP BY Article
         {
             base.ClickNewAfter();
 
-            string TempId = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IT", "Issue", DateTime.Now);
+            string TempId = MyUtility.GetValue.GetID(Env.User.Keyword + "IT", "Issue", DateTime.Now);
 
             if (MyUtility.Check.Empty(TempId))
             {
@@ -1818,8 +1818,8 @@ GROUP BY Article
                 return;
             }
 
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "E";
             this.CurrentMaintain["issuedate"] = DateTime.Now;
@@ -1875,7 +1875,7 @@ GROUP BY Article
             // 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IC", "Issue", (DateTime)this.CurrentMaintain["IssueDate"]);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "IC", "Issue", (DateTime)this.CurrentMaintain["IssueDate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -2334,7 +2334,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
 
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", ID));
-            pars.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
+            pars.Add(new SqlParameter("@MDivision", Env.User.Keyword));
             pars.Add(new SqlParameter("@OrderID", OrderID));
 
             #region Title
@@ -2542,7 +2542,7 @@ DROP TABLE #tmp
 
             string CurrentMDivisionID = MyUtility.GetValue.Lookup($"SELECT MDivisionID FROM Orders WHERE  ID ='{CurrentOrderID}' ");
 
-            if (CurrentMDivisionID != Sci.Env.User.Keyword)
+            if (CurrentMDivisionID != Env.User.Keyword)
             {
                 MyUtility.Msg.InfoBox($"<{CurrentOrderID}> M is {CurrentMDivisionID}. not the same login M. can't release !!");
                 this.txtOrderID.Focus();
@@ -2754,7 +2754,7 @@ and [IS].Poid='{POID}' AND [IS].SCIRefno='{SCIRefno}' AND [IS].ColorID='{ColorID
                     decimal totalQty = 0;
                     if (this.GetSubDetailDatas(_detail.Rows[_detail.Rows.Count - 1], out _subDetail))
                     {
-                        List<DataRow> issuedList = PublicPrg.Prgs.Thread_AutoPick(key, Convert.ToDecimal(AccuIssued));
+                        List<DataRow> issuedList = Prgs.Thread_AutoPick(key, Convert.ToDecimal(AccuIssued));
                         List<string> allSuppColor = new List<string>();
                         foreach (var issued in issuedList)
                         {
@@ -2980,7 +2980,7 @@ DROP TABLE #tmp
             if (subData.Rows.Count == 0)
             {
                 this.txtOrderID.Text = string.Empty;
-                return Result.F("No Issue Thread Data !");
+                return Ict.Result.F("No Issue Thread Data !");
             }
 
             foreach (DataRow dr in subData.Rows)
@@ -3013,14 +3013,14 @@ DROP TABLE #tmp
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private DualResult matrix_Reload()
         {
             if (this.EditMode == true && this.Ismatrix_Reload == false)
             {
-                return Result.True;
+                return Ict.Result.True;
             }
 
             this.Ismatrix_Reload = false;
@@ -3037,7 +3037,7 @@ where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by s
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out this.dtSizeCode)))
             {
                 this.ShowErr(sqlcmd, result);
-                return Result.True;
+                return Ict.Result.True;
             }
 
             if (this.dtSizeCode.Rows.Count == 0)
@@ -3045,7 +3045,7 @@ where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by s
                 // MyUtility.Msg.WarningBox(string.Format("Becuase there no sizecode data belong this OrderID {0} , can't show data!!", CurrentDataRow["orderid"]));
                 this.dtIssueBreakDown = null;
                 this.gridIssueBreakDown.DataSource = null;
-                return Result.True;
+                return Ict.Result.True;
             }
 
             this.sbSizecode = new StringBuilder();
@@ -3082,7 +3082,7 @@ where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by s
             if (!(result = DBProxy.Current.Select(null, sbIssueBreakDown.ToString(), out this.dtIssueBreakDown)))
             {
                 this.ShowErr(sqlcmd, result);
-                return Result.True;
+                return Ict.Result.True;
             }
 
             this.gridIssueBreakDown.AutoGenerateColumns = true;
@@ -3093,14 +3093,14 @@ where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by s
 
             this.checkByCombo_CheckedChanged(null, null);
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private DualResult IssueBreakDown_Reload()
         {
             if (this.EditMode == true && this.Ismatrix_Reload == false)
             {
-                return Result.True;
+                return Ict.Result.True;
             }
 
             this.Ismatrix_Reload = false;
@@ -3117,14 +3117,14 @@ where id = (select poid from dbo.orders WITH (NOLOCK) where id='{OrderID}') orde
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out this.dtSizeCode)))
             {
                 this.ShowErr(sqlcmd, result);
-                return Result.True;
+                return Ict.Result.True;
             }
 
             if (this.dtSizeCode.Rows.Count == 0)
             {
                 this.dtIssueBreakDown = null;
                 this.gridIssueBreakDown.DataSource = null;
-                return Result.True;
+                return Ict.Result.True;
             }
 
             this.sbSizecode = new StringBuilder();
@@ -3166,7 +3166,7 @@ order by [OrderID],[Article]
             if (!(result = DBProxy.Current.Select(null, sbIssueBreakDown.ToString(), out this.dtIssueBreakDown)))
             {
                 this.ShowErr(sqlcmd, result);
-                return Result.True;
+                return Ict.Result.True;
             }
 
             this.gridIssueBreakDown.AutoGenerateColumns = true;
@@ -3177,7 +3177,7 @@ order by [OrderID],[Article]
 
             this.checkByCombo_CheckedChanged(null, null);
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private void HideNullColumn(Win.UI.Grid grid)

@@ -13,8 +13,8 @@ namespace Sci.Production.Quality
     {
         // 宣告Context Menu Item
         ToolStripMenuItem edit;
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
         private bool boolFromP02;
         string find = string.Empty;
         int index;
@@ -249,7 +249,7 @@ Where a.poid='{0}' order by seq1,seq2
             }
 
             // 找出Cutinline and MinSciDelivery 比較早的日期
-            DateTime? targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(MyUtility.Check.Empty(queryDr) ? string.Empty : queryDr["CUTINLINE"], sciTb.Rows[0]["MinSciDelivery"]);
+            DateTime? targT = PublicPrg.Prgs.GetTargetLeadTime(MyUtility.Check.Empty(queryDr) ? string.Empty : queryDr["CUTINLINE"], sciTb.Rows[0]["MinSciDelivery"]);
             if (targT != null)
             {
                 this.dateTargetLeadTime.Text = ((DateTime)targT).ToShortDateString();
@@ -358,14 +358,14 @@ Where a.poid='{0}' order by seq1,seq2
                 {
                     _transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
-                    return Result.True;
+                    return Ict.Result.True;
                 }
             }
 
             _transactionscope.Dispose();
             _transactionscope = null;
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private void button1_Click(object sender, EventArgs e)

@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class txtsubprocess
+    partial class Txtsubprocess
     {
         /// <summary> 
         /// 設計工具所需的變數。

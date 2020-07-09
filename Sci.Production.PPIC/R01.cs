@@ -44,10 +44,10 @@ namespace Sci.Production.PPIC
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FTYGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
 
             // comboBox2.SelectedIndex = 0;
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
 
             this.comboSummaryBy.Add("SP#", "SP#");
             this.comboSummaryBy.Add("Article / Size", "Article / Size");
@@ -145,7 +145,7 @@ namespace Sci.Production.PPIC
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -165,7 +165,7 @@ namespace Sci.Production.PPIC
 
             if (this.type == "StylePerEachSewingDate")
             {
-                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R01_Style_PerEachSewingDate.xltx"); // 預先開啟excel app
+                objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_R01_Style_PerEachSewingDate.xltx"); // 預先開啟excel app
 
 // #if DEBUG
 //                objApp.Visible = true;
@@ -681,7 +681,7 @@ drop table #tmpFinal_step1
                                 {
                                     for (int i = colCount; i <= monthDays; i++)
                                     {
-                                        worksheet.Range[string.Format("{0}{1}:{0}{1}", PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1), MyUtility.Convert.GetString(intRowsStart))].Cells.Interior.Color = System.Drawing.Color.Black;
+                                        worksheet.Range[string.Format("{0}{1}:{0}{1}", PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1), MyUtility.Convert.GetString(intRowsStart))].Cells.Interior.Color = Color.Black;
                                     }
                                 }
 
@@ -783,7 +783,7 @@ drop table #tmpFinal_step1
                                 {
                                     for (int i = colCount; i <= monthDays; i++)
                                     {
-                                        worksheet.Range[string.Format("{0}{1}:{0}{1}", PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1), MyUtility.Convert.GetString(intRowsStart))].Cells.Interior.Color = System.Drawing.Color.Black;
+                                        worksheet.Range[string.Format("{0}{1}:{0}{1}", PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1), MyUtility.Convert.GetString(intRowsStart))].Cells.Interior.Color = Color.Black;
                                     }
                                 }
                             }
@@ -856,7 +856,7 @@ drop table #tmpFinal_step1
                         {
                             for (int i = colCount + 1; i < startCol; i++)
                             {
-                                worksheet.Range[string.Format("{0}{1}:{2}{1}", PublicPrg.Prgs.GetExcelEnglishColumnName(i), MyUtility.Convert.GetString(intRowsStart), PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1))].Cells.Interior.Color = System.Drawing.Color.Black;
+                                worksheet.Range[string.Format("{0}{1}:{2}{1}", PublicPrg.Prgs.GetExcelEnglishColumnName(i), MyUtility.Convert.GetString(intRowsStart), PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1))].Cells.Interior.Color = Color.Black;
                             }
                         }
 
@@ -876,7 +876,7 @@ drop table #tmpFinal_step1
                         #region 填入內容值
                         if (MyUtility.Convert.GetString(dr["StyleID"]) == "Holiday")
                         {
-                            rngColor.Cells.Interior.Color = System.Drawing.Color.Red;
+                            rngColor.Cells.Interior.Color = Color.Red;
                             colCount = colCount + (startCol - colCount - 1) + totalDays;
                             Marshal.ReleaseComObject(selrng);
                             continue;
@@ -919,7 +919,7 @@ drop table #tmpFinal_step1
                                 ((Excel.Range)worksheet.Cells[intRowsStart + 2, startCol + d]).NumberFormat = "0.00";
                                 worksheet.Cells[intRowsStart + 3, startCol + d] = this.drSummary[0]["CPU"];
                                 ((Excel.Range)worksheet.Cells[intRowsStart + 3, startCol + d]).NumberFormat = "#,##0_);(#,##0)";
-                                rngColor.Cells.Interior.Color = System.Drawing.Color.White;
+                                rngColor.Cells.Interior.Color = Color.White;
                             }
                         }
                         #endregion
@@ -951,7 +951,7 @@ drop table #tmpFinal_step1
                     {
                         for (int i = colCount; i <= monthDays; i++)
                         {
-                            worksheet.Range[string.Format("{0}{1}:{0}{1}", PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1), MyUtility.Convert.GetString(intRowsStart))].Cells.Interior.Color = System.Drawing.Color.Black;
+                            worksheet.Range[string.Format("{0}{1}:{0}{1}", PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1), MyUtility.Convert.GetString(intRowsStart))].Cells.Interior.Color = Color.Black;
                         }
                     }
 
@@ -1007,7 +1007,7 @@ drop table #tmpFinal_step1
 
                 #region Save & Show Excel
 
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R01_Style_PerEachSewingDate");
+                string strExcelName = Class.MicrosoftFile.GetName("PPIC_R01_Style_PerEachSewingDate");
                 Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
@@ -1038,7 +1038,7 @@ drop table #tmpFinal_step1
                     objApp = null;
                     worksheet = null;
 
-                    objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R01_PrintOut.xltx"); // 預先開啟excel app
+                    objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_R01_PrintOut.xltx"); // 預先開啟excel app
                     result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: "PPIC_R01_PrintOut.xltx", headerRow: 4, showExcel: false, excelApp: objApp, wSheet: objApp.Sheets[2]);
                     if (!result)
                     {
@@ -1083,7 +1083,7 @@ where id = '{0}'", Env.User.Factory), null);
                     worksheet.Activate();
 
                     #region Save & Show Excel
-                    string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R01_PrintOut");
+                    string strExcelName = Class.MicrosoftFile.GetName("PPIC_R01_PrintOut");
                     Excel.Workbook workbook = objApp.ActiveWorkbook;
                     workbook.SaveAs(strExcelName);
                     workbook.Close();
@@ -1102,7 +1102,7 @@ where id = '{0}'", Env.User.Factory), null);
                     #region PPIC_R01_SewingLineScheduleReport
                     objApp = null;
                     worksheet = null;
-                    objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R01_SewingLineScheduleReport.xltx"); // 預先開啟excel app
+                    objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_R01_SewingLineScheduleReport.xltx"); // 預先開啟excel app
                     result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: "PPIC_R01_SewingLineScheduleReport.xltx", headerRow: 1, showExcel: false, excelApp: objApp, wSheet: objApp.Sheets[2]);
 
                     if (!result)
@@ -1121,7 +1121,7 @@ where id = '{0}'", Env.User.Factory), null);
                     }
 
                     #region Save & Show Excel
-                    string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R01_SewingLineScheduleReport");
+                    string strExcelName = Class.MicrosoftFile.GetName("PPIC_R01_SewingLineScheduleReport");
                     Excel.Workbook workbook = objApp.ActiveWorkbook;
                     workbook.SaveAs(strExcelName);
                     workbook.Close();

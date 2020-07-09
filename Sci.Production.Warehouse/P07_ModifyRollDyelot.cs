@@ -666,7 +666,7 @@ UPDATE FIR_Shadebone SET
 Roll = '{drModify["roll"]}'
 ,Dyelot  = '{drModify["dyelot"]}'
 ,TicketYds   = '{drModify["ActualQty"]}'
-,EditName = '{Sci.Env.User.UserID}'
+,EditName = '{Env.User.UserID}'
 ,EditDate = GETDATE()
 WHERE  roll='{Original_Roll}' AND dyelot='{Original_Dyelot}' AND ID='{FirID}'
 ";

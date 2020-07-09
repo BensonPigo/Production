@@ -297,7 +297,7 @@ namespace Sci.Production.Logistic
                                 sp7.ParameterName = "@EditLocationDate";
                                 sp7.Value = DateTime.Now;
                                 sp8.ParameterName = "@EditLocationName";
-                                sp8.Value = Sci.Env.User.UserID;
+                                sp8.Value = Env.User.UserID;
                             }
 
                             // EditLocationDate
@@ -316,7 +316,7 @@ namespace Sci.Production.Logistic
                                 cmds.Add(sp8);
                             }
                             #endregion
-                            DualResult result = Sci.Data.DBProxy.Current.Execute(null, updateCmd, cmds);
+                            DualResult result = DBProxy.Current.Execute(null, updateCmd, cmds);
                             if (!result)
                             {
                                 lastResult = false;
@@ -488,7 +488,7 @@ namespace Sci.Production.Logistic
 
                 rd.ReportResource = reportresource;
                 rd.ReportDataSources.Add(new KeyValuePair<string, object>("Report_UpdateLocation", report_UpdateLocation));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("title", MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Keyword))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("title", MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", Env.User.Keyword))));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("request", MyUtility.Convert.GetString(this.comboRequestby.SelectedValue)));
 
                 using (var frm = new Win.Subs.ReportView(rd))
@@ -514,7 +514,7 @@ namespace Sci.Production.Logistic
                 // 讀檔案
                 string wheresql = string.Empty;
                 this.whereS = string.Empty;
-                using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, System.Text.Encoding.UTF8))
+                using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, Encoding.UTF8))
                 {
                     string line;
                     while ((line = reader.ReadLine()) != null)
@@ -615,7 +615,7 @@ from (
                 -- 不在 CFA 送回 Clog 的路上
                 and PLD.CFAReturnClogDate is null
                 and PLD.CTNQty = 1
-                and orders.MDivisionID =  '{0}'", Sci.Env.User.Keyword));
+                and orders.MDivisionID =  '{0}'", Env.User.Keyword));
             #region 組條件
             if (!isimport)
             {

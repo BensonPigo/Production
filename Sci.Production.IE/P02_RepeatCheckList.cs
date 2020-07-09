@@ -65,7 +65,7 @@ where cc.ID = {0} order by cc.ChgOverCheckListID", this.KeyValue1);
 
             this.SetGrid(chgOverChkList);
             this.grid.AutoResizeColumns();
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // Save -- Append/Revise/Delete按鈕要隱藏
@@ -90,7 +90,7 @@ where cc.ID = {0} order by cc.ChgOverCheckListID", this.KeyValue1);
                 return;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\IE_P02_ChkListRepeat.xltx");
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\IE_P02_ChkListRepeat.xltx");
             MyUtility.Excel.CopyToXls(excelTable, string.Empty, "IE_P02_ChkListRepeat.xltx", 2, true, string.Empty, objApp);
         }
     }

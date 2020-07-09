@@ -1157,7 +1157,7 @@ EXEC sp_executesql @sql", this.poID);
                 columns4 = ptb4.Columns.Count;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_P01_Qtybreakdown.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_P01_Qtybreakdown.xltx"); // 預先開啟excel app
 
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
             if (ptb1 != null && ptb1.Rows.Count > 0)
@@ -1236,7 +1236,7 @@ EXEC sp_executesql @sql", this.poID);
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_Qtybreakdown");
+            string strExcelName = Class.MicrosoftFile.GetName("PPIC_P01_Qtybreakdown");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

@@ -49,7 +49,7 @@ namespace Sci.Production.Logistic
             DataTable mDivision;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
         }
 
         /// <summary>
@@ -386,7 +386,7 @@ drop table #tmp,#tmp2
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -400,7 +400,7 @@ drop table #tmp,#tmp2
             this.SetCount(this.printData.Rows.Count);
 
             // 檢查是否擁有Clog R01的Confirm 權限
-            bool canConfrim = Prgs.GetAuthority(Sci.Env.User.UserID, "P01. Clog Master List", "CanConfirm");
+            bool canConfrim = Prgs.GetAuthority(Env.User.UserID, "P01. Clog Master List", "CanConfirm");
 
             if (this.printData.Rows.Count <= 0)
             {
@@ -409,7 +409,7 @@ drop table #tmp,#tmp2
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Logistic_R01_CartonStatusReport.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Logistic_R01_CartonStatusReport.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -439,7 +439,7 @@ drop table #tmp,#tmp2
             this.CreateCustomizedExcel(ref worksheet);
 
             #region Save & show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Logistic_R01_CartonStatusReport");
+            string strExcelName = Class.MicrosoftFile.GetName("Logistic_R01_CartonStatusReport");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

@@ -38,12 +38,12 @@
             this.textColor = new Sci.Win.UI.TextBox();
             this.labelColor = new Sci.Win.UI.Label();
             this.checkQty = new Sci.Win.UI.CheckBox();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
             this.label2 = new Sci.Win.UI.Label();
             this.textEndRefno = new Sci.Win.UI.TextBox();
             this.textStartRefno = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
+            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
             this.textEndSP = new Sci.Win.UI.TextBox();
             this.textStartSP = new Sci.Win.UI.TextBox();
             this.labelRefno = new Sci.Win.UI.Label();
@@ -196,7 +196,7 @@
             // txtfactory1
             // 
             this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.boolFtyGroupList = true;
+            this.txtfactory1.BoolFtyGroupList = true;
             this.txtfactory1.FilteMDivision = false;
             this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory1.IsProduceFty = false;
@@ -601,12 +601,12 @@
         private Win.UI.TextBox textColor;
         private Win.UI.Label labelColor;
         private Win.UI.CheckBox checkQty;
-        private Class.txtfactory txtfactory1;
+        private Class.Txtfactory txtfactory1;
         private Win.UI.Label label2;
         private Win.UI.TextBox textEndRefno;
         private Win.UI.TextBox textStartRefno;
         private Win.UI.Label label1;
-        private Class.txtMdivision txtMdivision1;
+        private Class.TxtMdivision txtMdivision1;
         private Win.UI.TextBox textEndSP;
         private Win.UI.TextBox textStartSP;
         private Win.UI.Label labelRefno;

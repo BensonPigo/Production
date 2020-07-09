@@ -26,7 +26,7 @@ namespace Sci.Production.Packing
             this.InitializeComponent();
             this.destination_path = MyUtility.GetValue.Lookup("select ShippingMarkPath from System WITH (NOLOCK) ", null);
 
-            string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".\Resources\");
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".\Resources\");
             if (this.ht.Count == 0)
             {
                 this.ht.Add("Picture1", path + "CTN.jpg");
@@ -152,7 +152,7 @@ FROM StickerSize WITH (NOLOCK)
                 {
                     try
                     {
-                        System.IO.File.Copy(from_file_path, fbd.SelectedPath + @"\" + MyUtility.Convert.GetString(this.CurrentMaintain["FileName"]), true);
+                        File.Copy(from_file_path, fbd.SelectedPath + @"\" + MyUtility.Convert.GetString(this.CurrentMaintain["FileName"]), true);
                     }
                     catch (IOException exception)
                     {
@@ -232,7 +232,7 @@ FROM StickerSize WITH (NOLOCK)
                 try
                 {
                     string destination = Path.Combine(this.destination_path, this.Destination_fileName);
-                    System.IO.File.Copy(local_path_file, destination, true);
+                    File.Copy(local_path_file, destination, true);
                     this.CurrentMaintain["FileName"] = this.Destination_fileName.Trim();
                 }
                 catch (IOException exception)
@@ -256,7 +256,7 @@ FROM StickerSize WITH (NOLOCK)
             try
             {
                 string destination = Path.Combine(this.destination_path, fileName);
-                System.IO.File.Delete(destination);
+                File.Delete(destination);
             }
             catch (IOException exception)
             {

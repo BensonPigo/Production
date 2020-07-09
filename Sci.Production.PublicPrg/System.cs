@@ -42,7 +42,7 @@ namespace Sci.Production.PublicPrg
         /// <returns>bool</returns>
         public static bool GetAuthority(string checkid)
         {
-            if (Sci.Env.User.IsAdmin)
+            if (Env.User.IsAdmin)
             {
                 return true;
             }
@@ -61,7 +61,7 @@ as
  union
  select * from superpass1
 )
-select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'", checkid, Sci.Env.User.UserID);
+select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'", checkid, Env.User.UserID);
 
                 return MyUtility.Check.Seek(sqlCmd) ? true : false;
             }
@@ -76,7 +76,7 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
         /// <returns>bool</returns>
         public static bool GetAuthority(string checkid, string formcaption, string pass2colname)
         {
-            if (Sci.Env.User.IsAdmin)
+            if (Env.User.IsAdmin)
             {
                 return true;
             }
@@ -84,7 +84,7 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             {
                 // Sci.Env.User.PositionID
                 string PositionID = "1";
-                string sql = string.Format("select FKPass0 from Pass1 WITH (NOLOCK) where ID='{0}'", Sci.Env.User.UserID);
+                string sql = string.Format("select FKPass0 from Pass1 WITH (NOLOCK) where ID='{0}'", Env.User.UserID);
                 PositionID = MyUtility.GetValue.Lookup(sql);
 
                 DataTable dt;
@@ -113,7 +113,7 @@ as
  union
  select * from superpass1
 )
-select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'", checkid, Sci.Env.User.UserID);
+select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'", checkid, Env.User.UserID);
 
                 return MyUtility.Check.Seek(sqlCmd) ? true : false;
             }

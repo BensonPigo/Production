@@ -230,7 +230,7 @@ namespace Sci.Production.Shipping
                         MyUtility.Check.Empty(dr["PcsLength"]) ? "0" : MyUtility.Convert.GetString(dr["PcsLength"]),
                         MyUtility.Check.Empty(dr["PcsKg"]) ? "0" : MyUtility.Convert.GetString(dr["PcsKg"]),
                         MyUtility.Convert.GetString(dr["NoDeclare"]),
-                        Sci.Env.User.UserID,
+                        Env.User.UserID,
                         MyUtility.Convert.GetString(dr["SCIRefno"]).Replace("'", "''")));
                 }
                 else
@@ -244,7 +244,7 @@ namespace Sci.Production.Shipping
                         MyUtility.Check.Empty(dr["PcsLength"]) ? "0" : MyUtility.Convert.GetString(dr["PcsLength"]),
                         MyUtility.Check.Empty(dr["PcsKg"]) ? "0" : MyUtility.Convert.GetString(dr["PcsKg"]),
                         MyUtility.Convert.GetString(dr["NoDeclare"]),
-                        Sci.Env.User.UserID,
+                        Env.User.UserID,
                         MyUtility.Convert.GetString(dr["RefNo"]).Replace("'", "''")));
                 }
             }

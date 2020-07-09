@@ -49,14 +49,14 @@ namespace Sci.Production.Warehouse
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             this.SetCount(this.dt.Rows.Count);
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
             if (this.dt.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found!!");
                 return result;
             }
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R18_Material_Tracking.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R18_Material_Tracking.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Warehouse_R18_Material_Tracking.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);
 
             this.ShowWaitMessage("Excel Processing...");
@@ -75,7 +75,7 @@ namespace Sci.Production.Warehouse
             worksheet.Columns[20].ColumnWidth = 88;
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R18_Material_Tracking");
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R18_Material_Tracking");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
@@ -104,7 +104,7 @@ namespace Sci.Production.Warehouse
             string sizespec = this.txtSizeCode.Text;
             bool chkbalance = this.checkBalanceQty.Checked;
 
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
             StringBuilder sqlcmd = new StringBuilder();
             #region sql command
             sqlcmd.Append(string.Format(

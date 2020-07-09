@@ -41,7 +41,7 @@ namespace Sci.Production.PPIC
 
             // 預設查詢為 Exclude Junk
             this.queryfors.SelectedIndex = 0;
-            this.DefaultWhere = $"(select f.MDivisionID from Factory f WITH (NOLOCK) where f.ID = OrderChangeApplication.FactoryID) = '{Sci.Env.User.Keyword}' and isnull(OrderChangeApplication.ConfirmedName,'') = '' and OrderChangeApplication.ConfirmedDate is null";
+            this.DefaultWhere = $"(select f.MDivisionID from Factory f WITH (NOLOCK) where f.ID = OrderChangeApplication.FactoryID) = '{Env.User.Keyword}' and isnull(OrderChangeApplication.ConfirmedName,'') = '' and OrderChangeApplication.ConfirmedDate is null";
             this.ReloadDatas();
             this.queryfors.SelectedIndexChanged += (s, e) =>
             {
@@ -50,10 +50,10 @@ namespace Sci.Production.PPIC
                 {
                     case "0":
                     default:
-                        this.DefaultWhere = $"(select f.MDivisionID from Factory f WITH (NOLOCK) where f.ID = OrderChangeApplication.FactoryID) = '{Sci.Env.User.Keyword}' and isnull(OrderChangeApplication.ConfirmedName,'') = '' and OrderChangeApplication.ConfirmedDate is null";
+                        this.DefaultWhere = $"(select f.MDivisionID from Factory f WITH (NOLOCK) where f.ID = OrderChangeApplication.FactoryID) = '{Env.User.Keyword}' and isnull(OrderChangeApplication.ConfirmedName,'') = '' and OrderChangeApplication.ConfirmedDate is null";
                         break;
                     case "1":
-                        this.DefaultWhere = $"(select f.MDivisionID from Factory f WITH (NOLOCK) where f.ID = OrderChangeApplication.FactoryID) = '{Sci.Env.User.Keyword}'";
+                        this.DefaultWhere = $"(select f.MDivisionID from Factory f WITH (NOLOCK) where f.ID = OrderChangeApplication.FactoryID) = '{Env.User.Keyword}'";
                         break;
                 }
 
@@ -574,7 +574,7 @@ sizeCode);
 update OrderChangeApplication set ConfirmedName = '{0}',ConfirmedDate = GETDATE(), EditName = '{0}', EditDate = GETDATE(),FTYComments = '{2}' where ID = '{1}'
 INSERT INTO [dbo].[OrderChangeApplication_History]([ID],[Status],[StatusUser],[StatusDate])
 VALUES('{1}','Confirmed','{0}',getdate())
-", Sci.Env.User.UserID,
+", Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
                 MyUtility.Convert.GetString(this.CurrentMaintain["FTYComments"]));
             result = DBProxy.Current.Execute(null, updateCmd);
@@ -608,7 +608,7 @@ VALUES('{1}','Confirmed','{0}',getdate())
 update OrderChangeApplication set Status = 'Reject',RejectName = '{0}',RejectDate = GETDATE(), EditName = '{0}', EditDate = GETDATE(),FTYComments = '{2}' where ID = '{1}'
 INSERT INTO [dbo].[OrderChangeApplication_History]([ID],[Status],[StatusUser],[StatusDate])
 VALUES('{1}','Reject','{0}',getdate())
-", Sci.Env.User.UserID,
+", Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
                 MyUtility.Convert.GetString(this.CurrentMaintain["FTYComments"]));
             result = DBProxy.Current.Execute(null, updateCmd);
@@ -645,7 +645,7 @@ VALUES('{1}','Reject','{0}',getdate())
             string subject = $@"{this.CurrentMaintain["ID"]} {this.CurrentMaintain["Orderid"]} {factory} {status}";
             string description = $@"{status} SP#{this.CurrentMaintain["Orderid"]}-{factory} request change qty, please check, apply id# - {this.CurrentMaintain["ID"]}";
 
-            var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, true, true);
+            var email = new MailTo(Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, true, true);
             email.ShowDialog(this);
         }
 

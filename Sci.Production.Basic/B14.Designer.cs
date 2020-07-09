@@ -45,7 +45,7 @@
             this.displayUnit = new Sci.Win.UI.DisplayBox();
             this.displayRemark = new Sci.Win.UI.DisplayBox();
             this.displayProductionUnit = new Sci.Win.UI.DisplayBox();
-            this.txtDropdownlistClassify = new Sci.Production.Class.txtdropdownlist();
+            this.txtDropdownlistClassify = new Sci.Production.Class.Txtdropdownlist();
             this.comboInHouseOSP = new Sci.Win.UI.ComboBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.checkIsTMS = new Sci.Win.UI.CheckBox();
@@ -538,7 +538,7 @@
         private Win.UI.Label labelAbbr;
         private Win.UI.Label labelRemark;
         private Win.UI.DisplayBox displayProductionUnit;
-        private Class.txtdropdownlist txtDropdownlistClassify;
+        private Class.Txtdropdownlist txtDropdownlistClassify;
         private Win.UI.DisplayBox displayRemark;
         private Win.UI.DisplayBox displayUnit;
         private Win.UI.DisplayBox displayArtworkType;

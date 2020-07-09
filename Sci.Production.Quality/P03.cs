@@ -13,8 +13,8 @@ namespace Sci.Production.Quality
 {
     public partial class P03 : Win.Tems.Input6
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
         int index;
         DataRow[] find_dr;
 
@@ -83,7 +83,7 @@ namespace Sci.Production.Quality
             }
 
             // 找出Cutinline and MinSciDelivery 比較早的日期
-            DateTime? targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(MyUtility.Check.Empty(queryDr) ? string.Empty : queryDr["CUTINLINE"], sciTb.Rows[0]["MinSciDelivery"]);
+            DateTime? targT = PublicPrg.Prgs.GetTargetLeadTime(MyUtility.Check.Empty(queryDr) ? string.Empty : queryDr["CUTINLINE"], sciTb.Rows[0]["MinSciDelivery"]);
             if (targT != null)
             {
                 this.dateTargetLeadTime.Text = ((DateTime)targT).ToShortDateString();
@@ -454,7 +454,7 @@ masterID);
                 {
                     _transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
-                    return Result.True;
+                    return Ict.Result.True;
                 }
             }
             #region Over All Result 寫入
@@ -464,7 +464,7 @@ masterID);
             {
                 if (dr.RowState == DataRowState.Modified)
                 {
-                    string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Lab(dr["ID"]);
+                    string[] returnstr = PublicPrg.Prgs.GetOverallResult_Lab(dr["ID"]);
                     string cmdResult = @"update Fir_Laboratory set Result=@Result where id=@id ";
                     List<SqlParameter> spam = new List<SqlParameter>();
                     spam.Add(new SqlParameter("@Result", returnstr[0]));
@@ -477,7 +477,7 @@ masterID);
             _transactionscope.Dispose();
             _transactionscope = null;
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override void ClickSaveAfter()
@@ -589,7 +589,7 @@ masterID);
         {
             if (this.EditMode)
             {
-                string[] returnResult = Sci.Production.PublicPrg.Prgs.GetOverallResult_Lab(dr["ID"]);
+                string[] returnResult = PublicPrg.Prgs.GetOverallResult_Lab(dr["ID"]);
                 dr["Result"] = returnResult[0];
             }
         }

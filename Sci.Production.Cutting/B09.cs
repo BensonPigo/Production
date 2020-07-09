@@ -1,6 +1,5 @@
 ﻿using Ict;
 using Sci.Data;
-using Sci.Production.Class;
 using Sci.Win.Tools;
 using System;
 using System.ComponentModel;

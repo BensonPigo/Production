@@ -203,7 +203,7 @@ from (
             and b.DisposeFromClog= 0
             and a.MDivisionID = '{0}' 
             and (a.Type = 'B' or a.Type = 'L')
-", Sci.Env.User.Keyword));
+", Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
                 sqlCmd.Append(string.Format(
@@ -336,7 +336,7 @@ from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c
                 this.listControlBindingSource1.DataSource = this.selectDataTable;
 
                 // 讀檔案
-                using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, System.Text.Encoding.UTF8))
+                using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, Encoding.UTF8))
                 {
                     DataRow seekData;
                     string line;
@@ -415,7 +415,7 @@ and pd.DisposeFromClog= 0",
                                         dr["Remark"] = dr["Remark"] + "This carton does not exist Clog!";
                                     }
 
-                                    if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
+                                    if (seekData["MDivisionID"].ToString().ToUpper() != Env.User.Keyword)
                                     {
                                         dr["Remark"] = dr["Remark"] + "The order's M is not equal to login M.";
                                     }
@@ -507,7 +507,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                             dr["Remark"] = dr["Remark"] + "This carton does not exist Clog!";
                                         }
 
-                                        if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
+                                        if (seekData["MDivisionID"].ToString().ToUpper() != Env.User.Keyword)
                                         {
                                             dr["Remark"] = dr["Remark"] + "The order's M is not equal to login M.";
                                         }
@@ -616,7 +616,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                         dr["Remark"] = dr["Remark"] + "This carton does not exist Clog!";
                                     }
 
-                                    if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
+                                    if (seekData["MDivisionID"].ToString().ToUpper() != Env.User.Keyword)
                                     {
                                         dr["Remark"] = dr["Remark"] + "The order's M is not equal to login M.";
                                     }
@@ -717,8 +717,8 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
             }
 
             string sql = $@"
-declare @MDivisionID as varchar(8) = '{Sci.Env.User.Keyword}'
-	, @Userid As nvarchar(10) = '{Sci.Env.User.UserID}'
+declare @MDivisionID as varchar(8) = '{Env.User.Keyword}'
+	, @Userid As nvarchar(10) = '{Env.User.UserID}'
 
 insert into ClogReturn(ReturnDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate,AddName,SCICtnNo)
 select GETDATE() ReturnDate
@@ -789,7 +789,7 @@ from #tmp t ;
             }
 
             DataTable resulttb;
-            DualResult result1 = Result.True, result2 = Result.True;
+            DualResult result1 = Ict.Result.True, result2 = Ict.Result.True;
 
             using (TransactionScope transactionScope = new TransactionScope())
             {

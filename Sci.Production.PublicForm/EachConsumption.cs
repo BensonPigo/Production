@@ -58,7 +58,7 @@ namespace Sci.Production.PublicForm
                 this._cuttingPiece = 1;
             }
 
-            bool EditSwitch2Order = Prgs.GetAuthority(Sci.Env.User.UserID, "P01.Cutting Master List", "CanEdit");
+            bool EditSwitch2Order = Prgs.GetAuthority(Env.User.UserID, "P01.Cutting Master List", "CanEdit");
             if (EditSwitch2Order && switchToWorkorder)
             {
                 this.btnSwitchtoWorkOrder.Enabled = true;
@@ -130,7 +130,7 @@ Where a.ID = '{0}' Order by a.Seq", this.KeyValue1);
             }
 
             this.gridSizeQty.DataSource = this.sizetb;
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnGridSetup()

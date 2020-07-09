@@ -24,7 +24,7 @@ namespace Sci.Production.Subcon
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "Mdivisionid = '" + Sci.Env.User.Keyword + "'";
+            this.DefaultFilter = "Mdivisionid = '" + Env.User.Keyword + "'";
             this.gridicon.Append.Enabled = false;
             this.gridicon.Append.Visible = false;
             this.gridicon.Insert.Enabled = false;
@@ -45,8 +45,8 @@ namespace Sci.Production.Subcon
 
         private void txtartworktype_ftyArtworkType_Validated(object sender, EventArgs e)
         {
-            Class.txtartworktype_fty o;
-            o = (Class.txtartworktype_fty)sender;
+            Class.Txtartworktype_fty o;
+            o = (Class.Txtartworktype_fty)sender;
 
             if ((o.Text != o.OldValue) && this.EditMode)
             {
@@ -65,10 +65,10 @@ namespace Sci.Production.Subcon
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["Mdivisionid"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            this.CurrentMaintain["ISSUEDATE"] = System.DateTime.Today;
-            this.CurrentMaintain["HANDLE"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["Mdivisionid"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
+            this.CurrentMaintain["ISSUEDATE"] = DateTime.Today;
+            this.CurrentMaintain["HANDLE"] = Env.User.UserID;
             this.CurrentMaintain["VatRate"] = 0;
             this.CurrentMaintain["Status"] = "New";
             ((DataTable)this.detailgridbs.DataSource).Rows[0].Delete();
@@ -229,14 +229,14 @@ where  ap.status = 'New'
             // 取單號：
             if (this.IsDetailInserting)
             {
-                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where ID ='{0}'", this.CurrentMaintain["factoryid"]));
+                string factorykeyword = MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where ID ='{0}'", this.CurrentMaintain["factoryid"]));
                 if (MyUtility.Check.Empty(factorykeyword))
                 {
                     MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
                     return false;
                 }
 
-                this.CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "FA", "artworkAP", (DateTime)this.CurrentMaintain["issuedate"]);
+                this.CurrentMaintain["id"] = MyUtility.GetValue.GetID(Env.User.Keyword + "FA", "artworkAP", (DateTime)this.CurrentMaintain["issuedate"]);
                 if (MyUtility.Check.Empty(this.CurrentMaintain["id"]))
                 {
                     MyUtility.Msg.WarningBox("Server is busy, Please re-try it again", "GetID() Failed");

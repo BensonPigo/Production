@@ -151,7 +151,7 @@ namespace Sci.Production.PPIC
                 sxrc.XltRptTable xltTbl = new sxrc.XltRptTable(dts[0], 1, 0, false, 18, 2);
                 for (int i = 3; i <= 18; i++)
                 {
-                    sxrc.XlsColumnInfo xcinfo = new sxrc.XlsColumnInfo(i, false, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft);
+                    sxrc.XlsColumnInfo xcinfo = new sxrc.XlsColumnInfo(i, false, 0, XlHAlign.xlHAlignLeft);
                     xcinfo.NumberFormate = "@";
                     xltTbl.LisColumnInfo.Add(xcinfo);
                 }
@@ -258,8 +258,8 @@ out dt);
                     }
                 }
 
-                this.strFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_M_Notice");
-                this.strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_M_Notice", Sci.Production.Class.PDFFileNameExtension.PDF);
+                this.strFileName = Class.MicrosoftFile.GetName("PPIC_P01_M_Notice");
+                this.strPDFFileName = Class.MicrosoftFile.GetName("PPIC_P01_M_Notice", Class.PDFFileNameExtension.PDF);
                 sxr.AllowRangeTransferToString = false;
                 sxr.Save(this.strFileName);
                 sxr.FinishSave();
@@ -342,7 +342,7 @@ out dt);
                     sxrc.XltRptTable xltTbl = new sxrc.XltRptTable(dts[0], 1, 0, false, 18, 2);
                     for (int i = 3; i <= 18; i++)
                     {
-                        sxrc.XlsColumnInfo xcinfo = new sxrc.XlsColumnInfo(i, false, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft);
+                        sxrc.XlsColumnInfo xcinfo = new sxrc.XlsColumnInfo(i, false, 0, XlHAlign.xlHAlignLeft);
                         xcinfo.NumberFormate = "@";
                         xltTbl.LisColumnInfo.Add(xcinfo);
                     }
@@ -407,7 +407,7 @@ out dt);
 
                     // Sheet3 每張SP的分隔線，只需要畫好一個，後面都是複製的
                     wks = sxr.ExcelApp.Worksheets[3];
-                    wks.get_Range($"A3:S3").Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].Weight = 3;
+                    wks.get_Range($"A3:S3").Borders[XlBordersIndex.xlEdgeTop].Weight = 3;
 
                     foreach (DataRow dr in dts[10].Rows)
                     {
@@ -450,8 +450,8 @@ out dt);
                     }
                 }
 
-                this.strFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_Report04");
-                this.strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_Report04", Sci.Production.Class.PDFFileNameExtension.PDF);
+                this.strFileName = Class.MicrosoftFile.GetName("PPIC_Report04");
+                this.strPDFFileName = Class.MicrosoftFile.GetName("PPIC_Report04", Class.PDFFileNameExtension.PDF);
 
                 sxr.Save(this.strFileName);
                 sxr.FinishSave();
@@ -497,13 +497,13 @@ and (SMnorderApv is not null or MnorderApv is not null)
             for (int colIdx = 3; colIdx <= this.intSizeSpecColumnCnt; colIdx++)
             {
                 // oSheet.Cells[4, colIdx].Interior.Color = System.Drawing.ColorTranslator.ToOle(Color.Red);
-                oSheet.Cells[4, colIdx].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
+                oSheet.Cells[4, colIdx].HorizontalAlignment = XlHAlign.xlHAlignLeft;
             }
 
             for (int colIdx = 3; colIdx <= this.intSizeSpecColumnCnt; colIdx++)
             {
                 // oSheet.Cells[4 + intSizeSpecRowCnt, colIdx].Interior.Color = System.Drawing.ColorTranslator.ToOle(Color.Red);
-                oSheet.Cells[4, colIdx].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
+                oSheet.Cells[4, colIdx].HorizontalAlignment = XlHAlign.xlHAlignLeft;
             }
         }
 

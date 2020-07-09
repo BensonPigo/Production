@@ -38,14 +38,14 @@
             this.txtSewingLine = new Sci.Win.UI.TextBox();
             this.contextMenuStrip1 = new Sci.Win.UI.ContextMenuStrip();
             this.label2 = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.labLocation = new Sci.Win.UI.Label();
             this.txtLocation = new Sci.Win.UI.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label3 = new Sci.Win.UI.Label();
-            this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
+            this.comboMDivision = new Sci.Production.Class.ComboMDivision(this.components);
             this.label4 = new Sci.Win.UI.Label();
-            this.comboRFIDProcessLocation = new Sci.Production.Class.comboRFIDProcessLocation();
+            this.comboRFIDProcessLocation = new Sci.Production.Class.ComboRFIDProcessLocation();
             this.btnSetPanelCutcell = new Sci.Win.UI.Button();
             this.txtSubprocess = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
@@ -191,7 +191,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtfactory.FilteMDivision = true;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -339,12 +339,12 @@
         private Win.UI.ContextMenuStrip contextMenuStrip1;
         private Win.UI.Label label2;
         private Win.UI.Label labLocation;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
         private Win.UI.TextBox txtLocation;
         private Win.UI.Label label3;
         private System.Windows.Forms.GroupBox groupBox1;
-        private Class.comboMDivision comboMDivision;
-        private Class.comboRFIDProcessLocation comboRFIDProcessLocation;
+        private Class.ComboMDivision comboMDivision;
+        private Class.ComboRFIDProcessLocation comboRFIDProcessLocation;
         private Win.UI.Label label4;
         private Win.UI.Button btnSetPanelCutcell;
         private Win.UI.TextBox txtSubprocess;

@@ -141,7 +141,7 @@ From
 	inner join WorkOrder_Estcutdate we with(nolock) on a.Ukey = we.WorkOrderUkey
 
 ";
-            string where = string.Format(" Where a.cutplanid!='' and a.MDivisionId = '{0}'", Sci.Env.User.Keyword);
+            string where = string.Format(" Where a.cutplanid!='' and a.MDivisionId = '{0}'", Env.User.Keyword);
             if (!MyUtility.Check.Empty(cutsp))
             {
                 where = where + string.Format(" and a.id='{0}'", cutsp);

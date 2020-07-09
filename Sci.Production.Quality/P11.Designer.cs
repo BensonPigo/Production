@@ -42,10 +42,10 @@
             this.dateBoxReceivedDate = new Sci.Win.UI.DateBox();
             this.dateBoxReleasedDate = new Sci.Win.UI.DateBox();
             this.txtRemark = new Sci.Win.UI.TextBox();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtseason = new Sci.Production.Class.txtseason();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
-            this.txtT1 = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtseason = new Sci.Production.Class.Txtseason();
+            this.txtstyle = new Sci.Production.Class.Txtstyle();
+            this.txtT1 = new Sci.Production.Class.TxtsubconNoConfirm();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -304,8 +304,8 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 2;
-            this.txtstyle.tarBrand = this.txtbrand;
-            this.txtstyle.tarSeason = this.txtseason;
+            this.txtstyle.TarBrand = this.txtbrand;
+            this.txtstyle.TarSeason = this.txtseason;
             // 
             // txtT1
             // 
@@ -363,9 +363,9 @@
         private Win.UI.DateBox dateBoxReleasedDate;
         private Win.UI.DateBox dateBoxReceivedDate;
         private Win.UI.TextBox txtArticle;
-        private Class.txtbrand txtbrand;
-        private Class.txtseason txtseason;
-        private Class.txtstyle txtstyle;
-        private Class.txtsubconNoConfirm txtT1;
+        private Class.Txtbrand txtbrand;
+        private Class.Txtseason txtseason;
+        private Class.Txtstyle txtstyle;
+        private Class.TxtsubconNoConfirm txtT1;
     }
 }

@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
-            this.txtCell = new Sci.Production.Class.txtCell();
-            this.txtLine = new Sci.Production.Class.txtsewingline();
-            this.txtBrand = new Sci.Production.Class.txtbrand();
+            this.txtCell = new Sci.Production.Class.TxtCell();
+            this.txtLine = new Sci.Production.Class.Txtsewingline();
+            this.txtBrand = new Sci.Production.Class.Txtbrand();
             this.txtDefectType = new Sci.Win.UI.TextBox();
             this.txtDefectCode = new Sci.Win.UI.TextBox();
             this.radioSummybyDateandStyle = new Sci.Win.UI.RadioButton();
@@ -110,7 +110,7 @@
             // txtLine
             // 
             this.txtLine.BackColor = System.Drawing.Color.White;
-            this.txtLine.factoryobjectName = this.ComboFactory;
+            this.txtLine.FactoryobjectName = this.ComboFactory;
             this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLine.Location = new System.Drawing.Point(100, 94);
             this.txtLine.Name = "txtLine";
@@ -368,8 +368,8 @@
         private Win.UI.Label labelFactory;
         private Win.UI.Label labelPeriod;
         private Win.UI.Label label9;
-        private Class.txtCell txtCell;
-        private Class.txtsewingline txtLine;
-        private Class.txtbrand txtBrand;
+        private Class.TxtCell txtCell;
+        private Class.Txtsewingline txtLine;
+        private Class.Txtbrand txtBrand;
     }
 }

@@ -93,7 +93,7 @@ select  cte1.FromPoId
 from cte1 
 left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 and cte2.ToSeq2 =  cte1.FromSeq2 
     and cte2.ToStocktype = cte1.FromStocktype;
-", this.dr_master["BorrowId"], Sci.Env.User.Keyword);
+", this.dr_master["BorrowId"], Env.User.Keyword);
             DataTable datas;
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out datas);
 
@@ -244,7 +244,7 @@ OUTER apply(
 where bd.id='{0}' and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and factory.MDivisionID = '{1}' and orders.Category <> 'A'
       and  c.StockType='B'
 drop table #tmp,#tmp2
-", this.dr_master["BorrowId"], Sci.Env.User.Keyword);
+", this.dr_master["BorrowId"], Env.User.Keyword);
 
             DataTable grid1Datas;
             result = DBProxy.Current.Select(null, sqlcmd, out grid1Datas);

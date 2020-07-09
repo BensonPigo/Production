@@ -21,7 +21,7 @@ namespace Sci.Production.Subcon
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
         }
 
         private bool isTaipeiDBC = false;
@@ -182,15 +182,15 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", this.CurrentMaintain["id"
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            this.CurrentMaintain["issuedate"] = System.DateTime.Today;
-            this.CurrentMaintain["handle"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
+            this.CurrentMaintain["issuedate"] = DateTime.Today;
+            this.CurrentMaintain["handle"] = Env.User.UserID;
             this.CurrentMaintain["Amount"] = 0;
             this.CurrentMaintain["Tax"] = 0;
             this.CurrentMaintain["TaxRate"] = 0;
             this.CurrentMaintain["Status"] = "New";
-            this.CurrentMaintain["SMR"] = MyUtility.GetValue.Lookup("Supervisor", Sci.Env.User.UserID, "Pass1", "ID");
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["SMR"] = MyUtility.GetValue.Lookup("Supervisor", Env.User.UserID, "Pass1", "ID");
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.CurrentMaintain["exchange"] = 1;
             this.dateReceiveDate.ReadOnly = true;
         }
@@ -267,14 +267,14 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", this.CurrentMaintain["id"
             // 取單號：
             if (this.IsDetailInserting)
             {
-                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where ID ='{0}'", this.CurrentMaintain["factoryid"]));
+                string factorykeyword = MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where ID ='{0}'", this.CurrentMaintain["factoryid"]));
                 if (MyUtility.Check.Empty(factorykeyword))
                 {
                     MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
                     return false;
                 }
 
-                this.CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(this.CurrentMaintain["factoryid"].ToString() + "LD", "localdebit", (DateTime)this.CurrentMaintain["issuedate"]);
+                this.CurrentMaintain["id"] = MyUtility.GetValue.GetID(this.CurrentMaintain["factoryid"].ToString() + "LD", "localdebit", (DateTime)this.CurrentMaintain["issuedate"]);
             }
 
             return base.ClickSaveBefore();
@@ -373,7 +373,7 @@ values ('LocalDebit',@id,@oldvalue,@newvalue,@reasonid,@remark,@addname,getdate(
                 paraList.Add(new SqlParameter("@newvalue", newValue));
                 paraList.Add(new SqlParameter("@reasonid", frm.ReturnReason));
                 paraList.Add(new SqlParameter("@remark", frm.ReturnRemark));
-                paraList.Add(new SqlParameter("@addname", Sci.Env.User.UserID));
+                paraList.Add(new SqlParameter("@addname", Env.User.UserID));
             }
             else
             {
@@ -384,7 +384,7 @@ values ('LocalDebit',@id,@oldvalue,@newvalue,'','',@addname,getdate())";
                 paraList.Add(new SqlParameter("@id", this.CurrentMaintain["id"].ToString()));
                 paraList.Add(new SqlParameter("@oldvalue", oldvalue));
                 paraList.Add(new SqlParameter("@newvalue", newValue));
-                paraList.Add(new SqlParameter("@addname", Sci.Env.User.UserID));
+                paraList.Add(new SqlParameter("@addname", Env.User.UserID));
             }
 
             updateCmd = string.Format(
@@ -593,7 +593,7 @@ where id = '{4}'",
             // if (Sci.Env.User.UserID!=CurrentMaintain["handle"].ToString()){return false;}//20170416 mark by dyson
 
             // 如果已經列印過的，則提醒是否再次列印。
-            string printdate = Sci.MyUtility.GetValue.Lookup(string.Format("select convert(varchar, printdate, 120) from localdebit WITH (NOLOCK) where ID ='{0}'", this.CurrentMaintain["id"]));
+            string printdate = MyUtility.GetValue.Lookup(string.Format("select convert(varchar, printdate, 120) from localdebit WITH (NOLOCK) where ID ='{0}'", this.CurrentMaintain["id"]));
             if (!MyUtility.Check.Empty(printdate))
             {
                 DialogResult dResult = MyUtility.Msg.QuestionBox("In" + ' ' + printdate + ' ' + " has been printed ,Do you want to print again?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);

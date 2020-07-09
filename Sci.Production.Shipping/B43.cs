@@ -241,7 +241,7 @@ AND vf.VNContractID = '{this.CurrentMaintain["ID"]}'
             base.ClickConfirm();
             string updateCmds = string.Format(
                 "update VNContract set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}'",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmds);
@@ -259,7 +259,7 @@ AND vf.VNContractID = '{this.CurrentMaintain["ID"]}'
 
             string updateCmds = string.Format(
                 "update VNContract set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}'",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmds);
@@ -328,7 +328,7 @@ AND vf.VNContractID = '{this.CurrentMaintain["ID"]}'
                     newRow["WrongUnit"] = 1;
                 }
 
-                newRow["AddName"] = Sci.Env.User.UserID;
+                newRow["AddName"] = Env.User.UserID;
                 newRow["AddDate"] = DateTime.Now;
                 excelDataTable.Rows.Add(newRow);
             }
@@ -358,7 +358,7 @@ AND vf.VNContractID = '{this.CurrentMaintain["ID"]}'
         {
             B43_AddNLCode callNextForm = new B43_AddNLCode(this.CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (result == DialogResult.OK)
             {
                 this.RenewData();
             }

@@ -144,7 +144,7 @@ namespace Sci.Production.Warehouse
 from dbo.orders a WITH (NOLOCK) inner join dbo.po_supp_detail b WITH (NOLOCK) on a.poid = b.id
 inner join dbo.cuttingtape_detail c WITH (NOLOCK) on c.mdivisionid = '{0}' and c.poid = b.id and c.seq1 = b.seq1 and c.seq2 = b.seq2
 WHERE A.IsForecast = 0 AND A.Junk = 0 AND A.LocalOrder = 0
-AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", Sci.Env.User.Keyword);
+AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", Env.User.Keyword);
             if (!MyUtility.Check.Empty(sciDelivery_b))
             {
                 sqlcmd += string.Format(@" and a.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e);
@@ -240,7 +240,7 @@ AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", S
             }
 
             Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
-            sdExcel.Save(Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P41"));
+            sdExcel.Save(Class.MicrosoftFile.GetName("Warehouse_P41"));
         }
 
         private void checkEachCons_CheckedChanged(object sender, EventArgs e)

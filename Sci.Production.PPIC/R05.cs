@@ -34,10 +34,10 @@ namespace Sci.Production.PPIC
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
         }
 
         /// <inheritdoc/>
@@ -190,7 +190,7 @@ drop table #tmpData");
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -206,7 +206,7 @@ drop table #tmpData");
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_R05_AllowanceConsumptionReport.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\PPIC_R05_AllowanceConsumptionReport.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -248,7 +248,7 @@ drop table #tmpData");
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R05_AllowanceConsumptionReport");
+            string strExcelName = Class.MicrosoftFile.GetName("PPIC_R05_AllowanceConsumptionReport");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

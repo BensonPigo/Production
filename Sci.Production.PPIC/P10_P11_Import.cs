@@ -150,7 +150,7 @@ namespace Sci.Production.PPIC
                 if (findrow.Length > 0)
                 {
                     DataTable wHdata;
-                    DualResult whdr = DBProxy.Current.Select(null, string.Format("SELECT m.InQty,m.OutQty FROM MDivisionPoDetail m WITH (NOLOCK) inner join Orders o WITH (NOLOCK) on m.POID=o.ID inner join Factory f WITH (NOLOCK) on f.ID=o.FtyGroup WHERE m.POID = '{0}' AND m.Seq1 = '{1}' AND m.Seq2 = '{2}' AND f.MDivisionID = '{3}'", MyUtility.Convert.GetString(this.Dr_master["POID"]), MyUtility.Convert.GetString(tmp["Seq1"]), MyUtility.Convert.GetString(tmp["Seq2"]), Sci.Env.User.Keyword), out wHdata);
+                    DualResult whdr = DBProxy.Current.Select(null, string.Format("SELECT m.InQty,m.OutQty FROM MDivisionPoDetail m WITH (NOLOCK) inner join Orders o WITH (NOLOCK) on m.POID=o.ID inner join Factory f WITH (NOLOCK) on f.ID=o.FtyGroup WHERE m.POID = '{0}' AND m.Seq1 = '{1}' AND m.Seq2 = '{2}' AND f.MDivisionID = '{3}'", MyUtility.Convert.GetString(this.Dr_master["POID"]), MyUtility.Convert.GetString(tmp["Seq1"]), MyUtility.Convert.GetString(tmp["Seq2"]), Env.User.Keyword), out wHdata);
                     if (whdr)
                     {
                         if (wHdata.Rows.Count > 0)
@@ -173,7 +173,7 @@ namespace Sci.Production.PPIC
                 else
                 {
                     DataTable wHdata1;
-                    DualResult whdr = DBProxy.Current.Select(null, string.Format("SELECT m.InQty,m.OutQty FROM MDivisionPoDetail m WITH (NOLOCK) inner join Orders o WITH (NOLOCK) on m.POID=o.ID inner join Factory f WITH (NOLOCK) on f.ID=o.FtyGroup WHERE m.POID = '{0}' AND m.Seq1 = '{1}' AND m.Seq2 = '{2}' AND f.MDivisionID = '{3}'", MyUtility.Convert.GetString(this.Dr_master["POID"]), MyUtility.Convert.GetString(tmp["Seq1"]), MyUtility.Convert.GetString(tmp["Seq2"]), Sci.Env.User.Keyword), out wHdata1);
+                    DualResult whdr = DBProxy.Current.Select(null, string.Format("SELECT m.InQty,m.OutQty FROM MDivisionPoDetail m WITH (NOLOCK) inner join Orders o WITH (NOLOCK) on m.POID=o.ID inner join Factory f WITH (NOLOCK) on f.ID=o.FtyGroup WHERE m.POID = '{0}' AND m.Seq1 = '{1}' AND m.Seq2 = '{2}' AND f.MDivisionID = '{3}'", MyUtility.Convert.GetString(this.Dr_master["POID"]), MyUtility.Convert.GetString(tmp["Seq1"]), MyUtility.Convert.GetString(tmp["Seq2"]), Env.User.Keyword), out wHdata1);
                     if (whdr)
                     {
                         if (wHdata1.Rows.Count > 0)

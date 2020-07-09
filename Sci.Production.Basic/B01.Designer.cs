@@ -57,7 +57,7 @@
             this.checkUseSBTS = new Sci.Win.UI.CheckBox();
             this.labelM = new Sci.Win.UI.Label();
             this.displayM = new Sci.Win.UI.DisplayBox();
-            this.txtUserManager = new Sci.Production.Class.txtuser();
+            this.txtUserManager = new Sci.Production.Class.Txtuser();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -461,7 +461,7 @@
         private Win.UI.Label labelName;
         private Win.UI.Label labelCode;
         private Win.UI.TextBox txtKeyWord;
-        private Class.txtuser txtUserManager;
+        private Class.Txtuser txtUserManager;
         private Win.UI.CheckBox checkUseSBTS;
         private Win.UI.Button btnCapacityWorkday;
         private Win.UI.DisplayBox displayM;

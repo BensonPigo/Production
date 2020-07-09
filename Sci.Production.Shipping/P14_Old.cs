@@ -147,12 +147,12 @@ UPDATE SET
 	t.AWBNo = s.AWBNo,
 	t.SendDate = convert(date, s.SendDate),
 	t.EditDate = getdate(),
-	t.EditName = '{Sci.Env.User.UserID}'
+	t.EditName = '{Env.User.UserID}'
 WHEN NOT MATCHED BY TARGET THEN
 INSERT(SuppID,FormXPayINV,COName,ReceiveDate,Carrier,AWBNo,SendDate,AddDate,AddName )
-Values(s.SuppID,s.FormXPayINV,s.COName,convert(date,s.ReceiveDate),s.Carrier,s.AWBNo,convert(date, s.SendDate),GetDate(),'{Sci.Env.User.UserID}' );";
+Values(s.SuppID,s.FormXPayINV,s.COName,convert(date,s.ReceiveDate),s.Carrier,s.AWBNo,convert(date, s.SendDate),GetDate(),'{Env.User.UserID}' );";
 
-            DualResult result1 = Result.True;
+            DualResult result1 = Ict.Result.True;
             using (TransactionScope transactionScope = new TransactionScope())
             {
                 try

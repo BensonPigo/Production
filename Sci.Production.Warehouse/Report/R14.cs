@@ -29,7 +29,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtfactory.Text = Sci.Env.User.Factory;
+            this.txtfactory.Text = Env.User.Factory;
             MyUtility.Tool.SetupCombox(this.comboFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
             this.comboFabricType.SelectedIndex = 0;
             this.txtdropdownlistOrderType.SelectedIndex = 0;
@@ -161,7 +161,7 @@ WHERE  D.Category in {0}", this.ordertype));
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel
@@ -176,7 +176,7 @@ WHERE  D.Category in {0}", this.ordertype));
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R14.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R14.xltx"); // 預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[1, 1] = this.condition.ToString();   // 條件字串寫入excel
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Warehouse_R14.xltx", 2, true, null, objApp);      // 將datatable copy to excel

@@ -35,7 +35,7 @@ namespace Sci.Production.Logistic
             DataTable mDivision;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
             this.comboCancel.SelectedIndex = 0;
         }
 
@@ -248,7 +248,7 @@ order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, I
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -268,7 +268,7 @@ order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, I
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Logistic_R02_ClogAuditList.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Logistic_R02_ClogAuditList.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -321,7 +321,7 @@ order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, I
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Logistic_R02_ClogAuditList");
+            string strExcelName = Class.MicrosoftFile.GetName("Logistic_R02_ClogAuditList");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

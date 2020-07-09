@@ -22,7 +22,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("Type='I' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("Type='I' and MDivisionID = '{0}'", Env.User.Keyword);
 
             // DoSubForm = new P10_Detail();
         }
@@ -226,7 +226,7 @@ Where s.id = '{0}'", masterID, cutplanID);
                 return;
             }
 
-            string sqlcmd = $@"select id from dbo.CutTapePlan WITH (NOLOCK) where id= @Request and mdivisionid = '{Sci.Env.User.Keyword}'";
+            string sqlcmd = $@"select id from dbo.CutTapePlan WITH (NOLOCK) where id= @Request and mdivisionid = '{Env.User.Keyword}'";
             List<SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("@Request", this.txtRequest.Text));
             parameters.Add(new SqlParameter("@ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
@@ -337,8 +337,8 @@ outer apply(
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "I";
             this.CurrentMaintain["issuedate"] = DateTime.Now;
@@ -409,7 +409,7 @@ outer apply(
             // 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IT", "Issue", (DateTime)this.CurrentMaintain["IssueDate"]);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "IT", "Issue", (DateTime)this.CurrentMaintain["IssueDate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -493,7 +493,7 @@ outer apply(
             DataTable subDT;
             foreach (DataRow dr in this.DetailDatas)
             {
-                var issued = PublicPrg.Prgs.AutoPickTape(dr, MyUtility.Convert.GetString(this.CurrentMaintain["cutplanID"]));
+                var issued = Prgs.AutoPickTape(dr, MyUtility.Convert.GetString(this.CurrentMaintain["cutplanID"]));
                 if (issued == null)
                 {
                     break;

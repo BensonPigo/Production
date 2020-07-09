@@ -19,7 +19,7 @@ namespace Sci.Production.Subcon
         {
             this.InitializeComponent();
             this.comboload();
-            this.comboRFIDProcessLocation.setDataSource(false);
+            this.comboRFIDProcessLocation.SetDataSource(false);
         }
 
         private void comboload()
@@ -39,7 +39,7 @@ namespace Sci.Production.Subcon
             this.comboStockType.ValueMember = "Key";
             this.comboStockType.DisplayMember = "Value";
 
-            this.comboMDivision.setDefalutIndex();
+            this.comboMDivision.SetDefalutIndex();
         }
 
         protected override void OnDetailEntered()
@@ -135,10 +135,10 @@ using #tmp s on t.[RFIDReaderID] = s.[RFIDReaderID] and t.[PanelNo] = s.[PanelNo
 when matched then update set
 	t.[CutCellID] = s.[CutCellID],
 	t.[EditDate]=getdate(),
-	t.[EditName]='{Sci.Env.User.UserID}'
+	t.[EditName]='{Env.User.UserID}'
 when not matched by target then
 	insert ([RFIDReaderID],[PanelNo],[CutCellID],[AddDate],[AddName])
-	values(s.[RFIDReaderID],s.[PanelNo],s.[CutCellID],s.[AddDate],'{Sci.Env.User.UserID}')
+	values(s.[RFIDReaderID],s.[PanelNo],s.[CutCellID],s.[AddDate],'{Env.User.UserID}')
 when not matched by source and t.[RFIDReaderID] = '{this.CurrentMaintain["id"]}' then
 	delete
 ;
@@ -184,7 +184,7 @@ delete RFIDReader_SubProcess where RFIDReaderID =  '{this.CurrentMaintain["ID"]}
         private string SelectSewingLine(string line)
         {
             List<SqlParameter> listSQLParameter = new List<SqlParameter>();
-            listSQLParameter.Add(new SqlParameter("@FactoryID", Sci.Env.User.Factory));
+            listSQLParameter.Add(new SqlParameter("@FactoryID", Env.User.Factory));
 
             string sql = "Select Distinct ID From SewingLine WITH (NOLOCK) WHERE Junk != 1  AND FactoryID = @FactoryID ";
 
@@ -208,7 +208,7 @@ delete RFIDReader_SubProcess where RFIDReaderID =  '{this.CurrentMaintain["ID"]}
                 DataRow dr;
 
                 List<SqlParameter> listSQLParameter = new List<SqlParameter>();
-                listSQLParameter.Add(new SqlParameter("@FactoryID", Sci.Env.User.Factory));
+                listSQLParameter.Add(new SqlParameter("@FactoryID", Env.User.Factory));
                 listSQLParameter.Add(new SqlParameter("@ID", this.txtSewingLine.Text));
 
                 string sqlcmd = "Select Distinct ID From SewingLine WITH (NOLOCK) WHERE Junk != 1  AND FactoryID =@FactoryID AND ID=@ID ";

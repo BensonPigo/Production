@@ -58,12 +58,12 @@
             this.displayTransferAC = new Sci.Win.UI.DisplayBox();
             this.labelTransferAC = new Sci.Win.UI.Label();
             this.dateApprovedDate = new Sci.Win.UI.DateBox();
-            this.txtmfactory = new Sci.Production.Class.txtfactory();
-            this.txtpayterm_ftyTerms = new Sci.Production.Class.txtpayterm_fty();
-            this.txtuserAccountant = new Sci.Production.Class.txtuser();
-            this.txtuserHandle = new Sci.Production.Class.txtuser();
-            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtmfactory = new Sci.Production.Class.Txtfactory();
+            this.txtpayterm_ftyTerms = new Sci.Production.Class.Txtpayterm_fty();
+            this.txtuserAccountant = new Sci.Production.Class.Txtuser();
+            this.txtuserHandle = new Sci.Production.Class.Txtuser();
+            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.Txtartworktype_fty();
+            this.txtsubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             this.lbExVoucherID = new Sci.Win.UI.Label();
             this.disExVoucherID = new Sci.Win.UI.DisplayBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -578,7 +578,7 @@
             // txtmfactory
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
-            this.txtmfactory.boolFtyGroupList = true;
+            this.txtmfactory.BoolFtyGroupList = true;
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
             this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -623,8 +623,8 @@
             // txtartworktype_ftyArtworkType
             // 
             this.txtartworktype_ftyArtworkType.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_ftyArtworkType.cClassify = "";
-            this.txtartworktype_ftyArtworkType.cSubprocess = "Y";
+            this.txtartworktype_ftyArtworkType.CClassify = "";
+            this.txtartworktype_ftyArtworkType.CSubprocess = "Y";
             this.txtartworktype_ftyArtworkType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
             this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(100, 49);
@@ -638,9 +638,9 @@
             this.txtsubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
             this.txtsubconSupplier.DisplayBox1Binding = "";
             this.txtsubconSupplier.IsIncludeJunk = false;
-            this.txtsubconSupplier.isMisc = false;
-            this.txtsubconSupplier.isShipping = false;
-            this.txtsubconSupplier.isSubcon = false;
+            this.txtsubconSupplier.IsMisc = false;
+            this.txtsubconSupplier.IsShipping = false;
+            this.txtsubconSupplier.IsSubcon = false;
             this.txtsubconSupplier.Location = new System.Drawing.Point(83, 84);
             this.txtsubconSupplier.Name = "txtsubconSupplier";
             this.txtsubconSupplier.Size = new System.Drawing.Size(159, 23);
@@ -754,15 +754,15 @@
         private Win.UI.Label labelID;
         private Win.UI.NumericBox numVatRate;
         private Win.UI.TextBox txtRemark;
-        private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
+        private Class.Txtartworktype_fty txtartworktype_ftyArtworkType;
         private Win.UI.DisplayBox displayCurrency;
         private Win.UI.DateBox dateIssueDate;
-        private Class.txtsubconNoConfirm txtsubconSupplier;
+        private Class.TxtsubconNoConfirm txtsubconSupplier;
         private Win.UI.DisplayBox displayID;
         private Win.UI.Button btnImportFromPO;
         private Win.UI.Label label25;
-        private Class.txtuser txtuserAccountant;
-        private Class.txtuser txtuserHandle;
+        private Class.Txtuser txtuserAccountant;
+        private Class.Txtuser txtuserHandle;
         private Win.UI.NumericBox numTotal;
         private Win.UI.NumericBox numAmount;
         private Win.UI.NumericBox numVat;
@@ -770,9 +770,9 @@
         private Win.UI.Label labelTransferAC;
         private Win.UI.TextBox txtInvoiceNo;
         private Win.UI.Label labelInvoiceNo;
-        private Class.txtpayterm_fty txtpayterm_ftyTerms;
+        private Class.Txtpayterm_fty txtpayterm_ftyTerms;
         private Win.UI.Label labelTerms;
-        private Class.txtfactory txtmfactory;
+        private Class.Txtfactory txtmfactory;
         private Win.UI.DateBox dateApprovedDate;
         private Win.UI.DisplayBox disExVoucherID;
         private Win.UI.Label lbExVoucherID;

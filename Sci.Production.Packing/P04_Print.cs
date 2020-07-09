@@ -166,7 +166,7 @@ order by RefNo", MyUtility.Convert.GetString(this.masterData["ID"]));
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ order by RefNo", MyUtility.Convert.GetString(this.masterData["ID"]));
         {
             if (this.reportType == "1")
             {
-                string strXltName = Sci.Env.Cfg.XltPathDir + "\\Packing_P04_PackingListReport.xltx";
+                string strXltName = Env.Cfg.XltPathDir + "\\Packing_P04_PackingListReport.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
                 if (excel == null)
                 {
@@ -269,7 +269,7 @@ order by RefNo", MyUtility.Convert.GetString(this.masterData["ID"]));
                 worksheet.Cells[excelRow, 3] = MyUtility.Convert.GetString(this.masterData["Remark"]);
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P04_PackingListReport");
+                string strExcelName = Class.MicrosoftFile.GetName("Packing_P04_PackingListReport");
                 Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();

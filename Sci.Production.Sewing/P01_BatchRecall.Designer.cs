@@ -33,7 +33,7 @@
             this.labelDate = new Sci.Win.UI.Label();
             this.dateOutput = new Sci.Win.UI.DateRange();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtsewinglineLine = new Sci.Production.Class.txtsewingline();
+            this.txtsewinglineLine = new Sci.Production.Class.Txtsewingline();
             this.btnQuery = new Sci.Win.UI.Button();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -85,7 +85,7 @@
             // txtsewinglineLine
             // 
             this.txtsewinglineLine.BackColor = System.Drawing.Color.White;
-            this.txtsewinglineLine.factoryobjectName = null;
+            this.txtsewinglineLine.FactoryobjectName = null;
             this.txtsewinglineLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtsewinglineLine.IsSupportEditMode = false;
             this.txtsewinglineLine.Location = new System.Drawing.Point(512, 9);
@@ -194,7 +194,7 @@
         private Win.UI.Label labelDate;
         private Win.UI.DateRange dateOutput;
         private Win.UI.Label label1;
-        private Class.txtsewingline txtsewinglineLine;
+        private Class.Txtsewingline txtsewinglineLine;
         private Win.UI.Button btnQuery;
         private Win.UI.Grid grid1;
         private Win.UI.Button btnsave;

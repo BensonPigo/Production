@@ -33,8 +33,8 @@ namespace Sci.Production.Planning
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtMdivision.Text = Sci.Env.User.Keyword;
-            this.txtfactory.Text = Sci.Env.User.Factory;
+            this.txtMdivision.Text = Env.User.Keyword;
+            this.txtfactory.Text = Env.User.Factory;
             MyUtility.Tool.SetupCombox(this.comboArtworkType, 1, 1, "HT(UA),HT(Non-UA)");
             this.comboArtworkType.SelectedIndex = 0;
             this.dateSewingDate.Value1 = DateTime.Now.Date;
@@ -248,7 +248,7 @@ pivot
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -302,7 +302,7 @@ pivot
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R18");
+            string strExcelName = Class.MicrosoftFile.GetName("Planning_R18");
             Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

@@ -39,8 +39,8 @@
             this.labelShipby = new Sci.Win.UI.Label();
             this.labelCountryfrom = new Sci.Win.UI.Label();
             this.labelCustomdeclareno = new Sci.Win.UI.Label();
-            this.txtshipmodeShipby = new Sci.Production.Class.txtshipmode();
-            this.txtcountryCountryfrom = new Sci.Production.Class.txtcountry();
+            this.txtshipmodeShipby = new Sci.Production.Class.Txtshipmode();
+            this.txtcountryCountryfrom = new Sci.Production.Class.Txtcountry();
             this.txtCustomdeclareno = new Sci.Win.UI.TextBox();
             this.checkCalculatebysystem = new Sci.Win.UI.CheckBox();
             this.label8 = new Sci.Win.UI.Label();
@@ -392,8 +392,8 @@
         private Win.UI.Label label8;
         private Win.UI.CheckBox checkCalculatebysystem;
         private Win.UI.TextBox txtCustomdeclareno;
-        private Class.txtcountry txtcountryCountryfrom;
-        private Class.txtshipmode txtshipmodeShipby;
+        private Class.Txtcountry txtcountryCountryfrom;
+        private Class.Txtshipmode txtshipmodeShipby;
         private Win.UI.Label labelCustomdeclareno;
         private Win.UI.Label labelCountryfrom;
         private Win.UI.Label labelShipby;

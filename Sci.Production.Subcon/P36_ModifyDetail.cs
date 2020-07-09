@@ -56,7 +56,7 @@ namespace Sci.Production.Subcon
 inner join factory WITH (NOLOCK) on orders.FactoryID = factory.id
 where orders.FtyGroup='{0}' 
 and factory.IsProduceFty = 1 
-and orders.id = @id", Sci.Env.User.Factory), cmds))
+and orders.id = @id", Env.User.Factory), cmds))
             {
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox("SP# is not found, Please check value is right and belong to login factory!!");

@@ -54,7 +54,7 @@ namespace Sci.Production.PPIC
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -115,7 +115,7 @@ namespace Sci.Production.PPIC
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -190,10 +190,10 @@ namespace Sci.Production.PPIC
             datas.Columns.Add("EditBy");
             foreach (DataRow gridData in datas.Rows)
             {
-                gridData["CreateBy"] = gridData["AddName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", gridData["AddName"].ToString(), "Pass1", "ID") + "   " + ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
-                if (gridData["EditDate"] != System.DBNull.Value)
+                gridData["CreateBy"] = gridData["AddName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", gridData["AddName"].ToString(), "Pass1", "ID") + "   " + ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
+                if (gridData["EditDate"] != DBNull.Value)
                 {
-                    gridData["EditBy"] = gridData["EditName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", gridData["EditName"].ToString(), "Pass1", "ID") + "   " + ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                    gridData["EditBy"] = gridData["EditName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", gridData["EditName"].ToString(), "Pass1", "ID") + "   " + ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
                 }
 
                 gridData.AcceptChanges();
@@ -223,7 +223,7 @@ namespace Sci.Production.PPIC
         {
             P04_WeightData_CopySeason callNextForm = new P04_WeightData_CopySeason(this.KeyValue1);
             DialogResult result = callNextForm.ShowDialog(this);
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (result == DialogResult.OK)
             {
                 DataRow styleData;
 

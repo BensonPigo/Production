@@ -25,8 +25,8 @@ namespace Sci.Production.Packing
             DataTable factory;
             DBProxy.Current.Select(null, "select '' union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboFactory.Text = Sci.Env.User.Factory;
-            this.txtMdivision1.Text = Sci.Env.User.Keyword;
+            this.comboFactory.Text = Env.User.Factory;
+            this.txtMdivision1.Text = Env.User.Keyword;
         }
 
         private string _sp1;
@@ -187,10 +187,10 @@ order by pl.MDivisionID,pl.FactoryID,pl.ID,o.ID
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out this._printData);
             if (!result)
             {
-                return Result.F(result.ToString());
+                return Ict.Result.F(result.ToString());
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -212,7 +212,7 @@ order by pl.MDivisionID,pl.FactoryID,pl.ID,o.ID
 
             #region To Excel
             string excelName = "Packing_R03";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
             MyUtility.Excel.CopyToXls(this._printData, string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]);
 
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];

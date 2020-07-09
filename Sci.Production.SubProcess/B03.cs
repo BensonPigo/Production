@@ -16,7 +16,7 @@ namespace Sci.Production.SubProcess
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = $"MDivisionID = '{Sci.Env.User.Keyword}'";
+            this.DefaultFilter = $"MDivisionID = '{Env.User.Keyword}'";
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Sci.Production.SubProcess
         {
             this.txtType.ReadOnly = false;
             this.txtID.ReadOnly = false;
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             base.ClickNewAfter();
         }
 

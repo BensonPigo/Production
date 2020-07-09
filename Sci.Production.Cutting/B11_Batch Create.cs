@@ -177,7 +177,7 @@ where exists(select 1 from SubProcessSeq where Styleukey = t.Ukey)
 
             sqlcmd = $@"
 INSERT INTO [dbo].[SubProcessSeq]([StyleUkey],[AddName],[AddDate])
-select  distinct t.StyleUkey, '{Sci.Env.User.UserID}',  getdate()
+select  distinct t.StyleUkey, '{Env.User.UserID}',  getdate()
 from #tmp t
 
 INSERT INTO [dbo].[SubProcessSeq_Detail]([StyleUkey],[SubProcessID],[Seq])

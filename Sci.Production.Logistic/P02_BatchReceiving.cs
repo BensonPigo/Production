@@ -95,7 +95,7 @@ namespace Sci.Production.Logistic
             sp2.ParameterName = "@id2";
             sp2.Value = this.txtTransferClogNoEnd.Text;
             sp3.ParameterName = "@mdivisionid";
-            sp3.Value = Sci.Env.User.Keyword;
+            sp3.Value = Env.User.Keyword;
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);

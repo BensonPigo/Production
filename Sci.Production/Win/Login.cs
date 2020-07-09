@@ -16,6 +16,9 @@ using System.Xml.Linq;
 
 namespace Sci.Production.Win
 {
+    /// <summary>
+    /// Login
+    /// </summary>
     public partial class Login : Sci.Win.Tools.Base
     {
         private Main app;
@@ -45,7 +48,7 @@ namespace Sci.Production.Win
             }
         }
 
-        void Ok_Click(object sender, EventArgs e)
+        private void Ok_Click(object sender, EventArgs e)
         {
             string act = this.act.Text;
             string loginFactory = (string)this.comboBox1.SelectedValue;
@@ -96,14 +99,14 @@ namespace Sci.Production.Win
                 "Production Management System - ({0}-ver {1}) - ({2})",
                 appDirName,
                 appVerText,
-                System.Environment.MachineName);
+                Environment.MachineName);
 
             string userData = string.Format(
                 "-{0}-({1}))",
-                Sci.Env.User.Factory,
-                Sci.Env.User.UserID);
+                Env.User.Factory,
+                Env.User.UserID);
 
-            Sci.Env.App.Text = ConfigurationManager.AppSettings["formTextSufix"] + userData;
+            Env.App.Text = ConfigurationManager.AppSettings["formTextSufix"] + userData;
 
             this.DialogResult = DialogResult.OK;
 
@@ -112,7 +115,7 @@ namespace Sci.Production.Win
             this.Close();
         }
 
-        void Exit_Click(object sender, EventArgs e)
+        private void Exit_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();
@@ -167,6 +170,14 @@ namespace Sci.Production.Win
             }
         }
 
+        /// <summary>
+        /// User Login
+        /// </summary>
+        /// <param name="userid">User ID</param>
+        /// <param name="pwd">PWD</param>
+        /// <param name="factoryID">Factory ID</param>
+        /// <param name="u">User Info</param>
+        /// <returns>DualResult</returns>
         public static DualResult UserLogin(string userid, string pwd, string factoryID, UserInfo u)
         {
             DualResult result;
@@ -188,7 +199,7 @@ namespace Sci.Production.Win
             }
 
             SCHEMAS.PASS1Row data;
-            if (!(result = Sci.Production.Win.ProjUtils.GetPass1(userid, pwd, out data)))
+            if (!(result = ProjUtils.GetPass1(userid, pwd, out data)))
             {
                 return result;
             }
@@ -237,14 +248,14 @@ namespace Sci.Production.Win
             }
             else
             {
-                Sci.Env.Cfg.MailServerIP = drSystem["Mailserver"].ToString().Trim();
-                Sci.Env.Cfg.MailFrom = drSystem["Sendfrom"].ToString().Trim();
-                Sci.Env.Cfg.MailServerAccount = drSystem["EmailID"].ToString().Trim();
-                Sci.Env.Cfg.MailServerPassword = drSystem["EmailPwd"].ToString().Trim();
-                Sci.Env.Cfg.FtpServerIP = drSystem["FtpIP"].ToString().Trim();
-                Sci.Env.Cfg.FtpServerAccount = drSystem["FtpID"].ToString().Trim();
-                Sci.Env.Cfg.FtpServerPassword = drSystem["FtpPwd"].ToString().Trim();
-                Sci.Env.Cfg.ClipDir = drSystem["ClipPath"].ToString().Trim();
+                Env.Cfg.MailServerIP = drSystem["Mailserver"].ToString().Trim();
+                Env.Cfg.MailFrom = drSystem["Sendfrom"].ToString().Trim();
+                Env.Cfg.MailServerAccount = drSystem["EmailID"].ToString().Trim();
+                Env.Cfg.MailServerPassword = drSystem["EmailPwd"].ToString().Trim();
+                Env.Cfg.FtpServerIP = drSystem["FtpIP"].ToString().Trim();
+                Env.Cfg.FtpServerAccount = drSystem["FtpID"].ToString().Trim();
+                Env.Cfg.FtpServerPassword = drSystem["FtpPwd"].ToString().Trim();
+                Env.Cfg.ClipDir = drSystem["ClipPath"].ToString().Trim();
             }
             #endregion
             #region 寫入登入時間
@@ -259,7 +270,7 @@ namespace Sci.Production.Win
             #region 在台北端(PMSDB 或 testing)登入時, 關閉紀錄UserLog功能
             if (DBProxy.Current.DefaultModuleName.Contains("PMSDB") || DBProxy.Current.DefaultModuleName.Contains("testing"))
             {
-                Sci.Env.Cfg.EnableUserLog = false;
+                Env.Cfg.EnableUserLog = false;
             }
             #endregion
             return result;
@@ -268,12 +279,12 @@ namespace Sci.Production.Win
         private void CheckUpdateSQL()
         {
             string sql_update_receiver = ConfigurationManager.AppSettings["sql_update_receiver"];
-            string[] dirs = Directory.GetFiles(Sci.Env.Cfg.ReportTempDir, "*.sql");
+            string[] dirs = Directory.GetFiles(Env.Cfg.ReportTempDir, "*.sql");
             if (dirs.Length == 0)
             {
                 try
                 {
-                    System.IO.File.WriteAllText(this.flagPathFile, string.Empty);  // 新增sql_update.txt以註記SQL更新成功
+                    File.WriteAllText(this.flagPathFile, string.Empty);  // 新增sql_update.txt以註記SQL更新成功
                 }
                 catch (Exception e)
                 {
@@ -322,11 +333,11 @@ Hi all,
 -------------------------------------------------------------------
 Script
 {3}
-", Sci.Env.User.Factory,
-                            Sci.Env.User.UserName,
+", Env.User.Factory,
+                            Env.User.UserName,
                             ex.ToString(),
                             script);
-                        Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Sci.Env.Cfg.MailFrom, sql_update_receiver, string.Empty, subject, string.Empty, desc, true, true);
+                        Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Env.Cfg.MailFrom, sql_update_receiver, string.Empty, subject, string.Empty, desc, true, true);
                         mail.ShowDialog();
                         return;
                     }
@@ -338,7 +349,7 @@ Script
 
             try
             {
-                System.IO.File.WriteAllText(this.flagPathFile, string.Empty);  // 新增sql_update.txt以註記SQL更新成功
+                File.WriteAllText(this.flagPathFile, string.Empty);  // 新增sql_update.txt以註記SQL更新成功
             }
             catch (Exception e)
             {
@@ -349,7 +360,7 @@ Script
         private void Sendmail(string desc, string receiver)
         {
             string subject = "Auto Update SQL ERROR";
-            Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Sci.Env.Cfg.MailFrom, receiver, string.Empty, subject, string.Empty, desc, true, true);
+            Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Env.Cfg.MailFrom, receiver, string.Empty, subject, string.Empty, desc, true, true);
             mail.ShowDialog();
         }
 

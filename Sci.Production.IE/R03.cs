@@ -174,7 +174,7 @@ where EXISTS (
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\IE_R03.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\IE_R03.xltx";
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(strXltName); // 預先開啟excel app
             if (objApp == null)
             {

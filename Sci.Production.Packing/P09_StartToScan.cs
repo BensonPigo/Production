@@ -85,8 +85,8 @@ namespace Sci.Production.Packing
                     }
                 };
 
-            this.gridDetail.Font = new Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
-            this.gridDetail.DefaultCellStyle.ForeColor = System.Drawing.Color.Blue;
+            this.gridDetail.Font = new Font("Microsoft Sans Serif", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            this.gridDetail.DefaultCellStyle.ForeColor = Color.Blue;
 
             // 撈Grid資料
             string sqlCmd = string.Format(
@@ -185,7 +185,7 @@ order by Seq",
             this.MasterDR["ScanQty"] = scanQty.ToString().Substring(0, scanQty.ToString().Length - 1);
             this.MasterDR["Barcode"] = barcode.ToString().Substring(0, barcode.ToString().Length - 1);
             this.MasterDR["NotYetScan"] = "0";
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
 
         // Cancel
@@ -193,12 +193,12 @@ order by Seq",
         {
             // 問是否要Cancel，確定才繼續往下做
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure to cancel this scanning?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
 
-            this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.DialogResult = DialogResult.Cancel;
         }
 
         // Reset
@@ -206,7 +206,7 @@ order by Seq",
         {
             // 問是否要清空Ref. Barcode值，確定才繼續往下做
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure to reset ref. barcode?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }

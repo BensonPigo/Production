@@ -4,30 +4,32 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtCustomsContract : Win.UI.TextBox
+    /// <summary>
+    /// TxtCustomsContract
+    /// </summary>
+    public partial class TxtCustomsContract : Win.UI.TextBox
     {
-        private bool _CheckDate = false;
-        private bool _CheckStatus = true;
-
-        public txtCustomsContract()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TxtCustomsContract"/> class.
+        /// </summary>
+        public TxtCustomsContract()
         {
             this.Size = new System.Drawing.Size(66, 23);
         }
 
+        /// <summary>
+        /// 篩選出今天（GetDate()）可以使用的合約
+        /// </summary>
         [Description("篩選出今天（GetDate()）可以使用的合約")]
-        public bool CheckDate
-        {
-            get { return this._CheckDate; }
-            set { this._CheckDate = value; }
-        }
+        public bool CheckDate { get; set; } = false;
 
+        /// <summary>
+        /// 判斷是否需要判斷合約的狀態（Confirmed）
+        /// </summary>
         [Description("判斷是否需要判斷合約的狀態（Confirmed）")]
-        public bool CheckStatus
-        {
-            get { return this._CheckStatus; }
-            set { this._CheckStatus = value; }
-        }
+        public bool CheckStatus { get; set; } = true;
 
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
@@ -54,6 +56,7 @@ namespace Sci.Production.Class
             this.ValidateText();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);

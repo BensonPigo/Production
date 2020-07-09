@@ -224,7 +224,7 @@ namespace Sci.Production.Subcon
                         {
                             string ftyKeyWord = MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where id='{0}'", q.ftygroup));
 
-                            string id = Sci.MyUtility.GetValue.GetID(ftyKeyWord + "OR", "artworkReq", DateTime.Parse(this.dateReqDate.Text));
+                            string id = MyUtility.GetValue.GetID(ftyKeyWord + "OR", "artworkReq", DateTime.Parse(this.dateReqDate.Text));
                             if (MyUtility.Check.Empty(id))
                             {
                                 _transactionscope.Dispose();
@@ -373,7 +373,7 @@ namespace Sci.Production.Subcon
                                                     ,'New'
                                                     ,{Exceed})");
 
-                            if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd)))
+                            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
                             {
                                 _transactionscope.Dispose();
                                 MyUtility.Msg.WarningBox("Create failed, Pleaes re-try");
@@ -382,7 +382,7 @@ namespace Sci.Production.Subcon
 
                             #endregion
 
-                            if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd2.ToString())))
+                            if (!(result = DBProxy.Current.Execute(null, sqlcmd2.ToString())))
                             {
                                 _transactionscope.Dispose();
                                 MyUtility.Msg.WarningBox("Create failed, Pleaes re-try");
@@ -418,7 +418,7 @@ namespace Sci.Production.Subcon
         {
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
-            sdExcel.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_P05_BatchCreate"));
+            sdExcel.Save(Class.MicrosoftFile.GetName("Subcon_P05_BatchCreate"));
         }
 
         private void txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
@@ -426,7 +426,7 @@ namespace Sci.Production.Subcon
             this.isArtwork = MyUtility.GetValue.Lookup(
                 string.Format(
                 "select isartwork from artworktype WITH (NOLOCK) where id = '{0}'",
-                ((Class.txtartworktype_fty)sender).Text), null);
+                ((Class.Txtartworktype_fty)sender).Text), null);
         }
 
         private DataTable FilterResult()
@@ -535,7 +535,7 @@ outer apply (
 where f.IsProduceFty=1
 and oa.ArtworkTypeID = '{this.txtartworktype_ftyArtworkType.Text}'
 and o.category in ('B','S')
-and o.MDivisionID='{Sci.Env.User.Keyword}' 
+and o.MDivisionID='{Env.User.Keyword}' 
 and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
 and sao.LocalSuppId is not null
 {sqlWhere}

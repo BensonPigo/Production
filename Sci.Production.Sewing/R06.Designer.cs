@@ -32,13 +32,13 @@
             this.labelSp = new Sci.Win.UI.Label();
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.txtsp_from = new Sci.Win.UI.TextBox();
             this.txtsp_to = new Sci.Win.UI.TextBox();
             this.label9 = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
+            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
             this.dateOutput = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
@@ -225,13 +225,13 @@
         private Win.UI.Label labelSp;
         private Win.UI.Label labelBrand;
         private Win.UI.Label labelFactory;
-        private Class.txtfactory txtfactory;
-        private Class.txtbrand txtbrand;
+        private Class.Txtfactory txtfactory;
+        private Class.Txtbrand txtbrand;
         private Win.UI.TextBox txtsp_from;
         private Win.UI.TextBox txtsp_to;
         private Win.UI.Label label9;
         private Win.UI.Label labelM;
-        private Class.txtMdivision txtMdivision1;
+        private Class.TxtMdivision txtMdivision1;
         private Win.UI.DateRange dateOutput;
     }
 }

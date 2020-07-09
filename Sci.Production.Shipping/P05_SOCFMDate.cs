@@ -34,7 +34,7 @@ values ('{0}','{1}','{2}','{3}','{4}',GETDATE())",
                 "SOCFMDate",
                 firstCFM ? string.Empty : "CFM",
                 "Un CFM",
-                Sci.Env.User.UserID);
+                Env.User.UserID);
 
             string updateCmd =
                 $@"

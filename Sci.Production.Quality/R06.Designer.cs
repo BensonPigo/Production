@@ -30,10 +30,10 @@
         {
             this.panel1 = new Sci.Win.UI.Panel();
             this.labelArriveWHDate = new Sci.Win.UI.Label();
-            this.txtseason = new Sci.Production.Class.txtseason();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtseason = new Sci.Production.Class.Txtseason();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.txtRef = new Sci.Win.UI.TextBox();
-            this.txtsupplier = new Sci.Production.Class.txtsupplier();
+            this.txtsupplier = new Sci.Production.Class.Txtsupplier();
             this.labelSeason = new Sci.Win.UI.Label();
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelRef = new Sci.Win.UI.Label();
@@ -238,10 +238,10 @@
 
         private Win.UI.Panel panel1;
         private Win.UI.DateRange dateArriveWHDate;
-        private Class.txtseason txtseason;
-        private Class.txtbrand txtbrand;
+        private Class.Txtseason txtseason;
+        private Class.Txtbrand txtbrand;
         private Win.UI.TextBox txtRef;
-        private Class.txtsupplier txtsupplier;
+        private Class.Txtsupplier txtsupplier;
         private Win.UI.Label labelSeason;
         private Win.UI.Label labelBrand;
         private Win.UI.Label labelRef;

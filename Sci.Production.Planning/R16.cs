@@ -34,8 +34,8 @@ namespace Sci.Production.Planning
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtMdivision.Text = Sci.Env.User.Keyword;
-            this.txtfactory.Text = Sci.Env.User.Factory;
+            this.txtMdivision.Text = Env.User.Keyword;
+            this.txtfactory.Text = Env.User.Factory;
         }
 
         /// <summary>
@@ -340,7 +340,7 @@ where o.LocalOrder = 0 {whereIncludeCancelOrder}
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -772,7 +772,7 @@ where o.LocalOrder = 0 {whereIncludeCancelOrder}
             objSheet.get_Range("BZ:CG").EntireColumn.Delete();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R16");
+            string strExcelName = Class.MicrosoftFile.GetName("Planning_R16");
             Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

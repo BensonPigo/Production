@@ -17,7 +17,7 @@ namespace Sci.Production.Basic
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Sci.Production.Basic
             }
 
             // MDivisionID為登入的ID
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
 
             return base.ClickSaveBefore();
         }

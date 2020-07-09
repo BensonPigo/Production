@@ -131,7 +131,7 @@ group by AP.ID, O.poid,AP.FactoryId, AP.Remark, AP.Handle, AP.CurrencyId, AP.Vat
                 return result;
             }
             #endregion
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -146,7 +146,7 @@ group by AP.ID, O.poid,AP.FactoryId, AP.Remark, AP.Handle, AP.CurrencyId, AP.Vat
             this.SetCount(this.printData.Rows.Count);
             this.ShowWaitMessage("Excel Processing");
             #region To Excel
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R51.xltx");
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R51.xltx");
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Subcon_R51.xltx", 2, showExcel: false, excelApp: objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
             worksheet.Cells[1, 2] = DateTime.Today.AddMonths(-2).ToShortDateString();
@@ -155,7 +155,7 @@ group by AP.ID, O.poid,AP.FactoryId, AP.Remark, AP.Handle, AP.CurrencyId, AP.Vat
             worksheet.Columns.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R51");
+            string strExcelName = Class.MicrosoftFile.GetName("Subcon_R51");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

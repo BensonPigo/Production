@@ -28,13 +28,13 @@ namespace Sci.Production.PPIC
             this.InitializeComponent();
             DataTable dtFactory;
             DualResult cbResult;
-            if (cbResult = DBProxy.Current.Select(null, string.Format("select ID from Factory WITH (NOLOCK) where MDivisionID = '{0}'", Sci.Env.User.Keyword), out dtFactory))
+            if (cbResult = DBProxy.Current.Select(null, string.Format("select ID from Factory WITH (NOLOCK) where MDivisionID = '{0}'", Env.User.Keyword), out dtFactory))
             {
                 MyUtility.Tool.SetupCombox(this.comboFactory, 1, dtFactory);
             }
 
             dtFactory.Rows.Add(new string[] { string.Empty });
-            this.comboFactory.SelectedValue = Sci.Env.User.Keyword;
+            this.comboFactory.SelectedValue = Env.User.Keyword;
 
             DataRow drOC;
             if (MyUtility.Check.Seek(
@@ -42,7 +42,7 @@ namespace Sci.Production.PPIC
                 @"select top 1 UpdateDate 
 from OrderComparisonList WITH (NOLOCK) 
 where MDivisionID = '{0}' 
-and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) where MDivisionID = '{0}')", Sci.Env.User.Keyword), out drOC))
+and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) where MDivisionID = '{0}')", Env.User.Keyword), out drOC))
             {
                 this.dateUpdatedDate.Value = Convert.ToDateTime(drOC["UpdateDate"]);
             }
@@ -105,7 +105,7 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) 
                     this.gridData.Rows[i]["DeleteOrder"].ToString() == "V")
                 {
                     this.gridUpdateOrder.Rows[i].DefaultCellStyle.ForeColor = Color.Red;
-                    this.gridUpdateOrder.Rows[i].DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+                    this.gridUpdateOrder.Rows[i].DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Bold);
                 }
             }
         }
@@ -117,7 +117,7 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) 
             DateTime? updateDate = (DateTime?)this.dateUpdatedDate.Value;
 
             string sqlwhere = string.Empty;
-            sqlwhere += MyUtility.Check.Empty(factoryID) ? $@" and oc.MDivisionID = '{Sci.Env.User.Keyword}'" : $@" and oc.FactoryID = '{factoryID}'";
+            sqlwhere += MyUtility.Check.Empty(factoryID) ? $@" and oc.MDivisionID = '{Env.User.Keyword}'" : $@" and oc.FactoryID = '{factoryID}'";
             sqlwhere += MyUtility.Check.Empty(updateDate) ? @" and UpdateDate is null" : $@" and UpdateDate='{Convert.ToDateTime(updateDate).ToString("d")}'";
             if (!MyUtility.Check.Empty(this.txtbrand1.Text))
             {
@@ -185,7 +185,7 @@ order by oc.FactoryID,oc.OrderId";
                     this.gridData.Rows[i]["DeleteOrder"].ToString() == "V")
                 {
                     this.gridUpdateOrder.Rows[i].DefaultCellStyle.ForeColor = Color.Red;
-                    this.gridUpdateOrder.Rows[i].DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+                    this.gridUpdateOrder.Rows[i].DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Bold);
                 }
             }
         }
@@ -216,7 +216,7 @@ order by oc.FactoryID,oc.OrderId";
                 return;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_P02.xltx");
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_P02.xltx");
             MyUtility.Excel.CopyToXls(excelTable, string.Empty, "PPIC_P02.xltx", 3, false, string.Empty, objApp);
             objApp.Cells[2, 3] = "Last Date " + this.dateLastDate.Value.Value.ToShortDateString();
             objApp.Cells[2, 9] = "Update Date " + (this.dateUpdatedDate.Value.HasValue ? this.dateUpdatedDate.Value.Value.ToShortDateString() : null);
@@ -267,7 +267,7 @@ order by oc.FactoryID,oc.OrderId";
             objApp.get_Range("A" + number, "Z" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 2;
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P02");
+            string strExcelName = Class.MicrosoftFile.GetName("PPIC_P02");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

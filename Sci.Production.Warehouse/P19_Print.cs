@@ -154,7 +154,7 @@ where ID = '{this.mainCurrentMaintain["ID"]}'
             }
 
             Excel.Application objApp = new Excel.Application();
-            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P18_ExcelImport.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Warehouse_P18_ExcelImport.xltx", objApp);
             com.UseInnerFormating = false;
             com.WriteTable(this.dtResult, 3);
 
@@ -178,7 +178,7 @@ where ID = '{this.mainCurrentMaintain["ID"]}'
             DataTable dtNAME;
             DBProxy.Current.Select(
                 string.Empty,
-                string.Format(@"select NameEN from MDivision where ID='{0}'", Sci.Env.User.Keyword), out dtNAME);
+                string.Format(@"select NameEN from MDivision where ID='{0}'", Env.User.Keyword), out dtNAME);
             string RptTitle = dtNAME.Rows[0]["NameEN"].ToString();
 
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));

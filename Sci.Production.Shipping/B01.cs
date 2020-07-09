@@ -24,7 +24,7 @@ namespace Sci.Production.Shipping
         {
             this.txtbrand.IsSupportEditMode = false;
             this.txtubconForwarder.TextBox1.IsSupportEditMode = false;
-            this.txtShipMode.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.txtShipMode.EditMode = Win.UI.AdvEditModes.DisableOnEdit;
             return base.ClickEditBefore();
         }
 
@@ -82,7 +82,7 @@ namespace Sci.Production.Shipping
 
             this.txtbrand.IsSupportEditMode = true;
             this.txtubconForwarder.TextBox1.IsSupportEditMode = true;
-            this.txtShipMode.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.txtShipMode.EditMode = Win.UI.AdvEditModes.EnableOnEdit;
             return base.ClickSaveBefore();
         }
 
@@ -91,7 +91,7 @@ namespace Sci.Production.Shipping
         {
             this.txtbrand.IsSupportEditMode = true;
             this.txtubconForwarder.TextBox1.IsSupportEditMode = true;
-            this.txtShipMode.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.txtShipMode.EditMode = Win.UI.AdvEditModes.EnableOnEdit;
             base.ClickUndo();
         }
     }

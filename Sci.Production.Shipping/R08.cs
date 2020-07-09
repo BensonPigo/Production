@@ -43,7 +43,7 @@ namespace Sci.Production.Shipping
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboFactory.SelectedIndex = -1;
@@ -226,7 +226,7 @@ and ShipQty = PullQty");
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -242,7 +242,7 @@ and ShipQty = PullQty");
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R08_PackingCheckList.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_R08_PackingCheckList.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -293,7 +293,7 @@ and ShipQty = PullQty");
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_R08_PackingCheckList");
+            string strExcelName = Class.MicrosoftFile.GetName("Shipping_R08_PackingCheckList");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

@@ -25,7 +25,7 @@ namespace Sci.Production.Centralized
         {
             base.OnDetailEntered();
 
-            bool canJunk = Prgs.GetAuthority(Sci.Env.User.UserID, "Endline_B12 Idle Reason", "CanJunk");
+            bool canJunk = Prgs.GetAuthority(Env.User.UserID, "Endline_B12 Idle Reason", "CanJunk");
 
             this.chkJunk.Enabled = canJunk;
         }

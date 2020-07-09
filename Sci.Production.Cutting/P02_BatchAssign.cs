@@ -20,7 +20,7 @@ namespace Sci.Production.Cutting
         private DataTable detailTb;
         private DataTable sp;
         private string Poid;
-        private string KeyWord = Sci.Env.User.Keyword;
+        private string KeyWord = Env.User.Keyword;
 
         public P02_BatchAssign(DataTable cursor, string id, DataTable distqtyTb)
         {
@@ -60,7 +60,7 @@ namespace Sci.Production.Cutting
             DataGridViewGeneratorTextColumnSettings col_Seq1 = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings col_Seq2 = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorDateColumnSettings EstCutDate = new DataGridViewGeneratorDateColumnSettings();
-            DataGridViewGeneratorTextColumnSettings col_Shift = cellTextDropDownList.GetGridCell("Pms_WorkOrderShift");
+            DataGridViewGeneratorTextColumnSettings col_Shift = CellTextDropDownList.GetGridCell("Pms_WorkOrderShift");
             DataGridViewGeneratorDateColumnSettings WKETA = new DataGridViewGeneratorDateColumnSettings();
             Ict.Win.UI.DataGridViewDateBoxColumn col_wketa = new Ict.Win.UI.DataGridViewDateBoxColumn();
 
@@ -1025,8 +1025,8 @@ where   id = '{0}'
             DateTime start_where = this.MinInLine;
             DateTime end_where = this.MaxOffLine;
 
-            List<PublicPrg.Prgs.Day> daylist1 = PublicPrg.Prgs.GetDays(maxLeadTime, start_where.Date, this.FtyFroup);
-            List<PublicPrg.Prgs.Day> daylist2 = PublicPrg.Prgs.GetDays(minLeadTime, end_where.Date, this.FtyFroup);
+            List<PublicPrg.Prgs.Day> daylist1 = GetDays(maxLeadTime, start_where.Date, this.FtyFroup);
+            List<PublicPrg.Prgs.Day> daylist2 = GetDays(minLeadTime, end_where.Date, this.FtyFroup);
             foreach (var item in daylist1)
             {
                 this.Days.Add(item);
@@ -1042,7 +1042,7 @@ where   id = '{0}'
             // 若 daylist1 是1/1~1/3, daylist2 是1/10~1/12, 中間也要補上
             if (start_where < d2)
             {
-                List<PublicPrg.Prgs.Day> daylist3 = PublicPrg.Prgs.GetRangeHoliday(start_where, d2, this.FtyFroup);
+                List<PublicPrg.Prgs.Day> daylist3 = GetRangeHoliday(start_where, d2, this.FtyFroup);
                 foreach (var item in daylist3)
                 {
                     this.Days.Add(item);
@@ -1071,7 +1071,7 @@ where   id = '{0}'
 
             this.bgWorkerUpdateInfo.ReportProgress(90);
 
-            List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days, this.AllData.OrderBy(o => o.OrderID).ToList());
+            List<DataTable> LeadTimeList = GetCutting_WIP_DataTable(this.Days, this.AllData.OrderBy(o => o.OrderID).ToList());
 
             if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
             {
@@ -1164,8 +1164,8 @@ where   id = '{0}'
             DateTime start_where = this.MinInLine;
             DateTime end_where = this.MaxOffLine;
 
-            List<PublicPrg.Prgs.Day> daylist1 = PublicPrg.Prgs.GetDays(maxLeadTime, start_where, this.FtyFroup);
-            List<PublicPrg.Prgs.Day> daylist2 = PublicPrg.Prgs.GetDays(minLeadTime, end_where, this.FtyFroup);
+            List<PublicPrg.Prgs.Day> daylist1 = GetDays(maxLeadTime, start_where, this.FtyFroup);
+            List<PublicPrg.Prgs.Day> daylist2 = GetDays(minLeadTime, end_where, this.FtyFroup);
             foreach (var item in daylist1)
             {
                 this.Days2.Add(item);
@@ -1181,7 +1181,7 @@ where   id = '{0}'
             // 若 daylist1 是1/1~1/3, daylist2 是1/10~1/12, 中間也要補上
             if (start_where < d2)
             {
-                List<PublicPrg.Prgs.Day> daylist3 = PublicPrg.Prgs.GetRangeHoliday(start_where, d2, this.FtyFroup);
+                List<PublicPrg.Prgs.Day> daylist3 = GetRangeHoliday(start_where, d2, this.FtyFroup);
                 foreach (var item in daylist3)
                 {
                     this.Days2.Add(item);
@@ -1210,7 +1210,7 @@ where   id = '{0}'
 
             this.bgWorkerUpdateInfo.ReportProgress(90);
 
-            List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days2, this.AllData2.OrderBy(o => o.OrderID).ToList());
+            List<DataTable> LeadTimeList = GetCutting_WIP_DataTable(this.Days2, this.AllData2.OrderBy(o => o.OrderID).ToList());
 
             if (this.bgWorkerUpdateInfo == null || this.bgWorkerUpdateInfo.CancellationPending == true)
             {
@@ -1471,7 +1471,7 @@ drop table #OrderList
                 string MDivisionID = dr["MDivisionID"].ToString();
                 string FactoryID = dr["FactoryID"].ToString();
 
-                PublicPrg.Prgs.GetGarmentListTable(string.Empty, POID, string.Empty, out GarmentTb);
+                GetGarmentListTable(string.Empty, POID, string.Empty, out GarmentTb);
 
                 List<string> AnnotationList = GarmentTb.AsEnumerable().Where(o => !MyUtility.Check.Empty(o["Annotation"].ToString())).Select(o => o["Annotation"].ToString()).Distinct().ToList();
 

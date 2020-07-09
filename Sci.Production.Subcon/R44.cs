@@ -35,7 +35,7 @@ Select ID
 from Factory WITH (NOLOCK)
 where Junk != 1", out dtFactory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, dtFactory);
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
 
             this.comboDropDownList1.SelectedIndex = 2;
         }
@@ -252,7 +252,7 @@ DROP TABLE #print0
             }
 
             DBProxy.Current.DefaultTimeout = 300;  // timeout時間調回為5分鐘
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -271,7 +271,7 @@ DROP TABLE #print0
             if (this.radioByFactory.Checked)
             {
                 #region By Factory
-                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R44_ByFactory.xltx");
+                objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R44_ByFactory.xltx");
                 worksheet = objApp.Sheets[1];
                 worksheet.Name = "cutting bcs base on std" + DateTime.Now.ToString("yyyyMMdd");
                 #region set CheckDate & Factory
@@ -284,7 +284,7 @@ DROP TABLE #print0
             else
             {
                 #region By SPNO
-                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R44_BySPNO.xltx");
+                objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R44_BySPNO.xltx");
                 worksheet = objApp.Sheets[1];
                 worksheet.Name = "cutting bcs base on std" + DateTime.Now.ToString("yyyyMMdd");
                 #region set CheckDate & Factory

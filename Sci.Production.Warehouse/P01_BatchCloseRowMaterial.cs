@@ -69,7 +69,7 @@ with cte_order as(
     select distinct poid 
     from dbo.orders WITH (NOLOCK) 
     LEFT JOIN dbo.Factory on orders.FtyGroup=Factory.ID 
-    where orders.Finished=1 and Orders.WhseClose is null and Factory.MDivisionID = '{0}'", Sci.Env.User.Keyword));
+    where orders.Finished=1 and Orders.WhseClose is null and Factory.MDivisionID = '{0}'", Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(pulloutdate1))
             {
@@ -176,7 +176,7 @@ cross apply (
     where a1.id=m.POID and Factory.MDivisionID = '{0}' {1} 
 ) x
 order by m.POID
-Drop table #cte_temp;", Sci.Env.User.Keyword, categorySql));
+Drop table #cte_temp;", Env.User.Keyword, categorySql));
 
             this.ShowWaitMessage("Data Loading....");
 
@@ -261,15 +261,15 @@ Drop table #cte_temp;", Sci.Env.User.Keyword, categorySql));
                 cmds.Add(sp_StocktakingID);
                 System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
                 sp_mdivision.ParameterName = "@MDivisionid";
-                sp_mdivision.Value = Sci.Env.User.Keyword;
+                sp_mdivision.Value = Env.User.Keyword;
                 cmds.Add(sp_mdivision);
                 System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
                 sp_factory.ParameterName = "@factoryid";
-                sp_factory.Value = Sci.Env.User.Factory;
+                sp_factory.Value = Env.User.Factory;
                 cmds.Add(sp_factory);
                 System.Data.SqlClient.SqlParameter sp_loginid = new System.Data.SqlClient.SqlParameter();
                 sp_loginid.ParameterName = "@loginid";
-                sp_loginid.Value = Sci.Env.User.UserID;
+                sp_loginid.Value = Env.User.UserID;
                 cmds.Add(sp_loginid);
                 #endregion
                 if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_WarehouseClose", cmds)))
@@ -302,7 +302,7 @@ from #tmp";
             {
                 MyUtility.Tool.ProcessWithDatatable(this.dtBatch[1], string.Empty, cmd, out printDatatable, "#Tmp");
                 Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(printDatatable);
-                sdExcel.Save(Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P01_BatchCloseRowMaterial"));
+                sdExcel.Save(Class.MicrosoftFile.GetName("Warehouse_P01_BatchCloseRowMaterial"));
             }
         }
     }

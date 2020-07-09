@@ -66,8 +66,8 @@ namespace Sci.Production.Quality
                 this.dateBoxReceivedDate.Value = MyUtility.Convert.GetDate(Detaildr["ReceivedDate"]);
                 this.dateBoxReleasedDate.Value = MyUtility.Convert.GetDate(Detaildr["ReleasedDate"]);
                 this.displayResult.Text = Detaildr["Result"].ToString();
-                this.txtTechnician.textbox1_text = Detaildr["Technician"].ToString();
-                this.txtMR.textbox1_text = Detaildr["MR"].ToString();
+                this.txtTechnician.Textbox1_text = Detaildr["Technician"].ToString();
+                this.txtMR.Textbox1_text = Detaildr["MR"].ToString();
             }
 
             #endregion
@@ -136,7 +136,7 @@ namespace Sci.Production.Quality
         {
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_DryScale;
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_WetScale;
-            DataGridViewGeneratorTextColumnSettings ResulCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings ResulCell = Prgs.cellResult.GetGridCell();
             #region Artwork event
             DataGridViewGeneratorTextColumnSettings ts_artwork = new DataGridViewGeneratorTextColumnSettings();
             ts_artwork.EditingMouseDown += (s, e) =>
@@ -151,7 +151,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string item_cmd = $"Select distinct ArtworkTypeID from Style_Artwork WITH (NOLOCK) where StyleUkey = (select ukey from style where ID = '{this.masterDr["StyleID"]}' and BrandID = '{this.masterDr["BrandID"]}' and SeasonID = '{this.masterDr["SeasonID"]}')";
@@ -197,7 +197,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string item_cmd = $"Select BrandID,ID,Name from Color WITH (NOLOCK) where BrandID =  '{this.masterDr["BrandID"]}'";
@@ -280,7 +280,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string item_cmd = $"Select BrandID,ID,Name from Color WITH (NOLOCK) where BrandID =  '{this.masterDr["BrandID"]}'";
@@ -496,7 +496,7 @@ namespace Sci.Production.Quality
             string mailcc = Env.User.MailAddress;
             string subject = "Mockup Crocking Test – ReportNo:" + this.reportNo + @" – Style#: " + this.masterDr["StyleID"].ToString();
             string content = "Attachment is Mockup Crocking Test– ReportNo:" + this.reportNo + " detail data";
-            var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailcc, subject, pdf_path, content.ToString(), false, true);
+            var email = new MailTo(Env.Cfg.MailFrom, mailto, mailcc, subject, pdf_path, content.ToString(), false, true);
             email.ShowDialog(this);
         }
 
@@ -529,7 +529,7 @@ namespace Sci.Production.Quality
             }
 
             string sql_cmd = string.Empty;
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P11_Detail_Report.xltx");
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_P11_Detail_Report.xltx");
             objApp.DisplayAlerts = false; // 設定Excel的警告視窗是否彈出
             Microsoft.Office.Interop.Excel.Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
@@ -620,8 +620,8 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
             #endregion
             string strFileName = string.Empty;
             string strPDFFileName = string.Empty;
-            strFileName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P11_Detail_Report");
-            strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P11_Detail_Report", Sci.Production.Class.PDFFileNameExtension.PDF);
+            strFileName = Class.MicrosoftFile.GetName("Quality_P11_Detail_Report");
+            strPDFFileName = Class.MicrosoftFile.GetName("Quality_P11_Detail_Report", Class.PDFFileNameExtension.PDF);
             objApp.ActiveWorkbook.SaveAs(strFileName);
             objApp.Quit();
             Marshal.ReleaseComObject(worksheet);

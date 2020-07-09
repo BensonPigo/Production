@@ -4,8 +4,20 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtbuyer : Win.UI.TextBox
+    /// <summary>
+    /// Txtbuyer
+    /// </summary>
+    public partial class Txtbuyer : Win.UI.TextBox
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtbuyer"/> class.
+        /// </summary>
+        public Txtbuyer()
+        {
+            this.Size = new System.Drawing.Size(66, 23);
+        }
+
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
@@ -23,6 +35,7 @@ namespace Sci.Production.Class
             this.ValidateText();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -38,11 +51,6 @@ namespace Sci.Production.Class
                     return;
                 }
             }
-        }
-
-        public txtbuyer()
-        {
-            this.Size = new System.Drawing.Size(66, 23);
         }
     }
 }

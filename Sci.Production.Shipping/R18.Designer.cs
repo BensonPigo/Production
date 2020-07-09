@@ -34,7 +34,7 @@
             this.txtShippingExpenseID_s = new Sci.Win.UI.TextBox();
             this.txtShippingExpenseID_e = new Sci.Win.UI.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.txtsubcon = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtsubcon = new Sci.Production.Class.TxtsubconNoConfirm();
             this.SuspendLayout();
             // 
             // print
@@ -123,9 +123,9 @@
             // 
             this.txtsubcon.DisplayBox1Binding = "";
             this.txtsubcon.IsIncludeJunk = true;
-            this.txtsubcon.isMisc = false;
-            this.txtsubcon.isShipping = true;
-            this.txtsubcon.isSubcon = false;
+            this.txtsubcon.IsMisc = false;
+            this.txtsubcon.IsShipping = true;
+            this.txtsubcon.IsSubcon = false;
             this.txtsubcon.Location = new System.Drawing.Point(114, 55);
             this.txtsubcon.Name = "txtsubcon";
             this.txtsubcon.Size = new System.Drawing.Size(170, 23);
@@ -181,6 +181,6 @@
         private Win.UI.TextBox txtShippingExpenseID_s;
         private Win.UI.TextBox txtShippingExpenseID_e;
         private System.Windows.Forms.Label label3;
-        private Class.txtsubconNoConfirm txtsubcon;
+        private Class.TxtsubconNoConfirm txtsubcon;
     }
 }

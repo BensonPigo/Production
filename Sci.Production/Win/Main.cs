@@ -13,23 +13,48 @@ using System.IO;
 namespace Sci.Production
 {
 #pragma warning disable 1591
+    /// <summary>
+    /// Main
+    /// </summary>
     public partial class Main : Sci.Win.Apps.Base
     {
-        delegate Sci.Win.Tems.Base CREATETEMPLATE(ToolStripMenuItem menuitem);
+        /// <summary>
+        /// CREATETEMPLATE
+        /// </summary>
+        /// <param name="menuitem">Tool Strip Menu Item</param>
+        /// <returns>Sci.Win.Tems.Base</returns>
+        internal delegate Sci.Win.Tems.Base CREATETEMPLATE(ToolStripMenuItem menuitem);
 
-        static Dictionary<Process, ToolStripMenuItem> proList = new Dictionary<Process, ToolStripMenuItem>();
+        private static Dictionary<Process, ToolStripMenuItem> proList = new Dictionary<Process, ToolStripMenuItem>();
         private static string strMaxVerDirName = string.Empty;
 
-        class TemplateInfo
+        /// <summary>
+        /// TemplateInfo
+        /// </summary>
+        internal class TemplateInfo
         {
-            public string text;
-            public CREATETEMPLATE create;
-            public ToolStripMenuItem menuitem;
+            /// <summary>
+            /// text
+            /// </summary>
+            public string Text { get; set; }
+
+            /// <summary>
+            /// create
+            /// </summary>
+            public CREATETEMPLATE Create { get; set; }
+
+            /// <summary>
+            /// menuitem
+            /// </summary>
+            public ToolStripMenuItem Menuitem { get; set; }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Main"/> class.
+        /// </summary>
         public Main()
         {
-            Sci.Env.App = this;
+            Env.App = this;
             this.InitializeComponent();
 
             // if (Debugger.IsAttached)
@@ -40,15 +65,15 @@ namespace Sci.Production
                 Name = "WINDOW",
                 Alignment = ToolStripItemAlignment.Right,
             });
-            DirectoryInfo dI = new DirectoryInfo(Sci.Env.Cfg.XltPathDir);
-            if (System.IO.File.Exists(dI.Parent.Parent.FullName + "\\Logo.bmp"))
+            DirectoryInfo dI = new DirectoryInfo(Env.Cfg.XltPathDir);
+            if (File.Exists(dI.Parent.Parent.FullName + "\\Logo.bmp"))
             {
                 Image image = Image.FromFile(dI.Parent.Parent.FullName + "\\Logo.bmp");
                 this.BackgroundImage = image;
                 this.BackgroundImageLayout = ImageLayout.Tile;
             }
 
-            if (System.IO.File.Exists(dI.Parent.Parent.FullName + "\\Logo.jpg"))
+            if (File.Exists(dI.Parent.Parent.FullName + "\\Logo.jpg"))
             {
                 Image image1 = Image.FromFile(dI.Parent.Parent.FullName + "\\Logo.jpg");
                 this.BackgroundImage = image1;
@@ -58,6 +83,7 @@ namespace Sci.Production
             // }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -76,6 +102,7 @@ namespace Sci.Production
             this.OnLineHelpID = "Production";
         }
 
+        /// <inheritdoc/>
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             base.OnFormClosing(e);
@@ -90,20 +117,17 @@ namespace Sci.Production
             }
         }
 
-        ToolStripMenuItem progmenu = null;
-        ToolStripMenuItem subMenu = null;
-        ToolStripSeparator separator = null;
-        DualResult result = null;
-        DataTable dtDDTable = null;
-        DataTable dtMenu = null;
-        DataTable dtMenuDetail = null;
-        DataRow[] drs = null;
-
-        Win.Login login;
-
-        int _isgeneralclosing;
-        IList<TemplateInfo> _templates = new List<TemplateInfo>();
-        public static string FormTextSufix = string.Empty;
+        private ToolStripMenuItem progmenu = null;
+        private ToolStripMenuItem subMenu = null;
+        private ToolStripSeparator separator = null;
+        private DualResult result = null;
+        private DataTable dtDDTable = null;
+        private DataTable dtMenu = null;
+        private DataTable dtMenuDetail = null;
+        private DataRow[] drs = null;
+        private Win.Login login;
+        private int _isgeneralclosing;
+        private IList<TemplateInfo> _templates = new List<TemplateInfo>();
 
         #region 屬性
         private bool IsGeneralClosing
@@ -113,11 +137,17 @@ namespace Sci.Production
 
         #endregion
         #region 應用函式
+
+        /// <summary>
+        /// DoLogin
+        /// </summary>
+        /// <param name="user">User Info</param>
+        /// <returns>DualResult</returns>
         public DualResult DoLogin(IUserInfo user)
         {
             if (user == null)
             {
-                return Result.F_ArgNull("user");
+                return Ict.Result.F_ArgNull("user");
             }
 
             if (!this.OnLogout())
@@ -125,20 +155,20 @@ namespace Sci.Production
                 return new DualResult(false, "Cannot logout current user.");
             }
 
-            if (!(this.result = Sci.Data.DBProxy.Current.Select(null, "SELECT * FROM Menu ORDER BY MenuNo, IsSubMenu", out this.dtMenu)))
+            if (!(this.result = Data.DBProxy.Current.Select(null, "SELECT * FROM Menu ORDER BY MenuNo, IsSubMenu", out this.dtMenu)))
             {
                 return new DualResult(false, "Can't get Menu table!");
             }
 
-            if (!(this.result = Sci.Data.DBProxy.Current.Select(null, "SELECT * FROM MenuDetail ORDER BY Ukey, BarNo", out this.dtMenuDetail)))
+            if (!(this.result = Data.DBProxy.Current.Select(null, "SELECT * FROM MenuDetail ORDER BY Ukey, BarNo", out this.dtMenuDetail)))
             {
                 return new DualResult(false, "Can't get Menu table!");
             }
 
             // 中英文轉換
-            if (Sci.Env.Cfg.CodePage == 950)
+            if (Env.Cfg.CodePage == 950)
             {
-                if (!(this.result = Sci.Data.DBProxy.Current.Select(null, "SELECT * FROM DDTable", out this.dtDDTable)))
+                if (!(this.result = Data.DBProxy.Current.Select(null, "SELECT * FROM DDTable", out this.dtDDTable)))
                 {
                     return new DualResult(false, "Can't get DDTable table!");
                 }
@@ -151,7 +181,7 @@ namespace Sci.Production
             // 產生Menu
             foreach (DataRow dr in this.dtMenu.Rows)
             {
-                if (!MyUtility.Check.Empty(dr["ForMISOnly"]) && !Sci.Env.User.IsMIS)
+                if (!MyUtility.Check.Empty(dr["ForMISOnly"]) && !Env.User.IsMIS)
                 {
                     continue;
                 }
@@ -183,7 +213,7 @@ namespace Sci.Production
                 return this.result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private void DDConvert()
@@ -237,7 +267,7 @@ namespace Sci.Production
                             break;
                         }
 
-                        if (!MyUtility.Check.Empty(dr["ForMISOnly"]) && !Sci.Env.User.IsMIS)
+                        if (!MyUtility.Check.Empty(dr["ForMISOnly"]) && !Env.User.IsMIS)
                         {
                             break;
                         }
@@ -316,7 +346,7 @@ namespace Sci.Production
                 {
                     if (form.DialogResult == DialogResult.OK)
                     {
-                        Sci.Production.Main.Kill_Process();
+                        Kill_Process();
                     }
                 };
 
@@ -360,7 +390,7 @@ namespace Sci.Production
             }
         }
 
-        void MyProcess_Exited(object sender, EventArgs e)
+        private void MyProcess_Exited(object sender, EventArgs e)
         {
             Process p = (Process)sender;
 
@@ -375,12 +405,16 @@ namespace Sci.Production
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnClosed(EventArgs e)
         {
             Kill_Process();
             base.OnClosed(e);
         }
 
+        /// <summary>
+        /// Kill Process
+        /// </summary>
         public static void Kill_Process()
         {
             var processArray = proList.Keys.Where(p => !p.HasExited).ToArray();
@@ -392,6 +426,10 @@ namespace Sci.Production
             proList.Clear();
         }
 
+        /// <summary>
+        /// Do Logout
+        /// </summary>
+        /// <param name="confirm">bool Confirm</param>
         public void DoLogout(bool confirm = true)
         {
             if (confirm)
@@ -430,6 +468,10 @@ namespace Sci.Production
             return true;
         }
 
+        /// <summary>
+        /// Do Exit
+        /// </summary>
+        /// <param name="confirm">Bool Confirm</param>
         public void DoExit(bool confirm = true)
         {
             if (this.IsFormClosing)
@@ -522,10 +564,8 @@ namespace Sci.Production
 
         private bool AlertForNotLatestVersion()
         {
-            System.Windows.Forms.Application.DoEvents();
-            MessageBox.Show(
-                new Form() { TopMost = true },
-                $@"
+            Application.DoEvents();
+            string showMsg = $@"
 New version {strMaxVerDirName} is updated!!!
 
 Please re-login system.
@@ -538,7 +578,10 @@ Thank you
 
 請將手邊事情告一段落後，重新登入系統
 
-謝謝您的配合",
+謝謝您的配合";
+            MessageBox.Show(
+                new Form() { TopMost = true },
+                showMsg,
                 "Warnning",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Warning);
@@ -546,6 +589,10 @@ Thank you
             return true;
         }
 
+        /// <summary>
+        /// Check App Is Not Latest Version
+        /// </summary>
+        /// <returns>Bool Latest Version</returns>
         internal static bool CheckAppIsNotLatestVersion()
         {
             if (((bool?)AppDomain.CurrentDomain.GetData("NewVerDetectionByLuncher")).GetValueOrDefault(false) == true)
@@ -595,9 +642,9 @@ Thank you
 
             var templateinfo = new TemplateInfo
             {
-                text = text,
-                create = create,
-                menuitem = menuitem,
+                Text = text,
+                Create = create,
+                Menuitem = menuitem,
             };
             menuitem.Tag = templateinfo;
 
@@ -611,7 +658,7 @@ Thank you
         {
             if (this._templates.Count == 0)
             {
-                return Result.True;
+                return Ict.Result.True;
             }
 
             DualResult result;
@@ -621,19 +668,19 @@ Thank you
             {
                 foreach (var it in this._templates)
                 {
-                    it.menuitem.Enabled = false;
+                    it.Menuitem.Enabled = false;
                 }
 
-                return Result.True;
+                return Ict.Result.True;
             }
             else if (sysuser.IsAdmin)
             {
                 foreach (var it in this._templates)
                 {
-                    it.menuitem.Enabled = true;
+                    it.Menuitem.Enabled = true;
                 }
 
-                return Result.True;
+                return Ict.Result.True;
             }
 
             IList<string> barprompts;
@@ -644,21 +691,21 @@ Thank you
 
             foreach (var it in this._templates)
             {
-                it.menuitem.Enabled = barprompts.Contains(it.text);
+                it.Menuitem.Enabled = barprompts.Contains(it.Text);
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
         #endregion
 
-        void Progmenu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        private void Progmenu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             TemplateInfo templateinfo = e.ClickedItem.Tag as TemplateInfo;
             if (templateinfo != null)
             {
-                if (templateinfo.create != null)
+                if (templateinfo.Create != null)
                 {
-                    var frm = templateinfo.create((ToolStripMenuItem)e.ClickedItem);
+                    var frm = templateinfo.Create((ToolStripMenuItem)e.ClickedItem);
                     if (frm != null)
                     {
                         this.OpenForm(frm);

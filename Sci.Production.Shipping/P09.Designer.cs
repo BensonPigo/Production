@@ -37,7 +37,7 @@
             this.labelDataType = new Sci.Win.UI.Label();
             this.comboM = new Sci.Win.UI.ComboBox();
             this.labelM = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.labelBrand = new Sci.Win.UI.Label();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.labelBuyerDelivery = new Sci.Win.UI.Label();
@@ -281,7 +281,7 @@
         private Win.UI.Panel panel5;
         private Win.UI.Grid gridDelayShipmentOrderDetail;
         private Win.UI.Label labelM;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.Label labelBrand;
         private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.Label labelBuyerDelivery;

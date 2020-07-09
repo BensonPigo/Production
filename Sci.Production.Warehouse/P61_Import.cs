@@ -98,7 +98,7 @@ order by s.Refno, s.ThreadColorID, s.StockQty, s.[Desc]
 
             List<SqlParameter> listPar = new List<SqlParameter>();
             listPar.Add(new SqlParameter("@SP", this.txtSPNo.Text.Trim()));
-            listPar.Add(new SqlParameter("@M", Sci.Env.User.Keyword));
+            listPar.Add(new SqlParameter("@M", Env.User.Keyword));
             #endregion
             #region SQL Data Loading...
             DualResult result;

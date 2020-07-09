@@ -297,7 +297,7 @@ namespace Sci.Production.Warehouse
                     sqlpar.Add(new SqlParameter("@Seq2", newRow["seq2"].ToString().Trim()));
                     sqlpar.Add(new SqlParameter("@Roll", newRow["roll"].ToString().Trim()));
                     sqlpar.Add(new SqlParameter("@Dyelot", newRow["dyelot"].ToString().Trim()));
-                    sqlpar.Add(new SqlParameter("@MDivisionID", Sci.Env.User.Keyword));
+                    sqlpar.Add(new SqlParameter("@MDivisionID", Env.User.Keyword));
                     DataRow dr2;
                     string sql = @"
 select fi.*
@@ -351,7 +351,7 @@ and f.MDivisionID = @MDivisionID ";
                         newRow["CanWriteIn"] = false;
                     }
 
-                    newRow["MDivisionID"] = Sci.Env.User.Keyword;
+                    newRow["MDivisionID"] = Env.User.Keyword;
                     newRow["Stocktype"] = "B";
 
                     this.grid2Data.Rows.Add(newRow);
@@ -447,13 +447,13 @@ and f.MDivisionID = @MDivisionID ";
             }
 
             MyUtility.Msg.InfoBox("Write in completed!!");
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
 
         private void BtnDownloadTempExcel_Click(object sender, EventArgs e)
         {
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P17_ExcelImport.xltx"); // 預先開啟excel app
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P17_ExcelImport");
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P17_ExcelImport.xltx"); // 預先開啟excel app
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_P17_ExcelImport");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

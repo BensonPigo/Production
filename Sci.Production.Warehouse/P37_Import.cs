@@ -124,17 +124,17 @@ where   f.InQty - f.OutQty + f.AdjustQty > 0
                     cmds.Add(sp1);
                 }
 
-                seq1.Value = this.txtSeq.seq1;
-                seq2.Value = this.txtSeq.seq2;
+                seq1.Value = this.txtSeq.Seq1;
+                seq2.Value = this.txtSeq.Seq2;
                 cmds.Add(seq1);
                 cmds.Add(seq2);
-                if (!this.txtSeq.checkSeq1Empty())
+                if (!this.txtSeq.CheckSeq1Empty())
                 {
                     strSQLCmd.Append(@"
         and f.seq1 = @seq1");
                 }
 
-                if (!this.txtSeq.checkSeq2Empty())
+                if (!this.txtSeq.CheckSeq2Empty())
                 {
                     strSQLCmd.Append(@" 
         and f.seq2 = @seq2");

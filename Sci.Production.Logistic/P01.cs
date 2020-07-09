@@ -20,7 +20,7 @@ namespace Sci.Production.Logistic
         {
             this.InitializeComponent();
             this.Text = type == "1" ? "P01. Clog Master List" : "P011. Clog Master List (History)";
-            this.DefaultFilter = type == "1" ? string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND Finished = 0", Sci.Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND Finished = 1", Sci.Env.User.Keyword);
+            this.DefaultFilter = type == "1" ? string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND Finished = 0", Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND Finished = 1", Env.User.Keyword);
         }
 
         /// <summary>

@@ -229,7 +229,7 @@ order by e.ID
             DataGridViewGeneratorTextColumnSettings colContainers = new DataGridViewGeneratorTextColumnSettings();
             colContainers.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     if (e.RowIndex != -1 && this.CurrentDetailData["ContainerNo"].Empty() == false)
                     {

@@ -32,7 +32,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.comboDropDownListCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboDropDownListCategory = new Sci.Production.Class.ComboDropDownList(this.components);
             this.btnFindNow = new Sci.Win.UI.Button();
             this.txtLocateForSP = new Sci.Win.UI.TextBox();
             this.labelLocateForSP = new Sci.Win.UI.Label();
@@ -306,6 +306,6 @@
         private Win.UI.Button btnFindNow;
         private Win.UI.TextBox txtLocateForSP;
         private Win.UI.Label labelLocateForSP;
-        private Class.comboDropDownList comboDropDownListCategory;
+        private Class.ComboDropDownList comboDropDownListCategory;
     }
 }

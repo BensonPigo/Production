@@ -96,7 +96,7 @@ inner join dbo.Factory f on f.ID=p1.factoryID
 left join dbo.Receiving_Detail rd  WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
 left join dbo.Receiving r WITH (NOLOCK) on r.Id = rd.Id
 where    f.MDivisionID='{0}' 
-", Sci.Env.User.Keyword));
+", Env.User.Keyword));
 
                 if (!MyUtility.Check.Empty(sp))
                 {
@@ -105,17 +105,17 @@ where    f.MDivisionID='{0}'
         and a.poid like '%{0}%' ", sp));
                 }
 
-                if (!this.txtSeq.checkSeq1Empty() && this.txtSeq.checkSeq2Empty())
+                if (!this.txtSeq.CheckSeq1Empty() && this.txtSeq.CheckSeq2Empty())
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-        and a.seq1 = '{0}'", this.txtSeq.seq1));
+        and a.seq1 = '{0}'", this.txtSeq.Seq1));
                 }
-                else if (!this.txtSeq.checkEmpty(showErrMsg: false))
+                else if (!this.txtSeq.CheckEmpty(showErrMsg: false))
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-        and a.seq1 = '{0}' and a.seq2='{1}'", this.txtSeq.seq1, this.txtSeq.seq2));
+        and a.seq1 = '{0}' and a.seq2='{1}'", this.txtSeq.Seq1, this.txtSeq.Seq2));
                 }
 
                 if (!MyUtility.Check.Empty(refno))
@@ -352,7 +352,7 @@ where
 ",
                     transid,
                     MyUtility.Check.Empty(StockType) ? string.Empty : $"and a.StockType = {StockType}",
-                    Sci.Env.User.Keyword));
+                    Env.User.Keyword));
             }
 
             // 增加 order by FtyInventory.POID, FtyInventory.Seq1, FtyInventory.Seq2,Receiving_Detail.Ukey,FtyInventory.StockType

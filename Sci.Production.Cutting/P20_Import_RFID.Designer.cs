@@ -30,7 +30,7 @@
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panelTOP = new Sci.Win.UI.Panel();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
             this.lbFactory = new Sci.Win.UI.Label();
             this.dateRFID = new Sci.Win.UI.DateRange();
             this.txtSP = new Sci.Win.UI.TextBox();
@@ -64,7 +64,7 @@
             // txtfactory1
             // 
             this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.boolFtyGroupList = true;
+            this.txtfactory1.BoolFtyGroupList = true;
             this.txtfactory1.FilteMDivision = false;
             this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory1.IsProduceFty = false;
@@ -235,7 +235,7 @@
         private Win.UI.Button btnImport;
         private Win.UI.Grid gridImport;
         private Win.UI.DateRange dateRFID;
-        private Class.txtfactory txtfactory1;
+        private Class.Txtfactory txtfactory1;
         private Win.UI.Label lbFactory;
         private Win.UI.Label lbSP;
         private Win.UI.Label lbRFIDDate;

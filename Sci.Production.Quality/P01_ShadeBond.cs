@@ -1,6 +1,5 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Production.Class;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -20,8 +19,8 @@ namespace Sci.Production.Quality
     public partial class P01_ShadeBond : Win.Subs.Input4
     {
         private DataRow maindr;
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
         string excelFile;
         string ID;
 
@@ -139,7 +138,7 @@ namespace Sci.Production.Quality
         {
             DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings Scalecell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ResulCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings ResulCell = PublicPrg.Prgs.cellResult.GetGridCell();
             DataGridViewGeneratorTextColumnSettings InspectorCell = new DataGridViewGeneratorTextColumnSettings();
 
             #region Scale
@@ -173,8 +172,8 @@ namespace Sci.Production.Quality
                     else
                     {
                         dr["InspDate"] = DateTime.Now;
-                        dr["Inspector"] = Sci.Env.User.UserID;
-                        dr["Name"] = MyUtility.GetValue.Lookup($"SELECT Name FROM Pass1 WHERE ID='{Sci.Env.User.UserID}'");
+                        dr["Inspector"] = Env.User.UserID;
+                        dr["Name"] = MyUtility.GetValue.Lookup($"SELECT Name FROM Pass1 WHERE ID='{Env.User.UserID}'");
                     }
 
                     dr["Scale"] = newvalue;
@@ -207,8 +206,8 @@ namespace Sci.Production.Quality
 
                     dr["Scale"] = item.GetSelectedString();
                     dr["InspDate"] = DateTime.Now;
-                    dr["Inspector"] = Sci.Env.User.UserID;
-                    dr["Name"] = MyUtility.GetValue.Lookup($"SELECT Name FROM Pass1 WHERE ID='{Sci.Env.User.UserID}'");
+                    dr["Inspector"] = Env.User.UserID;
+                    dr["Name"] = MyUtility.GetValue.Lookup($"SELECT Name FROM Pass1 WHERE ID='{Env.User.UserID}'");
                 }
             };
 
@@ -245,8 +244,8 @@ namespace Sci.Production.Quality
                     else
                     {
                         dr["InspDate"] = DateTime.Now;
-                        dr["Inspector"] = Sci.Env.User.UserID;
-                        dr["Name"] = MyUtility.GetValue.Lookup($"SELECT Name FROM Pass1 WHERE ID='{Sci.Env.User.UserID}'");
+                        dr["Inspector"] = Env.User.UserID;
+                        dr["Name"] = MyUtility.GetValue.Lookup($"SELECT Name FROM Pass1 WHERE ID='{Env.User.UserID}'");
                     }
 
                     dr["Result"] = newvalue;
@@ -494,7 +493,7 @@ and not exists
                 this.maindr["ShadeboneInspector"] = this.loginID;
                 #endregion
                 #region 判斷Result 是否要寫入
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(this.maindr);
+                string[] returnstr = PublicPrg.Prgs.GetOverallResult_Status(this.maindr);
                 #endregion
                 #region  寫入實體Table
                 updatesql = string.Format(
@@ -512,7 +511,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 							         or id in (select Manager from Pass1 where id = '{0}')
 						  ) tmp
 						  for xml path('')
-						 ), 1, 1, '')", Sci.Env.User.UserID);
+						 ), 1, 1, '')", Env.User.UserID);
                 DBProxy.Current.Select(string.Empty, cmd_leader, out dt_Leader);
                 if (!MyUtility.Check.Empty(dt_Leader)
                     && dt_Leader.Rows.Count > 0)
@@ -524,7 +523,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                                      + Environment.NewLine
                                      + "Please Approve and Check Fabric Inspection";
                     this.ToExcel(true);
-                    var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, ccAddress, subject, this.excelFile, content, false, true);
+                    var email = new MailTo(Env.Cfg.MailFrom, mailto, ccAddress, subject, this.excelFile, content, false, true);
                     email.ShowDialog(this);
                 }
 
@@ -543,7 +542,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 this.maindr["ShadeboneInspector"] = string.Empty;
 
                 // 判斷Result and Status 必須先確認shadebond="",判斷才會正確
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(this.maindr);
+                string[] returnstr = PublicPrg.Prgs.GetOverallResult_Status(this.maindr);
                 this.maindr["Result"] = returnstr[0];
                 this.maindr["Status"] = returnstr[1];
                 #endregion
@@ -649,7 +648,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), this.displaySP.Text, this.displayRefno.Text, this.displayColor.Text);
 
                 this.ToExcel(true);
-                var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailCC, subject, this.excelFile, content, false, true);
+                var email = new MailTo(Env.Cfg.MailFrom, mailto, mailCC, subject, this.excelFile, content, false, true);
                 email.ShowDialog(this);
             }
             #endregion
@@ -741,7 +740,7 @@ select Roll,Dyelot,TicketYds,Scale,Result
                 }
             }
             #endregion
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P01_ShadeBand_Report.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_P01_ShadeBand_Report.xltx"); // 預先開啟excel app
             objApp.Visible = false;
             MyUtility.Excel.CopyToXls(dt, string.Empty, "Quality_P01_ShadeBand_Report.xltx", 5, false, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
@@ -776,7 +775,7 @@ select Roll,Dyelot,TicketYds,Scale,Result
             objApp.Cells.EntireRow.AutoFit();       ////自動欄高
 
             #region Save Excel
-            this.excelFile = Sci.Production.Class.MicrosoftFile.GetName("QA_P01_ShadeBand");
+            this.excelFile = Class.MicrosoftFile.GetName("QA_P01_ShadeBand");
             objApp.ActiveWorkbook.SaveAs(this.excelFile);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
@@ -799,7 +798,7 @@ select Roll,Dyelot,TicketYds,Scale,Result
 
             // 抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", Sci.Env.User.Factory));
+            pars.Add(new SqlParameter("@ID", Env.User.Factory));
             result = DBProxy.Current.Select(
                 string.Empty,
                 @"select NameEN from Factory WITH (NOLOCK) where id=@ID ", pars, out dt_title);
@@ -842,7 +841,7 @@ select Roll,Dyelot,TicketYds,Scale,Result
 
             dr = dt.NewRow();
             dr["Poid"] = this.displaySP.Text;
-            dr["FactoryID"] = Sci.Env.User.Factory;
+            dr["FactoryID"] = Env.User.Factory;
             dr["Style"] = this.displayStyle.Text;
             dr["Color"] = this.displayColor.Text;
             dr["DESC"] = Refno;

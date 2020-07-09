@@ -54,10 +54,10 @@ namespace Sci.Production.Basic
         protected override bool OnAcceptChanging(DataRow data)
         {
             data["CountryName"] = MyUtility.GetValue.Lookup("Alias", data["CountryID"].ToString(), "Country", "ID");
-            data["CreateBy"] = data["AddName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", data["AddName"].ToString(), "Pass1", "ID") + "   " + ((DateTime)data["AddDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
-            if (data["EditDate"] != System.DBNull.Value)
+            data["CreateBy"] = data["AddName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", data["AddName"].ToString(), "Pass1", "ID") + "   " + ((DateTime)data["AddDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
+            if (data["EditDate"] != DBNull.Value)
             {
-                data["EditBy"] = data["EditName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", data["EditName"].ToString(), "Pass1", "ID") + "   " + ((DateTime)data["EditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                data["EditBy"] = data["EditName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", data["EditName"].ToString(), "Pass1", "ID") + "   " + ((DateTime)data["EditDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
             }
 
             return base.OnAcceptChanging(data);

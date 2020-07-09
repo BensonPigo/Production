@@ -31,7 +31,7 @@ namespace Sci.Production.Quality
         System.Data.DataTable alltemp;
         System.Data.DataTable alltemp_All;
         System.Data.DataTable[] alltemps;
-        string userfactory = Sci.Env.User.Factory;
+        string userfactory = Env.User.Factory;
 
         protected override bool ValidateInput()
         {
@@ -531,7 +531,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
             {
                 #region By Year
 
-                var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
+                var saveDialog = MyExcelPrg.GetSaveFileDialog(MyExcelPrg.Filter_Excel);
 
                 SaveXltReportCls xl = new SaveXltReportCls("Quality_R40_ByYear.xltx");
                 SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(this.dtt_All);
@@ -569,7 +569,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                 SaveXltReportCls.ReplaceAction a = this.AddRpt;
                 xl.DicDatas.Add("##addrpt", a);
 
-                xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Quality_R40_ByFactory"));
+                xl.Save(Class.MicrosoftFile.GetName("Quality_R40_ByFactory"));
                 #endregion
 
             }
@@ -577,7 +577,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
             {
                 #region By Factory
 
-                var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
+                var saveDialog = MyExcelPrg.GetSaveFileDialog(MyExcelPrg.Filter_Excel);
 
                 SaveXltReportCls xl = new SaveXltReportCls("Quality_R40_ByFactory.xltx", keepApp: true);
                 SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(this.alltemp_All);
@@ -643,7 +643,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                 SaveXltReportCls.ReplaceAction c = this.CopySheet;
                 xl.DicDatas.Add("##copyftysheet", c);
 
-                xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Quality_R40_ByFactory"));
+                xl.Save(Class.MicrosoftFile.GetName("Quality_R40_ByFactory"));
                 ((Worksheet)xl.ExcelApp.ActiveSheet).Columns.AutoFit();
                 xl.FinishSave();
                 #endregion
@@ -679,7 +679,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
 
                 // 選擇 統計圖表 的 圖表種類
                 myBook.ActiveChart.Location(XlChartLocation.xlLocationAsObject, mySheet.Name);
-                myBook.ActiveChart.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlLineMarkers; // 插入折線圖
+                myBook.ActiveChart.ChartType = XlChartType.xlLineMarkers; // 插入折線圖
 
                 // 設定數據範圍
                 Chart c = myBook.ActiveChart;
@@ -748,7 +748,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                 myBook.ActiveChart.ChartArea.Border.Color = ColorTranslator.ToOle(Color.Black);
 
                 // 設定 圖表的 邊框樣式
-                myBook.ActiveChart.ChartArea.Border.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                myBook.ActiveChart.ChartArea.Border.LineStyle = XlLineStyle.xlContinuous;
 
                 // 設置Legend圖例
                 myBook.ActiveChart.Legend.Top = 100;           // 設定 圖例 的 上邊距
@@ -761,12 +761,12 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                 myBook.ActiveChart.Legend.Font.Size = 11;    // 設定 圖例 的 字體大小
                 myBook.ActiveChart.Legend.Font.Bold = true;  // 設定 圖例 的 字體樣式=粗體
                 myBook.ActiveChart.Legend.Font.Name = "Arial"; // 設定 圖例 的 字體字型=細明體
-                myBook.ActiveChart.Legend.Position = Microsoft.Office.Interop.Excel.XlLegendPosition.xlLegendPositionBottom; // 設訂 圖例 的 位置靠上
-                myBook.ActiveChart.Legend.Border.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous; // 設定 圖例 的 邊框線條
+                myBook.ActiveChart.Legend.Position = XlLegendPosition.xlLegendPositionBottom; // 設訂 圖例 的 位置靠上
+                myBook.ActiveChart.Legend.Border.LineStyle = XlLineStyle.xlContinuous; // 設定 圖例 的 邊框線條
 
                 // 設定 圖表 x 軸 內容
                 // 宣告
-                Axis xAxis = (Axis)myBook.ActiveChart.Axes(Microsoft.Office.Interop.Excel.XlAxisType.xlValue, Microsoft.Office.Interop.Excel.XlAxisGroup.xlPrimary);
+                Axis xAxis = (Axis)myBook.ActiveChart.Axes(XlAxisType.xlValue, XlAxisGroup.xlPrimary);
 
                 // 設定 圖表 x軸 橫向線條 線條樣式
                 // xAxis.MajorGridlines.Border.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlDashDotDot;
@@ -782,7 +782,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                 xAxis.TickLabels.Font.Size = 14; // 設定 x軸 字體大小
 
                 // 設定 圖表 y軸 內容
-                Axis yAxis = (Axis)myBook.ActiveChart.Axes(Microsoft.Office.Interop.Excel.XlAxisType.xlCategory, Microsoft.Office.Interop.Excel.XlAxisGroup.xlPrimary);
+                Axis yAxis = (Axis)myBook.ActiveChart.Axes(XlAxisType.xlCategory, XlAxisGroup.xlPrimary);
 
                 // yAxis.TickLabels.Font.Name = "標楷體"; //設定 y軸 字體字型=標楷體
                 yAxis.TickLabels.Font.Size = 14; // 設定 y軸 字體大小
@@ -848,7 +848,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
 
                 // 選擇 統計圖表 的 圖表種類
                 myBook.ActiveChart.Location(XlChartLocation.xlLocationAsObject, mySheet.Name);
-                myBook.ActiveChart.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlLineMarkers; // 插入折線圖
+                myBook.ActiveChart.ChartType = XlChartType.xlLineMarkers; // 插入折線圖
 
                 // 設定數據範圍
                 Chart c = myBook.ActiveChart;
@@ -912,7 +912,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                 myBook.ActiveChart.ChartArea.Border.Color = ColorTranslator.ToOle(Color.Black);
 
                 // 設定 圖表的 邊框樣式
-                myBook.ActiveChart.ChartArea.Border.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                myBook.ActiveChart.ChartArea.Border.LineStyle = XlLineStyle.xlContinuous;
 
                 // 設置Legend圖例
                 myBook.ActiveChart.Legend.Top = 100;           // 設定 圖例 的 上邊距
@@ -925,12 +925,12 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                 myBook.ActiveChart.Legend.Font.Size = 11;    // 設定 圖例 的 字體大小
                 myBook.ActiveChart.Legend.Font.Bold = true;  // 設定 圖例 的 字體樣式=粗體
                 myBook.ActiveChart.Legend.Font.Name = "Arial"; // 設定 圖例 的 字體字型=細明體
-                myBook.ActiveChart.Legend.Position = Microsoft.Office.Interop.Excel.XlLegendPosition.xlLegendPositionBottom; // 設訂 圖例 的 位置靠上
-                myBook.ActiveChart.Legend.Border.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous; // 設定 圖例 的 邊框線條
+                myBook.ActiveChart.Legend.Position = XlLegendPosition.xlLegendPositionBottom; // 設訂 圖例 的 位置靠上
+                myBook.ActiveChart.Legend.Border.LineStyle = XlLineStyle.xlContinuous; // 設定 圖例 的 邊框線條
 
                 // 設定 圖表 x 軸 內容
                 // 宣告
-                Axis xAxis = (Axis)myBook.ActiveChart.Axes(Microsoft.Office.Interop.Excel.XlAxisType.xlValue, Microsoft.Office.Interop.Excel.XlAxisGroup.xlPrimary);
+                Axis xAxis = (Axis)myBook.ActiveChart.Axes(XlAxisType.xlValue, XlAxisGroup.xlPrimary);
 
                 // 設定 圖表 x軸 橫向線條 線條樣式
                 // xAxis.MajorGridlines.Border.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlDashDotDot;
@@ -947,7 +947,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                 xAxis.TickLabels.Font.Size = 14;       // 設定 x軸 字體大小
 
                 // 設定 圖表 y軸 內容
-                Axis yAxis = (Axis)myBook.ActiveChart.Axes(Microsoft.Office.Interop.Excel.XlAxisType.xlCategory, Microsoft.Office.Interop.Excel.XlAxisGroup.xlPrimary);
+                Axis yAxis = (Axis)myBook.ActiveChart.Axes(XlAxisType.xlCategory, XlAxisGroup.xlPrimary);
                 yAxis.TickLabels.Font.Name = "Arial"; // 設定 y軸 字體字型=標楷體
                 yAxis.TickLabels.Font.Size = 14; // 設定 y軸 字體大小
             }

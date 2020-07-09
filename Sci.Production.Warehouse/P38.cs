@@ -190,7 +190,7 @@ cross apply
     where o1.POID = fi.POID and o1.Junk = 0
 ) x
 {strMtlLocation}
-where   f.MDivisionID = '{Sci.Env.User.Keyword}' 
+where   f.MDivisionID = '{Env.User.Keyword}' 
         and fi.POID like @poid1 
 ");
 
@@ -231,18 +231,18 @@ where   f.MDivisionID = '{Sci.Env.User.Keyword}'
                     break;
             }
 
-            if (!this.txtSeq.checkSeq1Empty())
+            if (!this.txtSeq.CheckSeq1Empty())
             {
                 strSQLCmd.Append(string.Format(
                     @"
-        and fi.seq1 = '{0}'", this.txtSeq.seq1));
+        and fi.seq1 = '{0}'", this.txtSeq.Seq1));
             }
 
-            if (!this.txtSeq.checkSeq2Empty())
+            if (!this.txtSeq.CheckSeq2Empty())
             {
                 strSQLCmd.Append(string.Format(
                     @" 
-        and fi.seq2 = '{0}'", this.txtSeq.seq2));
+        and fi.seq2 = '{0}'", this.txtSeq.Seq2));
             }
 
             if (!MyUtility.Check.Empty(this.txtwkno.Text))
@@ -550,10 +550,10 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp
             StringBuilder sqlcmd = new StringBuilder();
             foreach (DataRow item in find)
             {
-                sqlcmd.Append(string.Format(@"update dbo.ftyinventory set lock={1},lockname='{2}',lockdate=GETDATE(),Remark='{3}' where ukey ={0};", item["ukey"], flag, Sci.Env.User.UserID, item["Remark"]));
+                sqlcmd.Append(string.Format(@"update dbo.ftyinventory set lock={1},lockname='{2}',lockdate=GETDATE(),Remark='{3}' where ukey ={0};", item["ukey"], flag, Env.User.UserID, item["Remark"]));
             }
 
-            if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd.ToString())))
+            if (!(result = DBProxy.Current.Execute(null, sqlcmd.ToString())))
             {
                 MyUtility.Msg.WarningBox(string.Format("{0} failed, Pleaes re-try", keyword));
                 return;
@@ -575,7 +575,7 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp
             }
 
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P38");
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_P38");
 
             if (this.SaveExcel(dt, strExcelName))
             {
@@ -592,7 +592,7 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp
 
             DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(row => row["selected"].EqualDecimal(1)).CopyToDataTable();
 
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P38");
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_P38");
 
             if (this.SaveExcel(dt, strExcelName))
             {
@@ -608,7 +608,7 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp
                         string mailCC = dtSendAccount.Rows[0]["CCAddress"].ToString();
                         string subject = dtSendAccount.Rows[0]["Subject"].ToString();
                         string content = dtSendAccount.Rows[0]["Content"].ToString();
-                        var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailCC, subject, strExcelName, content, false, true);
+                        var email = new MailTo(Env.Cfg.MailFrom, mailto, mailCC, subject, strExcelName, content, false, true);
                         email.ShowDialog(this);
                     }
                 }
@@ -658,7 +658,7 @@ inner join ftyinventory f with (NoLock) on t.ukey = f.ukey";
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P38.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P38.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(k, string.Empty, "Warehouse_P38.xltx", 2, false, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 

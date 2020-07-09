@@ -229,7 +229,7 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
                 }
 
                 this.CurrentData["Seq1"] = string.IsNullOrEmpty(seq["Seq1"].ToString()) ? "001" : seq["Seq1"];
-                this.CurrentData["InCharge"] = Sci.Env.User.UserID;
+                this.CurrentData["InCharge"] = Env.User.UserID;
             }
 
             return true;
@@ -238,14 +238,14 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
         /// <inheritdoc/>
         protected override DualResult OnSavePost()
         {
-            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.CurrentData["ID"])));
+            DualResult result = DBProxy.Current.Execute(null, Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.CurrentData["ID"])));
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnDeleteBefore()
@@ -262,14 +262,14 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
         /// <inheritdoc/>
         protected override DualResult OnDeletePost()
         {
-            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.CurrentData["ID"])));
+            DualResult result = DBProxy.Current.Execute(null, Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.CurrentData["ID"])));
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // Team Leader

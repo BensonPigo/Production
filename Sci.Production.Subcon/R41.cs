@@ -34,8 +34,8 @@ namespace Sci.Production.Subcon
         {
             this.InitializeComponent();
             this.comboload();
-            this.comboFactory.setDataSource();
-            this.comboRFIDProcessLocation.setDataSource();
+            this.comboFactory.SetDataSource();
+            this.comboRFIDProcessLocation.SetDataSource();
             this.comboRFIDProcessLocation.SelectedIndex = 0;
         }
 
@@ -94,7 +94,7 @@ namespace Sci.Production.Subcon
         // 非同步讀取資料
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel
@@ -466,7 +466,7 @@ drop table #tmp_Workorder
 
             #endregion
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R41_Bundle tracking list (RFID).xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R41_Bundle tracking list (RFID).xltx"); // 預先開啟excel app
 
             // 勿動!! 超過這個數字，DY的電腦會跑不動
             int excelMaxrow = 1000000;
@@ -552,7 +552,7 @@ drop table #tmp_Workorder
             #endregion
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R41_Bundle tracking list (RFID)");
+            string strExcelName = Class.MicrosoftFile.GetName("Subcon_R41_Bundle tracking list (RFID)");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

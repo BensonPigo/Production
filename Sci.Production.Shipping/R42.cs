@@ -32,7 +32,7 @@ namespace Sci.Production.Shipping
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
             this.comboFactory.SelectedIndex = -1;
         }
 
@@ -124,7 +124,7 @@ order by a.ID,a.BuyerDelivery,a.ASeq,a.SSeq");
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>

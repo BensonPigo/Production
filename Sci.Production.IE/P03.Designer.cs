@@ -101,11 +101,11 @@
             this.numHighestTimeDiff = new Sci.Win.UI.NumericBox();
             this.numEffieiency = new Sci.Win.UI.NumericBox();
             this.labelOprts = new Sci.Win.UI.Label();
-            this.txtsewingline = new Sci.Production.Class.txtsewingline();
+            this.txtsewingline = new Sci.Production.Class.Txtsewingline();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.grid1 = new Sci.Win.UI.Grid();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.txtFactory = new Sci.Production.Class.txtfactory();
+            this.txtFactory = new Sci.Production.Class.Txtfactory();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -1312,7 +1312,7 @@
             // 
             this.txtsewingline.BackColor = System.Drawing.Color.White;
             this.txtsewingline.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
-            this.txtsewingline.factoryobjectName = null;
+            this.txtsewingline.FactoryobjectName = null;
             this.txtsewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtsewingline.Location = new System.Drawing.Point(322, 147);
             this.txtsewingline.Name = "txtsewingline";
@@ -1358,7 +1358,7 @@
             // txtFactory
             // 
             this.txtFactory.BackColor = System.Drawing.Color.White;
-            this.txtFactory.boolFtyGroupList = true;
+            this.txtFactory.BoolFtyGroupList = true;
             this.txtFactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtFactory.FilteMDivision = false;
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -1451,7 +1451,7 @@
         private Win.UI.Label labelCPUPC;
         private Win.UI.Label label14;
         private Win.UI.ComboBox comboSewingLineTeam;
-        private Class.txtsewingline txtsewingline;
+        private Class.Txtsewingline txtsewingline;
         private Win.UI.NumericBox numTaktTimeIdeal;
         private Win.UI.NumericBox numDailydemandshiftIdeal;
         private Win.UI.NumericBox numTargetHrIdeal;
@@ -1495,6 +1495,6 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Grid grid1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private Class.txtfactory txtFactory;
+        private Class.Txtfactory txtFactory;
     }
 }

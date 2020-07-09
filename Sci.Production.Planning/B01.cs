@@ -18,7 +18,7 @@ namespace Sci.Production.Planning
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
             DataTable dt = new DataTable();
             dt.Columns.Add("Value");
 
@@ -49,7 +49,7 @@ namespace Sci.Production.Planning
         {
             base.ClickNewAfter();
             this.CurrentMaintain["unit"] = 1;
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
         }
 
         /// <summary>

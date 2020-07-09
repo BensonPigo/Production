@@ -14,8 +14,8 @@ namespace Sci.Production.Cutting
 {
     public partial class P20 : Win.Tems.Input8
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
 
         public P20(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -31,7 +31,7 @@ select '' FTYGroup
 union 
 select distinct FTYGroup 
 from Factory 
-where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+where MDivisionID = '{0}'", Env.User.Keyword);
             DualResult result;
             result = DBProxy.Current.Select(null, querySql, out queryDT);
             if (!result)
@@ -199,7 +199,7 @@ outer apply(select CuttingLayer = isnull(x3.Qty,0)-isnull(acc.AccuCuttingLayer,0
 where a.CutRef = '{e.FormattedValue}'
 and a.CutRef != ''
 --and a.Layer > isnull(acc.AccuCuttingLayer,0)
-and a.MDivisionId = '{Sci.Env.User.Keyword}'
+and a.MDivisionId = '{Env.User.Keyword}'
 ";
                 DualResult result = DBProxy.Current.Select(null, cutrefsql, out dt);
                 if (!result)
@@ -262,7 +262,7 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                                     inner join cuttingoutput_Detail b WITH (NOLOCK) on b.WorkOrderUkey = a.Ukey
                                     where a.CutRef =  '{e.FormattedValue}'
                                     and a.CutRef != ''
-                                    and a.MDivisionId = '{Sci.Env.User.Keyword}'";
+                                    and a.MDivisionId = '{Env.User.Keyword}'";
                         result = DBProxy.Current.Select(null, cutrefsql, out dt);
                         if (!result)
                         {
@@ -339,7 +339,7 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
             #region SizeRatio Dobule Click entery next form
             sizeratio.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left && !this.EditMode)
+                if (e.Button == MouseButtons.Left && !this.EditMode)
                 {
                     this.OpenSubDetailPage();
                 }
@@ -403,7 +403,7 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
             this.CurrentMaintain["cDate"] = DateTime.Today.AddDays(-1);
             this.CurrentMaintain["mDivisionid"] = this.keyWord;
             this.CurrentMaintain["Status"] = "New";
-            this.txtfactoryByM1.Text = Sci.Env.User.Factory;
+            this.txtfactoryByM1.Text = Env.User.Factory;
         }
 
         protected override bool ClickEditBefore()

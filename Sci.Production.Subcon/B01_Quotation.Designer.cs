@@ -28,14 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.txtsubconSupplier1 = new Sci.Production.Class.txtsubconNoConfirm();
-            this.txtsubconSupplier2 = new Sci.Production.Class.txtsubconNoConfirm();
-            this.txtsubconSupplier3 = new Sci.Production.Class.txtsubconNoConfirm();
-            this.txtsubconSupplier4 = new Sci.Production.Class.txtsubconNoConfirm();
-            this.txtcurrencySupplier1Price = new Sci.Production.Class.txtcurrency();
-            this.txtcurrencySupplier2Price = new Sci.Production.Class.txtcurrency();
-            this.txtcurrencySupplier3Price = new Sci.Production.Class.txtcurrency();
-            this.txtcurrencySupplier4Price = new Sci.Production.Class.txtcurrency();
+            this.txtsubconSupplier1 = new Sci.Production.Class.TxtsubconNoConfirm();
+            this.txtsubconSupplier2 = new Sci.Production.Class.TxtsubconNoConfirm();
+            this.txtsubconSupplier3 = new Sci.Production.Class.TxtsubconNoConfirm();
+            this.txtsubconSupplier4 = new Sci.Production.Class.TxtsubconNoConfirm();
+            this.txtcurrencySupplier1Price = new Sci.Production.Class.Txtcurrency();
+            this.txtcurrencySupplier2Price = new Sci.Production.Class.Txtcurrency();
+            this.txtcurrencySupplier3Price = new Sci.Production.Class.Txtcurrency();
+            this.txtcurrencySupplier4Price = new Sci.Production.Class.Txtcurrency();
             this.labelRefno = new Sci.Win.UI.Label();
             this.displayRefno = new Sci.Win.UI.DisplayBox();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
@@ -609,14 +609,14 @@
         private Win.UI.RadioButton radioSupplier1;
         private Win.UI.DisplayBox displayRefno;
         private Win.UI.Label labelRefno;
-        private Class.txtcurrency txtcurrencySupplier4Price;
-        private Class.txtcurrency txtcurrencySupplier3Price;
-        private Class.txtcurrency txtcurrencySupplier2Price;
-        private Class.txtcurrency txtcurrencySupplier1Price;
-        private Class.txtsubconNoConfirm txtsubconSupplier4;
-        private Class.txtsubconNoConfirm txtsubconSupplier3;
-        private Class.txtsubconNoConfirm txtsubconSupplier2;
-        private Class.txtsubconNoConfirm txtsubconSupplier1;
+        private Class.Txtcurrency txtcurrencySupplier4Price;
+        private Class.Txtcurrency txtcurrencySupplier3Price;
+        private Class.Txtcurrency txtcurrencySupplier2Price;
+        private Class.Txtcurrency txtcurrencySupplier1Price;
+        private Class.TxtsubconNoConfirm txtsubconSupplier4;
+        private Class.TxtsubconNoConfirm txtsubconSupplier3;
+        private Class.TxtsubconNoConfirm txtsubconSupplier2;
+        private Class.TxtsubconNoConfirm txtsubconSupplier1;
         private Win.UI.Label label2;
         private Win.UI.DateBox dateQuotation4;
         private Win.UI.DateBox dateQuotation3;

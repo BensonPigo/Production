@@ -22,7 +22,7 @@ namespace Sci.Production.Subcon
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = $"MdivisionID = '{Sci.Env.User.Keyword}'";
+            this.DefaultFilter = $"MdivisionID = '{Env.User.Keyword}'";
             this.gridicon.Append.Enabled = false;
             this.gridicon.Append.Visible = false;
             this.gridicon.Insert.Enabled = false;
@@ -41,8 +41,8 @@ namespace Sci.Production.Subcon
             #region 權限控管
 
             // 檢查是否擁有Confirm or Check權限
-            bool canConfrim = Prgs.GetAuthority(Sci.Env.User.UserID, "P05. Sub-con Requisition", "CanConfirm");
-            bool canCheck = Prgs.GetAuthority(Sci.Env.User.UserID, "P05. Sub-con Requisition", "CanCheck");
+            bool canConfrim = Prgs.GetAuthority(Env.User.UserID, "P05. Sub-con Requisition", "CanConfirm");
+            bool canCheck = Prgs.GetAuthority(Env.User.UserID, "P05. Sub-con Requisition", "CanCheck");
 
             if (canConfrim || canCheck || Env.User.IsAdmin)
             {
@@ -295,7 +295,7 @@ outer apply (
 ) PoQty
 where f.IsProduceFty=1
 and o.category in ('B','S')
-and o.MDivisionID='{Sci.Env.User.Keyword}' 
+and o.MDivisionID='{Env.User.Keyword}' 
 and ot.ArtworkTypeID like '{this.CurrentMaintain["artworktypeid"]}%' 
 and o.Junk=0
 and o.id = '{dr["OrderID"]}'
@@ -349,10 +349,10 @@ group by ReqQty.value,PoQty.value";
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MdivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            this.CurrentMaintain["Reqdate"] = System.DateTime.Today;
-            this.CurrentMaintain["handle"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["MdivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
+            this.CurrentMaintain["Reqdate"] = DateTime.Today;
+            this.CurrentMaintain["handle"] = Env.User.UserID;
             this.CurrentMaintain["Status"] = "New";
             ((DataTable)this.detailgridbs.DataSource).Rows[0].Delete();
         }
@@ -448,7 +448,7 @@ group by ReqQty.value,PoQty.value";
 
             if (this.IsDetailInserting)
             {
-                this.CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "OR", "artworkReq", (DateTime)this.CurrentMaintain["ReqDate"]);
+                this.CurrentMaintain["id"] = MyUtility.GetValue.GetID(Env.User.Factory + "OR", "artworkReq", (DateTime)this.CurrentMaintain["ReqDate"]);
             }
 
             return base.ClickSaveBefore();
@@ -761,8 +761,8 @@ where id = '{this.CurrentMaintain["id"]}'";
 
         private void txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
         {
-            Class.txtartworktype_fty o;
-            o = (Class.txtartworktype_fty)sender;
+            Class.Txtartworktype_fty o;
+            o = (Class.Txtartworktype_fty)sender;
 
             if ((o.Text != o.OldValue) && this.EditMode)
             {

@@ -137,7 +137,7 @@ where ed.ID = '{0}'", masterID);
         {
             base.ClickNewAfter();
             this.CurrentMaintain["Type"] = 1;
-            this.CurrentMaintain["Handle"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["Handle"] = Env.User.UserID;
         }
 
         /// <inheritdoc/>

@@ -35,8 +35,8 @@
             this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.comboStockType = new Sci.Win.UI.ComboBox();
             this.labelStockType = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.lbSPNo = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.comboStatus = new Sci.Win.UI.ComboBox();
@@ -212,8 +212,8 @@
         private Win.UI.TextBox txtSPNoStart;
         private Win.UI.ComboBox comboStockType;
         private Win.UI.Label labelStockType;
-        private Class.txtfactory txtfactory;
-        private Class.txtMdivision txtMdivision;
+        private Class.Txtfactory txtfactory;
+        private Class.TxtMdivision txtMdivision;
         private Win.UI.Label lbSPNo;
         private Win.UI.Label label1;
         private Win.UI.ComboBox comboStatus;

@@ -41,7 +41,7 @@ namespace Sci.Production.Subcon
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select DISTINCT ftygroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
             this.comboReportType.SelectedIndex = 0;
             this.comboStatus.SelectedIndex = 0;
             this.comboPaymentSettled.SelectedIndex = 0;
@@ -688,7 +688,7 @@ OUTER APPLY(
                     break;
             }
 
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
+            var saveDialog = MyExcelPrg.GetSaveFileDialog(MyExcelPrg.Filter_Excel);
 
             if ("Debit Note List".EqualString(this.comboReportType.Text))
             {
@@ -725,7 +725,7 @@ OUTER APPLY(
                 x1.DicDatas.Add("##SD", dtSummary1);
                 dtSummary1.ShowHeader = false;
 
-                x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_R36_DebitNote&ScheduleSummary(LocalSupplier)"));
+                x1.Save(Class.MicrosoftFile.GetName("Subcon_R36_DebitNote&ScheduleSummary(LocalSupplier)"));
                 return true;
             }
             else if ("Detail".EqualString(this.comboReportType.Text))
@@ -755,7 +755,7 @@ OUTER APPLY(
                 x1.DicDatas.Add("##SD", dtDetail1);
                 dtDetail1.ShowHeader = false;
 
-                x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_R36_DebitNoteDetail(LocalSupplier)"));
+                x1.Save(Class.MicrosoftFile.GetName("Subcon_R36_DebitNoteDetail(LocalSupplier)"));
                 return true;
             }
             else if ("Debit Schedule Detail".EqualString(this.comboReportType.Text))
@@ -785,7 +785,7 @@ OUTER APPLY(
                 x1.DicDatas.Add("##SD", dtSchedule1);
                 dtSchedule1.ShowHeader = false;
 
-                x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_R36_DebitScheduleDetail(LocalSupplier)"));
+                x1.Save(Class.MicrosoftFile.GetName("Subcon_R36_DebitScheduleDetail(LocalSupplier)"));
                 return true;
             }
 

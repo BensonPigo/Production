@@ -68,7 +68,7 @@ from dbo.PO_Supp_Detail a WITH (NOLOCK)
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 inner join dbo.Factory f WITH (NOLOCK) on a.FactoryID=f.id
 Where   c.lock = 0 
-        and f.mdivisionid='{0}'", Sci.Env.User.Keyword));
+        and f.mdivisionid='{0}'", Env.User.Keyword));
 
                 if (!MyUtility.Check.Empty(sp))
                 {
@@ -93,18 +93,18 @@ Where   c.lock = 0
                         where mtllocationid = '{0}') ", location));
                 }
 
-                if (!this.txtSeq.checkSeq1Empty())
+                if (!this.txtSeq.CheckSeq1Empty())
                 {
                     strSQLCmd.Append(string.Format(
                         @"
-        and a.seq1 = '{0}'", this.txtSeq.seq1));
+        and a.seq1 = '{0}'", this.txtSeq.Seq1));
                 }
 
-                if (!this.txtSeq.checkSeq2Empty())
+                if (!this.txtSeq.CheckSeq2Empty())
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-        and a.seq2 = '{0}'", this.txtSeq.seq2));
+        and a.seq2 = '{0}'", this.txtSeq.Seq2));
                 }
 
                 switch (fabrictype)
@@ -365,7 +365,7 @@ where exists(
     where   StockType='B' 
             and id = '{0}'
             and junk != '1'
-)", this.txtLocation.Text, Sci.Env.User.Keyword), null))
+)", this.txtLocation.Text, Env.User.Keyword), null))
             {
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");

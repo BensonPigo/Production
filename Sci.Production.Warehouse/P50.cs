@@ -26,7 +26,7 @@ namespace Sci.Production.Warehouse
             this.viewer.Dock = DockStyle.Fill;
             this.Controls.Add(this.viewer);
 
-            this.DefaultFilter = string.Format("Type='F' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("Type='F' and MDivisionID = '{0}'", Env.User.Keyword);
             this.di_fabrictype.Add("F", "Fabric");
             this.di_fabrictype.Add("A", "Accessory");
             this.gridicon.Append.Enabled = false;
@@ -63,8 +63,8 @@ namespace Sci.Production.Warehouse
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "F";
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
@@ -142,7 +142,7 @@ namespace Sci.Production.Warehouse
             // 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "SF", "StockTaking", (DateTime)this.CurrentMaintain["Issuedate"]);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "SF", "StockTaking", (DateTime)this.CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -224,15 +224,15 @@ namespace Sci.Production.Warehouse
             cmds.Add(sp_StocktakingID);
             System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
             sp_mdivision.ParameterName = "@MDivisionid";
-            sp_mdivision.Value = Sci.Env.User.Keyword;
+            sp_mdivision.Value = Env.User.Keyword;
             cmds.Add(sp_mdivision);
             System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
             sp_factory.ParameterName = "@Factoryid";
-            sp_factory.Value = Sci.Env.User.Factory;
+            sp_factory.Value = Env.User.Factory;
             cmds.Add(sp_factory);
             System.Data.SqlClient.SqlParameter sp_loginid = new System.Data.SqlClient.SqlParameter();
             sp_loginid.ParameterName = "@loginid";
-            sp_loginid.Value = Sci.Env.User.UserID;
+            sp_loginid.Value = Env.User.UserID;
             cmds.Add(sp_loginid);
             #endregion
             if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_StocktakingEncode", cmds)))

@@ -121,7 +121,7 @@ from tmpSumDetail",
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -139,7 +139,7 @@ from tmpSumDetail",
             this.ShowWaitMessage("Starting EXCEL...");
 
             // 填內容值
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P41_Print.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P41_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -222,7 +222,7 @@ from tmpSumDetail",
             excel.Cells.EntireRow.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P41_Print");
+            string strExcelName = Class.MicrosoftFile.GetName("Shipping_P41_Print");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

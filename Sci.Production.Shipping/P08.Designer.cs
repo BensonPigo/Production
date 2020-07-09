@@ -64,11 +64,11 @@
             this.displayM = new Sci.Win.UI.DisplayBox();
             this.labelM = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.comboFactory1 = new Sci.Production.Class.comboFactory(this.components);
-            this.txtSserAccountant = new Sci.Production.Class.txtuser();
-            this.txtUserHandle = new Sci.Production.Class.txtuser();
-            this.txtpayterm_ftyTerms = new Sci.Production.Class.txtpayterm_fty();
-            this.txtSubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
+            this.comboFactory1 = new Sci.Production.Class.ComboFactory(this.components);
+            this.txtSserAccountant = new Sci.Production.Class.Txtuser();
+            this.txtUserHandle = new Sci.Production.Class.Txtuser();
+            this.txtpayterm_ftyTerms = new Sci.Production.Class.Txtpayterm_fty();
+            this.txtSubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             this.lbExVoucherID = new Sci.Win.UI.Label();
             this.disExVoucherID = new Sci.Win.UI.DisplayBox();
             this.labReason = new Sci.Win.UI.Label();
@@ -87,7 +87,7 @@
             this.chkIncludeFoundry = new Sci.Win.UI.CheckBox();
             this.lbSisFtyAPID = new Sci.Win.UI.Label();
             this.txtSisFtyAPID = new Sci.Win.UI.TextBox();
-            this.txtcurrency = new Sci.Production.Class.txtcurrency();
+            this.txtcurrency = new Sci.Production.Class.Txtcurrency();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -717,9 +717,9 @@
             this.txtSubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalSuppID", true));
             this.txtSubconSupplier.DisplayBox1Binding = "";
             this.txtSubconSupplier.IsIncludeJunk = false;
-            this.txtSubconSupplier.isMisc = false;
-            this.txtSubconSupplier.isShipping = true;
-            this.txtSubconSupplier.isSubcon = false;
+            this.txtSubconSupplier.IsMisc = false;
+            this.txtSubconSupplier.IsShipping = true;
+            this.txtSubconSupplier.IsSubcon = false;
             this.txtSubconSupplier.Location = new System.Drawing.Point(95, 56);
             this.txtSubconSupplier.Name = "txtSubconSupplier";
             this.txtSubconSupplier.Size = new System.Drawing.Size(170, 23);
@@ -997,8 +997,8 @@
         private Win.UI.Button btnShareExpense;
         private Win.UI.DisplayBox displayVoucherNo;
         private Win.UI.DateBox dateApvDate;
-        private Class.txtuser txtSserAccountant;
-        private Class.txtuser txtUserHandle;
+        private Class.Txtuser txtSserAccountant;
+        private Class.Txtuser txtUserHandle;
         private Win.UI.Label labelVoucherNo;
         private Win.UI.Label labelApvDate;
         private Win.UI.Label labelAccountant;
@@ -1016,8 +1016,8 @@
         private Win.UI.Label labelCurrency;
         private Win.UI.TextBox txtInvoice;
         private Win.UI.TextBox txtRemark;
-        private Class.txtpayterm_fty txtpayterm_ftyTerms;
-        private Class.txtsubconNoConfirm txtSubconSupplier;
+        private Class.Txtpayterm_fty txtpayterm_ftyTerms;
+        private Class.TxtsubconNoConfirm txtSubconSupplier;
         private Win.UI.ComboBox comboType2;
         private Win.UI.ComboBox comboType;
         private Win.UI.DateBox dateDate;
@@ -1031,7 +1031,7 @@
         private Win.UI.Label labelNo;
         private Win.UI.DisplayBox displayM;
         private Win.UI.Label labelM;
-        private Class.comboFactory comboFactory1;
+        private Class.ComboFactory comboFactory1;
         private Win.UI.Label label1;
         private Win.UI.DisplayBox disExVoucherID;
         private Win.UI.Label lbExVoucherID;
@@ -1051,6 +1051,6 @@
         private Win.UI.CheckBox chkIncludeFoundry;
         private Win.UI.TextBox txtSisFtyAPID;
         private Win.UI.Label lbSisFtyAPID;
-        private Class.txtcurrency txtcurrency;
+        private Class.Txtcurrency txtcurrency;
     }
 }

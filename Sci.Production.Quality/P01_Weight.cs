@@ -1,6 +1,5 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Production.Class;
 using System;
 using System.Data;
 using System.Drawing;
@@ -19,8 +18,8 @@ namespace Sci.Production.Quality
     public partial class P01_Weight : Win.Subs.Input4
     {
         private DataRow maindr;
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
         string excelFile;
 
         public P01_Weight(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
@@ -135,7 +134,7 @@ namespace Sci.Production.Quality
         {
             DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings averageWeightM2cell = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ResulCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings ResulCell = Prgs.cellResult.GetGridCell();
             #region Roll
             Rollcell.EditingMouseDown += (s, e) =>
             {
@@ -399,7 +398,7 @@ and not exists
                 this.maindr["WeightInspector"] = this.loginID;
                 #endregion
                 #region 判斷Result 是否要寫入
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(this.maindr);
+                string[] returnstr = Prgs.GetOverallResult_Status(this.maindr);
                 #endregion
                 #region  寫入實體Table
                 updatesql = string.Format(
@@ -416,7 +415,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 							         or id in (select Manager from Pass1 where id = '{0}')
 						  ) tmp
 						  for xml path('')
-						 ), 1, 1, '')", Sci.Env.User.UserID);
+						 ), 1, 1, '')", Env.User.UserID);
                 DBProxy.Current.Select(string.Empty, cmd_leader, out dt_Leader);
                 if (!MyUtility.Check.Empty(dt_Leader)
                     && dt_Leader.Rows.Count > 0)
@@ -428,7 +427,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                                      + Environment.NewLine
                                      + "Please Approve and Check Fabric Inspection";
                     this.ToExcel(true);
-                    var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, ccAddress, subject, this.excelFile, content, false, true);
+                    var email = new MailTo(Env.Cfg.MailFrom, mailto, ccAddress, subject, this.excelFile, content, false, true);
                     email.ShowDialog(this);
                 }
                 #endregion
@@ -447,7 +446,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 this.maindr["WeightInspector"] = string.Empty;
 
                 // 判斷Result and Status 必須先確認Weight="", 判斷才會正確
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(this.maindr);
+                string[] returnstr = Prgs.GetOverallResult_Status(this.maindr);
                 this.maindr["Result"] = returnstr[0];
                 this.maindr["Status"] = returnstr[1];
                 #endregion
@@ -552,7 +551,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), this.displaySP.Text, this.displayRefno.Text, this.displayColor.Text);
 
                 this.ToExcel(true);
-                var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailCC, subject, this.excelFile, content, false, true);
+                var email = new MailTo(Env.Cfg.MailFrom, mailto, mailCC, subject, this.excelFile, content, false, true);
                 email.ShowDialog(this);
             }
             #endregion
@@ -625,7 +624,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 }
             }
             #endregion
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P01_Weight_Report.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_P01_Weight_Report.xltx"); // 預先開啟excel app
             objApp.Visible = false;
             MyUtility.Excel.CopyToXls(dt, string.Empty, "Quality_P01_Weight_Report.xltx", 5, false, null, objApp);      // 將datatable copy to excel
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
@@ -649,7 +648,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             objApp.Cells.EntireRow.AutoFit();       ////自動欄高
 
             #region Save Excel
-            this.excelFile = Sci.Production.Class.MicrosoftFile.GetName("QA_P01_Weight");
+            this.excelFile = Class.MicrosoftFile.GetName("QA_P01_Weight");
             objApp.ActiveWorkbook.SaveAs(this.excelFile);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
@@ -883,14 +882,14 @@ where bof.id='{this.maindr["POID"].ToString()}' and p.seq1='{this.maindr["Seq1"]
                 }
             }
 
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("QA_P01_Weight");
+            string strExcelName = Class.MicrosoftFile.GetName("QA_P01_Weight");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.ActiveWorkbook.Close(true, Type.Missing, Type.Missing);
             objApp.Quit();
             Marshal.ReleaseComObject(exlSheets);
             Marshal.ReleaseComObject(objApp);
 
-            string strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("QA_P01_Weight", Sci.Production.Class.PDFFileNameExtension.PDF);
+            string strPDFFileName = Class.MicrosoftFile.GetName("QA_P01_Weight", Class.PDFFileNameExtension.PDF);
             if (ConvertToPDF.ExcelToPDF(strExcelName, strPDFFileName))
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo(strPDFFileName);

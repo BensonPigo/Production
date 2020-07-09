@@ -4,10 +4,16 @@ using Sci.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class txtshipmode : Win.UI.ComboBox
+    /// <summary>
+    /// Txtshipmode
+    /// </summary>
+    public partial class Txtshipmode : Win.UI.ComboBox
     {
         private string useFunction;
 
+        /// <summary>
+        /// ShipMode.UseFunction
+        /// </summary>
         [Category("Custom Properties")]
         public string UseFunction
         {
@@ -32,10 +38,10 @@ namespace Sci.Production.Class
                     }
 
                     Ict.DualResult cbResult;
-                    DataTable ShipModeTable = new DataTable();
-                    if (cbResult = DBProxy.Current.Select(null, sqlCMD, out ShipModeTable))
+                    DataTable shipModeTable = new DataTable();
+                    if (cbResult = DBProxy.Current.Select(null, sqlCMD, out shipModeTable))
                     {
-                        this.DataSource = ShipModeTable;
+                        this.DataSource = shipModeTable;
                         this.DisplayMember = "ID";
                         this.ValueMember = "ID";
                     }
@@ -43,7 +49,10 @@ namespace Sci.Production.Class
             }
         }
 
-        public txtshipmode()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtshipmode"/> class.
+        /// </summary>
+        public Txtshipmode()
         {
             this.Size = new System.Drawing.Size(80, 24);
         }

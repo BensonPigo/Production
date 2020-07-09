@@ -50,7 +50,7 @@ Where cuttingsp = '{0}'",
 
             DBProxy.Current.Select(null, string.Format("SELECT *,isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList FROM ORDERS o WITH (NOLOCK)  WHERE ID = '{0}'", this.cuttingid), out this.ODT);
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private void btnBreakdown_Click(object sender, EventArgs e)

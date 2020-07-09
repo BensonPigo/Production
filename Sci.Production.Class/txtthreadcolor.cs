@@ -4,8 +4,21 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtthreadcolor : Win.UI.TextBox
+    /// <summary>
+    /// Txtthreadcolor
+    /// </summary>
+    public partial class Txtthreadcolor : Win.UI.TextBox
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtthreadcolor"/> class.
+        /// </summary>
+        public Txtthreadcolor()
+        {
+            this.Width = 90;
+            this.IsSupportSytsemContextMenu = false;
+        }
+
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
@@ -20,6 +33,7 @@ namespace Sci.Production.Class
             this.Text = item.GetSelectedString();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -42,12 +56,6 @@ namespace Sci.Production.Class
                     MyUtility.Msg.WarningBox(string.Format("Thread Color already junk, you can't choose!!"));
                 }
             }
-        }
-
-        public txtthreadcolor()
-        {
-            this.Width = 90;
-            this.IsSupportSytsemContextMenu = false;
         }
     }
 }

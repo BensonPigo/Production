@@ -30,8 +30,8 @@ namespace Sci.Production.Subcon
         {
             this.InitializeComponent();
             this.comboload();
-            this.comboFactory.setDataSource();
-            this.comboRFIDProcessLocation.setDataSource();
+            this.comboFactory.SetDataSource();
+            this.comboRFIDProcessLocation.SetDataSource();
             this.comboRFIDProcessLocation.SelectedIndex = 0;
         }
 
@@ -85,7 +85,7 @@ namespace Sci.Production.Subcon
         // 非同步讀取資料
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel
@@ -380,7 +380,7 @@ drop table #result
             }
 
             // 預先開啟excel app
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R41-1 Replacement Bundle tracking list(RFID).xltx");
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R41-1 Replacement Bundle tracking list(RFID).xltx");
 
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
             int num = 100000;
@@ -402,7 +402,7 @@ drop table #result
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R41-1 Replacement Bundle tracking list(RFID)");
+            string strExcelName = Class.MicrosoftFile.GetName("Subcon_R41-1 Replacement Bundle tracking list(RFID)");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             if (objSheets != null)
             {

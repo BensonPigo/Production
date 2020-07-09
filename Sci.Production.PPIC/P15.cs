@@ -98,7 +98,7 @@ namespace Sci.Production.PPIC
 
                 if (!this.checkBoxRotate.Checked)
                 {
-                    string fullpath = System.Windows.Forms.Application.StartupPath + ".\\Sci.Production.Warehouse.dll";
+                    string fullpath = Application.StartupPath + ".\\Sci.Production.Warehouse.dll";
                     var assemblys = Assembly.LoadFile(fullpath);
                     var types = assemblys.GetTypes().ToList();
                     var myClass = types.Where(x => x.FullName == (dr["FabricType"].Equals("Fabric") ? "Sci.Production.Warehouse.P16" : "Sci.Production.Warehouse.P15")).First();

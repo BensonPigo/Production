@@ -7,17 +7,28 @@ using Ict;
 
 namespace Sci.Production.Class
 {
-    public partial class userData : Form
+    /// <summary>
+    /// UserData
+    /// </summary>
+    public partial class UserData : Form
     {
         private string sql;
         private List<SqlParameter> sqlPar;
         private DataTable dt;
 
-        public string errMsg { get; set; }
+        /// <summary>
+        /// Err Msg
+        /// </summary>
+        public string ErrMsg { get; set; }
 
-        public userData(string sql, List<SqlParameter> sqlPar)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserData"/> class.
+        /// </summary>
+        /// <param name="sql">sqlCmd</param>
+        /// <param name="sqlPar">SqlParameter</param>
+        public UserData(string sql, List<SqlParameter> sqlPar)
         {
-            this.errMsg = null;
+            this.ErrMsg = null;
             this.sql = sql;
             this.sqlPar = sqlPar;
             this.InitializeComponent();
@@ -35,12 +46,12 @@ namespace Sci.Production.Class
                 }
                 else
                 {
-                    this.errMsg = "Data not found!";
+                    this.ErrMsg = "Data not found!";
                 }
             }
             else
             {
-                this.errMsg = "Sql connection fail!\r\n" + result.ToString();
+                this.ErrMsg = "Sql connection fail!\r\n" + result.ToString();
             }
         }
     }

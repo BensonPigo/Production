@@ -121,7 +121,7 @@ order by num";
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private void GroupFillRateCheck()
@@ -328,7 +328,7 @@ from (
                     }
 
                     #region Save & Show Excel
-                    string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("P10_ToExcel");
+                    string strExcelName = Class.MicrosoftFile.GetName("P10_ToExcel");
                     myBook.SaveAs(strExcelName);
                     myBook.Close();
                     myExcel.Quit();
@@ -572,7 +572,7 @@ from (
                     mySheet.Shapes.Item(mySheet.Shapes.Count).Left = 1;
 
                     #region Save & Show Excel
-                    string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("P10_ToExcel");
+                    string strExcelName = Class.MicrosoftFile.GetName("P10_ToExcel");
                     myBook.SaveAs(strExcelName);
                     myBook.Close();
                     myExcel.Quit();

@@ -254,7 +254,7 @@ order by TRY_CONVERT(int, SUBSTRING(vdd.NLCode, 3, LEN(vdd.NLCode))), vdd.NLCode
                 {
                     if (!this.EditMode)
                     {
-                        if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                        if (e.Button == MouseButtons.Left)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             P40_Detail callNextForm = new P40_Detail(this.CurrentMaintain, MyUtility.Convert.GetString(dr["NLCode"]));
@@ -415,7 +415,7 @@ Brand, RefNo, HSCode, Customs Code
             // Get ID
             if (this.IsDetailInserting)
             {
-                string newID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "ID", "VNImportDeclaration", Convert.ToDateTime(this.CurrentMaintain["CDate"]), 2, "ID", null);
+                string newID = MyUtility.GetValue.GetID(Env.User.Keyword + "ID", "VNImportDeclaration", Convert.ToDateTime(this.CurrentMaintain["CDate"]), 2, "ID", null);
                 if (MyUtility.Check.Empty(newID))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -464,7 +464,7 @@ when not matched by source and t.id in(select id from #tmps) then
             DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, string.Empty, insertuUdataDetail, out dt);
             if (!result)
             {
-                return Result.F(result.ToString());
+                return Ict.Result.F(result.ToString());
             }
 
             return base.ClickSavePost();
@@ -477,7 +477,7 @@ when not matched by source and t.id in(select id from #tmps) then
             DualResult reslut = DBProxy.Current.Execute(null, sqldelete);
             if (!reslut)
             {
-                return Result.F(reslut.ToString());
+                return Ict.Result.F(reslut.ToString());
             }
 
             return base.ClickDelete();
@@ -489,7 +489,7 @@ when not matched by source and t.id in(select id from #tmps) then
             base.ClickConfirm();
             string updateCmds = string.Format(
                 "update VNImportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}'",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmds);
@@ -507,7 +507,7 @@ when not matched by source and t.id in(select id from #tmps) then
 
             string updateCmds = string.Format(
                 "update VNImportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}'",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmds);
@@ -737,7 +737,7 @@ where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{dr["NLCode"]}
                 {
                     P40_AssignNLCode callNextForm = new P40_AssignNLCode(this.NoNLCode, this.NotInPO, this.UnitNotFound, this.CurrentMaintain);
                     DialogResult result = callNextForm.ShowDialog(this);
-                    if (result == System.Windows.Forms.DialogResult.OK)
+                    if (result == DialogResult.OK)
                     {
                         this.NotInPO = callNextForm.NotInPo;
                         callNextForm.Dispose();
@@ -880,7 +880,7 @@ where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{dr["NLCode"]}
                     {
                         P40_AssignNLCode callNextForm = new P40_AssignNLCode(this.NoNLCode, this.NotInPO, this.UnitNotFound, this.CurrentMaintain);
                         DialogResult result = callNextForm.ShowDialog(this);
-                        if (result == System.Windows.Forms.DialogResult.OK)
+                        if (result == DialogResult.OK)
                         {
                             this.NotInPO = callNextForm.NotInPo;
                             callNextForm.Dispose();
@@ -907,7 +907,7 @@ where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{dr["NLCode"]}
                     {
                         P40_AssignNLCode callNextForm = new P40_AssignNLCode(this.NoNLCode, this.NotInPO, this.UnitNotFound, this.CurrentMaintain);
                         DialogResult result = callNextForm.ShowDialog(this);
-                        if (result == System.Windows.Forms.DialogResult.OK)
+                        if (result == DialogResult.OK)
                         {
                             this.NotInPO = callNextForm.NotInPo;
                             callNextForm.Dispose();

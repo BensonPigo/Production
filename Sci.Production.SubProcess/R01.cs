@@ -109,7 +109,7 @@ from (
             int intStdTms = Convert.ToInt32(MyUtility.GetValue.Lookup("select top 1 stdTms from System"));
             int intWorkingDate = this.dtPrint.AsEnumerable().Where(row => row["TotalCPU"].EqualDecimal(0) == false).Count();
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\SubProcess_R01.xltx");
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\SubProcess_R01.xltx");
             Excel.Worksheet workSheet = objApp.Sheets[1];
 
             for (int i = 1; i <= this.dtPrint.Rows.Count; i++)
@@ -131,7 +131,7 @@ from (
             workSheet.Cells[7, 11] = intWorkingDate;
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("SubProcess_R01");
+            string strExcelName = Class.MicrosoftFile.GetName("SubProcess_R01");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

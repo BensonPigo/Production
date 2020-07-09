@@ -155,7 +155,7 @@ outer apply(
 	),1,1,'')
 ) o1
 where p2.CTNStartNo<>''
-and p1.Mdivisionid='{Sci.Env.User.Keyword}'
+and p1.Mdivisionid='{Env.User.Keyword}'
 and p1.Type in ('B','L')
 and p2.TransferCFADate is null
 and p2.DisposeFromClog= 0
@@ -268,14 +268,14 @@ select * from #tmp
 where CFANeedInsp = 1 ", out dtToExcel);
             if (dtToExcel != null && dtToExcel.Rows.Count > 0)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P22.xltx"); // 預先開啟excel app;
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_P22.xltx"); // 預先開啟excel app;
                 MyUtility.Excel.CopyToXls(dtToExcel, string.Empty, "Quality_P22.xltx", 2, false, null, objApp);
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 objApp.Cells.EntireColumn.AutoFit();    // 自動欄寬
                 objApp.Cells.EntireRow.AutoFit();       ////自動欄高
-                Microsoft.Office.Interop.Excel.Range rangeColumnA = objSheets.Columns["A", System.Type.Missing];
+                Microsoft.Office.Interop.Excel.Range rangeColumnA = objSheets.Columns["A", Type.Missing];
                 rangeColumnA.Hidden = true;
-                this.excelFile = Sci.Production.Class.MicrosoftFile.GetName("Quality_P22");
+                this.excelFile = Class.MicrosoftFile.GetName("Quality_P22");
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(this.excelFile);
                 workbook.Close();
@@ -288,7 +288,7 @@ where CFANeedInsp = 1 ", out dtToExcel);
                 {
                     string userEmail = MyUtility.GetValue.Lookup($@"select email from pass1 where id='{Env.User.UserID}'");
 
-                    var email = new MailTo(Sci.Env.Cfg.MailFrom, dr["ToAddress"].ToString(), dr["CCAddress"].ToString() + ";" + userEmail, "[" + DateTime.Now.ToString("yyyy-MM-dd") + "] " + dr["Subject"].ToString(), this.excelFile, dr["Content"].ToString(), false, true);
+                    var email = new MailTo(Env.Cfg.MailFrom, dr["ToAddress"].ToString(), dr["CCAddress"].ToString() + ";" + userEmail, "[" + DateTime.Now.ToString("yyyy-MM-dd") + "] " + dr["Subject"].ToString(), this.excelFile, dr["Content"].ToString(), false, true);
                     email.ShowDialog(this);
                 }
                 else

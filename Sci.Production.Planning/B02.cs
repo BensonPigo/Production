@@ -99,7 +99,7 @@ namespace Sci.Production.Planning
             #endregion
 
             bool flag = false;
-            Sci.Data.DBProxy.Current.Exists(null, s1, cmds, out flag);
+            Data.DBProxy.Current.Exists(null, s1, cmds, out flag);
             if (flag)
             {
                 this.NeedCheck = false;

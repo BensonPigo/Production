@@ -39,7 +39,7 @@ namespace Sci.Production.PPIC
             this.comboFactory.DisplayMember = "ID";
             this.comboReportType.SelectedIndex = 0;
             this.comboStatus.SelectedIndex = 6;
-            this.comboMDivision.setDefalutIndex(true);
+            this.comboMDivision.SetDefalutIndex(true);
         }
 
         /// <summary>
@@ -245,11 +245,11 @@ drop table #tmpBaseICR
 
             if (this.comboReportType.Text == "Detail List")
             {
-                com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\PPIC_R18_DetailList.xltx", objApp);
+                com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\PPIC_R18_DetailList.xltx", objApp);
             }
             else
             {
-                com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\PPIC_R18_RespDeptList.xltx", objApp);
+                com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\PPIC_R18_RespDeptList.xltx", objApp);
             }
 
             com.WriteTable(this.dtResult, 2);

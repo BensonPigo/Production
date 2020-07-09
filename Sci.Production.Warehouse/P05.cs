@@ -35,7 +35,7 @@ namespace Sci.Production.Warehouse
                string canUse = MyUtility.GetValue.Lookup($@"
 SELECT DISTINCT 1 FROM Pass1 p1 
 INNER JOIN PAss2 p2 ON p1.FKPass0=p2.FKPass0  AND p2.MenuName='Warehouse' AND ( (p2.BarPrompt='P02. Import schedule' AND p2.Used='Y') or (p1.IsAdmin=1 or p1.IsMis =1) )
-WHERE p1.ID ='{Sci.Env.User.UserID}' 
+WHERE p1.ID ='{Env.User.UserID}' 
 ");
                if (MyUtility.Check.Empty(canUse))
                 {
@@ -62,7 +62,7 @@ WHERE p1.ID ='{Sci.Env.User.UserID}'
 
                ToolStripMenuItem P02MenuItem = null;
 
-               foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
+               foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
                 {
                     if (toolMenuItem.Text.EqualString("Warehouse"))
                     {
@@ -91,7 +91,7 @@ WHERE p1.ID ='{Sci.Env.User.UserID}'
                 string canUse = MyUtility.GetValue.Lookup($@"
 SELECT DISTINCT 1 FROM Pass1 p1 
 INNER JOIN PAss2 p2 ON p1.FKPass0=p2.FKPass0  AND p2.MenuName='Warehouse' AND ( (p2.BarPrompt='P02. Import schedule' AND p2.Used='Y') or (p1.IsAdmin=1 or p1.IsMis =1) )
-WHERE p1.ID ='{Sci.Env.User.UserID}' 
+WHERE p1.ID ='{Env.User.UserID}' 
 ");
                 if (MyUtility.Check.Empty(canUse))
                 {
@@ -118,7 +118,7 @@ WHERE p1.ID ='{Sci.Env.User.UserID}'
 
                 ToolStripMenuItem P02MenuItem = null;
 
-                foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
+                foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
                 {
                     if (toolMenuItem.Text.EqualString("Warehouse"))
                     {

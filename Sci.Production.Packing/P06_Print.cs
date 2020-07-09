@@ -114,7 +114,7 @@ namespace Sci.Production.Packing
                 e.Report.ReportDataSource = this.printData;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>

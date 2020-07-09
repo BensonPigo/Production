@@ -21,12 +21,12 @@ namespace Sci.Production.Tools
             this.InitializeComponent();
 
             this.EditMode = true;
-            this.txtAccount.Text = Sci.Env.User.UserID;
+            this.txtAccount.Text = Env.User.UserID;
             this.txtAccount.Enabled = false;
-            this.txtPassword.Text = Sci.Env.User.UserPassword;
+            this.txtPassword.Text = Env.User.UserPassword;
             this.txtPassword.Enabled = false;
 
-            this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.DialogResult = DialogResult.Cancel;
         }
 
         protected override void OnFormLoaded()
@@ -61,7 +61,7 @@ namespace Sci.Production.Tools
 
             DualResult result;
             DataTable dtPass1;
-            string cmd = string.Format("SELECT ID, Factory FROM Pass1 WHERE ID = '{0}'", Sci.Env.User.UserID);
+            string cmd = string.Format("SELECT ID, Factory FROM Pass1 WHERE ID = '{0}'", Env.User.UserID);
             if (!(result = DBProxy.Current.Select(null, cmd, out dtPass1)))
             {
                 MyUtility.Msg.ErrorBox(result.ToString());
@@ -81,7 +81,7 @@ namespace Sci.Production.Tools
                 this.comboFactory.DataSource = new BindingSource(factoryOption, null);
                 this.comboFactory.ValueMember = "Key";
                 this.comboFactory.DisplayMember = "Value";
-                this.comboFactory.SelectedValue = Sci.Env.User.Factory;
+                this.comboFactory.SelectedValue = Env.User.Factory;
             }
         }
 
@@ -95,9 +95,9 @@ namespace Sci.Production.Tools
             }
             else
             {
-                UserInfo user = (UserInfo)Sci.Env.User;
+                UserInfo user = (UserInfo)Env.User;
                 string newFactory = (string)this.comboFactory.SelectedValue;
-                bool isFactoryChanged = !newFactory.EqualString(Sci.Env.User.Factory);
+                bool isFactoryChanged = !newFactory.EqualString(Env.User.Factory);
 
                 // if (!(result = DBProxy.Current.Select(null, string.Format("SELECT id FROM MDivision WHERE ID = '{0}'", (string)this.comboBox1.SelectedValue), out dtFactory)))
                 if (!(result = DBProxy.Current.Select(null, string.Format("SELECT MDivisionid FROM Factory WHERE ID = '{0}'", newFactory), out dtFactory)))
@@ -120,8 +120,8 @@ namespace Sci.Production.Tools
 
                 user.Factory = (string)this.comboFactory.SelectedValue;
                 this.DialogResult = isFactoryChanged
-                        ? System.Windows.Forms.DialogResult.OK
-                        : System.Windows.Forms.DialogResult.Cancel;
+                        ? DialogResult.OK
+                        : DialogResult.Cancel;
                 Env.User = user;
 
                 // Sci.Env.App.Text = string.Format("Production Management System-({2})-{0}-({1})", Sci.Env.User.Factory, Sci.Env.User.UserID, Environment.MachineName);
@@ -129,10 +129,10 @@ namespace Sci.Production.Tools
                 var appDirName = new DirectoryInfo(Application.StartupPath).Name;
                 string userData = string.Format(
                     "-{0}-({1}))",
-                    Sci.Env.User.Factory,
-                    Sci.Env.User.UserID);
+                    Env.User.Factory,
+                    Env.User.UserID);
 
-                Sci.Env.App.Text = ConfigurationManager.AppSettings["formTextSufix"] + userData;
+                Env.App.Text = ConfigurationManager.AppSettings["formTextSufix"] + userData;
 
                 this.Close();
             }
@@ -140,7 +140,7 @@ namespace Sci.Production.Tools
 
         private void btnExit_Click(object sender, EventArgs e)
         {
-            this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.DialogResult = DialogResult.Cancel;
             if (ConfigurationManager.AppSettings["TaipeiServer"] != string.Empty)
             {
                 DBProxy.Current.DefaultModuleName = this.OriginalDatasource;
@@ -170,7 +170,7 @@ namespace Sci.Production.Tools
             DualResult result;
             DataTable dtPass1;
             DataRow drpass1;
-            string cmd = string.Format("SELECT ID, Factory FROM Pass1 WHERE ID = '{0}'", Sci.Env.User.UserID);
+            string cmd = string.Format("SELECT ID, Factory FROM Pass1 WHERE ID = '{0}'", Env.User.UserID);
             if (!(result = DBProxy.Current.Select(null, cmd, out dtPass1)))
             {
                 this.Close();

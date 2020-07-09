@@ -14,7 +14,7 @@ namespace Sci.Production.SubProcess
     /// </summary>
     public partial class B02 : Win.Tems.Input6
     {
-        private string user = Sci.Env.User.UserID;
+        private string user = Env.User.UserID;
         private DataTable dtSMV = new DataTable();
         private int newUkey = 0;
 
@@ -172,7 +172,7 @@ Order by Seq
                     }
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     string brand = MyUtility.Convert.GetString(this.CurrentMaintain["brandid"]);
                     string style = MyUtility.Convert.GetString(this.CurrentMaintain["id"]);
@@ -510,7 +510,7 @@ values({MyUtility.Convert.GetInt(dtDetail.Rows[i]["ukey"])},'{this.dtSMV.Rows[ii
                     {
                         transactionscope.Dispose();
                         MyUtility.Msg.WarningBox(dualResult.ToString());
-                        return Result.True;
+                        return Ict.Result.True;
                     }
 
                     transactionscope.Complete();
@@ -518,7 +518,7 @@ values({MyUtility.Convert.GetInt(dtDetail.Rows[i]["ukey"])},'{this.dtSMV.Rows[ii
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -533,7 +533,7 @@ values({MyUtility.Convert.GetInt(dtDetail.Rows[i]["ukey"])},'{this.dtSMV.Rows[ii
             pass1Schema.IsSupportEditDate = false;
             pass1Schema.IsSupportEditName = false;
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>

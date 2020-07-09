@@ -15,8 +15,8 @@ namespace Sci.Production.Cutting
 {
     public partial class P05 : Win.Tems.Input6
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
         string fileNameExt;
         string pathName;
 
@@ -38,7 +38,7 @@ select '' FTYGroup
 union 
 select distinct FTYGroup 
 from Factory 
-where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+where MDivisionID = '{0}'", Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;
@@ -451,8 +451,8 @@ DROP TABLE #temp1,#temp2
             DualResult dResult = DBProxy.Current.Select(null, cmdsql, out ExcelTb);
             if (dResult)
             {
-                string str = Sci.Env.Cfg.XltPathDir;
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P05.xltx"); // 預先開啟excel app
+                string str = Env.Cfg.XltPathDir;
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P05.xltx"); // 預先開啟excel app
 
                 // Microsoft.Office.Interop.Excel._Workbook objBook = null;
 
@@ -466,8 +466,8 @@ DROP TABLE #temp1,#temp2
                     objSheet.Cells[3, 2] = this.CurrentMaintain["id"].ToString();
                     objSheet.Cells[3, 4] = Convert.ToDateTime(this.CurrentMaintain["EstCutDate"]).ToShortDateString();
                     objSheet.Cells[3, 6] = this.CurrentMaintain["CutCellid"].ToString();
-                    objSheet.Cells[3, 8] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(this.CurrentMaintain["AddName"]);
-                    this.pathName = Sci.Production.Class.MicrosoftFile.GetName("Bulk_Marker_Request");
+                    objSheet.Cells[3, 8] = PublicPrg.Prgs.GetAddOrEditBy(this.CurrentMaintain["AddName"]);
+                    this.pathName = Class.MicrosoftFile.GetName("Bulk_Marker_Request");
                     objBook.SaveAs(this.pathName);
                     if (autoSave)
                     {
@@ -548,7 +548,7 @@ DROP TABLE #temp1,#temp2
             DataRow seekdr;
             if (MyUtility.Check.Seek("select * from mailto WITH (NOLOCK) where Id='004'", out seekdr))
             {
-                string mailFrom = Sci.Env.Cfg.MailFrom;
+                string mailFrom = Env.Cfg.MailFrom;
                 string mailto = seekdr["ToAddress"].ToString();
                 string cc = seekdr["ccAddress"].ToString();
                 string content = seekdr["content"].ToString();

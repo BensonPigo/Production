@@ -44,7 +44,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.chkIsLackingAndReplacement = new Sci.Win.UI.CheckBox();
             this.txtFullName = new Sci.Win.UI.TextBox();
-            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
+            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.Txtartworktype_fty();
             this.chkIsBoundedProcess = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -274,8 +274,8 @@
             // txtartworktype_ftyArtworkType
             // 
             this.txtartworktype_ftyArtworkType.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_ftyArtworkType.cClassify = "";
-            this.txtartworktype_ftyArtworkType.cSubprocess = "t";
+            this.txtartworktype_ftyArtworkType.CClassify = "";
+            this.txtartworktype_ftyArtworkType.CSubprocess = "t";
             this.txtartworktype_ftyArtworkType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
             this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(162, 112);
@@ -338,7 +338,7 @@
         private Win.UI.TextBox txtID;
         private Win.UI.Label labelBcsDate;
         private Win.UI.TextBox txtBcsDate;
-        private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
+        private Class.Txtartworktype_fty txtartworktype_ftyArtworkType;
         private Win.UI.Label label1;
         private Win.UI.ComboBox combInOutRule;
         private Win.UI.Label label2;

@@ -43,7 +43,7 @@ namespace Sci.Production.Shipping
                 {
                     if (this.EditMode)
                     {
-                        if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                        if (e.Button == MouseButtons.Right)
                         {
                             if (e.RowIndex != -1)
                             {
@@ -297,7 +297,7 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'",
             // Get ID
             if (this.IsDetailInserting)
             {
-                string newID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "ED", "VNExportDeclaration", Convert.ToDateTime(this.CurrentMaintain["CDate"]), 2, "ID", null);
+                string newID = MyUtility.GetValue.GetID(Env.User.Keyword + "ED", "VNExportDeclaration", Convert.ToDateTime(this.CurrentMaintain["CDate"]), 2, "ID", null);
                 if (MyUtility.Check.Empty(newID))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -329,7 +329,7 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'",
             }
 
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Junk > this data?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
@@ -353,7 +353,7 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 updateCmds.Add(string.Format("update VNConsumption set PulloutQty = PulloutQty-{0} where CustomSP = '{1}' and VNContractID = '{2}';", MyUtility.Convert.GetString(dr["ExportQty"]), MyUtility.Convert.GetString(dr["CustomSP"]), MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"])));
             }
 
-            updateCmds.Add(string.Format("update VNExportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'Junked' where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            updateCmds.Add(string.Format("update VNExportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'Junked' where ID = '{1}';", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
@@ -432,7 +432,7 @@ isnull((select sum(ExportQty) as ExportQty from VNExportDeclaration_Detail WITH 
             if (qty != "0")
             {
                 DialogResult buttonResult = MyUtility.Msg.WarningBox("Declaration Qty is not equal to Garment Booking Qty. Are you sure you want to < Confirm > this data?", "Warning", MessageBoxButtons.YesNo);
-                if (buttonResult == System.Windows.Forms.DialogResult.No)
+                if (buttonResult == DialogResult.No)
                 {
                     return;
                 }
@@ -457,7 +457,7 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 updateCmds.Add(string.Format("update VNConsumption set PulloutQty = PulloutQty+{0} where CustomSP = '{1}' and VNContractID = '{2}';", MyUtility.Convert.GetString(dr["ExportQty"]), MyUtility.Convert.GetString(dr["CustomSP"]), MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"])));
             }
 
-            updateCmds.Add(string.Format("update VNExportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            updateCmds.Add(string.Format("update VNExportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}';", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
@@ -490,7 +490,7 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 updateCmds.Add(string.Format("update VNConsumption set PulloutQty = PulloutQty-{0} where CustomSP = '{1}' and VNContractID = '{2}';", MyUtility.Convert.GetString(dr["ExportQty"]), MyUtility.Convert.GetString(dr["CustomSP"]), MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"])));
             }
 
-            updateCmds.Add(string.Format("update VNExportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            updateCmds.Add(string.Format("update VNExportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}';", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)

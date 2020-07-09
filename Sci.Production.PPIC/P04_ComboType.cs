@@ -38,7 +38,7 @@ namespace Sci.Production.PPIC
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {

@@ -4,10 +4,23 @@ using Sci.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class txtFinanceEnReason : Win.UI.ComboBox
+    /// <summary>
+    /// TxtFinanceEnReason
+    /// </summary>
+    public partial class TxtFinanceEnReason : Win.UI.ComboBox
     {
         private string type;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TxtFinanceEnReason"/> class.
+        /// </summary>
+        public TxtFinanceEnReason()
+        {
+        }
+
+        /// <summary>
+        /// ReasonType ID
+        /// </summary>
         [Category("Custom Properties")]
         public string ReasonTypeID
         {
@@ -34,10 +47,6 @@ namespace Sci.Production.Class
                     }
                 }
             }
-        }
-
-        public txtFinanceEnReason()
-        {
         }
     }
 }

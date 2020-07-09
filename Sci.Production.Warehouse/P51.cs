@@ -22,7 +22,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("Type='B' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("Type='B' and MDivisionID = '{0}'", Env.User.Keyword);
             this.di_fabrictype.Add("F", "Fabric");
             this.di_fabrictype.Add("A", "Accessory");
             this.di_fabrictype.Add("O", "Other");
@@ -56,8 +56,8 @@ namespace Sci.Production.Warehouse
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "B";
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
@@ -149,7 +149,7 @@ namespace Sci.Production.Warehouse
             // 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "SB", "StockTaking", (DateTime)this.CurrentMaintain["Issuedate"]);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "SB", "StockTaking", (DateTime)this.CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -268,7 +268,7 @@ namespace Sci.Production.Warehouse
                         if (!MyUtility.Check.Seek(
                             string.Format(
                             Prgs.selePoItemSqlCmd() +
-                                    @"and f.MDivisionID = '{1}' and p.seq1 ='{2}' and p.seq2 = '{3}'", this.CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
+                                    @"and f.MDivisionID = '{1}' and p.seq1 ='{2}' and p.seq2 = '{3}'", this.CurrentDetailData["poid"], Env.User.Keyword, seq[0], seq[1]), out dr, null))
                         {
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data not found!", "Seq");
@@ -409,7 +409,7 @@ namespace Sci.Production.Warehouse
 
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-            .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: false, alignment: null, CheckMDivisionID: true) // 0
+            .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: false, alignment: null, checkMDivisionID: true) // 0
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: false, settings: ts) // 1
             .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: false, settings: ts2) // 2
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
@@ -455,15 +455,15 @@ namespace Sci.Production.Warehouse
             cmds.Add(sp_StocktakingID);
             System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
             sp_mdivision.ParameterName = "@MDivisionid";
-            sp_mdivision.Value = Sci.Env.User.Keyword;
+            sp_mdivision.Value = Env.User.Keyword;
             cmds.Add(sp_mdivision);
             System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
             sp_factory.ParameterName = "@Factoryid";
-            sp_factory.Value = Sci.Env.User.Factory;
+            sp_factory.Value = Env.User.Factory;
             cmds.Add(sp_factory);
             System.Data.SqlClient.SqlParameter sp_loginid = new System.Data.SqlClient.SqlParameter();
             sp_loginid.ParameterName = "@loginid";
-            sp_loginid.Value = Sci.Env.User.UserID;
+            sp_loginid.Value = Env.User.UserID;
             cmds.Add(sp_loginid);
             #endregion
             if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_StocktakingEncode", cmds)))

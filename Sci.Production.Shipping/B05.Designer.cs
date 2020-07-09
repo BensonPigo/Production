@@ -32,7 +32,7 @@
             this.labelBrand = new Sci.Win.UI.Label();
             this.displayEditDate = new Sci.Win.UI.DisplayBox();
             this.labelEditDate = new Sci.Win.UI.Label();
-            this.txtuserShipLeader = new Sci.Production.Class.txtuser();
+            this.txtuserShipLeader = new Sci.Production.Class.Txtuser();
             this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -145,7 +145,7 @@
         private Win.UI.DisplayBox displayBrand;
         private Win.UI.Label labelBrand;
         private Win.UI.Label label1;
-        private Class.txtuser txtuserShipLeader;
+        private Class.Txtuser txtuserShipLeader;
         private Win.UI.DisplayBox displayEditDate;
         private Win.UI.Label labelEditDate;
     }

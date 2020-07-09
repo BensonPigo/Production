@@ -19,7 +19,7 @@ namespace Sci.Production.PPIC
         public B07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            string sqlCommand = "select UseAPS from factory WITH (NOLOCK) where ID = '" + Sci.Env.User.Factory + "'";
+            string sqlCommand = "select UseAPS from factory WITH (NOLOCK) where ID = '" + Env.User.Factory + "'";
             string useAPS = MyUtility.GetValue.Lookup(sqlCommand, null);
             if (useAPS.ToUpper() == "TRUE")
             {
@@ -29,7 +29,7 @@ namespace Sci.Production.PPIC
             }
 
             this.InitializeComponent();
-            this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
+            this.DefaultFilter = "FactoryID = '" + Env.User.Factory + "'";
         }
 
         /// <inheritdoc/>
@@ -66,7 +66,7 @@ namespace Sci.Production.PPIC
         {
             B07_Add callNextForm = new B07_Add();
             DialogResult result = callNextForm.ShowDialog(this);
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (result == DialogResult.OK)
             {
                 this.ReloadDatas();
             }
@@ -92,7 +92,7 @@ namespace Sci.Production.PPIC
         {
             B07_BatchAdd callNextForm = new B07_BatchAdd(this.CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (result == DialogResult.OK)
             {
                 // 紀錄目前畫面資料，Reload Data後，資料要保留在Reload前的那一筆
                 DataRow currentData = this.CurrentMaintain;

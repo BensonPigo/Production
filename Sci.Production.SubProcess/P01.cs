@@ -29,7 +29,7 @@ namespace Sci.Production.SubProcess
             this.InitializeComponent();
             MyUtility.Tool.SetupCombox(this.comboTeam, 1, 1, "A,B");
             this.DoSubForm = new P01_QAOutput();
-            this.DefaultFilter = $"MDivisionID = '{Sci.Env.User.Keyword}'";
+            this.DefaultFilter = $"MDivisionID = '{Env.User.Keyword}'";
         }
 
         /// <inheritdoc/>
@@ -143,7 +143,7 @@ order by a.OrderId,os.Seq
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     string sqlCmd = string.Format(
                     @"
@@ -278,7 +278,7 @@ and f.IsProduceFty = 1 and SF.Type='PPA' and o.MDivisionID  = '{1}'",
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     string sqlCmd = string.Format(@"select Article,ColorID from View_OrderFAColor where Id = '{0}'", this.CurrentDetailData["orderid"]);
                     Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "10,10", this.CurrentDetailData["Article"].ToString());
@@ -380,7 +380,7 @@ and f.IsProduceFty = 1 and SF.Type='PPA' and o.MDivisionID  = '{1}'",
             DataGridViewGeneratorTextColumnSettings qaoutput = new DataGridViewGeneratorTextColumnSettings();
             qaoutput.CellMouseDoubleClick += (s, e) =>
              {
-                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                 if (e.Button == MouseButtons.Left)
                  {
                      this.OpenSubDetailPage();
                      this.Caculate_DefectQty();
@@ -420,7 +420,7 @@ and f.IsProduceFty = 1 and SF.Type='PPA' and o.MDivisionID  = '{1}'",
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     if (MyUtility.Check.Empty(this.CurrentDetailData["OrderID"]))
                     {
@@ -694,7 +694,7 @@ Order by Feature",
             #region GetID
             if (this.IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("FtyGroup", Sci.Env.User.Factory, "Factory", "ID") + "SU", "SubProcessOutput ", DateTime.Today, 3, "Id", null);
+                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("FtyGroup", Env.User.Factory, "Factory", "ID") + "SU", "SubProcessOutput ", DateTime.Today, 3, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -837,7 +837,7 @@ where not exists (select 1
             this.CurrentMaintain["Team"] = "A";
             this.CurrentMaintain["status"] = "New";
             this.CurrentMaintain["TypeID"] = "PPA";
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
         }
 
         /// <inheritdoc/>
@@ -933,7 +933,7 @@ where id = '{1}'",
         protected override bool ClickPrint()
         {
             #region SQL撈取資料
-            string ftyName = MyUtility.GetValue.Lookup(string.Format(@"select NameEN from MDivision where ID = '{0}'", Sci.Env.User.Keyword));
+            string ftyName = MyUtility.GetValue.Lookup(string.Format(@"select NameEN from MDivision where ID = '{0}'", Env.User.Keyword));
             string secondrow = "PPA Daily CMP Report, DD." + MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]).Value.Month + "." + MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]).Value.Day;
             string sqlcmd = string.Format(
                 @"
@@ -1037,7 +1037,7 @@ where s.id = '{0}'
             worksheet.get_Range("A1").ColumnWidth = 1.88;
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subprocess_P01");
+            string strExcelName = Class.MicrosoftFile.GetName("Subprocess_P01");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

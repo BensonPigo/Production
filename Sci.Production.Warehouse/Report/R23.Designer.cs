@@ -36,9 +36,9 @@
             this.labelLocation = new Sci.Win.UI.Label();
             this.checkBalanceQty = new Sci.Win.UI.CheckBox();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.txtLocationEnd = new Sci.Production.Class.txtMtlLocation(this.components);
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.txtMtlLocationStart = new Sci.Production.Class.txtMtlLocation(this.components);
+            this.txtLocationEnd = new Sci.Production.Class.TxtMtlLocation(this.components);
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtMtlLocationStart = new Sci.Production.Class.TxtMtlLocation(this.components);
             this.label2 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
@@ -233,9 +233,9 @@
         private Win.UI.Label labelLocation;
         private Win.UI.CheckBox checkBalanceQty;
         private Win.UI.Label labelFactory;
-        private Class.txtfactory txtfactory;
-        private Class.txtMtlLocation txtLocationEnd;
-        private Class.txtMtlLocation txtMtlLocationStart;
+        private Class.Txtfactory txtfactory;
+        private Class.TxtMtlLocation txtLocationEnd;
+        private Class.TxtMtlLocation txtMtlLocationStart;
         private Win.UI.Label label2;
     }
 }

@@ -40,8 +40,8 @@
             this.txtArticle = new Sci.Win.UI.TextBox();
             this.txtCombo = new Sci.Win.UI.TextBox();
             this.displaySubProcess = new Sci.Win.UI.DisplayBox();
-            this.txtsewingline = new Sci.Production.Class.txtsewingline();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtsewingline = new Sci.Production.Class.Txtsewingline();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.labSize = new Sci.Win.UI.Label();
             this.labArticle = new Sci.Win.UI.Label();
             this.labCombo = new Sci.Win.UI.Label();
@@ -148,7 +148,7 @@
             // txtsewingline
             // 
             this.txtsewingline.BackColor = System.Drawing.Color.White;
-            this.txtsewingline.factoryobjectName = this.txtfactory;
+            this.txtsewingline.FactoryobjectName = this.txtfactory;
             this.txtsewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtsewingline.Location = new System.Drawing.Point(479, 38);
             this.txtsewingline.Name = "txtsewingline";
@@ -401,8 +401,8 @@
         private Win.UI.TextBox txtArticle;
         private Win.UI.TextBox txtCombo;
         private Win.UI.DisplayBox displaySubProcess;
-        private Class.txtsewingline txtsewingline;
-        private Class.txtfactory txtfactory;
+        private Class.Txtsewingline txtsewingline;
+        private Class.Txtfactory txtfactory;
         private Win.UI.Label labSize;
         private Win.UI.Label labArticle;
         private Win.UI.Label labCombo;

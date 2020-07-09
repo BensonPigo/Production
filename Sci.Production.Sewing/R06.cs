@@ -109,7 +109,7 @@ order by s.OutputDate,s.SewingLineID,sdd.OrderId,sdd.ComboType,sdd.Article,sdd.S
                 return new DualResult(false, result.ToString());
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -126,7 +126,7 @@ order by s.OutputDate,s.SewingLineID,sdd.OrderId,sdd.ComboType,sdd.Article,sdd.S
 
             this.ShowWaitMessage("Starting EXCEL...");
             string excelFile = "Sewing_R06.xltx";
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + excelFile); // 開excelapp
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + excelFile); // 開excelapp
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             bool result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: excelFile, headerRow: 1, excelApp: objApp);

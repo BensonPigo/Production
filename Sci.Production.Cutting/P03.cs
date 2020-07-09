@@ -17,8 +17,8 @@ namespace Sci.Production.Cutting
     {
         DataTable detailTb;
         Ict.Win.UI.DataGridViewDateBoxColumn col_estcutdate;
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
 
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -36,9 +36,9 @@ namespace Sci.Production.Cutting
         public void setDetailGrid()
         {
             this.gridDetail.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
-            DataGridViewGeneratorTextColumnSettings col_cutreason = cellcutreason.GetGridCell("RC");
+            DataGridViewGeneratorTextColumnSettings col_cutreason = TxtcutReason.Cellcutreason.GetGridCell("RC");
             DataGridViewGeneratorCheckBoxColumnSettings col_check = new DataGridViewGeneratorCheckBoxColumnSettings();
-            DataGridViewGeneratorTextColumnSettings col_Shift = cellTextDropDownList.GetGridCell("Pms_WorkOrderShift");
+            DataGridViewGeneratorTextColumnSettings col_Shift = CellTextDropDownList.GetGridCell("Pms_WorkOrderShift");
 
             #region set grid
             this.Helper.Controls.Grid.Generator(this.gridDetail)
@@ -443,27 +443,27 @@ From
                     string orgEstCutDate = ((DateTime)dr["EstCutDate"]).ToShortDateString();
                     if (!MyUtility.Check.Empty(dr["newestcutdate"]))
                     {
-                        update = update + $"Update Workorder Set estcutdate ='{((DateTime)dr["newestcutdate"]).ToShortDateString()}',EditDate=getdate(),EditName='{Sci.Env.User.UserID}' where Ukey = {dr["Ukey"]}; ";
+                        update = update + $"Update Workorder Set estcutdate ='{((DateTime)dr["newestcutdate"]).ToShortDateString()}',EditDate=getdate(),EditName='{Env.User.UserID}' where Ukey = {dr["Ukey"]}; ";
                     }
 
                     if (!MyUtility.Check.Empty(dr["NewCutcellid"]))
                     {
-                        update = update + $"Update Workorder Set CutCellid = '{dr["NewCutcellid"]}',EditDate=getdate(),EditName='{Sci.Env.User.UserID}' where Ukey = {dr["Ukey"]}; ";
+                        update = update + $"Update Workorder Set CutCellid = '{dr["NewCutcellid"]}',EditDate=getdate(),EditName='{Env.User.UserID}' where Ukey = {dr["Ukey"]}; ";
                     }
 
                     if (!MyUtility.Check.Empty(dr["NewSpreadingNoID"]))
                     {
-                        update = update + $"Update Workorder Set SpreadingNoID='{dr["NewSpreadingNoID"]}',EditDate=getdate(),EditName='{Sci.Env.User.UserID}' where Ukey = {dr["Ukey"]}; ";
+                        update = update + $"Update Workorder Set SpreadingNoID='{dr["NewSpreadingNoID"]}',EditDate=getdate(),EditName='{Env.User.UserID}' where Ukey = {dr["Ukey"]}; ";
                     }
 
                     if (!MyUtility.Check.Empty(dr["NewShift"]))
                     {
-                        update = update + $"Update Workorder Set Shift='{dr["NewShift"]}',EditDate=getdate(),EditName='{Sci.Env.User.UserID}' where Ukey = {dr["Ukey"]}; ";
+                        update = update + $"Update Workorder Set Shift='{dr["NewShift"]}',EditDate=getdate(),EditName='{Env.User.UserID}' where Ukey = {dr["Ukey"]}; ";
                     }
 
                     update = update + $@"
 Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate      ,NewEstCutDate  ,CutReasonid              ,ID             ,OrgCutCellid       ,NewCutCellid   ,OrgSpreadingNoID         ,NewSpreadingNoID       , OrgShift         ,NewShift   , AddDate, AddName) 
-Values                                       ({dr["Ukey"]}    ,'{orgEstCutDate}',{newestcutdate},'{dr["CutReasonid"]}','{dr["ID"]}','{dr["Cutcellid"]}',{NewCutcellid},'{dr["SpreadingNoID"]}',{NewSpreadingNoID} ,'{dr["Shift"]}'  ,{NewShift}    ,getdate(),'{Sci.Env.User.UserID}');";
+Values                                       ({dr["Ukey"]}    ,'{orgEstCutDate}',{newestcutdate},'{dr["CutReasonid"]}','{dr["ID"]}','{dr["Cutcellid"]}',{NewCutcellid},'{dr["SpreadingNoID"]}',{NewSpreadingNoID} ,'{dr["Shift"]}'  ,{NewShift}    ,getdate(),'{Env.User.UserID}');";
                 }
             }
 

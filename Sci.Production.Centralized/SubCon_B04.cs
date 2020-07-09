@@ -54,7 +54,7 @@ namespace Sci.Production.Centralized
         protected override void ClickJunk()
         {
             base.ClickJunk();
-            DBProxy.Current.Execute("ProductionTPE", $"UPDATE SubconReason SET Status = 'Junked',Junk=1 ,EditDate=GETDATE() ,EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
+            DBProxy.Current.Execute("ProductionTPE", $"UPDATE SubconReason SET Status = 'Junked',Junk=1 ,EditDate=GETDATE() ,EditName='{Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
             MyUtility.Msg.InfoBox("Success!");
             this.RenewData();
         }
@@ -62,7 +62,7 @@ namespace Sci.Production.Centralized
         protected override void ClickUnJunk()
         {
             base.ClickUnJunk();
-            DBProxy.Current.Execute("ProductionTPE", $"UPDATE SubconReason SET Status = 'New' ,Junk=0 ,EditDate=GETDATE() ,EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
+            DBProxy.Current.Execute("ProductionTPE", $"UPDATE SubconReason SET Status = 'New' ,Junk=0 ,EditDate=GETDATE() ,EditName='{Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
             MyUtility.Msg.InfoBox("Success!");
             this.RenewData();
         }

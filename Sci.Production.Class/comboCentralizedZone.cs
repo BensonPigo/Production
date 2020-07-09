@@ -14,12 +14,12 @@ namespace Sci.Production.Class
     /// <summary>
     /// ComboFactory
     /// </summary>
-    public partial class comboCentralizedZone : Win.UI.ComboBox
+    public partial class ComboCentralizedZone : Win.UI.ComboBox
     {
         /// <summary>
         /// ComboFactory
         /// </summary>
-        public comboCentralizedZone()
+        public ComboCentralizedZone()
         {
             this.InitializeComponent();
             this.Size = new System.Drawing.Size(80, 23);
@@ -29,7 +29,7 @@ namespace Sci.Production.Class
         /// ComboFactory
         /// </summary>
         /// <param name="container">container</param>
-        public comboCentralizedZone(IContainer container)
+        public ComboCentralizedZone(IContainer container)
         {
             container.Add(this);
             this.InitializeComponent();
@@ -42,10 +42,10 @@ namespace Sci.Production.Class
         /// <param name="defalutValue">defalutValue</param>
         public void SetDefalutIndex(string defalutValue = null)
         {
-            DualResult result = Result.True;
-            DataTable ZoneData = new DataTable();
-            ZoneData.Columns.Add("zone", typeof(string));
-            DataTable Data;
+            DualResult result = Ict.Result.True;
+            DataTable zoneData = new DataTable();
+            zoneData.Columns.Add("zone", typeof(string));
+            DataTable dt;
 
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
             List<string> strSevers = ConfigurationManager.AppSettings["PMSDBServer"].Split(',').ToList();
@@ -74,20 +74,20 @@ namespace Sci.Production.Class
                 {
                     con.Open();
                     string sqlcmd = $@"select Zone=''  union all select distinct Zone from FACTORY sf where 1=1 and sf.junk=0 and sf.Zone <> '' Order by Zone";
-                    result = DBProxy.Current.SelectByConn(con, sqlcmd, out Data);
+                    result = DBProxy.Current.SelectByConn(con, sqlcmd, out dt);
                     if (!result)
                     {
                         return;
                     }
 
-                    foreach (DataRow row in Data.Rows)
+                    foreach (DataRow row in dt.Rows)
                     {
-                        ZoneData.ImportRow(row);
+                        zoneData.ImportRow(row);
                     }
                 }
             }
 
-            var zonelist = ZoneData.AsEnumerable().Select(s => new { zone = MyUtility.Convert.GetString(s["zone"]) }).Distinct().OrderBy(o => o.zone).ToList();
+            var zonelist = zoneData.AsEnumerable().Select(s => new { zone = MyUtility.Convert.GetString(s["zone"]) }).Distinct().OrderBy(o => o.zone).ToList();
 
             // 第一筆加入空白
             this.DataSource = zonelist;

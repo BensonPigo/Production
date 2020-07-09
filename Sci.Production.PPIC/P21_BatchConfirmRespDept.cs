@@ -172,7 +172,7 @@ where   ID in (select ID from #tmp)
 Pls re-check and update responsibility information.
 {listSelectedICR.Select(s => s["ID"].ToString()).JoinToString(Environment.NewLine)}
 ";
-            var email = new MailTo(Sci.Env.Cfg.MailFrom, mailTo, mailCC, subject, string.Empty, content, false, true);
+            var email = new MailTo(Env.Cfg.MailFrom, mailTo, mailCC, subject, string.Empty, content, false, true);
             email.ShowDialog(this);
         }
 

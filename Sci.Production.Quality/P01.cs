@@ -11,8 +11,8 @@ namespace Sci.Production.Quality
 {
     public partial class P01 : Win.Tems.Input6
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
         private bool boolFromP01;
 
         int index;
@@ -489,7 +489,7 @@ and ActualYds > 0
             }
             else
             {
-                 targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(MyUtility.Check.Empty(queryDr) ? string.Empty : queryDr["CUTINLINE"], sciTb.Rows[0]["MinSciDelivery"]);
+                 targT = PublicPrg.Prgs.GetTargetLeadTime(MyUtility.Check.Empty(queryDr) ? string.Empty : queryDr["CUTINLINE"], sciTb.Rows[0]["MinSciDelivery"]);
                  if (queryDr["cutinline"] == DBNull.Value)
                 {
                     this.dateEarliestEstCutDate.Text = string.Empty;
@@ -631,14 +631,14 @@ and ActualYds > 0
                 {
                     _transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
-                    return Result.True;
+                    return Ict.Result.True;
                 }
             }
 
             _transactionscope.Dispose();
             _transactionscope = null;
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 判斷並回寫Physical OverallResult, Status string[0]=Result, string[1]=status
@@ -646,7 +646,7 @@ and ActualYds > 0
         {
             if (this.EditMode) // Status = Confirm 才會判斷
             {
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(dr);
+                string[] returnstr = PublicPrg.Prgs.GetOverallResult_Status(dr);
 
                 dr["Result"] = returnstr[0];
                 dr["Status"] = returnstr[1];

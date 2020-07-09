@@ -1,6 +1,5 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Production.Class;
 using System;
 using System.ComponentModel;
 using System.Data;
@@ -13,6 +12,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 using Ict.Win.UI;
 using Sci.Production.PublicPrg;
 using System.Linq;
+using Sci.Production.Class;
 
 namespace Sci.Production.Thread
 {
@@ -21,9 +21,9 @@ namespace Sci.Production.Thread
     /// </summary>
     public partial class P02 : Win.Tems.Input8
     {
-        private string factory = Sci.Env.User.Factory;
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string factory = Env.User.Factory;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_color;
         private DataGridViewNumericBoxColumn col_cons;
         private DataGridViewNumericBoxColumn col_Allowance;
@@ -54,7 +54,7 @@ union
 select distinct FTYGroup 
 from Factory 
 where MDivisionID = '{0}'",
-                Sci.Env.User.Keyword);
+                Env.User.Keyword);
 
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
@@ -174,7 +174,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             return base.OnSubDetailSelectCommandPrepare(e);
         }
 
-        private celllocalitem refno = (celllocalitem)celllocalitem.GetGridCell("Thread", null, ",,,description");
+        private Txtlocalitem.Celllocalitem refno = (Txtlocalitem.Celllocalitem)Txtlocalitem.Celllocalitem.GetGridCell("Thread", null, ",,,description");
 
         /// <inheritdoc/>
         protected override void OnDetailGridSetup()
@@ -293,7 +293,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -333,7 +333,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             };
             cons.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     this.OpenSubDetailPage();
                 }
@@ -646,7 +646,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             string msg = result.ToString().ToUpper();
             if (msg.Contains("PK") && msg.Contains("DUPLICAT"))
             {
-                result = Result.F("<OrderID> duplicated", result.GetException());
+                result = Ict.Result.F("<OrderID> duplicated", result.GetException());
             }
 
             return result;
@@ -1583,7 +1583,7 @@ and {0} <= tas.UpperBound",
                 dt.Rows.Add(dr);
             }
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_P02.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Thread_P02.xltx"); // 預先開啟excel app
             bool result = MyUtility.Excel.CopyToXls(dt, string.Empty, showExcel: false, xltfile: "Thread_P02.xltx", headerRow: 7, excelApp: objApp);
 
             if (!result)
@@ -1616,7 +1616,7 @@ and {0} <= tas.UpperBound",
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Thread_P02");
+            string strExcelName = Class.MicrosoftFile.GetName("Thread_P02");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

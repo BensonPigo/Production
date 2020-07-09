@@ -649,7 +649,7 @@ order by FactorySort
             }
             #endregion
             #endregion
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -697,14 +697,14 @@ order by FactorySort
                 xdt_detail_detail_All.ShowHeader = false;
                 xl.DicDatas.Add("##R13UNRLDETAIL", xdt_detail_All);
                 xl.DicDatas.Add("##R13UNRLDETAILDETAIL", xdt_detail_detail_All);
-                xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Centralized_R13_Transportation_Cost_Garment_Export_fee"));
+                xl.Save(Class.MicrosoftFile.GetName("Centralized_R13_Transportation_Cost_Garment_Export_fee"));
             }
             else
             {
                 Microsoft.Office.Interop.Excel.Application excel = xl.ExcelApp;
                 excel.Worksheets[3].Delete();
                 excel.Worksheets[2].Delete();
-                xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Centralized_R13_Transportation_Cost_Garment_Export_fee"));
+                xl.Save(Class.MicrosoftFile.GetName("Centralized_R13_Transportation_Cost_Garment_Export_fee"));
             }
             #endregion
             return true;

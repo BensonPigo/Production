@@ -312,7 +312,7 @@ where	pd.CTNStartNo != '' and
                         PackDataResult packDataResult = new PackDataResult();
                         string packNo = string.Empty;
                         reader.DiscardBufferedData();
-                        reader.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
+                        reader.BaseStream.Seek(0, SeekOrigin.Begin);
                         while ((line = reader.ReadLine()) != null)
                         {
                             packNo = line.Split('\t')[1].Trim();

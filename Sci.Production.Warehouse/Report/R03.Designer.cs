@@ -45,28 +45,28 @@
             this.labelETA = new Sci.Win.UI.Label();
             this.labelSeason = new Sci.Win.UI.Label();
             this.labelFabricType = new Sci.Win.UI.Label();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.labelM = new Sci.Win.UI.Label();
-            this.txtseason = new Sci.Production.Class.txtseason();
+            this.txtseason = new Sci.Production.Class.Txtseason();
             this.comboFabricType = new System.Windows.Forms.ComboBox();
             this.labelCountry = new Sci.Win.UI.Label();
-            this.txtcountry = new Sci.Production.Class.txtcountry();
+            this.txtcountry = new Sci.Production.Class.Txtcountry();
             this.labelRefno = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
-            this.txtsupplier = new Sci.Production.Class.txtsupplier();
+            this.txtstyle = new Sci.Production.Class.Txtstyle();
+            this.txtsupplier = new Sci.Production.Class.Txtsupplier();
             this.labelSupplier = new Sci.Win.UI.Label();
             this.comboOrderBy = new Sci.Win.UI.ComboBox();
             this.labelOrderBy = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.chkDWR = new Sci.Win.UI.CheckBox();
             this.label1 = new Sci.Win.UI.Label();
             this.txtWKNo2 = new Sci.Win.UI.TextBox();
             this.txtWKNo1 = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
             this.chkWhseClose = new Sci.Win.UI.CheckBox();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.labelBrand = new Sci.Win.UI.Label();
             this.chkIncludeJunk = new Sci.Win.UI.CheckBox();
             this.chkExcludeMaterial = new Sci.Win.UI.CheckBox();
@@ -393,8 +393,8 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 10;
-            this.txtstyle.tarBrand = null;
-            this.txtstyle.tarSeason = null;
+            this.txtstyle.TarBrand = null;
+            this.txtstyle.TarSeason = null;
             // 
             // txtsupplier
             // 
@@ -447,7 +447,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
@@ -691,28 +691,28 @@
         private Win.UI.Label labelETA;
         private Win.UI.Label labelSeason;
         private Win.UI.Label labelFabricType;
-        private Class.txtMdivision txtMdivision;
+        private Class.TxtMdivision txtMdivision;
         private Win.UI.Label labelM;
-        private Class.txtseason txtseason;
+        private Class.Txtseason txtseason;
         private System.Windows.Forms.ComboBox comboFabricType;
         private Win.UI.Label labelCountry;
-        private Class.txtcountry txtcountry;
+        private Class.Txtcountry txtcountry;
         private Win.UI.Label labelRefno;
         private Win.UI.Label labelStyle;
-        private Class.txtstyle txtstyle;
-        private Class.txtsupplier txtsupplier;
+        private Class.Txtstyle txtstyle;
+        private Class.Txtsupplier txtsupplier;
         private Win.UI.Label labelSupplier;
         private Win.UI.ComboBox comboOrderBy;
         private Win.UI.Label labelOrderBy;
         private Win.UI.Label labelFactory;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
         private Win.UI.CheckBox chkDWR;
         private Win.UI.Label label1;
         private Win.UI.TextBox txtWKNo2;
         private Win.UI.TextBox txtWKNo1;
         private Win.UI.Label label2;
         private Win.UI.CheckBox chkWhseClose;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.Label labelBrand;
         private Win.UI.CheckBox chkIncludeJunk;
         private Win.UI.CheckBox chkExcludeMaterial;

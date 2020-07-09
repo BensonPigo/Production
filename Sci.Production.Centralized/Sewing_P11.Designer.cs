@@ -37,8 +37,8 @@
             this.dateLock = new Sci.Win.UI.DateBox();
             this.btnlock = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
-            this.txtCentralizedmulitM1 = new Sci.Production.Class.txtCentralizedmulitM();
-            this.txtCentralizedmulitFactory1 = new Sci.Production.Class.txtCentralizedmulitFactory();
+            this.txtCentralizedmulitM1 = new Sci.Production.Class.TxtCentralizedmulitM();
+            this.txtCentralizedmulitFactory1 = new Sci.Production.Class.TxtCentralizedmulitFactory();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -198,7 +198,7 @@
         private Win.UI.DateBox dateLock;
         private Win.UI.Button btnlock;
         private Win.UI.Button btnClose;
-        private Class.txtCentralizedmulitFactory txtCentralizedmulitFactory1;
-        private Class.txtCentralizedmulitM txtCentralizedmulitM1;
+        private Class.TxtCentralizedmulitFactory txtCentralizedmulitFactory1;
+        private Class.TxtCentralizedmulitM txtCentralizedmulitM1;
     }
 }

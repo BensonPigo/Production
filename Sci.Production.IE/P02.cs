@@ -32,22 +32,22 @@ namespace Sci.Production.IE
             this.InitializeComponent();
             this.type = type;
             this.Text = this.type == "1" ? "P02. Style Changeover Monitor" : "P021. Style Changeover Monitor (History)";
-            this.DefaultFilter = this.type == "1" ? string.Format("MDivisionID = '{0}' AND Status <> 'Closed'", Sci.Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND Status = 'Closed'", Sci.Env.User.Keyword);
+            this.DefaultFilter = this.type == "1" ? string.Format("MDivisionID = '{0}' AND Status <> 'Closed'", Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND Status = 'Closed'", Env.User.Keyword);
             if (this.type == "2")
            {
                this.IsSupportEdit = false;
             }
 
             // 組InLine date的mask
-            for (int i = 0; i < Sci.Env.Cfg.DateTimeStringFormat.Length; i++)
+            for (int i = 0; i < Env.Cfg.DateTimeStringFormat.Length; i++)
             {
-                this.dtmask = Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "/" || Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == ":" ? Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) : Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == " " ? " " : "0";
-                this.empmask = Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "/" || Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == ":" ? Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) : Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "s" ? string.Empty : " ";
+                this.dtmask = Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "/" || Env.Cfg.DateTimeStringFormat.Substring(i, 1) == ":" ? Env.Cfg.DateTimeStringFormat.Substring(i, 1) : Env.Cfg.DateTimeStringFormat.Substring(i, 1) == " " ? " " : "0";
+                this.empmask = Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "/" || Env.Cfg.DateTimeStringFormat.Substring(i, 1) == ":" ? Env.Cfg.DateTimeStringFormat.Substring(i, 1) : Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "s" ? string.Empty : " ";
                 this.DateTimeMask = this.DateTimeMask + this.dtmask;
                 this.emptyDTMask = this.emptyDTMask + this.empmask;
             }
 
-            this.txtInLineDate.DataBindings.Add(new Binding("Text", this.mtbs, "Inline", true, DataSourceUpdateMode.OnValidation, this.emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
+            this.txtInLineDate.DataBindings.Add(new Binding("Text", this.mtbs, "Inline", true, DataSourceUpdateMode.OnValidation, this.emptyDTMask, Env.Cfg.DateTimeStringFormat));
             this.txtInLineDate.Mask = this.DateTimeMask;
         }
 
@@ -398,7 +398,7 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
-            string sqlCmd = string.Format("update ChgOver set Status = 'Approved', ApvDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
+            string sqlCmd = string.Format("update ChgOver set Status = 'Approved', ApvDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, this.CurrentMaintain["ID"].ToString());
 
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
@@ -414,7 +414,7 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
         {
             base.ClickUnconfirm();
 
-            string sqlCmd = string.Format("update ChgOver set Status = 'New', ApvDate = null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
+            string sqlCmd = string.Format("update ChgOver set Status = 'New', ApvDate = null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, this.CurrentMaintain["ID"].ToString());
 
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
@@ -513,7 +513,7 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
             string cmdsql = string.Format("SELECT TOP 1 'CHANGEOVER REPORT'  FROM ChgOver WITH (NOLOCK) where 1=1");
             DualResult dResult = DBProxy.Current.Select(null, cmdsql, out dtTitle);
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\IE_P02_ChangeoverReport.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\IE_P02_ChangeoverReport.xltx"); // 預先開啟excel app
 
             if (MyUtility.Excel.CopyToXls(dtTitle, string.Empty, "IE_P02_ChangeoverReport.xltx", 2, false, null, objApp, false))
             { // 將datatable copy to excel
@@ -748,7 +748,7 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                 #endregion
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("IE_P02_ChangeoverReport");
+                string strExcelName = Class.MicrosoftFile.GetName("IE_P02_ChangeoverReport");
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();

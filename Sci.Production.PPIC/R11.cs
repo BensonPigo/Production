@@ -688,7 +688,7 @@ drop table #Calendar,#CalendarData,#tmp,#tmp1,#tmp2
             }
             #endregion
             this.SetCount(this.dtList[0].Rows.Count);
-            string xltPath = System.IO.Path.Combine(Sci.Env.Cfg.XltPathDir + "\\PPIC_R11.xltx");
+            string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir + "\\PPIC_R11.xltx");
             sxrc sxr = new sxrc(xltPath, keepApp: true);
             sxr.BoOpenFile = true;
             sxrc.XltRptTable xrtSummery1 = new sxrc.XltRptTable(this.dtList[1]);
@@ -705,7 +705,7 @@ drop table #Calendar,#CalendarData,#tmp,#tmp1,#tmp2
 
             #region Save Excel
             string excelFile = string.Empty;
-            excelFile = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R11");
+            excelFile = Class.MicrosoftFile.GetName("PPIC_R11");
             sxr.Save(excelFile);
             #endregion
 

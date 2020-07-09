@@ -1,6 +1,5 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Production.Class;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,8 +11,8 @@ namespace Sci.Production.Cutting
 {
     public partial class P04_Import : Win.Subs.Base
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
         DataTable gridTable;
         DataTable detailTable;
 
@@ -41,7 +40,7 @@ namespace Sci.Production.Cutting
             this.gridImport.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
 
             // 預設MDivision = 使用者登入的 MDivision
-            this.txtSpreadingNo.MDivision = Sci.Env.User.Keyword;
+            this.txtSpreadingNo.MDivision = Env.User.Keyword;
         }
 
         private void btnClose_Click(object sender, EventArgs e)

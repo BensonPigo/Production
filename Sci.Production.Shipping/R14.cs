@@ -282,7 +282,7 @@ order by s.ID,g.ID
 
             this.ShowWaitMessage("Starting EXCEL...");
             string excelName = this.Type == 1 ? "Shipping_R14_Detail" : this.Type == 2 ? "Shipping_R14_Summary" : "Shipping_R14_ContainerDetail";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
             int startrow = this.Type == 1 ? 1 : this.Type == 2 ? 2 : 1;
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, $"{excelName}.xltx", startrow, false, null, excelApp, wSheet: excelApp.Sheets[1]);
 

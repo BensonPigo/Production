@@ -36,7 +36,7 @@
             this.dateEstCutDate = new Sci.Win.UI.DateBox();
             this.panelTOP = new Sci.Win.UI.Panel();
             this.label2 = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.txtCutRef = new Sci.Win.UI.TextBox();
             this.txtSP = new Sci.Win.UI.TextBox();
             this.panelBOTTOM = new Sci.Win.UI.Panel();
@@ -149,7 +149,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = true;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
@@ -258,7 +258,7 @@
         private Win.UI.Panel panelMIDDLE;
         private Win.UI.TextBox txtCutRef;
         private Win.UI.TextBox txtSP;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
         private Win.UI.Label label2;
         private Win.UI.Label lbCutRef;
         private Win.UI.Label lbSP;

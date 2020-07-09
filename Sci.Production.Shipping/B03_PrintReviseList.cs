@@ -79,7 +79,7 @@ order by l.EditDate,l.ID",
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -94,7 +94,7 @@ order by l.EditDate,l.ID",
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_B03_PrintReviseList.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_B03_PrintReviseList.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -124,7 +124,7 @@ order by l.EditDate,l.ID",
             excel.Cells.EntireRow.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_B03_PrintReviseList");
+            string strExcelName = Class.MicrosoftFile.GetName("Shipping_B03_PrintReviseList");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

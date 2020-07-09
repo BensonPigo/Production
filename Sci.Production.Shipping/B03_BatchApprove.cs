@@ -373,7 +373,7 @@ when matched then update set
             DataTable selectdt = this.master.Select("Selected = 1").CopyToDataTable();
 
             this.ShowWaitMessage("Starting Excel");
-            Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Shipping_B03.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Shipping_B03.xltx"); // 預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];   // 取得工作表
             worksheet.Cells[3, 1] = MyUtility.GetValue.Lookup("select RgCode from System", "Production");
             Microsoft.Office.Interop.Excel.Range rngToCopy = worksheet.get_Range("A7:A7").EntireRow; // 複製格式後插入
@@ -411,7 +411,7 @@ when matched then update set
 
             worksheet.Columns.AutoFit();
             #region Save Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_B03");
+            string strExcelName = Class.MicrosoftFile.GetName("Shipping_B03");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

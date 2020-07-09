@@ -20,7 +20,7 @@ namespace Sci.Production.Quality
          *注意! P02_Detail WorkAlias沒有特別作用,所有的繫結資料(mtbs - )來源都是上一層的CurrentDetailData(detail GridView)
          */
         #endregion
-        private string loginID = Sci.Env.User.UserID;
+        private string loginID = Env.User.UserID;
         private bool canedit;
         private string id;
         private string receivingID;
@@ -172,7 +172,7 @@ namespace Sci.Production.Quality
                         case "Fail":
                             updatesql += Environment.NewLine + $@"
 UPDATE f SET 
-Lock = 1 , LockName='{Sci.Env.User.UserID}' ,LockDate=GETDATE(), F.Remark='Auto Lock by QA_P02.Accessory Inspection'
+Lock = 1 , LockName='{Env.User.UserID}' ,LockDate=GETDATE(), F.Remark='Auto Lock by QA_P02.Accessory Inspection'
 FROM FtyInventory f 
 WHERE f.POID='{this.poid}' AND f.Seq1='{this.seq1}' AND f.Seq2='{this.seq2}'";
                             break;
@@ -212,7 +212,7 @@ AND ID<>'{this.id}' AND ReceivingID<>'{this.receivingID}'
                             {
                                 updatesql += Environment.NewLine + $@"
 UPDATE f SET 
-Lock = 0 , LockName='{Sci.Env.User.UserID}' ,LockDate=GETDATE(), F.Remark='Auto unLock by QA_P02.Accessory Inspection'
+Lock = 0 , LockName='{Env.User.UserID}' ,LockDate=GETDATE(), F.Remark='Auto unLock by QA_P02.Accessory Inspection'
 FROM FtyInventory f 
 WHERE f.POID='{this.poid}' AND f.Seq1='{this.seq1}' AND f.Seq2='{this.seq2}'";
                             }
@@ -400,8 +400,8 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
 
                         if (MyUtility.Check.Empty(this.txtInspector.TextBox1.Text))
                         {
-                            this.txtInspector.TextBox1.Text = Sci.Env.User.UserID;
-                            this.CurrentData["Inspector"] = Sci.Env.User.UserID;
+                            this.txtInspector.TextBox1.Text = Env.User.UserID;
+                            this.CurrentData["Inspector"] = Env.User.UserID;
                         }
 
                         this.EditMode = true; // 因為從上一層進來是false,導致popup功能無法使用,所以才改變EditMode
@@ -413,8 +413,8 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
 
                         if (MyUtility.Check.Empty(this.txtInspector.TextBox1.Text))
                        {
-                           this.txtInspector.TextBox1.Text = Sci.Env.User.UserID;
-                           this.CurrentData["Inspector"] = Sci.Env.User.UserID;
+                           this.txtInspector.TextBox1.Text = Env.User.UserID;
+                           this.CurrentData["Inspector"] = Env.User.UserID;
                        }
 
                         if (dt.Rows[0]["Status"].ToString().Trim() == "Confirmed")
@@ -452,7 +452,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
                 return;
             }
 
-            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            if (e.Button == MouseButtons.Right)
             {
                 string sqlcmd = "select id,description from AccessoryDefect WITH (NOLOCK) ";
                 SelectItem2 item = new SelectItem2(sqlcmd, "Code,Description", "10,30", null, null, null, null);

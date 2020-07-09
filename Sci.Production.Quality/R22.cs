@@ -731,7 +731,7 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected string intToExcelcolumn(int cc) // 將數字轉換EXCEL的英文欄位;例27→AA
@@ -784,7 +784,7 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
             #region radioPerBrand
             if (this.radioPerBrand.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R22_PerBrand.xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R22_PerBrand.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R22_PerBrand.xltx", 4, false, null, objApp); // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
@@ -817,7 +817,7 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                 objSheets.get_Range("A3", lastright).EntireRow.AutoFit(); // 自動調整列高
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R22_PerBrand");
+                string strExcelName = Class.MicrosoftFile.GetName("Quality_R22_PerBrand");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);
@@ -831,7 +831,7 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
             #region radioPerDateFactory
             if (this.radioPerDateFactory.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R22_PerDate(Factory).xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R22_PerDate(Factory).xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R22_PerDate(Factory).xltx", 3, false, null, objApp); // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
@@ -866,7 +866,7 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                 objSheets.Columns.AutoFit();
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R22_PerDate(Factory)");
+                string strExcelName = Class.MicrosoftFile.GetName("Quality_R22_PerDate(Factory)");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);
@@ -880,7 +880,7 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
             #region radioPerDateBrand
             if (this.radioPerDateBrand.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R22_PerDate(Brand).xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R22_PerDate(Brand).xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R22_PerDate(Brand).xltx", 3, false, null, objApp); // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
@@ -914,7 +914,7 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                 objSheets.get_Range("A2", lastright).EntireRow.AutoFit(); // 自動調整列高
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R22_PerDate(Brand)");
+                string strExcelName = Class.MicrosoftFile.GetName("Quality_R22_PerDate(Brand)");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);

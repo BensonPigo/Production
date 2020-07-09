@@ -19,7 +19,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
             this.gridicon.Append.Enabled = false;
             this.gridicon.Append.Visible = false;
             this.gridicon.Insert.Enabled = false;
@@ -48,7 +48,7 @@ left join LocalInventory Linv on LID.OrderID = Linv.OrderID
                                  and LID.ThreadColorID = Linv.ThreadColorID
 left join LocalItem Litem on LID.Refno = Litem.Refno
 where   LI.ID = '{0}' 
-        and LI.MDivisionID = '{1}'", ID, Sci.Env.User.Keyword);
+        and LI.MDivisionID = '{1}'", ID, Env.User.Keyword);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -289,8 +289,8 @@ where   orderID = '{0}'
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
         }
@@ -330,7 +330,7 @@ where   orderID = '{0}'
             #region 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IO", "LocalIssue", (DateTime)this.CurrentMaintain["Issuedate"]);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "IO", "LocalIssue", (DateTime)this.CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -596,7 +596,7 @@ where LID.ID = @ID";
                 @"
 select NameEN
 from factory
-where id = '{0}'", Sci.Env.User.Keyword));
+where id = '{0}'", Env.User.Keyword));
             #region Set RDLC_Title Data
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("MDivision", MDivisonName));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", this.CurrentMaintain["ID"].ToString()));

@@ -55,21 +55,21 @@ when matched then update set
 	 [SetUpTime]		={this.numSetUpT.Value}
 	,[WindowTime]	={this.numWindowTime.Value}
 	,[WindowLength]			={this.numWindowLength.Value}
-	,[EditName]				='{Sci.Env.User.UserID}'
+	,[EditName]				='{Env.User.UserID}'
 	,[EditDate]				=getdate()
 when not matched by target then
 insert ([WeaveTypeID],[SetUpTime],[WindowTime],[WindowLength],[EditName],[EditDate])
-values(s.WeaveType,{this.numSetUpT.Value},{this.numWindowTime.Value},{this.numWindowLength.Value},'{Sci.Env.User.UserID}',getdate())
+values(s.WeaveType,{this.numSetUpT.Value},{this.numWindowTime.Value},{this.numWindowLength.Value},'{Env.User.UserID}',getdate())
 ;
 drop table #tmp
 ";
             DualResult result = DBProxy.Current.Execute(null, insertupdate);
             if (!result)
             {
-                return Result.F(result.ToString());
+                return Ict.Result.F(result.ToString());
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
     }
 }

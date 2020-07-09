@@ -81,7 +81,7 @@ select  PoId
         ,[Description] = dbo.getmtldesc(Z.poid,Z.seq1,Z.seq2,2,0)
 from Z
 group by PoId,Seq1,Seq2,Qty,stockunit;
-", this.dr["id"].ToString(), Sci.Env.User.Keyword, Sci.Env.User.Factory));
+", this.dr["id"].ToString(), Env.User.Keyword, Env.User.Factory));
 
             DataTable selectDataTable1;
             this.P19.ShowWaitMessage("Data Loading...");

@@ -24,7 +24,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtMdivision.Text = Sci.Env.User.Keyword;
+            this.txtMdivision.Text = Env.User.Keyword;
         }
 
         // 驗證輸入條件
@@ -162,7 +162,7 @@ where a.type = 'D' AND a.Status = 'Confirmed'
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel

@@ -235,7 +235,7 @@ namespace Sci.Production.Quality
                 }
 
                 // 第一列跟第三列開啟的Type不一樣
-                if (eve.Button == System.Windows.Forms.MouseButtons.Right && eve.RowIndex == 0)
+                if (eve.Button == MouseButtons.Right && eve.RowIndex == 0)
                 {
                     DataRow dr = this.gridAppearance.GetDataRow(eve.RowIndex);
 
@@ -277,7 +277,7 @@ namespace Sci.Production.Quality
                     dr.EndEdit();
                 }
 
-                if (eve.Button == System.Windows.Forms.MouseButtons.Right && ((!this.IsNewData && eve.RowIndex == 3) || (this.IsNewData && eve.RowIndex == 2)))
+                if (eve.Button == MouseButtons.Right && ((!this.IsNewData && eve.RowIndex == 3) || (this.IsNewData && eve.RowIndex == 2)))
                 {
                     DataRow dr = this.gridAppearance.GetDataRow(eve.RowIndex);
 
@@ -341,7 +341,7 @@ namespace Sci.Production.Quality
                 }
 
                 // 第一列跟第三列開啟的Type不一樣
-                if (eve.Button == System.Windows.Forms.MouseButtons.Right && eve.RowIndex == 0)
+                if (eve.Button == MouseButtons.Right && eve.RowIndex == 0)
                 {
                     DataRow dr = this.gridAppearance.GetDataRow(eve.RowIndex);
 
@@ -383,7 +383,7 @@ namespace Sci.Production.Quality
                     dr.EndEdit();
                 }
 
-                if (eve.Button == System.Windows.Forms.MouseButtons.Right && ((!this.IsNewData && eve.RowIndex == 3) || (this.IsNewData && eve.RowIndex == 2)))
+                if (eve.Button == MouseButtons.Right && ((!this.IsNewData && eve.RowIndex == 3) || (this.IsNewData && eve.RowIndex == 2)))
                 {
                     DataRow dr = this.gridAppearance.GetDataRow(eve.RowIndex);
 
@@ -647,7 +647,7 @@ where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["NO"]}
                 #endregion
                 this.tab2ShrinkageSave();
                 this.tab2TwistingSave();
-                DBProxy.Current.Execute(null, $"update Garmenttest_Detail set Editname = '{Sci.Env.User.UserID}',EditDate = getdate() where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]}");
+                DBProxy.Current.Execute(null, $"update Garmenttest_Detail set Editname = '{Env.User.UserID}',EditDate = getdate() where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]}");
                 this.tab2Load();
 
                 this.tab3ApperanceSave();
@@ -803,7 +803,7 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
                 return;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P04_GarmentWash.xltx");
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_P04_GarmentWash.xltx");
             objApp.DisplayAlerts = false; // 設定Excel的警告視窗是否彈出
             Microsoft.Office.Interop.Excel.Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
 
@@ -2707,8 +2707,8 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
             #region Save & Show Excel
             string strFileName = string.Empty;
             string strPDFFileName = string.Empty;
-            strFileName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P04_GarmentWash");
-            strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P04_GarmentWash", Sci.Production.Class.PDFFileNameExtension.PDF);
+            strFileName = Class.MicrosoftFile.GetName("Quality_P04_GarmentWash");
+            strPDFFileName = Class.MicrosoftFile.GetName("Quality_P04_GarmentWash", Class.PDFFileNameExtension.PDF);
             objApp.ActiveWorkbook.SaveAs(strFileName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

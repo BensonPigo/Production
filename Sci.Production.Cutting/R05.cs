@@ -23,7 +23,7 @@ namespace Sci.Production.Cutting
             DataTable WorkOrder;
             DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out WorkOrder);
             MyUtility.Tool.SetupCombox(this.comboM, 1, WorkOrder);
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
 
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
@@ -161,7 +161,7 @@ where 1=1
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel
@@ -176,7 +176,7 @@ where 1=1
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R05_CuttingMonthlyForecast.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_R05_CuttingMonthlyForecast.xltx"); // 預先開啟excel app
             foreach (DataRow dr in this.printData.Rows)
             {
                 dr["Fab Desc"] = dr["Fab Desc"].ToString().Trim();
@@ -194,7 +194,7 @@ where 1=1
             objSheets.Columns[19].ColumnWidth = 67;
             objSheets.Rows.AutoFit();
 
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R05_CuttingMonthlyForecast");
+            string strExcelName = Class.MicrosoftFile.GetName("Cutting_R05_CuttingMonthlyForecast");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

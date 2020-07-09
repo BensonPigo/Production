@@ -486,7 +486,7 @@ namespace Sci.Production.Packing
             }
 
             MyUtility.Msg.InfoBox("Import complete.	");
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
     }
 }

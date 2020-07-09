@@ -22,8 +22,8 @@ namespace Sci.Production.Cutting
     public partial class P02 : Win.Tems.Input8
     {
         #region
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
 
         private DataTable sizeratioTb;
         private DataTable layersTb;
@@ -76,7 +76,7 @@ namespace Sci.Production.Cutting
             this.comboBox1.DataSource = new BindingSource(comboBox1_RowSource, null);
             this.comboBox1.ValueMember = "Key";
             this.comboBox1.DisplayMember = "Value";
-            this.txtCutCell.MDivisionID = Sci.Env.User.Keyword;
+            this.txtCutCell.MDivisionID = Env.User.Keyword;
 
             this.DoSubForm = new P02_PatternPanel();
             /*
@@ -143,7 +143,7 @@ select '' FTYGroup
 union 
 select distinct FTYGroup 
 from Factory  WITH (NOLOCK)
-where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+where MDivisionID = '{0}'", Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;
@@ -669,8 +669,8 @@ where WorkOrderUkey={0}", masterID);
             };
             #endregion
 
-            cellDropDownList dropdown = (cellDropDownList)cellDropDownList.GetGridCell("Pms_WorkOrderShift");
-            DataGridViewGeneratorTextColumnSettings col_Shift = cellTextDropDownList.GetGridCell("Pms_WorkOrderShift");
+            CellDropDownList dropdown = (CellDropDownList)CellDropDownList.GetGridCell("Pms_WorkOrderShift");
+            DataGridViewGeneratorTextColumnSettings col_Shift = CellTextDropDownList.GetGridCell("Pms_WorkOrderShift");
 
             #region set grid
             this.Helper.Controls.Grid.Generator(this.detailgrid)
@@ -3811,7 +3811,7 @@ where SCIRefno = '{0}'", strSCIRefno));
 select cuttingWidth = isnull (cuttingWidth, 0) 
 from CutCell 
 where   id = '{0}'
-        and MDivisionID = '{1}'", strCutCellID, Sci.Env.User.Keyword));
+        and MDivisionID = '{1}'", strCutCellID, Env.User.Keyword));
             if (!chkwidth.Empty() && !strCuttingWidth.Empty())
             {
                 decimal width_CM = decimal.Parse(chkwidth);
@@ -3852,7 +3852,7 @@ where   id = '{0}'
             }
 
             ToolStripMenuItem P07MenuItem = null;
-            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
+            foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
             {
                 if (toolMenuItem.Text.EqualString("Cutting"))
                 {

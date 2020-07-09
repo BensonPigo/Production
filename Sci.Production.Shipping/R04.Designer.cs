@@ -39,19 +39,19 @@
             this.checkIncludeLocalOrder = new Sci.Win.UI.CheckBox();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.dateEstimatePullout = new Sci.Win.UI.DateRange();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.comboM = new Sci.Win.UI.ComboBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.txtOrderNo = new Sci.Win.UI.TextBox();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
             this.lbBuyer = new Sci.Win.UI.Label();
             this.lbFCRDate = new Sci.Win.UI.Label();
             this.lbCustCD = new Sci.Win.UI.Label();
             this.lbDestinction = new Sci.Win.UI.Label();
             this.dateFCRDate = new Sci.Win.UI.DateRange();
-            this.txtbuyer = new Sci.Production.Class.txtbuyer();
-            this.txtcountryDestination = new Sci.Production.Class.txtcountry();
-            this.txtcustcd = new Sci.Production.Class.txtcustcd();
+            this.txtbuyer = new Sci.Production.Class.Txtbuyer();
+            this.txtcountryDestination = new Sci.Production.Class.Txtcountry();
+            this.txtcustcd = new Sci.Production.Class.Txtcustcd();
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
@@ -405,19 +405,19 @@
         private Win.UI.CheckBox checkIncludeLocalOrder;
         private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.DateRange dateEstimatePullout;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.ComboBox comboM;
         private Win.UI.ComboBox comboFactory;
         private Win.UI.TextBox txtOrderNo;
-        private Class.comboDropDownList comboCategory;
+        private Class.ComboDropDownList comboCategory;
         private Win.UI.Label lbBuyer;
         private Win.UI.Label lbFCRDate;
         private Win.UI.Label lbCustCD;
         private Win.UI.Label lbDestinction;
         private Win.UI.DateRange dateFCRDate;
-        private Class.txtcustcd txtcustcd;
-        private Class.txtcountry txtcountryDestination;
-        private Class.txtbuyer txtbuyer;
+        private Class.Txtcustcd txtcustcd;
+        private Class.Txtcountry txtcountryDestination;
+        private Class.Txtbuyer txtbuyer;
         private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

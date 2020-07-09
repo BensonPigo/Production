@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class txttpeuser
+    partial class Txttpeuser
     {
         /// <summary> 
         /// 設計工具所需的變數。
@@ -28,31 +28,31 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
+            this.DisplayBox1 = new Sci.Win.UI.DisplayBox();
+            this.DisplayBox2 = new Sci.Win.UI.DisplayBox();
             this.SuspendLayout();
             // 
             // displayBox1
             // 
-            this.displayBox1.Location = new System.Drawing.Point(0, 0);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(80, 22);
-            this.displayBox1.TabIndex = 0;
-            this.displayBox1.TextChanged += new System.EventHandler(this.displayBox1_TextChanged);
-            this.displayBox1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.displayBox1_MouseDoubleClick);
+            this.DisplayBox1.Location = new System.Drawing.Point(0, 0);
+            this.DisplayBox1.Name = "displayBox1";
+            this.DisplayBox1.Size = new System.Drawing.Size(80, 22);
+            this.DisplayBox1.TabIndex = 0;
+            this.DisplayBox1.TextChanged += new System.EventHandler(this.DisplayBox1_TextChanged);
+            this.DisplayBox1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.DisplayBox1_MouseDoubleClick);
             // 
             // displayBox2
             // 
-            this.displayBox2.Location = new System.Drawing.Point(82, 0);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(220, 22);
-            this.displayBox2.TabIndex = 1;
+            this.DisplayBox2.Location = new System.Drawing.Point(82, 0);
+            this.DisplayBox2.Name = "displayBox2";
+            this.DisplayBox2.Size = new System.Drawing.Size(220, 22);
+            this.DisplayBox2.TabIndex = 1;
             // 
             // txttpeuser
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.Controls.Add(this.displayBox2);
-            this.Controls.Add(this.displayBox1);
+            this.Controls.Add(this.DisplayBox2);
+            this.Controls.Add(this.DisplayBox1);
             this.Name = "txttpeuser";
             this.Size = new System.Drawing.Size(302, 23);
             this.ResumeLayout(false);
@@ -61,9 +61,6 @@
         }
 
         #endregion
-
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.DisplayBox displayBox2;
 
     }
 }

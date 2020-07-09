@@ -338,7 +338,7 @@ order by FactoryID
             this.dtSummary.Rows.Add(totalrow);
             #endregion
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -356,7 +356,7 @@ order by FactoryID
                 return false;
             }
             #region Save & Show Excel
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx");
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx");
             MyUtility.Excel.CopyToXls(this.dtSummary, null, "Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp, wSheet: objApp.Sheets[1]);
             MyUtility.Excel.CopyToXls(this.dtDetail, null, "Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp, wSheet: objApp.Sheets[2]);
             for (int i = 1; i <= 2; i++)
@@ -365,7 +365,7 @@ order by FactoryID
             }
 
             Excel.Workbook workbook = objApp.Workbooks[1];
-            string strFileName = Sci.Production.Class.MicrosoftFile.GetName("Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx");
+            string strFileName = Class.MicrosoftFile.GetName("Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx");
             workbook.SaveAs(strFileName);
             workbook.Close();
             objApp.Quit();

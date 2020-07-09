@@ -4,8 +4,20 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtunit_fty : Win.UI.TextBox
+    /// <summary>
+    /// Txtunit_fty
+    /// </summary>
+    public partial class Txtunit_fty : Win.UI.TextBox
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtunit_fty"/> class.
+        /// </summary>
+        public Txtunit_fty()
+        {
+            this.Size = new System.Drawing.Size(66, 23);
+        }
+
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
@@ -22,6 +34,7 @@ namespace Sci.Production.Class
             this.ValidateText();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -37,11 +50,6 @@ namespace Sci.Production.Class
                     return;
                 }
             }
-        }
-
-        public txtunit_fty()
-        {
-            this.Size = new System.Drawing.Size(66, 23);
         }
     }
 }

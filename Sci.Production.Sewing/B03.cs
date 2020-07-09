@@ -15,7 +15,7 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("FactoryID = '{0}'", Sci.Env.User.Factory);
+            this.DefaultFilter = string.Format("FactoryID = '{0}'", Env.User.Factory);
         }
 
         protected override void OnDetailEntered()
@@ -54,13 +54,13 @@ and a.ProductionDate  = '{1}'",
             #region lineLocationID Right Click & Validating
             lineLocationID.EditingMouseDown += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Right &&
+                if (e.Button == MouseButtons.Right &&
                     this.EditMode &&
                     e.RowIndex != -1)
                 {
                     dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
-                    sqlCmd = string.Format("select ID, Name from LineLocation where FactoryID = '{0}'", Sci.Env.User.Factory);
+                    sqlCmd = string.Format("select ID, Name from LineLocation where FactoryID = '{0}'", Env.User.Factory);
                     result = DBProxy.Current.Select(null, sqlCmd, out dt);
                     Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "10,20", MyUtility.Convert.GetString(dr["LineLocationID"]), headercaptions: "ID,Name");
                     DialogResult returnResult = item.ShowDialog();
@@ -93,7 +93,7 @@ and a.ProductionDate  = '{1}'",
                     dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (!MyUtility.Convert.GetString(e.FormattedValue).Equals(dr["LineLocationID"]))
                     {
-                        sqlCmd = string.Format("select ID, Name from LineLocation where FactoryID = '{0}' and ID = {1}", Sci.Env.User.Factory, e.FormattedValue);
+                        sqlCmd = string.Format("select ID, Name from LineLocation where FactoryID = '{0}' and ID = {1}", Env.User.Factory, e.FormattedValue);
                         result = DBProxy.Current.Select(null, sqlCmd, out dt);
                         if (dt == null || dt.Rows.Count == 0)
                         {
@@ -119,7 +119,7 @@ and a.ProductionDate  = '{1}'",
                     dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (!MyUtility.Convert.GetString(e.FormattedValue).Equals(dr["SewingLineID"]))
                     {
-                        sqlCmd = string.Format("select ID from SewingLine where ID = '{0}' and FactoryID = '{1}' and Junk = 0", e.FormattedValue, Sci.Env.User.Factory);
+                        sqlCmd = string.Format("select ID from SewingLine where ID = '{0}' and FactoryID = '{1}' and Junk = 0", e.FormattedValue, Env.User.Factory);
                         if (!MyUtility.Check.Seek(sqlCmd))
                         {
                             dr["SewingLineID"] = string.Empty;
@@ -137,7 +137,7 @@ and a.ProductionDate  = '{1}'",
             #region team Left Click
             team.EditingMouseDown += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left &&
+                if (e.Button == MouseButtons.Left &&
                     this.EditMode &&
                     e.RowIndex != -1)
                 {
@@ -179,7 +179,7 @@ and a.ProductionDate  = '{1}'",
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentDetailData["Team"] = "A";
         }
 

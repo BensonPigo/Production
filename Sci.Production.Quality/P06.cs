@@ -68,7 +68,7 @@ namespace Sci.Production.Quality
             DateTime? targT = null;
             if (!MyUtility.Check.Empty(drEarly["CUTINLINE"]) && !MyUtility.Check.Empty(drSci["MinSciDelivery"]))
             {
-                targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(drEarly["CUTINLINE"], drSci["MinSciDelivery"]);
+                targT = PublicPrg.Prgs.GetTargetLeadTime(drEarly["CUTINLINE"], drSci["MinSciDelivery"]);
             }
 
             if (targT != null)
@@ -195,7 +195,7 @@ namespace Sci.Production.Quality
 
         public void grid_CellMouseClick(MouseButtons eButton, int eRowIndex)
         {
-            if (eButton == System.Windows.Forms.MouseButtons.Right)
+            if (eButton == MouseButtons.Right)
             {
                 MyUtility.Msg.InfoBox("Right Click Event!!");
             }
@@ -229,7 +229,7 @@ namespace Sci.Production.Quality
                 DualResult result = DBProxy.Current.Execute(null, sqlcmd);
                 if (!result)
                 {
-                    return Result.F(result.ToString());
+                    return Ict.Result.F(result.ToString());
                 }
             }
 
@@ -378,9 +378,9 @@ namespace Sci.Production.Quality
 
             foreach (DataRow dr in dt.Rows)
             {
-                dr["LastUpdate"] = Sci.Production.Class.Commons.UserPrg.GetName(
+                dr["LastUpdate"] = Class.Commons.UserPrg.GetName(
                     MyUtility.Check.Empty(dt.Rows[i]["EditName"].ToString()) ?
-                    dt.Rows[i]["addName"].ToString() : dt.Rows[i]["EditName"].ToString(), Sci.Production.Class.Commons.UserPrg.NameType.nameOnly) + " - " + (
+                    dt.Rows[i]["addName"].ToString() : dt.Rows[i]["EditName"].ToString(), Class.Commons.UserPrg.NameType.NameOnly) + " - " + (
                     MyUtility.Check.Empty(dt.Rows[i]["EditDate"].ToString()) ?
                     ((DateTime)dt.Rows[i]["addDate"]).ToString("yyyy/MM/dd HH:mm:ss") :
                     ((DateTime)dt.Rows[i]["EditDate"]).ToString("yyyy/MM/dd HH:mm:ss"));

@@ -72,7 +72,7 @@ inner join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
 left join GMTBooking g WITH (NOLOCK) on p.INVNo = g.ID
 left join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id and oq.Seq = pd.OrderShipmodeSeq
 where p.Type = 'B'
-and p.MDivisionID = '{0}'", Sci.Env.User.Keyword));
+and p.MDivisionID = '{0}'", Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtGarmentBookingStart.Text))
             {
                 sqlCmd.Append(string.Format(" and p.INVNo >= '{0}'", this.txtGarmentBookingStart.Text));

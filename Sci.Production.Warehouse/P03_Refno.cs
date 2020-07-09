@@ -224,13 +224,13 @@ drop table #tmp
         {
             this.ShowWaitMessage("Excel Processing...");
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Refno.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P03_Refno.xltx"); // 預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format(
                 @"
 select NameEN
 from Factory
-where id = '{0}'", Sci.Env.User.Keyword));
+where id = '{0}'", Env.User.Keyword));
             objSheets.Cells[3, 2] = MyUtility.Convert.GetString(this.dr["refno"].ToString());
 
             MyUtility.Excel.CopyToXls(dt.DefaultView.ToTable(), string.Empty, "Warehouse_P03_Refno.xltx", 4, true, null, objApp);      // 將datatable copy to excel

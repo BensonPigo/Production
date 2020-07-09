@@ -369,9 +369,9 @@ order by pd.SCICtnNo
                     try
                     {
                         destination = Path.Combine(this.destination_path, MyUtility.Convert.GetString(dr["FileNameOri"]));
-                        if (System.IO.File.Exists(destination))
+                        if (File.Exists(destination))
                         {
-                            System.IO.File.Delete(destination);
+                            File.Delete(destination);
                         }
                     }
                     catch (IOException exception)
@@ -489,11 +489,11 @@ delete ShippingMarkPic_Detail where ShippingMarkPicUkey = {this.CurrentMaintain[
                 try
                 {
                     string destination = Path.Combine(this.destination_path, destination_fileName);
-                    if (System.IO.File.Exists(destination))
+                    if (File.Exists(destination))
                     {
-                        if (System.IO.File.Exists(destination))
+                        if (File.Exists(destination))
                         {
-                            System.IO.File.Delete(destination);
+                            File.Delete(destination);
                         }
                     }
                 }
@@ -597,7 +597,7 @@ order by SCICtnNo
 
             #region To Excel
             string excelName = "Packing_P24_Download";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
 
             int rownum = 2;
@@ -744,7 +744,7 @@ order by SCICtnNo
                 Excel.Workbook xlsBook = xlsApp.Workbooks.Open(strPath);
                 Excel.Worksheet xlsSheet = xlsBook.ActiveSheet;
                 Excel.Range xlsRangeFirstCell = xlsSheet.get_Range("A1");
-                Excel.Range xlsRangeLastCell = xlsSheet.Cells.SpecialCells(Microsoft.Office.Interop.Excel.XlCellType.xlCellTypeLastCell);
+                Excel.Range xlsRangeLastCell = xlsSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell);
                 Excel.Range xlsRange = xlsSheet.get_Range(xlsRangeFirstCell, xlsRangeLastCell);
                 object[,] objValue = xlsRange.Value2 as object[,];
 

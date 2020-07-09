@@ -87,7 +87,7 @@ namespace Sci.Production.Centralized
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
             if (this.dtPrint != null)
             {
                 this.dtPrint.Rows.Clear();
@@ -165,7 +165,7 @@ Where 1 = 1
       and O.Category in ('B','S') 
 	  {0}", where);
 
-                    this.BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Style, Order 資料抓取中, 資料可能很多, 請等待 (Step 1/5)"); });
+                    this.BeginInvoke(() => { MyUtility.Msg.WaitWindows("Wait – Style, Order 資料抓取中, 資料可能很多, 請等待 (Step 1/5)"); });
                     result = DBProxy.Current.SelectByConn(con, this.SqlData1, out this.tmpData1);
                     this.BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
                     if (!result)
@@ -193,7 +193,7 @@ from #tmpData1 tmpData1
 Left Join SewingOutput_Detail WITH (NOLOCK) on SewingOutput_Detail.OrderId = tmpData1.ID AND SewingOutput_Detail.WorkHour > 0
 Left Join SewingOutput WITH (NOLOCK) on SewingOutput.ID = SewingOutput_Detail.ID";
 
-                    this.BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – By Order, Factory 整理明細 (Step 2/5)"); });
+                    this.BeginInvoke(() => { MyUtility.Msg.WaitWindows("Wait – By Order, Factory 整理明細 (Step 2/5)"); });
                     result = DBProxy.Current.SelectByConn(con, this.SqlData2, out this.tmpData2);
                     this.BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
                     if (!result)
@@ -234,7 +234,7 @@ from (
                         select,
                         groupBy);
 
-                    this.BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Group By Style , Country 整理明細 (Step 3/5)"); });
+                    this.BeginInvoke(() => { MyUtility.Msg.WaitWindows("Wait – Group By Style , Country 整理明細 (Step 3/5)"); });
                     result = DBProxy.Current.SelectByConn(con, this.SqlData3, out tmpData3);
                     this.BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
                     if (!result)
@@ -315,7 +315,7 @@ full join (
 ) c on c.Data = final.SMVEFFX
 order by data";
 
-                    this.BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – 產生tmpEFFIC明細 (Step 3/5)"); });
+                    this.BeginInvoke(() => { MyUtility.Msg.WaitWindows("Wait – 產生tmpEFFIC明細 (Step 3/5)"); });
                     result = DBProxy.Current.SelectByConn(con, this.SqlData4, out tmpData4);
                     result = DBProxy.Current.SelectByConn(con, this.All_SqlData4, out all_tmpData4);
                     this.BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
@@ -337,7 +337,7 @@ order by data";
 
                     this.SqlStyleDetail = string.Format(@"select Style,CPU,SMV,{0} as [grouping], StyleProdQty as 實際產量, StyleStardQty as 標準產量, QtyEFFX as [橫向區間#], Country from #tmpData3 order by Style", groupBy);
 
-                    this.BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – 整理 Style Detail 資料 (Step 4/5)"); });
+                    this.BeginInvoke(() => { MyUtility.Msg.WaitWindows("Wait – 整理 Style Detail 資料 (Step 4/5)"); });
                     result = DBProxy.Current.SelectByConn(con, this.SqlStyleDetail, out tmpStyleDetail);
                     this.BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
                     if (!result)
@@ -351,7 +351,7 @@ order by data";
 	                                            tmpData2.AGCCode  as AreaCode, tmpData2.[Order Qty] as [SP# Q'ty], tmpData2.Style as Style, tmpData2.ProdQty as 實際產量, tmpData2.StardQty as 標準產量 
                                             from #tmpData2 tmpData2 order by tmpData2.OrderID";
 
-                    this.BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – 整理 Order Detail 資料 (Step 5/5)"); });
+                    this.BeginInvoke(() => { MyUtility.Msg.WaitWindows("Wait – 整理 Order Detail 資料 (Step 5/5)"); });
                     result = DBProxy.Current.SelectByConn(con, this.SqlOrderDetail, out tmpOrderDetail);
                     this.BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
                     if (!result)
@@ -510,7 +510,7 @@ order by data",
         private DualResult TransferData()
         {
             string temfile = string.Empty;
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
 
             string strPath = PrivUtils.getPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
             temfile = strPath + @"\Centralized_R01.Matrix.xltx";
@@ -534,7 +534,7 @@ order by data",
             sxrc.DicDatas.Add("##OrderDetail", xrt4);
             sxrc.DicDatas.Add("##SeasonCode", this.txtSeason.Text + "_historical data");
 
-            sxrc.Save(Sci.Production.Class.MicrosoftFile.GetName("Centralized_R01.Matrix"));
+            sxrc.Save(Class.MicrosoftFile.GetName("Centralized_R01.Matrix"));
             this.Final_Data1.Clear();
             this.FinalData4.Clear();
             this.FinalDetailData.Clear();
@@ -542,7 +542,7 @@ order by data",
             this.FinalALLData.Clear();
             this.FinalStyleDetail.Clear();
             this.FinalOrderDetail.Clear();
-            return Result.True;
+            return Ict.Result.True;
         }
     }
 }

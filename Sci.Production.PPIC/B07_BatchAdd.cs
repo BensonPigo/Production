@@ -68,7 +68,7 @@ namespace Sci.Production.PPIC
         private void TxtLineNoStart_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Win.UI.TextBox sewingLineText = (Win.UI.TextBox)sender;
-            string sql = "Select ID,Description From SewingLine WITH (NOLOCK) Where FactoryId = '" + Sci.Env.User.Factory + "' order by ID";
+            string sql = "Select ID,Description From SewingLine WITH (NOLOCK) Where FactoryId = '" + Env.User.Factory + "' order by ID";
             SelectItem item = new SelectItem(sql, "4,15", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
@@ -86,7 +86,7 @@ namespace Sci.Production.PPIC
             if (!string.IsNullOrWhiteSpace(sewingLineText.Text) && sewingLineText.Text != sewingLineText.OldValue)
             {
                 // sql參數
-                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@factoryid", Sci.Env.User.Factory);
+                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@factoryid", Env.User.Factory);
                 System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@sewinglineid", sewingLineText.Text.ToString());
 
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
@@ -131,7 +131,7 @@ namespace Sci.Production.PPIC
 
             // 先將屬於登入的工廠的SewingLine資料給撈出來
             DataTable sewingLine;
-            string sqlCommand = "select ID from SewingLine WITH (NOLOCK) where FactoryID = '" + Sci.Env.User.Factory + "' and ID >= '" + this.txtLineNoStart.Text + "' and ID <= '" + this.txtLineNoEnd.Text + "' order by ID";
+            string sqlCommand = "select ID from SewingLine WITH (NOLOCK) where FactoryID = '" + Env.User.Factory + "' and ID >= '" + this.txtLineNoStart.Text + "' and ID <= '" + this.txtLineNoEnd.Text + "' order by ID";
             DualResult returnResult = DBProxy.Current.Select(null, sqlCommand, out sewingLine);
             if (!returnResult)
             {
@@ -215,7 +215,7 @@ namespace Sci.Production.PPIC
                     {
                         foreach (DataRow currentRecord in sewingLine.Rows)
                         {
-                            sqlCommand = string.Format("select Date from WorkHour WITH (NOLOCK) where SewingLineID = '{0}' and FactoryID = '{1}' and Date = '{2}'", currentRecord["ID"].ToString(), Sci.Env.User.Factory, startDate.ToString("d"));
+                            sqlCommand = string.Format("select Date from WorkHour WITH (NOLOCK) where SewingLineID = '{0}' and FactoryID = '{1}' and Date = '{2}'", currentRecord["ID"].ToString(), Env.User.Factory, startDate.ToString("d"));
                             if (!MyUtility.Check.Seek(sqlCommand, null))
                             {
                                 insertCmds.Add(string.Format(
@@ -223,15 +223,15 @@ namespace Sci.Production.PPIC
 Insert into WorkHour (SewingLineID,FactoryID,Date,Hours,Holiday,AddName,AddDate)
 Values('{0}','{1}','{2}','{3}','{4}','{5}',GETDATE());",
                                     currentRecord["ID"].ToString(),
-                                    Sci.Env.User.Factory,
+                                    Env.User.Factory,
                                     startDate.ToString("d"),
                                     this.numHours.Text.ToString(),
                                     this.checkItsAHoliday.Checked,
-                                    Sci.Env.User.UserID));
+                                    Env.User.UserID));
                             }
                             else
                             {
-                                insertCmds.Add(string.Format("Update WorkHour set Hours = '{0}', Holiday = '{1}', EditName = '{2}', EditDate = GETDATE() where SewingLineID = '{3}' and FactoryID = '{4}' and Date = '{5}';", this.numHours.Text.ToString(), this.checkItsAHoliday.Checked, Sci.Env.User.UserID, currentRecord["ID"].ToString(), Sci.Env.User.Factory, startDate.ToString("d")));
+                                insertCmds.Add(string.Format("Update WorkHour set Hours = '{0}', Holiday = '{1}', EditName = '{2}', EditDate = GETDATE() where SewingLineID = '{3}' and FactoryID = '{4}' and Date = '{5}';", this.numHours.Text.ToString(), this.checkItsAHoliday.Checked, Env.User.UserID, currentRecord["ID"].ToString(), Env.User.Factory, startDate.ToString("d")));
                             }
                         }
                     }
@@ -241,7 +241,7 @@ Values('{0}','{1}','{2}','{3}','{4}','{5}',GETDATE());",
             }
 
             // 將資料新增至Table
-            DualResult insertReturnResult = Result.True;
+            DualResult insertReturnResult = Ict.Result.True;
             if (insertCmds.Count > 0)
             {
                 using (TransactionScope transactionScope = new TransactionScope())
@@ -253,7 +253,7 @@ Values('{0}','{1}','{2}','{3}','{4}','{5}',GETDATE());",
                         {
                             transactionScope.Complete();
                             transactionScope.Dispose();
-                            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+                            this.DialogResult = DialogResult.OK;
                         }
                         else
                         {

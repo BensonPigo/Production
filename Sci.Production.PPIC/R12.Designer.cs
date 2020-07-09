@@ -43,8 +43,8 @@
             this.checkSample = new Sci.Win.UI.CheckBox();
             this.checkMaterial = new Sci.Win.UI.CheckBox();
             this.checkForecast = new Sci.Win.UI.CheckBox();
-            this.txtseason = new Sci.Production.Class.txtseason();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtseason = new Sci.Production.Class.Txtseason();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.checkGarment = new Sci.Win.UI.CheckBox();
             this.checkSMTL = new Sci.Win.UI.CheckBox();
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
@@ -374,8 +374,8 @@
         private Win.UI.CheckBox checkSample;
         private Win.UI.CheckBox checkMaterial;
         private Win.UI.CheckBox checkForecast;
-        private Class.txtseason txtseason;
-        private Class.txtbrand txtbrand;
+        private Class.Txtseason txtseason;
+        private Class.Txtbrand txtbrand;
         private Win.UI.CheckBox checkGarment;
         private Win.UI.CheckBox checkSMTL;
         private Win.UI.CheckBox chkIncludeCancelOrder;

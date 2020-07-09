@@ -221,7 +221,7 @@ drop table #tmp
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(ReportDefinition report)

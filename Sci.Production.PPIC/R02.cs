@@ -40,7 +40,7 @@ namespace Sci.Production.PPIC
             DataTable mDivision;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
             MyUtility.Tool.SetupCombox(this.comboPrintType, 1, 1, "ALL,MR Not Send,MR Send Not Receive,Factory Receive");
             this.comboPrintType.SelectedIndex = 0;
         }
@@ -185,7 +185,7 @@ where 1=1 "));
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -200,7 +200,7 @@ where 1=1 "));
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R02_ProductionKits.xltx");
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_R02_ProductionKits.xltx");
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "PPIC_R02_ProductionKits.xltx", 1, true, string.Empty, objApp);
 
             return true;

@@ -15,8 +15,8 @@ namespace Sci.Production.Cutting
 {
     public partial class P10_1 : Win.Tems.Input6
     {
-        string keyword = Sci.Env.User.Keyword;
-        string LoginId = Sci.Env.User.UserID;
+        string keyword = Env.User.Keyword;
+        string LoginId = Env.User.UserID;
         DataTable bundle_Detail_allpart_Tb;
         DataTable bundle_Detail_Art_Tb;
         DataTable bundle_Detail_Qty_Tb;
@@ -27,7 +27,7 @@ namespace Sci.Production.Cutting
         {
             this.InitializeComponent();
 
-            this.DefaultWhere = $@"(select O.FtyGroup from Orders O WITH (NOLOCK) Where O.ID = BundleReplacement.Orderid)  = '{Sci.Env.User.Factory}'";
+            this.DefaultWhere = $@"(select O.FtyGroup from Orders O WITH (NOLOCK) Where O.ID = BundleReplacement.Orderid)  = '{Env.User.Factory}'";
         }
 
         protected override void OnFormLoaded()
@@ -41,14 +41,14 @@ select '' FTYGroup
 union 
 select distinct FTYGroup 
 from Factory WITH (NOLOCK)
-where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+where MDivisionID = '{0}'", Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
 
             // 取得當前登入工廠index
             for (int i = 0; i < queryDT.Rows.Count; i++)
             {
-                if (string.Compare(queryDT.Rows[i]["FTYGroup"].ToString(), Sci.Env.User.Factory) == 0)
+                if (string.Compare(queryDT.Rows[i]["FTYGroup"].ToString(), Env.User.Factory) == 0)
                 {
                     this.queryfors.SelectedIndex = i;
                 }
@@ -1049,7 +1049,7 @@ ORDER BY Seq",
 
             string sql = string.Format(
                 @"Select ID,FactoryID,Description  From SewingLine WITH (NOLOCK) 
-                                        where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{0}')", Sci.Env.User.Keyword);
+                                        where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{0}')", Env.User.Keyword);
             SelectItem item = new SelectItem(sql, "2,8,16", this.Text, false, ",");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
@@ -1082,7 +1082,7 @@ ORDER BY Seq",
 
             string sql = string.Format(
                 @"Select ID  From SewingLine WITH (NOLOCK)  
-                    where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{0}') and ID='{1}'", Sci.Env.User.Keyword, newvalue);
+                    where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{0}') and ID='{1}'", Env.User.Keyword, newvalue);
             string tmp = MyUtility.GetValue.Lookup(sql);
             if (string.IsNullOrWhiteSpace(tmp))
             {

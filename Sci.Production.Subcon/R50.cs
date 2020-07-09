@@ -38,7 +38,7 @@ namespace Sci.Production.Subcon
         // 非同步讀取資料
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -109,7 +109,7 @@ Where sub.sub like '%PRT%'
             sql.Append(" order by o.FtyGroup,o.FactoryID,BD.BundleNo,bd.BundleGroup,o.StyleID,o.SeasonID,o.brandid");
 
             // 預先開啟excel app
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R50.xltx");
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R50.xltx");
 
             DataRow dr;
             MyUtility.Check.Seek(sql2.ToString(), out dr, null);
@@ -180,7 +180,7 @@ Where sub.sub like '%PRT%'
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R50");
+            string strExcelName = Class.MicrosoftFile.GetName("Subcon_R50");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

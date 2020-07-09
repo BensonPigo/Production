@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panelTop = new Sci.Win.UI.Panel();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.btnDelete = new Sci.Win.UI.Button();
             this.btnUpdate = new Sci.Win.UI.Button();
             this.btnQuery = new Sci.Win.UI.Button();
@@ -340,7 +340,7 @@
         private Win.UI.Label label1;
         private Win.UI.Panel panelBottom;
         private Win.UI.Panel panelFill;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
         private Win.UI.Grid gridP21Query;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
     }

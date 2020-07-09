@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
+using Sci.Production.Class;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
@@ -121,7 +122,7 @@ namespace Sci.Production.Warehouse
                 }
             };
             #endregion
-            DataGridViewGeneratorTextColumnSettings ts2 = Production.Class.cellMtlLocation.GetGridCell("O");
+            DataGridViewGeneratorTextColumnSettings ts2 = TxtMtlLocation.CellMtlLocation.GetGridCell("O");
             this.gridRel.CellValueChanged += (s, e) =>
 {
     if (MyUtility.Check.Empty(this.listControlBindingSource1.DataSource) || MyUtility.Check.Empty(this.listControlBindingSource2.DataSource))
@@ -547,7 +548,7 @@ drop table #tmp
 
                 if (dr["selected"].ToString() == "True" && !MyUtility.Check.Empty(dr["requestqty"]))
                 {
-                    var issued = PublicPrg.Prgs.autopick(dr, false, "I");
+                    var issued = Prgs.autopick(dr, false, "I");
                     if (issued == null)
                     {
                         return;
@@ -599,7 +600,7 @@ drop table #tmp
              * 依照 To POID 建立 P24
              */
              var listPoid = findrow.Select(row => row["ToPOID"]).Distinct().ToList();
-             var tmpId = Sci.MyUtility.GetValue.GetBatchID(Sci.Env.User.Keyword + "PI", "SubTransfer", System.DateTime.Now, batchNumber: listPoid.Count);
+             var tmpId = MyUtility.GetValue.GetBatchID(Env.User.Keyword + "PI", "SubTransfer", DateTime.Now, batchNumber: listPoid.Count);
              if (MyUtility.Check.Empty(tmpId))
             {
                 MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -668,7 +669,7 @@ from #tmp
                 drNewMaster["type"] = "E";
                 drNewMaster["issuedate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
                 drNewMaster["mdivisionid"] = Env.User.Keyword;
-                drNewMaster["FactoryID"] = Sci.Env.User.Factory;
+                drNewMaster["FactoryID"] = Env.User.Factory;
                 drNewMaster["status"] = "New";
                 drNewMaster["addname"] = Env.User.UserID;
                 drNewMaster["adddate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
@@ -815,7 +816,7 @@ from #tmp
             Exceldt.Columns.Remove("stockseq2");
             Exceldt.Columns.Remove("qty");
 
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P30.xltx"); // 預先開啟excel app
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P30.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(Exceldt, string.Empty, "Warehouse_P30.xltx", 2, showExcel: true, showSaveMsg: true, excelApp: excelApp);      // 將datatable copy to excel
             Marshal.ReleaseComObject(excelApp);
         }

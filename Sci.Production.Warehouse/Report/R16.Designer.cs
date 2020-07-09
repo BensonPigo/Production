@@ -30,13 +30,13 @@
         {
             this.dateIssueDate = new Sci.Win.UI.DateRange();
             this.labelM = new Sci.Win.UI.Label();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.txtRquest2 = new Sci.Win.UI.TextBox();
             this.txtRquest1 = new Sci.Win.UI.TextBox();
             this.label10 = new Sci.Win.UI.Label();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.label1 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
@@ -156,7 +156,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
@@ -218,14 +218,14 @@
         #endregion
 
         private Win.UI.DateRange dateIssueDate;
-        private Class.txtMdivision txtMdivision;
+        private Class.TxtMdivision txtMdivision;
         private Win.UI.Label labelM;
         private Win.UI.TextBox txtRquest2;
         private Win.UI.TextBox txtRquest1;
         private Win.UI.Label label10;
         private Win.UI.Label labelSPNo;
         private Win.UI.Label labelFactory;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
         private Win.UI.Label label1;
     }
 }

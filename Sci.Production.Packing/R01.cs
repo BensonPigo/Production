@@ -26,8 +26,8 @@ namespace Sci.Production.Packing
             DataTable factory;
             DBProxy.Current.Select(null, "select '' union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboFactory.Text = Sci.Env.User.Factory;
-            this.txtMdivision1.Text = Sci.Env.User.Keyword;
+            this.comboFactory.Text = Env.User.Factory;
+            this.txtMdivision1.Text = Env.User.Keyword;
 
             this.dateScan1.CustomFormat = "yyyy/MM/dd HH:mm";
             this.dateScan2.CustomFormat = "yyyy/MM/dd HH:mm";
@@ -409,11 +409,11 @@ select Customize1 = stuff((
             }
             catch (Exception ex)
             {
-                return Result.F("Get column name failed!!\r\n", ex);
+                return Ict.Result.F("Get column name failed!!\r\n", ex);
             }
             #endregion
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -436,7 +436,7 @@ select Customize1 = stuff((
 
             #region To Excel
             string reportname = "Packing_R01.xltx";
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + reportname);
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + reportname);
             Excel.Worksheet worksheet = objApp.Sheets[1];
             worksheet.Cells[2, 2] = this._sp1 + "~" + this._sp2;
             worksheet.Cells[2, 5] = this._packingno1 + "~" + this._packingno2;
@@ -451,7 +451,7 @@ select Customize1 = stuff((
             worksheet.Columns.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Packing_R01");
+            string strExcelName = Class.MicrosoftFile.GetName("Packing_R01");
             Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

@@ -31,7 +31,7 @@ select distinct FTYGroup
 from Factory 
 where Junk != 1", out dtFactory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, dtFactory);
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
             #endregion
         }
 
@@ -283,10 +283,10 @@ Drop Table #FarmOutList,#FarmInList,#Base
             result = DBProxy.Current.Select(null, sqlCmd, listSqlPar, out this.printData);
             if (!result)
             {
-                return Result.F(result.ToString());
+                return Ict.Result.F(result.ToString());
             }
             #endregion
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -301,13 +301,13 @@ Drop Table #FarmOutList,#FarmInList,#Base
             this.SetCount(this.printData.Rows.Count);
             this.ShowWaitMessage("Excel Processing");
             #region To Excel
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R32.xltx");
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R32.xltx");
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Subcon_R32.xltx", 1, showExcel: false, excelApp: objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
             worksheet.Columns.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R32");
+            string strExcelName = Class.MicrosoftFile.GetName("Subcon_R32");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

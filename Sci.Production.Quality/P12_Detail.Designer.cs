@@ -52,11 +52,11 @@
             this.label16 = new Sci.Win.UI.Label();
             this.label15 = new Sci.Win.UI.Label();
             this.label14 = new System.Windows.Forms.Label();
-            this.txtTechnician = new Sci.Production.Class.txtTechnician();
+            this.txtTechnician = new Sci.Production.Class.TxtTechnician();
             this.dateBoxReleasedDate = new Sci.Win.UI.DateBox();
             this.dateBoxReceivedDate = new Sci.Win.UI.DateBox();
             this.dateBoxSubmitDate = new Sci.Win.UI.DateBox();
-            this.txtMR = new Sci.Production.Class.txtuser();
+            this.txtMR = new Sci.Production.Class.Txtuser();
             this.txtCombineStyle = new Sci.Win.UI.TextBox();
             this.displayResult = new Sci.Win.UI.DisplayBox();
             this.displayReportNo = new Sci.Win.UI.DisplayBox();
@@ -749,7 +749,7 @@
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
-        private Class.txtuser txtMR;
+        private Class.Txtuser txtMR;
         private Win.UI.DisplayBox displayResult;
         private Win.UI.DisplayBox displayReportNo;
         private Win.UI.DisplayBox displayNo;
@@ -760,7 +760,7 @@
         private Win.UI.DateBox dateBoxReleasedDate;
         private Win.UI.DateBox dateBoxReceivedDate;
         private Win.UI.DateBox dateBoxSubmitDate;
-        private Class.txtTechnician txtTechnician;
+        private Class.TxtTechnician txtTechnician;
         private Win.UI.TextBox txtCombineStyle;
         private Win.UI.Button btnSendMR;
         private Win.UI.Button btnPDF;

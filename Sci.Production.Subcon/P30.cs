@@ -27,7 +27,7 @@ namespace Sci.Production.Subcon
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "mdivisionid = '" + Sci.Env.User.Keyword + "'";
+            this.DefaultFilter = "mdivisionid = '" + Env.User.Keyword + "'";
 
             this.gridicon.Insert.Enabled = false;
             this.gridicon.Insert.Visible = false;
@@ -50,7 +50,7 @@ namespace Sci.Production.Subcon
             base.EnsureToolbarExt();
             if (!this.tabs.TabPages[0].Equals(this.tabs.SelectedTab) && !MyUtility.Check.Empty(this.CurrentMaintain))
             {
-                bool NotEditModeAndHasAuthority = !this.EditMode && Sci.Production.PublicPrg.Prgs.GetAuthority(Env.User.UserID);
+                bool NotEditModeAndHasAuthority = !this.EditMode && Prgs.GetAuthority(Env.User.UserID);
 
                 // 狀態流程：New → Locked → Approved → Closed
                 this.toolbar.cmdConfirm.Enabled = !this.EditMode && this.Perm.Confirm && this.CurrentMaintain["status"].ToString() == "Locked";
@@ -68,9 +68,9 @@ namespace Sci.Production.Subcon
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["Mdivisionid"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            this.CurrentMaintain["ISSUEDATE"] = System.DateTime.Today;
+            this.CurrentMaintain["Mdivisionid"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
+            this.CurrentMaintain["ISSUEDATE"] = DateTime.Today;
             this.CurrentMaintain["VatRate"] = 0;
             this.CurrentMaintain["Status"] = "New";
             this.txtmfactory.ReadOnly = true;  // 新增時[factory]預設唯讀
@@ -299,14 +299,14 @@ where a.RequestID <> '' and lpd.qty-lld.qty-a.Qty<0";
             // 取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'LocalPO1'), 'LocalPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where ID ='{0}'", this.CurrentMaintain["factoryid"]));
+                string factorykeyword = MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where ID ='{0}'", this.CurrentMaintain["factoryid"]));
                 if (MyUtility.Check.Empty(factorykeyword))
                 {
                     MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
                     return false;
                 }
 
-                this.CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "LP", "Localpo", (DateTime)this.CurrentMaintain["issuedate"]);
+                this.CurrentMaintain["id"] = MyUtility.GetValue.GetID(Env.User.Keyword + "LP", "Localpo", (DateTime)this.CurrentMaintain["issuedate"]);
             }
 
             #region 加總明細金額至表頭
@@ -362,7 +362,7 @@ where a.RequestID <> '' and lpd.qty-lld.qty-a.Qty<0";
 
                 if (ids != string.Empty)
                 {
-                    return Result.F("Below request id already be created in Local PO, can't approve it!!" + Environment.NewLine + ids);
+                    return Ict.Result.F("Below request id already be created in Local PO, can't approve it!!" + Environment.NewLine + ids);
                 }
             }
             #endregion
@@ -390,7 +390,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
 
                 if (ids != string.Empty)
                 {
-                    return Result.F("Below request id already be created in Local PO, can't approve it!!" + Environment.NewLine + ids);
+                    return Ict.Result.F("Below request id already be created in Local PO, can't approve it!!" + Environment.NewLine + ids);
                 }
             }
             #endregion
@@ -453,7 +453,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                 {
                     _transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
-                    DualResult er = Result.F("Commit transaction error.", ex);
+                    DualResult er = Ict.Result.F("Commit transaction error.", ex);
                     return er;
                 }
             }
@@ -484,7 +484,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                             // 根據不同供應商，寫入LocalPO
                             List<string> SupplyList = dtPadBoardInfo.AsEnumerable().Select(o => o.Field<string>("localsuppid")).Distinct().ToList();
 
-                            string[] IDList = Sci.MyUtility.GetValue.GetBatchID(Sci.Env.User.Keyword + "LP", "Localpo", DateTime.Now, batchNumber: SupplyList.Count).ToArray();
+                            string[] IDList = MyUtility.GetValue.GetBatchID(Env.User.Keyword + "LP", "Localpo", DateTime.Now, batchNumber: SupplyList.Count).ToArray();
 
                             // 用於顯示MessageBox
                             List<string> msg_Id_List = new List<string>();
@@ -556,7 +556,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
 
                                     sql.Append(" ,@BuyerID)" + Environment.NewLine);
 
-                                    padResult = Sci.Data.DBProxy.Current.Execute(null, sql.ToString(), parameters);
+                                    padResult = DBProxy.Current.Execute(null, sql.ToString(), parameters);
 
                                     if (padResult == false)
                                     {
@@ -591,7 +591,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                                 parameters.Add(new SqlParameter("@InternalRemark", $"Auto create pads PO from PO#:{this.CurrentMaintain["ID"]}."));
                                 parameters.Add(new SqlParameter("@ApvName", this.CurrentMaintain["ApvName"]));
                                 parameters.Add(new SqlParameter("@ApvDate", this.CurrentMaintain["ApvDate"]));
-                                parameters.Add(new SqlParameter("@AddName", Sci.Env.User.UserID));
+                                parameters.Add(new SqlParameter("@AddName", Env.User.UserID));
 
                                 parameters.Add(new SqlParameter("@AddDate", DateTime.Now));
                                 parameters.Add(new SqlParameter("@EditName", DBNull.Value));
@@ -644,7 +644,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                                 sql.Append(" ,@Status)" + Environment.NewLine);
                                 #endregion
 
-                                padResult = Sci.Data.DBProxy.Current.Execute(null, sql.ToString(), parameters);
+                                padResult = DBProxy.Current.Execute(null, sql.ToString(), parameters);
                                 if (padResult == false)
                                 {
                                     _transactionscope2.Dispose();
@@ -731,7 +731,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                 {
                     _transactionscope.Dispose();
                     this.ShowErr("Commit transaction error.", ex);
-                    DualResult er = Result.F("Commit transaction error.", ex);
+                    DualResult er = Ict.Result.F("Commit transaction error.", ex);
                     return er;
                 }
             }
@@ -965,7 +965,7 @@ and factory.IsProduceFty = 1
 and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
 and orders.PulloutComplete = 0
  ",
-                    e.FormattedValue, Sci.Env.User.Keyword), out dr, null))
+                    e.FormattedValue, Env.User.Keyword), out dr, null))
                 {
                     this.CurrentDetailData["orderid"] = e.FormattedValue;
                     this.CurrentDetailData["factoryid"] = dr["FactoryID"];
@@ -1998,8 +1998,8 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
 
         private void txtLocalPurchaseItem_Validated(object sender, EventArgs e)
         {
-            Class.txtLocalPurchaseItem o;
-            o = (Class.txtLocalPurchaseItem)sender;
+            Class.TxtLocalPurchaseItem o;
+            o = (Class.TxtLocalPurchaseItem)sender;
 
             if ((o.Text != o.OldValue) && this.EditMode)
             {

@@ -81,12 +81,12 @@ namespace Sci.Production.Class.Commons
         /// <returns>bool</returns>
         public static bool HasHandleOrDeputyAuth_popupWarningBox(object handleID)
         {
-            bool hasAuth = AuthPrg.HasHandleOrDeputyAuth(handleID);
+            bool hasAuth = HasHandleOrDeputyAuth(handleID);
             if (!hasAuth)
             {
                 string handle = handleID == null ? string.Empty : handleID.ToString();
                 string userName;
-                UserPrg.GetName(handle, out userName, UserPrg.NameType.idAndName);
+                UserPrg.GetName(handle, out userName, UserPrg.NameType.IdAndName);
                 Msg.WarningBox("this is only authorised for [" + userName + "]");
             }
 

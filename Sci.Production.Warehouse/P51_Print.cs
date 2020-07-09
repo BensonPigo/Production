@@ -75,7 +75,7 @@ LEFT JOIN DBO.Stocktaking T  WITH (NOLOCK) ON T.ID = S.Id  WHERE S.Id = @ID", pa
                 e.Report.ReportDataSource = data;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         public DataRow CurrentDataRow { get; set; }

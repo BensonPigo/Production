@@ -30,10 +30,10 @@ namespace Sci.Production.Subcon
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
             MyUtility.Tool.SetupCombox(this.comboOrderBy, 1, 1, "Issue date,Supplier");
             this.comboOrderBy.SelectedIndex = 0;
-            this.txtMdivisionM.Text = Sci.Env.User.Keyword;
+            this.txtMdivisionM.Text = Env.User.Keyword;
         }
 
         // 驗證輸入條件
@@ -203,7 +203,7 @@ where 1=1"));
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel
@@ -218,7 +218,7 @@ where 1=1"));
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R15.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R15.xltx"); // 預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[2, 1] = this.condition.ToString();   // 條件字串寫入excel
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Subcon_R15.xltx", 3, true, null, objApp);      // 將datatable copy to excel

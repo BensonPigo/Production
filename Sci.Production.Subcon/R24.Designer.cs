@@ -38,9 +38,9 @@
             this.dateGLDate = new Sci.Win.UI.DateRange();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
-            this.txtMdivisionM = new Sci.Production.Class.txtMdivision();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
-            this.txtartworktype_ftyCategory = new Sci.Production.Class.txtartworktype_fty();
+            this.txtMdivisionM = new Sci.Production.Class.TxtMdivision();
+            this.txtstyle = new Sci.Production.Class.Txtstyle();
+            this.txtartworktype_ftyCategory = new Sci.Production.Class.Txtartworktype_fty();
             this.comboOrderType = new Sci.Win.UI.ComboBox();
             this.labelOrderType = new Sci.Win.UI.Label();
             this.comboRateType = new Sci.Win.UI.ComboBox();
@@ -50,7 +50,7 @@
             this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.txtSPNoEnd = new Sci.Win.UI.TextBox();
             this.labelAPDate = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.labelGLDate = new Sci.Win.UI.Label();
             this.chk_IrregularPriceReason = new Sci.Win.UI.CheckBox();
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
@@ -201,14 +201,14 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(170, 23);
             this.txtstyle.TabIndex = 8;
-            this.txtstyle.tarBrand = null;
-            this.txtstyle.tarSeason = null;
+            this.txtstyle.TarBrand = null;
+            this.txtstyle.TarSeason = null;
             // 
             // txtartworktype_ftyCategory
             // 
             this.txtartworktype_ftyCategory.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_ftyCategory.cClassify = "\'P\'";
-            this.txtartworktype_ftyCategory.cSubprocess = "";
+            this.txtartworktype_ftyCategory.CClassify = "\'P\'";
+            this.txtartworktype_ftyCategory.CSubprocess = "";
             this.txtartworktype_ftyCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_ftyCategory.Location = new System.Drawing.Point(114, 118);
             this.txtartworktype_ftyCategory.Name = "txtartworktype_ftyCategory";
@@ -433,9 +433,9 @@
         private Win.UI.Label labelStyle;
         private Win.UI.ComboBox comboFactory;
         private Win.UI.DateRange dateAPDate;
-        private Class.txtartworktype_fty txtartworktype_ftyCategory;
-        private Class.txtstyle txtstyle;
-        private Class.txtMdivision txtMdivisionM;
+        private Class.Txtartworktype_fty txtartworktype_ftyCategory;
+        private Class.Txtstyle txtstyle;
+        private Class.TxtMdivision txtMdivisionM;
         private Win.UI.Label labelM;
         private Win.UI.DateRange dateGLDate;
         private Win.UI.Label labelSPNo;
@@ -449,7 +449,7 @@
         private Win.UI.TextBox txtSPNoStart;
         private Win.UI.TextBox txtSPNoEnd;
         private Win.UI.Label labelAPDate;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.Label labelGLDate;
         private Win.UI.CheckBox chk_IrregularPriceReason;
         private Win.UI.CheckBox chkIncludeCancelOrder;

@@ -104,20 +104,20 @@ where 1=1
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             this.SetCount(this.dt.Rows.Count);
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
             if (this.dt.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found!!");
                 return result;
             }
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R23.Report.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R23.Report.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Warehouse_R23.Report.xltx", 2, showExcel: false, showSaveMsg: false, excelApp: objApp);      // 將datatable copy to excel
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
@@ -125,7 +125,7 @@ where 1=1
             objSheets.Rows.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R23.Report");
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R23.Report");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

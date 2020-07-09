@@ -31,10 +31,10 @@
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
-            this.txtFactory1 = new Sci.Production.Class.txtCentralizedFactory();
+            this.txtFactory1 = new Sci.Production.Class.TxtCentralizedFactory();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.numericUpDown1 = new Sci.Win.UI.NumericUpDown();
-            this.txtCountry1 = new Sci.Production.Class.txtcountry();
+            this.txtCountry1 = new Sci.Production.Class.Txtcountry();
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
@@ -186,10 +186,10 @@
         private Win.UI.Label label1;
         private Win.UI.Label label2;
         private Win.UI.Label label3;
-        private Class.txtCentralizedFactory txtFactory1;
+        private Class.TxtCentralizedFactory txtFactory1;
         private Win.UI.CheckBox checkBox1;
         private Win.UI.NumericUpDown numericUpDown1;
-        private Class.txtcountry txtCountry1;
+        private Class.Txtcountry txtCountry1;
         private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

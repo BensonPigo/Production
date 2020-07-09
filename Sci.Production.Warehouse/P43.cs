@@ -28,8 +28,8 @@ namespace Sci.Production.Warehouse
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "O";
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
@@ -108,7 +108,7 @@ Original Qty and Current Qty can't be equal!!",
             // 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "AO", "Adjust", (DateTime)this.CurrentMaintain["Issuedate"], 2, "ID", null);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "AO", "Adjust", (DateTime)this.CurrentMaintain["Issuedate"], 2, "ID", null);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -130,7 +130,7 @@ Original Qty and Current Qty can't be equal!!",
 update Adjust_detail
 set StockType='O',
 MDivisionID='{0}'
-where id='{1}'", Sci.Env.User.Keyword, this.CurrentMaintain["ID"]);
+where id='{1}'", Env.User.Keyword, this.CurrentMaintain["ID"]);
             if (!(result = DBProxy.Current.Execute(null, sqlUpd)))
             {
                 this.ShowErr(sqlUpd, result);

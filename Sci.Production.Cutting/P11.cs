@@ -23,8 +23,8 @@ namespace Sci.Production.Cutting
 {
     public partial class P11 : Win.Tems.QueryForm
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
         DataTable CutRefTb;
         DataTable ArticleSizeTb;
         DataTable ExcessTb;
@@ -128,7 +128,7 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
                     SelectItem sele;
                     string sql = string.Format(
                         @"Select DISTINCT ID  From SewingLine WITH (NOLOCK) 
-                        where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{0}')", Sci.Env.User.Keyword);
+                        where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{0}')", Env.User.Keyword);
                     sele = new SelectItem(sql, "10", dr["SewingLine"].ToString());
                     sele.Width = 300;
                     DialogResult result = sele.ShowDialog();
@@ -1228,7 +1228,7 @@ order by ArticleGroup", patternukey);
                         #region 算Subprocess
 
                         // artTb 用不到只是因為共用BundleCardCheckSubprocess PRG其他需要用到
-                        art = PublicPrg.Prgs.BundleCardCheckSubprocess(ann, dr["PatternCode"].ToString(), this.artTb, out lallpart);
+                        art = Prgs.BundleCardCheckSubprocess(ann, dr["PatternCode"].ToString(), this.artTb, out lallpart);
                         #endregion
                         if (!lallpart)
                         {
@@ -1552,7 +1552,7 @@ order by ArticleGroup", patternukey);
                     {
                         bool lallpart;
                         #region 算Subprocess
-                        art = PublicPrg.Prgs.BundleCardCheckSubprocess(ann, chdr["PatternCode"].ToString(), this.artTb, out lallpart);
+                        art = Prgs.BundleCardCheckSubprocess(ann, chdr["PatternCode"].ToString(), this.artTb, out lallpart);
                         #endregion
                     }
 

@@ -31,8 +31,8 @@ namespace Sci.Production.Subcon
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboFactory.Text = Sci.Env.User.Factory;
-            this.txtMdivisionM.Text = Sci.Env.User.Keyword;
+            this.comboFactory.Text = Env.User.Factory;
+            this.txtMdivisionM.Text = Env.User.Keyword;
 
             this.txtdropdownlistOrderType.SelectedIndex = 0;
 
@@ -413,7 +413,7 @@ where po_qty > 0
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel

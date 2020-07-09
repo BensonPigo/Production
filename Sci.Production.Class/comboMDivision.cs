@@ -4,22 +4,36 @@ using System.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class comboMDivision : Win.UI.ComboBox
+    /// <summary>
+    /// combo MDivision
+    /// </summary>
+    public partial class ComboMDivision : Win.UI.ComboBox
     {
-        public comboMDivision()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComboMDivision"/> class.
+        /// </summary>
+        public ComboMDivision()
         {
             this.InitializeComponent();
             this.Size = new System.Drawing.Size(80, 23);
         }
 
-        public comboMDivision(IContainer container)
+        /// <summary>
+        /// comboMDivision
+        /// </summary>
+        /// <param name="container">container</param>
+        public ComboMDivision(IContainer container)
         {
             container.Add(this);
             this.InitializeComponent();
             this.Size = new System.Drawing.Size(80, 23);
         }
 
-        public void setDefalutIndex(bool defaultValue = false)
+        /// <summary>
+        /// Set ComboBox Data
+        /// </summary>
+        /// <param name="defaultValue">如果沒輸入，SelectedValue 預設 Sci.Env.User.Keywordd</param>
+        public void SetDefalutIndex(bool defaultValue = false)
         {
             DataTable dataTable;
             DBProxy.Current.Select(null, "Select ID From MDivision", out dataTable);
@@ -31,7 +45,7 @@ namespace Sci.Production.Class
             this.ValueMember = "ID";
             this.DisplayMember = "ID";
 
-            this.SelectedValue = defaultValue ? Sci.Env.User.Keyword : string.Empty;
+            this.SelectedValue = defaultValue ? Env.User.Keyword : string.Empty;
         }
     }
 }

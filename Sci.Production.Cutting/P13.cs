@@ -409,8 +409,8 @@ order by x.[Bundle]";
 
             int printSheetNum = 0;
             List<string> openWorkBook = new List<string>();
-            string printExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_P13");
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); // 預先開啟excel app
+            string printExcelName = Class.MicrosoftFile.GetName("Cutting_P13");
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); // 預先開啟excel app
 
             foreach (DataRow printDr in printDt.Rows)
             {
@@ -427,8 +427,8 @@ order by x.[Bundle]";
                     objApp.Quit();
                     openWorkBook.Add(printExcelName);
 
-                    objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P10.xltx");
-                    printExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_P13");
+                    objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P10.xltx");
+                    printExcelName = Class.MicrosoftFile.GetName("Cutting_P13");
                 }
 
                 #region 取得每一個 ID 的資料

@@ -30,7 +30,7 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
             this.labelComments.Text = "MR's \r\nComments";
             this.labelResponsible.Text = "Cause &\r\nResponsible\r\nDetails";
             this.txtUserPreparedBy.TextBox1.ReadOnly = true;
@@ -151,8 +151,8 @@ where o.Id = '{0}'",
             }
 
             this.displayResponsibilityJustifcation.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Air_Prepaid_Reason' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ReasonID"])));
-            this.displayTPEEditDate.Value = MyUtility.Check.Empty(this.CurrentMaintain["TPEEditDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["TPEEditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
-            this.displayUpdTPEDate.Value = MyUtility.Check.Empty(this.CurrentMaintain["FtySendDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["FtySendDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+            this.displayTPEEditDate.Value = MyUtility.Check.Empty(this.CurrentMaintain["TPEEditDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["TPEEditDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
+            this.displayUpdTPEDate.Value = MyUtility.Check.Empty(this.CurrentMaintain["FtySendDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["FtySendDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
 
             // 狀態顯示
             switch (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]))
@@ -194,7 +194,7 @@ where o.Id = '{0}'",
             this.CurrentMaintain["RatioSCI"] = 0;
             this.CurrentMaintain["RatioSupp"] = 0;
             this.CurrentMaintain["RatioBuyer"] = 0;
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
 
             this.ControlFactoryRatio(true);
             this.ControlSubconRatio(true);
@@ -425,7 +425,7 @@ where o.Id = '{0}'",
                     @"insert into AirPP_History (ID,HisType,OldValue,NewValue,AddName,AddDate)
 values ('{0}','Status','','New','{1}',GETDATE())",
                     MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                    Sci.Env.User.UserID);
+                    Env.User.UserID);
 
                 DualResult result = DBProxy.Current.Execute(null, insertCmd);
                 if (!result)
@@ -435,7 +435,7 @@ values ('{0}','Status','','New','{1}',GETDATE())",
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -453,7 +453,7 @@ values ('{0}','Status','','New','{1}',GETDATE())",
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P01.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P01.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -539,7 +539,7 @@ values ('{0}','Status','','New','{1}',GETDATE())",
             worksheet.Cells[23, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["MRComment"]);
 
             #region Save Excel
-            this.excelFile = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P01");
+            this.excelFile = Class.MicrosoftFile.GetName("Shipping_P01");
             excel.ActiveWorkbook.SaveAs(this.excelFile);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
@@ -722,7 +722,7 @@ values ('{0}','Status','','New','{1}',GETDATE())",
                     {
                         // sql參數
                         System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", this.txtSpNo.Text);
-                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
+                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Env.User.Keyword);
 
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                         cmds.Add(sp1);
@@ -1032,14 +1032,14 @@ where oq.Id = b.Id and oq.Seq = b.Seq",
 
             // 問是否要做Junk，確定才繼續往下做
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Junk > this data?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
 
             Win.UI.SelectReason callReason = new Win.UI.SelectReason("Air_Prepaid_unApprove");
             DialogResult dResult = callReason.ShowDialog(this);
-            if (dResult == System.Windows.Forms.DialogResult.OK)
+            if (dResult == DialogResult.OK)
             {
                 string insertCmd = string.Format(
                     @"insert into AirPP_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
@@ -1047,9 +1047,9 @@ values ('{0}','Status','New','Junked','{1}','{2}','{3}',GetDate())",
                     MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
                     callReason.ReturnReason,
                     callReason.ReturnRemark,
-                    Sci.Env.User.UserID);
+                    Env.User.UserID);
 
-                string updateCmd = string.Format(@"update AirPP set Status = 'Junked', EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                string updateCmd = string.Format(@"update AirPP set Status = 'Junked', EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
                 using (TransactionScope transactionScope = new TransactionScope())
                 {
@@ -1162,9 +1162,9 @@ values ('{0}','Status','New','Junked','{1}','{2}','{3}',GetDate())",
                 @"insert into AirPP_History (ID,HisType,OldValue,NewValue,AddName,AddDate)
 values ('{0}','Status','New','Checked','{1}',GetDate())",
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                Sci.Env.User.UserID);
+                Env.User.UserID);
 
-            string updateCmd = string.Format(@"update AirPP set Status = 'Checked',PPICMgr = '{0}',PPICMgrApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format(@"update AirPP set Status = 'Checked',PPICMgr = '{0}',PPICMgrApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             using (TransactionScope transactionScope = new TransactionScope())
             {
@@ -1204,7 +1204,7 @@ values ('{0}','Status','New','Checked','{1}',GetDate())",
 
             Win.UI.SelectReason callReason = new Win.UI.SelectReason("Air_Prepaid_unApprove");
             DialogResult dResult = callReason.ShowDialog(this);
-            if (dResult == System.Windows.Forms.DialogResult.OK)
+            if (dResult == DialogResult.OK)
             {
                 string insertCmd = string.Format(
                     @"insert into AirPP_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
@@ -1212,9 +1212,9 @@ values ('{0}','Status','Checked','New','{1}','{2}','{3}',GetDate())",
                     MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
                     callReason.ReturnReason,
                     callReason.ReturnRemark,
-                    Sci.Env.User.UserID);
+                    Env.User.UserID);
 
-                string updateCmd = string.Format(@"update AirPP set Status = 'New', PPICMgr = '',PPICMgrApvDate = null, EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                string updateCmd = string.Format(@"update AirPP set Status = 'New', PPICMgr = '',PPICMgrApvDate = null, EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
                 using (TransactionScope transactionScope = new TransactionScope())
                 {
@@ -1264,9 +1264,9 @@ values ('{0}','Status','Checked','New','{1}','{2}','{3}',GetDate())",
                 @"insert into AirPP_History (ID,HisType,OldValue,NewValue,AddName,AddDate)
 values ('{0}','Status','Checked','Approved','{1}',GetDate())",
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                Sci.Env.User.UserID);
+                Env.User.UserID);
 
-            string updateCmd = string.Format(@"update AirPP set Status = 'Approved', FtyMgr = '{0}', FtyMgrApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format(@"update AirPP set Status = 'Approved', FtyMgr = '{0}', FtyMgrApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             using (TransactionScope transactionScope = new TransactionScope())
             {
@@ -1390,7 +1390,7 @@ Remind:Please return the air pp request – approved  within 24hrs to avoid any 
                 // 產生Excel
                 this.ToExcel(true);
 
-                var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, cc, subject, this.excelFile, content.ToString(), visibleForm, visibleForm);
+                var email = new MailTo(Env.Cfg.MailFrom, mailto, cc, subject, this.excelFile, content.ToString(), visibleForm, visibleForm);
 
                 email.ShowDialog(this);
 

@@ -24,7 +24,7 @@ namespace Sci.Production.Subcon
         {
             this.InitializeComponent();
 
-            this.DefaultFilter = "mdivisionid = '" + Sci.Env.User.Keyword + "'";
+            this.DefaultFilter = "mdivisionid = '" + Env.User.Keyword + "'";
             this.gridicon.Append.Enabled = false;
             this.gridicon.Append.Visible = false;
             this.gridicon.Insert.Enabled = false;
@@ -71,8 +71,8 @@ where lapd.id = '{0}'",
 
         private void txtartworktype_ftyCategory_Validated(object sender, EventArgs e)
         {
-            Class.txtartworktype_fty o;
-            o = (Class.txtartworktype_fty)sender;
+            Class.Txtartworktype_fty o;
+            o = (Class.Txtartworktype_fty)sender;
 
             if ((o.Text != o.OldValue) && this.EditMode)
             {
@@ -84,10 +84,10 @@ where lapd.id = '{0}'",
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["Mdivisionid"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            this.CurrentMaintain["ISSUEDATE"] = System.DateTime.Today;
-            this.CurrentMaintain["HANDLE"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["Mdivisionid"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
+            this.CurrentMaintain["ISSUEDATE"] = DateTime.Today;
+            this.CurrentMaintain["HANDLE"] = Env.User.UserID;
             this.CurrentMaintain["VatRate"] = 0;
             this.CurrentMaintain["Status"] = "New";
 
@@ -203,14 +203,14 @@ where lapd.id = '{0}'",
             // 取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'LocalPO1'), 'LocalPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where ID ='{0}'", this.CurrentMaintain["factoryid"]));
+                string factorykeyword = MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where ID ='{0}'", this.CurrentMaintain["factoryid"]));
                 if (MyUtility.Check.Empty(factorykeyword))
                 {
                     MyUtility.Msg.WarningBox("Factory can't empty!!");
                     return false;
                 }
 
-                this.CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "LA", "LocalAP", (DateTime)this.CurrentMaintain["issuedate"]);
+                this.CurrentMaintain["id"] = MyUtility.GetValue.GetID(Env.User.Keyword + "LA", "LocalAP", (DateTime)this.CurrentMaintain["issuedate"]);
             }
 
             #region 加總明細金額至表頭

@@ -21,8 +21,8 @@ namespace Sci.Production.Cutting
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtstyle1.tarBrand = this.txtbrand1;
-            this.txtstyle1.tarSeason = this.txtseason1;
+            this.txtstyle1.TarBrand = this.txtbrand1;
+            this.txtstyle1.TarSeason = this.txtseason1;
         }
 
         private DataTable Dt;

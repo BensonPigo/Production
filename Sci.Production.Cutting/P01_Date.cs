@@ -29,7 +29,7 @@ namespace Sci.Production.Cutting
             FROM Sewingschedule b 
             WHERE Inline <= '{0}' And offline is not null and offline !=''
             AND b.mDivisionid = '{1}' group by b.orderid) d where c.id = d.orderid and c.MDivisionID = '{1}')) f
-            on cutting.id = f.ID", sewdate, Sci.Env.User.Keyword);
+            on cutting.id = f.ID", sewdate, Env.User.Keyword);
 
             DBProxy.Current.DefaultTimeout = 300;
             TransactionScope _transactionscope = new TransactionScope();
@@ -80,7 +80,7 @@ namespace Sci.Production.Cutting
             where c.id = d.orderid and c.IsForecast = 0 and c.LocalOrder = 0 ) e Where e.cuttingsp is not null 
 			and e.cuttingsp not in (Select id from cutting WITH (NOLOCK) )) cut
             where ord.cuttingsp = cut.CuttingSP and ord.mDivisionid = '{1}'
-          group by ord.CuttingSp order by ord.CuttingSP", sewdate, Sci.Env.User.Keyword);
+          group by ord.CuttingSp order by ord.CuttingSP", sewdate, Env.User.Keyword);
             dresult = DBProxy.Current.Select("Production", sqlcmd, out cuttingtb);
             string sewin, sewof;
             foreach (DataRow dr in cuttingtb.Rows)
@@ -103,7 +103,7 @@ namespace Sci.Production.Cutting
                     sewof = Convert.ToDateTime(dr["offlinea"]).ToShortDateString();
                 }
 
-                updsql = updsql + string.Format("insert into cutting(ID,sewInline,sewoffline,mDivisionid,AddName,AddDate) Values('{0}','{1}','{2}','{3}','{4}',GetDate()); ", dr["cuttingsp"], sewin, sewof, Sci.Env.User.Keyword, Sci.Env.User.UserID);
+                updsql = updsql + string.Format("insert into cutting(ID,sewInline,sewoffline,mDivisionid,AddName,AddDate) Values('{0}','{1}','{2}','{3}','{4}',GetDate()); ", dr["cuttingsp"], sewin, sewof, Env.User.Keyword, Env.User.UserID);
             }
 
             sqlcmd = string.Format(
@@ -116,7 +116,7 @@ namespace Sci.Production.Cutting
             where c.id = d.orderid and c.IsForecast = 0 and c.LocalOrder = 0 ) e Where e.cuttingsp is not null 
 			and e.cuttingsp in (Select id from cutting WITH (NOLOCK) )) cut
             where ord.cuttingsp = cut.CuttingSP and ord.mDivisionid = '{1}'
-          group by ord.CuttingSp order by ord.CuttingSP", sewdate, Sci.Env.User.Keyword);
+          group by ord.CuttingSp order by ord.CuttingSP", sewdate, Env.User.Keyword);
             dresult = DBProxy.Current.Select("Production", sqlcmd, out cuttingtb);
             foreach (DataRow dr in cuttingtb.Rows)
             {

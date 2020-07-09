@@ -203,7 +203,7 @@ order by td.Seq", masterID);
         {
             base.OnDetailEntered();
             this.GenCD(null, null);  // 撈CD Code
-            bool canEdit = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P01. Factory GSD", "CanEdit");
+            bool canEdit = PublicPrg.Prgs.GetAuthority(Env.User.UserID, "P01. Factory GSD", "CanEdit");
             this.btnNewVersion.Enabled = !this.EditMode && this.CurrentMaintain != null && canEdit;
             this.btnNewStatus.Enabled = !this.EditMode && this.CurrentMaintain != null && canEdit;
             this.btnHistory.Enabled = !this.EditMode && this.CurrentMaintain != null;
@@ -263,7 +263,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             DataGridViewGeneratorTextColumnSettings seq = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
 
-            celltxtMachineGroup txtSubReason = (celltxtMachineGroup)celltxtMachineGroup.GetGridCell();
+            TxtMachineGroup.CelltxtMachineGroup txtSubReason = (TxtMachineGroup.CelltxtMachineGroup)TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
 
             #region Seq & Operation Code & Frequency & SMV & ST/MC Type & Attachment按右鍵與Validating
             #region Seq的Valid
@@ -286,7 +286,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -294,7 +294,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
 
                             P01_SelectOperationCode callNextForm = new P01_SelectOperationCode();
                             DialogResult result = callNextForm.ShowDialog(this);
-                            if (result == System.Windows.Forms.DialogResult.Cancel)
+                            if (result == DialogResult.Cancel)
                             {
                                 if (callNextForm.P01SelectOperationCode != null)
                                 {
@@ -315,7 +315,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                                 }
                             }
 
-                            if (result == System.Windows.Forms.DialogResult.OK)
+                            if (result == DialogResult.OK)
                             {
                                 dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
                                 dr["OperationDescEN"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
@@ -484,7 +484,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -531,7 +531,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -710,7 +710,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
         {
             P01_Copy callNextForm = new P01_Copy(this.CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (result == DialogResult.OK)
             {
                 this.styleID = callNextForm.P01CopyStyleData.Rows[0]["ID"].ToString();
                 this.seasonID = callNextForm.P01CopyStyleData.Rows[0]["SeasonID"].ToString();
@@ -1028,7 +1028,7 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
                 string toAddress = MyUtility.Convert.GetString(dr[0]);
                 string subject = $"IE P01 Factory GSD Style：{this.CurrentMaintain["StyleID"]} ,Brand：{this.CurrentMaintain["BrandID"]} ,Season：{this.CurrentMaintain["SeasonID"]} have changed ";
                 string description = $@"Please regenerate Thread P01.Thread Color Combination data.";
-                var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, string.Empty, subject, string.Empty, description, true, true);
+                var email = new MailTo(Env.Cfg.MailFrom, toAddress, string.Empty, subject, string.Empty, description, true, true);
                 email.ShowDialog();
             }
         }
@@ -1215,7 +1215,7 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
             // 將現有資料寫入TimeStudyHistory,TimeStudyHistory_History，並將現有資料的Version+1
             DialogResult confirmResult;
             confirmResult = MyUtility.Msg.QuestionBox("Are you sure you want to create new version?", caption: "Confirm", buttons: MessageBoxButtons.YesNo);
-            if (confirmResult == System.Windows.Forms.DialogResult.Yes)
+            if (confirmResult == DialogResult.Yes)
             {
                 string executeCmd = string.Format(
                     @"insert into TimeStudyHistory (StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSewer,AddName,AddDate,EditName,EditDate,IETMSID,IETMSVersion)
@@ -1276,7 +1276,7 @@ where ID = {0}",
 
             DialogResult confirmResult;
             confirmResult = MyUtility.Msg.QuestionBox("Are you sure you want to create new status?", caption: "Confirm", buttons: MessageBoxButtons.YesNo);
-            if (confirmResult == System.Windows.Forms.DialogResult.Yes)
+            if (confirmResult == DialogResult.Yes)
             {
                 string executeCmd = string.Format(
                     @"insert into TimeStudyHistory (StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSewer,AddName,AddDate,EditName,EditDate,IETMSID,IETMSVersion)
@@ -1342,7 +1342,7 @@ where ID = {0}",
             {
                 DialogResult confirmResult;
                 confirmResult = MyUtility.Msg.QuestionBox("Detail data have operation code now! Are you sure you want to erase it?", caption: "Confirm", buttons: MessageBoxButtons.YesNo);
-                if (confirmResult != System.Windows.Forms.DialogResult.Yes)
+                if (confirmResult != DialogResult.Yes)
                 {
                     return;
                 }
@@ -1681,7 +1681,7 @@ where ID = {0}",
 
                 if (targetRowToInsertReplace == null)
                 {
-                    if (MyUtility.Msg.QuestionBox("there is no " + seqTarget + " exists, can't locate insert position, append to the last. \r\n\r\ncontinue?") != System.Windows.Forms.DialogResult.Yes)
+                    if (MyUtility.Msg.QuestionBox("there is no " + seqTarget + " exists, can't locate insert position, append to the last. \r\n\r\ncontinue?") != DialogResult.Yes)
                     {
                         return;
                     }

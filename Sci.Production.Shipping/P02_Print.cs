@@ -129,7 +129,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
             {
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -138,7 +138,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
             if (this.reportType == "1")
             {
                 #region Detail List
-                string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P02_Print_DetailList.xltx";
+                string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P02_Print_DetailList.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
                 if (excel == null)
                 {
@@ -168,9 +168,9 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                 worksheet.Cells[6, 10] = MyUtility.Convert.GetString(this.masterData["BLNo"]);
                 worksheet.Cells[7, 2] = MyUtility.Check.Empty(this.masterData["ETA"]) ? string.Empty : Convert.ToDateTime(this.masterData["ETA"]).ToString("d");
                 worksheet.Cells[7, 6] = MyUtility.Convert.GetString(this.masterData["NW"]);
-                worksheet.Cells[7, 10] = MyUtility.Check.Empty(this.masterData["StatusUpdateDate"]) ? string.Empty : Convert.ToDateTime(this.masterData["StatusUpdateDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                worksheet.Cells[7, 10] = MyUtility.Check.Empty(this.masterData["StatusUpdateDate"]) ? string.Empty : Convert.ToDateTime(this.masterData["StatusUpdateDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
                 worksheet.Cells[8, 2] = MyUtility.Convert.GetString(this.masterData["Remark"]);
-                worksheet.Cells[8, 10] = MyUtility.Check.Empty(this.masterData["SendDate"]) ? string.Empty : Convert.ToDateTime(this.masterData["SendDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                worksheet.Cells[8, 10] = MyUtility.Check.Empty(this.masterData["SendDate"]) ? string.Empty : Convert.ToDateTime(this.masterData["SendDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
 
                 int rownum = 11;
                 object[,] objArray = new object[1, 16];
@@ -198,7 +198,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                 }
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P02_Print_DetailList");
+                string strExcelName = Class.MicrosoftFile.GetName("Shipping_P02_Print_DetailList");
                 excel.ActiveWorkbook.SaveAs(strExcelName);
                 excel.Quit();
                 Marshal.ReleaseComObject(excel);
@@ -211,7 +211,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
             else if (this.reportType == "2")
             {
                 #region Packing List
-                string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P02_Print_PackingList.xltx";
+                string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P02_Print_PackingList.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
                 if (excel == null)
                 {
@@ -223,7 +223,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                 worksheet.Cells[1, 1] = this.mdivisionName;
                 worksheet.Cells[2, 1] = this.mdivisionAddr;
                 worksheet.Cells[3, 1] = this.mdivisionTel;
-                worksheet.Cells[5, 4] = "Date: " + (MyUtility.Check.Empty(this.masterData["ShipDate"]) ? string.Empty : Convert.ToDateTime(this.masterData["ShipDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat)));
+                worksheet.Cells[5, 4] = "Date: " + (MyUtility.Check.Empty(this.masterData["ShipDate"]) ? string.Empty : Convert.ToDateTime(this.masterData["ShipDate"]).ToString(string.Format("{0}", Env.Cfg.DateStringFormat)));
                 worksheet.Cells[6, 1] = this.messrs;
                 worksheet.Cells[6, 2] = "Invoice No.:" + MyUtility.Convert.GetString(this.masterData["FtyInvNo"]);
                 worksheet.Cells[9, 1] = this.courierAWB;
@@ -301,7 +301,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                 worksheet.Range[string.Format("E{0}:F{0}", rownum + 5)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = 1;
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P02_Print_PackingList");
+                string strExcelName = Class.MicrosoftFile.GetName("Shipping_P02_Print_PackingList");
                 excel.ActiveWorkbook.SaveAs(strExcelName);
                 excel.Quit();
                 Marshal.ReleaseComObject(excel);
@@ -314,7 +314,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
             else if (this.reportType == "3")
             {
                 #region Detail Packing List
-                string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P02_Print_DetailPackingList.xltx";
+                string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P02_Print_DetailPackingList.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
                 if (excel == null)
                 {
@@ -326,7 +326,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                 worksheet.Cells[1, 1] = this.mdivisionName;
                 worksheet.Cells[2, 1] = this.mdivisionAddr;
                 worksheet.Cells[3, 1] = this.mdivisionTel;
-                worksheet.Cells[5, 9] = "Date: " + (MyUtility.Check.Empty(this.masterData["ShipDate"]) ? string.Empty : Convert.ToDateTime(this.masterData["ShipDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat)));
+                worksheet.Cells[5, 9] = "Date: " + (MyUtility.Check.Empty(this.masterData["ShipDate"]) ? string.Empty : Convert.ToDateTime(this.masterData["ShipDate"]).ToString(string.Format("{0}", Env.Cfg.DateStringFormat)));
                 worksheet.Cells[6, 1] = this.messrs;
                 worksheet.Cells[6, 9] = "Invoice No.:" + MyUtility.Convert.GetString(this.masterData["FtyInvNo"]);
                 worksheet.Cells[9, 1] = this.courierAWB;
@@ -415,7 +415,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                 worksheet.Range[string.Format("J{0}:K{0}", rownum + 5)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = 1;
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P02_Print_DetailPackingList");
+                string strExcelName = Class.MicrosoftFile.GetName("Shipping_P02_Print_DetailPackingList");
                 excel.ActiveWorkbook.SaveAs(strExcelName);
                 excel.Quit();
                 Marshal.ReleaseComObject(excel);
@@ -427,7 +427,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
             }
             else if (this.reportType == "4")
             {
-                string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P02_Print_DHL_XCCA.xltx";
+                string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P02_Print_DHL_XCCA.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
                 if (excel == null)
                 {
@@ -486,7 +486,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                 worksheet.Rows.AutoFit();
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P02_Print_DHL_XCCA");
+                string strExcelName = Class.MicrosoftFile.GetName("Shipping_P02_Print_DHL_XCCA");
                 excel.ActiveWorkbook.SaveAs(strExcelName);
                 excel.Quit();
                 Marshal.ReleaseComObject(excel);

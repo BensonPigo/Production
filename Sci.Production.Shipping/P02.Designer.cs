@@ -85,9 +85,9 @@
             this.displaySendtoSCI = new Sci.Win.UI.DisplayBox();
             this.labelDescription = new Sci.Win.UI.Label();
             this.editDescription = new Sci.Win.UI.EditBox();
-            this.txtCountryDestination = new Sci.Production.Class.txtcountry();
-            this.txtUserManager = new Sci.Production.Class.txtuser();
-            this.txtUserHandle = new Sci.Production.Class.txtuser();
+            this.txtCountryDestination = new Sci.Production.Class.Txtcountry();
+            this.txtUserManager = new Sci.Production.Class.Txtuser();
+            this.txtUserHandle = new Sci.Production.Class.Txtuser();
             this.cmbPayer = new Sci.Win.UI.ComboBox();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
@@ -1152,9 +1152,9 @@
         private Win.UI.Button btnMailto;
         private Win.UI.Label label9;
         private Win.UI.TextBox txtPort;
-        private Class.txtcountry txtCountryDestination;
-        private Class.txtuser txtUserManager;
-        private Class.txtuser txtUserHandle;
+        private Class.Txtcountry txtCountryDestination;
+        private Class.Txtuser txtUserManager;
+        private Class.Txtuser txtUserHandle;
         private Win.UI.Label labelPort;
         private Win.UI.Label labelDestination;
         private Win.UI.Label labelManager;

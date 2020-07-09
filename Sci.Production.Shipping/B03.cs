@@ -172,7 +172,7 @@ namespace Sci.Production.Shipping
 
         private void BtnCanvassRecord_Click(object sender, EventArgs e)
         {
-            B03_Quotation callNextForm = new B03_Quotation(Prgs.GetAuthority(Sci.Env.User.UserID, "B03. Shipping Expense", "CanEdit"), this.CurrentMaintain, this.Perm.Confirm);
+            B03_Quotation callNextForm = new B03_Quotation(Prgs.GetAuthority(Env.User.UserID, "B03. Shipping Expense", "CanEdit"), this.CurrentMaintain, this.Perm.Confirm);
             callNextForm.ShowDialog(this);
             this.RenewData();
         }
@@ -252,7 +252,7 @@ namespace Sci.Production.Shipping
         protected override void ClickJunk()
         {
             base.ClickJunk();
-            DBProxy.Current.Execute(null, $"UPDATE ShipExpense SET Junk=1,Status='Junked',EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
+            DBProxy.Current.Execute(null, $"UPDATE ShipExpense SET Junk=1,Status='Junked',EditDate=GETDATE(),EditName='{Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
             MyUtility.Msg.InfoBox("Success!");
             this.RenewData();
         }
@@ -260,7 +260,7 @@ namespace Sci.Production.Shipping
         protected override void ClickUnJunk()
         {
             base.ClickUnJunk();
-            DBProxy.Current.Execute(null, $"UPDATE ShipExpense SET Junk=0,Status='New',EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
+            DBProxy.Current.Execute(null, $"UPDATE ShipExpense SET Junk=0,Status='New',EditDate=GETDATE(),EditName='{Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
             MyUtility.Msg.InfoBox("Success!");
             this.RenewData();
         }

@@ -22,7 +22,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = $@"Type = 'H' and MDivisionID = '{Sci.Env.User.Keyword}'";
+            this.DefaultFilter = $@"Type = 'H' and MDivisionID = '{Env.User.Keyword}'";
         }
 
         protected override void ClickNewAfter()
@@ -30,8 +30,8 @@ namespace Sci.Production.Warehouse
             base.ClickEditAfter();
             this.CurrentMaintain["Type"] = "H";
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.txtfactory.ReadOnly = true;
         }
@@ -134,7 +134,7 @@ namespace Sci.Production.Warehouse
             // 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "AT", "Issue", (DateTime)this.CurrentMaintain["Issuedate"]);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "AT", "Issue", (DateTime)this.CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -650,7 +650,7 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
             string CDate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
+            pars.Add(new SqlParameter("@MDivision", Env.User.Keyword));
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
             DualResult result = DBProxy.Current.Select(string.Empty, @"
@@ -808,7 +808,7 @@ drop table #tmp
 select ID
 from orders o with(nolock)
 where Category ='A'
-and o.FtyGroup = '{Sci.Env.User.Factory}'
+and o.FtyGroup = '{Env.User.Factory}'
 ";
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "16", this.txtOrderID.Text);
             DialogResult result = item.ShowDialog();
@@ -834,7 +834,7 @@ and o.FtyGroup = '{Sci.Env.User.Factory}'
 select ID
 from orders o with(nolock)
 where Category ='A'
-and o.FtyGroup = '{Sci.Env.User.Factory}'
+and o.FtyGroup = '{Env.User.Factory}'
 and ID = '{this.txtOrderID.Text}'
 ";
                 if (!MyUtility.Check.Seek(sqlcmd))

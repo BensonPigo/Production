@@ -4,13 +4,25 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtFromMdivision : Win.UI.TextBox
+    /// <summary>
+    /// TxtFromMdivision
+    /// </summary>
+    public partial class TxtFromMdivision : Win.UI.TextBox
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TxtFromMdivision"/> class.
+        /// </summary>
+        public TxtFromMdivision()
+        {
+            this.Size = new System.Drawing.Size(66, 23);
+        }
+
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
 
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select ID from dbo.MDivision WITH (NOLOCK) where ID <> '{0}'", Sci.Env.User.Keyword), "8,40", this.Text, false, ",");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select ID from dbo.MDivision WITH (NOLOCK) where ID <> '{0}'", Env.User.Keyword), "8,40", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -21,6 +33,7 @@ namespace Sci.Production.Class
             this.ValidateText();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -36,11 +49,6 @@ namespace Sci.Production.Class
                     return;
                 }
             }
-        }
-
-        public txtFromMdivision()
-        {
-            this.Size = new System.Drawing.Size(66, 23);
         }
     }
 }

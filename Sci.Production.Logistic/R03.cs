@@ -21,7 +21,7 @@ namespace Sci.Production.Logistic
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.comboM.setDefalutIndex(true);
+            this.comboM.SetDefalutIndex(true);
             this.comboCancel.SelectedIndex = 0;
         }
 
@@ -167,7 +167,7 @@ group by o.MDivisionID,o.FactoryID,o.ID,pd.ID,cd.CTNStartNO,cd.ID,c.DisposeDate,
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ group by o.MDivisionID,o.FactoryID,o.ID,pd.ID,cd.CTNStartNO,cd.ID,c.DisposeDate,
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Logistic_R03.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Logistic_R03.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -197,7 +197,7 @@ group by o.MDivisionID,o.FactoryID,o.ID,pd.ID,cd.CTNStartNO,cd.ID,c.DisposeDate,
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Logistic_R03.xltx", 1, false, null, excel); // 將datatable copy to excel
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Logistic_R03");
+            string strExcelName = Class.MicrosoftFile.GetName("Logistic_R03");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

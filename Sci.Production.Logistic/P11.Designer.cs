@@ -36,7 +36,7 @@
             this.editRemark = new Sci.Win.UI.EditBox();
             this.btnImport = new Sci.Win.UI.Button();
             this.lblStatus = new Sci.Win.UI.Label();
-            this.txtClogReason = new Sci.Production.Class.txtClogReason();
+            this.txtClogReason = new Sci.Production.Class.TxtClogReason();
             this.labReason = new Sci.Win.UI.Label();
             this.btnDownloadExcel = new Sci.Win.UI.Button();
             this.btnExcelImport = new Sci.Win.UI.Button();
@@ -297,7 +297,7 @@
         private Win.UI.Label label1;
         private Win.UI.Label lblStatus;
         private Win.UI.Label labReason;
-        private Class.txtClogReason txtClogReason;
+        private Class.TxtClogReason txtClogReason;
         private Win.UI.Button btnExcelImport;
         private Win.UI.Button btnDownloadExcel;
     }

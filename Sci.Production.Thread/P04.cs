@@ -1,11 +1,11 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Production.Class;
 using Sci.Production.PublicPrg;
 using System;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
+using Sci.Production.Class;
 
 namespace Sci.Production.Thread
 {
@@ -14,8 +14,8 @@ namespace Sci.Production.Thread
     /// </summary>
     public partial class P04 : Win.Tems.Input6
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
 
         /// <summary>
         /// P04
@@ -49,7 +49,7 @@ namespace Sci.Production.Thread
         /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            DataGridViewGeneratorTextColumnSettings refno = celllocalitem.GetGridCell("Thread", null, ",,,Description");
+            DataGridViewGeneratorTextColumnSettings refno = Txtlocalitem.Celllocalitem.GetGridCell("Thread", null, ",,,Description");
             DataGridViewGeneratorTextColumnSettings thcolor = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings threadlocaion = new DataGridViewGeneratorTextColumnSettings();
 

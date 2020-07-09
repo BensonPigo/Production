@@ -21,7 +21,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("Type='A' and MDivisionID = '{0}'", Sci.Env.User.Keyword); // Issue此為PMS自行建立的資料，MDivisionID皆會有寫入值
+            this.DefaultFilter = string.Format("Type='A' and MDivisionID = '{0}'", Env.User.Keyword); // Issue此為PMS自行建立的資料，MDivisionID皆會有寫入值
 
             this.WorkAlias = "Issue";                        // PK: ID
             this.GridAlias = "Issue_summary";           // PK: ID+UKey
@@ -296,8 +296,8 @@ outer apply(
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "A";
             this.CurrentMaintain["issuedate"] = DateTime.Now;
@@ -372,7 +372,7 @@ outer apply(
             // 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IC", "Issue", (DateTime)this.CurrentMaintain["IssueDate"]);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "IC", "Issue", (DateTime)this.CurrentMaintain["IssueDate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -458,7 +458,7 @@ outer apply(
             DataTable subDT;
             foreach (DataRow dr in this.DetailDatas)
             {
-                var issued = PublicPrg.Prgs.autopick(dr);
+                var issued = Prgs.autopick(dr);
                 if (issued == null)
                 {
                     break;
@@ -504,7 +504,7 @@ outer apply(
                 }
 
                 this.CurrentMaintain["cutplanid"] = this.txtRequest.Text;
-                if (!MyUtility.Check.Seek(string.Format("select id from dbo.cutplan WITH (NOLOCK) where id='{0}' and mdivisionid = '{1}'", this.txtRequest.Text, Sci.Env.User.Keyword), null))
+                if (!MyUtility.Check.Seek(string.Format("select id from dbo.cutplan WITH (NOLOCK) where id='{0}' and mdivisionid = '{1}'", this.txtRequest.Text, Env.User.Keyword), null))
                 {
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("Request not existe");

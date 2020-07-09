@@ -40,7 +40,7 @@
             this.labelRemark = new Sci.Win.UI.Label();
             this.editRemark = new Sci.Win.UI.EditBox();
             this.btnImport = new Sci.Win.UI.Button();
-            this.txtsubconLocalSupplier = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtsubconLocalSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             this.labelLocalSupplier = new Sci.Win.UI.Label();
             this.labelInvoice = new Sci.Win.UI.Label();
             this.txtInvoice = new Sci.Win.UI.TextBox();
@@ -394,7 +394,7 @@
         private Win.UI.TextBox txtInvoice;
         private Win.UI.Label labelInvoice;
         private Win.UI.Label labelLocalSupplier;
-        private Class.txtsubconNoConfirm txtsubconLocalSupplier;
+        private Class.TxtsubconNoConfirm txtsubconLocalSupplier;
         private Win.UI.DisplayBox txtTotal;
         private Win.UI.Label lblTotal;
     }

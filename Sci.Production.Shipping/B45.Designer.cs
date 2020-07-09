@@ -47,7 +47,7 @@
             this.displayStockUnit = new Sci.Win.UI.DisplayBox();
             this.label3 = new Sci.Win.UI.Label();
             this.labContractNo = new Sci.Win.UI.Label();
-            this.txtContractNo = new Sci.Production.Class.txtCustomsContract();
+            this.txtContractNo = new Sci.Production.Class.TxtCustomsContract();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -365,7 +365,7 @@
         private Win.UI.Label label3;
         private Win.UI.DisplayBox displayFabricType;
         private Win.UI.Label label2;
-        private Class.txtCustomsContract txtContractNo;
+        private Class.TxtCustomsContract txtContractNo;
         private Win.UI.Label labContractNo;
     }
 }

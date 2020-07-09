@@ -34,7 +34,7 @@
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.dateCreateDate = new Sci.Win.UI.DateRange();
-            this.comboDropDownList1 = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboDropDownList1 = new Sci.Production.Class.ComboDropDownList(this.components);
             this.label3 = new Sci.Win.UI.Label();
             this.dateLock = new Sci.Win.UI.DateBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -315,7 +315,7 @@
         private Win.UI.Label label1;
         private Win.UI.Label label2;
         private Win.UI.DateRange dateCreateDate;
-        private Class.comboDropDownList comboDropDownList1;
+        private Class.ComboDropDownList comboDropDownList1;
         private Win.UI.Label label3;
         private Win.UI.DateBox dateLock;
         private System.Windows.Forms.SplitContainer splitContainer1;

@@ -180,12 +180,12 @@ from
                 sqlcmd.Append(" and i.poid = @spno");
             }
 
-            if (!this.txtSeq.checkSeq1Empty())
+            if (!this.txtSeq.CheckSeq1Empty())
             {
                 sqlcmd.Append(" and i.seq1 = @seq1");
             }
 
-            if (!this.txtSeq.checkSeq2Empty())
+            if (!this.txtSeq.CheckSeq2Empty())
             {
                 sqlcmd.Append(" and i.seq2 = @seq2");
             }
@@ -276,13 +276,13 @@ from (
         and i.poid = @spno");
             }
 
-            if (!this.txtSeq.checkSeq1Empty())
+            if (!this.txtSeq.CheckSeq1Empty())
             {
                 sqlcmd.Append(@" 
         and i.seq1 = @seq1");
             }
 
-            if (!this.txtSeq.checkSeq2Empty())
+            if (!this.txtSeq.CheckSeq2Empty())
             {
                 sqlcmd.Append(@" 
         and i.seq2 = @seq2 ");
@@ -337,13 +337,13 @@ from (
         and i.poid = @spno");
             }
 
-            if (!this.txtSeq.checkSeq1Empty())
+            if (!this.txtSeq.CheckSeq1Empty())
             {
                 sqlcmd.Append(@" 
         and i.seq1 = @seq1");
             }
 
-            if (!this.txtSeq.checkSeq2Empty())
+            if (!this.txtSeq.CheckSeq2Empty())
             {
                 sqlcmd.Append(@" 
         and i.seq2 = @seq2 ");
@@ -388,13 +388,13 @@ where   stocktype='I'");
         and f.poid = @spno");
             }
 
-            if (!this.txtSeq.checkSeq1Empty())
+            if (!this.txtSeq.CheckSeq1Empty())
             {
                 sqlcmd.Append(@" 
         and f.seq1 = @seq1");
             }
 
-            if (!this.txtSeq.checkSeq2Empty())
+            if (!this.txtSeq.CheckSeq2Empty())
             {
                 sqlcmd.Append(@" 
         and f.seq2 = @seq2");
@@ -408,11 +408,11 @@ where   stocktype='I'");
 
             System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
             sp2.ParameterName = "@seq1";
-            sp2.Value = this.txtSeq.seq1;
+            sp2.Value = this.txtSeq.Seq1;
 
             System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
             sp3.ParameterName = "@seq2";
-            sp3.Value = this.txtSeq.seq2;
+            sp3.Value = this.txtSeq.Seq2;
 
             System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
             sp4.ParameterName = "@Refno";

@@ -1420,7 +1420,7 @@ where s.Type = 'EXPORT'");
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -1436,7 +1436,7 @@ where s.Type = 'EXPORT'");
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + (this.reportType == 1 ? "\\Shipping_R10_ShareExpenseExportFeeReport.xltx" : this.reportType == 2 ? "\\Shipping_R10_ShareExpenseExportBySP.xltx" : "\\Shipping_R10_ShareExpenseExportBySPByFee.xltx");
+            string strXltName = Env.Cfg.XltPathDir + (this.reportType == 1 ? "\\Shipping_R10_ShareExpenseExportFeeReport.xltx" : this.reportType == 2 ? "\\Shipping_R10_ShareExpenseExportBySP.xltx" : "\\Shipping_R10_ShareExpenseExportBySPByFee.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -1883,7 +1883,7 @@ where s.Type = 'EXPORT'");
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(this.reportType == 1 ? "Shipping_R10_ShareExpenseExportFeeReport" : this.reportType == 2 ? "Shipping_R10_ShareExpenseExportBySP" : "Shipping_R10_ShareExpenseExportBySPByFee");
+            string strExcelName = Class.MicrosoftFile.GetName(this.reportType == 1 ? "Shipping_R10_ShareExpenseExportFeeReport" : this.reportType == 2 ? "Shipping_R10_ShareExpenseExportBySP" : "Shipping_R10_ShareExpenseExportBySPByFee");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

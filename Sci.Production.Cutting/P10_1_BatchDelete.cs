@@ -66,7 +66,7 @@ select
 from BundleReplacement b
 left join Orders o on b.Orderid=o.ID
 where 1=1
-      and o.mDivisionid='{Sci.Env.User.Keyword}'
+      and o.mDivisionid='{Env.User.Keyword}'
       {sqlwhere}
 ";
             this.ShowWaitMessage("Data Loading....");

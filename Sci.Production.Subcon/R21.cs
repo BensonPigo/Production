@@ -26,10 +26,10 @@ namespace Sci.Production.Subcon
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
             MyUtility.Tool.SetupCombox(this.comboOrderBy, 1, 1, "Supplier,Handle");
             this.comboOrderBy.SelectedIndex = 0;
-            this.txtMdivisionM.Text = Sci.Env.User.Keyword;
+            this.txtMdivisionM.Text = Env.User.Keyword;
 
             int month = DateTime.Today.Month;
             int day = DateTime.Today.Day;
@@ -191,7 +191,7 @@ where a.ApvDate is null and 1=1"));
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel

@@ -35,7 +35,7 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
             this.DoSubForm = new P06_ShipQtyDetail();
         }
 
@@ -129,7 +129,7 @@ order by os.Seq", masterID);
             base.OnDetailGridSetup();
             this.shipqty.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     this.DoSubForm.IsSupportDelete = false;
                     this.DoSubForm.IsSupportNew = false;
@@ -226,10 +226,10 @@ order by os.Seq", masterID);
             DialogResult dr = callNextForm.ShowDialog(this);
 
             // 當Form:P06_Append是按OK時，要新增一筆資料進Cursor
-            if (dr == System.Windows.Forms.DialogResult.OK)
+            if (dr == DialogResult.OK)
             {
                 // 檢查此日期是否已存在資料庫
-                if (MyUtility.Check.Seek(string.Format("select ID from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(callNextForm.PulloutDate).ToString("d"), Sci.Env.User.Keyword)))
+                if (MyUtility.Check.Seek(string.Format("select ID from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(callNextForm.PulloutDate).ToString("d"), Env.User.Keyword)))
                 {
                     MyUtility.Msg.WarningBox(string.Format("Pull-out date:{0} already exists!!", callNextForm.PulloutDate.ToAppDateFormatString()));
                     return false;
@@ -244,15 +244,15 @@ order by os.Seq", masterID);
 
                 if (this.CurrentDataRow != null)
                 {
-                    string newID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "PO", "Pullout", callNextForm.PulloutDate, 2, "Id", null);
+                    string newID = MyUtility.GetValue.GetID(Env.User.Keyword + "PO", "Pullout", callNextForm.PulloutDate, 2, "Id", null);
                     string insertCmd = string.Format(
                         @"insert into Pullout(ID,PulloutDate,MDivisionID,FactoryID,Status,AddName,AddDate)
 values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
                         newID,
                         Convert.ToDateTime(callNextForm.PulloutDate).ToString("d"),
-                        Sci.Env.User.Keyword,
-                        Sci.Env.User.Factory,
-                        Sci.Env.User.UserID);
+                        Env.User.Keyword,
+                        Env.User.Factory,
+                        Env.User.UserID);
 
                     DualResult result = DBProxy.Current.Execute(null, insertCmd);
                     if (!result)
@@ -269,7 +269,7 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
 
                     // newrow["MDivisionID"] = Sci.Env.User.Keyword;
                     newrow["Status"] = "New";
-                    newrow["AddName"] = Sci.Env.User.UserID;
+                    newrow["AddName"] = Env.User.UserID;
                     newrow["AddDate"] = DateTime.Now;
 
                     this.CurrentDataRow.Table.Rows.Add(newrow);
@@ -497,7 +497,7 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P06.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P06.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -507,7 +507,7 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             worksheet.Cells[1, 1] = MyUtility.Convert.GetString(this.CurrentMaintain["MDivisionID"]);
             worksheet.Cells[3, 2] = Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("d");
-            worksheet.Cells[3, 12] = DateTime.Now.ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+            worksheet.Cells[3, 12] = DateTime.Now.ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
 
             int intRowsStart = 5;
             int dataRowCount = excelData.Rows.Count;
@@ -541,7 +541,7 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             worksheet.Cells[rownum + 1, 8] = excelData.Compute("sum(ShipQty)", string.Empty);
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P06");
+            string strExcelName = Class.MicrosoftFile.GetName("Shipping_P06");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
@@ -575,7 +575,7 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             // 有Cancel Order 不能confirmed
             bool errchk = false;
-            string strErrmsg = PublicPrg.Prgs.ChkCancelOrder(this.CurrentMaintain["id"].ToString());
+            string strErrmsg = Prgs.ChkCancelOrder(this.CurrentMaintain["id"].ToString());
             if (!MyUtility.Check.Empty(strErrmsg))
             {
                 MyUtility.Msg.WarningBox(strErrmsg);
@@ -655,13 +655,13 @@ and c.ClogReceiveCFADate is null
             #endregion
 
             IList<string> updateCmds = new List<string>();
-            updateCmds.Add(string.Format("update Pullout set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            updateCmds.Add(string.Format("update Pullout set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             if (!MyUtility.Check.Empty(this.CurrentMaintain["SendToTPE"]))
             {
                 updateCmds.Add(string.Format(
                     @"insert into Pullout_History(ID, HisType, NewValue, AddName, AddDate) values ('{0}','Status','Confirmed','{1}',GETDATE());",
                     MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                    Sci.Env.User.UserID));
+                    Env.User.UserID));
             }
 
             updateCmds.Add(
@@ -727,14 +727,14 @@ where	exists (
             {
                 Win.UI.SelectReason callReason = new Win.UI.SelectReason("Pullout_Delay");
                 DialogResult dResult = callReason.ShowDialog(this);
-                if (dResult == System.Windows.Forms.DialogResult.OK)
+                if (dResult == DialogResult.OK)
                 {
                     sqlCmds.Add(string.Format(
                         @"insert into Pullout_History(ID, HisType, NewValue, ReasonID,Remark, AddName, AddDate) values ('{0}','Status','Unconfirmed','{1}','{2}','{3}',GETDATE());",
                         MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
                         callReason.ReturnReason,
                         callReason.ReturnRemark,
-                        Sci.Env.User.UserID));
+                        Env.User.UserID));
                 }
                 else
                 {
@@ -744,7 +744,7 @@ where	exists (
 
             sqlCmds.Add(string.Format(
                 "update Pullout set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}';",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             string selectCmd = string.Format(
@@ -830,7 +830,7 @@ and MDivisionID = '{1}'
 and Status = 'New' 
 and (Type = 'F' or Type = 'L')",
                 Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("d"),
-                Sci.Env.User.Keyword);
+                Env.User.Keyword);
 
             DataTable packlistData;
             DualResult result;
@@ -850,7 +850,7 @@ and (Type = 'F' or Type = 'L')",
                 @"
 select distinct p.ID from PackingList p WITH (NOLOCK) where p.PulloutDate = '{0}' and p.MDivisionID = '{1}'and p.ShipPlanID != ''and p.Status = 'New'",
                 Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("d"),
-                Sci.Env.User.Keyword);
+                Env.User.Keyword);
 
             DataTable packDataconfirm;
             result = DBProxy.Current.Select(null, sqlCmd, out packDataconfirm);
@@ -886,7 +886,7 @@ and p.MDivisionID = '{1}'
 and p.ShipPlanID != ''
 and s.Status != 'Confirmed' ",
                 Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("d"),
-                Sci.Env.User.Keyword);
+                Env.User.Keyword);
 
             DataTable shipPlanData;
             result = DBProxy.Current.Select(null, sqlCmd, out shipPlanData);
@@ -1043,7 +1043,7 @@ select  'S' as DataType
                                    inner join InvAdjust i WITH (NOLOCK) on iq.ID = i.id 
                                    inner join SummaryData b on i.OrderID = b.OrderID), 0))  
 from SummaryData",
-                Sci.Env.User.Keyword,
+                Env.User.Keyword,
                 Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("d"),
                 MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? "XXXXXXXXXX" : MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
@@ -1392,7 +1392,7 @@ select  'S' as DataType
                                    inner join InvAdjust i WITH (NOLOCK) on iq.ID = i.id 
                                    inner join SummaryData b on i.OrderID = b.OrderID), 0))  
 from SummaryData",
-                Sci.Env.User.Keyword,
+                Env.User.Keyword,
                 Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("d"),
                 MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? "XXXXXXXXXX" : MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
@@ -1517,7 +1517,7 @@ from SummaryData",
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private DualResult WritePulloutRevise(DataRow dr, DataRow reviseRow, string type)
@@ -1535,7 +1535,7 @@ from SummaryData",
             reviseRow["INVNo"] = dr["INVNo"];
             reviseRow["OldShipModeID"] = type == "Missing" ? string.Empty : dr["ShipModeID", DataRowVersion.Original];
             reviseRow["ShipModeID"] = dr["ShipModeID"];
-            reviseRow["AddName"] = Sci.Env.User.UserID;
+            reviseRow["AddName"] = Env.User.UserID;
             reviseRow["AddDate"] = DateTime.Now;
 
             return DBProxy.Current.Insert(null, this.revisedTS, reviseRow);
@@ -1564,7 +1564,7 @@ from SummaryData",
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 檢查表身的ShipMode與表頭的ShipMode要相同 & ShipModeID 不存在Order_QtyShip 就return

@@ -52,7 +52,7 @@ namespace Sci.Production.PPIC
 
             // 先將屬於登入的工廠的SewingLine資料給撈出來
             DataTable sewingLine;
-            string sqlCommand = "select ID from SewingLine WITH (NOLOCK) where FactoryID = '" + Sci.Env.User.Factory + "' order by ID";
+            string sqlCommand = "select ID from SewingLine WITH (NOLOCK) where FactoryID = '" + Env.User.Factory + "' order by ID";
             DualResult returnResult = DBProxy.Current.Select(null, sqlCommand, out sewingLine);
             if (!returnResult)
             {
@@ -80,7 +80,7 @@ namespace Sci.Production.PPIC
                         {
                             foreach (DataRow currentRecord in sewingLine.Rows)
                             {
-                                sqlCommand = string.Format("select Date from WorkHour WITH (NOLOCK) where SewingLineID = '{0}' and FactoryID = '{1}' and Date = '{2}'", currentRecord["ID"].ToString(), Sci.Env.User.Factory, startDate.ToString("d"));
+                                sqlCommand = string.Format("select Date from WorkHour WITH (NOLOCK) where SewingLineID = '{0}' and FactoryID = '{1}' and Date = '{2}'", currentRecord["ID"].ToString(), Env.User.Factory, startDate.ToString("d"));
                                 if (!MyUtility.Check.Seek(sqlCommand, null))
                                {
                                    insertCmds.Add(string.Format(
@@ -91,7 +91,7 @@ Values('{0}','{1}','{2}','{3}','{4}','{5}');",
                                        Env.User.Factory,
                                        startDate.ToString("d"),
                                        this.numHours.Text.ToString(),
-                                       Sci.Env.User.UserID,
+                                       Env.User.UserID,
                                        DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
                                 }
                             }
@@ -103,7 +103,7 @@ Values('{0}','{1}','{2}','{3}','{4}','{5}');",
             }
 
             // 將資料新增至Table
-            DualResult insertReturnResult = Result.True;
+            DualResult insertReturnResult = Ict.Result.True;
             if (insertCmds.Count > 0)
             {
                 using (TransactionScope transactionScope = new TransactionScope())

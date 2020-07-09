@@ -22,7 +22,7 @@ namespace Sci.Production.Subcon
         {
             this.InitializeComponent();
             this.comboload();
-            this.comboFactory.setDataSource();
+            this.comboFactory.SetDataSource();
         }
 
         private void comboload()
@@ -145,7 +145,7 @@ order by [M], [Factory], [SPNo], [Style], [Season], [Brand], [Sub-process], [Rec
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel
@@ -160,7 +160,7 @@ order by [M], [Factory], [SPNo], [Style], [Season], [Brand], [Sub-process], [Rec
 
             // 預先開啟excel app
             Microsoft.Office.Interop.Excel.Application objApp
-                = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R43_Sub-process BCS report (RFID).xltx");
+                = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R43_Sub-process BCS report (RFID).xltx");
 
             // 將datatable copy to excel
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Subcon_R43_Sub-process BCS report (RFID).xltx", 1, true, null, objApp);

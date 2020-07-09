@@ -54,7 +54,7 @@ order by a.Seq";
             }
 
             this.SetGrid(artworkTable);
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -123,7 +123,7 @@ order by a.Seq";
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
     }
 }

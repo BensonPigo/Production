@@ -15,7 +15,7 @@ namespace Sci.Production.Thread
     /// </summary>
     public partial class B05 : Win.Tems.Input6
     {
-        private string keyWord = Sci.Env.User.Keyword;
+        private string keyWord = Env.User.Keyword;
         private DataTable gridTb;
         private bool gtbflag = false;
 

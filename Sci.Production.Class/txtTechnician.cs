@@ -8,83 +8,86 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Class
 {
-    public partial class txtTechnician : Win.UI._UserControl
+    /// <summary>
+    /// TxtTechnician
+    /// </summary>
+    public partial class TxtTechnician : Win.UI._UserControl
     {
-        public txtTechnician()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TxtTechnician"/> class.
+        /// </summary>
+        public TxtTechnician()
         {
             this.InitializeComponent();
         }
 
         private string myUsername = null;
 
-        private string checkColumn;
+        /// <summary>
+        /// Technician Where
+        /// </summary>
+        public string CheckColumn { get; set; }
 
-        public string CheckColumn
-        {
-            get { return this.checkColumn; } set { this.checkColumn = value; }
-        }
+        /// <inheritdoc/>
+        public Win.UI.TextBox TextBox1 { get; private set; }
 
-        public Win.UI.TextBox TextBox1
-        {
-            get { return this.textBox1; }
-        }
-
-        public Win.UI.DisplayBox DisplayBox1
-        {
-            get { return this.displayBox1; }
-        }
+        /// <inheritdoc/>
+        public Win.UI.DisplayBox DisplayBox1 { get; private set; }
 
         private string TechnicianWhere()
         {
-            string result = MyUtility.Check.Empty(this.checkColumn) ? "ID in (select id from Technician WITH (NOLOCK) where junk = 0 )" : $"ID in (select id from Technician WITH (NOLOCK) where junk = 0 and {this.checkColumn} = 1)";
+            string result = MyUtility.Check.Empty(this.CheckColumn) ? "ID in (select id from Technician WITH (NOLOCK) where junk = 0 )" : $"ID in (select id from Technician WITH (NOLOCK) where junk = 0 and {this.CheckColumn} = 1)";
             return result;
         }
 
-        public string textbox1_text
+        /// <inheritdoc/>
+        public string Textbox1_text
         {
             set
             {
-                this.textBox1.Text = value;
-                Sci.Production.Class.Commons.UserPrg.GetName(this.TextBox1.Text, out this.myUsername, Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
+                this.TextBox1.Text = value;
+                Commons.UserPrg.GetName(this.TextBox1.Text, out this.myUsername, Commons.UserPrg.NameType.NameAndExt);
                 this.DisplayBox1.Text = this.myUsername;
             }
         }
 
+        /// <inheritdoc/>
         [Bindable(true)]
         public string TextBox1Binding
         {
             get
             {
-                return this.textBox1.Text;
+                return this.TextBox1.Text;
             }
 
             set
             {
-                this.textBox1.Text = value;
+                this.TextBox1.Text = value;
                 if (!Env.DesignTime)
                 {
                     // if (this.textBox1.Text == "" || MyUtility.Check.Empty(this.textBox1.Text))
                     // {
                     //    return;
                     // }
-                    Sci.Production.Class.Commons.UserPrg.GetName(this.TextBox1.Text, out this.myUsername, Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
+                    Commons.UserPrg.GetName(this.TextBox1.Text, out this.myUsername, Commons.UserPrg.NameType.NameAndExt);
                     this.DisplayBox1.Text = this.myUsername;
                 }
             }
         }
 
+        /// <inheritdoc/>
         [Bindable(true)]
         public string DisplayBox1Binding
         {
-            get { return this.displayBox1.Text; }
-            set { this.displayBox1.Text = value; }
+            get { return this.DisplayBox1.Text; }
+            set { this.DisplayBox1.Text = value; }
         }
 
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void TextBox1_Validating(object sender, CancelEventArgs e)
         {
             // base.OnValidating(e);
-            string textValue = this.textBox1.Text;
-            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
+            string textValue = this.TextBox1.Text;
+            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.TextBox1.OldValue)
             {
                 // if (!MyUtility.Check.Seek(textValue, "Pass1", "ID"))
                 if (!MyUtility.Check.Seek($"select 1 from pass1 where id = '{textValue}' and {this.TechnicianWhere()} "))
@@ -101,38 +104,38 @@ namespace Sci.Production.Class
                         DataTable selectTable;
                         if (dtName.Rows.Count > 0)
                         {
-                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(dtName, "ID,Name,ExtNo,Factory", "10,22,5,40", this.textBox1.Text);
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(dtName, "ID,Name,ExtNo,Factory", "10,22,5,40", this.TextBox1.Text);
                             item.Size = new System.Drawing.Size(828, 509);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
-                                this.textBox1.Text = string.Empty;
+                                this.TextBox1.Text = string.Empty;
                                 this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
                                 return;
                             }
 
-                            this.textBox1.Text = item.GetSelectedString();
+                            this.TextBox1.Text = item.GetSelectedString();
                         }
                         else
                         {
                             selectCommand = string.Format("select ID, Name, ExtNo, REPLACE(Factory,' ','') Factory from Pass1 WITH (NOLOCK) where ExtNo = '{0}' order by ID", textValue.Trim());
                             DBProxy.Current.Select(null, selectCommand, out selectTable);
-                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo,Factory", "10,22,5,40", this.textBox1.Text);
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo,Factory", "10,22,5,40", this.TextBox1.Text);
                             item.Size = new System.Drawing.Size(828, 509);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
-                                this.textBox1.Text = string.Empty;
+                                this.TextBox1.Text = string.Empty;
                                 this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
                                 return;
                             }
 
-                            this.textBox1.Text = item.GetSelectedString();
+                            this.TextBox1.Text = item.GetSelectedString();
                         }
                     }
                     else
                     {
-                        this.textBox1.Text = string.Empty;
+                        this.TextBox1.Text = string.Empty;
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox(string.Format("< User Id: {0} > not found!!!", textValue));
                         this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
@@ -145,19 +148,19 @@ namespace Sci.Production.Class
             // 強制把binding的Text寫到DataRow
             this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
 
-            Sci.Production.Class.Commons.UserPrg.GetName(this.TextBox1.Text, out this.myUsername, Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
+            Commons.UserPrg.GetName(this.TextBox1.Text, out this.myUsername, Commons.UserPrg.NameType.NameAndExt);
             this.DisplayBox1.Text = this.myUsername;
         }
 
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TextBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Win.Forms.Base myForm = (Win.Forms.Base)this.FindForm();
-            if (myForm.EditMode == false || this.textBox1.ReadOnly == true)
+            if (myForm.EditMode == false || this.TextBox1.ReadOnly == true)
             {
                 return;
             }
 
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem($"select ID, Name, ExtNo, replace(Factory,' ','')factory from Pass1 WITH (NOLOCK) where Resign is null  and {this.TechnicianWhere()}  order by ID", "10,22,5,40", this.textBox1.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem($"select ID, Name, ExtNo, replace(Factory,' ','')factory from Pass1 WITH (NOLOCK) where Resign is null  and {this.TechnicianWhere()}  order by ID", "10,22,5,40", this.TextBox1.Text);
             item.Size = new System.Drawing.Size(828, 509);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
@@ -165,13 +168,13 @@ namespace Sci.Production.Class
                 return;
             }
 
-            this.textBox1.Text = item.GetSelectedString();
+            this.TextBox1.Text = item.GetSelectedString();
 
-            Sci.Production.Class.Commons.UserPrg.GetName(this.TextBox1.Text, out this.myUsername, Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
+            Commons.UserPrg.GetName(this.TextBox1.Text, out this.myUsername, Commons.UserPrg.NameType.NameAndExt);
             this.DisplayBox1.Text = this.myUsername;
         }
 
-        private void textBox1_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void TextBox1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             string sql;
             List<SqlParameter> sqlpar = new List<SqlParameter>();
@@ -182,17 +185,17 @@ namespace Sci.Production.Class
 		                    Mail = email
                     from Pass1 WITH (NOLOCK) 
                     where id = @id";
-            sqlpar.Add(new SqlParameter("@id", this.textBox1.Text.ToString()));
+            sqlpar.Add(new SqlParameter("@id", this.TextBox1.Text.ToString()));
 
-            userData ud = new userData(sql, sqlpar);
+            UserData ud = new UserData(sql, sqlpar);
 
-            if (ud.errMsg == null)
+            if (ud.ErrMsg == null)
             {
                 ud.ShowDialog();
             }
             else
             {
-                MyUtility.Msg.ErrorBox(ud.errMsg);
+                MyUtility.Msg.ErrorBox(ud.ErrMsg);
             }
         }
     }

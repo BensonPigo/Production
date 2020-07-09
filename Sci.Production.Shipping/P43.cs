@@ -105,7 +105,7 @@ where agd.id = '{0}'",
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     string sqlCmd = $"Select distinct a.Article from Order_Qty a with (nolock) where a.id = '{this.CurrentDetailData["orderid"]}'";
                     Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "10,10", this.CurrentDetailData["Article"].ToString());
@@ -172,7 +172,7 @@ where agd.id = '{0}'",
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     string sqlCmd = $"Select distinct a.SizeCode from Order_Qty a with (nolock) where a.id = '{this.CurrentDetailData["orderid"]}' and  a.Article = '{this.CurrentDetailData["Article"]}'";
                     Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "10,10", this.CurrentDetailData["SizeCode"].ToString());
@@ -243,7 +243,7 @@ where agd.id = '{0}'",
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     string sqlCmd = "Select distinct ID, Description from ShippingReason a with (nolock) WHERE Type='AG' AND junk = 0";
                     Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "10,20", this.CurrentDetailData["ReasonID"].ToString());
@@ -310,7 +310,7 @@ where agd.id = '{0}'",
         {
             base.ClickNewAfter();
             this.CurrentMaintain["issuedate"] = DateTime.Now;
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
         }
 
         /// <inheritdoc/>
@@ -405,7 +405,7 @@ where agd.id = '{0}'",
             #region GetID
             if (this.IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "AG", " AdjustGMT ", (DateTime)MyUtility.Convert.GetDate(this.CurrentMaintain["issuedate"]), 2, "Id", null);
+                string id = MyUtility.GetValue.GetID(Env.User.Keyword + "AG", " AdjustGMT ", (DateTime)MyUtility.Convert.GetDate(this.CurrentMaintain["issuedate"]), 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");

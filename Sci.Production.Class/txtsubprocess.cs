@@ -3,8 +3,12 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtsubprocess : Win.UI.TextBox
+    /// <summary>
+    /// Txtsubprocess
+    /// </summary>
+    public partial class Txtsubprocess : Win.UI.TextBox
     {
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "Select ID From Subprocess WITH (NOLOCK) where junk=0 and IsRFIDProcess= 1";

@@ -32,9 +32,9 @@ namespace Sci.Production.Tools
             // MyApp.lAdmin = fasle時,
             // 1.則DefaultFilter設為 ID = MyApp.cLogin
             // 2.關閉New/Dele/Move功能
-            if (!Sci.Env.User.IsAdmin)
+            if (!Env.User.IsAdmin)
             {
-                this.DefaultFilter = $@"ID = '{Sci.Env.User.UserID}' and isnull(ISMIS,0) = 0";
+                this.DefaultFilter = $@"ID = '{Env.User.UserID}' and isnull(ISMIS,0) = 0";
                 this.IsSupportNew = false;
                 this.IsSupportDelete = false;
             }
@@ -76,7 +76,7 @@ namespace Sci.Production.Tools
             this.comboLanguage.ValueMember = "Key";
             this.comboLanguage.DisplayMember = "Value";
 
-            this.destination_path = Sci.Production.Class.UserESignature.getESignaturePath();
+            this.destination_path = UserESignature.GetESignaturePath();
         }
 
         protected override void SearchGridColumns()
@@ -201,12 +201,12 @@ namespace Sci.Production.Tools
                 if (MyUtility.Check.Empty(this.disBoxESignature.Text))
                 {
                     // 刪除pic
-                    if (System.IO.File.Exists(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["ESignature"])))
+                    if (File.Exists(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["ESignature"])))
                     {
                         try
                         {
                             string deltpath = this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["ESignature"]);
-                            System.IO.File.Delete(deltpath);
+                            File.Delete(deltpath);
                             this.CurrentMaintain["ESignature"] = string.Empty;
                             this.disBoxESignature.Text = MyUtility.Convert.GetString(this.CurrentMaintain["ESignature"]);
                         }
@@ -222,7 +222,7 @@ namespace Sci.Production.Tools
                 }
                 else
                 {
-                    if (System.IO.File.Exists(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["ESignature"])) || !MyUtility.Check.Empty(this.file))
+                    if (File.Exists(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["ESignature"])) || !MyUtility.Check.Empty(this.file))
                     {
                         try
                         {
@@ -248,18 +248,18 @@ namespace Sci.Production.Tools
             base.OnDetailEntered();
 
             this.txtIDStart.ReadOnly = !(this.EditMode && this.IsDetailInserting);
-            this.txtIDEnd.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
-            this.txtPassword.ReadOnly = !(this.EditMode && (Sci.Env.User.IsAdmin || this.txtIDStart.Text == Sci.Env.User.UserID));
+            this.txtIDEnd.ReadOnly = !(this.EditMode && Env.User.IsAdmin);
+            this.txtPassword.ReadOnly = !(this.EditMode && (Env.User.IsAdmin || this.txtIDStart.Text == Env.User.UserID));
             this.txtPassword.UseSystemPasswordChar = !this.EditMode;
-            this.txtExtNo.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
+            this.txtExtNo.ReadOnly = !(this.EditMode && Env.User.IsAdmin);
             this.editFactory.ReadOnly = true;  // !(this.EditMode && Sci.Env.User.IsAdmin);
 
-            this.txtUserManager.TextBox1.Enabled = this.EditMode && Sci.Env.User.IsAdmin;
-            this.txtUserSupervisor.TextBox1.Enabled = this.EditMode && Sci.Env.User.IsAdmin;
-            this.txtUserDeputy.TextBox1.Enabled = this.EditMode && Sci.Env.User.IsAdmin;
-            this.txtEMailAddr.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
+            this.txtUserManager.TextBox1.Enabled = this.EditMode && Env.User.IsAdmin;
+            this.txtUserSupervisor.TextBox1.Enabled = this.EditMode && Env.User.IsAdmin;
+            this.txtUserDeputy.TextBox1.Enabled = this.EditMode && Env.User.IsAdmin;
+            this.txtEMailAddr.ReadOnly = !(this.EditMode && Env.User.IsAdmin);
             this.txtPosition.ReadOnly = true; // !(this.EditMode && Sci.Env.User.IsAdmin);
-            if (this.EditMode && Sci.Env.User.IsAdmin)
+            if (this.EditMode && Env.User.IsAdmin)
             {
                 this.txtPosition.ForeColor = Color.Red;
                 this.txtPosition.BackColor = Color.FromArgb((int)((byte)255),  (int)((byte)255),  (int)((byte)255));
@@ -270,10 +270,10 @@ namespace Sci.Production.Tools
                 this.txtPosition.BackColor = Color.FromArgb((int)((byte)183),  (int)((byte)227),  (int)((byte)255));
             }
 
-            this.dateDateHired.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
-            this.dateResign.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
-            this.editRemark.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
-            this.checkAdmin.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
+            this.dateDateHired.ReadOnly = !(this.EditMode && Env.User.IsAdmin);
+            this.dateResign.ReadOnly = !(this.EditMode && Env.User.IsAdmin);
+            this.editRemark.ReadOnly = !(this.EditMode && Env.User.IsAdmin);
+            this.checkAdmin.ReadOnly = !(this.EditMode && Env.User.IsAdmin);
 
             this.sqlCmd = string.Format(
                 @"SELECT A.*, B.MenuNo, B.BarNo 
@@ -320,7 +320,7 @@ namespace Sci.Production.Tools
             {
                 // 非編輯模式,只能Show照片
                 case false:
-                    Image img = UserESignature.getUserESignature(this.CurrentMaintain["id"].ToString());
+                    Image img = UserESignature.GetUserESignature2(this.CurrentMaintain["id"].ToString());
                     if (string.IsNullOrEmpty(this.disBoxESignature.Text))
                     {
                         return;
@@ -335,7 +335,7 @@ namespace Sci.Production.Tools
                     if (this.destination_path != null)
                     {
                         DialogResult delResult = MyUtility.Msg.QuestionBox("Clear the E- Signature?", buttons: MessageBoxButtons.YesNo);
-                        if (delResult == System.Windows.Forms.DialogResult.Yes)
+                        if (delResult == DialogResult.Yes)
                         {
                             // 暫時清空pic
                             this.disBoxESignature.Text = string.Empty;

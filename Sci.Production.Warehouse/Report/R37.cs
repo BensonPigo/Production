@@ -195,7 +195,7 @@ where 1=1 ");
                 DualResult failResult = new DualResult(false, "Quary data fail\r\n" + result.ToString());
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(ReportDefinition report)
@@ -208,7 +208,7 @@ where 1=1 ");
 
             // 顯示筆數
             this.SetCount(this.printData.Rows.Count);
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R37.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R37.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Warehouse_R37.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
 
             this.ShowWaitMessage("Excel Processing...");
@@ -216,7 +216,7 @@ where 1=1 ");
             worksheet.Rows.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R37");
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R37");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

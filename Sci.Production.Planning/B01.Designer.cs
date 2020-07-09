@@ -41,7 +41,7 @@
             this.radiobyMonth = new Sci.Win.UI.RadioButton();
             this.radiobyDay = new Sci.Win.UI.RadioButton();
             this.label25 = new Sci.Win.UI.Label();
-            this.txtsubconFtySupp = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtsubconFtySupp = new Sci.Production.Class.TxtsubconNoConfirm();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -318,7 +318,7 @@
         private Win.UI.RadioButton radiobyDay;
         private Win.UI.NumericBox numHeads;
         private Win.UI.NumericBox numCapacity;
-        private Class.txtsubconNoConfirm txtsubconFtySupp;
+        private Class.TxtsubconNoConfirm txtsubconFtySupp;
         private Win.UI.ComboBox comboArtworkType;
         private Win.UI.DateBox dateDate;
         private Win.UI.Label labelHeads;

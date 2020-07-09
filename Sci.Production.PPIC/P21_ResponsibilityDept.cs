@@ -53,7 +53,7 @@ namespace Sci.Production.PPIC
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string sqlcmd = $@"Select distinct FtyGroup from Factory where junk = 0 and Type in ('B','S')";
@@ -81,7 +81,7 @@ namespace Sci.Production.PPIC
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string sqlcmd = $@"Select distinct FtyGroup from Factory where junk = 0 and Type in ('B','S')";
@@ -150,7 +150,7 @@ namespace Sci.Production.PPIC
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string sqlcmd = $@"select ID,Name from [FinanceEN].dbo.Department where Junk = 0";
@@ -178,7 +178,7 @@ namespace Sci.Production.PPIC
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string sqlcmd = $@"select ID,Name from [FinanceEN].dbo.Department where Junk = 0";

@@ -716,7 +716,7 @@ from FtyExportData");
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>

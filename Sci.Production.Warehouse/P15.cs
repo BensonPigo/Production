@@ -34,7 +34,7 @@ namespace Sci.Production.Warehouse
             this.Controls.Add(this.viewer);
 
             // MDivisionID 是 P15 寫入 => Sci.Env.User.Keyword
-            this.DefaultFilter = string.Format("FabricType='A' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("FabricType='A' and MDivisionID = '{0}'", Env.User.Keyword);
             this.gridicon.Append.Enabled = false;
             this.gridicon.Append.Visible = false;
             this.gridicon.Insert.Enabled = false;
@@ -77,7 +77,7 @@ namespace Sci.Production.Warehouse
             }
 
             ToolStripMenuItem P15MenuItem = null;
-            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
+            foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
             {
                 if (toolMenuItem.Text.EqualString("Warehouse"))
                 {
@@ -137,8 +137,8 @@ namespace Sci.Production.Warehouse
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["FabricType"] = "A";
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
@@ -246,7 +246,7 @@ namespace Sci.Production.Warehouse
             // 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IL", "IssueLack", (DateTime)this.CurrentMaintain["Issuedate"]);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "IL", "IssueLack", (DateTime)this.CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -281,7 +281,7 @@ namespace Sci.Production.Warehouse
                 DataRow dr;
                 if (MyUtility.Check.Seek(string.Format(@"select apvdate,Shift,SubconName from lack WITH (NOLOCK) where id = '{0}'", this.CurrentMaintain["requestid"]), out dr))
                 {
-                    this.displayApvDate.Text = ((DateTime)dr["apvdate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                    this.displayApvDate.Text = ((DateTime)dr["apvdate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
                     this.displayBoxShift.Text = dr["Shift"].Equals("D") ? "Day" : dr["Shift"].Equals("N") ? "Night" : "Subcon-Out";
                     this.txtLocalSupp1.TextBox1.Text = dr["SubconName"].ToString();
                 }
@@ -810,7 +810,7 @@ Where a.id = '{0}'", masterID);
                 string.Format(
                 @"select [type],[apvdate],[issuelackid],[Shift],[SubconName] from dbo.lack WITH (NOLOCK) 
 where id='{0}' and fabrictype='A' and mdivisionid='{1}'",
-                this.txtRequest.Text, Sci.Env.User.Keyword), out dr, null))
+                this.txtRequest.Text, Env.User.Keyword), out dr, null))
             {
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox("Please check requestid is Accessory.", "Data not found!!");
@@ -836,7 +836,7 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'",
 
             this.CurrentMaintain["requestid"] = this.txtRequest.Text;
             this.CurrentMaintain["type"] = dr["type"].ToString();
-            this.displayApvDate.Text = ((DateTime)dr["apvdate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+            this.displayApvDate.Text = ((DateTime)dr["apvdate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
             this.displayBoxShift.Text = dr["Shift"].Equals("D") ? "Day" : dr["Shift"].Equals("N") ? "Night" : "Subcon-Out";
             this.txtLocalSupp1.TextBox1.Text = dr["SubconName"].ToString();
         }
@@ -858,7 +858,7 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'",
 
             #region  抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
+            pars.Add(new SqlParameter("@MDivision", Env.User.Keyword));
             DataTable dt;
             DualResult result = DBProxy.Current.Select(string.Empty, @"
 select NameEn

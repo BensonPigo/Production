@@ -14,8 +14,8 @@ namespace Sci.Production.Cutting
 {
     public partial class P04 : Win.Tems.Input6
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
         string fileNameExt;
         string pathName;
 
@@ -37,7 +37,7 @@ select '' FTYGroup
 union 
 select distinct FTYGroup 
 from Factory 
-where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+where MDivisionID = '{0}'", Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;
@@ -351,7 +351,7 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
 
             // dr == System.Windows.Forms.DialogResult.
             this.ReloadDatas();
-            if (dr == System.Windows.Forms.DialogResult.OK)
+            if (dr == DialogResult.OK)
             {
                 var topID = frm.importedIDs[0];
                 int newDataIdx = this.gridbs.Find("ID", topID);
@@ -420,7 +420,7 @@ where cd.id = '{0}'", this.CurrentDetailData["ID"]);
 
             if (dResult)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P04.xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P04.xltx"); // 預先開啟excel app
 
                 // createfolder();
                 // if (MyUtility.Excel.CopyToXls(ExcelTb, "", "Cutting_P04.xltx", 5, !autoSave, null, objApp, false))
@@ -434,8 +434,8 @@ where cd.id = '{0}'", this.CurrentDetailData["ID"]);
                     objSheet.Cells[3, 5] = this.CurrentMaintain["POID"].ToString();
                     objSheet.Cells[3, 10] = this.CurrentMaintain["SpreadingNoID"].ToString();
                     objSheet.Cells[3, 12] = this.CurrentMaintain["CutCellid"].ToString();
-                    objSheet.Cells[3, 15] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(this.loginID);
-                    this.pathName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_Daily_Plan");
+                    objSheet.Cells[3, 15] = PublicPrg.Prgs.GetAddOrEditBy(this.loginID);
+                    this.pathName = Class.MicrosoftFile.GetName("Cutting_Daily_Plan");
                     objBook.SaveAs(this.pathName);
                     if (autoSave)
                     {
@@ -519,7 +519,7 @@ where cd.id = '{0}'", this.CurrentDetailData["ID"]);
             DataRow seekdr;
             if (MyUtility.Check.Seek("select * from mailto WITH (NOLOCK) where Id='005'", out seekdr))
             {
-                string mailFrom = Sci.Env.Cfg.MailFrom;
+                string mailFrom = Env.Cfg.MailFrom;
                 string mailto = seekdr["ToAddress"].ToString();
                 string cc = seekdr["ccAddress"].ToString();
                 string content = seekdr["content"].ToString();

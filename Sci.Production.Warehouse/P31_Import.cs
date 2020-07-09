@@ -40,8 +40,8 @@ namespace Sci.Production.Warehouse
             string fromSP = this.txtBorrowFromSP.Text.TrimEnd();
             int intNoLock = this.chkNoLock.Checked ? 1 : 0;
 
-            if (string.IsNullOrWhiteSpace(sp) || this.txtSeq.checkSeq1Empty()
-                || this.txtSeq.checkSeq2Empty() || string.IsNullOrWhiteSpace(fromSP))
+            if (string.IsNullOrWhiteSpace(sp) || this.txtSeq.CheckSeq1Empty()
+                || this.txtSeq.CheckSeq2Empty() || string.IsNullOrWhiteSpace(fromSP))
             {
                 MyUtility.Msg.WarningBox("< To SP# Seq> <From SP#> can't be empty!!");
                 this.txtToSP.Focus();
@@ -64,7 +64,7 @@ where   po.id = '{0}'
         and po.seq1 = '{1}' 
         and po.seq2='{2}'
 		AND o.Category<>'A'
-", sp, this.txtSeq.seq1, this.txtSeq.seq2);
+", sp, this.txtSeq.Seq1, this.txtSeq.Seq2);
 
                 DBProxy.Current.Select(null, strSQL, out dt);
                 if (dt != null && dt.Rows.Count > 0)
@@ -125,8 +125,8 @@ outer apply(
 	    and Seq2 = b.seq2
         and Roll = c.Roll
 ) as toSP
-Where a.id = '{fromSP}' and b.id = '{sp}' and b.seq1 = '{this.txtSeq.seq1}' 
-and b.seq2='{this.txtSeq.seq2}' and Factory.MDivisionID = '{Sci.Env.User.Keyword}'
+Where a.id = '{fromSP}' and b.id = '{sp}' and b.seq1 = '{this.txtSeq.Seq1}' 
+and b.seq2='{this.txtSeq.Seq2}' and Factory.MDivisionID = '{Env.User.Keyword}'
 and c.inqty-c.outqty + c.adjustqty > 0 and  c.StockType='B'
 AND Orders.Category <> 'A' ");
 
@@ -138,8 +138,8 @@ AND Orders.Category <> 'A' ");
                     {
                         MyUtility.Msg.WarningBox("Data not found!!");
                         this.txtToSP.Text = string.Empty;
-                        this.txtSeq.seq1 = string.Empty;
-                        this.txtSeq.seq2 = string.Empty;
+                        this.txtSeq.Seq1 = string.Empty;
+                        this.txtSeq.Seq2 = string.Empty;
                         this.txtBorrowFromSP.Text = string.Empty;
                     }
 

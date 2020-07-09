@@ -20,7 +20,7 @@ namespace Sci.Production.Planning
     /// </summary>
     public partial class R10 : Win.Tems.PrintForm
     {
-        private DateTime currentTime = System.DateTime.Now;
+        private DateTime currentTime = DateTime.Now;
 
         private int reportType = 1;
         private string BrandID = string.Empty;
@@ -64,7 +64,7 @@ namespace Sci.Production.Planning
             this.InitializeComponent();
             this.EditMode = true;
             this.print.Visible = false;
-            this.txtMDivision.Text = Sci.Env.User.Keyword;
+            this.txtMDivision.Text = Env.User.Keyword;
         }
 
         /// <inheritdoc/>
@@ -152,7 +152,7 @@ namespace Sci.Production.Planning
         {
             if (this.rdMonth.Checked || this.rdHalfMonth.Checked)
             {
-                DualResult result = Result.True;
+                DualResult result = Ict.Result.True;
                 try
                 {
                     List<string> artworkLis = new List<string>();
@@ -639,7 +639,7 @@ namespace Sci.Production.Planning
                 SaveXltReportCls.ReplaceAction a = this.SetRow1;
                 xl.DicDatas.Add("##setRow1", a);
 
-                xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Planning_R10_ProuctionStatus"));
+                xl.Save(Class.MicrosoftFile.GetName("Planning_R10_ProuctionStatus"));
 
                 int startRow = 3; // title有2列
                 int lastRow = dt2.Rows.Count + 3;
@@ -790,7 +790,7 @@ namespace Sci.Production.Planning
             }
             catch (Exception ex)
             {
-                return Result.F(ex.ToString());
+                return Ict.Result.F(ex.ToString());
             }
 
             if (saveReport)
@@ -801,13 +801,13 @@ namespace Sci.Production.Planning
                 // 2020/02/21 [IST20200294] modify by Anderson 經由批次轉廠呼叫時，當發生錯誤時回報錯誤，不產生報表
                 if (isErrorOccured)
                 {
-                    result = Result.F(errorMsg);
+                    result = Ict.Result.F(errorMsg);
                 }
                 else
                 {
                     var savePath = Path.Combine(tmpDir, $"{mdivisionID}_Planning-R10_{DateTime.Now.ToString("yyyyMMdd_hhmmss")}.xlsx");
                     sxrc.Save(savePath);
-                    result = Result.True;
+                    result = Ict.Result.True;
                 }
             }
             else
@@ -1218,7 +1218,7 @@ namespace Sci.Production.Planning
             rg = wks.get_Range("A:A");
             rg.Columns.AutoFit();
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -1404,7 +1404,7 @@ namespace Sci.Production.Planning
 
             sheetStart += 1;
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -1993,7 +1993,7 @@ namespace Sci.Production.Planning
             // sxrc = null;
             GC.Collect();
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         #region 減少Code用
@@ -2161,11 +2161,11 @@ namespace Sci.Production.Planning
                         decimal.TryParse(wks.Cells[sheetStart, i].Value.ToString(), out value);
                         if (value >= 0)
                         {
-                            wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#FF99CC"));
+                            wks.Cells[sheetStart, i].Interior.Color = ColorTranslator.ToOle(ColorTranslator.FromHtml("#FF99CC"));
                         }
                         else if (value < 0)
                         {
-                            wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#CCFFCC"));
+                            wks.Cells[sheetStart, i].Interior.Color = ColorTranslator.ToOle(ColorTranslator.FromHtml("#CCFFCC"));
                         }
                     }
                 }
@@ -2199,11 +2199,11 @@ namespace Sci.Production.Planning
                             decimal.TryParse(wks.Cells[sheetStart, i].Value.ToString(), out value);
                             if (value >= 0)
                             {
-                                wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#FF99CC"));
+                                wks.Cells[sheetStart, i].Interior.Color = ColorTranslator.ToOle(ColorTranslator.FromHtml("#FF99CC"));
                             }
                             else if (value < 0)
                             {
-                                wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#CCFFCC"));
+                                wks.Cells[sheetStart, i].Interior.Color = ColorTranslator.ToOle(ColorTranslator.FromHtml("#CCFFCC"));
                             }
                         }
                     }
@@ -2250,7 +2250,7 @@ namespace Sci.Production.Planning
 
             if (this.rdHalfMonth.Checked)
             {
-                this.numMonth.Value = System.DateTime.Today.Month;
+                this.numMonth.Value = DateTime.Today.Month;
             }
         }
 

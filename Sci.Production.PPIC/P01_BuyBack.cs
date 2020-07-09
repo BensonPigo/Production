@@ -114,7 +114,7 @@ namespace Sci.Production.PPIC
             Ict.Win.DataGridViewGeneratorTextColumnSettings popupSPCell = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
             popupSPCell.EditingMouseDown += (s, e) =>
             {
-                if (this.EditMode && e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     if (e.RowIndex == -1)
                     {

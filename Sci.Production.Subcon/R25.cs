@@ -19,7 +19,7 @@ namespace Sci.Production.Subcon
 
             DBProxy.Current.Select(null, "select '' as ID union all select DISTINCT ftygroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboFactory.SelectedValue = Sci.Env.User.Factory;
+            this.comboFactory.SelectedValue = Env.User.Factory;
             this.print.Enabled = false;
         }
 
@@ -151,7 +151,7 @@ left join dbo.LocalItem li WITH (NOLOCK) on li.RefNo=lrd.Refno
             }
 
             this.SetCount(this.dtt.Rows.Count);
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R25.xltx");
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R25.xltx");
             MyUtility.Excel.CopyToXls(this.dtt, string.Empty, "Subcon_R25.xltx", 3, showExcel: false, showSaveMsg: false, excelApp: objApp);
 
             this.ShowWaitMessage("Excel Processing...");
@@ -163,7 +163,7 @@ left join dbo.LocalItem li WITH (NOLOCK) on li.RefNo=lrd.Refno
                 this.SP, this.Refno, this.Category, this.Supplier, this.Factory);
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R25");
+            string strExcelName = Class.MicrosoftFile.GetName("Subcon_R25");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

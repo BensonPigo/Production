@@ -40,7 +40,7 @@ namespace Sci.Production.Sewing
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboCategory.SelectedIndex = 0;
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
             this.comboFactory.SelectedIndex = 0;
         }
 
@@ -487,7 +487,7 @@ EXEC sp_executesql @lastSql
             }
 
          DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
-         return Result.True;
+         return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -504,7 +504,7 @@ EXEC sp_executesql @lastSql
 
             this.ShowWaitMessage("Starting EXCEL...");
             string excelFile = "Sewing_R04_SewingDailyOutputList.xltx";
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + excelFile); // 開excelapp
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + excelFile); // 開excelapp
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             if (this.show_Accumulate_output == true)
             {

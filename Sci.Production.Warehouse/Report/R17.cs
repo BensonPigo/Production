@@ -44,7 +44,7 @@ namespace Sci.Production.Warehouse
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             this.SetCount(this.dt.Rows.Count);
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
             if (this.dt.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found!!");
@@ -52,7 +52,7 @@ namespace Sci.Production.Warehouse
             }
 
             // MyUtility.Excel.CopyToXls(dt,"","Warehouse_R17_Location_List.xltx");
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R17_Location_List.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R17_Location_List.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Warehouse_R17_Location_List.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);      // 將datatable copy to excel
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
@@ -70,7 +70,7 @@ namespace Sci.Production.Warehouse
             objSheets.Rows.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R17_Location_List");
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R17_Location_List");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
@@ -116,7 +116,7 @@ namespace Sci.Production.Warehouse
                 locationFilte = locationFilte = string.Format("'{0}' < b.mtllocationid", locationStart);
             }
 
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
             StringBuilder sqlcmd = new StringBuilder();
             #region sql command
             if (MyUtility.Check.Empty(this.dateSCIDelivery.Value1) && MyUtility.Check.Empty(this.dateSCIDelivery.Value2)) // SCI Delivery empty
@@ -176,18 +176,18 @@ where   1=1");
         And a.Poid like '{0}%'", spno));
                     }
 
-                    if (!this.txtSeq.checkSeq1Empty())
+                    if (!this.txtSeq.CheckSeq1Empty())
                     {
                         sqlcmd.Append(string.Format(
                             @"
-        and a.seq1 = '{0}'", this.txtSeq.seq1));
+        and a.seq1 = '{0}'", this.txtSeq.Seq1));
                     }
 
-                    if (!this.txtSeq.checkSeq2Empty())
+                    if (!this.txtSeq.CheckSeq2Empty())
                     {
                         sqlcmd.Append(string.Format(
                             @" 
-        and a.seq2 = '{0}'", this.txtSeq.seq2));
+        and a.seq2 = '{0}'", this.txtSeq.Seq2));
                     }
 
                     if (chkbalance)
@@ -290,18 +290,18 @@ where   1=1
         And a.Poid like '{0}%'", spno));
                     }
 
-                    if (!this.txtSeq.checkSeq1Empty())
+                    if (!this.txtSeq.CheckSeq1Empty())
                     {
                         sqlcmd.Append(string.Format(
                             @"
-        and a.seq1 = '{0}'", this.txtSeq.seq1));
+        and a.seq1 = '{0}'", this.txtSeq.Seq1));
                     }
 
-                    if (!this.txtSeq.checkSeq2Empty())
+                    if (!this.txtSeq.CheckSeq2Empty())
                     {
                         sqlcmd.Append(string.Format(
                             @" 
-        and a.seq2 = '{0}'", this.txtSeq.seq2));
+        and a.seq2 = '{0}'", this.txtSeq.Seq2));
                     }
 
                     if (chkbalance)
@@ -420,18 +420,18 @@ where   1=1"));
         And a.Poid like '{0}%'", spno));
                     }
 
-                    if (!this.txtSeq.checkSeq1Empty())
+                    if (!this.txtSeq.CheckSeq1Empty())
                     {
                         sqlcmd.Append(string.Format(
                             @"
-        and a.seq1 = '{0}'", this.txtSeq.seq1));
+        and a.seq1 = '{0}'", this.txtSeq.Seq1));
                     }
 
-                    if (!this.txtSeq.checkSeq2Empty())
+                    if (!this.txtSeq.CheckSeq2Empty())
                     {
                         sqlcmd.Append(string.Format(
                             @" 
-        and a.seq2 = '{0}'", this.txtSeq.seq2));
+        and a.seq2 = '{0}'", this.txtSeq.Seq2));
                     }
 
                     if (chkbalance)
@@ -549,18 +549,18 @@ where   1=1
         And a.Poid like '{0}%'", spno));
                     }
 
-                    if (!this.txtSeq.checkSeq1Empty())
+                    if (!this.txtSeq.CheckSeq1Empty())
                     {
                         sqlcmd.Append(string.Format(
                             @"
-        and a.seq1 = '{0}'", this.txtSeq.seq1));
+        and a.seq1 = '{0}'", this.txtSeq.Seq1));
                     }
 
-                    if (!this.txtSeq.checkSeq2Empty())
+                    if (!this.txtSeq.CheckSeq2Empty())
                     {
                         sqlcmd.Append(string.Format(
                             @" 
-        and a.seq2 = '{0}'", this.txtSeq.seq2));
+        and a.seq2 = '{0}'", this.txtSeq.Seq2));
                     }
 
                     if (chkbalance)

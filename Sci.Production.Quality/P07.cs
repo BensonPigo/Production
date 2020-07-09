@@ -80,7 +80,7 @@ namespace Sci.Production.Quality
                 DateTime? targT = null;
                 if (!MyUtility.Check.Empty(dr["CutInLine"]) && !MyUtility.Check.Empty(dr["MinSciDelivery"]))
                 {
-                    targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(dr["CutInLine"], dr["MinSciDelivery"]);
+                    targT = PublicPrg.Prgs.GetTargetLeadTime(dr["CutInLine"], dr["MinSciDelivery"]);
                 }
 
                 if (targT != null)

@@ -31,8 +31,8 @@ namespace Sci.Production.Planning
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtMdivision.Text = Sci.Env.User.Keyword;
-            this.txtfactory.Text = Sci.Env.User.Factory;
+            this.txtMdivision.Text = Env.User.Keyword;
+            this.txtfactory.Text = Env.User.Factory;
             this.dateSCIDelivery.Value1 = DateTime.Now.AddDays(-DateTime.Now.Day + 1);
             this.dateSCIDelivery.Value2 = DateTime.Now.AddMonths(1).AddDays(-DateTime.Now.AddMonths(1).Day);
         }
@@ -276,7 +276,7 @@ drop table #tmporders,#m,#m2,#a,#b,#ltm,#lts,#lu,#ltsr,#ltm2");
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -307,7 +307,7 @@ drop table #tmporders,#m,#m2,#a,#b,#ltm,#lts,#lu,#ltsr,#ltm2");
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R01.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Planning_R01.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Planning_R01.xltx", 4, false, null, objApp);      // 將datatable copy to excel
             objApp.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
@@ -352,7 +352,7 @@ drop table #tmporders,#m,#m2,#a,#b,#ltm,#lts,#lu,#ltsr,#ltm2");
             objSheets.Cells[3, 2] = DateTime.Now.ToShortDateString();  // 列印日期寫入excel
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R01");
+            string strExcelName = Class.MicrosoftFile.GetName("Planning_R01");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

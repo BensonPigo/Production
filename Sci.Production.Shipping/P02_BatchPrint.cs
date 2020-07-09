@@ -85,7 +85,7 @@ Order by CTNNo,Seq1,seq2", MyUtility.Convert.GetString(this.masterData["ID"]),
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("from", (MyUtility.Convert.GetString(this.masterData["FromTag"]) == "1" ? "Factory" : "Brand") + "(" + MyUtility.Convert.GetString(this.masterData["FromSite"]) + ")"));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("to", (MyUtility.Convert.GetString(this.masterData["ToTag"]) == "1" ? "SCI" : MyUtility.Convert.GetString(this.masterData["ToTag"]) == "2" ? "Factory" : MyUtility.Convert.GetString(this.masterData["ToTag"]) == "3" ? "Supplier" : "Brand") + "(" + MyUtility.Convert.GetString(this.masterData["ToSite"]) + ")"));
 
-            return Result.True;
+            return Ict.Result.True;
         }
     }
 }

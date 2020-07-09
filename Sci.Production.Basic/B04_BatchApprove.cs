@@ -236,7 +236,7 @@ WHERE t.status = 'New'
             // 若有單已經被其他使用者先approve則跳過, 加上status = 'New' 為更新條件
             string updSql = $@"
 Update  l
-set l.Status = 'Confirmed' ,l.ApproveName='{Sci.Env.User.UserID}' ,l.ApproveDate=GETDATE() ,l.editname = '{Env.User.UserID}', l.editdate = GETDATE() 
+set l.Status = 'Confirmed' ,l.ApproveName='{Env.User.UserID}' ,l.ApproveDate=GETDATE() ,l.editname = '{Env.User.UserID}', l.editdate = GETDATE() 
 FROM LocalSupp_Bank l
 INNER JOIN #tmp t ON t.ID = l.ID AND t.PKey = l.PKey
 

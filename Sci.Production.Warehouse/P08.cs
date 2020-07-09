@@ -23,8 +23,8 @@ namespace Sci.Production.Warehouse
         {
             this.InitializeComponent();
             this.DefaultFilter = string.Format("Type='B'");
-            string factory = Sci.Env.User.Factory;
-            string Mdvision = Sci.Env.User.Keyword;
+            string factory = Env.User.Factory;
+            string Mdvision = Env.User.Keyword;
 
           // ChangeDetailColor();
             this.di_fabrictype.Add("F", "Fabric");
@@ -66,8 +66,8 @@ namespace Sci.Production.Warehouse
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "B";
             this.CurrentMaintain["Third"] = 1;
@@ -199,7 +199,7 @@ where p.junk = 1
             // 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "RF", "Receiving", (DateTime)this.CurrentMaintain["WhseArrival"]);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "RF", "Receiving", (DateTime)this.CurrentMaintain["WhseArrival"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -315,7 +315,7 @@ where p.junk = 1
                             if (!MyUtility.Check.Seek(
                                 string.Format(
                                 Prgs.selePoItemSqlCmd() +
-                                    @"and p.seq1 ='{2}'and p.seq2 = '{3}' and left(p.seq1,1) !='7'", this.CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
+                                    @"and p.seq1 ='{2}'and p.seq2 = '{3}' and left(p.seq1,1) !='7'", this.CurrentDetailData["poid"], Env.User.Keyword, seq[0], seq[1]), out dr, null))
                             {
                                 this.CurrentDetailData["seq"] = string.Empty;
                                 e.Cancel = true;

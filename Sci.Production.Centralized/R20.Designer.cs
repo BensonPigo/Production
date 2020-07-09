@@ -41,10 +41,10 @@
             this.dateQueryDateStart = new Sci.Win.UI.DateBox();
             this.dateQueryDateEnd = new Sci.Win.UI.DateBox();
             this.label5 = new Sci.Win.UI.Label();
-            this.comboDropdownlist = new Sci.Production.Class.comboDropDownList(this.components);
-            this.txtCentralizedFactory = new Sci.Production.Class.txtCentralizedFactory();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtcountry = new Sci.Production.Class.txtcountry();
+            this.comboDropdownlist = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.txtCentralizedFactory = new Sci.Production.Class.TxtCentralizedFactory();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtcountry = new Sci.Production.Class.Txtcountry();
             this.SuspendLayout();
             // 
             // print
@@ -266,9 +266,9 @@
         private Win.UI.DateBox dateQueryDateStart;
         private Win.UI.DateBox dateQueryDateEnd;
         private Win.UI.Label label5;
-        private Class.comboDropDownList comboDropdownlist;
-        private Class.txtCentralizedFactory txtCentralizedFactory;
-        private Class.txtbrand txtbrand;
-        private Class.txtcountry txtcountry;
+        private Class.ComboDropDownList comboDropdownlist;
+        private Class.TxtCentralizedFactory txtCentralizedFactory;
+        private Class.Txtbrand txtbrand;
+        private Class.Txtcountry txtcountry;
     }
 }

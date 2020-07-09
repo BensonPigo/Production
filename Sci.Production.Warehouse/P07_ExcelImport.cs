@@ -579,7 +579,7 @@ where   stocktype='{0}'
             }
 
             MyUtility.Msg.InfoBox("Write in completed!!");
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
     }
 }

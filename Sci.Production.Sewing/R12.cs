@@ -199,7 +199,7 @@ IF object_id('tempdb..#tmp_InspectionOrderId') IS NOT NULL drop table #tmp_Inspe
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -213,14 +213,14 @@ IF object_id('tempdb..#tmp_InspectionOrderId') IS NOT NULL drop table #tmp_Inspe
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Sewing_R12.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Sewing_R12.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printData[0], string.Empty, "Sewing_R12.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[1]); // 將datatable copy to excel
             MyUtility.Excel.CopyToXls(this.printData[1], string.Empty, "Sewing_R12.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[2]); // 將datatable copy to excel
 
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Sewing_R12");
+            string strExcelName = Class.MicrosoftFile.GetName("Sewing_R12");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

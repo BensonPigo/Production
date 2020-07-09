@@ -33,7 +33,7 @@
             this.labelWeight = new Sci.Win.UI.Label();
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.displayCustomsUnit = new Sci.Win.UI.DisplayBox();
-            this.txtUnitUsageUnit = new Sci.Production.Class.txtunit();
+            this.txtUnitUsageUnit = new Sci.Production.Class.Txtunit();
             this.displayMaterialType = new Sci.Win.UI.DisplayBox();
             this.comboType = new Sci.Win.UI.ComboBox();
             this.editDescDetail = new Sci.Win.UI.EditBox();
@@ -362,7 +362,7 @@
         private Win.UI.Label labelWeight;
         private Win.UI.CheckBox checkJunk;
         private Win.UI.DisplayBox displayCustomsUnit;
-        private Class.txtunit txtUnitUsageUnit;
+        private Class.Txtunit txtUnitUsageUnit;
         private Win.UI.DisplayBox displayMaterialType;
         private Win.UI.ComboBox comboType;
         private Win.UI.EditBox editDescDetail;

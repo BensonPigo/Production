@@ -323,9 +323,9 @@ where exists (select 1 from ClogGarmentDispose_Detail t where t.ID = '{this.Curr
         private void btnDownloadExcel_Click(object sender, EventArgs e)
         {
             // 呼叫執行檔絕對路徑
-            DirectoryInfo dir = new DirectoryInfo(System.Windows.Forms.Application.StartupPath);
+            DirectoryInfo dir = new DirectoryInfo(Application.StartupPath);
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\ClogP11_ExcelImportTemplete.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\ClogP11_ExcelImportTemplete.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {

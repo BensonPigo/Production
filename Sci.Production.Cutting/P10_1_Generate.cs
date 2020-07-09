@@ -92,7 +92,7 @@ namespace Sci.Production.Cutting
             }
 
             // GarmentList
-            PublicPrg.Prgs.GetGarmentListTable(string.Empty, this.maindatarow["poid"].ToString(), sizeGroup, out this.garmentTb);
+            Prgs.GetGarmentListTable(string.Empty, this.maindatarow["poid"].ToString(), sizeGroup, out this.garmentTb);
 
             // ArticleGroup
             string patidsql;

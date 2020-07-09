@@ -4,25 +4,35 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtCell : Win.UI.TextBox
+    /// <summary>
+    /// TxtCell
+    /// </summary>
+    public partial class TxtCell : Win.UI.TextBox
     {
-        private string mdivision = string.Empty;
         private string where = string.Empty;   // " Where junk = 0";
 
+        /// <summary>
+        /// MDivision
+        /// </summary>
         [Category("Custom Properties")]
-        public string MDivisionID
+        public string MDivisionID { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TxtCell"/> class.
+        /// </summary>
+        public TxtCell()
         {
-            get { return this.mdivision; }
-            set { this.mdivision = value; }
+            this.Width = 30;
         }
 
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
             string sql;
-            if (!string.IsNullOrWhiteSpace(this.mdivision))
+            if (!string.IsNullOrWhiteSpace(this.MDivisionID))
             {
-                this.where = string.Format(" Where junk = 0 and mdivisionid = '{0}'", this.mdivision);
+                this.where = string.Format(" Where junk = 0 and mdivisionid = '{0}'", this.MDivisionID);
             }
 
             sql = "select distinct id from Production.dbo.CutCell WITH (NOLOCK) " + this.where;
@@ -37,6 +47,7 @@ namespace Sci.Production.Class
             this.Text = item.GetSelectedString();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -44,9 +55,9 @@ namespace Sci.Production.Class
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
                 string tmp = null;
-                if (!string.IsNullOrWhiteSpace(this.mdivision))
+                if (!string.IsNullOrWhiteSpace(this.MDivisionID))
                 {
-                    tmp = MyUtility.GetValue.Lookup("id", this.mdivision + str, "Production.dbo.Cutcell", "mdivisionid+id");
+                    tmp = MyUtility.GetValue.Lookup("id", this.MDivisionID + str, "Production.dbo.Cutcell", "mdivisionid+id");
                 }
                 else
                 {
@@ -63,9 +74,9 @@ namespace Sci.Production.Class
                 else
                 {
                     string cJunk = null;
-                    if (!string.IsNullOrWhiteSpace(this.mdivision))
+                    if (!string.IsNullOrWhiteSpace(this.MDivisionID))
                     {
-                        cJunk = MyUtility.GetValue.Lookup("Junk", this.mdivision + str, "Production.dbo.CutCell", "mdivisionid+id");
+                        cJunk = MyUtility.GetValue.Lookup("Junk", this.MDivisionID + str, "Production.dbo.CutCell", "mdivisionid+id");
                     }
                     else
                     {
@@ -79,11 +90,6 @@ namespace Sci.Production.Class
                     }
                 }
             }
-        }
-
-        public txtCell()
-        {
-            this.Width = 30;
         }
     }
 }

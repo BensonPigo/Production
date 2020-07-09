@@ -91,10 +91,10 @@ namespace Sci.Production.IE
                             string local_file_type = Path.GetExtension(local_path_file);
                             string destination_fileName = this.CurrentMaintain["UKey"].ToString().Trim() + "-1" + local_file_type;
 
-                            System.IO.File.Copy(local_path_file, this.destination_path + destination_fileName, true);
+                            File.Copy(local_path_file, this.destination_path + destination_fileName, true);
 
                             // update picture1 path
-                            DualResult result = Sci.Data.DBProxy.Current.Execute(null, "update Operation set Picture1 ='" + destination_fileName.Trim() + "' where ukey=" + this.CurrentMaintain["UKey"]);
+                            DualResult result = Data.DBProxy.Current.Execute(null, "update Operation set Picture1 ='" + destination_fileName.Trim() + "' where ukey=" + this.CurrentMaintain["UKey"]);
                             this.CurrentMaintain["Picture1"] = this.destination_path.Trim() + destination_fileName.Trim();
                             this.picture1.ImageLocation = this.CurrentMaintain["Picture1"].ToString();
                         }
@@ -110,17 +110,17 @@ namespace Sci.Production.IE
         private void BtnPicture1Delete_Click(object sender, EventArgs e)
         {
             this.deleteResult1 = MyUtility.Msg.QuestionBox("Are you sure delete the < Picture1 >?", buttons: MessageBoxButtons.YesNo);
-            if (this.deleteResult1 == System.Windows.Forms.DialogResult.Yes)
+            if (this.deleteResult1 == DialogResult.Yes)
             {
-                if (System.IO.File.Exists(this.destination_path
+                if (File.Exists(this.destination_path
                     + this.CurrentMaintain["Picture1"].ToString()))
                 {
                     try
                     {
-                        System.IO.File.Delete(this.destination_path + this.CurrentMaintain["Picture1"].ToString());
+                        File.Delete(this.destination_path + this.CurrentMaintain["Picture1"].ToString());
                         this.CurrentMaintain["Picture1"] = string.Empty;
                         this.picture1.ImageLocation = this.CurrentMaintain["Picture1"].ToString();
-                        DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Operation set Picture1='' where UKey={0}", this.CurrentMaintain["UKey"].ToString()));
+                        DualResult result = Data.DBProxy.Current.Execute(null, string.Format("update Operation set Picture1='' where UKey={0}", this.CurrentMaintain["UKey"].ToString()));
                         if (!result)
                         {
                             MyUtility.Msg.ErrorBox("Update data fail!!\r\n" + result.ToString());
@@ -136,7 +136,7 @@ namespace Sci.Production.IE
                 {
                     this.CurrentMaintain["Picture1"] = string.Empty;
                     this.picture1.ImageLocation = this.CurrentMaintain["Picture1"].ToString();
-                    DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Operation set Picture1='' where UKey={0}", this.CurrentMaintain["UKey"].ToString()));
+                    DualResult result = Data.DBProxy.Current.Execute(null, string.Format("update Operation set Picture1='' where UKey={0}", this.CurrentMaintain["UKey"].ToString()));
                     if (!result)
                     {
                         MyUtility.Msg.ErrorBox("Update data fail!!\r\n" + result.ToString());
@@ -166,10 +166,10 @@ namespace Sci.Production.IE
                             string local_file_type = Path.GetExtension(local_path_file);
                             string destination_fileName = this.CurrentMaintain["UKey"] + "-2" + local_file_type;
 
-                            System.IO.File.Copy(local_path_file, this.destination_path + destination_fileName, true);
+                            File.Copy(local_path_file, this.destination_path + destination_fileName, true);
 
                             // update picture2 path
-                            DualResult result = Sci.Data.DBProxy.Current.Execute(null, "update Operation set Picture2 ='" + destination_fileName.Trim() + "' where Ukey='" + this.CurrentMaintain["UKey"] + "'");
+                            DualResult result = Data.DBProxy.Current.Execute(null, "update Operation set Picture2 ='" + destination_fileName.Trim() + "' where Ukey='" + this.CurrentMaintain["UKey"] + "'");
                             this.CurrentMaintain["Picture2"] = this.destination_path.Trim() + destination_fileName.Trim();
                             this.picture2.ImageLocation = this.CurrentMaintain["Picture2"].ToString();
                         }
@@ -185,16 +185,16 @@ namespace Sci.Production.IE
         private void BtnPicture2Delete_Click(object sender, EventArgs e)
         {
             this.deleteResult1 = MyUtility.Msg.QuestionBox("Are you sure delete the < Picture2 >?", buttons: MessageBoxButtons.YesNo);
-            if (this.deleteResult1 == System.Windows.Forms.DialogResult.Yes)
+            if (this.deleteResult1 == DialogResult.Yes)
             {
-                if (System.IO.File.Exists(this.destination_path + this.CurrentMaintain["Picture2"].ToString()))
+                if (File.Exists(this.destination_path + this.CurrentMaintain["Picture2"].ToString()))
                 {
                     try
                     {
-                        System.IO.File.Delete(this.destination_path + this.CurrentMaintain["Picture2"].ToString());
+                        File.Delete(this.destination_path + this.CurrentMaintain["Picture2"].ToString());
                         this.CurrentMaintain["Picture2"] = string.Empty;
                         this.picture2.ImageLocation = this.CurrentMaintain["Picture2"].ToString();
-                        DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Operation set Picture2='' where UKey={0}", this.CurrentMaintain["UKey"].ToString()));
+                        DualResult result = Data.DBProxy.Current.Execute(null, string.Format("update Operation set Picture2='' where UKey={0}", this.CurrentMaintain["UKey"].ToString()));
                         if (!result)
                         {
                             MyUtility.Msg.ErrorBox("Update data fail!!\r\n" + result.ToString());
@@ -210,7 +210,7 @@ namespace Sci.Production.IE
                 {
                     this.CurrentMaintain["Picture2"] = string.Empty;
                     this.picture2.ImageLocation = this.CurrentMaintain["Picture2"].ToString();
-                    DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Operation set Picture2='' where UKey={0}", this.CurrentMaintain["UKey"].ToString()));
+                    DualResult result = Data.DBProxy.Current.Execute(null, string.Format("update Operation set Picture2='' where UKey={0}", this.CurrentMaintain["UKey"].ToString()));
                     if (!result)
                     {
                         MyUtility.Msg.ErrorBox("Update data fail!!\r\n" + result.ToString());

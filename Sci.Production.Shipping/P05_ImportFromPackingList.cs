@@ -33,7 +33,7 @@ namespace Sci.Production.Shipping
             this.txtmultifactoryFactory.Text = MyUtility.GetValue.Lookup("select stuff((select distinct concat(',',ID)  from Factory WITH (NOLOCK) where Junk = 0 and IsProduceFty = 1 for xml path('')),1,1,'')");
             this.masterData = masterData;
             this.detailData = detailData;
-            this.txtmultifactoryFactory.checkProduceFty = true;
+            this.txtmultifactoryFactory.CheckProduceFty = true;
         }
 
         /// <inheritdoc/>

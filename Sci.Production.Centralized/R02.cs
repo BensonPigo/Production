@@ -60,7 +60,7 @@ namespace Sci.Production.Centralized
         /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
             if (this.excel == null)
             {
                 return true;
@@ -69,8 +69,8 @@ namespace Sci.Production.Centralized
             this.ShowInfo("Completed.");
             #region Save & Show Excel
             Workbook workbook = this.excel.Workbooks[1];
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Centralized_R02.CPULoadingReport", Sci.Production.Class.ExcelFileNameExtension.Xlsm);
-            workbook.SaveAs(strExcelName, Excel.XlFileFormat.xlOpenXMLWorkbookMacroEnabled);
+            string strExcelName = Class.MicrosoftFile.GetName("Centralized_R02.CPULoadingReport", Class.ExcelFileNameExtension.Xlsm);
+            workbook.SaveAs(strExcelName, XlFileFormat.xlOpenXMLWorkbookMacroEnabled);
             workbook.Close();
             this.excel.Quit();
             Marshal.ReleaseComObject(this.excel);
@@ -521,9 +521,9 @@ WHERE 1 = 0 ";
 
                 wsSheet.Range[string.Format("B:{0}", PrivUtils.getPosition(aryHeaders.Length))].WrapText = false;
                 wsSheet.get_Range(string.Format("B:{0}", PrivUtils.getPosition(aryHeaders.Length))).EntireColumn.AutoFit();
-                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(aryHeaders.Length))].HorizontalAlignment = Excel.Constants.xlCenter;
+                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(aryHeaders.Length))].HorizontalAlignment = Constants.xlCenter;
                 wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(aryHeaders.Length))].Interior.Color = 13434828; // 10092441;
-                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(aryHeaders.Length))].AutoFilter(1, Type.Missing, Excel.XlAutoFilterOperator.xlFilterValues);
+                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(aryHeaders.Length))].AutoFilter(1, Type.Missing, XlAutoFilterOperator.xlFilterValues);
                 #endregion Export Sum Data
 
                 if (this.checkBox1.Checked)
@@ -707,7 +707,7 @@ WHERE 1 = 0 ";
                         wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
                         wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
                         wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].Interior.Color = 13434828; // 10092441;
-                        wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].AutoFilter(1, Type.Missing, Excel.XlAutoFilterOperator.xlFilterValues);
+                        wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].AutoFilter(1, Type.Missing, XlAutoFilterOperator.xlFilterValues);
 
                         ii = 0;
                         jj = 0;
@@ -730,7 +730,7 @@ WHERE 1 = 0 ";
                         wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
                         wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
                         wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].Interior.Color = 13434828; // 10092441;
-                        wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].AutoFilter(1, Type.Missing, Excel.XlAutoFilterOperator.xlFilterValues);
+                        wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].AutoFilter(1, Type.Missing, XlAutoFilterOperator.xlFilterValues);
 
                         // 欄位 title
                         for (int intIndex_0 = 0; intIndex_0 < intColumns; intIndex_0++)
@@ -805,7 +805,7 @@ WHERE 1 = 0 ";
                 wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
                 wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
                 wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].Interior.Color = 13434828; // 10092441;
-                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].AutoFilter(1, Type.Missing, Excel.XlAutoFilterOperator.xlFilterValues);
+                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].AutoFilter(1, Type.Missing, XlAutoFilterOperator.xlFilterValues);
 
                 // 欄位Focus
                 PrivUtils.Excels.setPosition_Focus(wsSheet, rownum);
@@ -1086,7 +1086,7 @@ where   orders.Category NOT IN ('G','A')
                 }
 
                 wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(aryHeaders.Length))].Interior.Color = 13434828; // 10092441;
-                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(aryHeaders.Length))].AutoFilter(1, Type.Missing, Excel.XlAutoFilterOperator.xlFilterValues);
+                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(aryHeaders.Length))].AutoFilter(1, Type.Missing, XlAutoFilterOperator.xlFilterValues);
 
                 #endregion Export Sum Data
 
@@ -1147,7 +1147,7 @@ where   orders.Category NOT IN ('G','A')
                             ((Worksheet)wsSheet).Select();
                             Range formatRange1 = wsSheet.get_Range(string.Format("A{0}:{2}{1}", rownum, PrivUtils.getPageNum() - 1, PrivUtils.getPosition(intColumns)));
                             formatRange1.Select();
-                            formatRange1.Delete(Microsoft.Office.Interop.Excel.XlDeleteShiftDirection.xlShiftUp);
+                            formatRange1.Delete(XlDeleteShiftDirection.xlShiftUp);
                         }
 
                         for (int k = 0; k < intColumns; k++)

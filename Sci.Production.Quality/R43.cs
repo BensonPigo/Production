@@ -147,7 +147,7 @@ left join dbo.ADIDASComplainDefect_Detail d WITH (NOLOCK) on d.ID=b.DefectMainID
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R43.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R43.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Quality_R43.xltx", 1, true, null, objApp);      // 將datatable copy to excel
             return true;
         }

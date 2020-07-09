@@ -674,7 +674,7 @@ drop table #tmp, #PoidAvailableReserveQty, #OrdersAccuNeedQty, #OrdersReceiveTmp
             listSqlParameter.Add(new SqlParameter("@FromSP", this.textBoxFromSpNum.Text));
             listSqlParameter.Add(new SqlParameter("@StartDate", this.dateRangeBuyerDelivery.Value1.Empty() ? string.Empty : ((DateTime)this.dateRangeBuyerDelivery.Value1).ToString("yyyy/MM/dd")));
             listSqlParameter.Add(new SqlParameter("@EndDate", this.dateRangeBuyerDelivery.Value2.Empty() ? string.Empty : ((DateTime)this.dateRangeBuyerDelivery.Value2).ToString("yyyy/MM/dd")));
-            listSqlParameter.Add(new SqlParameter("@Factory", Sci.Env.User.Factory));
+            listSqlParameter.Add(new SqlParameter("@Factory", Env.User.Factory));
             #endregion
             #region SQL Filte
             #region BuyerDelivery Filte

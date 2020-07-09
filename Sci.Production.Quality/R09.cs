@@ -142,7 +142,7 @@ order by ord.FactoryID, fir.poid, ord.StyleID, fir.SEQ1, fir.SEQ2, firo.roll, fi
             }
 
             string xltx = "Quality_R09.xltx";
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + xltx); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + xltx); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.dt, string.Empty, xltx, 2, true, null, objApp); // 將datatable copy to excel
             return true;
         }

@@ -40,7 +40,7 @@
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.radioListByWKNoByFeeType = new Sci.Win.UI.RadioButton();
             this.radioListbyWKNo = new Sci.Win.UI.RadioButton();
-            this.txtshipmode = new Sci.Production.Class.txtshipmode();
+            this.txtshipmode = new Sci.Production.Class.Txtshipmode();
             this.txtForwarder = new Sci.Win.UI.TextBox();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.lbVoucherDate = new Sci.Win.UI.Label();
@@ -386,7 +386,7 @@
         private Win.UI.RadioPanel radioPanel1;
         private Win.UI.RadioButton radioListByWKNoByFeeType;
         private Win.UI.RadioButton radioListbyWKNo;
-        private Class.txtshipmode txtshipmode;
+        private Class.Txtshipmode txtshipmode;
         private Win.UI.TextBox txtForwarder;
         private Win.UI.DisplayBox displayBox1;
         private Win.UI.Label lbVoucherDate;

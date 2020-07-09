@@ -67,22 +67,22 @@ when matched then update set
 	,[SeparatorTime]		={this.numSeparatorTime.Value}
 	,[SpreadingTime]		={this.numSpreadingTime.Value}
 	,[ForwardTime]			={this.numForwardTime.Value}
-	,[EditName]				='{Sci.Env.User.UserID}'
+	,[EditName]				='{Env.User.UserID}'
 	,[EditDate]				=getdate()
 when not matched by target then
 insert ([WeaveTypeID],[PreparationTime],[ChangeOverRollTime],[ChangeOverUnRollTime],[SetupTime],[SeparatorTime],[SpreadingTime],[ForwardTime],[EditName],[EditDate])
 values(s.WeaveType,{this.numPreparationTime.Value},{this.numChangeOverRollTime.Value},{this.numChangeOverUnRollTime.Value},{this.numSetupTime.Value},
-{this.numSeparatorTime.Value},{this.numSpreadingTime.Value},{this.numForwardTime.Value},'{Sci.Env.User.UserID}',getdate())
+{this.numSeparatorTime.Value},{this.numSpreadingTime.Value},{this.numForwardTime.Value},'{Env.User.UserID}',getdate())
 ;
 drop table #tmp
 ";
             DualResult result = DBProxy.Current.Execute(null, insertupdate);
             if (!result)
             {
-                return Result.F(result.ToString());
+                return Ict.Result.F(result.ToString());
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
     }
 }

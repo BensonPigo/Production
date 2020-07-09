@@ -175,7 +175,7 @@ namespace Sci.Production.Quality
                 this.sql = string.Format(
                     @"update Air_Laboratory set WashEncode=1 , editName='{0}', editDate='{1}'
                                       where ID='{2}' and POID='{3}' and SEQ1='{4}' and SEQ2='{5}'",
-                    Sci.Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), this.ID, this.PoID, this.SEQ1, this.SEQ2);
+                    Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), this.ID, this.PoID, this.SEQ1, this.SEQ2);
                 DBProxy.Current.Execute(null, this.sql);
                 #endregion
 
@@ -236,7 +236,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
                 this.sql = string.Format(
                     @"update Air_Laboratory set WashEncode=0 , Result='' ,  editName='{0}', editDate='{1}'
                                       where ID='{2}' and POID='{3}' and SEQ1='{4}' and SEQ2='{5}'",
-                    Sci.Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), this.ID, this.PoID, this.SEQ1, this.SEQ2);
+                    Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), this.ID, this.PoID, this.SEQ1, this.SEQ2);
                 DBProxy.Current.Execute(null, this.sql);
                 #endregion
 
@@ -317,7 +317,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
             {
                 if (MyUtility.Check.Empty(this.txtuserLabTech.TextBox1.Text))
                 {
-                    this.CurrentData["WashInspector"] = Sci.Env.User.UserID;
+                    this.CurrentData["WashInspector"] = Env.User.UserID;
                 }
 
                 if (MyUtility.Check.Empty(this.dateInspectDate.Value))

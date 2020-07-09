@@ -163,7 +163,7 @@ where L.status='Confirmed'
             }
 
             Excel.Application objApp = new Excel.Application();
-            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R26.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Warehouse_R26.xltx", objApp);
             com.UseInnerFormating = false;
             com.WriteTable(this.dt, 2);
 

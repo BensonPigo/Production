@@ -35,9 +35,9 @@
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.dateIssueDate = new Sci.Win.UI.DateRange();
             this.labelM = new Sci.Win.UI.Label();
-            this.txtMdivisionM = new Sci.Production.Class.txtMdivision();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
-            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
+            this.txtMdivisionM = new Sci.Production.Class.TxtMdivision();
+            this.txtsubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
+            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.Txtartworktype_fty();
             this.dateApproveDate = new Sci.Win.UI.DateRange();
             this.labelApproveDate = new Sci.Win.UI.Label();
             this.checkSummary = new Sci.Win.UI.CheckBox();
@@ -150,8 +150,8 @@
             // txtartworktype_ftyArtworkType
             // 
             this.txtartworktype_ftyArtworkType.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_ftyArtworkType.cClassify = "";
-            this.txtartworktype_ftyArtworkType.cSubprocess = "Y";
+            this.txtartworktype_ftyArtworkType.CClassify = "";
+            this.txtartworktype_ftyArtworkType.CSubprocess = "Y";
             this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(114, 84);
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
@@ -243,9 +243,9 @@
         private Win.UI.Label labelSupplier;
         private Win.UI.ComboBox comboFactory;
         private Win.UI.DateRange dateIssueDate;
-        private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
-        private Class.txtsubconNoConfirm txtsubconSupplier;
-        private Class.txtMdivision txtMdivisionM;
+        private Class.Txtartworktype_fty txtartworktype_ftyArtworkType;
+        private Class.TxtsubconNoConfirm txtsubconSupplier;
+        private Class.TxtMdivision txtMdivisionM;
         private Win.UI.Label labelM;
         private Win.UI.DateRange dateApproveDate;
         private Win.UI.Label labelApproveDate;

@@ -113,7 +113,7 @@ where ID = '{0}'",
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
         #endregion
     }

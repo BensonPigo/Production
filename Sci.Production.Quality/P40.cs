@@ -361,7 +361,7 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     string sqlcmd = @"select distinct responsibility from ADIDASComplainDefect_Detail";
                     SelectItem item1 = new SelectItem(sqlcmd, string.Empty, this.CurrentDetailData["responsibility"].ToString());

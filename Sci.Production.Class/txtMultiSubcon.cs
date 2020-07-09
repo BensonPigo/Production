@@ -4,21 +4,29 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Class
 {
-    public partial class txtMultiSubcon : Win.UI.TextBox
+    /// <summary>
+    /// TxtMultiSubcon
+    /// </summary>
+    public partial class TxtMultiSubcon : Win.UI.TextBox
     {
+        /// <summary>
+        /// 串sql條件值使用，會將值用單引號先包起來。例：'G001','G002','G003'
+        /// </summary>
         [Category("Custom Properties")]
         [Description("串sql條件值使用，會將值用單引號先包起來。例：'G001','G002','G003'")]
         public string Subcons { get; set; }
 
-        public txtMultiSubcon()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TxtMultiSubcon"/> class.
+        /// </summary>
+        public TxtMultiSubcon()
         {
             this.Size = new System.Drawing.Size(450, 23);
             this.ReadOnly = true;
             this.IsSupportEditMode = false;
-
-            // this.Text = "";
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
@@ -32,8 +40,15 @@ WHERE l.Junk=0
 
                 Win.Tools.SelectItem2 selectSubcons = new Win.Tools.SelectItem2(
                     sqlcmd,
-                    "Supp ID,Supp Abb", "10,15", this.Text, null, null, null);
-                selectSubcons.Width = 410;
+                    "Supp ID,Supp Abb",
+                    "10,15",
+                    this.Text,
+                    null,
+                    null,
+                    null)
+                {
+                    Width = 410,
+                };
                 DialogResult result = selectSubcons.ShowDialog();
                 if (result == DialogResult.Cancel)
                 {
@@ -52,6 +67,7 @@ WHERE l.Junk=0
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(PaintEventArgs pe)
         {
             base.OnPaint(pe);

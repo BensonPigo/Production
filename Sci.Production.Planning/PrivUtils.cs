@@ -4,7 +4,6 @@ using System.Data;
 using System.Data.SqlClient;
 using Ict;
 using Microsoft.Office.Interop.Excel;
-using EXCEL = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Report
 {
@@ -176,7 +175,7 @@ namespace Sci.Production.Report
                 }
 
                 excel = exc;
-                return Result.True;
+                return Ict.Result.True;
             }
 
             /// <summary>
@@ -214,7 +213,7 @@ namespace Sci.Production.Report
                     }
                 }
 
-                return Result.True;
+                return Ict.Result.True;
             }
 
             /// <summary>
@@ -421,9 +420,9 @@ namespace Sci.Production.Report
         public static string GetPath_XLT(string sPath)
         {
             string rtn = string.Empty;
-            if (Sci.Env.Cfg.XltPathDir != string.Empty)
+            if (Env.Cfg.XltPathDir != string.Empty)
             {
-                rtn = Sci.Env.Cfg.XltPathDir;
+                rtn = Env.Cfg.XltPathDir;
             }
             else
             {
@@ -526,8 +525,8 @@ namespace Sci.Production.Report
         public static void SetRangeMerageCell(Range rngCell)
         {
             rngCell.MergeCells = true;
-            rngCell.VerticalAlignment = EXCEL.Constants.xlCenter;
-            rngCell.HorizontalAlignment = EXCEL.Constants.xlCenter;
+            rngCell.VerticalAlignment = Constants.xlCenter;
+            rngCell.HorizontalAlignment = Constants.xlCenter;
         }
 
         /// <summary>

@@ -49,8 +49,8 @@ namespace Sci.Production.Planning
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtMdivision.Text = Sci.Env.User.Keyword;
-            this.txtfactory.Text = Sci.Env.User.Factory;
+            this.txtMdivision.Text = Env.User.Keyword;
+            this.txtfactory.Text = Env.User.Factory;
             MyUtility.Tool.SetupCombox(this.comboOrderBy, 2, 1, "orderid,SPNO,brandid,Brand");
             this.comboOrderBy.SelectedIndex = 0;
             this.dateBuyerDelivery.Select();
@@ -158,7 +158,7 @@ namespace Sci.Production.Planning
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace Sci.Production.Planning
             {
                 if (this.isArtwork)
                 {
-                    Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R15_WIP.xltx"); // 預先開啟excel app
+                    Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Planning_R15_WIP.xltx"); // 預先開啟excel app
                     MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Planning_R15_WIP.xltx", 1, false, null, objApp);      // 將datatable copy to excel
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
@@ -213,7 +213,7 @@ namespace Sci.Production.Planning
                     this.CreateCustomizedExcel(ref objSheets);
 
                     #region Save & Show Excel
-                    string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R15_WIP");
+                    string strExcelName = Class.MicrosoftFile.GetName("Planning_R15_WIP");
                     Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
                     workbook.SaveAs(strExcelName);
                     workbook.Close();
@@ -228,7 +228,7 @@ namespace Sci.Production.Planning
                 }
                 else
                 {
-                    Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R15_WIP.xltx"); // 預先開啟excel app
+                    Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Planning_R15_WIP.xltx"); // 預先開啟excel app
                     MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Planning_R15_WIP.xltx", 1, false, null, objApp);      // 將datatable copy to excel
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
@@ -242,7 +242,7 @@ namespace Sci.Production.Planning
                     this.CreateCustomizedExcel(ref objSheets);
 
                     #region Save & Show Excel
-                    string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R15_WIP");
+                    string strExcelName = Class.MicrosoftFile.GetName("Planning_R15_WIP");
                     Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
                     workbook.SaveAs(strExcelName);
                     workbook.Close();
@@ -260,7 +260,7 @@ namespace Sci.Production.Planning
             {
                 if (this.isArtwork)
                 {
-                    Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R15_WIP_byArticleSize.xltx"); // 預先開啟excel app
+                    Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Planning_R15_WIP_byArticleSize.xltx"); // 預先開啟excel app
                     MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Planning_R15_WIP_byArticleSize.xltx", 1, false, null, objApp);      // 將datatable copy to excel
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
@@ -279,7 +279,7 @@ namespace Sci.Production.Planning
                     this.CreateCustomizedExcel(ref objSheets);
 
                     #region Save & Show Excel
-                    string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R15_WIP_byArticleSize");
+                    string strExcelName = Class.MicrosoftFile.GetName("Planning_R15_WIP_byArticleSize");
                     Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
                     workbook.SaveAs(strExcelName);
                     workbook.Close();
@@ -294,7 +294,7 @@ namespace Sci.Production.Planning
                 }
                 else
                 {
-                    Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R15_WIP_byArticleSize.xltx"); // 預先開啟excel app
+                    Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Planning_R15_WIP_byArticleSize.xltx"); // 預先開啟excel app
                     MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Planning_R15_WIP_byArticleSize.xltx", 1, false, null, objApp);      // 將datatable copy to excel
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
@@ -307,7 +307,7 @@ namespace Sci.Production.Planning
                     this.CreateCustomizedExcel(ref objSheets);
 
                     #region Save & Show Excel
-                    string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R15_WIP_byArticleSize");
+                    string strExcelName = Class.MicrosoftFile.GetName("Planning_R15_WIP_byArticleSize");
                     Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
                     workbook.SaveAs(strExcelName);
                     workbook.Close();

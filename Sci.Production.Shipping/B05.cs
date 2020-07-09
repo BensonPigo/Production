@@ -37,7 +37,7 @@ namespace Sci.Production.Shipping
             };
             DBProxy.Current.Execute(string.Empty, upd_brand_sql, upd_par);
 
-            return Result.True;
+            return Ict.Result.True;
         }
     }
 }

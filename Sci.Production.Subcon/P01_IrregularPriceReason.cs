@@ -266,14 +266,14 @@ namespace Sci.Production.Subcon
                         {
                             if (dt.Rows[0]["SubconReasonID"].ToString() != SubconReasonID && !string.IsNullOrEmpty(SubconReasonID))
                             {
-                                sql.Append($"UPDATE [ArtworkPO_IrregularPrice] SET [SubconReasonID]='{SubconReasonID}',EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'" + Environment.NewLine);
+                                sql.Append($"UPDATE [ArtworkPO_IrregularPrice] SET [SubconReasonID]='{SubconReasonID}',EditDate=GETDATE(),EditName='{Env.User.UserID}'" + Environment.NewLine);
                                 sql.Append($"                                  WHERE [POID]='{POID}' AND [ArtworkTypeID]='{ArtworkType}'" + Environment.NewLine);
                             }
                         }
                         else
                         {
                             sql.Append("INSERT INTO [ArtworkPO_IrregularPrice]([POID],[ArtworkTypeID],[POPrice],[StandardPrice],[SubconReasonID],[AddDate],[AddName])" + Environment.NewLine);
-                            sql.Append($"                              VALUES ('{POID}','{ArtworkType}',{POPrice},{StandardPrice},'{SubconReasonID}',GETDATE(),'{Sci.Env.User.UserID}')" + Environment.NewLine);
+                            sql.Append($"                              VALUES ('{POID}','{ArtworkType}',{POPrice},{StandardPrice},'{SubconReasonID}',GETDATE(),'{Env.User.UserID}')" + Environment.NewLine);
                         }
                     }
 
@@ -483,17 +483,17 @@ namespace Sci.Production.Subcon
             #endregion
 
             #region 欄位定義
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("ArtworkTypeID", System.Type.GetType("System.String")));
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("POID", System.Type.GetType("System.String")));
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("StyleID", System.Type.GetType("System.String")));
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("BrandID", System.Type.GetType("System.String")));
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("PoPrice", System.Type.GetType("System.Decimal")));
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("StdPrice", System.Type.GetType("System.Decimal")));
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("SubconReasonID", System.Type.GetType("System.String")));
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("AddDate", System.Type.GetType("System.DateTime")));
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("AddName", System.Type.GetType("System.String")));
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("EditDate", System.Type.GetType("System.DateTime")));
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("EditName", System.Type.GetType("System.String")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("ArtworkTypeID", Type.GetType("System.String")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("POID", Type.GetType("System.String")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("StyleID", Type.GetType("System.String")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("BrandID", Type.GetType("System.String")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("PoPrice", Type.GetType("System.Decimal")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("StdPrice", Type.GetType("System.Decimal")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("SubconReasonID", Type.GetType("System.String")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("AddDate", Type.GetType("System.DateTime")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("AddName", Type.GetType("System.String")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("EditDate", Type.GetType("System.DateTime")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("EditName", Type.GetType("System.String")));
             #endregion
 
             try
@@ -921,17 +921,17 @@ DROP TABLE #tmp_AllOrders --,#BePurchased
             #endregion
 
             #region 欄位定義
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("ArtworkTypeID", System.Type.GetType("System.String")));
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("POID", System.Type.GetType("System.String")));
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("StyleID", System.Type.GetType("System.String")));
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("BrandID", System.Type.GetType("System.String")));
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("PoPrice", System.Type.GetType("System.Decimal")));
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("StdPrice", System.Type.GetType("System.Decimal")));
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("SubconReasonID", System.Type.GetType("System.String")));
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("AddDate", System.Type.GetType("System.DateTime")));
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("AddName", System.Type.GetType("System.String")));
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("EditDate", System.Type.GetType("System.DateTime")));
-            IrregularPriceReason_Real.Columns.Add(new DataColumn("EditName", System.Type.GetType("System.String")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("ArtworkTypeID", Type.GetType("System.String")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("POID", Type.GetType("System.String")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("StyleID", Type.GetType("System.String")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("BrandID", Type.GetType("System.String")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("PoPrice", Type.GetType("System.Decimal")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("StdPrice", Type.GetType("System.Decimal")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("SubconReasonID", Type.GetType("System.String")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("AddDate", Type.GetType("System.DateTime")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("AddName", Type.GetType("System.String")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("EditDate", Type.GetType("System.DateTime")));
+            IrregularPriceReason_Real.Columns.Add(new DataColumn("EditName", Type.GetType("System.String")));
             #endregion
 
             try

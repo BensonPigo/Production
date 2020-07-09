@@ -194,7 +194,7 @@ where ICR.ID = '{masterID}';
                 return;
             }
 
-            bool canEdit = Prgs.GetAuthority(Sci.Env.User.UserID, "P21. Irregular Cost Report", "CanEdit");
+            bool canEdit = Prgs.GetAuthority(Env.User.UserID, "P21. Irregular Cost Report", "CanEdit");
 
             var frm = new P21_ResponsibilityDept(canEdit, this.CurrentMaintain["ID"].ToString(), null, null, string.Empty, this.Perm.Confirm, this.Perm.Unconfirm);
             frm.ShowDialog(this);

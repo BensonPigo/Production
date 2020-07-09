@@ -122,7 +122,7 @@ namespace Sci.Production.Subcon
             this.sewingdate2 = this.dateSewingInline.Value2;
             this.scidate1 = this.dateSCIDelivery.Value1;
             this.scidate2 = this.dateSCIDelivery.Value2;
-            this.M = Sci.Env.User.Keyword;
+            this.M = Env.User.Keyword;
             #region --組WHERE--
             if (!this.txtSPStart.Text.Empty())
             {
@@ -406,7 +406,7 @@ drop table  #tmp,#tmp2
                 dt2.ShowHeader = false;
             }
 
-            x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_P32"));
+            x1.Save(Class.MicrosoftFile.GetName("Subcon_P32"));
             return;
         }
     }

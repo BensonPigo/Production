@@ -63,7 +63,7 @@
             this.displayBox15 = new Sci.Win.UI.DisplayBox();
             this.displayFax = new Sci.Win.UI.DisplayBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
-            this.txtCountry = new Sci.Production.Class.txtcountry();
+            this.txtCountry = new Sci.Production.Class.Txtcountry();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -536,7 +536,7 @@
         private Win.UI.DisplayBox displayTel;
         private Win.UI.DisplayBox displayEngName;
         private Win.UI.DisplayBox displayName;
-        private Class.txtcountry txtCountry;
+        private Class.Txtcountry txtCountry;
         private Win.UI.DisplayBox displayTeam;
         private Win.UI.DisplayBox displayBuyer;
         private Win.UI.Label labelEngAddress;

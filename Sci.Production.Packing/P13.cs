@@ -187,7 +187,7 @@ left join LocalSupp ls WITH (NOLOCK) on li.LocalSuppid = ls.ID
                 sqlCmd.Append(" inner join #tmp_PackData pd on o.ID = pd.OrderID");
             }
 
-            sqlCmd.Append(string.Format(" where o.MDivisionID = '{0}'", Sci.Env.User.Keyword));
+            sqlCmd.Append(string.Format(" where o.MDivisionID = '{0}'", Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
             {
                 sqlCmd.Append(string.Format(" and o.SciDelivery >= cast('{0}' as date)", Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("d")));

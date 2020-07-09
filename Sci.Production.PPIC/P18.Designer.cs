@@ -51,7 +51,7 @@
             this.txtPPDMgrApv = new Sci.Win.UI.TextBox();
             this.labProdMgrApv = new Sci.Win.UI.Label();
             this.labPPDMgrApv = new Sci.Win.UI.Label();
-            this.txtuser = new Sci.Production.Class.txtuser();
+            this.txtuser = new Sci.Production.Class.Txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -466,7 +466,7 @@
         private Win.UI.DisplayBox displayID;
         private Win.UI.Label labelID;
         private Win.UI.Label labRemark;
-        private Class.txtuser txtuser;
+        private Class.Txtuser txtuser;
         private Win.UI.TextBox txtM;
         private Win.UI.Label labHandle;
         private Win.UI.Label label1;

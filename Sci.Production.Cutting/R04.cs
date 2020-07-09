@@ -26,8 +26,8 @@ namespace Sci.Production.Cutting
             DataTable WorkOrder;
             DBProxy.Current.Select(null, "select distinct ID from MDivision WITH (NOLOCK) ", out WorkOrder);
             MyUtility.Tool.SetupCombox(this.comboM, 1, WorkOrder);
-            this.comboM.Text = Sci.Env.User.Keyword;
-            this.comboFactory.setDataSource();
+            this.comboM.Text = Env.User.Keyword;
+            this.comboFactory.SetDataSource();
         }
 
         private void radioByM_CheckedChanged(object sender, EventArgs e)
@@ -67,7 +67,7 @@ namespace Sci.Production.Cutting
 
         private void comboM_TextChanged(object sender, EventArgs e)
         {
-            this.comboFactory.setDataSource(this.comboM.Text);
+            this.comboFactory.SetDataSource(this.comboM.Text);
         }
 
         private void radioByDetail_CheckedChanged(object sender, EventArgs e)
@@ -609,7 +609,7 @@ order by wo.MDivisionID, wo.CutCellID, wo.OrderID, wo.CutRef, wo.Cutno
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel
@@ -626,13 +626,13 @@ order by wo.MDivisionID, wo.CutCellID, wo.OrderID, wo.CutRef, wo.Cutno
             #region radiobtn_ByM
             if (this.radioByM.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R04_Cutting BCSReportByM.xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_R04_Cutting BCSReportByM.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Cutting_R04_Cutting BCSReportByM.xltx", 3, false, null, objApp);      // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 objSheets.Cells[1, 3] = string.Format(@"{0} ~ {1}", Convert.ToDateTime(this.Est_CutDate1).ToString("d"), Convert.ToDateTime(this.Est_CutDate2).ToString("d")); // 條件字串寫入excel
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R04_Cutting BCSReportByM");
+                string strExcelName = Class.MicrosoftFile.GetName("Cutting_R04_Cutting BCSReportByM");
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
@@ -649,13 +649,13 @@ order by wo.MDivisionID, wo.CutCellID, wo.OrderID, wo.CutRef, wo.Cutno
             #region ByFactory
             if (this.radioByFactory.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R04_Cutting BCSReportByFactory.xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_R04_Cutting BCSReportByFactory.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Cutting_R04_Cutting BCSReportByFactory.xltx", 3, false, null, objApp);      // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 objSheets.Cells[1, 3] = string.Format(@"{0} ~ {1}", Convert.ToDateTime(this.Est_CutDate1).ToString("d"), Convert.ToDateTime(this.Est_CutDate2).ToString("d")); // 條件字串寫入excel
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R04_Cutting BCSReportByFactory");
+                string strExcelName = Class.MicrosoftFile.GetName("Cutting_R04_Cutting BCSReportByFactory");
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
@@ -671,13 +671,13 @@ order by wo.MDivisionID, wo.CutCellID, wo.OrderID, wo.CutRef, wo.Cutno
 
             if (this.radioByCutCell.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R04_CuttingBCSReportByCutCell.xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_R04_CuttingBCSReportByCutCell.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Cutting_R04_CuttingBCSReportByCutCell.xltx", 3, false, null, objApp);      // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 objSheets.Cells[1, 3] = string.Format(@"{0} ~ {1}", Convert.ToDateTime(this.Est_CutDate1).ToString("d"), Convert.ToDateTime(this.Est_CutDate2).ToString("d"));  // 條件字串寫入excel
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R04_CuttingBCSReportByCutCell");
+                string strExcelName = Class.MicrosoftFile.GetName("Cutting_R04_CuttingBCSReportByCutCell");
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
@@ -692,7 +692,7 @@ order by wo.MDivisionID, wo.CutCellID, wo.OrderID, wo.CutRef, wo.Cutno
 
             if (this.radioByDetail.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R04_Cutting BCS Report ByDetail.xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_R04_Cutting BCS Report ByDetail.xltx"); // 預先開啟excel app
 
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Cutting_R04_Cutting BCS Report ByDetail.xltx", 2, false, null, objApp); // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
@@ -702,7 +702,7 @@ order by wo.MDivisionID, wo.CutCellID, wo.OrderID, wo.CutRef, wo.Cutno
                 objSheets.Rows.AutoFit();
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R04_Cutting BCS Report ByDetail");
+                string strExcelName = Class.MicrosoftFile.GetName("Cutting_R04_Cutting BCS Report ByDetail");
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();

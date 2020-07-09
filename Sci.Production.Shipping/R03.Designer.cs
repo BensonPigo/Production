@@ -35,10 +35,10 @@
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelCategory = new Sci.Win.UI.Label();
             this.datePulloutDate = new Sci.Win.UI.DateRange();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.comboM = new Sci.Win.UI.ComboBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -200,9 +200,9 @@
         private Win.UI.Label labelFactory;
         private Win.UI.Label labelCategory;
         private Win.UI.DateRange datePulloutDate;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.ComboBox comboM;
         private Win.UI.ComboBox comboFactory;
-        private Class.comboDropDownList comboCategory;
+        private Class.ComboDropDownList comboCategory;
     }
 }

@@ -61,7 +61,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtMdivision.Text = Sci.Env.User.Keyword;
+            this.txtMdivision.Text = Env.User.Keyword;
             MyUtility.Tool.SetupCombox(this.comboFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
             this.comboFabricType.SelectedIndex = 0;
             MyUtility.Tool.SetupCombox(this.comboOrderBy, 1, 1, "Supplier,SP#");
@@ -395,7 +395,7 @@ where 1=1 and c.ThirdCountry = 1"));
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel
@@ -410,7 +410,7 @@ where 1=1 and c.ThirdCountry = 1"));
                 return false;
             }
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R01.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R01.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Warehouse_R01.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
 
             this.ShowWaitMessage("Excel Processing...");
@@ -428,7 +428,7 @@ where 1=1 and c.ThirdCountry = 1"));
             worksheet.Rows.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R01");
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R01");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

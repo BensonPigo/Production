@@ -31,7 +31,7 @@
             this.labelM = new Sci.Win.UI.Label();
             this.labelManager = new Sci.Win.UI.Label();
             this.txtM = new Sci.Win.UI.TextBox();
-            this.txtUserManager = new Sci.Production.Class.txtuser();
+            this.txtUserManager = new Sci.Production.Class.Txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -142,7 +142,7 @@
 
         #endregion
 
-        private Class.txtuser txtUserManager;
+        private Class.Txtuser txtUserManager;
         private Win.UI.TextBox txtM;
         private Win.UI.Label labelManager;
         private Win.UI.Label labelM;

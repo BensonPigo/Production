@@ -113,14 +113,14 @@ Where	vSA.ArtworkTypeID = 'Printing'
          this.ShowWaitMessage("Excel Processing");
 
          #region  To Excel
-         Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R52.xltx");
+         Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R52.xltx");
          MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Subcon_R52.xltx", 2, showExcel: false, excelApp: objApp);
          Excel.Worksheet worksheet = objApp.Sheets[1];
          worksheet.Cells[1, 2] = this.SeasonID;
          worksheet.Columns.AutoFit();
          #endregion
          #region Save & Show Excel
-         string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R52");
+         string strExcelName = Class.MicrosoftFile.GetName("Subcon_R52");
          objApp.ActiveWorkbook.SaveAs(strExcelName);
          objApp.Quit();
          Marshal.ReleaseComObject(objApp);
@@ -160,7 +160,7 @@ select * from
 
                 // 開窗選擇存放位置
                 FolderBrowserDialog path = new FolderBrowserDialog();
-                if (path.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                if (path.ShowDialog() == DialogResult.OK)
                 {
                     this.ShowLoadingText("Loading...");
                     ttlCnt = 0;

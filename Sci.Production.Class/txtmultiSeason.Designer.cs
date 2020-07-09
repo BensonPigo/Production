@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class txtmultiSeason
+    partial class TxtmultiSeason
     {
         /// <summary> 
         /// 設計工具所需的變數。

@@ -250,7 +250,7 @@ where o.ID = @orderid
             {
                 if (this.EditMode & MyUtility.Check.Empty(this.CurrentMaintain["GMTBookingLock"]))
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -286,7 +286,7 @@ where o.ID = @orderid
             {
                 if (this.EditMode & MyUtility.Check.Empty(this.CurrentMaintain["GMTBookingLock"]))
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -362,7 +362,7 @@ where o.ID = @orderid
             {
                 if (this.EditMode & MyUtility.Check.Empty(this.CurrentMaintain["GMTBookingLock"]))
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -530,10 +530,10 @@ order by os.Seq", dr["OrderID"].ToString(),
         {
             base.ClickNewAfter();
             this.txtshipmode.ReadOnly = false;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Type"] = "S";
             this.CurrentMaintain["Status"] = "New";
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.CurrentMaintain["QueryDate"] = DateTime.Now.ToShortDateString();
 
             this.gridicon.Append.Enabled = true;
@@ -875,7 +875,7 @@ where InvA.OrderID = '{0}'
             // GetID
             if (this.IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "PS", "PackingList", DateTime.Today, 2, "Id", null);
+                string id = MyUtility.GetValue.GetID(Env.User.Keyword + "PS", "PackingList", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -888,14 +888,14 @@ where InvA.OrderID = '{0}'
             // Get表身 SCICtnNo
             if (this.IsDetailInserting)
             {
-                if (!PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), "IsDetailInserting"))
+                if (!Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), "IsDetailInserting"))
                 {
                     return false;
                 }
             }
             else
             {
-                if (!PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), string.Empty))
+                if (!Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), string.Empty))
                 {
                     return false;
                 }
@@ -958,7 +958,7 @@ where InvA.OrderID = '{0}'
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -1156,7 +1156,7 @@ AND s.ShipGroup <> (
                 try
                 {
                     // PackingList狀態改為Confirm
-                    this.sqlCmd = string.Format("update PackingList set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
+                    this.sqlCmd = string.Format("update PackingList set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, this.CurrentMaintain["ID"].ToString());
                     this.result = DBProxy.Current.Execute(null, this.sqlCmd);
                     if (!this.result)
                     {
@@ -1195,7 +1195,7 @@ AND s.ShipGroup <> (
                             IList<System.Data.SqlClient.SqlParameter> parameters = new List<System.Data.SqlClient.SqlParameter>();
                             parameters.Add(ttlCBM);
                             parameters.Add(iNVNo);
-                            this.result = Sci.Data.DBProxy.Current.Execute(null, updateCmd, parameters);
+                            this.result = DBProxy.Current.Execute(null, updateCmd, parameters);
                             if (!this.result)
                             {
                                 transactionScope.Dispose();
@@ -1268,12 +1268,12 @@ Pullout No. < {0} > ", dtt.Rows[0]["PulloutId"].ToString()));
 
             // 問是否要做Unconfirm，確定才繼續往下做
             this.buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Unconfirm > this data?", "Warning", MessageBoxButtons.YesNo);
-            if (this.buttonResult == System.Windows.Forms.DialogResult.No)
+            if (this.buttonResult == DialogResult.No)
             {
                 return;
             }
 
-            this.sqlCmd = string.Format("update PackingList set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
+            this.sqlCmd = string.Format("update PackingList set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, this.CurrentMaintain["ID"].ToString());
 
             this.result = DBProxy.Current.Execute(null, this.sqlCmd);
             if (!this.result)
@@ -1285,7 +1285,7 @@ Pullout No. < {0} > ", dtt.Rows[0]["PulloutId"].ToString()));
         // Download excel format
         private void BtnDownloadExcelFormat_Click(object sender, EventArgs e)
         {
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Packing_P04_ImportExcelFormat.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Packing_P04_ImportExcelFormat.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {

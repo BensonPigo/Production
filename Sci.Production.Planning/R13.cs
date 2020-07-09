@@ -122,7 +122,7 @@ namespace Sci.Production.Planning
         /// <returns>DualResult</returns>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
             try
             {
                 List<SqlParameter> plis = new List<SqlParameter>();
@@ -159,7 +159,7 @@ namespace Sci.Production.Planning
                 {
                     // 顯示筆數
                     this.SetCount(this.dsData[0].Rows.Count);
-                    return Result.True;
+                    return Ict.Result.True;
                 }
                 else
                 {
@@ -237,7 +237,7 @@ namespace Sci.Production.Planning
                     sxrc.DicDatas.Add("##detailTbl", xrt2);
                 }
 
-                sxrc.Save(Sci.Production.Class.MicrosoftFile.GetName("Planning_R13_01"));
+                sxrc.Save(MicrosoftFile.GetName("Planning_R13_01"));
             }
             else
             {
@@ -285,7 +285,7 @@ namespace Sci.Production.Planning
                     idxItem += 1;
                 }
 
-                sxrc.Save(Sci.Production.Class.MicrosoftFile.GetName("Planning_R13_02"));
+                sxrc.Save(MicrosoftFile.GetName("Planning_R13_02"));
             }
 
             return true;

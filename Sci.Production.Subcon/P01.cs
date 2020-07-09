@@ -36,7 +36,7 @@ namespace Sci.Production.Subcon
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "MdivisionID = '" + Sci.Env.User.Keyword + "' and POTYPE='O'";
+            this.DefaultFilter = "MdivisionID = '" + Env.User.Keyword + "' and POTYPE='O'";
             this.gridicon.Append.Enabled = false;
             this.gridicon.Append.Visible = false;
             this.gridicon.Insert.Enabled = false;
@@ -61,11 +61,11 @@ namespace Sci.Production.Subcon
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MdivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            this.CurrentMaintain["issuedate"] = System.DateTime.Today;
+            this.CurrentMaintain["MdivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
+            this.CurrentMaintain["issuedate"] = DateTime.Today;
             this.CurrentMaintain["potype"] = "O";
-            this.CurrentMaintain["handle"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["handle"] = Env.User.UserID;
             this.CurrentMaintain["VatRate"] = 0;
             this.CurrentMaintain["Status"] = "New";
             ((DataTable)this.detailgridbs.DataSource).Rows[0].Delete();
@@ -287,14 +287,14 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
             // 取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where ID ='{0}'", this.CurrentMaintain["factoryid"]));
+                string factorykeyword = MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where ID ='{0}'", this.CurrentMaintain["factoryid"]));
                 if (MyUtility.Check.Empty(factorykeyword))
                 {
                     MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
                     return false;
                 }
 
-                this.CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "OS", "artworkpo", (DateTime)this.CurrentMaintain["issuedate"]);
+                this.CurrentMaintain["id"] = MyUtility.GetValue.GetID(Env.User.Keyword + "OS", "artworkpo", (DateTime)this.CurrentMaintain["issuedate"]);
             }
 
             #region 加總明細金額至表頭
@@ -317,7 +317,7 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
 
         protected override DualResult ClickSavePost()
         {
-            if (P01.tmp_ModifyTable != null && P01.tmp_OriginDT_FromDB != null)
+            if (tmp_ModifyTable != null && tmp_OriginDT_FromDB != null)
             {
                 // 新增模式下的異常價格紀錄寫入DB，是在這裡執行，內容與 P01_IrregularPriceReason 一樣
                 StringBuilder sql = new StringBuilder();
@@ -353,14 +353,14 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
                         {
                             if (dt.Rows[0]["SubconReasonID"].ToString() != SubconReasonID && !string.IsNullOrEmpty(SubconReasonID))
                             {
-                                sql.Append($"UPDATE [ArtworkPO_IrregularPrice] SET [SubconReasonID]='{SubconReasonID}',EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'" + Environment.NewLine);
+                                sql.Append($"UPDATE [ArtworkPO_IrregularPrice] SET [SubconReasonID]='{SubconReasonID}',EditDate=GETDATE(),EditName='{Env.User.UserID}'" + Environment.NewLine);
                                 sql.Append($"                                  WHERE [POID]='{POID}' AND [ArtworkTypeID]='{ArtworkType}'" + Environment.NewLine);
                             }
                         }
                         else
                         {
                             sql.Append("INSERT INTO [ArtworkPO_IrregularPrice]([POID],[ArtworkTypeID],[POPrice],[StandardPrice],[SubconReasonID],[AddDate],[AddName])" + Environment.NewLine);
-                            sql.Append($"                              VALUES ('{POID}','{ArtworkType}',{POPrice},{StandardPrice},'{SubconReasonID}',GETDATE(),'{Sci.Env.User.UserID}')" + Environment.NewLine);
+                            sql.Append($"                              VALUES ('{POID}','{ArtworkType}',{POPrice},{StandardPrice},'{SubconReasonID}',GETDATE(),'{Env.User.UserID}')" + Environment.NewLine);
                         }
                     }
 
@@ -378,8 +378,8 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
                     }
                 }
 
-                P01.tmp_ModifyTable = null;
-                P01.tmp_OriginDT_FromDB = null;
+                tmp_ModifyTable = null;
+                tmp_OriginDT_FromDB = null;
             }
 
             #region update ArtworkReq_Detail.ArtworkPOID
@@ -905,8 +905,8 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
 
         private void txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
         {
-            Class.txtartworktype_fty o;
-            o = (Class.txtartworktype_fty)sender;
+            Class.Txtartworktype_fty o;
+            o = (Class.Txtartworktype_fty)sender;
 
             if ((o.Text != o.OldValue) && this.EditMode)
             {
@@ -1158,7 +1158,7 @@ where id = '{spNo}' and Category = 'S'
 
             var IrregularPriceReason = new P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, detailDatas);
 
-            P01.tmp_ModifyTable = null;
+            tmp_ModifyTable = null;
 
             // P01_IrregularPriceReason.tmp_IrregularPriceReason_List.Clear();
             bool Has_Irregular_Price = false;

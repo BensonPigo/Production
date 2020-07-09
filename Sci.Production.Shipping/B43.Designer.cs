@@ -44,7 +44,7 @@
             this.btnAddNewNLCode = new Sci.Win.UI.Button();
             this.lab_status = new System.Windows.Forms.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtmultifactory1 = new Sci.Production.Class.txtmultifactory();
+            this.txtmultifactory1 = new Sci.Production.Class.Txtmultifactory();
             this.lbShipper = new Sci.Win.UI.Label();
             this.txtShipper = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
@@ -418,7 +418,7 @@
         private Win.UI.Label labelStartDate;
         private System.Windows.Forms.Label lab_status;
         private Win.UI.Label label1;
-        private Class.txtmultifactory txtmultifactory1;
+        private Class.Txtmultifactory txtmultifactory1;
         private Win.UI.TextBox txtShipper;
         private Win.UI.Label lbShipper;
     }

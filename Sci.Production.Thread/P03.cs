@@ -1,12 +1,12 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Production.Class;
 using System;
 using System.Data;
 using System.Drawing;
 using System.Transactions;
 using System.Windows.Forms;
+using Sci.Production.Class;
 
 namespace Sci.Production.Thread
 {
@@ -15,8 +15,8 @@ namespace Sci.Production.Thread
     /// </summary>
     public partial class P03 : Win.Tems.Input6
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
 
         /// <summary>
         /// P03
@@ -47,7 +47,7 @@ namespace Sci.Production.Thread
         /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            DataGridViewGeneratorTextColumnSettings refno = celllocalitem.GetGridCell("Thread", null, "LocalSuppid,supp,category,description,ThreadTex,,MeterToCone,Weight,AxleWeight");
+            DataGridViewGeneratorTextColumnSettings refno = Txtlocalitem.Celllocalitem.GetGridCell("Thread", null, "LocalSuppid,supp,category,description,ThreadTex,,MeterToCone,Weight,AxleWeight");
             DataGridViewGeneratorTextColumnSettings thcolor = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings pcsused = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings totalweight = new DataGridViewGeneratorNumericColumnSettings();

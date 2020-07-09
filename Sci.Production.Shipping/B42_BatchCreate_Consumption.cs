@@ -83,7 +83,7 @@ namespace Sci.Production.Shipping
 
             this.nlcode.EditingMouseDown += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     if (e.RowIndex != -1)
                     {
@@ -148,7 +148,7 @@ namespace Sci.Production.Shipping
             #region Qty 的DBClick
             this.qty.EditingMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     DataRow dr = this.gridConsumption.GetDataRow<DataRow>(e.RowIndex);
                     if (MyUtility.Convert.GetString(dr["UserCreate"]) == "1")

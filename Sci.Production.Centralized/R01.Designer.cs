@@ -34,9 +34,9 @@
             this.lbBrand = new Sci.Win.UI.Label();
             this.rbFactoryCode = new Sci.Win.UI.RadioButton();
             this.rbRegionNo = new Sci.Win.UI.RadioButton();
-            this.txtBrand = new Sci.Production.Class.txtbrand();
-            this.txtCountry = new Sci.Production.Class.txtcountry();
-            this.txtSeason = new Sci.Production.Class.txtseason();
+            this.txtBrand = new Sci.Production.Class.Txtbrand();
+            this.txtCountry = new Sci.Production.Class.Txtcountry();
+            this.txtSeason = new Sci.Production.Class.Txtseason();
             this.SuspendLayout();
             // 
             // print
@@ -186,8 +186,8 @@
         private Win.UI.Label lbBrand;
         private Win.UI.RadioButton rbFactoryCode;
         private Win.UI.RadioButton rbRegionNo;
-        private Class.txtbrand txtBrand;
-        private Class.txtcountry txtCountry;
-        private Class.txtseason txtSeason;
+        private Class.Txtbrand txtBrand;
+        private Class.Txtcountry txtCountry;
+        private Class.Txtseason txtSeason;
     }
 }

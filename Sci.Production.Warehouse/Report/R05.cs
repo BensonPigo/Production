@@ -14,7 +14,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtMdivision1.Text = Sci.Env.User.Keyword;
+            this.txtMdivision1.Text = Env.User.Keyword;
         }
 
         DateTime? Issuedate1;
@@ -130,7 +130,7 @@ where 1=1
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel
@@ -145,7 +145,7 @@ where 1=1
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R05.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R05.xltx"); // 預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[1, 5] = this.type == 0 ? "Arrive W/H Date" : "Issue Date";
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Warehouse_R05.xltx", 1, true, null, objApp);      // 將datatable copy to excel

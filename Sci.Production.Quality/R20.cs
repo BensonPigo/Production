@@ -28,7 +28,7 @@ namespace Sci.Production.Quality
             this.InitializeComponent();
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK)  ", out factory);
             MyUtility.Tool.SetupCombox(this.ComboFactory, 1, factory);
-            this.ComboFactory.Text = Sci.Env.User.Keyword;
+            this.ComboFactory.Text = Env.User.Keyword;
         }
 
         private void radioPerLine_CheckedChanged(object sender, EventArgs e)
@@ -877,7 +877,7 @@ drop table #tmpall
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel
@@ -895,7 +895,7 @@ drop table #tmpall
             #region radiobtn_PerLine
             if (this.radioPerLine.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_PerLine.xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R20_PerLine.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R20_PerLine.xltx", 1, false, null, objApp); // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 for (int i = 2; i < this.printData.Columns.Count; i++)
@@ -907,7 +907,7 @@ drop table #tmpall
                 objSheets.Rows.AutoFit();
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R20_PerLine");
+                string strExcelName = Class.MicrosoftFile.GetName("Quality_R20_PerLine");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);
@@ -921,7 +921,7 @@ drop table #tmpall
             #region radiobtn_PerCell
             if (this.radioPerCell.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_PerCell.xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R20_PerCell.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R20_PerCell.xltx", 1, false, null, objApp); // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 for (int i = 2; i < this.printData.Columns.Count; i++)
@@ -933,7 +933,7 @@ drop table #tmpall
                 objSheets.Rows.AutoFit();
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R20_PerCell");
+                string strExcelName = Class.MicrosoftFile.GetName("Quality_R20_PerCell");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);
@@ -947,7 +947,7 @@ drop table #tmpall
             #region radiobtn_AllData
             if (this.radioAllData.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_AllData.xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R20_AllData.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R20_AllData.xltx", 1, false, null, objApp); // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
@@ -963,7 +963,7 @@ drop table #tmpall
                 objApp.Cells.EntireRow.AutoFit();       ////自動欄高
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R20_AllData");
+                string strExcelName = Class.MicrosoftFile.GetName("Quality_R20_AllData");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);
@@ -977,7 +977,7 @@ drop table #tmpall
             #region radioBtn_Detail
             if (this.radioDetail.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_Detail.xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R20_Detail.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R20_Detail.xltx", 1, true, null, objApp); // 將datatable copy to excel
             }
             #endregion
@@ -985,7 +985,7 @@ drop table #tmpall
             #region radioBtn_SummybySP
             if (this.radioSummybySP.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_SummarybySP.xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R20_SummarybySP.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R20_SummarybySP.xltx", 1, true, null, objApp); // 將datatable copy to excel
             }
             #endregion
@@ -993,7 +993,7 @@ drop table #tmpall
             #region radiobtn_SummybyStyle
             if (this.radioSummybyStyle.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_SummarybyStyle.xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R20_SummarybyStyle.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R20_SummarybyStyle.xltx", 1, true, null, objApp); // 將datatable copy to excel
             }
             #endregion
@@ -1001,7 +1001,7 @@ drop table #tmpall
             #region radiobtn_SummybyDateandStyle
             if (this.radioSummybyDateandStyle.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_SummarybyDateaAndStyle.xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R20_SummarybyDateaAndStyle.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Quality_R20_SummarybyDateaAndStyle.xltx", 1, true, null, objApp); // 將datatable copy to excel
             }
             #endregion

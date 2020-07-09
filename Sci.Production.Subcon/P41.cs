@@ -37,7 +37,7 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
             // 排除非生產工廠
             this.txtFactory.IsProduceFty = false;
             this.txtFactory.FilteMDivision = true;
-            this.txtFactory.Text = Sci.Env.User.Factory;
+            this.txtFactory.Text = Env.User.Factory;
         }
 
         protected override void OnFormLoaded()
@@ -301,7 +301,7 @@ OUTER APPLY(
 		)
 	)M
 )DefaultSubProcess
-WHERE o.MDivisionID='{Sci.Env.User.Keyword}' {sqlWhere}
+WHERE o.MDivisionID='{Env.User.Keyword}' {sqlWhere}
 
 select
 bi.BundleNo,

@@ -158,7 +158,7 @@ namespace Sci.Production.Packing
             {
                 if (!MyUtility.Check.Empty(dr["Filename"]))
                 {
-                    if (!System.IO.File.Exists(MyUtility.Convert.GetString(dr["FullFileName"])))
+                    if (!File.Exists(MyUtility.Convert.GetString(dr["FullFileName"])))
                     {
                         dr["Status"] = "can not find file!!";
                     }
@@ -166,7 +166,7 @@ namespace Sci.Production.Packing
                     {
                         if (this.comboBrand.Text.EqualString("N.FACE"))
                         {
-                            using (StreamReader reader = new StreamReader(MyUtility.Convert.GetString(dr["FullFileName"]), System.Text.Encoding.UTF8))
+                            using (StreamReader reader = new StreamReader(MyUtility.Convert.GetString(dr["FullFileName"]), Encoding.UTF8))
                             {
                                 string line;
                                 try
@@ -582,7 +582,7 @@ and article = '{item.Article}' and SizeCode = '{item.Size}'";
                     string updateCustBarCode = $@"
 update CustBarCode set
     barcode='{item.Barcode}',
-    EditName='{Sci.Env.User.UserID}',
+    EditName='{Env.User.UserID}',
     EditDate= getdate()
 where CustPoNo = '{item.CustPoNo}' and BrandID = '{item.Brand}' and StyleID = '{item.StyleID}' 
 and article = '{item.Article}' and SizeCode = '{item.Size}'
@@ -594,7 +594,7 @@ and article = '{item.Article}' and SizeCode = '{item.Size}'
                 {
                     string insertCustBarCode = $@"
 insert CustBarCode(BrandID,CustPONo,StyleID,Article,SizeCode,BarCode,EditName,EditDate)
-values('{item.Brand}','{item.CustPoNo}','{item.StyleID}','{item.Article}','{item.Size}','{item.Barcode}','{Sci.Env.User.UserID}',getdate())
+values('{item.Brand}','{item.CustPoNo}','{item.StyleID}','{item.Article}','{item.Size}','{item.Barcode}','{Env.User.UserID}',getdate())
 ";
                     result = DBProxy.Current.Execute(null, insertCustBarCode);
                     this.Updategrid2DataStatus(item.Brand, item.CustPoNo, item.StyleID, item.Article, item.Size, $"Created success!!");
@@ -653,9 +653,9 @@ and (Pullout.Status = 'New' or Pullout.Status is null)
 
         private void Btndowload_click(object sender, EventArgs e)
         {
-            DirectoryInfo dir = new DirectoryInfo(System.Windows.Forms.Application.StartupPath);
+            DirectoryInfo dir = new DirectoryInfo(Application.StartupPath);
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Packing_P17Template.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Packing_P17Template.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {

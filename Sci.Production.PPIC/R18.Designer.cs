@@ -37,7 +37,7 @@
             this.label6 = new Sci.Win.UI.Label();
             this.dateRangeConfirm = new Sci.Win.UI.DateRange();
             this.dateRangeConfirmDept = new Sci.Win.UI.DateRange();
-            this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
+            this.comboMDivision = new Sci.Production.Class.ComboMDivision(this.components);
             this.txtShareDept = new Sci.Win.UI.TextBox();
             this.comboReportType = new Sci.Win.UI.ComboBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
@@ -288,7 +288,7 @@
         private Win.UI.Label label6;
         private Win.UI.DateRange dateRangeConfirm;
         private Win.UI.DateRange dateRangeConfirmDept;
-        private Class.comboMDivision comboMDivision;
+        private Class.ComboMDivision comboMDivision;
         private Win.UI.TextBox txtShareDept;
         private Win.UI.ComboBox comboReportType;
         private Win.UI.ComboBox comboFactory;

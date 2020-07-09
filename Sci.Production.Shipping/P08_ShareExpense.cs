@@ -616,7 +616,7 @@ when not matched by target then
             // 重新計算
             result = DBProxy.Current.Execute(
                 "Production",
-                string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Sci.Env.User.UserID));
+                string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID));
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Calcute share expense failed.\r\n" + result.ToString());
@@ -774,13 +774,13 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
             if (MyUtility.Convert.GetString(this.apData["SubType"]) == "OTHER" && MyUtility.Convert.GetString(this.apData["Type"]) == "EXPORT")
             {
                 DialogResult buttonResult = MyUtility.Msg.InfoBox("If you want to import \"Garment Data\" please click 'Yes'.\r\nIf you want to import \"Material Data\" please click 'No'.\r\nIf you don't want to import data please click 'Cancel'.", "Warning", MessageBoxButtons.YesNoCancel);
-                if (buttonResult == System.Windows.Forms.DialogResult.Cancel)
+                if (buttonResult == DialogResult.Cancel)
                 {
                     return;
                 }
                 else
                 {
-                    if (buttonResult == System.Windows.Forms.DialogResult.Yes)
+                    if (buttonResult == DialogResult.Yes)
                     {
                         P08_ShareExpense_ImportGarment callNextForm = new P08_ShareExpense_ImportGarment(this.SEGroupData, t);
                         callNextForm.ShowDialog(this);
@@ -811,7 +811,7 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
         private void BtnDelete_Click(object sender, EventArgs e)
         {
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Do you want to delete this data?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
@@ -1112,7 +1112,7 @@ where   ShippingAPID = '{3}'
 
                         result = DBProxy.Current.ExecuteByConn(
                             sqlConn,
-                            string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Sci.Env.User.UserID));
+                            string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID));
                         if (!result)
                         {
                             errmsg = errmsg + "Calcute share expense failed." + "\r\n" + result.ToString();
@@ -1323,7 +1323,7 @@ select [resultType] = 'OK',
             else
             {
                 DialogResult buttonResult = MyUtility.Msg.WarningBox("Discard changes?", "Warning", MessageBoxButtons.YesNo);
-                if (buttonResult == System.Windows.Forms.DialogResult.No)
+                if (buttonResult == DialogResult.No)
                 {
                     return;
                 }
@@ -1339,7 +1339,7 @@ select [resultType] = 'OK',
         {
             DualResult result = DBProxy.Current.Execute(
                 "Production",
-                string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Sci.Env.User.UserID));
+                string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID));
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Re-Calculate Delete faile\r\n" + result.ToString());
@@ -1367,7 +1367,7 @@ select [resultType] = 'OK',
         private void BtnDeleteAll_Click(object sender, EventArgs e)
         {
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Do you want to delete all this data?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }

@@ -39,7 +39,7 @@
             this.lblETA = new Sci.Win.UI.Label();
             this.displayID = new Sci.Win.UI.DisplayBox();
             this.displayConsignee = new Sci.Win.UI.DisplayBox();
-            this.txtHandle = new Sci.Production.Class.txtuser();
+            this.txtHandle = new Sci.Production.Class.Txtuser();
             this.displayCarton = new Sci.Win.UI.DisplayBox();
             this.displayExportID = new Sci.Win.UI.DisplayBox();
             this.dateETC = new Sci.Win.UI.DateBox();
@@ -412,7 +412,7 @@
         private Win.UI.DateBox dateETC;
         private Win.UI.DisplayBox displayExportID;
         private Win.UI.DisplayBox displayCarton;
-        private Class.txtuser txtHandle;
+        private Class.Txtuser txtHandle;
         private Win.UI.DisplayBox displayConsignee;
         private Win.UI.DisplayBox displayID;
         private Win.UI.Label lblETA;

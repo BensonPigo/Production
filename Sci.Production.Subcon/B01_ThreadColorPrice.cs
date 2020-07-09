@@ -42,7 +42,7 @@ namespace Sci.Production.Subcon
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     Win.Tools.SelectItem item = new Win.Tools.SelectItem(
@@ -104,7 +104,7 @@ namespace Sci.Production.Subcon
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     Win.Tools.SelectItem item = new Win.Tools.SelectItem(

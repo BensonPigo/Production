@@ -57,7 +57,7 @@ Order by Order_EachCons_Color.ColorID";
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
     }
 }

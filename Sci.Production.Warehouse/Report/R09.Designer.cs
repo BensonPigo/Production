@@ -31,7 +31,7 @@
             this.labelDeadLine = new Sci.Win.UI.Label();
             this.dateDeadLine = new Sci.Win.UI.DateRange();
             this.labelM = new Sci.Win.UI.Label();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.labelBuyerDelivery = new Sci.Win.UI.Label();
             this.txtSPNoEnd = new Sci.Win.UI.TextBox();
@@ -46,7 +46,7 @@
             this.labelInventoryETA = new Sci.Win.UI.Label();
             this.comboFilterCondition = new Sci.Win.UI.ComboBox();
             this.labelFilterCondition = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.labelFactory = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
@@ -325,7 +325,7 @@
 
         private Win.UI.Label labelDeadLine;
         private Win.UI.DateRange dateDeadLine;
-        private Class.txtMdivision txtMdivision;
+        private Class.TxtMdivision txtMdivision;
         private Win.UI.Label labelM;
         private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.Label labelBuyerDelivery;
@@ -341,7 +341,7 @@
         private Win.UI.Label labelInventoryETA;
         private Win.UI.ComboBox comboFilterCondition;
         private Win.UI.Label labelFilterCondition;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
         private Win.UI.Label labelFactory;
     }
 }

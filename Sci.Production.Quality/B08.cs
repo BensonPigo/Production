@@ -50,7 +50,7 @@ namespace Sci.Production.Quality
             string msg = result.ToString().ToUpper();
             if (msg.Contains("PK") && msg.Contains("DUPLICAT"))
             {
-                result = Result.F(string.Format("<RefNo:{0}>existed,change other one please!", this.txtRefno.Text), result.GetException());
+                result = Ict.Result.F(string.Format("<RefNo:{0}>existed,change other one please!", this.txtRefno.Text), result.GetException());
             }
 
             return result;

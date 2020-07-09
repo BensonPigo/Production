@@ -33,7 +33,7 @@
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.labelBrand = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.SuspendLayout();
             // 
             // print
@@ -142,6 +142,6 @@
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.Label labelSCIDelivery;
         private Win.UI.Label labelBrand;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
     }
 }

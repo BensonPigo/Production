@@ -48,7 +48,7 @@ namespace Sci.Production.PPIC
             {
                 DataRow dr = this.grid2.GetDataRow<DataRow>(e.RowIndex);
 
-                string fullpath = System.Windows.Forms.Application.StartupPath + ".\\Sci.Production.Warehouse.dll";
+                string fullpath = Application.StartupPath + ".\\Sci.Production.Warehouse.dll";
                 var assemblys = Assembly.LoadFile(fullpath);
                 var types = assemblys.GetTypes().ToList();
                 var myClass = types.Where(x => x.FullName == "Sci.Production.Warehouse.P03").First();

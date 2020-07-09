@@ -142,7 +142,7 @@ namespace Sci.Production.Packing
                         // 若上傳的ZPL檔，包含多張ZPL，先拆成個別ZPL
                         if (this.currentFileType == UploadType.ZPL)
                         {
-                            using (StreamReader reader = new StreamReader(MyUtility.Convert.GetString(file), System.Text.Encoding.UTF8))
+                            using (StreamReader reader = new StreamReader(MyUtility.Convert.GetString(file), Encoding.UTF8))
                             {
                                 // 1-1.讀取內容
                                 oriZplConten = reader.ReadToEnd();
@@ -1579,7 +1579,7 @@ FROM PackingList_Detail pd
 INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
 
 UPDATE PackingList
-SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
+SET EditDate=GETDATE(),EditName='{Env.User.UserID}'
 WHERE ID ='{model.PackingListID}'
 
 DROP TABLE #tmpOrders{i},#tmp{i}
@@ -1633,7 +1633,7 @@ FROM PackingList_Detail pd
 INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
 
 UPDATE PackingList
-SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
+SET EditDate=GETDATE(),EditName='{Env.User.UserID}'
 WHERE ID ='{model.PackingListID}'
 
 DROP TABLE #tmpOrders{i},#tmp{i}
@@ -1752,14 +1752,14 @@ BEGIN
 	INSERT INTO ShippingMarkPic
 		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
 
-	SELECT DISTINCT [PackingListID]=t.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
+	SELECT DISTINCT [PackingListID]=t.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Env.User.UserID}'	
 	FROM ShippingMarkPicture s
 	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D'
     ;
 	INSERT INTO ShippingMarkPic
 		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
 
-	SELECT DISTINCT [PackingListID]=t.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
+	SELECT DISTINCT [PackingListID]=t.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Env.User.UserID}'	
 	FROM ShippingMarkPicture s
 	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='A'
     ;
@@ -1767,13 +1767,13 @@ END
 ELSE
 BEGIN
     UPDATE spc
-    SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
+    SET EditDate=GETDATE(),EditName='{Env.User.UserID}'
     FROM ShippingMarkPic spc
 	INNER JOIN ShippingMarkPicture s ON s.Seq = spc.Seq AND s.Side = spc.Side 
     INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='D' AND t.ID = spc.PackingListID
     ;
     UPDATE spc
-    SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
+    SET EditDate=GETDATE(),EditName='{Env.User.UserID}'
     FROM ShippingMarkPic spc
 	INNER JOIN ShippingMarkPicture s ON s.Seq = spc.Seq AND s.Side = spc.Side 
     INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND s.Side='A' AND t.ID = spc.PackingListID
@@ -1805,7 +1805,7 @@ BEGIN
 	INSERT INTO ShippingMarkPic
 		([PackingListID]           ,[Seq]           ,[Side]           ,[AddDate]           ,[AddName] )
 
-	SELECT DISTINCT [PackingListID]=t.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Sci.Env.User.UserID}'	
+	SELECT DISTINCT [PackingListID]=t.id ,S.Seq ,S.Side ,[AddDate]=GETDATE() ,[AddName]='{Env.User.UserID}'	
 	FROM ShippingMarkPicture s
 	INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo
     ;
@@ -1813,7 +1813,7 @@ END
 ELSE
 BEGIN
     UPDATE spc
-    SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
+    SET EditDate=GETDATE(),EditName='{Env.User.UserID}'
     FROM ShippingMarkPic spc
 	INNER JOIN ShippingMarkPicture s ON s.Seq = spc.Seq AND s.Side = spc.Side 
     INNER JOIN #tmp{i} t ON s.BrandID=t.BrandID AND s.CTNRefno=t.RefNo AND t.ID = spc.PackingListID
@@ -2551,7 +2551,7 @@ DROP TABLE #tmpOrders ,#tmp ,#ExistsB03
             // bmp.Save(imageOutputPath + imageName + "_tmpOri.bmp");
             byte[] data = null;
 
-            if (!System.IO.Directory.Exists(imageOutputPath))
+            if (!Directory.Exists(imageOutputPath))
             {
                 Directory.CreateDirectory(imageOutputPath);
             }
@@ -2585,7 +2585,7 @@ DROP TABLE #tmpOrders ,#tmp ,#ExistsB03
             // 準備要寫入DB的資料
             using (var stream = new MemoryStream())
             {
-                pic.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                pic.Save(stream, ImageFormat.Png);
                 data = stream.ToArray();
             }
 
@@ -2647,7 +2647,7 @@ WHERE sd.FileName=@FileName
 )";
             cmd += $@"
 UPDATE s
-SET s.EditDate=GETDATE() , s.EditName='{Sci.Env.User.UserID}'
+SET s.EditDate=GETDATE() , s.EditName='{Env.User.UserID}'
 FROM ShippingMarkPic s WITH(NOLOCK)
 INNER JOIN ShippingMarkPic_Detail sd WITH(NOLOCK) ON s.Ukey=sd.ShippingMarkPicUkey
 WHERE sd.FileName=@FileName

@@ -59,7 +59,7 @@ namespace Sci.Production.IE
                     foreach (DataGridViewRow datarow in selectRows)
                     {
                         this._P01SelectOperationCode = ((DataRowView)datarow.DataBoundItem).Row;
-                        this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+                        this.DialogResult = DialogResult.Cancel;
                     }
                 }
             };
@@ -142,7 +142,7 @@ namespace Sci.Production.IE
                 this._P01SelectOperationCode = ((DataRowView)datarow.DataBoundItem).Row;
             }
 
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
     }
 }

@@ -398,7 +398,7 @@ INSERT INTO [dbo].[PackingScan_History]
            ,[AddDate]
            ,[LackingQty])
      VALUES
-           ('{Sci.Env.User.Keyword}'
+           ('{Env.User.Keyword}'
            ,'{packingListID}'
            ,'{orderID}'
            ,'{cTNStartNo}'
@@ -407,7 +407,7 @@ INSERT INTO [dbo].[PackingScan_History]
            ,{oriTtlScanQty}
            ,'{Convert.ToDateTime(tmp[0]["ScanEditDate"]).ToAppDateTimeFormatString()}'
            ,'{scanName}'
-           ,'{Sci.Env.User.UserID}'
+           ,'{Env.User.UserID}'
            ,GETDATE()
            ,(
                 ISNULL(  (SELECT SUM(pd.ShipQty) FROM PackingList_Detail pd WHERE pd.ID='{packingListID}' AND pd.CTNStartNo='{cTNStartNo}') ,0)

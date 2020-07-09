@@ -253,7 +253,7 @@ masterID);
             #region 取得表頭ID
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "WA", "MockupWash", DateTime.Now);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "WA", "MockupWash", DateTime.Now);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");

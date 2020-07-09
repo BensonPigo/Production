@@ -47,11 +47,11 @@
             this.txtWK1 = new Sci.Win.UI.TextBox();
             this.label7 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
-            this.txtsupplier1 = new Sci.Production.Class.txtsupplier();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.comboMDivision1 = new Sci.Production.Class.comboMDivision(this.components);
+            this.txtsupplier1 = new Sci.Production.Class.Txtsupplier();
+            this.txtbrand1 = new Sci.Production.Class.Txtbrand();
+            this.comboMDivision1 = new Sci.Production.Class.ComboMDivision(this.components);
             this.txtfactory = new Sci.Win.UI.TextBox();
-            this.comboDropDownList1 = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboDropDownList1 = new Sci.Production.Class.ComboDropDownList(this.components);
             this.label10 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
@@ -402,7 +402,7 @@
         private Win.UI.TextBox txtSP1;
         private Win.UI.Label lbSPNo;
         private Win.UI.Label label1;
-        private Class.comboMDivision comboMDivision1;
+        private Class.ComboMDivision comboMDivision1;
         private Win.UI.DateRange datekPIETA;
         private Win.UI.DateRange dateWhseArrival;
         private Win.UI.Label label3;
@@ -414,10 +414,10 @@
         private Win.UI.TextBox txtWK1;
         private Win.UI.Label label7;
         private Win.UI.Label label9;
-        private Class.txtbrand txtbrand1;
-        private Class.txtsupplier txtsupplier1;
+        private Class.Txtbrand txtbrand1;
+        private Class.Txtsupplier txtsupplier1;
         private Win.UI.TextBox txtfactory;
-        private Class.comboDropDownList comboDropDownList1;
+        private Class.ComboDropDownList comboDropDownList1;
         private Win.UI.Label label10;
     }
 }

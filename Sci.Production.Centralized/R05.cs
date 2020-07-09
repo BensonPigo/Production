@@ -19,13 +19,13 @@ namespace Sci.Production.Centralized
         {
             this.InitializeComponent();
             this.numYear.Value = MyUtility.Convert.GetDecimal(DateTime.Now.Year);
-            this.comboCentralizedM1.SetDefalutIndex(Sci.Env.User.Keyword);
-            this.comboCentralizedFactory1.SetDefalutIndex(Sci.Env.User.Factory, true);
+            this.comboCentralizedM1.SetDefalutIndex(Env.User.Keyword);
+            this.comboCentralizedFactory1.SetDefalutIndex(Env.User.Factory, true);
 
             MyUtility.Tool.SetupCombox(this.cmbDate, 2, 1, "1,SCI Delivery Date,2,Buyer Delivery Date");
             this.cmbDate.SelectedValue = "1";
             this.comboFtyZone.IsIncludeSampleRoom = false;
-            this.comboFtyZone.setDataSourceAllFty();
+            this.comboFtyZone.SetDataSourceAllFty();
         }
 
         private int Year;
@@ -418,7 +418,7 @@ drop table #tmpBaseOrderID,#tmpBaseByOrderID,#tmpBaseTransOrderID,#tmpBaseStep1,
 
             if (this.dtAllData == null || this.dtAllData[0].Rows.Count == 0)
             {
-                return Result.F("Data not found!");
+                return Ict.Result.F("Data not found!");
             }
 
             var allDetail = this.dtAllData[0].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["FtyZone"]));
@@ -578,7 +578,7 @@ drop table #tmp
             }
 
             DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -595,7 +595,7 @@ drop table #tmp
 
             this.ShowWaitMessage("Starting EXCEL...");
             string excelFile = "Centralized_R05.xltx";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + excelFile); // 開excelapp
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + excelFile); // 開excelapp
 
             // excelApp.Visible = true;
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];

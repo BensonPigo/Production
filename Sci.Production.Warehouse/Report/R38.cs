@@ -173,7 +173,7 @@ select	fi.POID
 
             if (result)
             {
-                return Result.True;
+                return Ict.Result.True;
             }
             else
             {
@@ -188,14 +188,14 @@ select	fi.POID
                 this.SetCount(this.dataTable.Rows.Count);
                 this.ShowWaitMessage("Excel Processing...");
 
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R38.xltx"); // 預先開啟excel app
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R38.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.dataTable, null, "Warehouse_R38.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
                 Excel.Worksheet worksheet = objApp.Sheets[1];
                 worksheet.Rows.AutoFit();
                 worksheet.Columns.AutoFit();
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R38");
+                string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R38");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);

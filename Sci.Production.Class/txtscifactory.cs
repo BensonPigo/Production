@@ -4,8 +4,20 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtscifactory : Win.UI.TextBox
+    /// <summary>
+    /// Txtscifactory
+    /// </summary>
+    public partial class Txtscifactory : Win.UI.TextBox
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtscifactory"/> class.
+        /// </summary>
+        public Txtscifactory()
+        {
+            this.Size = new System.Drawing.Size(66, 23);
+        }
+
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
@@ -21,6 +33,7 @@ namespace Sci.Production.Class
             this.ValidateText();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -36,11 +49,6 @@ namespace Sci.Production.Class
                     return;
                 }
             }
-        }
-
-        public txtscifactory()
-        {
-            this.Size = new System.Drawing.Size(66, 23);
         }
     }
 }

@@ -11,44 +11,45 @@ using System.Xml.Linq;
 
 namespace Sci.Production.Class
 {
-    public partial class comboFtyZone : Win.UI.ComboBox
+    /// <summary>
+    /// Combo FtyZone
+    /// </summary>
+    public partial class ComboFtyZone : Win.UI.ComboBox
     {
-        private bool _IssupportJunk = false;
-        private bool _FilteMDivision = false;
-        private string _SelectTable = "Factory";
-        private bool _isIncludeSampleRoom = false;
+        /// <summary>
+        /// Is support Junk
+        /// </summary>
+        public bool IssupportJunk { get; set; } = false;
 
-        public bool IssupportJunk
-        {
-            get { return this._IssupportJunk; }
-            set { this._IssupportJunk = value; }
-        }
+        /// <summary>
+        /// Filte MDivision
+        /// </summary>
+        public bool FilteMDivision { get; set; } = false;
 
-        public bool FilteMDivision
-        {
-            get { return this._FilteMDivision; }
-            set { this._FilteMDivision = value; }
-        }
+        /// <summary>
+        /// Select Table
+        /// </summary>
+        public string SelectTable { get; set; } = "Factory";
 
-        public string SelectTable
-        {
-            get { return this._SelectTable; }
-            set { this._SelectTable = value; }
-        }
+        /// <summary>
+        /// Is Include Sample Room
+        /// </summary>
+        public bool IsIncludeSampleRoom { get; set; } = false;
 
-        public bool IsIncludeSampleRoom
-        {
-            get { return this._isIncludeSampleRoom; }
-            set { this._isIncludeSampleRoom = value; }
-        }
-
-        public comboFtyZone()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComboFtyZone"/> class.
+        /// </summary>
+        public ComboFtyZone()
         {
             this.InitializeComponent();
             this.Size = new System.Drawing.Size(80, 23);
         }
 
-        public comboFtyZone(IContainer container)
+        /// <summary>
+        /// ComboFtyZone
+        /// </summary>
+        /// <param name="container">container</param>
+        public ComboFtyZone(IContainer container)
         {
             container.Add(this);
             this.InitializeComponent();
@@ -59,7 +60,7 @@ namespace Sci.Production.Class
         /// Set ComboBox Data
         /// </summary>
         /// <param name="strMDivisionID">如果沒輸入，MDivision 預設 Sci.Env.User.Keywordd</param>
-        public void setDataSource(string strMDivisionID = null)
+        public void SetDataSource(string strMDivisionID = null)
         {
             DataTable dtFactoryData;
             DualResult result;
@@ -79,21 +80,21 @@ namespace Sci.Production.Class
         private string GetFtySQL(string strMDivisionID, out List<SqlParameter> listSqlPar)
         {
             listSqlPar = new List<SqlParameter>();
-            listSqlPar.Add(new SqlParameter("@MDivision", strMDivisionID.Empty() ? Sci.Env.User.Keyword : strMDivisionID));
+            listSqlPar.Add(new SqlParameter("@MDivision", strMDivisionID.Empty() ? Env.User.Keyword : strMDivisionID));
 
             #region SQL Filte
             List<string> listFilte = new List<string>();
-            if (this._IssupportJunk)
+            if (this.IssupportJunk)
             {
                 listFilte.Add("Junk = 0 ");
             }
 
-            if (!this._isIncludeSampleRoom && this._SelectTable == "Factory")
+            if (!this.IsIncludeSampleRoom && this.SelectTable == "Factory")
             {
                 listFilte.Add("IsSampleRoom = 0 ");
             }
 
-            if (this._FilteMDivision)
+            if (this.FilteMDivision)
             {
                 listFilte.Add("MDivisionID = @MDivision ");
             }
@@ -113,12 +114,16 @@ from (
 ) a
 order by FtyZone",
                 (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\r and ") : string.Empty,
-                this._SelectTable);
+                this.SelectTable);
 
             return sqlcmd;
         }
 
-        public DualResult setDataSourceAllFty()
+        /// <summary>
+        /// Set Data Source AllFty
+        /// </summary>
+        /// <returns>DualResult</returns>
+        public DualResult SetDataSourceAllFty()
         {
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
             string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' }).Where(s => !s.Contains("testing_PMS")).ToArray();

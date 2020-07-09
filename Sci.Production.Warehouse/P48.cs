@@ -87,7 +87,7 @@ left join Orders o WITH (NOLOCK) on o.id=a.id
 Where   c.lock = 0 
         and c.inqty-c.outqty + c.adjustqty > 0
         and f.mdivisionid = '{0}'        
-        ", Sci.Env.User.Keyword));
+        ", Env.User.Keyword));
 
                 if (!MyUtility.Check.Empty(sp1))
                 {
@@ -455,7 +455,7 @@ where   StockType='O'
             // *依照POID 批次建立P45 ID
             dr2 = dtGridBS1.Select("adjustqty <> 0 and Selected = 1");
             var listPoid = dr2.Select(row => row["Poid"]).Distinct().ToList();
-            var tmpId = MyUtility.GetValue.GetBatchID(Sci.Env.User.Keyword + "AM", "Adjust", System.DateTime.Now, batchNumber: listPoid.Count);
+            var tmpId = MyUtility.GetValue.GetBatchID(Env.User.Keyword + "AM", "Adjust", DateTime.Now, batchNumber: listPoid.Count);
             if (MyUtility.Check.Empty(tmpId))
             {
                 MyUtility.Msg.WarningBox("Get document id fail!");
@@ -513,7 +513,7 @@ from #tmp";
                 drNewMaster["type"] = "R";
                 drNewMaster["issuedate"] = DateTime.Now.ToString("yyyy/MM/dd");
                 drNewMaster["mdivisionid"] = Env.User.Keyword;
-                drNewMaster["FactoryID"] = Sci.Env.User.Factory;
+                drNewMaster["FactoryID"] = Env.User.Factory;
                 drNewMaster["status"] = "New";
                 drNewMaster["addname"] = Env.User.UserID;
                 drNewMaster["adddate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");

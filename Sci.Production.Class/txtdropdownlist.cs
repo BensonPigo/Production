@@ -4,10 +4,16 @@ using Sci.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class txtdropdownlist : Win.UI.ComboBox
+    /// <summary>
+    /// TxtDropdownlist
+    /// </summary>
+    public partial class Txtdropdownlist : Win.UI.ComboBox
     {
         private string type;
 
+        /// <summary>
+        /// Type
+        /// </summary>
         [Category("Custom Properties")]
         public string Type
         {
@@ -34,7 +40,10 @@ namespace Sci.Production.Class
             }
         }
 
-        public txtdropdownlist()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtdropdownlist"/> class.
+        /// </summary>
+        public Txtdropdownlist()
         {
         }
     }

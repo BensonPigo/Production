@@ -16,7 +16,7 @@ namespace Sci.Production.Quality
 {
     public partial class P03_Heat : Win.Subs.Input4
     {
-        private string loginID = Sci.Env.User.UserID;
+        private string loginID = Env.User.UserID;
         private DataRow maindr;
         private string ID;
 
@@ -170,7 +170,7 @@ this.ID);
             DataGridViewGeneratorTextColumnSettings DyelotCell = new DataGridViewGeneratorTextColumnSettings();
 
             DataGridViewGeneratorTextColumnSettings LabTechCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ResultCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings ResultCell = PublicPrg.Prgs.cellResult.GetGridCell();
 
             #region 設定GridMouse Click 事件
 
@@ -186,7 +186,7 @@ this.ID);
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string selectedDyelot = dr["Dyelot"].ToString();
@@ -237,7 +237,7 @@ this.ID);
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string selectedRoll = dr["Roll"].ToString();
@@ -286,7 +286,7 @@ this.ID);
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
 
@@ -977,12 +977,12 @@ Each Dyelot must be tested!", d));
                     }
 
                     updatesql = string.Format(
-                    @"Update Fir_Laboratory set HeatDate = '{0}',HeatEncode = 1,Heat='{1}',HeatInspector = '{3}' where id ='{2}'", lastDate.ToShortDateString(), result, this.maindr["ID"], Sci.Env.User.UserID);
+                    @"Update Fir_Laboratory set HeatDate = '{0}',HeatEncode = 1,Heat='{1}',HeatInspector = '{3}' where id ='{2}'", lastDate.ToShortDateString(), result, this.maindr["ID"], Env.User.UserID);
                 }
                 else
                 {
                     updatesql = string.Format(
-                    @"Update Fir_Laboratory set HeatEncode = 1,Heat='{0}', HeatInspector = '{2}' where id ='{1}'", result, this.maindr["ID"], Sci.Env.User.UserID);
+                    @"Update Fir_Laboratory set HeatEncode = 1,Heat='{0}', HeatInspector = '{2}' where id ='{1}'", result, this.maindr["ID"], Env.User.UserID);
                 }
                 #endregion
 
@@ -1021,7 +1021,7 @@ Each Dyelot must be tested!", d));
                 }
             }
             #region Over All Result 寫入
-            string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Lab(this.maindr["ID"]);
+            string[] returnstr = PublicPrg.Prgs.GetOverallResult_Lab(this.maindr["ID"]);
             this.maindr["Result"] = returnstr[0];
             string cmdResult = @"update Fir_Laboratory set Result=@Result where id=@id";
             List<SqlParameter> spam = new List<SqlParameter>();
@@ -1144,7 +1144,7 @@ Each Dyelot must be tested!", d));
             excel.Cells.EntireRow.AutoFit();       ////自動欄高
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P03_Heat_Test");
+            string strExcelName = Class.MicrosoftFile.GetName("Quality_P03_Heat_Test");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

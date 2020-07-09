@@ -4,8 +4,20 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtLocalPurchaseItem : Win.UI.TextBox
+    /// <summary>
+    /// TxtLocalPurchaseItem
+    /// </summary>
+    public partial class TxtLocalPurchaseItem : Win.UI.TextBox
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TxtLocalPurchaseItem"/> class.
+        /// </summary>
+        public TxtLocalPurchaseItem()
+        {
+            this.Size = new System.Drawing.Size(140, 23);
+        }
+
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
@@ -26,6 +38,7 @@ namespace Sci.Production.Class
             this.ValidateText();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -45,11 +58,6 @@ namespace Sci.Production.Class
                     return;
                 }
             }
-        }
-
-        public txtLocalPurchaseItem()
-        {
-            this.Size = new System.Drawing.Size(140, 23);
         }
     }
 }

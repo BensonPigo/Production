@@ -67,7 +67,7 @@ Where a.id = '{0}'
       and upper(dbo.mtltype.Issuetype) = 'PACKING' 
       and factory.MDivisionID = '{1}'
       and Orders.category != 'A'
-", sp_b, Sci.Env.User.Keyword);
+", sp_b, Env.User.Keyword);
 
                 DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd, out this.dtArtwork))

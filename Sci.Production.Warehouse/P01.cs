@@ -222,7 +222,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 this.displayActPullout.Value = string.Empty;
             }
             #endregion
-            bool lConfirm = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P01. PPIC Master List", "CanConfirm");
+            bool lConfirm = PublicPrg.Prgs.GetAuthority(Env.User.UserID, "P01. PPIC Master List", "CanConfirm");
 
             // 按鈕變色
             bool haveTmsCost = MyUtility.Check.Seek(string.Format("select ID from Order_TmsCost WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
@@ -277,14 +277,14 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
             // 帶入預設值
             this.CurrentMaintain["Category"] = "B";
             this.CurrentMaintain["LocalOrder"] = 1;
-            this.CurrentMaintain["MCHandle"] = Sci.Env.User.UserID;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            this.CurrentMaintain["FtyGroup"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MCHandle"] = Env.User.UserID;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
+            this.CurrentMaintain["FtyGroup"] = Env.User.Factory;
             this.CurrentMaintain["CMPUnit"] = "PCS";
             this.CurrentMaintain["CFMDate"] = DateTime.Today;
             this.CurrentMaintain["CtnType"] = "1";
             this.CurrentMaintain["CPUFactor"] = 1;
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.CurrentMaintain["SubconInType"] = "0";
         }
 
@@ -504,7 +504,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 return;
             }
 
-            if (!MyUtility.Check.Seek(string.Format("select MDivisionID from dbo.Factory where ID='{0}' and MDivisionID='{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["FtyGroup"]), Sci.Env.User.Keyword)))
+            if (!MyUtility.Check.Seek(string.Format("select MDivisionID from dbo.Factory where ID='{0}' and MDivisionID='{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["FtyGroup"]), Env.User.Keyword)))
             {
                 MyUtility.Msg.WarningBox("Insufficient permissions!!");
                 return;
@@ -536,15 +536,15 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 cmds.Add(sp_StocktakingID);
                 SqlParameter sp_mdivision = new SqlParameter();
                 sp_mdivision.ParameterName = "@MDivisionid";
-                sp_mdivision.Value = Sci.Env.User.Keyword;
+                sp_mdivision.Value = Env.User.Keyword;
                 cmds.Add(sp_mdivision);
                 SqlParameter sp_factory = new SqlParameter();
                 sp_factory.ParameterName = "@factoryid";
-                sp_factory.Value = Sci.Env.User.Factory;
+                sp_factory.Value = Env.User.Factory;
                 cmds.Add(sp_factory);
                 SqlParameter sp_loginid = new SqlParameter();
                 sp_loginid.ParameterName = "@loginid";
-                sp_loginid.Value = Sci.Env.User.UserID;
+                sp_loginid.Value = Env.User.UserID;
                 cmds.Add(sp_loginid);
                 #endregion
                 if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_WarehouseClose", cmds)))
@@ -640,7 +640,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
             }
 
             ToolStripMenuItem P03MenuItem = null;
-            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
+            foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
             {
                 if (toolMenuItem.Text.EqualString("Warehouse"))
                 {
@@ -691,7 +691,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
             }
 
             ToolStripMenuItem P04MenuItem = null;
-            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
+            foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
             {
                 if (toolMenuItem.Text.EqualString("Warehouse"))
                 {

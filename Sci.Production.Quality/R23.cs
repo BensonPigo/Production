@@ -424,7 +424,7 @@ drop table  #tmp,#CalendarData,#Calendar,#tmpPacking
             }
             #endregion
             this.SetCount(this.dtList[0].Rows.Count);
-            string xltPath = System.IO.Path.Combine(Sci.Env.Cfg.XltPathDir + "\\Quality_R23.xltx");
+            string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir + "\\Quality_R23.xltx");
             sxrc sxr = new sxrc(xltPath, keepApp: true);
             sxr.BoOpenFile = true;
             sxrc.XltRptTable xrtSummery1 = new sxrc.XltRptTable(this.dtList[1]);
@@ -441,7 +441,7 @@ drop table  #tmp,#CalendarData,#Calendar,#tmpPacking
 
             #region Save Excel
             string excelFile = string.Empty;
-            excelFile = Sci.Production.Class.MicrosoftFile.GetName("Quality_R23");
+            excelFile = Class.MicrosoftFile.GetName("Quality_R23");
             sxr.Save(excelFile);
             #endregion
 

@@ -61,9 +61,9 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             MyUtility.Tool.SetupCombox(this.comboOrderBy, 1, 1, "Sewing Line,CPU/Sewer/HR");
             this.comboReportType.SelectedIndex = 0;
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
             this.comboOrderBy.SelectedIndex = 0;
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
         }
 
         // Date
@@ -1243,7 +1243,7 @@ where f.Junk = 0",
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -1262,7 +1262,7 @@ where f.Junk = 0",
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir;
+            string strXltName = Env.Cfg.XltPathDir;
             switch (this.reportType)
             {
                 case 0:
@@ -1293,9 +1293,9 @@ where f.Junk = 0",
 
             #region Direct Manpower(From PAMS)
             List<APIData> pams = new List<APIData>();
-            if (!(Sci.Env.User.Keyword.EqualString("CM1") ||
-                Sci.Env.User.Keyword.EqualString("CM2") ||
-                Sci.Env.User.Keyword.EqualString("CM3")))
+            if (!(Env.User.Keyword.EqualString("CM1") ||
+                Env.User.Keyword.EqualString("CM2") ||
+                Env.User.Keyword.EqualString("CM3")))
             {
                 this.dataMode = new List<APIData>();
                 GetApiData.GetAPIData(this.mDivision, this.factory, (DateTime)this.date1.Value, (DateTime)this.date2.Value, out this.dataMode);
@@ -1322,7 +1322,7 @@ where f.Junk = 0",
                 for (int i = 0; i < this.cpuFactor.Rows.Count - 2; i++)
                 {
                     rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
-                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                    rngToInsert.Insert(Excel.XlInsertShiftDirection.xlShiftDown);
                     Marshal.ReleaseComObject(rngToInsert);
                 }
             }
@@ -1338,7 +1338,7 @@ where f.Junk = 0",
                 worksheet.Range[string.Format("A{0}:D{0}", insertRow)].Value2 = objArray;
                 insertRow++;
                 rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
-                rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                rngToInsert.Insert(Excel.XlInsertShiftDirection.xlShiftDown);
                 Marshal.ReleaseComObject(rngToInsert);
             }
 
@@ -1363,7 +1363,7 @@ where f.Junk = 0",
 
                     // 插入一筆Record
                     rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
-                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                    rngToInsert.Insert(Excel.XlInsertShiftDirection.xlShiftDown);
                     Marshal.ReleaseComObject(rngToInsert);
                 }
             }
@@ -1371,9 +1371,9 @@ where f.Junk = 0",
             insertRow = insertRow + 3;
 
             #region  中國工廠自抓/其它場Pams [Total Work Day]
-            if (Sci.Env.User.Keyword.EqualString("CM1") ||
-                Sci.Env.User.Keyword.EqualString("CM2") ||
-                Sci.Env.User.Keyword.EqualString("CM3"))
+            if (Env.User.Keyword.EqualString("CM1") ||
+                Env.User.Keyword.EqualString("CM2") ||
+                Env.User.Keyword.EqualString("CM3"))
             {
                 int ttlWorkDay = 0;
                 string strWorkDay = @"select Distinct OutputDate from #tmp where LastShift <> 'O'";
@@ -1423,7 +1423,7 @@ where f.Junk = 0",
 
                         // 插入一筆Record
                         rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
-                        rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                        rngToInsert.Insert(Excel.XlInsertShiftDirection.xlShiftDown);
                         Marshal.ReleaseComObject(rngToInsert);
 
                         #region Sub-Process Total Revenue for Company Subcon-In
@@ -1438,7 +1438,7 @@ where f.Junk = 0",
                             worksheet.Cells[insertRow, 9] = "(Unit:US$)";
 
                             rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
-                            rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                            rngToInsert.Insert(Excel.XlInsertShiftDirection.xlShiftDown);
                             Marshal.ReleaseComObject(rngToInsert);
 
                             insertRow++;
@@ -1458,7 +1458,7 @@ where f.Junk = 0",
 
                                     // 插入一筆Record
                                     rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
-                                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                                    rngToInsert.Insert(Excel.XlInsertShiftDirection.xlShiftDown);
                                     Marshal.ReleaseComObject(rngToInsert);
                                 }
                             }
@@ -1468,11 +1468,11 @@ where f.Junk = 0",
                             rngBorders.BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, System.Drawing.Color.Black.ToArgb());     // 給單元格加邊框
                             rngBorders = worksheet.get_Range(string.Format("A{0}:K{0}", MyUtility.Convert.GetString(revenueStartRow)), Type.Missing);
                             rngBorders.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = 1;
-                            rngBorders.Borders[Excel.XlBordersIndex.xlEdgeBottom].Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
+                            rngBorders.Borders[Excel.XlBordersIndex.xlEdgeBottom].Weight = Excel.XlBorderWeight.xlThin;
 
                             // 插入一筆Record
                             rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
-                            rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                            rngToInsert.Insert(Excel.XlInsertShiftDirection.xlShiftDown);
                             Marshal.ReleaseComObject(rngToInsert);
                         }
                         #endregion
@@ -1511,7 +1511,7 @@ where f.Junk = 0",
                             worksheet.Cells[insertRow, 9] = "(Unit:US$)";
 
                             rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
-                            rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                            rngToInsert.Insert(Excel.XlInsertShiftDirection.xlShiftDown);
                             Marshal.ReleaseComObject(rngToInsert);
 
                             insertRow++;
@@ -1531,7 +1531,7 @@ where f.Junk = 0",
 
                                     // 插入一筆Record
                                     rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
-                                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                                    rngToInsert.Insert(Excel.XlInsertShiftDirection.xlShiftDown);
                                     Marshal.ReleaseComObject(rngToInsert);
                                 }
                             }
@@ -1541,13 +1541,13 @@ where f.Junk = 0",
                             rngBorders.BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, System.Drawing.Color.Black.ToArgb());     // 給單元格加邊框
                             rngBorders = worksheet.get_Range(string.Format("A{0}:K{0}", MyUtility.Convert.GetString(revenueStartRow)), Type.Missing);
                             rngBorders.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = 1;
-                            rngBorders.Borders[Excel.XlBordersIndex.xlEdgeBottom].Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
+                            rngBorders.Borders[Excel.XlBordersIndex.xlEdgeBottom].Weight = Excel.XlBorderWeight.xlThin;
                         }
                         #endregion
 
                         // 插入一筆Record
                         rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
-                        rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                        rngToInsert.Insert(Excel.XlInsertShiftDirection.xlShiftDown);
                         Marshal.ReleaseComObject(rngToInsert);
                     }
                 }
@@ -1566,7 +1566,7 @@ where f.Junk = 0",
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(this.reportType == 0 ? "Sewing_R02_MonthlyReportByDate" : "Sewing_R02_MonthlyReportBySewingLine");
+            string strExcelName = Class.MicrosoftFile.GetName(this.reportType == 0 ? "Sewing_R02_MonthlyReportByDate" : "Sewing_R02_MonthlyReportBySewingLine");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Visible = true;
             Marshal.ReleaseComObject(excel);
@@ -1642,7 +1642,7 @@ where f.Junk = 0",
 
                 // 插入一筆Record
                 rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
-                rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                rngToInsert.Insert(Excel.XlInsertShiftDirection.xlShiftDown);
                 Marshal.ReleaseComObject(rngToInsert);
             }
 

@@ -22,7 +22,7 @@ namespace Sci.Production.Cutting
         string Poid = string.Empty;
         string cp;
         string cr;
-        private string keyword = Sci.Env.User.Keyword;
+        private string keyword = Env.User.Keyword;
         private string cutrefSort;
         int SheetCount = 1;
         DataTable WorkorderTb;
@@ -225,7 +225,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                 MyUtility.Tool.ProcessWithDatatable(this.WorkorderTb, "Cutplanid,SEQ1,SEQ2,yds,Colorid", Issue_cmd, out this.IssueTb); // 整理FabricPanelCode
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -252,7 +252,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
 
         public bool ByRequestExcel()
         {
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Cutting_P02_SpreadingReportbyRequest.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Cutting_P02_SpreadingReportbyRequest.xltx";
             Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -382,7 +382,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                         {
                             if (fd.Length > fl * i)
                             {
-                                Excel.Range rangeRow13 = (Excel.Range)worksheet.Rows[13, System.Type.Missing];
+                                Excel.Range rangeRow13 = (Excel.Range)worksheet.Rows[13, Type.Missing];
                                 rangeRow13.RowHeight = 19.125 * (i + 1);
                             }
                         }
@@ -417,7 +417,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                     {
                         if (spList.Length > l * i)
                         {
-                            Excel.Range rangeRow8 = (Excel.Range)worksheet.Rows[8, System.Type.Missing];
+                            Excel.Range rangeRow8 = (Excel.Range)worksheet.Rows[8, Type.Missing];
                             rangeRow8.RowHeight = 20.25 * (i + 1);
                         }
                     }
@@ -466,7 +466,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                         {
                             if (size.Length > l * i)
                             {
-                                Excel.Range rangeRow12 = (Excel.Range)worksheet.Rows[nRow, System.Type.Missing];
+                                Excel.Range rangeRow12 = (Excel.Range)worksheet.Rows[nRow, Type.Missing];
                                 rangeRow12.RowHeight = 16.875 * (i + 1);
                             }
                         }
@@ -519,7 +519,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                     if (!MyUtility.Check.Empty(FabricComboDr["shc"]))
                     {
                         Excel.Range rng = (Excel.Range)worksheet.Rows[tmpn, Type.Missing];
-                        rng.Insert(Microsoft.Office.Interop.Excel.XlDirection.xlDown);
+                        rng.Insert(Excel.XlDirection.xlDown);
                         Excel.Range rng2 = (Excel.Range)worksheet.get_Range("I" + tmpn, "U" + tmpn);
                         rng2.Merge();
                         rng2.Cells.Font.Color = Color.Red;
@@ -601,10 +601,10 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
             }
 
             // 重製Mode以取消Copy區塊
-            worksheet.Application.CutCopyMode = Microsoft.Office.Interop.Excel.XlCutCopyMode.xlCopy;
+            worksheet.Application.CutCopyMode = Excel.XlCutCopyMode.xlCopy;
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_P02_SpreadingReportbyRequest");
+            string strExcelName = Class.MicrosoftFile.GetName("Cutting_P02_SpreadingReportbyRequest");
             Excel.Workbook workbook = excel.Workbooks[1];
             workbook.SaveAs(strExcelName);
             workbook.Close();
@@ -623,7 +623,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
             int nSizeColumn;
             this.SheetCount = this.CutrefTb.Rows.Count;
             #region By Cutref
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Cutting_P02_SpreadingReportbyCutref.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Cutting_P02_SpreadingReportbyCutref.xltx";
             Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -738,7 +738,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                     {
                         if (fd.Length > fl * i)
                         {
-                            Excel.Range rangeRow13 = (Excel.Range)worksheet.Rows[13, System.Type.Missing];
+                            Excel.Range rangeRow13 = (Excel.Range)worksheet.Rows[13, Type.Missing];
                             rangeRow13.RowHeight = 19.125 * (i + 1);
                         }
                     }
@@ -774,7 +774,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                     {
                         if (spList.Length > l * i)
                         {
-                            Excel.Range rangeRow8 = (Excel.Range)worksheet.Rows[8, System.Type.Missing];
+                            Excel.Range rangeRow8 = (Excel.Range)worksheet.Rows[8, Type.Missing];
                             rangeRow8.RowHeight = 20.25 * (i + 1);
                         }
                     }
@@ -813,7 +813,7 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                     {
                         if (size.Length > l * i)
                         {
-                            Excel.Range rangeRow12 = (Excel.Range)worksheet.Rows[12, System.Type.Missing];
+                            Excel.Range rangeRow12 = (Excel.Range)worksheet.Rows[12, Type.Missing];
                             rangeRow12.RowHeight = 16.875 * (i + 1);
                         }
                     }
@@ -976,9 +976,9 @@ Where Cutref = '{0}'", cutref);
             #endregion //End By CutRef
 
             // 重製Mode以取消Copy區塊
-            worksheet.Application.CutCopyMode = Microsoft.Office.Interop.Excel.XlCutCopyMode.xlCopy;
+            worksheet.Application.CutCopyMode = Excel.XlCutCopyMode.xlCopy;
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_P02_SpreadingReportbyCutref");
+            string strExcelName = Class.MicrosoftFile.GetName("Cutting_P02_SpreadingReportbyCutref");
             Excel.Workbook workbook = excel.Workbooks[1];
             workbook.SaveAs(strExcelName);
             workbook.Close();

@@ -174,7 +174,7 @@ where id='{0}' ", this.Orderid), out dtY);
             }
 
             ((DataTable)this.listControlBindingSource1.DataSource).Rows[0].Delete();
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override void OnAttached()

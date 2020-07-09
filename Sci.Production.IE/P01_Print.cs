@@ -233,7 +233,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -294,7 +294,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\IE_P01_Print.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\IE_P01_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -476,7 +476,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("IE_P01_Print");
+            string strExcelName = Class.MicrosoftFile.GetName("IE_P01_Print");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

@@ -1,6 +1,5 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Production.Class;
 using System;
 using System.Data;
 using System.Drawing;
@@ -17,8 +16,8 @@ namespace Sci.Production.Quality
     public partial class P01_Continuity : Win.Subs.Input4
     {
         private DataRow maindr;
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
         string excelFile;
 
         public P01_Continuity(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
@@ -134,7 +133,7 @@ namespace Sci.Production.Quality
         {
             DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings Resultcell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ResulCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings ResulCell = PublicPrg.Prgs.cellResult.GetGridCell();
 
             #region Roll
             Rollcell.EditingMouseDown += (s, e) =>
@@ -379,7 +378,7 @@ and not exists
                 this.maindr["ContinuityInspector"] = this.loginID;
                 #endregion
                 #region 判斷Result 是否要寫入
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(this.maindr);
+                string[] returnstr = PublicPrg.Prgs.GetOverallResult_Status(this.maindr);
                 #endregion
                 #region  寫入實體Table
                 updatesql = string.Format(
@@ -396,7 +395,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 							         or id in (select Manager from Pass1 where id = '{0}')
 						  ) tmp
 						  for xml path('')
-						 ), 1, 1, '')", Sci.Env.User.UserID);
+						 ), 1, 1, '')", Env.User.UserID);
                 DBProxy.Current.Select(string.Empty, cmd_leader, out dt_Leader);
                 if (!MyUtility.Check.Empty(dt_Leader)
                     && dt_Leader.Rows.Count > 0)
@@ -408,7 +407,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                                      + Environment.NewLine
                                      + "Please Approve and Check Fabric Inspection";
                     this.ToExcel(true);
-                    var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, ccAddress, subject, this.excelFile, content, false, true);
+                    var email = new MailTo(Env.Cfg.MailFrom, mailto, ccAddress, subject, this.excelFile, content, false, true);
                     email.ShowDialog(this);
                 }
                 #endregion
@@ -427,7 +426,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 this.maindr["ContinuityInspector"] = string.Empty;
 
                 // 判斷Result and Status 必須先確認Continuity="",判斷才會正確
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(this.maindr);
+                string[] returnstr = PublicPrg.Prgs.GetOverallResult_Status(this.maindr);
                 this.maindr["Result"] = returnstr[0];
                 this.maindr["Status"] = returnstr[1];
                 #endregion
@@ -534,7 +533,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), this.displaySP.Text, this.displayRefno.Text, this.displayColor.Text);
 
                 this.ToExcel(true);
-                var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailCC, subject, this.excelFile, content, false, true);
+                var email = new MailTo(Env.Cfg.MailFrom, mailto, mailCC, subject, this.excelFile, content, false, true);
                 email.ShowDialog(this);
             }
             #endregion
@@ -606,7 +605,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 }
             }
             #endregion
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P01_Continuity_Report.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_P01_Continuity_Report.xltx"); // 預先開啟excel app
             objApp.Visible = false;
             MyUtility.Excel.CopyToXls(dt, string.Empty, "Quality_P01_Continuity_Report.xltx", 5, false, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
@@ -630,7 +629,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             objApp.Cells.EntireRow.AutoFit();       ////自動欄高
 
             #region Save Excel
-            this.excelFile = Sci.Production.Class.MicrosoftFile.GetName("Quality_P01_Continuity_Report");
+            this.excelFile = Class.MicrosoftFile.GetName("Quality_P01_Continuity_Report");
             objApp.ActiveWorkbook.SaveAs(this.excelFile);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
@@ -661,7 +660,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             }
 
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryNameEN", MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory", "ID")));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryNameEN", MyUtility.GetValue.Lookup("NameEN", Env.User.Factory, "Factory", "ID")));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryID", MyUtility.GetValue.Lookup("FactoryID", this.displaySP.Text, "Orders", "ID")));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("POID", this.displaySP.Text));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("StyleID", this.displayStyle.Text));

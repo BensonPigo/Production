@@ -13,8 +13,8 @@ namespace Sci.Production.Quality
 {
     public partial class P10 : Win.Tems.Input6
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string Factory = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string Factory = Env.User.Keyword;
         private int ReportNoCount = 0;
         ToolStripMenuItem edit;
 
@@ -117,7 +117,7 @@ where sd.id='{0}' order by sd.No
             string mailcc = Env.User.MailAddress;
             string subject = "Sample Garment Test - Style #:" + this.displayBoxStyle.Text + ", Season :" + this.displayBoxSeason.Text;
             string content = "Sample Garment Test - Style #:" + this.displayBoxStyle.Text + ", Season :" + this.displayBoxSeason.Text + " had been sent, please receive and confirm";
-            var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailcc, subject, null, content.ToString(), false, true);
+            var email = new MailTo(Env.Cfg.MailFrom, mailto, mailcc, subject, null, content.ToString(), false, true);
             email.ShowDialog(this);
         }
 
@@ -209,7 +209,7 @@ where sd.id='{0}' order by sd.No
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr_showname;
                     DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
@@ -324,7 +324,7 @@ where sd.id='{0}' order by sd.No
                 MaxNo = Convert.ToInt32(dt.Compute("Max(No)", string.Empty));
                 this.CurrentDetailData["No"] = MaxNo + 1;
 
-                string tmpId = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "GM", "SampleGarmentTest_Detail", DateTime.Today, 2, "ReportNo", null);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "GM", "SampleGarmentTest_Detail", DateTime.Today, 2, "ReportNo", null);
                 string head = tmpId.Substring(0, 9);
                 int seq = Convert.ToInt32(tmpId.Substring(9, 4));
 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Sci.Win.UI;
@@ -7,41 +6,34 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Class
 {
-    public partial class txtfactory : Win.UI.TextBox
+    /// <summary>
+    /// Txtfactory
+    /// </summary>
+    public partial class Txtfactory : Win.UI.TextBox
     {
-        private bool _IssupportJunk = false;
-        private bool _FilteMDivision = false;
-        private bool _boolFtyGroupList = true;
-        private bool _IsProduceFty = false;
-        private Object _MDivision;
-
+        /// <summary>
+        /// 是否要顯示 Junk 的資料
+        /// </summary>
         [Description("是否要顯示 Junk 的資料")]
-        public bool IssupportJunk
-        {
-            get { return this._IssupportJunk; }
-            set { this._IssupportJunk = value; }
-        }
+        public bool IssupportJunk { get; set; } = false;
 
+        /// <summary>
+        /// 是否需要排除非同 MDivition 的資料
+        /// </summary>
         [Description("是否需要排除非同 MDivition 的資料")]
-        public bool FilteMDivision
-        {
-            get { return this._FilteMDivision; }
-            set { this._FilteMDivision = value; }
-        }
+        public bool FilteMDivision { get; set; } = false;
 
+        /// <summary>
+        /// 是否只顯示 IsProduceFty 的資料
+        /// </summary>
         [Description("是否只顯示 IsProduceFty 的資料")]
-        public bool IsProduceFty
-        {
-            get { return this._IsProduceFty; }
-            set { this._IsProduceFty = value; }
-        }
+        public bool IsProduceFty { get; set; } = false;
 
+        /// <summary>
+        /// MDivision
+        /// </summary>
         [Description("M元件")]
-        public Object MDivision
-        {
-            get { return this._MDivision; }
-            set { this._MDivision = value; }
-        }
+        public object MDivision { get; set; }
 
         /// <summary>
         /// boolFtyGroupList
@@ -49,19 +41,17 @@ namespace Sci.Production.Class
         /// True：替換單字 FtyGroup
         /// False：替換單字 ID
         /// </summary>
-        public bool boolFtyGroupList
-        {
-            get
-            {
-                return this._boolFtyGroupList;
-            }
+        public bool BoolFtyGroupList { get; set; } = true;
 
-            set
-            {
-                this._boolFtyGroupList = value;
-            }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtfactory"/> class.
+        /// </summary>
+        public Txtfactory()
+        {
+            this.Size = new System.Drawing.Size(66, 23);
         }
 
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
@@ -82,13 +72,13 @@ namespace Sci.Production.Class
 
             if (this.FilteMDivision)
             {
-                listSqlPar.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
+                listSqlPar.Add(new SqlParameter("@MDivision", Env.User.Keyword));
                 listFilte.Add("MDivisionID = @MDivision");
             }
 
-            if (this._MDivision != null && !MyUtility.Check.Empty(((Win.UI.TextBox)this._MDivision).Text))
+            if (this.MDivision != null && !MyUtility.Check.Empty(((Win.UI.TextBox)this.MDivision).Text))
             {
-                listSqlPar.Add(new SqlParameter("@MDivision", ((Win.UI.TextBox)this._MDivision).Text));
+                listSqlPar.Add(new SqlParameter("@MDivision", ((Win.UI.TextBox)this.MDivision).Text));
                 listFilte.Add("MDivisionID = @MDivision");
             }
             #endregion
@@ -96,7 +86,7 @@ namespace Sci.Production.Class
 
             // 依boolFtyGroupList=true 顯示FtyGroup 反之顯示ID
             string strShowColumn = string.Empty;
-            if (this.boolFtyGroupList)
+            if (this.BoolFtyGroupList)
             {
                 strShowColumn = "DISTINCT FtyGroup";
             }
@@ -106,11 +96,9 @@ namespace Sci.Production.Class
             }
 
             string sqlcmd = string.Format(
-                @"
-Select {1} as Factory 
-from Production.dbo.Factory WITH (NOLOCK) 
-{0}
-order by FtyGroup", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : string.Empty, strShowColumn);
+                "Select {1} as Factory from Production.dbo.Factory WITH (NOLOCK) {0} order by FtyGroup",
+                (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : string.Empty,
+                strShowColumn);
             #endregion
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, listSqlPar, "8", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
@@ -123,13 +111,14 @@ order by FtyGroup", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\
             this.ValidateText();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
             string str = this.Text;
             #region SQL Parameter
             List<SqlParameter> listSqlPar = new List<SqlParameter>();
-            listSqlPar.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
+            listSqlPar.Add(new SqlParameter("@MDivision", Env.User.Keyword));
             listSqlPar.Add(new SqlParameter("@str", this.Text));
             #endregion
             #region SQL Filte
@@ -154,7 +143,7 @@ order by FtyGroup", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\
 
             // 依boolFtyGroupList=true 顯示FtyGroup 反之顯示ID
             string strShowColumn = string.Empty;
-            if (this.boolFtyGroupList)
+            if (this.BoolFtyGroupList)
             {
                 strShowColumn = "DISTINCT FtyGroup";
                 listFilte.Add("FtyGroup = @str");
@@ -166,10 +155,9 @@ order by FtyGroup", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\
             }
 
             string sqlcmd = string.Format(
-                @"
-Select {1}
-from Production.dbo.Factory WITH (NOLOCK) 
-{0}", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : string.Empty, strShowColumn);
+                "Select {1} from Production.dbo.Factory WITH (NOLOCK) {0}",
+                (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : string.Empty,
+                strShowColumn);
             #endregion
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
@@ -181,11 +169,6 @@ from Production.dbo.Factory WITH (NOLOCK)
                     return;
                 }
             }
-        }
-
-        public txtfactory()
-        {
-            this.Size = new System.Drawing.Size(66, 23);
         }
     }
 }

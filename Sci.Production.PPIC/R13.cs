@@ -491,7 +491,7 @@ drop table #detailResult,#tmpOrderOffLine
             this.SetCount(dtDetail.Rows.Count); // 顯示筆數
 
             Excel.Application objApp = new Excel.Application();
-            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\PPIC_R13.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\PPIC_R13.xltx", objApp);
             Excel.Worksheet worksheet;
 
 #if DEBUG

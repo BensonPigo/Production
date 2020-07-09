@@ -182,7 +182,7 @@ namespace Sci.Production.Planning
             Ict.Win.UI.DataGridViewComboBoxColumn col_inhouseosp;
 
             #region local supplier 右鍵開窗
-            DataGridViewGeneratorTextColumnSettings ts = cellsbuconNoConfirm.GetGridCell("localSuppid", "suppnm");
+            DataGridViewGeneratorTextColumnSettings ts = TxtsubconNoConfirm.CellsbuconNoConfirm.GetGridCell("localSuppid", "suppnm");
             #endregion
             this.gridFactoryID.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.gridFactoryID.DataSource = this.listControlBindingSource1;
@@ -561,11 +561,11 @@ where   a.Finished = 0
                 }
 
                 sqlcmd += string.Format(@",inhouseosp = '{0}',localsuppid='{1}'", item["inhouseosp"].ToString(), item["localsuppid"].ToString());
-                sqlcmd += string.Format(",EditName = '{0}' ,EditDate='{1}' ", Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff"));
+                sqlcmd += string.Format(",EditName = '{0}' ,EditDate='{1}' ", Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff"));
                 sqlcmd += string.Format(@" where id ='{0}' and artworktypeid = '{1}';", item["ID"], item["artworktypeid"]);
             }
 
-            if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd)))
+            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
             {
                 MyUtility.Msg.WarningBox("Save failed, Pleaes re-try");
                 return;

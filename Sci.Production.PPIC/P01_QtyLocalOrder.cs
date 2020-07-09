@@ -158,7 +158,7 @@ namespace Sci.Production.PPIC
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private void EnsureButtons()
@@ -200,7 +200,7 @@ namespace Sci.Production.PPIC
             if (!this.DoValidate())
             {
                 cancel = true;
-                return Result.True;
+                return Ict.Result.True;
             }
 
             DataTable datas, xdatas, ydatas;
@@ -294,7 +294,7 @@ namespace Sci.Production.PPIC
                 if (MyUtility.Convert.GetInt(ttlQty) != qty)
                 {
                     // updateCmds.Add(string.Format("update Order_QtyShip set Qty = {0}, EditName = '{1}', EditDate = GETDATE() where ID = '{2}';", MyUtility.Convert.GetString(qty), Sci.Env.User.UserID, orderID));
-                    updateCmds.Add(string.Format("update Order_QtyShip set Qty = {0}, OriQty = {0}, EditName = '{1}', EditDate = GETDATE() where ID = '{2}';", MyUtility.Convert.GetString(qty), Sci.Env.User.UserID, this.orderID));
+                    updateCmds.Add(string.Format("update Order_QtyShip set Qty = {0}, OriQty = {0}, EditName = '{1}', EditDate = GETDATE() where ID = '{2}';", MyUtility.Convert.GetString(qty), Env.User.UserID, this.orderID));
                 }
 
                 DataTable order_QtyShip_Detail;
@@ -313,13 +313,13 @@ namespace Sci.Production.PPIC
                             if (MyUtility.Convert.GetInt(queryData[0]["Qty"]) != MyUtility.Convert.GetInt(dr["Qty"]))
                             {
                                 // updateCmds.Add(string.Format("update Order_QtyShip_Detail set Qty = {0}, EditName = '{1}', EditDate = GETDATE() where UKey = {2};", MyUtility.Convert.GetString(dr["Qty"]), Sci.Env.User.UserID, MyUtility.Convert.GetString(queryData[0]["UKey"])));
-                                updateCmds.Add(string.Format("update Order_QtyShip_Detail set Qty = {0}, OriQty = {0}, EditName = '{1}', EditDate = GETDATE() where UKey = {2};", MyUtility.Convert.GetString(dr["Qty"]), Sci.Env.User.UserID, MyUtility.Convert.GetString(queryData[0]["UKey"])));
+                                updateCmds.Add(string.Format("update Order_QtyShip_Detail set Qty = {0}, OriQty = {0}, EditName = '{1}', EditDate = GETDATE() where UKey = {2};", MyUtility.Convert.GetString(dr["Qty"]), Env.User.UserID, MyUtility.Convert.GetString(queryData[0]["UKey"])));
                             }
                         }
                         else
                         {
                             // insertCmds.Add(string.Format("insert into Order_QtyShip_Detail(ID,Seq,Article,SizeCode,Qty,AddName,AddDate,UKey) values ('{0}','01','{1}','{2}',{3},'{4}',GETDATE(),(select MIN(UKey)-1 from Order_QtyShip_Detail));", orderID, MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"]), Sci.Env.User.UserID));
-                            insertCmds.Add(string.Format("insert into Order_QtyShip_Detail(ID,Seq,Article,SizeCode,Qty,OriQty,AddName,AddDate,UKey) values ('{0}','01','{1}','{2}',{3},{3},'{4}',GETDATE(),(select isnull(MIN(UKey),0)-1 from Order_QtyShip_Detail));", this.orderID, MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"]), Sci.Env.User.UserID));
+                            insertCmds.Add(string.Format("insert into Order_QtyShip_Detail(ID,Seq,Article,SizeCode,Qty,OriQty,AddName,AddDate,UKey) values ('{0}','01','{1}','{2}',{3},{3},'{4}',GETDATE(),(select isnull(MIN(UKey),0)-1 from Order_QtyShip_Detail));", this.orderID, MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"]), Env.User.UserID));
                         }
                     }
                 }
@@ -335,12 +335,12 @@ namespace Sci.Production.PPIC
             }
             else
             {
-                insertCmds.Add(string.Format("insert into Order_QtyShip (ID,Seq,ShipmodeID,BuyerDelivery,Qty,AddName,AddDate) values ('{0}','01',(select ShipModeList from Orders where ID = '{0}'),(select BuyerDelivery from Orders where ID = '{0}'),{1},'{2}',GETDATE());", this.orderID, MyUtility.Convert.GetString(qty), Sci.Env.User.UserID));
+                insertCmds.Add(string.Format("insert into Order_QtyShip (ID,Seq,ShipmodeID,BuyerDelivery,Qty,AddName,AddDate) values ('{0}','01',(select ShipModeList from Orders where ID = '{0}'),(select BuyerDelivery from Orders where ID = '{0}'),{1},'{2}',GETDATE());", this.orderID, MyUtility.Convert.GetString(qty), Env.User.UserID));
                 foreach (DataRow dr in datas.Rows)
                 {
                     if (dr.RowState != DataRowState.Deleted && !MyUtility.Check.Empty(dr["Qty"]))
                     {
-                        insertCmds.Add(string.Format("insert into Order_QtyShip_Detail(ID,Seq,Article,SizeCode,Qty,AddName,AddDate,UKey) values ('{0}','01','{1}','{2}',{3},'{4}',GETDATE(),(select isnull(MIN(UKey),0)-1 from Order_QtyShip_Detail));", this.orderID, MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"]), Sci.Env.User.UserID));
+                        insertCmds.Add(string.Format("insert into Order_QtyShip_Detail(ID,Seq,Article,SizeCode,Qty,AddName,AddDate,UKey) values ('{0}','01','{1}','{2}',{3},'{4}',GETDATE(),(select isnull(MIN(UKey),0)-1 from Order_QtyShip_Detail));", this.orderID, MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"]), Env.User.UserID));
                     }
                 }
             }
@@ -407,7 +407,7 @@ namespace Sci.Production.PPIC
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private void DoUndo()

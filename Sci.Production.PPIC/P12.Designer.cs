@@ -59,8 +59,8 @@
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.labelSMR = new Sci.Win.UI.Label();
             this.labelHandle = new Sci.Win.UI.Label();
-            this.txttpeuserSMR = new Sci.Production.Class.txttpeuser();
-            this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
+            this.txttpeuserSMR = new Sci.Production.Class.Txttpeuser();
+            this.txttpeuserHandle = new Sci.Production.Class.Txttpeuser();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -507,8 +507,8 @@
 
         #endregion
 
-        private Class.txttpeuser txttpeuserHandle;
-        private Class.txttpeuser txttpeuserSMR;
+        private Class.Txttpeuser txttpeuserHandle;
+        private Class.Txttpeuser txttpeuserSMR;
         private Win.UI.Label labelHandle;
         private Win.UI.Label labelSMR;
         private Win.UI.CheckBox checkJunk;

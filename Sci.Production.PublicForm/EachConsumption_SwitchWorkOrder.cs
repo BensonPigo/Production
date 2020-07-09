@@ -11,8 +11,8 @@ namespace Sci.Production.PublicForm
 {
     public partial class EachConsumption_SwitchWorkOrder : Win.Subs.Base
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
         private string cuttingid;
 
         public EachConsumption_SwitchWorkOrder(string cutid)

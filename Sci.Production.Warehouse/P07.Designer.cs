@@ -63,7 +63,7 @@
             this.comboTypeFilter = new Sci.Win.UI.ComboBox();
             this.btnDeleteAll = new Sci.Win.UI.Button();
             this.check3rdCountry = new Sci.Win.UI.CheckBox();
-            this.txtSeq1 = new Sci.Production.Class.txtSeq();
+            this.txtSeq1 = new Sci.Production.Class.TxtSeq();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -572,8 +572,8 @@
             this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.txtSeq1.Location = new System.Drawing.Point(280, 179);
             this.txtSeq1.Name = "txtSeq1";
-            this.txtSeq1.seq1 = "";
-            this.txtSeq1.seq2 = "";
+            this.txtSeq1.Seq1 = "";
+            this.txtSeq1.Seq2 = "";
             this.txtSeq1.Size = new System.Drawing.Size(61, 23);
             this.txtSeq1.TabIndex = 14;
             // 
@@ -655,6 +655,6 @@
         private Win.UI.Button btnDeleteAll;
         private Win.UI.Label labelTypeFilter;
         private Win.UI.ComboBox comboTypeFilter;
-        private Class.txtSeq txtSeq1;
+        private Class.TxtSeq txtSeq1;
     }
 }

@@ -210,7 +210,7 @@ order by orderid,a.refno,threadcolorid", this.currentID);
                 #endregion
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // To Rdlc Print
@@ -278,8 +278,8 @@ order by orderid,a.refno,threadcolorid", this.currentID);
                         Amount = Convert.ToDecimal(row1["Amount"]),
                     }).ToList();
 
-                data[0].ApvName = Production.Class.UserESignature.getUserESignature(this.dtBody.Rows[0]["apvname"].ToString(), 207, 83);
-                data[0].Lockname = Production.Class.UserESignature.getUserESignature(this.dtBody.Rows[0]["LockName"].ToString(), 207, 83);
+                data[0].ApvName = Class.UserESignature.GetUserESignature(this.dtBody.Rows[0]["apvname"].ToString(), 207, 83);
+                data[0].Lockname = Class.UserESignature.GetUserESignature(this.dtBody.Rows[0]["LockName"].ToString(), 207, 83);
 
                 report.ReportDataSource = data;
                 #endregion
@@ -333,8 +333,8 @@ order by orderid,a.refno,threadcolorid", this.currentID);
                         Amount = Convert.ToDecimal(row1["Amount"]),
                     }).ToList();
 
-                data[0].ApvName = Production.Class.UserESignature.getUserESignature(this.dtBody.Rows[0]["apvname"].ToString(), 207, 83);
-                data[0].Lockname = Production.Class.UserESignature.getUserESignature(this.dtBody.Rows[0]["LockName"].ToString(), 127, 83);
+                data[0].ApvName = Class.UserESignature.GetUserESignature(this.dtBody.Rows[0]["apvname"].ToString(), 207, 83);
+                data[0].Lockname = Class.UserESignature.GetUserESignature(this.dtBody.Rows[0]["LockName"].ToString(), 127, 83);
 
                 report.ReportDataSource = data;
                 #endregion
@@ -377,12 +377,12 @@ order by orderid,a.refno,threadcolorid", this.currentID);
 
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.dtexcel.Rows.Count);
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_P30.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_P30.xltx"); // 預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             MyUtility.Excel.CopyToXls(this.dtexcel, string.Empty, "Subcon_P30.xltx", 1, false, null, objApp);      // 將datatable copy to excel
 
             #region Save & Shwo Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_P30");
+            string strExcelName = Class.MicrosoftFile.GetName("Subcon_P30");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

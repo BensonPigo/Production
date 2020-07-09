@@ -205,7 +205,7 @@ where s.ID = @id and s.SeasonID = @seasonid and s.BrandID = @brandid and sl.Loca
                 return;
             }
 
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
     }
 }

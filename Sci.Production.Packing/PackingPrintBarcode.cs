@@ -36,11 +36,11 @@ namespace Sci.Production.Packing
             Word.Table tables = null;
 
             #region check Factory
-            string countryID = MyUtility.GetValue.Lookup(string.Format(@"Select CountryID from Factory where id = '{0}'", Sci.Env.User.Factory));
+            string countryID = MyUtility.GetValue.Lookup(string.Format(@"Select CountryID from Factory where id = '{0}'", Env.User.Factory));
             switch (countryID)
             {
                 case "VN":
-                    printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_BarcodeVN.dotx";
+                    printFile = Env.Cfg.XltPathDir + "\\Packing_P03_BarcodeVN.dotx";
                     document = winword.Documents.Add(ref printFile);
                     #region VN
                     try
@@ -125,7 +125,7 @@ namespace Sci.Production.Packing
                     break;
                 case "PH":
                 default:
-                    printFile = Sci.Env.Cfg.XltPathDir + (print_type.Equals("New") ? "\\Packing_P03_Barcode_New.dotx" : "\\Packing_P03_Barcode.dotx");
+                    printFile = Env.Cfg.XltPathDir + (print_type.Equals("New") ? "\\Packing_P03_Barcode_New.dotx" : "\\Packing_P03_Barcode.dotx");
                     document = winword.Documents.Add(ref printFile);
                     #region PH
                     try
@@ -176,7 +176,7 @@ namespace Sci.Production.Packing
                                 tables.Cell(1, 2).Range.Text = sizeQty;
                                 if (country)
                                 {
-                                    string madein = "Made in " + MyUtility.Convert.GetString(MyUtility.GetValue.Lookup($"select Alias from country where id = (select countryid from factory where id = '{Sci.Env.User.Factory}')"));
+                                    string madein = "Made in " + MyUtility.Convert.GetString(MyUtility.GetValue.Lookup($"select Alias from country where id = (select countryid from factory where id = '{Env.User.Factory}')"));
                                     string deldate = "del date: " + (MyUtility.Check.Empty(printData.Rows[i]["BuyerDelivery"]) ? string.Empty : ((DateTime)printData.Rows[i]["BuyerDelivery"]).ToString("yyyy/MM/dd"));
                                     tables.Cell(3, 1).Range.Text = madein;
                                     tables.Cell(3, 2).Range.Text = deldate;
@@ -273,7 +273,7 @@ namespace Sci.Production.Packing
             Word._Document document;
             Word.Table tables = null;
 
-            printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_QRcode.dotx";
+            printFile = Env.Cfg.XltPathDir + "\\Packing_P03_QRcode.dotx";
             document = winword.Documents.Add(ref printFile);
 
             try
@@ -385,7 +385,7 @@ namespace Sci.Production.Packing
             Word._Document document;
             Word.Table tables = null;
 
-            printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_Barcode_CustCTN.dotx";
+            printFile = Env.Cfg.XltPathDir + "\\Packing_P03_Barcode_CustCTN.dotx";
             document = winword.Documents.Add(ref printFile);
 
             try

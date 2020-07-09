@@ -270,7 +270,7 @@ namespace Sci.Production.Quality
                 }
 
                 // 第一列跟第三列開啟的Type不一樣
-                if (eve.Button == System.Windows.Forms.MouseButtons.Right && eve.RowIndex == 0)
+                if (eve.Button == MouseButtons.Right && eve.RowIndex == 0)
                 {
                     DataRow dr = this.gridAppearance.GetDataRow(eve.RowIndex);
 
@@ -312,7 +312,7 @@ namespace Sci.Production.Quality
                     dr.EndEdit();
                 }
 
-                if (eve.Button == System.Windows.Forms.MouseButtons.Right && ((!this.IsNewData && eve.RowIndex == 3) || (this.IsNewData && eve.RowIndex == 2)))
+                if (eve.Button == MouseButtons.Right && ((!this.IsNewData && eve.RowIndex == 3) || (this.IsNewData && eve.RowIndex == 2)))
                 {
                     DataRow dr = this.gridAppearance.GetDataRow(eve.RowIndex);
 
@@ -376,7 +376,7 @@ namespace Sci.Production.Quality
                 }
 
                 // 第一列跟第三列開啟的Type不一樣
-                if (eve.Button == System.Windows.Forms.MouseButtons.Right && eve.RowIndex == 0)
+                if (eve.Button == MouseButtons.Right && eve.RowIndex == 0)
                 {
                     DataRow dr = this.gridAppearance.GetDataRow(eve.RowIndex);
 
@@ -418,7 +418,7 @@ namespace Sci.Production.Quality
                     dr.EndEdit();
                 }
 
-                if (eve.Button == System.Windows.Forms.MouseButtons.Right && ((!this.IsNewData && eve.RowIndex == 3) || (this.IsNewData && eve.RowIndex == 2)))
+                if (eve.Button == MouseButtons.Right && ((!this.IsNewData && eve.RowIndex == 3) || (this.IsNewData && eve.RowIndex == 2)))
                 {
                     DataRow dr = this.gridAppearance.GetDataRow(eve.RowIndex);
 
@@ -732,7 +732,7 @@ order by seq";
                 #endregion
                 this.tab2ShrinkageSave();
                 this.tab2TwistingSave();
-                DBProxy.Current.Execute(null, $"update SampleGarmentTest_Detail set Editname = '{Sci.Env.User.UserID}',EditDate = getdate() where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]}");
+                DBProxy.Current.Execute(null, $"update SampleGarmentTest_Detail set Editname = '{Env.User.UserID}',EditDate = getdate() where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]}");
                 this.tab2Load();
 
                 this.tab3ApperanceSave();
@@ -915,7 +915,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 return;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P10_SampleGarmentWash.xltx");
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_P10_SampleGarmentWash.xltx");
             objApp.DisplayAlerts = false; // 設定Excel的警告視窗是否彈出
             Microsoft.Office.Interop.Excel.Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
 
@@ -2473,8 +2473,8 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
             #region Save & Show Excel
             string strFileName = string.Empty;
             string strPDFFileName = string.Empty;
-            strFileName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P10_SampleGarmentWash");
-            strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P10_SampleGarmentWash", Sci.Production.Class.PDFFileNameExtension.PDF);
+            strFileName = Class.MicrosoftFile.GetName("Quality_P10_SampleGarmentWash");
+            strPDFFileName = Class.MicrosoftFile.GetName("Quality_P10_SampleGarmentWash", Class.PDFFileNameExtension.PDF);
             objApp.ActiveWorkbook.SaveAs(strFileName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

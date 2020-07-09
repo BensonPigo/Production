@@ -57,7 +57,7 @@ namespace Sci.Production.Warehouse
             {
                 foreach (DataColumn dc in this.dtIssueBreakDown.Columns)
                 {
-                    if (object.ReferenceEquals(sum.GetType(), dr[dc].GetType()))
+                    if (ReferenceEquals(sum.GetType(), dr[dc].GetType()))
                     {
                         sum += (decimal)dr[dc];
                     }
@@ -700,7 +700,7 @@ order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSi
                 return;
             }
 
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
 
         public static void ProcessWithDatatable2(DataTable source, string tmp_columns, string sqlcmd, out DataTable[] result, string temptablename = "#tmp")

@@ -139,7 +139,7 @@ from (
                                                     and oq.Seq = pd.OrderShipmodeSeq
     where t.MDivisionID = '{0}' 
     --and pd.TransferDate is not null 
-    ", Sci.Env.User.Keyword));
+    ", Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(this.dateTimePicker1.Text))
             {

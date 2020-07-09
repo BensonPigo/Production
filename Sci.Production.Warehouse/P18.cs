@@ -28,7 +28,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
             this.viewer = new ReportViewer();
             this.viewer.Dock = DockStyle.Fill;
             this.di_stocktype.Add("B", "Bulk");
@@ -70,8 +70,8 @@ namespace Sci.Production.Warehouse
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
         }
@@ -143,7 +143,7 @@ where   b.id = a.mdivisionid
             DataTable dtNAME;
             DBProxy.Current.Select(
                 string.Empty,
-                string.Format(@"select NameEN from MDivision where ID='{0}'", Sci.Env.User.Keyword), out dtNAME);
+                string.Format(@"select NameEN from MDivision where ID='{0}'", Env.User.Keyword), out dtNAME);
             string RptTitle = dtNAME.Rows[0]["NameEN"].ToString();
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new ReportParameter("RptTitle", RptTitle));
@@ -363,7 +363,7 @@ where a.id = @ID", pars, out dtDetail);
             #region 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "TI", "TransferIn", (DateTime)this.CurrentMaintain["Issuedate"]);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "TI", "TransferIn", (DateTime)this.CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -408,7 +408,7 @@ where a.id = @ID", pars, out dtDetail);
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
-            this.CurrentDetailData["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentDetailData["MDivisionID"] = Env.User.Keyword;
             this.CurrentDetailData["Stocktype"] = 'B';
         }
 
@@ -897,7 +897,7 @@ when matched then
 
             List<SqlParameter> Fir_Air_Proce = new List<SqlParameter>();
             Fir_Air_Proce.Add(new SqlParameter("@ID", this.CurrentMaintain["ID"]));
-            Fir_Air_Proce.Add(new SqlParameter("@LoginID", Sci.Env.User.UserID));
+            Fir_Air_Proce.Add(new SqlParameter("@LoginID", Env.User.UserID));
 
             if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.insert_Air_Fir_TnsfIn", Fir_Air_Proce)))
             {

@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.txtCFALocation = new Sci.Production.Class.txtCFALocation();
+            this.txtCFALocation = new Sci.Production.Class.TxtCFALocation();
             this.numTTLCTNQty = new Sci.Win.UI.NumericBox();
             this.label2 = new Sci.Win.UI.Label();
             this.numSelectQty = new Sci.Win.UI.NumericBox();
@@ -495,6 +495,6 @@
         private Win.UI.Grid gridPackID;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Class.txtCFALocation txtCFALocation;
+        private Class.TxtCFALocation txtCFALocation;
     }
 }

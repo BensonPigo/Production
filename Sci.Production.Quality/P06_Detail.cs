@@ -15,7 +15,7 @@ namespace Sci.Production.Quality
 {
     public partial class P06_Detail : Win.Subs.Input4
     {
-        private string loginID = Sci.Env.User.UserID;
+        private string loginID = Env.User.UserID;
         private DataRow maindr;
         private DualResult result;
         private string PoID;
@@ -272,7 +272,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string item_cmd = string.Format("select seq1 +'-'+ seq2 AS SEQ,scirefno,refno,colorid from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and FabricType='F'", this.PoID);
@@ -312,7 +312,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string item_cmd = string.Format("select seq1 +'-'+ seq2 AS SEQ,scirefno,refno,colorid from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and FabricType='F'", this.PoID);
@@ -461,7 +461,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string item_cmd = "SELECT DISTINCT Roll,Dyelot from FtyInventory WITH (NOLOCK) where poid=@poid and Seq1=@seq1 and Seq2=@seq2 order by roll,Dyelot";
@@ -493,7 +493,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string item_cmd = "SELECT DISTINCT Roll,Dyelot from FtyInventory WITH (NOLOCK) where poid=@poid and Seq1=@seq1 and Seq2=@seq2 order by roll,Dyelot";
@@ -583,7 +583,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string item_cmd = "select id from Scale WITH (NOLOCK) where Junk=0 ";
@@ -612,7 +612,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string item_cmd = "select id from Scale WITH (NOLOCK) where Junk=0 ";
@@ -681,7 +681,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string item_cmd = "select id from Scale WITH (NOLOCK) where Junk=0 ";
@@ -709,7 +709,7 @@ namespace Sci.Production.Quality
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string item_cmd = "select id from Scale WITH (NOLOCK) where Junk=0 ";
@@ -826,7 +826,7 @@ namespace Sci.Production.Quality
             };
             #endregion
 
-            DataGridViewGeneratorTextColumnSettings resultCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings resultCell = Prgs.cellResult.GetGridCell();
             seqMskCell.TextMaskFormat = MaskFormat.ExcludePromptAndLiterals;
 
             this.Helper.Controls.Grid.Generator(this.grid)
@@ -933,7 +933,7 @@ namespace Sci.Production.Quality
                 {
                     if (this.newOven) // insert 新資料進ColorFastness
                     {
-                        this.ID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "CF", "ColorFastness", DateTime.Today, 2, "ID", null);
+                        this.ID = MyUtility.GetValue.GetID(Env.User.Keyword + "CF", "ColorFastness", DateTime.Today, 2, "ID", null);
                         this.KeyValue1 = this.ID;
                         string insCmd = @"                                            
             insert into ColorFastness(ID,POID,TestNo,InspDate,Article,Status,Inspector,Remark,addName,addDate,Temperature,Cycle,Detergent,Machine,Drying)
@@ -1002,7 +1002,7 @@ where id='{this.ID}'";
                 return;
             }
 
-            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            if (e.Button == MouseButtons.Right)
             {
                 string cmd =
                     @"select distinct oq.article 
@@ -1146,7 +1146,7 @@ where id='{this.ID}'";
                 BrandID = dtPo.Rows[0]["BrandID"].ToString();
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Quality_P06_Detail_Report.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Quality_P06_Detail_Report.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -1189,7 +1189,7 @@ where id='{this.ID}'";
             MyUtility.Msg.WaitClear();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P06_Detail_Report");
+            string strExcelName = Class.MicrosoftFile.GetName("Quality_P06_Detail_Report");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
@@ -1239,7 +1239,7 @@ where id='{this.ID}'";
                 BrandID = dtOrders.Rows[0]["BrandID"].ToString();
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Quality_P06_Detail_Report_ToPDF.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Quality_P06_Detail_Report_ToPDF.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -1314,8 +1314,8 @@ where id='{this.ID}'";
                 nSheet++;
             }
             #region Save & Show Excel
-            string strFileName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P06_Detail_Report_ToPDF");
-            string strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P06_Detail_Report_ToPDF", Sci.Production.Class.PDFFileNameExtension.PDF);
+            string strFileName = Class.MicrosoftFile.GetName("Quality_P06_Detail_Report_ToPDF");
+            string strPDFFileName = Class.MicrosoftFile.GetName("Quality_P06_Detail_Report_ToPDF", Class.PDFFileNameExtension.PDF);
             excel.ActiveWorkbook.SaveAs(strFileName);
             excel.Quit();
 

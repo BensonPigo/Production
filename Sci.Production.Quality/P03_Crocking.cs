@@ -18,7 +18,7 @@ namespace Sci.Production.Quality
 {
     public partial class P03_Crocking : Win.Subs.Input4
     {
-        private string loginID = Sci.Env.User.UserID;
+        private string loginID = Env.User.UserID;
         private DataRow maindr;
         private string ID;
 
@@ -155,7 +155,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string selectedDyelot = dr["Dyelot"].ToString();
@@ -206,7 +206,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string selectedRoll = dr["Roll"].ToString();
@@ -256,7 +256,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                         return;
                     }
 
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         DataRow dr = this.grid.GetDataRow(e.RowIndex);
                         string scalecmd = @"select id from Scale WITH (NOLOCK) where junk!=1";
@@ -283,7 +283,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string scalecmd = @"select id from Scale WITH (NOLOCK) where junk!=1";
@@ -309,7 +309,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
 
@@ -873,14 +873,14 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     #region  寫入實體Table
                     updatesql = string.Format(
                     @"Update Fir_Laboratory set CrockingEncode = 1 , Crocking='{0}',CrockingDate ='{2}',CrockingInspector = '{3}' where id ='{1}'",
-                    result, this.maindr["ID"], lastDate.ToShortDateString(), Sci.Env.User.UserID);
+                    result, this.maindr["ID"], lastDate.ToShortDateString(), Env.User.UserID);
 
                     updatesql = updatesql + string.Format(@"update FIR_Laboratory_Crocking set inspDate='{1}' where id='{0}'", this.maindr["ID"], Today);
                 }
                 else
                 {
                     updatesql = string.Format(
-                    @"Update Fir_Laboratory set CrockingEncode = 1,Crocking='{0}',CrockingInspector = '{2}'  where id ='{1}'", result, this.maindr["ID"], Sci.Env.User.UserID);
+                    @"Update Fir_Laboratory set CrockingEncode = 1,Crocking='{0}',CrockingInspector = '{2}'  where id ='{1}'", result, this.maindr["ID"], Env.User.UserID);
                 }
 
                 #endregion
@@ -920,7 +920,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 }
             }
             #region Over All Result 寫入
-            string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Lab(this.maindr["ID"]);
+            string[] returnstr = Prgs.GetOverallResult_Lab(this.maindr["ID"]);
             this.maindr["Result"] = returnstr[0];
             string cmdResult = @"update Fir_Laboratory set Result=@Result where id=@id";
             List<SqlParameter> spam = new List<SqlParameter>();
@@ -1011,7 +1011,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             excel.Cells.EntireRow.AutoFit();       ////自動欄高
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P03_Crocking_Test");
+            string strExcelName = Class.MicrosoftFile.GetName("Quality_P03_Crocking_Test");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
@@ -1092,7 +1092,7 @@ order by fd.InspDate,oc.article
                 return;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P03_Crocking_Test_for_PDF.xltx");
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_P03_Crocking_Test_for_PDF.xltx");
 
             objApp.DisplayAlerts = false; // 設定Excel的警告視窗是否彈出
             for (int i = 1; i < dt.Rows.Count; i++)
@@ -1324,8 +1324,8 @@ where bof.id='{this.maindr["POID"]}' and p.seq1='{this.maindr["seq1"]}' and p.se
             #region Save & Show Excel
             string strFileName = string.Empty;
             string strPDFFileName = string.Empty;
-            strFileName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P03_Crocking_Test_for_PDF");
-            strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P03_Crocking_Test_for_PDF", Sci.Production.Class.PDFFileNameExtension.PDF);
+            strFileName = Class.MicrosoftFile.GetName("Quality_P03_Crocking_Test_for_PDF");
+            strPDFFileName = Class.MicrosoftFile.GetName("Quality_P03_Crocking_Test_for_PDF", Class.PDFFileNameExtension.PDF);
             objApp.ActiveWorkbook.SaveAs(strFileName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

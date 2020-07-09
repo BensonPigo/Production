@@ -17,7 +17,7 @@ namespace Sci.Production.Warehouse
         {
             this.InitializeComponent();
             this.InsertDetailGridOnDoubleClick = false;
-            this.DefaultFilter = string.Format("Type='R' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("Type='R' and MDivisionID = '{0}'", Env.User.Keyword);
             this.gridicon.Append.Enabled = false;
             this.gridicon.Append.Visible = false;
             this.gridicon.Insert.Enabled = false;
@@ -28,8 +28,8 @@ namespace Sci.Production.Warehouse
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "R";
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
@@ -112,7 +112,7 @@ Original Qty and Current Qty can't be equal!!",
 update AdjustLocal_detail
 set StockType='R',
 MDivisionID='{0}'
-where id='{1}'", Sci.Env.User.Keyword, this.CurrentMaintain["ID"]);
+where id='{1}'", Env.User.Keyword, this.CurrentMaintain["ID"]);
             if (!(result = DBProxy.Current.Execute(null, sqlUpd)))
             {
                 this.ShowErr(sqlUpd, result);
@@ -122,7 +122,7 @@ where id='{1}'", Sci.Env.User.Keyword, this.CurrentMaintain["ID"]);
             // 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "LM", "AdjustLocal", (DateTime)this.CurrentMaintain["Issuedate"], 2, "ID", null);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "LM", "AdjustLocal", (DateTime)this.CurrentMaintain["Issuedate"], 2, "ID", null);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");

@@ -174,7 +174,7 @@ where Type='TP' and Junk=0";
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string importFileName = openFileDialog.FileName;
-                using (StreamReader reader = new StreamReader(importFileName, System.Text.Encoding.UTF8))
+                using (StreamReader reader = new StreamReader(importFileName, Encoding.UTF8))
                 {
                     this.ShowWaitMessage("Processing....");
                     string line;

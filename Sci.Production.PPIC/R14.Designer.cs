@@ -38,11 +38,11 @@
             this.labBuyerDelivery = new Sci.Win.UI.Label();
             this.labStatus = new Sci.Win.UI.Label();
             this.txtSpNo2 = new Sci.Win.UI.TextBox();
-            this.txtBrand = new Sci.Production.Class.txtbrand();
-            this.comboDropDownList = new Sci.Production.Class.comboDropDownList(this.components);
+            this.txtBrand = new Sci.Production.Class.Txtbrand();
+            this.comboDropDownList = new Sci.Production.Class.ComboDropDownList(this.components);
             this.label1 = new System.Windows.Forms.Label();
             this.labM = new Sci.Win.UI.Label();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.SuspendLayout();
             // 
             // print
@@ -260,10 +260,10 @@
         private Win.UI.Label labBuyerDelivery;
         private Win.UI.Label labStatus;
         private Win.UI.TextBox txtSpNo2;
-        private Class.txtbrand txtBrand;
-        private Class.comboDropDownList comboDropDownList;
+        private Class.Txtbrand txtBrand;
+        private Class.ComboDropDownList comboDropDownList;
         private System.Windows.Forms.Label label1;
         private Win.UI.Label labM;
-        private Class.txtMdivision txtMdivision;
+        private Class.TxtMdivision txtMdivision;
     }
 }

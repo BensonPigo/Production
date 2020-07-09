@@ -5,18 +5,21 @@ using System.Configuration;
 
 namespace Sci.Production
 {
-    static class Program
+    /// <summary>
+    /// Program
+    /// </summary>
+    public static class Program
     {
         /// <summary>
         /// 應用程式的主要進入點。
         /// </summary>
         [STAThread]
-        static void Main(string[] args = null)
+        private static void Main(string[] args = null)
         {
             // Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Sci.Env.AppInit();
+            Env.AppInit();
             DBProxy.Current.DefaultTimeout = 300;  // 加長時間為5分鐘，避免timeout
 
             bool clearTaipeiServer = true;
@@ -52,7 +55,7 @@ namespace Sci.Production
             Application.Run(new Main());
 
             // }
-            Sci.Env.AppShutdown();
+            Env.AppShutdown();
         }
 
         // public static void DirectOpenForm(string[] args)

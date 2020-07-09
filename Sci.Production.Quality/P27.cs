@@ -36,7 +36,7 @@ namespace Sci.Production.Quality
         {
             this.EditMode = true;
             base.OnFormLoaded();
-            this.txtCFALocation.M = Sci.Env.User.Keyword;
+            this.txtCFALocation.M = Env.User.Keyword;
 
             Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
             comboBox1_RowSource.Add("1", string.Empty);
@@ -81,7 +81,7 @@ namespace Sci.Production.Quality
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("QtyPerCTN", header: "PC/Ctn", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("ShipQty", header: "Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .CellCFALocation("CFALocationID", header: "Location No", width: Widths.AnsiChars(10), M: Sci.Env.User.Keyword).Get(out this.col_location)
+            .CellCFALocation("CFALocationID", header: "Location No", width: Widths.AnsiChars(10), m: Env.User.Keyword).Get(out this.col_location)
             .Text("Remark", header: "Remarks", width: Widths.AnsiChars(10))
             ;
         }
@@ -212,7 +212,7 @@ namespace Sci.Production.Quality
                                 sp7.ParameterName = "@EditCFALocationDate";
                                 sp7.Value = DateTime.Now;
                                 sp8.ParameterName = "@EditCFALocationName";
-                                sp8.Value = Sci.Env.User.UserID;
+                                sp8.Value = Env.User.UserID;
                             }
 
                             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
@@ -227,7 +227,7 @@ namespace Sci.Production.Quality
                                 cmds.Add(sp8);
                             }
                             #endregion
-                            DualResult result = Sci.Data.DBProxy.Current.Execute(null, updateCmd, cmds);
+                            DualResult result = DBProxy.Current.Execute(null, updateCmd, cmds);
                             if (!result)
                             {
                                 lastResult = false;
@@ -388,7 +388,7 @@ namespace Sci.Production.Quality
                 // 讀檔案
                 string wheresql = string.Empty;
                 this.whereS = string.Empty;
-                using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, System.Text.Encoding.UTF8))
+                using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, Encoding.UTF8))
                 {
                     string line;
                     while ((line = reader.ReadLine()) != null)
@@ -480,7 +480,7 @@ from (
 		        and PLD.TransferCFADate is not null
 		        and PLD.CFAReceiveDate is not null
                 and PLD.CTNQty = 1
-                and orders.MDivisionID =  '{0}'", Sci.Env.User.Keyword));
+                and orders.MDivisionID =  '{0}'", Env.User.Keyword));
             #region 組條件
             if (!isimport)
             {

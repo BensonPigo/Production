@@ -62,7 +62,7 @@ isnull((select SUM(c.Qty)
 
             this.sewingqty.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     DataRow dr = this.gridSewingOutput.GetDataRow<DataRow>(e.RowIndex);
                     P01_ProductionOutput_SewingDetail callNextForm = new P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "S", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
@@ -72,7 +72,7 @@ isnull((select SUM(c.Qty)
 
             this.t.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     DataRow dr = this.gridSewingOutput.GetDataRow<DataRow>(e.RowIndex);
                     P01_ProductionOutput_SewingDetail callNextForm = new P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "T", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
@@ -82,7 +82,7 @@ isnull((select SUM(c.Qty)
 
             this.b.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     DataRow dr = this.gridSewingOutput.GetDataRow<DataRow>(e.RowIndex);
                     P01_ProductionOutput_SewingDetail callNextForm = new P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "B", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
@@ -92,7 +92,7 @@ isnull((select SUM(c.Qty)
 
             this.i.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     DataRow dr = this.gridSewingOutput.GetDataRow<DataRow>(e.RowIndex);
                     P01_ProductionOutput_SewingDetail callNextForm = new P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "I", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
@@ -102,7 +102,7 @@ isnull((select SUM(c.Qty)
 
             this.o.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     DataRow dr = this.gridSewingOutput.GetDataRow<DataRow>(e.RowIndex);
                     P01_ProductionOutput_SewingDetail callNextForm = new P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "O", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
@@ -185,7 +185,7 @@ isnull((select SUM(c.Qty)
 
             this.cuttingqty.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     DataRow dr = this.gridCutting.GetDataRow<DataRow>(e.RowIndex);
                     P01_ProductionOutput_CuttingDetail callNextForm = new P01_ProductionOutput_CuttingDetail(this.cuttingWorkType, MyUtility.Convert.GetString(this.masterData["ID"]), "C", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
@@ -209,7 +209,7 @@ isnull((select SUM(c.Qty)
 
             this.loadoutput.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     DataRow dr = this.gridLoading.GetDataRow<DataRow>(e.RowIndex);
                     P01_ProductionOutput_LoadingoutputDetail callNextForm = new P01_ProductionOutput_LoadingoutputDetail(MyUtility.Convert.GetString(this.masterData["ID"]), "S", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));

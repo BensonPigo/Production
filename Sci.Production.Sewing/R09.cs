@@ -134,11 +134,11 @@ drop table #tmp
             this.SetCount(this.printData.Rows.Count);
 
             string excelFile = "Sewing_R09";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + excelFile + ".xltx"); // 開excelapp
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + excelFile + ".xltx"); // 開excelapp
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, excelFile + ".xltx", 1, false, null, excelApp, false, null, false);
 
             #region Save Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(excelFile);
+            string strExcelName = Class.MicrosoftFile.GetName(excelFile);
             Excel.Workbook workbook = excelApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
 

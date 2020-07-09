@@ -42,7 +42,7 @@ namespace Sci.Production.PPIC
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.printData = this.gridData.Select(string.Format("{0}{1}", MyUtility.Check.Empty(this.readyDate1) ? "1 = 1" : "ReadyDate >= '" + this.readyDate1 + "'", MyUtility.Check.Empty(this.readyDate2) ? string.Empty : " and ReadyDate <= '" + this.readyDate2 + "'"));
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -54,7 +54,7 @@ namespace Sci.Production.PPIC
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_P05_Print.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\PPIC_P05_Print.xltx";
             Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -68,7 +68,7 @@ namespace Sci.Production.PPIC
                 @"
 select  NameEN
 from Factory
-where ID = '{0}'", Sci.Env.User.Factory));
+where ID = '{0}'", Env.User.Factory));
             worksheet.PageSetup.LeftHeader = string.Format("\n\nUp to SCI Delivery : {0}      Ready Date : {1} ~ {2}", this.strUp2SCIDelivery, this.readyDate1, this.readyDate2);
             worksheet.PageSetup.CenterHeader = string.Format("{0}\nProduction Schedule", factoryName);
             #endregion
@@ -108,7 +108,7 @@ where ID = '{0}'", Sci.Env.User.Factory));
             worksheet.Columns.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P05_Print");
+            string strExcelName = Class.MicrosoftFile.GetName("PPIC_P05_Print");
             Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

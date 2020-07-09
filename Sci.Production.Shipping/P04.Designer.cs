@@ -69,13 +69,13 @@
             this.dateDoxRcvDate = new Sci.Win.UI.DateBox();
             this.btnExpenseData = new Sci.Win.UI.Button();
             this.btnImportData = new Sci.Win.UI.Button();
-            this.txtUserHandle = new Sci.Production.Class.txtuser();
-            this.txtdropdownlistContainerType = new Sci.Production.Class.txtdropdownlist();
-            this.txtSubconForwarder = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtUserHandle = new Sci.Production.Class.Txtuser();
+            this.txtdropdownlistContainerType = new Sci.Production.Class.Txtdropdownlist();
+            this.txtSubconForwarder = new Sci.Production.Class.TxtsubconNoConfirm();
             this.labSisFtyWk = new Sci.Win.UI.Label();
             this.txtSisFtyWK = new Sci.Win.UI.TextBox();
             this.labShipper = new Sci.Win.UI.Label();
-            this.txtLocalSupp = new Sci.Production.Class.txtLocalSupp();
+            this.txtLocalSupp = new Sci.Production.Class.TxtLocalSupp();
             this.labOnBoard = new Sci.Win.UI.Label();
             this.dateOnBoardDate = new Sci.Win.UI.DateBox();
             this.comboShippMode = new Sci.Win.UI.ComboBox();
@@ -773,9 +773,9 @@
             this.txtSubconForwarder.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Forwarder", true));
             this.txtSubconForwarder.DisplayBox1Binding = "";
             this.txtSubconForwarder.IsIncludeJunk = false;
-            this.txtSubconForwarder.isMisc = false;
-            this.txtSubconForwarder.isShipping = false;
-            this.txtSubconForwarder.isSubcon = false;
+            this.txtSubconForwarder.IsMisc = false;
+            this.txtSubconForwarder.IsShipping = false;
+            this.txtSubconForwarder.IsSubcon = false;
             this.txtSubconForwarder.Location = new System.Drawing.Point(109, 61);
             this.txtSubconForwarder.Name = "txtSubconForwarder";
             this.txtSubconForwarder.Size = new System.Drawing.Size(170, 23);
@@ -956,7 +956,7 @@
 
         private Win.UI.NumericBox numCBM;
         private Win.UI.NumericBox numPackages;
-        private Class.txtdropdownlist txtdropdownlistContainerType;
+        private Class.Txtdropdownlist txtdropdownlistContainerType;
         private Win.UI.Label labelNWGW;
         private Win.UI.Label labelCBM;
         private Win.UI.Label labelPackages;
@@ -973,7 +973,7 @@
         private Win.UI.TextBox txtPortofLoading;
         private Win.UI.TextBox txtConsignee;
         private Win.UI.TextBox txtInvoiceNo;
-        private Class.txtsubconNoConfirm txtSubconForwarder;
+        private Class.TxtsubconNoConfirm txtSubconForwarder;
         private Win.UI.DisplayBox displayFtyWKNo;
         private Win.UI.Label labelPortofDischarge;
         private Win.UI.Label labelPortofLoading;
@@ -995,12 +995,12 @@
         private Win.UI.DateBox dateArrivePortDate;
         private Win.UI.TextBox txtVslvoyFltNo;
         private Win.UI.TextBox txtBLAWBNo;
-        private Class.txtuser txtUserHandle;
+        private Class.Txtuser txtUserHandle;
         private Win.UI.Button btnImportData;
         private Win.UI.Button btnExpenseData;
         private Win.UI.TextBox txtSisFtyWK;
         private Win.UI.Label labSisFtyWk;
-        private Class.txtLocalSupp txtLocalSupp;
+        private Class.TxtLocalSupp txtLocalSupp;
         private Win.UI.Label labShipper;
         private Win.UI.Label labOnBoard;
         private Win.UI.DateBox dateOnBoardDate;

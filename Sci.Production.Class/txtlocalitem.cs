@@ -11,50 +11,43 @@ using Sci.Win.Tools;
 
 namespace Sci.Production.Class
 {
-    public partial class txtlocalitem : Win.UI.TextBox
+    /// <summary>
+    /// Txtlocalitem
+    /// </summary>
+    public partial class Txtlocalitem : Win.UI.TextBox
     {
         private string category = string.Empty;
         private string localSupp = string.Empty;
-        private Control categoryObject; // 欄位.存入要取值的<控制項>
-        private Control localSuppObject;
         private string where;
 
-        // 屬性. 利用字串來設定要存取的<控制項>
-        [Category("Custom Properties")]
-        public Control CategoryObjectName
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtlocalitem"/> class.
+        /// </summary>
+        public Txtlocalitem()
         {
-            get
-            {
-                return this.categoryObject;
-            }
-
-            set
-            {
-                this.categoryObject = value;
-            }
+            this.Width = 150;
         }
 
+        /// <summary>
+        /// 屬性. 利用字串來設定要存取的<控制項>
+        /// </summary>
         [Category("Custom Properties")]
-        public Control LocalSuppObjectName
-        {
-            get
-            {
-                return this.localSuppObject;
-            }
+        public Control CategoryObjectName { get; set; }
 
-            set
-            {
-                this.localSuppObject = value;
-            }
-        }
+        /// <summary>
+        /// Custom Properties
+        /// </summary>
+        [Category("Custom Properties")]
+        public Control LocalSuppObjectName { get; set; }
 
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
             this.where = "Where junk = 0";
-            if (this.categoryObject != null)
+            if (this.CategoryObjectName != null)
             {
-                this.category = this.categoryObject.Text;
+                this.category = this.CategoryObjectName.Text;
                 if (!string.IsNullOrWhiteSpace(this.category))
                 {
                     if (this.category.ToUpper() == "THREAD")
@@ -68,9 +61,9 @@ namespace Sci.Production.Class
                 }
             }
 
-            if (this.localSuppObject != null)
+            if (this.LocalSuppObjectName != null)
             {
-                this.localSupp = this.localSuppObject.Text;
+                this.localSupp = this.LocalSuppObjectName.Text;
                 if (!string.IsNullOrWhiteSpace(this.localSupp))
                 {
                     this.where = this.where + string.Format(" and Localsuppid = '{0}'", this.localSupp);
@@ -90,6 +83,7 @@ namespace Sci.Production.Class
             this.Text = item.GetSelectedString();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -97,9 +91,9 @@ namespace Sci.Production.Class
             this.where = string.Format("Where junk = 0 and Refno = '{0}'", str);
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                if (this.categoryObject != null)
+                if (this.CategoryObjectName != null)
                 {
-                    this.category = this.categoryObject.Text;
+                    this.category = this.CategoryObjectName.Text;
 
                     if (!string.IsNullOrWhiteSpace(this.category))
                     {
@@ -114,9 +108,9 @@ namespace Sci.Production.Class
                     }
                 }
 
-                if (this.localSuppObject != null)
+                if (this.LocalSuppObjectName != null)
                 {
-                    this.localSupp = this.localSuppObject.Text;
+                    this.localSupp = this.LocalSuppObjectName.Text;
                     if (!string.IsNullOrWhiteSpace(this.localSupp))
                     {
                         this.where = this.where + " and LocalSuppid = @LocalSupp";
@@ -167,54 +161,112 @@ namespace Sci.Production.Class
             }
         }
 
-        public txtlocalitem()
+        /// <summary>
+        /// Celllocalitem
+        /// </summary>
+        public class Celllocalitem : DataGridViewGeneratorTextColumnSettings
         {
-            this.Width = 150;
-        }
-    }
+            /// <summary>
+            /// SupportPopup
+            /// </summary>
+            public bool SupportPopup { get; set; } = true;
 
-    public class celllocalitem : DataGridViewGeneratorTextColumnSettings
-    {
-        public bool SupportPopup = true;
-
-        public static DataGridViewGeneratorTextColumnSettings GetGridCell(string category, string localSupp = null, string setColumnname = null)
-        {
-            // pur 為ture 表示需判斷PurchaseFrom
-            celllocalitem ts = new celllocalitem();
-            string where = "Where LI.junk=0 ";
-            if (category != null)
+            /// <summary>
+            /// GetGridCell
+            /// </summary>
+            /// <param name="category">LocalItem Category</param>
+            /// <param name="localSupp">LocalItem Localsupp ID</param>
+            /// <param name="setColumnname">Column Name</param>
+            /// <returns>DataGridViewGeneratorTextColumnSettings</returns>
+            public static DataGridViewGeneratorTextColumnSettings GetGridCell(string category, string localSupp = null, string setColumnname = null)
             {
-                if (!string.IsNullOrWhiteSpace(category))
+                // pur 為ture 表示需判斷PurchaseFrom
+                Celllocalitem ts = new Celllocalitem();
+                string where = "Where LI.junk=0 ";
+                if (category != null)
                 {
-                    if (category.ToUpper() == "THREAD")
+                    if (!string.IsNullOrWhiteSpace(category))
                     {
-                        where = where + string.Format(" and LI.Category like '%{0}%'", category);
-                    }
-                    else
-                    {
-                        where = where + string.Format(" and LI.Category = '{0}'", category);
+                        if (category.ToUpper() == "THREAD")
+                        {
+                            where = where + string.Format(" and LI.Category like '%{0}%'", category);
+                        }
+                        else
+                        {
+                            where = where + string.Format(" and LI.Category = '{0}'", category);
+                        }
                     }
                 }
-            }
 
-            if (localSupp != null)
-            {
-                if (!string.IsNullOrWhiteSpace(localSupp))
+                if (localSupp != null)
                 {
-                    where = where + string.Format(" and LI.Localsuppid = '{0}'", localSupp);
-                }
-            }
-
-            ts.EditingMouseDown += (s, e) =>
-            {
-                // 右鍵彈出功能
-                if (e.Button == MouseButtons.Right)
-                {
-                    if (!ts.SupportPopup)
+                    if (!string.IsNullOrWhiteSpace(localSupp))
                     {
-                        return;
+                        where = where + string.Format(" and LI.Localsuppid = '{0}'", localSupp);
                     }
+                }
 
+                ts.EditingMouseDown += (s, e) =>
+                {
+                    // 右鍵彈出功能
+                    if (e.Button == MouseButtons.Right)
+                    {
+                        if (!ts.SupportPopup)
+                        {
+                            return;
+                        }
+
+                        DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+
+                        // Parent form 若是非編輯狀態就 return
+                        if (!((Win.Forms.Base)grid.FindForm()).EditMode)
+                        {
+                            return;
+                        }
+
+                        DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
+                        SelectItem sele;
+
+                        sele = new SelectItem("Select LI.Refno,LI.LocalSuppid, LI.LocalSuppid+'-'+LS.Name as supp, LI.category, LI.description ,LI.ThreadTex ,LI.ThreadTypeID,LI.MeterToCone,LI.Weight,LI.AxleWeight From LocalItem LI WITH (NOLOCK) left join LocalSupp LS WITH (NOLOCK) on LI.LocalSuppid=LS.ID " + where, "23", row["refno"].ToString(), false, ",");
+                        DialogResult result = sele.ShowDialog();
+                        if (result == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+
+                        var sellist = sele.GetSelecteds();
+                        if (setColumnname != null)
+                        {
+                            int count = 1;
+                            var columnnamelist = setColumnname.Split(',');
+                            foreach (var columnname in columnnamelist)
+                            {
+                                if (columnname != string.Empty)
+                                {
+                                    row[columnname] = sellist[0][count];
+                                }
+
+                                count++;
+                            }
+
+                            // if (Columnname[0] != "") row[Columnname[0]] = sellist[0][1];    //LocalSuppid
+                            // if (Columnname[1] != "") row[Columnname[1]] = sellist[0][2];    //supp
+                            // if (Columnname[2] != "") row[Columnname[2]] = sellist[0][3];    //category
+                            // if (Columnname[3] != "") row[Columnname[3]] = sellist[0][4];    //description
+                            // if (Columnname[4] != "") row[Columnname[4]] = sellist[0][5];    //ThreadTex
+                            // if (Columnname[5] != "") row[Columnname[5]] = sellist[0][6];    //ThreadTypeID
+                            // if (Columnname[6] != "") row[Columnname[6]] = sellist[0][7];    //MeterToCone
+                            // if (Columnname[7] != "") row[Columnname[7]] = sellist[0][8];    //Weight
+                            // if (Columnname[8] != "") row[Columnname[8]] = sellist[0][9];    //AxleWeight
+                        }
+
+                        e.EditingControl.Text = sele.GetSelectedString();       // Refno
+                    }
+                };
+
+                // 正確性檢查
+                ts.CellValidating += (s, e) =>
+                {
                     DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
                     // Parent form 若是非編輯狀態就 return
@@ -223,77 +275,27 @@ namespace Sci.Production.Class
                         return;
                     }
 
+                    // 右鍵彈出功能
                     DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
-                    SelectItem sele;
+                    string oldValue = row["refno"].ToString();
+                    string newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
+                    string sql;
 
-                    sele = new SelectItem("Select LI.Refno,LI.LocalSuppid, LI.LocalSuppid+'-'+LS.Name as supp, LI.category, LI.description ,LI.ThreadTex ,LI.ThreadTypeID,LI.MeterToCone,LI.Weight,LI.AxleWeight From LocalItem LI WITH (NOLOCK) left join LocalSupp LS WITH (NOLOCK) on LI.LocalSuppid=LS.ID " + where, "23", row["refno"].ToString(), false, ",");
-                    DialogResult result = sele.ShowDialog();
-                    if (result == DialogResult.Cancel)
+                    sql = string.Format("Select Refno, LocalSuppid, category, description From LocalItem LI WITH (NOLOCK) " + where + " and refno ='{0}'", newValue);
+                    if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)
                     {
-                        return;
-                    }
-
-                    var sellist = sele.GetSelecteds();
-                    if (setColumnname != null)
-                    {
-                        int count = 1;
-                        var Columnnamelist = setColumnname.Split(',');
-                        foreach (var Columnname in Columnnamelist)
+                        if (!MyUtility.Check.Seek(sql))
                         {
-                            if (Columnname != string.Empty)
-                            {
-                                row[Columnname] = sellist[0][count];
-                            }
-
-                            count++;
+                            row["refno"] = string.Empty;
+                            row.EndEdit();
+                            e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< Local item: {0}> not found.", newValue));
+                            return;
                         }
-
-                        // if (Columnname[0] != "") row[Columnname[0]] = sellist[0][1];    //LocalSuppid
-                        // if (Columnname[1] != "") row[Columnname[1]] = sellist[0][2];    //supp
-                        // if (Columnname[2] != "") row[Columnname[2]] = sellist[0][3];    //category
-                        // if (Columnname[3] != "") row[Columnname[3]] = sellist[0][4];    //description
-                        // if (Columnname[4] != "") row[Columnname[4]] = sellist[0][5];    //ThreadTex
-                        // if (Columnname[5] != "") row[Columnname[5]] = sellist[0][6];    //ThreadTypeID
-                        // if (Columnname[6] != "") row[Columnname[6]] = sellist[0][7];    //MeterToCone
-                        // if (Columnname[7] != "") row[Columnname[7]] = sellist[0][8];    //Weight
-                        // if (Columnname[8] != "") row[Columnname[8]] = sellist[0][9];    //AxleWeight
                     }
-
-                    e.EditingControl.Text = sele.GetSelectedString();       // Refno
-                }
-            };
-
-            // 正確性檢查
-            ts.CellValidating += (s, e) =>
-            {
-                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
-
-                // Parent form 若是非編輯狀態就 return
-                if (!((Win.Forms.Base)grid.FindForm()).EditMode)
-                {
-                    return;
-                }
-
-                // 右鍵彈出功能
-                DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
-                String oldValue = row["refno"].ToString();
-                String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
-                string sql;
-
-                sql = string.Format("Select Refno, LocalSuppid, category, description From LocalItem LI WITH (NOLOCK) " + where + " and refno ='{0}'", newValue);
-                if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)
-                {
-                    if (!MyUtility.Check.Seek(sql))
-                    {
-                        row["refno"] = string.Empty;
-                        row.EndEdit();
-                        e.Cancel = true;
-                        MyUtility.Msg.WarningBox(string.Format("< Local item: {0}> not found.", newValue));
-                        return;
-                    }
-                }
-            };
-            return ts;
+                };
+                return ts;
+            }
         }
     }
 }

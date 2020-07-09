@@ -99,7 +99,7 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]))
         {
             if (!MyUtility.Check.Empty(this.datePulloutDate.Value) && this.datePulloutDate.OldValue != this.datePulloutDate.Value)
             {
-                if (this.CheckPullout((DateTime)MyUtility.Convert.GetDate(this.datePulloutDate.Value), MyUtility.Convert.GetString(Sci.Env.User.Keyword)))
+                if (this.CheckPullout((DateTime)MyUtility.Convert.GetDate(this.datePulloutDate.Value), MyUtility.Convert.GetString(Env.User.Keyword)))
                 {
                     this.PulloutMsg(null, (DateTime)MyUtility.Convert.GetDate(this.datePulloutDate.Value));
                     this.datePulloutDate.Value = null;
@@ -193,7 +193,7 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]))
                 }
             }
 
-            updateCmds.Add($"UPDATE ShipPlan Set EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'");
+            updateCmds.Add($"UPDATE ShipPlan Set EditDate=GETDATE(),EditName='{Env.User.UserID}'");
 
             DualResult result;
             if (updateCmds.Count != 0)

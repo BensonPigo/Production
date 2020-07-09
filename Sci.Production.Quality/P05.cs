@@ -20,8 +20,8 @@ namespace Sci.Production.Quality
 
         // 宣告Context Menu Item
         ToolStripMenuItem delete;
-        private string loginID = Sci.Env.User.UserID;
-        private string Factory = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string Factory = Env.User.Keyword;
         private new bool IsSupportEdit = true;
 
         public P05(ToolStripMenuItem menuitem)
@@ -71,7 +71,7 @@ namespace Sci.Production.Quality
                 DateTime? targT = null;
                 if (!MyUtility.Check.Empty(drEarly["CUTINLINE"]) && !MyUtility.Check.Empty(drSci["MinSciDelivery"]))
                 {
-                    targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(drEarly["CUTINLINE"], drSci["MinSciDelivery"]);
+                    targT = PublicPrg.Prgs.GetTargetLeadTime(drEarly["CUTINLINE"], drSci["MinSciDelivery"]);
                 }
 
                 if (targT != null)
@@ -291,7 +291,7 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
             }
             else
             {
-                if (MyUtility.Msg.WarningBox("Do you want to delete the data? \n(No of Test = " + dr["Testno"].ToString() + ")", buttons: MessageBoxButtons.OKCancel) == System.Windows.Forms.DialogResult.OK)
+                if (MyUtility.Msg.WarningBox("Do you want to delete the data? \n(No of Test = " + dr["Testno"].ToString() + ")", buttons: MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
                     List<SqlParameter> spam = new List<SqlParameter>();
                     spam.Add(new SqlParameter("@id", this.CurrentDetailData["ID"].ToString()));
@@ -371,9 +371,9 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
 
             foreach (DataRow dr in dt.Rows)
             {
-                dr["LastUpdate"] = Sci.Production.Class.Commons.UserPrg.GetName(
+                dr["LastUpdate"] = Class.Commons.UserPrg.GetName(
                     MyUtility.Check.Empty(dt.Rows[i]["EditName"].ToString()) ?
-                    dt.Rows[i]["addName"].ToString() : dt.Rows[i]["EditName"].ToString(), Sci.Production.Class.Commons.UserPrg.NameType.nameOnly) + " - " + (
+                    dt.Rows[i]["addName"].ToString() : dt.Rows[i]["EditName"].ToString(), Class.Commons.UserPrg.NameType.NameOnly) + " - " + (
                     MyUtility.Check.Empty(dt.Rows[i]["EditDate"].ToString()) ?
                     ((DateTime)dt.Rows[i]["addDate"]).ToString("yyyy/MM/dd HH:mm:ss") :
                     ((DateTime)dt.Rows[i]["EditDate"]).ToString("yyyy/MM/dd HH:mm:ss"));

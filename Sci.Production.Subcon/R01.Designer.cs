@@ -39,14 +39,14 @@
             this.comboOrderBy = new Sci.Win.UI.ComboBox();
             this.txtSPNO = new Sci.Win.UI.TextBox();
             this.checkOutstanding = new Sci.Win.UI.CheckBox();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
-            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
+            this.txtsubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
+            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.Txtartworktype_fty();
+            this.txtstyle = new Sci.Production.Class.Txtstyle();
             this.labelM = new Sci.Win.UI.Label();
-            this.txtMdivisionM = new Sci.Production.Class.txtMdivision();
+            this.txtMdivisionM = new Sci.Production.Class.TxtMdivision();
             this.label9 = new Sci.Win.UI.Label();
             this.labelBrand = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.SuspendLayout();
             // 
             // print
@@ -186,9 +186,9 @@
             // 
             this.txtsubconSupplier.DisplayBox1Binding = "";
             this.txtsubconSupplier.IsIncludeJunk = true;
-            this.txtsubconSupplier.isMisc = false;
-            this.txtsubconSupplier.isShipping = false;
-            this.txtsubconSupplier.isSubcon = false;
+            this.txtsubconSupplier.IsMisc = false;
+            this.txtsubconSupplier.IsShipping = false;
+            this.txtsubconSupplier.IsSubcon = false;
             this.txtsubconSupplier.Location = new System.Drawing.Point(115, 152);
             this.txtsubconSupplier.Name = "txtsubconSupplier";
             this.txtsubconSupplier.Size = new System.Drawing.Size(170, 23);
@@ -198,8 +198,8 @@
             // txtartworktype_ftyArtworkType
             // 
             this.txtartworktype_ftyArtworkType.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_ftyArtworkType.cClassify = "";
-            this.txtartworktype_ftyArtworkType.cSubprocess = "Y";
+            this.txtartworktype_ftyArtworkType.CClassify = "";
+            this.txtartworktype_ftyArtworkType.CSubprocess = "Y";
             this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(114, 47);
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
@@ -215,8 +215,8 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 7;
-            this.txtstyle.tarBrand = null;
-            this.txtstyle.tarSeason = null;
+            this.txtstyle.TarBrand = null;
+            this.txtstyle.TarSeason = null;
             // 
             // labelM
             // 
@@ -336,14 +336,14 @@
         private Win.UI.DateRange dateIssueDate;
         private Win.UI.ComboBox comboOrderBy;
         private Win.UI.TextBox txtSPNO;
-        private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
-        private Class.txtsubconNoConfirm txtsubconSupplier;
+        private Class.Txtartworktype_fty txtartworktype_ftyArtworkType;
+        private Class.TxtsubconNoConfirm txtsubconSupplier;
         private Win.UI.CheckBox checkOutstanding;
-        private Class.txtstyle txtstyle;
+        private Class.Txtstyle txtstyle;
         private Win.UI.Label labelM;
-        private Class.txtMdivision txtMdivisionM;
+        private Class.TxtMdivision txtMdivisionM;
         private Win.UI.Label label9;
         private Win.UI.Label labelBrand;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
     }
 }

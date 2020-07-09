@@ -418,10 +418,10 @@ drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail,#tmpCutRefNull
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out this.printData);
             if (!result)
             {
-                return Result.F(result.ToString());
+                return Ict.Result.F(result.ToString());
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(ReportDefinition report)
@@ -436,7 +436,7 @@ drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail,#tmpCutRefNull
             }
 
             string excelName = "Cutting_R08";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
             this.printData[0].Columns.Remove("MDivisionid");
             MyUtility.Excel.CopyToXls(this.printData[0], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]); // 將datatable copy to excel
             excelApp.DisplayAlerts = false;
@@ -522,7 +522,7 @@ drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail,#tmpCutRefNull
                 worksheet.Cells[i + s + 2, 4] = $"='Actual Output Summary'!{col}26";
             }
 
-            worksheet.Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden; // 隱藏第3頁sheet
+            worksheet.Visible = Excel.XlSheetVisibility.xlSheetHidden; // 隱藏第3頁sheet
             #endregion
             worksheet = excelApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
 

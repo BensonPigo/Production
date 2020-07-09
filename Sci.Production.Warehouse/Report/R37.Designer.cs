@@ -34,10 +34,10 @@
             this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.label10 = new Sci.Win.UI.Label();
             this.labelSPNo = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.labelOrderBy = new Sci.Win.UI.Label();
             this.comboStockType = new System.Windows.Forms.ComboBox();
             this.labelFabricType = new Sci.Win.UI.Label();
@@ -250,10 +250,10 @@
         private Win.UI.TextBox txtSPNoStart;
         private Win.UI.Label label10;
         private Win.UI.Label labelSPNo;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
         private Win.UI.Label labelFactory;
         private Win.UI.Label labelM;
-        private Class.txtMdivision txtMdivision;
+        private Class.TxtMdivision txtMdivision;
         private Win.UI.Label labelOrderBy;
         private System.Windows.Forms.ComboBox comboStockType;
         private Win.UI.Label labelFabricType;

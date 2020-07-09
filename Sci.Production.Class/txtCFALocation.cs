@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Data;
 using System.Windows.Forms;
 using Sci.Win.UI;
@@ -9,32 +8,33 @@ using Ict;
 
 namespace Sci.Production.Class
 {
-    public partial class txtCFALocation : Win.UI.TextBox
+    /// <summary>
+    /// TxtCFALocation
+    /// </summary>
+    public partial class TxtCFALocation : Win.UI.TextBox
     {
-        public txtCFALocation()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TxtCFALocation"/> class.
+        /// </summary>
+        public TxtCFALocation()
         {
             this.Size = new System.Drawing.Size(80, 23);
             this.IsSupportSytsemContextMenu = false;
         }
 
-        private Control mDivisionObject;
-
+        /// <summary>
+        /// MDivision ID
+        /// </summary>
         [Category("Custom Properties")]
-        public Control MDivisionObjectName
-        {
-            get { return this.mDivisionObject; }
-            set { this.mDivisionObject = value; }
-        }
+        public Control MDivisionObjectName { get; set; }
 
-        private string m;
-
+        /// <summary>
+        /// MDivision ID
+        /// </summary>
         [Category("Custom Properties")]
-        public string M
-        {
-            get { return this.m; }
-            set { this.m = value; }
-        }
+        public string M { get; set; }
 
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
@@ -47,9 +47,9 @@ namespace Sci.Production.Class
             if (myform.EditMode)
             {
                 string sql = "select ID,Description from CFALocation WITH (NOLOCK) order by ID";
-                if (this.mDivisionObject != null && !string.IsNullOrWhiteSpace((string)this.mDivisionObject.Text))
+                if (this.MDivisionObjectName != null && !string.IsNullOrWhiteSpace((string)this.MDivisionObjectName.Text))
                 {
-                    sql = string.Format("select ID,Description from CFALocation WITH (NOLOCK) where MDivisionID = '{0}' and junk=0 order by ID", this.mDivisionObject.Text);
+                    sql = string.Format("select ID,Description from CFALocation WITH (NOLOCK) where MDivisionID = '{0}' and junk=0 order by ID", this.MDivisionObjectName.Text);
                 }
 
                 if (!MyUtility.Check.Empty(this.M))
@@ -72,6 +72,7 @@ namespace Sci.Production.Class
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -91,11 +92,11 @@ namespace Sci.Production.Class
                 }
                 else
                 {
-                    if (this.mDivisionObject != null)
+                    if (this.MDivisionObjectName != null)
                     {
-                        if (!string.IsNullOrWhiteSpace((string)this.mDivisionObject.Text))
+                        if (!string.IsNullOrWhiteSpace((string)this.MDivisionObjectName.Text))
                         {
-                            string selectCommand = string.Format("select ID from CFALocation WITH (NOLOCK) where MDivisionID = '{0}' and ID = '{1}'", (string)this.mDivisionObject.Text, str);
+                            string selectCommand = string.Format("select ID from CFALocation WITH (NOLOCK) where MDivisionID = '{0}' and ID = '{1}'", (string)this.MDivisionObjectName.Text, str);
                             if (!MyUtility.Check.Seek(selectCommand, null))
                             {
                                 this.Text = string.Empty;
@@ -108,7 +109,7 @@ namespace Sci.Production.Class
 
                     if (!MyUtility.Check.Empty(this.M))
                     {
-                        if (!string.IsNullOrWhiteSpace((string)this.mDivisionObject.Text))
+                        if (!string.IsNullOrWhiteSpace((string)this.MDivisionObjectName.Text))
                         {
                             string selectCommand = string.Format("select ID from CFALocation WITH (NOLOCK) where MDivisionID = '{0}' and ID = '{1}'", this.M, str);
                             if (!MyUtility.Check.Seek(selectCommand, null))
@@ -124,8 +125,16 @@ namespace Sci.Production.Class
             }
         }
 
+        /// <summary>
+        /// CellCFALocation
+        /// </summary>
         public class CellCFALocation : DataGridViewGeneratorTextColumnSettings
         {
+            /// <summary>
+            /// GetGridCell
+            /// </summary>
+            /// <param name="mdivisionID">Mdivision</param>
+            /// <returns>DataGridViewGeneratorTextColumnSettings</returns>
             public static DataGridViewGeneratorTextColumnSettings GetGridCell(string mdivisionID)
             {
                 // pur 為ture 表示需判斷PurchaseFrom
@@ -172,8 +181,8 @@ namespace Sci.Production.Class
 
                     // 右鍵彈出功能
                     DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
-                    String oldValue = row["CFALocationID"].ToString();
-                    String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
+                    string oldValue = row["CFALocationID"].ToString();
+                    string newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
                     string sql;
 
                     sql = $@"select ID from CFALocation WITH (NOLOCK) where MDivisionID = '{mdivisionID.ToString().Trim()}' and ID = '{newValue}' and junk=0 ";

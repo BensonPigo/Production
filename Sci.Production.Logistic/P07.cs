@@ -139,7 +139,7 @@ outer apply(
 	),1,1,'')
 ) o1
 where p2.CTNStartNo<>''
-and p1.Mdivisionid='{Sci.Env.User.Keyword}'
+and p1.Mdivisionid='{Env.User.Keyword}'
 and p1.Type in ('B','L')
 and p2.ReceiveDate is not null
 and p2.TransferCFADate is null
@@ -200,7 +200,7 @@ from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK)
                 this.listControlBindingSource1.DataSource = selectDataTable;
 
                 // 讀檔案
-                using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, System.Text.Encoding.UTF8))
+                using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, Encoding.UTF8))
                 {
                     DataRow seekData;
                     DataTable notFoundErr = selectDataTable.Clone();
@@ -256,7 +256,7 @@ outer apply(
 	),1,1,'')
 ) o1
 where p2.CTNStartNo<>''
-and p1.Mdivisionid='{Sci.Env.User.Keyword}'
+and p1.Mdivisionid='{Env.User.Keyword}'
 and p1.Type in ('B','L')
 and p2.ReceiveDate is not null
 and p2.DisposeFromClog= 0
@@ -320,7 +320,7 @@ outer apply(
 	),1,1,'')
 ) o1
 where p2.CTNStartNo<>''
-and p1.Mdivisionid='{Sci.Env.User.Keyword}'
+and p1.Mdivisionid='{Env.User.Keyword}'
 and p1.Type in ('B','L')
 and p2.ReceiveDate is not null
 and p2.TransferCFADate is null
@@ -389,7 +389,7 @@ outer apply(
 	),1,1,'')
 ) o1
 where p2.CTNStartNo<>''
-and p1.Mdivisionid='{Sci.Env.User.Keyword}'
+and p1.Mdivisionid='{Env.User.Keyword}'
 and p1.Type in ('B','L')
 and p2.ReceiveDate is not null
 and p2.TransferCFADate is null
@@ -520,7 +520,7 @@ where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToStri
 ");
                         insertCmds.Add($@"
 insert into TransferToCFA(TransferDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate,OrigloactionID,SCICtnNo)
-values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["OrderID"].ToString().Trim()}','{dr["ID"].ToString().Trim()}','{dr["CTNStartNo"].ToString().Trim()}','{Sci.Env.User.UserID}',GETDATE(),'{dr["ClogLocationId"]}','{dr["SCICtnNo"]}')
+values(CONVERT(varchar(100), GETDATE(), 111),'{Env.User.Keyword}','{dr["OrderID"].ToString().Trim()}','{dr["ID"].ToString().Trim()}','{dr["CTNStartNo"].ToString().Trim()}','{Env.User.UserID}',GETDATE(),'{dr["ClogLocationId"]}','{dr["SCICtnNo"]}')
 ");
                     }
                 }
@@ -541,19 +541,19 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
                 MyUtility.Msg.ErrorBox("Prepare update orders data fail!\r\n" + ex.ToString());
             }
 
-            DualResult result1 = Result.True, result2 = Result.True;
+            DualResult result1 = Ict.Result.True, result2 = Ict.Result.True;
             using (TransactionScope transactionScope = new TransactionScope())
             {
                 try
                 {
                     if (updateCmds.Count > 0)
                     {
-                        result1 = Sci.Data.DBProxy.Current.Executes(null, updateCmds);
+                        result1 = DBProxy.Current.Executes(null, updateCmds);
                     }
 
                     if (insertCmds.Count > 0)
                     {
-                        result2 = Sci.Data.DBProxy.Current.Executes(null, insertCmds);
+                        result2 = DBProxy.Current.Executes(null, insertCmds);
                     }
 
                     if (updateCmds.Count > 0 && insertCmds.Count > 0)

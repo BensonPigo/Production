@@ -132,7 +132,7 @@ from (
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
     left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = cr.SCICtnNo 
     where   cr.MDivisionID = '{0}'
-", Sci.Env.User.Keyword));
+", Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(this.dateReceiveDate.Value1))
             {

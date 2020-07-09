@@ -792,7 +792,7 @@ group by POID, OrderID, StyleID, SciDelivery, SeasonID, Refno
             DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Copy();
             dt.Columns.RemoveAt(dt.Columns.Count - 1);
             Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
-            sdExcel.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_P30_Import"));
+            sdExcel.Save(Class.MicrosoftFile.GetName("Subcon_P30_Import"));
         }
 
         private void ChkQty_CheckedChanged(object sender, EventArgs e)

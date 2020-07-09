@@ -44,7 +44,7 @@ namespace Sci.Production.Cutting
             MyUtility.Tool.SetupCombox(this.comboM, 1, WorkOrder);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory); // 要預設空白
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
             this.comboFactory.SelectedIndex = 0;
         }
 
@@ -489,7 +489,7 @@ drop table #tmp,#tmpL");
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel
@@ -504,7 +504,7 @@ drop table #tmp,#tmpL");
                 return false;
             }
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R03_CuttingScheduleListReport.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_R03_CuttingScheduleListReport.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printData[0], string.Empty, "Cutting_R03_CuttingScheduleListReport.xltx", 2, false, null, objApp); // 將datatable copy to excel
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
@@ -513,7 +513,7 @@ drop table #tmp,#tmpL");
             objApp.Cells[3, PerimeterCol] = $"=IFERROR(LEFT(AJ3,SEARCH(\"yd\",AJ3,1)-1)+0+(IFERROR(RIGHT(LEFT(AJ3,SEARCH(\"\"\"\",AJ3,1)-1),2)+0,0)+IFERROR(VLOOKUP(RIGHT(AJ3,2)+0,data!$A$1:$B$8,2,TRUE),0))/36,\"\")";
             int rowct = this.printData[0].Rows.Count + 2;
             objApp.Range[objApp.Cells[3, PerimeterCol], objApp.Cells[3, PerimeterCol]].Copy();
-            objApp.Range[objApp.Cells[4, PerimeterCol], objApp.Cells[rowct, PerimeterCol]].PasteSpecial(Microsoft.Office.Interop.Excel.XlPasteType.xlPasteAll, Microsoft.Office.Interop.Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
+            objApp.Range[objApp.Cells[4, PerimeterCol], objApp.Cells[rowct, PerimeterCol]].PasteSpecial(Excel.XlPasteType.xlPasteAll, Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
             objApp.Range[objApp.Cells[2, 1], objApp.Cells[2, 1]].Select();
             objSheets.get_Range("Q2").ColumnWidth = 15.38;
             objSheets.get_Range("U2").ColumnWidth = 15.38;
@@ -539,7 +539,7 @@ drop table #tmp,#tmpL");
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R03_CuttingScheduleListReport");
+            string strExcelName = Class.MicrosoftFile.GetName("Cutting_R03_CuttingScheduleListReport");
             Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

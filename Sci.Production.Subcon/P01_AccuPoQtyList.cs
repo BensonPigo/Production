@@ -50,7 +50,7 @@ and ad.PatternCode = '{this.dr["PatternCode"]}'";
                     return;
                 }
 
-                Sci.Production.Class.Commons.UserPrg.GetName(dr["Handle"], Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
+                Class.Commons.UserPrg.GetName(dr["Handle"], Class.Commons.UserPrg.NameType.NameAndExt);
 
                 string sql;
                 List<SqlParameter> sqlpar = new List<SqlParameter>();
@@ -63,15 +63,15 @@ and ad.PatternCode = '{this.dr["PatternCode"]}'";
                     where id = @id";
                 sqlpar.Add(new SqlParameter("@id", dr["Handle"]));
 
-                userData ud = new userData(sql, sqlpar);
+                UserData ud = new UserData(sql, sqlpar);
 
-                if (ud.errMsg == null)
+                if (ud.ErrMsg == null)
                 {
                     ud.ShowDialog();
                 }
                 else
                 {
-                    MyUtility.Msg.ErrorBox(ud.errMsg);
+                    MyUtility.Msg.ErrorBox(ud.ErrMsg);
                 }
             };
 

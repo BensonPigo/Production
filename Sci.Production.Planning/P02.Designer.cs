@@ -42,7 +42,7 @@
             this.panel3 = new Sci.Win.UI.Panel();
             this.btnCheckData = new Sci.Win.UI.Button();
             this.comboinhouseOsp2 = new Sci.Win.UI.ComboBox();
-            this.txtsubconLocalSuppid = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtsubconLocalSuppid = new Sci.Production.Class.TxtsubconNoConfirm();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnSave = new Sci.Win.UI.Button();
             this.pictureBox2 = new Sci.Win.UI.PictureBox();
@@ -58,16 +58,16 @@
             this.checkInLine = new Sci.Win.UI.CheckBox();
             this.gridSupplier = new Sci.Win.UI.Grid();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
-            this.txtmfactory = new Sci.Production.Class.txtfactory();
+            this.txtmfactory = new Sci.Production.Class.Txtfactory();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
+            this.txtstyle = new Sci.Production.Class.Txtstyle();
             this.labelOSPInHouse = new Sci.Win.UI.Label();
             this.comboOSPInHouse = new Sci.Win.UI.ComboBox();
             this.labelSupplier = new Sci.Win.UI.Label();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtsubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             this.labelSeason = new Sci.Win.UI.Label();
             this.btnUpdateInline = new Sci.Win.UI.Button();
-            this.txtseason = new Sci.Production.Class.txtseason();
+            this.txtseason = new Sci.Production.Class.Txtseason();
             this.btnSetDefaultSuppFromStyle = new Sci.Win.UI.Button();
             this.labelStyle = new Sci.Win.UI.Label();
             this.panel3.SuspendLayout();
@@ -620,10 +620,10 @@
         private Win.UI.CheckBox checkInLine;
         private Win.UI.ComboBox comboOSPInHouse;
         private Win.UI.Label labelSupplier;
-        private Class.txtsubconNoConfirm txtsubconSupplier;
+        private Class.TxtsubconNoConfirm txtsubconSupplier;
         private Win.UI.Label labelSeason;
-        private Class.txtseason txtseason;
-        private Class.txtstyle txtstyle;
+        private Class.Txtseason txtseason;
+        private Class.Txtstyle txtstyle;
         private Win.UI.Label labelStyle;
         private Win.UI.Button btnSetDefaultSuppFromStyle;
         private Win.UI.Button btnUpdateInline;
@@ -633,8 +633,8 @@
         private Win.UI.Label labelFilterEmpty;
         private Win.UI.GroupBox groupBox2;
         private Win.UI.ComboBox comboinhouseOsp2;
-        private Class.txtsubconNoConfirm txtsubconLocalSuppid;
+        private Class.TxtsubconNoConfirm txtsubconLocalSuppid;
         private Win.UI.Button btnCheckData;
-        private Class.txtfactory txtmfactory;
+        private Class.Txtfactory txtmfactory;
     }
 }

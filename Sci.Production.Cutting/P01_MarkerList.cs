@@ -52,7 +52,7 @@ Where mark.id ='{0}' order by mark.Seq",
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnGridSetup()

@@ -206,7 +206,7 @@ namespace Sci.Production.Centralized
             #endregion
             #region Save
             List<SqlParameter> listSqlParameter = new List<SqlParameter>();
-            listSqlParameter.Add(new SqlParameter("@UserName", Sci.Env.User.UserName));
+            listSqlParameter.Add(new SqlParameter("@UserName", Env.User.UserName));
 
             string strUpdateTable = @"
 delete tas

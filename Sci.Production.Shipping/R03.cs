@@ -35,7 +35,7 @@ namespace Sci.Production.Shipping
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
             this.comboFactory.SelectedIndex = -1;
         }
 
@@ -154,7 +154,7 @@ drop table #temp1,#temp2
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -170,7 +170,7 @@ drop table #temp1,#temp2
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R03_ActualShipmentRecord.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_R03_ActualShipmentRecord.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -213,7 +213,7 @@ drop table #temp1,#temp2
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_R03_ActualShipmentRecord");
+            string strExcelName = Class.MicrosoftFile.GetName("Shipping_R03_ActualShipmentRecord");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

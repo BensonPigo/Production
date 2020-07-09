@@ -25,7 +25,7 @@ namespace Sci.Production.Warehouse
             this.InsertDetailGridOnDoubleClick = false;
 
             // MDivisionID 是 Stored Procedures 寫入 => usp_WarehouseClose
-            this.DefaultFilter = string.Format("Type='D' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("Type='D' and MDivisionID = '{0}'", Env.User.Keyword);
             this.gridicon.Append.Enabled = false;
             this.gridicon.Append.Visible = false;
             this.gridicon.Insert.Enabled = false;
@@ -56,8 +56,8 @@ namespace Sci.Production.Warehouse
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "D";
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
@@ -831,13 +831,13 @@ Where a.id = '{0}'", masterID);
 
             int index = -1;
 
-            if (!this.txtSeq.checkSeq1Empty() && this.txtSeq.checkSeq2Empty())
+            if (!this.txtSeq.CheckSeq1Empty() && this.txtSeq.CheckSeq2Empty())
             {
-                index = this.detailgridbs.Find("fromseq1", this.txtSeq.seq1);
+                index = this.detailgridbs.Find("fromseq1", this.txtSeq.Seq1);
             }
-            else if (!this.txtSeq.checkEmpty())
+            else if (!this.txtSeq.CheckEmpty())
             {
-                index = this.detailgridbs.Find("fromseq", this.txtSeq.getSeq());
+                index = this.detailgridbs.Find("fromseq", this.txtSeq.GetSeq());
             }
 
             if (index == -1)
@@ -858,7 +858,7 @@ Where a.id = '{0}'", masterID);
             string CDate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
+            pars.Add(new SqlParameter("@MDivision", Env.User.Keyword));
             DataTable dt;
             DualResult result = DBProxy.Current.Select(
                 string.Empty,

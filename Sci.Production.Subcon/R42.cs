@@ -29,8 +29,8 @@ namespace Sci.Production.Subcon
         {
             this.InitializeComponent();
             this.comboload();
-            this.comboFactory.setDataSource();
-            this.comboRFIDProcessLocation.setDataSource();
+            this.comboFactory.SetDataSource();
+            this.comboRFIDProcessLocation.SetDataSource();
             this.comboRFIDProcessLocation.SelectedIndex = 0;
         }
 
@@ -367,13 +367,13 @@ where 1=1
             }
 
             DBProxy.Current.DefaultTimeout = 1800;  // 加長時間為30分鐘，避免timeout
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R42_Bundle Transaction detail (RFID).xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R42_Bundle Transaction detail (RFID).xltx"); // 預先開啟excel app
             decimal excelMaxrow = 1000000;
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1];
@@ -453,7 +453,7 @@ where 1=1
             #endregion
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R42_BundleTransactiondetail(RFID)");
+            string strExcelName = Class.MicrosoftFile.GetName("Subcon_R42_BundleTransactiondetail(RFID)");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

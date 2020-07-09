@@ -43,8 +43,8 @@
             this.label9 = new Sci.Win.UI.Label();
             this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.comboReportType = new Sci.Win.UI.ComboBox();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
-            this.txtartworktype_ftyCategory = new Sci.Production.Class.txtartworktype_fty();
+            this.txtsubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
+            this.txtartworktype_ftyCategory = new Sci.Production.Class.Txtartworktype_fty();
             this.dateIssueDate = new Sci.Win.UI.DateRange();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.labelReportType = new Sci.Win.UI.Label();
@@ -286,8 +286,8 @@
             // txtartworktype_ftyCategory
             // 
             this.txtartworktype_ftyCategory.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_ftyCategory.cClassify = "\'P\'";
-            this.txtartworktype_ftyCategory.cSubprocess = "";
+            this.txtartworktype_ftyCategory.CClassify = "\'P\'";
+            this.txtartworktype_ftyCategory.CSubprocess = "";
             this.txtartworktype_ftyCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_ftyCategory.Location = new System.Drawing.Point(114, 195);
             this.txtartworktype_ftyCategory.Name = "txtartworktype_ftyCategory";
@@ -439,8 +439,8 @@
         #endregion
 
         private Win.UI.Panel panel1;
-        private Class.txtsubconNoConfirm txtsubconSupplier;
-        private Class.txtartworktype_fty txtartworktype_ftyCategory;
+        private Class.TxtsubconNoConfirm txtsubconSupplier;
+        private Class.Txtartworktype_fty txtartworktype_ftyCategory;
         private Win.UI.DateRange dateIssueDate;
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.Label labelReportType;

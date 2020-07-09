@@ -193,7 +193,7 @@ Where 1=1 ");
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>

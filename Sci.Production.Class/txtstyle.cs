@@ -5,26 +5,36 @@ using Ict;
 
 namespace Sci.Production.Class
 {
-    public partial class txtstyle : Win.UI.TextBox
+    /// <summary>
+    /// Txtstyle
+    /// </summary>
+    public partial class Txtstyle : Win.UI.TextBox
     {
-        public txtstyle()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtstyle"/> class.
+        /// </summary>
+        public Txtstyle()
         {
             this.Size = new System.Drawing.Size(130, 23);
         }
 
-        public txtbrand tarBrand { get; set; }
+        /// <summary>
+        /// Style.BrandID  get
+        /// </summary>
+        public Txtbrand TarBrand { get; set; }
 
-        public txtseason tarSeason { get; set; }
+        /// <summary>
+        /// Style.SeasonID
+        /// </summary>
+        public Txtseason TarSeason { get; set; }
 
-        private Control brandObject;
-
+        /// <summary>
+        /// Style.BrandID  SQLwhere
+        /// </summary>
         [Category("Custom Properties")]
-        public Control BrandObjectName
-        {
-            get { return this.brandObject; }
-            set { this.brandObject = value; }
-        }
+        public Control BrandObjectName { get; set; }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -41,16 +51,16 @@ namespace Sci.Production.Class
                 }
                 else
                 {
-                    if (this.brandObject != null)
+                    if (this.BrandObjectName != null)
                     {
-                        if (!string.IsNullOrWhiteSpace((string)this.brandObject.Text))
+                        if (!string.IsNullOrWhiteSpace((string)this.BrandObjectName.Text))
                         {
-                            string selectCommand = string.Format("select ID from Style WITH (NOLOCK) where BrandID = '{0}' and ID = '{1}'", (string)this.brandObject.Text, this.Text.ToString());
+                            string selectCommand = string.Format("select ID from Style WITH (NOLOCK) where BrandID = '{0}' and ID = '{1}'", (string)this.BrandObjectName.Text, this.Text.ToString());
                             if (!MyUtility.Check.Seek(selectCommand, "Production"))
                             {
                                 this.Text = string.Empty;
                                 e.Cancel = true;
-                                MyUtility.Msg.WarningBox(string.Format("< Brand + Style: {0} + {1} > not found!!!", (string)this.brandObject.Text, textValue));
+                                MyUtility.Msg.WarningBox(string.Format("< Brand + Style: {0} + {1} > not found!!!", (string)this.BrandObjectName.Text, textValue));
                                 return;
                             }
                         }
@@ -59,6 +69,7 @@ namespace Sci.Production.Class
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
@@ -66,9 +77,9 @@ namespace Sci.Production.Class
             Win.Tools.SelectItem item;
             string selectCommand;
             selectCommand = "select ID,SeasonID,Description,BrandID from Production.dbo.Style WITH (NOLOCK) where Junk = 0 order by ID";
-            if (this.brandObject != null && !string.IsNullOrWhiteSpace((string)this.brandObject.Text))
+            if (this.BrandObjectName != null && !string.IsNullOrWhiteSpace((string)this.BrandObjectName.Text))
             {
-                selectCommand = string.Format("select ID,SeasonID,Description,BrandID from Production.dbo.Style WITH (NOLOCK) where Junk = 0 and BrandID = '{0}' order by ID", this.brandObject.Text);
+                selectCommand = string.Format("select ID,SeasonID,Description,BrandID from Production.dbo.Style WITH (NOLOCK) where Junk = 0 and BrandID = '{0}' order by ID", this.BrandObjectName.Text);
             }
 
             item = new Win.Tools.SelectItem(selectCommand, "12,5,38,10", this.Text);
@@ -81,13 +92,13 @@ namespace Sci.Production.Class
             }
 
             this.Text = item.GetSelectedString();
-            if (this.tarBrand != null && this.tarSeason != null)
+            if (this.TarBrand != null && this.TarSeason != null)
             {
                 this.ValidateControl();
-                this.tarBrand.Text = item.GetSelecteds()[0]["BrandID"].ToString();
-                this.tarBrand.ValidateControl();
-                this.tarSeason.Text = item.GetSelecteds()[0]["SeasonID"].ToString();
-                this.tarSeason.ValidateControl();
+                this.TarBrand.Text = item.GetSelecteds()[0]["BrandID"].ToString();
+                this.TarBrand.ValidateControl();
+                this.TarSeason.Text = item.GetSelecteds()[0]["SeasonID"].ToString();
+                this.TarSeason.ValidateControl();
             }
         }
     }

@@ -52,7 +52,7 @@ namespace Sci.Production.Basic
                 }
             }
 
-            bool hasEditauthority = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "B08. CD Code", "CanEdit");
+            bool hasEditauthority = PublicPrg.Prgs.GetAuthority(Env.User.UserID, "B08. CD Code", "CanEdit");
             B08_ProductionFabricType rm = new B08_ProductionFabricType(hasEditauthority, selectDataTable.Rows[0]);
             rm.ShowDialog(this);
             this.OnDetailEntered();

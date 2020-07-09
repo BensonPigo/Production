@@ -37,7 +37,7 @@
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.label9 = new Sci.Win.UI.Label();
             this.labelCategory = new Sci.Win.UI.Label();
-            this.txtartworktype_ftyCategory = new Sci.Production.Class.txtartworktype_fty();
+            this.txtartworktype_ftyCategory = new Sci.Production.Class.Txtartworktype_fty();
             this.labelLocalPO = new Sci.Win.UI.Label();
             this.labelPOIssueDate = new Sci.Win.UI.Label();
             this.datePOIssueDate = new Sci.Win.UI.DateRange();
@@ -157,8 +157,8 @@
             // txtartworktype_ftyCategory
             // 
             this.txtartworktype_ftyCategory.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_ftyCategory.cClassify = "";
-            this.txtartworktype_ftyCategory.cSubprocess = "";
+            this.txtartworktype_ftyCategory.CClassify = "";
+            this.txtartworktype_ftyCategory.CSubprocess = "";
             this.txtartworktype_ftyCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_ftyCategory.Location = new System.Drawing.Point(781, 19);
             this.txtartworktype_ftyCategory.Name = "txtartworktype_ftyCategory";
@@ -337,7 +337,7 @@
         private Win.UI.Label labelPOIssueDate;
         private Win.UI.DateRange datePOIssueDate;
         private Win.UI.Label labelCategory;
-        private Class.txtartworktype_fty txtartworktype_ftyCategory;
+        private Class.Txtartworktype_fty txtartworktype_ftyCategory;
         private Win.UI.Label label9;
         private Win.UI.Label label1;
         private Win.UI.DateRange dateRangeBuyerDelivery;

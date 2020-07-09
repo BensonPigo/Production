@@ -23,7 +23,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            string sqlCommand = "select UseAPS from factory WITH (NOLOCK) where ID = '" + Sci.Env.User.Factory + "'";
+            string sqlCommand = "select UseAPS from factory WITH (NOLOCK) where ID = '" + Env.User.Factory + "'";
             this.useAPS = MyUtility.GetValue.Lookup(sqlCommand, null);
             if (this.useAPS.ToUpper() == "FALSE")
             {
@@ -62,8 +62,8 @@ update factory set LastDownloadAPSDate  = getdate() where id = '{2}'
 
 ", MyUtility.Convert.GetString(dr["SQLServerName"]),
                 MyUtility.Convert.GetString(dr["APSDatabaseName"]),
-                Sci.Env.User.Factory,
-                Sci.Env.User.UserID);
+                Env.User.Factory,
+                Env.User.UserID);
 
             DBProxy.Current.DefaultTimeout = 1200;
             DataTable[] dsForAutomation;
@@ -127,10 +127,10 @@ outer apply(select top 1 Type from WorkOrder where ID = ord.cuttingsp)a
 where ord.FtyGroup = '{1}'
 group by ord.CuttingSp ,a.Type",
                 sewdate,
-                Sci.Env.User.Factory,
-                Sci.Env.User.Keyword,
-                Sci.Env.User.Factory,
-                Sci.Env.User.UserID);
+                Env.User.Factory,
+                Env.User.Keyword,
+                Env.User.Factory,
+                Env.User.UserID);
 
             updsql = updsql + string.Format(
                 @"
@@ -194,7 +194,7 @@ join (
 )s on cutting.id = s.cuttingsp
 ",
                 sewdate,
-                Sci.Env.User.Factory);
+                Env.User.Factory);
 
             DualResult result = DBProxy.Current.Execute(null, updsql);
             if (!result)

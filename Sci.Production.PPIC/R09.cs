@@ -40,14 +40,14 @@ where   MDivisionID = '{0}'
         and UpdateDate = (select max(UpdateDate) 
                           from OrderComparisonList WITH (NOLOCK) 
                           where MDivisionID = '{0}')",
-                    Sci.Env.User.Keyword), out drOC))
+                    Env.User.Keyword), out drOC))
             {
                 this.dateUpdate.Value1 = Convert.ToDateTime(drOC["UpdateDate"]);
                 this.dateUpdate.Value2 = Convert.ToDateTime(drOC["UpdateDate"]);
             }
 
-            this.txtMdivision.Text = Sci.Env.User.Keyword;
-            this.txtfactory.Text = Sci.Env.User.Factory;
+            this.txtMdivision.Text = Env.User.Keyword;
+            this.txtfactory.Text = Env.User.Factory;
             #endregion
         }
 
@@ -188,7 +188,7 @@ order by FactoryID, OrderId",
             this.ShowWaitMessage("Excel processing...");
             #region Export Excel
             Excel.Application objApp = null;
-            objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R09.xltx");
+            objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_R09.xltx");
             MyUtility.Excel.CopyToXls(this.dtPrint, string.Empty, "PPIC_R09.xltx", 1, showExcel: true, excelApp: objApp);
             #endregion
             this.HideWaitMessage();

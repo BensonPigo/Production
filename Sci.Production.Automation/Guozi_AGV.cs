@@ -73,7 +73,7 @@ namespace Sci.Production.Automation
                 if (!result)
                 {
                     this.automationErrMsg.SetErrInfo(result);
-                    UtilityAutomation.SaveAutomationErrMsg(this.automationErrMsg);
+                    SaveAutomationErrMsg(this.automationErrMsg);
                 }
 
                 listWorkOrder.Add(

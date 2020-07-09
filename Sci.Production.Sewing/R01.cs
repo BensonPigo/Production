@@ -35,7 +35,7 @@ namespace Sci.Production.Sewing
             DBProxy.Current.Select(null, "select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.dateDate.Value = DateTime.Today.AddDays(-1);
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
             this.comboTeam.SelectedIndex = 0;
         }
 
@@ -598,7 +598,7 @@ order by ArtworkTypeID"),
             #endregion
 
             this._factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", this._factory));
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -614,7 +614,7 @@ order by ArtworkTypeID"),
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Sewing_R01_DailyCMPReport.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Sewing_R01_DailyCMPReport.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -859,9 +859,9 @@ order by ArtworkTypeID"),
                 }
             }
             #region Direct Manpower(From PAMS)
-            if (Sci.Env.User.Keyword.EqualString("CM1") ||
-                Sci.Env.User.Keyword.EqualString("CM2") ||
-                Sci.Env.User.Keyword.EqualString("CM3"))
+            if (Env.User.Keyword.EqualString("CM1") ||
+                Env.User.Keyword.EqualString("CM2") ||
+                Env.User.Keyword.EqualString("CM3"))
             {
                 worksheet.Cells[insertRow, 5] = 0;
                 worksheet.Cells[insertRow, 7] = 0;
@@ -896,7 +896,7 @@ order by ArtworkTypeID"),
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Sewing_R01_DailyCMPReport");
+            string strExcelName = Class.MicrosoftFile.GetName("Sewing_R01_DailyCMPReport");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

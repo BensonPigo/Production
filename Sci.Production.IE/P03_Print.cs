@@ -389,7 +389,7 @@ order by no
             }
             #endregion
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -406,7 +406,7 @@ order by no
             }
 
             // string strXltName = Sci.Env.Cfg.XltPathDir + (this.display == "U" ? "\\IE_P03_Print_U.xltx" : "\\IE_P03_Print_Z.xltx");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\IE_P03_Print.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\IE_P03_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -516,7 +516,7 @@ order by no
             excel.CutCopyMode = Microsoft.Office.Interop.Excel.XlCutCopyMode.xlCopy;
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("IE_P03_Print");
+            string strExcelName = Class.MicrosoftFile.GetName("IE_P03_Print");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
@@ -579,7 +579,7 @@ order by no
 
             // 右下簽名位置
             worksheet.Cells[29, 20] = DateTime.Now.ToString("d");
-            worksheet.Cells[32, 20] = Sci.Env.User.UserName;
+            worksheet.Cells[32, 20] = Env.User.UserName;
 
             // 左下表頭資料
             worksheet.Cells[56, 4] = this.masterData["Version"];

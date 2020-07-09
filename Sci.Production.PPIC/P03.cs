@@ -93,7 +93,7 @@ namespace Sci.Production.PPIC
             if (this.needSave && !this.alreadySave)
             {
                 DialogResult buttonResult = MyUtility.Msg.QuestionBox("Do you want to save data?", "Confirm", MessageBoxButtons.OKCancel);
-                if (buttonResult == System.Windows.Forms.DialogResult.OK)
+                if (buttonResult == DialogResult.OK)
                 {
                     if (!this.SaveData())
                     {
@@ -120,7 +120,7 @@ iif(sp.IsPF = 1,'Y','N') as CPF
 from Style_ProductionKits sp WITH (NOLOCK) 
 left join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
 where sp.ReceiveDate is null and sp.SendDate is not null and ReasonID=''
-and sp.ProductionKitsGroup='{Sci.Env.User.Keyword}'
+and sp.ProductionKitsGroup='{Env.User.Keyword}'
 ");
 
             if (!MyUtility.Check.Empty(this.txtStyleNo.Text))
@@ -194,7 +194,7 @@ and sp.ProductionKitsGroup='{Sci.Env.User.Keyword}'
                     cmds.Append(string.Format(@"update Style_ProductionKits set ReceiveDate = {0}, FtyRemark = '{1}'", MyUtility.Check.Empty(dr["ReceiveDate"]) ? "null" : "'" + Convert.ToDateTime(dr["ReceiveDate"]).ToString("d") + "'", dr["FtyRemark"].ToString()));
                     if (!MyUtility.Check.Empty(dr["ReceiveDate"]))
                     {
-                        cmds.Append(string.Format(@", FtyHandle = '{0}', FtyLastDate = GETDATE()", Sci.Env.User.UserID));
+                        cmds.Append(string.Format(@", FtyHandle = '{0}', FtyLastDate = GETDATE()", Env.User.UserID));
                     }
 
                     cmds.Append(string.Format(" where Ukey = {0}", dr["UKey"].ToString()));

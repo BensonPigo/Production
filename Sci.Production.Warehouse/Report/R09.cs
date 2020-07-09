@@ -42,7 +42,7 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
-            this.txtMdivision.Text = Sci.Env.User.Keyword;
+            this.txtMdivision.Text = Env.User.Keyword;
             MyUtility.Tool.SetupCombox(this.comboFilterCondition, 1, 1, "Actual Inventory Qty < Taipei system,Inventory In  < Taipei InputQty,");
             this.comboFilterCondition.SelectedIndex = 0;
         }
@@ -355,7 +355,7 @@ where b.InputQty> 0"));
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel

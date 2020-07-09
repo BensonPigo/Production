@@ -21,7 +21,7 @@ namespace Sci.Production.Subcon
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select DISTINCT ftygroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
             this.comboReportType.SelectedIndex = 0;
             this.checkShippingMark.Enabled = false;
         }
@@ -521,10 +521,10 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
             #region PO List
             if ("PO List".EqualString(this.comboReportType.Text))
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R26_Local_PO_List.xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R26_Local_PO_List.xltx"); // 預先開啟excel app
 
                 // MyUtility.Excel.CopyToXls(dtt, "", "Subcon_R26_Local_PO_List.xltx", 2, excelApp: objApp, showExcel: false, showSaveMsg: false);      // 將datatable copy to excel
-                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Subcon_R26_Local_PO_List.xltx", objApp);
+                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Subcon_R26_Local_PO_List.xltx", objApp);
                 com.ColumnsAutoFit = false;
                 com.WriteTable(this.dtt, 3);
 
@@ -533,7 +533,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
                 objSheets.get_Range("A2").RowHeight = 31.5;
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R26_Local_PO_List");
+                string strExcelName = Class.MicrosoftFile.GetName("Subcon_R26_Local_PO_List");
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
@@ -551,7 +551,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
             #region PO Order
             else if ("PO Order".EqualString(this.comboReportType.Text))
             {
-                var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
+                var saveDialog = Utility.Excel.MyExcelPrg.GetSaveFileDialog(Utility.Excel.MyExcelPrg.Filter_Excel);
                 Utility.Excel.SaveXltReportCls x1 = new Utility.Excel.SaveXltReportCls("Subcon_R26_Local_PO_Order.xltx");
 
                 List<string> lis = new List<string>();
@@ -595,7 +595,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
                     idx += 1;
                 }
 
-                x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_R26_Local_PO_Order"));
+                x1.Save(Class.MicrosoftFile.GetName("Subcon_R26_Local_PO_Order"));
                 return true;
             }
             #endregion
@@ -603,7 +603,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
             #region Shipping Mark
             if (this.checkShippingMark.Checked == true)
             {
-                var saveDialog1 = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
+                var saveDialog1 = Utility.Excel.MyExcelPrg.GetSaveFileDialog(Utility.Excel.MyExcelPrg.Filter_Excel);
                 Utility.Excel.SaveXltReportCls x1 = new Utility.Excel.SaveXltReportCls("Subcon_R26_Shipping_Mark.xltx");
 
                 // copy sheet by TheOrderID count.
@@ -637,7 +637,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
                     idx += 1;
                 }
 
-                x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_R26_Shipping_Mark"));
+                x1.Save(Class.MicrosoftFile.GetName("Subcon_R26_Shipping_Mark"));
                 return true;
             }
             #endregion

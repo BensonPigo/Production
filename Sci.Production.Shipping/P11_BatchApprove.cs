@@ -152,7 +152,7 @@ drop table #tmp
             }
 
             string sqlupdate = $@"
-update BIRInvoice set Status='Approved', Approve='{Sci.Env.User.UserID}', ApproveDate=getdate(), EditName='{Sci.Env.User.UserID}', EditDate=getdate()
+update BIRInvoice set Status='Approved', Approve='{Env.User.UserID}', ApproveDate=getdate(), EditName='{Env.User.UserID}', EditDate=getdate()
 where id in({string.Join(",", ids)})
 ";
             DualResult result = DBProxy.Current.Execute(null, sqlupdate);

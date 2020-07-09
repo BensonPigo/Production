@@ -117,7 +117,7 @@ and o.Qty > 0
 and (oq.EstPulloutDate <= '{1}' or dateadd(day,4,o.SewOffLine) <= '{1}')
 and o.Category in ({2})
 ",
-                Sci.Env.User.Keyword,
+                Env.User.Keyword,
                 Convert.ToDateTime(this.dateExpPoutDate.Value).ToString("d"),
                 category));
             sqlCmd.Append(@"

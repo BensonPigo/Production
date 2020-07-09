@@ -44,7 +44,7 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("FactoryID = '{0}' and Category = 'O'", Sci.Env.User.Factory);
+            this.DefaultFilter = string.Format("FactoryID = '{0}' and Category = 'O'", Env.User.Factory);
             MyUtility.Tool.SetupCombox(this.comboTeam, 1, 1, "A,B");
             this.DoSubForm = new P01_QAOutput();
 
@@ -57,7 +57,7 @@ namespace Sci.Production.Sewing
                 }
             };
 
-            this.loginFactory = Sci.Env.User.Factory;
+            this.loginFactory = Env.User.Factory;
             this.dateYesterday = DateTime.Now.AddDays(-1);
         }
 
@@ -298,7 +298,7 @@ order by a.OrderId,os.Seq",
             base.OnDetailGridSetup();
             this.qaoutput.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     this.OpenSubDetailPage();
                 }
@@ -306,7 +306,7 @@ order by a.OrderId,os.Seq",
             #region SP#的Right click & Validating
             this.orderid.EditingMouseDown += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     if (this.EditMode && this.CurrentDetailData["AutoCreate"].EqualString("False"))
                     {
@@ -332,7 +332,7 @@ where   ss.FactoryID = '{0}'
                                   (exludeOrder.IsBuyBack = 1 and exludeOrder.BuyBackReason = 'Garment')) and
                                   exludeOrder.ID = o.ID
                         )",
-                                Sci.Env.User.Factory,
+                                Env.User.Factory,
                                 MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]));
 
                             SelectItem item = new SelectItem(sqlCmd, "20", dr["OrderID"].ToString());
@@ -377,7 +377,7 @@ where   ss.FactoryID = '{0}'
                         }
 
                         // sql參數
-                        SqlParameter sp1 = new SqlParameter("@factoryid", Sci.Env.User.Factory);
+                        SqlParameter sp1 = new SqlParameter("@factoryid", Env.User.Factory);
                         SqlParameter sp2 = new SqlParameter("@id", MyUtility.Convert.GetString(e.FormattedValue));
 
                         IList<SqlParameter> cmds = new List<SqlParameter>();
@@ -435,7 +435,7 @@ where   o.FtyGroup = @factoryid
                             {
                                 // 問是否要繼續，確定才繼續往下做
                                 DialogResult buttonResult = MyUtility.Msg.WarningBox("This SP# dosen't belong to this line, please inform scheduler.\r\n\r\nDo you want to continue?", "Warning", MessageBoxButtons.YesNo);
-                                if (buttonResult == System.Windows.Forms.DialogResult.No)
+                                if (buttonResult == DialogResult.No)
                                 {
                                     dr["OrderID"] = string.Empty;
                                     e.Cancel = true;
@@ -524,7 +524,7 @@ where StyleUkey = {0}",
             #region ComboType的Right Click
             this.combotype.EditingMouseDown += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     if (this.EditMode)
                     {
@@ -593,7 +593,7 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
             #region Article的Right Click & Validating
             this.article.EditingMouseDown += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     if (this.EditMode && this.CurrentDetailData["AutoCreate"].EqualString("False"))
                     {
@@ -717,7 +717,7 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
             #region SewingReasonID右鍵開窗
             this.SewingReasonID.EditingMouseDown += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     if (this.EditMode)
                     {
@@ -1219,13 +1219,13 @@ order by a.OrderId,os.Seq",
         {
             base.ClickNewAfter();
             this.CurrentMaintain["Category"] = "O";
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["OutputDate"] = DateTime.Today.AddDays(-1);
             this.CurrentMaintain["Shift"] = "D";
             this.CurrentMaintain["Team"] = "A";
             this.CurrentDetailData["AutoCreate"] = 0;
             this.CurrentDetailData["RFT"] = "0.00%";
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
         }
 
         /// <inheritdoc/>
@@ -1456,7 +1456,7 @@ order by a.OrderId,os.Seq",
                 if (MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= sewingMonthlyLockDate)
                 {
                     this.dateDate.Focus();
-                    MyUtility.Msg.WarningBox(string.Format("Date can't earlier than Sewing Lock Date: {0}.", Convert.ToDateTime(sewingMonthlyLockDate).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
+                    MyUtility.Msg.WarningBox(string.Format("Date can't earlier than Sewing Lock Date: {0}.", Convert.ToDateTime(sewingMonthlyLockDate).ToString(string.Format("{0}", Env.Cfg.DateStringFormat))));
                     return false;
                 }
             }
@@ -1467,7 +1467,7 @@ order by a.OrderId,os.Seq",
             {
                 MyUtility.Msg.WarningBox(string.Format(
                     "Date:{0}, Line:{1}, Shift:{2}, Team:{3},SubconOutFty:{4},SubConOutContractNumber:{5} already exist, can't save!!",
-                    Convert.ToDateTime(this.CurrentMaintain["OutputDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat)),
+                    Convert.ToDateTime(this.CurrentMaintain["OutputDate"]).ToString(string.Format("{0}", Env.Cfg.DateStringFormat)),
                     MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]),
                     MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]),
                     MyUtility.Convert.GetString(this.CurrentMaintain["Team"]),
@@ -1874,7 +1874,7 @@ where   OrderQty < (QAQty + OtherSewingOutputQty + TransOutQty)
             #region GetID
             if (this.IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("FtyGroup", Sci.Env.User.Factory, "Factory", "ID") + "SM", "SewingOutput", DateTime.Today, 3, "Id", null);
+                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("FtyGroup", Env.User.Factory, "Factory", "ID") + "SM", "SewingOutput", DateTime.Today, 3, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -2369,7 +2369,7 @@ and ukey = (select max(ukey) from SewingOutput_Detail s2 where s.id =s2.id)
                 {
                     this.dateDate.Value = null;
                     e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("Date can't earlier than Sewing Lock Date: {0}.", Convert.ToDateTime(sewingMonthlyLockDate).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
+                    MyUtility.Msg.WarningBox(string.Format("Date can't earlier than Sewing Lock Date: {0}.", Convert.ToDateTime(sewingMonthlyLockDate).ToString(string.Format("{0}", Env.Cfg.DateStringFormat))));
                     return;
                 }
 
@@ -2465,7 +2465,7 @@ where Convert (bit, AutoCreate) != 1";
             base.ClickUnconfirm();
             Win.UI.SelectReason callReason = new Win.UI.SelectReason("Sewing_RVS", true);
             DialogResult dResult = callReason.ShowDialog(this);
-            if (dResult == System.Windows.Forms.DialogResult.OK)
+            if (dResult == DialogResult.OK)
             {
                 string insertCmd = string.Format(
                     @"insert into SewingOutput_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
@@ -2476,12 +2476,12 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
                     "New",
                     callReason.ReturnReason,
                     callReason.ReturnRemark,
-                    Sci.Env.User.UserID);
+                    Env.User.UserID);
 
                 string updateCmd = $@"
 update SewingOutput 
 set LockDate = null, Status = 'New' 
-, EditDate = GetDate(), EditName = '{Sci.Env.User.UserID}'
+, EditDate = GetDate(), EditName = '{Env.User.UserID}'
 where ID = '{MyUtility.Convert.GetString(this.CurrentMaintain["ID"])}'";
 
                 using (TransactionScope transactionScope = new TransactionScope())
@@ -2759,7 +2759,7 @@ WHERE sewqty < (packqty + adjQty)",
         {
             Win.UI.SelectReason callReason = new Win.UI.SelectReason("Sewing_RVS");
             DialogResult dResult = callReason.ShowDialog(this);
-            if (dResult == System.Windows.Forms.DialogResult.OK)
+            if (dResult == DialogResult.OK)
             {
                 string toAddress = MyUtility.GetValue.Lookup($@"
 SELECT CONCAT(p1.EMail,';')  
@@ -2800,7 +2800,7 @@ Manhours : {this.CurrentMaintain["Manhour"]}
 Reason : {MyUtility.GetValue.Lookup($@"select name from Reason where ReasonTypeID='Sewing_RVS' and id= '{callReason.ReturnReason}'")}
 Remark : {callReason.ReturnRemark}
 ";
-                var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, false, true);
+                var email = new MailTo(Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, false, true);
 
                 // email畫面關閉後額外塞入CC人員
                 email.SendingBefore += this.Email_SendingBefore;
@@ -2810,7 +2810,7 @@ Remark : {callReason.ReturnRemark}
                 {
                     this.btnRequestUnlock.Enabled = false;
                     string sqlcmd = $@"insert into SewingOutput_DailyUnlock(SewingOutputID,ReasonID,Remark,RequestDate,RequestName)
-values('{this.CurrentMaintain["ID"]}','{callReason.ReturnReason}','{callReason.ReturnRemark}',getdate(),'{Sci.Env.User.UserID}')";
+values('{this.CurrentMaintain["ID"]}','{callReason.ReturnReason}','{callReason.ReturnRemark}',getdate(),'{Env.User.UserID}')";
                     DualResult rs = DBProxy.Current.Execute("Production", sqlcmd);
                     if (!rs)
                     {
@@ -2848,15 +2848,15 @@ declare @ukey bigint
 select top 1 @ukey=ukey,@reasonID=reasonID,@remark=remark from SewingOutput_DailyUnlock where SewingOutputID = '{this.CurrentMaintain["ID"]}' order by Ukey desc
 
 insert into SewingOutput_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
-values ('{this.CurrentMaintain["ID"]}','Status','Sent','New',isnull(@reasonID,''),isnull(@remark,''),'{Sci.Env.User.UserID}',GETDATE())
+values ('{this.CurrentMaintain["ID"]}','Status','Sent','New',isnull(@reasonID,''),isnull(@remark,''),'{Env.User.UserID}',GETDATE())
 
 Update SewingOutput_DailyUnlock set 
 	UnLockDate = getdate()
-	,UnLockName= '{Sci.Env.User.UserID}'
+	,UnLockName= '{Env.User.UserID}'
 where ukey=@ukey
 
 update SewingOutput set Status='New', LockDate = null
-, editname='{Sci.Env.User.UserID}' 
+, editname='{Env.User.UserID}' 
 , editdate=getdate()
 where ID = '{this.CurrentMaintain["ID"]}' 
 ";
@@ -2899,7 +2899,7 @@ INNER JOIN Orders o ON o.ID = sd.OrderId
 where 1=1
     and s.OutputDate < = CAST (GETDATE() AS DATE) 
     and s.LockDate is null 
-    and s.FactoryID  = '{Sci.Env.User.Factory}'
+    and s.FactoryID  = '{Env.User.Factory}'
 ";
             if (!MyUtility.Check.Seek(sqlcmdChk))
             {
@@ -2915,14 +2915,14 @@ where 1=1
             string sqlcmd = $@"
 UPDATE  s 
 SET s.LockDate = CONVERT(date, GETDATE()) , s.Status='Sent'
-, s.editname='{Sci.Env.User.UserID}', s.editdate=getdate()
+, s.editname='{Env.User.UserID}', s.editdate=getdate()
 FROM SewingOutput s
 INNER JOIN SewingOutput_Detail sd ON sd.ID = s.ID
 INNER JOIN Orders o ON o.ID = sd.OrderId
 where 1=1
     and s.OutputDate < = CAST (GETDATE() AS DATE) 
     and s.LockDate is null 
-    and s.FactoryID  = '{Sci.Env.User.Factory}'
+    and s.FactoryID  = '{Env.User.Factory}'
 ";
 
             string sqlFixWrongSewingOutput = $@"
@@ -3041,7 +3041,7 @@ DEALLOCATE Sewingoutput_cursor --將cursor物件從記憶體移除
                 scope.Complete();
             }
 
-            if (MyUtility.Check.Seek($@"select 1 from Factory where type !='S' and id = '{Sci.Env.User.Factory}'"))
+            if (MyUtility.Check.Seek($@"select 1 from Factory where type !='S' and id = '{Env.User.Factory}'"))
             {
                 SendMail();
             }
@@ -3073,7 +3073,7 @@ where OutputDate != convert(date,GETDATE())"));
                 where 1=1
                     and OutputDate = '{Convert.ToDateTime(dateMaxOutputDate).ToString("d")}'
                     and Status in('','NEW')
-                    and FactoryID = '{Sci.Env.User.Factory}'
+                    and FactoryID = '{Env.User.Factory}'
             ";
             if (MyUtility.Check.Seek(sql, out drData))
             {
@@ -3149,7 +3149,7 @@ where s.OutputDate = '{0}'
 	  and s.FactoryID = '{1}'
       and (o.CateGory NOT IN ('G','A') or s.Category='M')  ",
                 Convert.ToDateTime(dateMaxOutputDate).ToString("d"),
-                Sci.Env.User.Factory));
+                Env.User.Factory));
 
             sqlCmd.Append(@"
 select OutputDate
@@ -3582,12 +3582,12 @@ order by ArtworkTypeID"),
             }
             #endregion
 
-            string factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Factory));
+            string factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", Env.User.Factory));
             #endregion
 
             #region ToExcel
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Sewing_R01_DailyCMPReport.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Sewing_R01_DailyCMPReport.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -3597,7 +3597,7 @@ order by ArtworkTypeID"),
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[1, 1] = factoryName;
-            worksheet.Cells[2, 1] = string.Format("{0} Daily CMP Report, DD.{1} {2}", Sci.Env.User.Factory, Convert.ToDateTime(dateMaxOutputDate).ToString("MM/dd"), "(Included Subcon-IN)");
+            worksheet.Cells[2, 1] = string.Format("{0} Daily CMP Report, DD.{1} {2}", Env.User.Factory, Convert.ToDateTime(dateMaxOutputDate).ToString("MM/dd"), "(Included Subcon-IN)");
 
             // 沒資料就顯示空的Excel
             if (dtR01.Rows.Count > 0 && !MyUtility.Check.Empty(dtR01))
@@ -3834,9 +3834,9 @@ order by ArtworkTypeID"),
                     }
                 }
                 #region Direct Manpower(From PAMS)
-                if (Sci.Env.User.Keyword.EqualString("CM1") ||
-                    Sci.Env.User.Keyword.EqualString("CM2") ||
-                    Sci.Env.User.Keyword.EqualString("CM3"))
+                if (Env.User.Keyword.EqualString("CM1") ||
+                    Env.User.Keyword.EqualString("CM2") ||
+                    Env.User.Keyword.EqualString("CM3"))
                 {
                     worksheet.Cells[insertRow, 5] = 0;
                     worksheet.Cells[insertRow, 7] = 0;
@@ -3844,7 +3844,7 @@ order by ArtworkTypeID"),
                 else
                 {
                     dataMode = new List<APIData>();
-                    GetApiData.GetAPIData(string.Empty, Sci.Env.User.Factory, (DateTime)DateTime.Now.AddDays(-1), (DateTime)DateTime.Now.AddDays(-1), out dataMode);
+                    GetApiData.GetAPIData(string.Empty, Env.User.Factory, (DateTime)DateTime.Now.AddDays(-1), (DateTime)DateTime.Now.AddDays(-1), out dataMode);
                     if (dataMode != null)
                     {
                         worksheet.Cells[insertRow, 5] = dataMode[0].SewTtlManpower;
@@ -3872,8 +3872,8 @@ order by ArtworkTypeID"),
             excel.Visible = false;
             #region Save & Show Excel
             string excelFileR01 = Path.Combine(
-                Sci.Env.Cfg.ReportTempDir,
-                "Daily CMP Report" + ((DateTime)dateMaxOutputDate).ToString("_yyyyMMdd") + DateTime.Now.ToString("_HHmmssfff") + "(" + Sci.Env.User.Factory + ").xlsx");
+                Env.Cfg.ReportTempDir,
+                "Daily CMP Report" + ((DateTime)dateMaxOutputDate).ToString("_yyyyMMdd") + DateTime.Now.ToString("_HHmmssfff") + "(" + Env.User.Factory + ").xlsx");
             excel.ActiveWorkbook.SaveAs(excelFileR01);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
@@ -3886,7 +3886,7 @@ order by ArtworkTypeID"),
 
             #region 產生R04 報表
             DataTable dtR04;
-            string sqlcmd = $"exec [dbo].[Send_SewingDailyOutput] '{Sci.Env.User.Factory}', '{Convert.ToDateTime(dateMaxOutputDate).ToString("d")}'";
+            string sqlcmd = $"exec [dbo].[Send_SewingDailyOutput] '{Env.User.Factory}', '{Convert.ToDateTime(dateMaxOutputDate).ToString("d")}'";
             result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtR04);
             if (!result)
             {
@@ -3894,7 +3894,7 @@ order by ArtworkTypeID"),
                 return;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Sewing_R04_SewingDailyOutputList.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Sewing_R04_SewingDailyOutputList.xltx"); // 預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得
             objSheets.get_Range("AM:AN").EntireColumn.Delete();
             for (int i = 40; i < dtR04.Columns.Count; i++)
@@ -3913,8 +3913,8 @@ order by ArtworkTypeID"),
             }
 
             string excelFileR04 = Path.Combine(
-                Sci.Env.Cfg.ReportTempDir,
-                "Sewing daily output list -" + ((DateTime)dateMaxOutputDate).ToString("_yyyyMMdd") + DateTime.Now.ToString("_HHmmssfff") + "(" + Sci.Env.User.Factory + ").xlsx");
+                Env.Cfg.ReportTempDir,
+                "Sewing daily output list -" + ((DateTime)dateMaxOutputDate).ToString("_yyyyMMdd") + DateTime.Now.ToString("_HHmmssfff") + "(" + Env.User.Factory + ").xlsx");
             objApp.ActiveWorkbook.SaveAs(excelFileR04);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
@@ -3929,7 +3929,7 @@ order by ArtworkTypeID"),
                 {
                     string desc = $@"
 Hi all,
-     Output date: {Convert.ToDateTime(dateMaxOutputDate).ToString("d")} Factory: {Sci.Env.User.Factory} sewing output data is already daily lock, these attachments are system generated from Sewing R01(Daily CMP Report) and Sewing R04(Sewing Daily Output List). This mail is automatically sent, please do not reply directly.
+     Output date: {Convert.ToDateTime(dateMaxOutputDate).ToString("d")} Factory: {Env.User.Factory} sewing output data is already daily lock, these attachments are system generated from Sewing R01(Daily CMP Report) and Sewing R04(Sewing Daily Output List). This mail is automatically sent, please do not reply directly.
       
 ";
                     if (MyUtility.Check.Seek("select * from mailto where id='020'", out drMail))
@@ -3938,7 +3938,7 @@ Hi all,
                         attachFiles.Add(excelFileR01);
                         attachFiles.Add(excelFileR04);
 
-                        string subject = drMail["Subject"].ToString() + $@"{Convert.ToDateTime(dateMaxOutputDate).ToString("d")} ({Sci.Env.User.Factory})";
+                        string subject = drMail["Subject"].ToString() + $@"{Convert.ToDateTime(dateMaxOutputDate).ToString("d")} ({Env.User.Factory})";
                         MailTo mail = new MailTo(dr["SendFrom"].ToString(), drMail["ToAddress"].ToString(), drMail["ccAddress"].ToString(), subject, desc, attachFiles, true, true);
                         mail.ShowDialog();
                     }
@@ -3982,7 +3982,7 @@ group by InspectionDate, FactoryID, Line, Shift, Team, OrderId, Article, Locatio
 
             if (sewDt1.Rows.Count == 0)
             {
-                return Result.F("DQS Data not found!");
+                return Ict.Result.F("DQS Data not found!");
             }
 
             string sqlcmd = $@"
@@ -4038,7 +4038,7 @@ outer apply(
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private DualResult GetDQSDataForDetail_Detail(DataRow item, out DataTable sewDt2)
@@ -4127,7 +4127,7 @@ order by a.OrderId,os.Seq
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private void FromDQS()

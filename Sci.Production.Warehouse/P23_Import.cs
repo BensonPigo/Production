@@ -175,7 +175,7 @@ inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID
 left join dbo.orders o WITH (NOLOCK) on o.id = fi.POID 
 where fi.Lock = 0
 Order by GroupQty desc, fromdyelot, balanceQty desc
-drop table #tmp", Sci.Env.User.Keyword, this.dr_master["id"]));
+drop table #tmp", Env.User.Keyword, this.dr_master["id"]));
                 #endregion
                 System.Data.SqlClient.SqlParameter sqlp1 = new System.Data.SqlClient.SqlParameter();
                 sqlp1.ParameterName = "@poid";

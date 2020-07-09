@@ -68,7 +68,7 @@ namespace Sci.Production.Report.GSchemas
             }
 
             this._GetShip_Detail_MinETA.Add(key, eta);
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private IDictionary<string, IDictionary<string, decimal?>> _GetCurrencyRate = new Dictionary<string, IDictionary<string, decimal?>>();
@@ -95,7 +95,7 @@ namespace Sci.Production.Report.GSchemas
             {
                 rate = currencyRate["A"];
                 exact = currencyRate["B"];
-                return Result.True;
+                return Ict.Result.True;
             }
             else
             {
@@ -144,7 +144,7 @@ namespace Sci.Production.Report.GSchemas
             }
 
             this._GetCurrencyRate.Add(key, currencyRate);
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private IDictionary<string, decimal?> _GetPoAmount = new Dictionary<string, decimal?>();
@@ -162,7 +162,7 @@ namespace Sci.Production.Report.GSchemas
             string key = id;
             if (this._GetPoAmount.TryGetValue(key, out poAmount))
             {
-                return Result.True;
+                return Ict.Result.True;
             }
 
             var paras = new List<SqlParameter>()
@@ -193,7 +193,7 @@ namespace Sci.Production.Report.GSchemas
 
             poAmount = 1;
             this._GetPoAmount.Add(key, poAmount);
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private IDictionary<string, DateTime?> _GetOrderSciDate = new Dictionary<string, DateTime?>();
@@ -243,7 +243,7 @@ namespace Sci.Production.Report.GSchemas
             }
 
             this._GetOrderSciDate.Add(key, sValue);
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -273,7 +273,7 @@ namespace Sci.Production.Report.GSchemas
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -312,7 +312,7 @@ namespace Sci.Production.Report.GSchemas
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -341,7 +341,7 @@ namespace Sci.Production.Report.GSchemas
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -366,7 +366,7 @@ namespace Sci.Production.Report.GSchemas
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -387,7 +387,7 @@ namespace Sci.Production.Report.GSchemas
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -408,7 +408,7 @@ namespace Sci.Production.Report.GSchemas
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -433,7 +433,7 @@ namespace Sci.Production.Report.GSchemas
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -456,7 +456,7 @@ namespace Sci.Production.Report.GSchemas
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -483,7 +483,7 @@ namespace Sci.Production.Report.GSchemas
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -512,7 +512,7 @@ namespace Sci.Production.Report.GSchemas
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -555,7 +555,7 @@ namespace Sci.Production.Report.GSchemas
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
     }
 }

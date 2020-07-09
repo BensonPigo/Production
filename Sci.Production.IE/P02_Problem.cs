@@ -37,7 +37,7 @@ namespace Sci.Production.IE
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -84,7 +84,7 @@ where cp.ID = {0}", this.KeyValue1);
             }
 
             this.SetGrid(chgOverProblem);
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // Save -- Append/Revise/Delete按鈕要隱藏

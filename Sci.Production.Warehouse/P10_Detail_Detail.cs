@@ -98,7 +98,7 @@ inner join cte d on d.Dyelot=c.Dyelot
 Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 
 and a.Refno='{2}' and a.colorid='{3}' {5}--and ltrim(a.seq1) between '01' and '99'
 order by d.GroupQty DESC,c.Dyelot,balanceqty DESC", this.dr_master["poid"],
-                Sci.Env.User.Keyword,
+                Env.User.Keyword,
                 this.dr_master["Refno"],
                 this.dr_master["colorid"],
                 this.Type == 0 ? " and a.Seq1 BETWEEN '00' AND '99'" : string.Empty,

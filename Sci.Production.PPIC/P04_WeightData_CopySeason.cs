@@ -99,7 +99,7 @@ and s.SeasonID = @seasonid";
         private void BtnOK_Click(object sender, EventArgs e)
         {
             this.PPICP04CopySeason = this.txtFromSeason.Text;
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
     }
 }

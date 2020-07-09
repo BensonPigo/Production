@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
@@ -236,7 +235,7 @@ outer apply(select [Result] = CASE	WHEN ed.PODD is null or ed.ActFCRDate is null
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -270,7 +269,7 @@ outer apply(select [Result] = CASE	WHEN ed.PODD is null or ed.ActFCRDate is null
             objSheet.Visible = Excel.XlSheetVisibility.xlSheetHidden;
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R14");
+            string strExcelName = Class.MicrosoftFile.GetName("Planning_R14");
             Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

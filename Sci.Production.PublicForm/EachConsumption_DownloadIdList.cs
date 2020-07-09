@@ -39,7 +39,7 @@ Group by ID, MarkerDownloadID", this.KeyValue1);
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnGridSetup()

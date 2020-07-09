@@ -78,7 +78,7 @@ namespace Sci.Production.Centralized
             DualResult result;
             base.OnFormLoaded();
             this.comboDropDownListCategory.SelectedIndex = 0;
-            this.comboFtyZone.setDataSource();
+            this.comboFtyZone.SetDataSource();
             #region 取得 MR Team 資料
             System.Data.DataTable dt_ref = null;
             string sql = @"select * from Department WITH (NOLOCK) where Department.Type = 'MR'";
@@ -110,7 +110,7 @@ namespace Sci.Production.Centralized
         /// <inheritdoc/>
         protected override bool OnToExcel(ReportDefinition report)
         {
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
             if (this.excel == null)
             {
                 return true;
@@ -623,7 +623,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
         private DualResult TransferToExcel()
         {
             string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
             string strPath = PrivUtils.getPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
             this.temfile = strPath + @"\Centralized-R03.Prod. Efficiency Analysis Report.xltx";
 
@@ -839,7 +839,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H,I,J order by A,B,C,D,E,F,H";
                 #region Save & Show Excel
                 this.excel.Visible = true;
                 Workbook workbook = this.excel.Workbooks[1];
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Centralized-R03.Prod. Efficiency Analysis Report");
+                string strExcelName = Class.MicrosoftFile.GetName("Centralized-R03.Prod. Efficiency Analysis Report");
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
                 this.excel.Quit();

@@ -190,7 +190,7 @@ where R.id = @ID";
                 e.Report.ReportDataSource = data;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         public DataRow CurrentDataRow { get; set; }
@@ -229,7 +229,7 @@ where R.id = @ID";
 
             if (this.ReportResourceName == "P07_Report2.rdlc")
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P07_ArriveWearhouseReport.xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P07_ArriveWearhouseReport.xltx"); // 預先開啟excel app
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
                 int nRow = 7;
@@ -262,7 +262,7 @@ where R.id = @ID";
                 }
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P07_ArriveWearhouseReport");
+                string strExcelName = Class.MicrosoftFile.GetName("Warehouse_P07_ArriveWearhouseReport");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);
@@ -273,7 +273,7 @@ where R.id = @ID";
             }
             else
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P07_PackingListReveivingReport.xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P07_PackingListReveivingReport.xltx"); // 預先開啟excel app
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
                 int nRow = 7;
@@ -302,7 +302,7 @@ where R.id = @ID";
                 }
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P07_PackingListReveivingReport");
+                string strExcelName = Class.MicrosoftFile.GetName("Warehouse_P07_PackingListReveivingReport");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);

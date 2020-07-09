@@ -43,7 +43,7 @@ namespace Sci.Production.Packing
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' AND Type = 'F'";
+            this.DefaultFilter = "MDivisionID = '" + Env.User.Keyword + "' AND Type = 'F'";
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
         }
@@ -82,7 +82,7 @@ select '' FTYGroup
 union 
 select distinct FTYGroup 
 from Factory 
-where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+where MDivisionID = '{0}'", Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;
@@ -147,7 +147,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                         // sql參數
                         SqlParameter sp1 = new SqlParameter("@orderid", e.FormattedValue.ToString());
                         SqlParameter sp2 = new SqlParameter("@brandid", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]));
-                        SqlParameter sp3 = new SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
+                        SqlParameter sp3 = new SqlParameter("@mdivisionid", Env.User.Keyword);
 
                         IList<SqlParameter> cmds = new List<SqlParameter>();
                         cmds.Add(sp1);
@@ -252,7 +252,7 @@ select 1 from Orders o WITH (NOLOCK) where o.ID = @orderid and o.category in ('B
             {
                 if (this.EditMode && MyUtility.Check.Empty(this.CurrentMaintain["ExpressID"]))
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -288,7 +288,7 @@ select 1 from Orders o WITH (NOLOCK) where o.ID = @orderid and o.category in ('B
             {
                 if (this.EditMode && MyUtility.Check.Empty(this.CurrentMaintain["ExpressID"]))
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -386,7 +386,7 @@ select 1 from Orders o WITH (NOLOCK) where o.ID = @orderid and o.category in ('B
             {
                 if (this.EditMode && MyUtility.Check.Empty(this.CurrentMaintain["ExpressID"]))
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -720,8 +720,8 @@ where InvA.OrderID = '{0}'
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Type"] = "F";
             this.CurrentMaintain["Dest"] = "ZZ";
             this.CurrentMaintain["Status"] = "New";
@@ -764,7 +764,7 @@ where InvA.OrderID = '{0}'
                 }
 
                 // 如果Pullout report已存在且狀態為Confirmed時，需出訊息告知
-                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(this.CurrentMaintain["PulloutDate"].ToString()).ToString("d"), Sci.Env.User.Keyword), out this.dr))
+                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(this.CurrentMaintain["PulloutDate"].ToString()).ToString("d"), Env.User.Keyword), out this.dr))
                 {
                     if (this.dr["Status"].ToString() != "New")
                     {
@@ -967,7 +967,7 @@ where oqd.Id = '{0}'
             // GetID
             if (this.IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "FS", "PackingList", DateTime.Today, 2, "Id", null);
+                string id = MyUtility.GetValue.GetID(Env.User.Keyword + "FS", "PackingList", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -981,14 +981,14 @@ where oqd.Id = '{0}'
             // Get表身 SCICtnNo
             if (this.IsDetailInserting)
             {
-                if (!PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), "IsDetailInserting"))
+                if (!Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), "IsDetailInserting"))
                 {
                     return false;
                 }
             }
             else
             {
-                if (!PublicPrg.Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), string.Empty))
+                if (!Prgs.GetSCICtnNo((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), string.Empty))
                 {
                     return false;
                 }
@@ -1024,7 +1024,7 @@ where oqd.Id = '{0}'
             if (!MyUtility.Check.Empty(this.datePullOutDate.Value) && this.datePullOutDate.Value !=
                 this.datePullOutDate.OldValue)
             {
-                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(this.datePullOutDate.Value.ToString()).ToString("d"), Sci.Env.User.Keyword), out this.dr))
+                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(this.datePullOutDate.Value.ToString()).ToString("d"), Env.User.Keyword), out this.dr))
                 {
                     if (this.dr["Status"].ToString() != "New")
                     {
@@ -1113,7 +1113,7 @@ AND s.ShipGroup <> (
                 return;
             }
 
-            this.sqlCmd = string.Format("update PackingList set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
+            this.sqlCmd = string.Format("update PackingList set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, this.CurrentMaintain["ID"].ToString());
             this.result = DBProxy.Current.Execute(null, this.sqlCmd);
             if (!this.result)
             {
@@ -1146,7 +1146,7 @@ and p.ID = pl.PulloutID", this.CurrentMaintain["ID"].ToString());
 
             // 問是否要做Unconfirm，確定才繼續往下做
             this.buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Unconfirm > this data?", "Warning", MessageBoxButtons.YesNo);
-            if (this.buttonResult == System.Windows.Forms.DialogResult.No)
+            if (this.buttonResult == DialogResult.No)
             {
                 return;
             }

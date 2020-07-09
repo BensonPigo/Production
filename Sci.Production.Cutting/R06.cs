@@ -355,7 +355,7 @@ drop table #orderBuyer,#tmpc,#tmpc2,#tmpc3,#tmpcB,#tmpcB2,#tmpcB3,#pOffline,#tmp
 
             this.dt[0].Columns.Remove("MDivisionID");
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -370,7 +370,7 @@ drop table #orderBuyer,#tmpc,#tmpc2,#tmpc3,#tmpcB,#tmpcB2,#tmpcB3,#pOffline,#tmp
             }
 
             string filename = "Cutting_R06 Ready date.xltx";
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.dt[0], string.Empty, filename, 1, false, null, objApp, wSheet: objApp.Sheets[1]);      // 將datatable copy to excel
             Excel.Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
@@ -407,11 +407,11 @@ drop table #orderBuyer,#tmpc,#tmpc2,#tmpc3,#tmpcB,#tmpcB2,#tmpcB3,#pOffline,#tmp
                 worksheet.Cells[row, 1] = m;
                 worksheet.get_Range("A" + row, "B" + (row + 1)).Font.Bold = true; // 指定粗體
                 worksheet.get_Range("A" + row, "B" + (row + 1)).Font.Size = 10; // 字型大小
-                worksheet.get_Range("A" + row, "B" + row).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, System.Drawing.Color.Black.ToArgb());
+                worksheet.get_Range("A" + row, "B" + row).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, Color.Black.ToArgb());
                 worksheet.get_Range("A" + row, "B" + row).Interior.Color = Color.FromArgb(217, 217, 217);
                 row++;
                 worksheet.get_Range("A" + row, "B" + row).Borders.Weight = 2;
-                worksheet.get_Range("A" + row, "B" + row).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, System.Drawing.Color.Black.ToArgb());
+                worksheet.get_Range("A" + row, "B" + row).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, Color.Black.ToArgb());
                 worksheet.get_Range("A" + row, "B" + row).Interior.Color = Color.FromArgb(102, 255, 255);
 
                 worksheet.Cells[row, 1] = "Factory";
@@ -421,14 +421,14 @@ drop table #orderBuyer,#tmpc,#tmpc2,#tmpc3,#tmpcB,#tmpcB2,#tmpcB3,#pOffline,#tmp
                 p2.Columns.Remove("MDivisionID");
                 MyUtility.Excel.CopyToXls(p2, string.Empty, filename, row, false, null, objApp, wSheet: objApp.Sheets[2]);
                 worksheet.get_Range("A" + (row + 1), "B" + (row + p2.Rows.Count)).Borders.Weight = 2;
-                worksheet.get_Range("A" + (row + 1), "B" + (row + p2.Rows.Count)).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, System.Drawing.Color.Black.ToArgb());
+                worksheet.get_Range("A" + (row + 1), "B" + (row + p2.Rows.Count)).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, Color.Black.ToArgb());
                 row += p2.Rows.Count + 1;
                 int s2 = row - 1;
                 worksheet.Cells[row, 1] = "Grand Total";
                 worksheet.Cells[row, 2] = $"=SUM(B{s1}:B{s2})";
                 worksheet.get_Range("A" + row, "B" + row).Font.Bold = true; // 指定粗體
                 worksheet.get_Range("A" + row, "B" + row).Borders.Weight = 2;
-                worksheet.get_Range("A" + row, "B" + row).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, System.Drawing.Color.Black.ToArgb());
+                worksheet.get_Range("A" + row, "B" + row).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, Color.Black.ToArgb());
                 worksheet.get_Range("A" + row, "B" + row).Interior.Color = Color.FromArgb(255, 230, 153);
 
                 row += 2;
@@ -455,7 +455,7 @@ drop table #orderBuyer,#tmpc,#tmpc2,#tmpc3,#tmpcB,#tmpcB2,#tmpcB3,#pOffline,#tmp
                 worksheet.Cells[row, 4] = $"=SUM(D{s1}:D{s2})";
                 worksheet.Cells[row, 5] = $"=C{row}/B{row}";
                 worksheet.get_Range("A" + s1, "E" + row).Borders.Weight = 2;
-                worksheet.get_Range("A" + s1, "E" + row).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, System.Drawing.Color.Black.ToArgb());
+                worksheet.get_Range("A" + s1, "E" + row).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, Color.Black.ToArgb());
                 worksheet.get_Range("A" + row, "E" + row).Interior.Color = Color.FromArgb(255, 230, 153);
 
                 row += 1;
@@ -466,7 +466,7 @@ drop table #orderBuyer,#tmpc,#tmpc2,#tmpc3,#tmpcB,#tmpcB2,#tmpcB3,#pOffline,#tmp
             worksheet.Columns.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(filename);
+            string strExcelName = Class.MicrosoftFile.GetName(filename);
             Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

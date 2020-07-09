@@ -8,8 +8,8 @@ namespace Sci.Production.Cutting
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = $" MDivisionid = '{Sci.Env.User.Keyword}' ";
-            this.txtCell1.MDivisionID = Sci.Env.User.Keyword;
+            this.DefaultFilter = $" MDivisionid = '{Env.User.Keyword}' ";
+            this.txtCell1.MDivisionID = Env.User.Keyword;
         }
 
         protected override void ClickEditAfter()
@@ -21,7 +21,7 @@ namespace Sci.Production.Cutting
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionid"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionid"] = Env.User.Keyword;
         }
     }
 }

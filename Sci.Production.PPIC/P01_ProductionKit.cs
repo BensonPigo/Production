@@ -93,7 +93,7 @@ where sp.StyleUkey = {0} order by sp.ProductionKitsGroup", this.KeyValue1);
 
             this.SetGrid(artworkTable);
             this.DataFilter();
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>

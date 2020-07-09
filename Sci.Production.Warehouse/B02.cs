@@ -30,7 +30,7 @@ namespace Sci.Production.Warehouse
             this.comboStockType.DisplayMember = "Value";
 
             // 有新增權限的人才可以按這顆按鈕
-            bool canNew = Prgs.GetAuthority(Sci.Env.User.UserID, "B02. Material Location Index", "CanNew");
+            bool canNew = Prgs.GetAuthority(Env.User.UserID, "B02. Material Location Index", "CanNew");
             this.btnBatchCreate.Enabled = canNew;
         }
 

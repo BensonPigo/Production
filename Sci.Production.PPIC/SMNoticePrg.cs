@@ -18,7 +18,7 @@ namespace Sci.Production.Class.Commons
     /// </summary>
     public static class SMNoticePrg
     {
-        private static object MissingType = System.Type.Missing;
+        private static object MissingType = Type.Missing;
 
         #region QueryFors setup
 
@@ -509,7 +509,7 @@ Exists (
         public static void PrintSMNotice(string iD, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
         {
             // var xltFolder = Sci.Production.Class.Commons.TradeSystem.Env.XltPathDir;
-            var xltFolder = Sci.Env.Cfg.XltPathDir;
+            var xltFolder = Env.Cfg.XltPathDir;
             var xltPath = System.IO.Path.Combine(xltFolder, "PPIC_Pattern-P01_PrintSMnotice.xlt");
 
             if (System.IO.File.Exists(xltPath) == false)
@@ -576,7 +576,7 @@ Exists (
                 mainSheet.Protect("SCIMIS919", Type.Missing, Type.Missing, Type.Missing, Type.Missing, true, true, true);
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_Pattern-P01_PrintSMnotice");
+                string strExcelName = MicrosoftFile.GetName("PPIC_Pattern-P01_PrintSMnotice");
                 MsExcel.Workbook workbook = app.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
@@ -592,9 +592,9 @@ Exists (
                 Marshal.ReleaseComObject(app);
                 book = null;
                 app = null;
-                System.GC.Collect();
-                System.GC.WaitForPendingFinalizers();
-                System.GC.Collect();
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
             }
 
             // MyUtility.Msg.InfoBox("print complete");
@@ -2230,7 +2230,7 @@ Where o.ID = @ID
         /// <param name="smID">string</param>
         public static void PrintSMNoticeDevTrimCard(string smID)
         {
-            var xltFolder = Sci.Env.Cfg.XltPathDir;
+            var xltFolder = Env.Cfg.XltPathDir;
             var xltPath = System.IO.Path.Combine(xltFolder, "Pattern-P01_PrintDev.xlt");
             if (System.IO.File.Exists(xltPath) == false)
             {
@@ -2275,9 +2275,9 @@ Where o.ID = @ID
                 Marshal.ReleaseComObject(app);
                 book = null;
                 app = null;
-                System.GC.Collect();
-                System.GC.WaitForPendingFinalizers();
-                System.GC.Collect();
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
             }
 
             MyUtility.Msg.InfoBox("print complete");
@@ -2467,7 +2467,7 @@ order by x.tp, x.PNO
         public static void PrintGarmentList(long uKey, string savePath = null)
         {
             var directlyOpenExportReport = savePath == null;
-            var xltFolder = Sci.Env.Cfg.XltPathDir;
+            var xltFolder = Env.Cfg.XltPathDir;
             var xltPath = System.IO.Path.Combine(xltFolder, "Pattern-P02.Garment List-Print.xlt");
             var bmpFolder = System.IO.Path.Combine(xltFolder, "BMP");
             if (System.IO.File.Exists(xltPath) == false)
@@ -2543,9 +2543,9 @@ order by x.tp, x.PNO
                 Marshal.ReleaseComObject(app);
                 book = null;
                 app = null;
-                System.GC.Collect();
-                System.GC.WaitForPendingFinalizers();
-                System.GC.Collect();
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
             }
 
             if (directlyOpenExportReport)
@@ -2630,7 +2630,7 @@ Where p.UKey = @UKey";
                 // line6
                 var sizeRoundText = string.Format("Size Round#: {0}", row.Field<string>("SizeRound"));
                 using (var img = new Bitmap(1000, 1000))
-                using (var gra = System.Drawing.Graphics.FromImage(img))
+                using (var gra = Graphics.FromImage(img))
                 using (var fnt = new Font("Arial", 10f))
                 {
                     sheet.GetRange("A6").WrapText = true;
@@ -2852,7 +2852,7 @@ Order by (
                     var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("B3") as MsExcel.Worksheet;
                     var articleCellWidth = Convert.ToInt32(Math.Floor((double)thisSheet.GetRange(3, 2, 9, 2).Width * 1.3333));
                     using (var img = new Bitmap(1000, 1000))
-                    using (var gra = System.Drawing.Graphics.FromImage(img))
+                    using (var gra = Graphics.FromImage(img))
                     using (var fnt = new Font("Arial", 10f))
                     {
                         try
@@ -2987,7 +2987,7 @@ Where p.UKey = @UKey
                 {
                     var remarkCellWidth = Convert.ToInt32((double)thisSheet.GetRange(1, 2, 9, 2).Width * 1.2);
                     using (var img = new Bitmap(1000, 1000))
-                    using (var gra = System.Drawing.Graphics.FromImage(img))
+                    using (var gra = Graphics.FromImage(img))
                     using (var fnt = new Font("Arial", 10f))
                     {
                         thisSheet.GetRange("A2").Value = row.Field<string>("HisRemark");

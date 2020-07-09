@@ -46,15 +46,15 @@ namespace Sci.Production.Shipping
             this.InsertDetailGridOnDoubleClick = false;
 
             // 組Cut off date的mask
-            for (int i = 0; i < Sci.Env.Cfg.DateTimeStringFormat.Length; i++)
+            for (int i = 0; i < Env.Cfg.DateTimeStringFormat.Length; i++)
             {
-                this.dtmask = Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "/" || Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == ":" ? Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) : Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == " " ? " " : "0";
-                this.empmask = Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "/" || Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == ":" ? Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) : Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "s" ? string.Empty : " ";
+                this.dtmask = Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "/" || Env.Cfg.DateTimeStringFormat.Substring(i, 1) == ":" ? Env.Cfg.DateTimeStringFormat.Substring(i, 1) : Env.Cfg.DateTimeStringFormat.Substring(i, 1) == " " ? " " : "0";
+                this.empmask = Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "/" || Env.Cfg.DateTimeStringFormat.Substring(i, 1) == ":" ? Env.Cfg.DateTimeStringFormat.Substring(i, 1) : Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "s" ? string.Empty : " ";
                 this.dateTimeMask = this.dateTimeMask + this.dtmask;
                 this.emptyDTMask = this.emptyDTMask + this.empmask;
             }
 
-            this.txtCutoffDate.DataBindings.Add(new Binding("Text", this.mtbs, "CutOffDate", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, this.emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
+            this.txtCutoffDate.DataBindings.Add(new Binding("Text", this.mtbs, "CutOffDate", true, DataSourceUpdateMode.OnValidation, this.emptyDTMask, Env.Cfg.DateTimeStringFormat));
             this.txtCutoffDate.Mask = this.dateTimeMask;
         }
 
@@ -228,7 +228,7 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                 if (MyUtility.Check.Seek(sqlCmd))
                 {
                     this.btnAirPPList.ForeColor = Color.Red;
-                    this.btnAirPPList.Font = new Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+                    this.btnAirPPList.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Bold);
                 }
                 else
                 {
@@ -287,7 +287,7 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
 
             this.shipqty.EditingMouseDoubleClick += (s, e) =>
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                    if (e.Button == MouseButtons.Left)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -395,7 +395,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
             base.ClickNewAfter();
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["InvDate"] = DateTime.Today;
-            this.CurrentMaintain["Handle"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["Handle"] = Env.User.UserID;
             this.CurrentMaintain["ShipModeID"] = "SEA";
             this.CurrentMaintain["ShipTermID"] = "FOB";
         }
@@ -948,13 +948,13 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
         protected override bool ClickPrint()
         {
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P05.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P05.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -1020,7 +1020,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P05");
+            string strExcelName = Class.MicrosoftFile.GetName("Shipping_P05");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
@@ -1511,7 +1511,7 @@ Packing List : {pid}";
             }
 
             // 有Cancel Order 不能confirmed
-            string errmsg = PublicPrg.Prgs.ChkCancelOrder(this.CurrentMaintain["id"].ToString());
+            string errmsg = Prgs.ChkCancelOrder(this.CurrentMaintain["id"].ToString());
             if (!MyUtility.Check.Empty(errmsg))
             {
                 MyUtility.Msg.WarningBox(errmsg);
@@ -1636,7 +1636,7 @@ inner join (
     where b.INVNo = '{1}'
     group by b.INVNo
 )b on a.id = b.INVNo
-where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             DualResult result1 = DBProxy.Current.Execute(null, updateCmd);
             if (!result1)
             {
@@ -1666,14 +1666,14 @@ where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.Current
 
             // 問是否要做Unconfirm，確定才繼續往下做
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Unconfirm > this data?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
 
             Win.UI.SelectReason callReason = new Win.UI.SelectReason("GMTBooking_UnCFM", true);
             DialogResult dResult = callReason.ShowDialog(this);
-            if (dResult == System.Windows.Forms.DialogResult.OK)
+            if (dResult == DialogResult.OK)
             {
                 if (callReason.ReturnReason == string.Empty)
                 {
@@ -1691,7 +1691,7 @@ where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.Current
                         "New",
                         callReason.ReturnReason,
                         callReason.ReturnRemark,
-                        Sci.Env.User.UserID);
+                        Env.User.UserID);
 
                     string insert = $@"
     INSERT INTO GMTBooking_History  ([ID],[HisType],[OldValue],[NewValue],[ReasonID],[Remark],[AddName],[AddDate])
@@ -1702,12 +1702,12 @@ where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.Current
                    ,'Un CFM'
                    ,'{callReason.ReturnReason}'
                    ,'{callReason.ReturnRemark}'
-                   ,'{Sci.Env.User.UserID}'
+                   ,'{Env.User.UserID}'
                    ,GETDATE()
                 )
 
     ";
-                    string updateCmd = string.Format("update GMTBooking set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                    string updateCmd = string.Format("update GMTBooking set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
                     using (TransactionScope transactionScope = new TransactionScope())
                     {
@@ -1844,7 +1844,7 @@ order by fwd.WhseNo", this.txtTerminalWhse.Text.ToString().Trim());
 
             Win.UI.SelectReason callReason = new Win.UI.SelectReason("GMTBooking_SO", true);
             DialogResult dResult = callReason.ShowDialog(this);
-            if (dResult == System.Windows.Forms.DialogResult.OK)
+            if (dResult == DialogResult.OK)
             {
                 string insertCmd = string.Format(
                     @"insert into GMTBooking_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
@@ -1855,7 +1855,7 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
                     "CFM",
                     callReason.ReturnReason,
                     callReason.ReturnRemark,
-                    Sci.Env.User.UserID);
+                    Env.User.UserID);
 
                 string updateCmd = string.Format(@"update GMTBooking set SOCFMDate = null where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 

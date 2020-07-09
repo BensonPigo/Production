@@ -38,8 +38,8 @@ namespace Sci.Production.Cutting
         {
             base.OnFormLoaded();
 
-            this.txtMdivision.Text = Sci.Env.User.Keyword;
-            this.txtfactory.Text = Sci.Env.User.Factory;
+            this.txtMdivision.Text = Env.User.Keyword;
+            this.txtfactory.Text = Env.User.Factory;
         }
 
         protected override bool ValidateInput()
@@ -131,9 +131,9 @@ AND (
 
             this.Days.Clear();
 
-            List<PublicPrg.Prgs.Day> daylist1 = PublicPrg.Prgs.GetDays(maxLeadTime, start_where, this.FtyFroup);
+            List<PublicPrg.Prgs.Day> daylist1 = GetDays(maxLeadTime, start_where, this.FtyFroup);
             this.displayday1 = daylist1.Select(s => s.Date).Min(m => m.Date); // 報表顯示開始日
-            List<PublicPrg.Prgs.Day> daylist2 = PublicPrg.Prgs.GetDays(minLeadTime, end_where, this.FtyFroup);
+            List<PublicPrg.Prgs.Day> daylist2 = GetDays(minLeadTime, end_where, this.FtyFroup);
             this.displayday2 = daylist2.Select(s => s.Date).Min(m => m.Date); // 報表顯示結束日
             foreach (var item in daylist1)
             {
@@ -148,7 +148,7 @@ AND (
             // 若 daylist1 是1/1~1/3, daylist2 是1/10~1/12, 中間也要補上
             if (start_where < this.displayday2)
             {
-                List<PublicPrg.Prgs.Day> daylist3 = PublicPrg.Prgs.GetRangeHoliday(start_where, (DateTime)this.displayday2, this.FtyFroup);
+                List<PublicPrg.Prgs.Day> daylist3 = GetRangeHoliday(start_where, (DateTime)this.displayday2, this.FtyFroup);
                 foreach (var item in daylist3)
                 {
                     this.Days.Add(item);
@@ -157,7 +157,7 @@ AND (
 
             if (start_where < MaxOffLine) // 報表篩選是時間範圍, 狀況是SewingSchedule的最晚OffLine超過條件
             {
-                List<PublicPrg.Prgs.Day> daylist3 = PublicPrg.Prgs.GetRangeHoliday(start_where, MaxOffLine, this.FtyFroup);
+                List<PublicPrg.Prgs.Day> daylist3 = GetRangeHoliday(start_where, MaxOffLine, this.FtyFroup);
                 foreach (var item in daylist3)
                 {
                     this.Days.Add(item);
@@ -172,11 +172,11 @@ AND (
 
             this.AllData = GetInOffLineList(dt_Schedule, this.Days, Enddate: this.displayday2, ori_startdate: start_where, ori_Enddate: end_where);
 
-            List<DataTable> LeadTimeList = PublicPrg.Prgs.GetCutting_WIP_DataTable(this.Days, this.AllData.OrderBy(o => o.OrderID).ToList());
+            List<DataTable> LeadTimeList = GetCutting_WIP_DataTable(this.Days, this.AllData.OrderBy(o => o.OrderID).ToList());
 
             this.summaryData = LeadTimeList[0];
             this.detailData = LeadTimeList[1];
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(ReportDefinition report)
@@ -188,7 +188,7 @@ AND (
             }
 
             this.ShowWaitMessage("Excel processing...");
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R01.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_R01.xltx"); // 預先開啟excel app
             objApp.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet Summary_Sheet = objApp.ActiveWorkbook.Worksheets[1];
             Microsoft.Office.Interop.Excel.Worksheet Detail_Sheet = objApp.ActiveWorkbook.Worksheets[2];
@@ -357,7 +357,7 @@ AND (
             #endregion
 
             #region Save Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R01");
+            string strExcelName = Class.MicrosoftFile.GetName("Cutting_R01");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
@@ -429,7 +429,7 @@ drop table #OrderList
                 string MDivisionID = dr["MDivisionID"].ToString();
                 string FactoryID = dr["FactoryID"].ToString();
 
-                PublicPrg.Prgs.GetGarmentListTable(string.Empty, POID, string.Empty, out GarmentTb);
+                GetGarmentListTable(string.Empty, POID, string.Empty, out GarmentTb);
 
                 List<string> AnnotationList = GarmentTb.AsEnumerable().Where(o => !MyUtility.Check.Empty(o["Annotation"].ToString())).Select(o => o["Annotation"].ToString()).Distinct().ToList();
 

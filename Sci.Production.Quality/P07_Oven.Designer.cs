@@ -48,7 +48,7 @@
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.dateInspectDate = new Sci.Win.UI.DateBox();
             this.labelInspectDate = new Sci.Win.UI.Label();
-            this.txtuserLabTech = new Sci.Production.Class.txtuser();
+            this.txtuserLabTech = new Sci.Production.Class.Txtuser();
             this.labelLabTech = new Sci.Win.UI.Label();
             this.txtRemark = new Sci.Win.UI.TextBox();
             this.labelRemark = new Sci.Win.UI.Label();
@@ -515,7 +515,7 @@
         private Win.UI.TextBox txtRemark;
         private Win.UI.Label labelRemark;
         private Win.UI.Label labelLabTech;
-        private Class.txtuser txtuserLabTech;
+        private Class.Txtuser txtuserLabTech;
         private Win.UI.DisplayBox displaySupplier;
         private Win.UI.Label labelInspectDate;
         private Win.UI.DateBox dateInspectDate;

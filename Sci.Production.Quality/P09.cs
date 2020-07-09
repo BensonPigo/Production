@@ -469,15 +469,15 @@ DROP TABLE #default,#withBrandID
                 sqlwheres.Add(" ed.PoID = @sp ");
             }
 
-            if (!MyUtility.Check.Empty(this.txtSeq.seq1))
+            if (!MyUtility.Check.Empty(this.txtSeq.Seq1))
             {
-                listSQLParameter.Add(new SqlParameter("@seq1", this.txtSeq.seq1));
+                listSQLParameter.Add(new SqlParameter("@seq1", this.txtSeq.Seq1));
                 sqlwheres.Add(" ed.Seq1 = @seq1 ");
             }
 
-            if (!MyUtility.Check.Empty(this.txtSeq.seq2))
+            if (!MyUtility.Check.Empty(this.txtSeq.Seq2))
             {
-                listSQLParameter.Add(new SqlParameter("@seq2", this.txtSeq.seq2));
+                listSQLParameter.Add(new SqlParameter("@seq2", this.txtSeq.Seq2));
                 sqlwheres.Add(" ed.Seq2 = @seq2 ");
             }
 
@@ -627,13 +627,13 @@ when matched then update set
 	t.T2InspYds=isnull(s.T2InspYds,0),
 	t.T2DefectPoint=isnull(s.T2DefectPoint,0),
 	t.T2Grade=isnull(s.T2Grade,''),
-    t.EditName='{Sci.Env.User.UserID}',
+    t.EditName='{Env.User.UserID}',
     t.EditDate = getdate()	,
     t.TestReportCheckClima = isnull(s.TestReportCheckClima,0)
 when not matched by target then 
 insert([Export_DetailUkey]
 ,[InspectionReport],[TestReport],[ContinuityCard],[T2InspYds],[T2DefectPoint],[T2Grade],[EditName],[EditDate],TestReportCheckClima)
-VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYds,0),isnull(s.T2DefectPoint,0),isnull(s.T2Grade,''),'{Sci.Env.User.UserID}',getdate(), isnull(s.TestReportCheckClima,0))
+VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYds,0),isnull(s.T2DefectPoint,0),isnull(s.T2Grade,''),'{Env.User.UserID}',getdate(), isnull(s.TestReportCheckClima,0))
 ;
 ";
             DataTable odt;
@@ -889,7 +889,7 @@ drop table #tmp
             string sqlupdate = $@"
 update t
 	set FirstDyelot= s.FirstDyelot,
-		EditName = '{Sci.Env.User.UserID}',
+		EditName = '{Env.User.UserID}',
 		EditDate = GETDATE()
 from FirstDyelot t
 inner join
@@ -919,9 +919,9 @@ on t.Refno = s.Refno and t.SuppID = s.SuppID and t.ColorID = s.ColorID and t.Tes
             DataRow drSystem;
             if (MyUtility.Check.Seek("select * from system", out drSystem))
             {
-                Sci.Env.Cfg.FtpServerIP = drSystem["FtpIP"].ToString().Trim();
-                Sci.Env.Cfg.FtpServerAccount = drSystem["FtpID"].ToString().Trim();
-                Sci.Env.Cfg.FtpServerPassword = drSystem["FtpPwd"].ToString().Trim();
+                Env.Cfg.FtpServerIP = drSystem["FtpIP"].ToString().Trim();
+                Env.Cfg.FtpServerAccount = drSystem["FtpID"].ToString().Trim();
+                Env.Cfg.FtpServerPassword = drSystem["FtpPwd"].ToString().Trim();
             }
 
             this.Close();

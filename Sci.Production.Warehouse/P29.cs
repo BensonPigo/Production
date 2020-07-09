@@ -702,7 +702,7 @@ drop table #tmp  {(!string.IsNullOrEmpty(InvCfmDate_s) && !string.IsNullOrEmpty(
 
                 if (dr["selected"].ToString() == "True" && !MyUtility.Check.Empty(dr["requestqty"]))
                 {
-                    var issued = PublicPrg.Prgs.autopick(dr, false, "I");
+                    var issued = Prgs.autopick(dr, false, "I");
                     if (issued == null)
                     {
                         return;
@@ -770,7 +770,7 @@ WHERE   StockType='{findrow[0]["tostocktype"]}'
              * 依照 To POID 建立 P23
              */
             var listPoid = findrow.Select(row => row["ToPOID"]).Distinct().ToList();
-            var tmpId = Sci.MyUtility.GetValue.GetBatchID(Sci.Env.User.Keyword + "PI", "SubTransfer", System.DateTime.Now, batchNumber: listPoid.Count);
+            var tmpId = MyUtility.GetValue.GetBatchID(Env.User.Keyword + "PI", "SubTransfer", DateTime.Now, batchNumber: listPoid.Count);
             if (MyUtility.Check.Empty(tmpId))
             {
                 MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -836,7 +836,7 @@ from #tmp";
                 drNewMaster["type"] = "B";
                 drNewMaster["issuedate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
                 drNewMaster["mdivisionid"] = Env.User.Keyword;
-                drNewMaster["FactoryID"] = Sci.Env.User.Factory;
+                drNewMaster["FactoryID"] = Env.User.Factory;
                 drNewMaster["status"] = "New";
                 drNewMaster["addname"] = Env.User.UserID;
                 drNewMaster["adddate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
@@ -981,7 +981,7 @@ from #tmp";
             }
 
             string excelName = "Warehouse_P29";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
 
             // excelApp.DisplayAlerts = false;
             MyUtility.Excel.CopyToXls(Exceldt, string.Empty, $"{excelName}.xltx", 2, false, null, excelApp, wSheet: excelApp.Sheets[1], DisplayAlerts_ForSaveFile: false);
@@ -989,7 +989,7 @@ from #tmp";
             excelApp.Sheets[1].Columns.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(excelName);
+            string strExcelName = Class.MicrosoftFile.GetName(excelName);
             excelApp.ActiveWorkbook.SaveAs(strExcelName);
             excelApp.Quit();
             Marshal.ReleaseComObject(excelApp);

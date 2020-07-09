@@ -233,7 +233,7 @@ namespace Sci.Production.Cutting
 
                 DBProxy.Current.DefaultTimeout = 1800;  // 加長時間為30分鐘，避免timeout
                 sqlcmd = $@"
-declare @Keyword varchar(8) = '{Sci.Env.User.Keyword}'
+declare @Keyword varchar(8) = '{Env.User.Keyword}'
 declare @Cut_Ref varchar(6) = '{this.Cut_Ref}'
 declare @Cut_Ref1 varchar(6) = '{this.Cut_Ref1}'
 declare @SP varchar(13) = '{this.SP}'
@@ -441,7 +441,7 @@ OPTION (RECOMPILE)"
             {
                 #region SQL
                 sqlcmd = $@"
-declare @Keyword varchar(8) = '{Sci.Env.User.Keyword}'
+declare @Keyword varchar(8) = '{Env.User.Keyword}'
 declare @Cut_Ref varchar(6) = '{this.Cut_Ref}'
 declare @Cut_Ref1 varchar(6) = '{this.Cut_Ref1}'
 declare @SP varchar(13) = '{this.SP}'
@@ -896,7 +896,7 @@ where bd.BundleNo = '{0}'",
                 .Where(row => (bool)row["selected"])
                 .CopyToDataTable();
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P12.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P12.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(selects, string.Empty, "Cutting_P12.xltx", 1, true, "Bundle,CutRef,POID,SP,Group,Line,SpreadingNoID,Cell,Style,Item,Comb,Cut,Article,Color,Size,SizeSpec,Cutpart,Description,SubProcess,Parts,Qty", objApp);      // 將datatable copy to excel
             return;
             #endregion

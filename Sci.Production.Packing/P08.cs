@@ -130,7 +130,7 @@ and o.Junk = 0");
             #endregion
 
             #region 準備sql參數資料
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Env.User.Keyword);
             System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@orderid1", this.txtSPStart.Text);
             System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@orderid2", this.txtSPEnd.Text);
 

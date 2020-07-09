@@ -174,7 +174,7 @@ left join fabric WITH (NOLOCK) on fabric.SCIRefno = psd.scirefno
                 return result;
             }
             #endregion
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -189,13 +189,13 @@ left join fabric WITH (NOLOCK) on fabric.SCIRefno = psd.scirefno
             this.SetCount(this.printData.Rows.Count);
             this.ShowWaitMessage("Excel Processing");
             #region To Excel
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R20.xltx");
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R20.xltx");
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Warehouse_R20.xltx", 2, showExcel: false, excelApp: objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
             worksheet.Columns.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R20");
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R20");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

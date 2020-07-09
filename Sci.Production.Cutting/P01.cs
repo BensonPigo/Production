@@ -10,7 +10,7 @@ namespace Sci.Production.Cutting
     public partial class P01 : Win.Tems.Input1
     {
         string StyleUkey;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string keyWord = Env.User.Keyword;
         private string histype;
 
         public P01(ToolStripMenuItem menuitem, string Type)
@@ -403,7 +403,7 @@ select '' FTYGroup
 union 
 select distinct FTYGroup 
 from Factory 
-where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+where MDivisionID = '{0}'", Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;

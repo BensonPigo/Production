@@ -52,7 +52,7 @@ namespace Sci.Production.Warehouse
 
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
             if (this.dtPrint_Content != null)
             {
                 this.dtPrint_Content.Rows.Clear();
@@ -592,7 +592,7 @@ ORDER BY ThreadColorID ASC
                 #endregion
             }
             #endregion
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -604,7 +604,7 @@ ORDER BY ThreadColorID ASC
             }
 
             this.SetCount(this.dtPrint_Content.Rows.Count);
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
 
             // decimal intRowsCount = dtPrint.Rows.Count;
             // int page = Convert.ToInt16(Math.Ceiling(intRowsCount / 4));
@@ -612,11 +612,11 @@ ORDER BY ThreadColorID ASC
 
             if (this.radioOther.Checked)
             {
-                temfile = Sci.Env.Cfg.XltPathDir + "\\Warehouse-P01.TrimCardPrint_B.dotx";
+                temfile = Env.Cfg.XltPathDir + "\\Warehouse-P01.TrimCardPrint_B.dotx";
             }
             else
             {
-                temfile = Sci.Env.Cfg.XltPathDir + "\\Warehouse-P01.TrimCardPrint_A.dotx";
+                temfile = Env.Cfg.XltPathDir + "\\Warehouse-P01.TrimCardPrint_A.dotx";
             }
 
             this.ShowWaitMessage(temfile.ToString());
@@ -964,7 +964,7 @@ from (
                 winword.Visible = true;
 
                // winword.Quit(ref missing, ref missing, ref missing);     //close word application
-                return Result.True;
+                return Ict.Result.True;
             }
             catch (Exception ex)
             {

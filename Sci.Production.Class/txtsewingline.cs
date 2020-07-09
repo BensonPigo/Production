@@ -4,37 +4,39 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtsewingline : Win.UI.TextBox
+    /// <summary>
+    /// Txtsewingline
+    /// </summary>
+    public partial class Txtsewingline : Win.UI.TextBox
     {
         private string fty = string.Empty;
-        public Control factoryObject = null;    // 欄位.存入要取值的<控制項>
 
-        // 屬性. 利用Control來設定要存取的<控制項>
+        /// <summary>
+        /// SewingLine.FactoryID
+        /// </summary>
         [Category("Custom Properties")]
-        public Control factoryobjectName
-        {
-            get
-            {
-                return this.factoryObject;
-            }
+        public Control FactoryobjectName { get; set; } = null;
 
-            set
-            {
-                this.factoryObject = value;
-            }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtsewingline"/> class.
+        /// </summary>
+        public Txtsewingline()
+        {
+            this.Width = 60;
         }
 
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
 
-            if (this.factoryObject == null || MyUtility.Check.Empty(this.factoryObject.Text))
+            if (this.FactoryobjectName == null || MyUtility.Check.Empty(this.FactoryobjectName.Text))
             {
                 this.fty = string.Empty;
             }
             else
             {
-                this.fty = this.factoryObject.Text;
+                this.fty = this.FactoryobjectName.Text;
             }
 
             string ftyWhere = string.Empty;
@@ -54,13 +56,14 @@ namespace Sci.Production.Class
             this.Text = item.GetSelectedString();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                if (this.factoryObject == null || MyUtility.Check.Empty(this.factoryObject.Text))
+                if (this.FactoryobjectName == null || MyUtility.Check.Empty(this.FactoryobjectName.Text))
                 {
                     string tmp = MyUtility.GetValue.Lookup("ID", str, "SewingLine", "id", "Production");
                     if (string.IsNullOrWhiteSpace(tmp))
@@ -73,9 +76,9 @@ namespace Sci.Production.Class
                 }
                 else
                 {
-                    if (!string.IsNullOrWhiteSpace((string)this.factoryObject.Text))
+                    if (!string.IsNullOrWhiteSpace((string)this.FactoryobjectName.Text))
                     {
-                        string selectCommand = string.Format("select ID from Production.dbo.SewingLine WITH (NOLOCK) where FactoryID = '{0}' and ID = '{1}'", (string)this.factoryObject.Text, this.Text.ToString());
+                        string selectCommand = string.Format("select ID from Production.dbo.SewingLine WITH (NOLOCK) where FactoryID = '{0}' and ID = '{1}'", (string)this.FactoryobjectName.Text, this.Text.ToString());
                         if (!MyUtility.Check.Seek(selectCommand, null))
                         {
                             e.Cancel = true;
@@ -86,11 +89,6 @@ namespace Sci.Production.Class
                     }
                 }
             }
-        }
-
-        public txtsewingline()
-        {
-            this.Width = 60;
         }
     }
 }

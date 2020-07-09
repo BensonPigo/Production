@@ -192,7 +192,7 @@ inner join dbo.Factory F WITH (NOLOCK) on F.id = A.factoryid
 										  and F.MDivisionID = '{0}'
 where A.ID = '{1}' 
 	  and (A.Complete = 0 or B.InQty <> B.OutQty - B.AdjustQty)",
-                            Sci.Env.User.Keyword,
+                            Env.User.Keyword,
                             item["POID"]);
 
                         if (MyUtility.Check.Seek(sqlCmds))
@@ -290,7 +290,7 @@ select SP = (select ID + ','
                 return;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_P01_BatchShipmentFinished.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\PPIC_P01_BatchShipmentFinished.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -316,7 +316,7 @@ select SP = (select ID + ','
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_BatchShipmentFinished");
+            string strExcelName = Class.MicrosoftFile.GetName("PPIC_P01_BatchShipmentFinished");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
@@ -432,7 +432,7 @@ from (
 left join Orders o WITH (NOLOCK) on a.POID = o.ID
 left join Brand b WITH (NOLOCK) on o.BrandID = b.ID
 left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle",
-                Sci.Env.User.Keyword);
+                Env.User.Keyword);
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
             if (!result)

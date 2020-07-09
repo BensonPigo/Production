@@ -28,7 +28,7 @@ namespace Sci.Production.Thread
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.comboMDivision.setDefalutIndex(true);
+            this.comboMDivision.SetDefalutIndex(true);
         }
 
         /// <inheritdoc/>
@@ -201,12 +201,12 @@ namespace Sci.Production.Thread
             Excel.Application objApp;
             if (this.radioDetail.Checked == true)
             {
-                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_R07.xltx"); // 預先開啟excel app
+                objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Thread_R07.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Thread_R07.xltx", 3, showExcel: false, showSaveMsg: false, excelApp: objApp);
             }
             else
             {
-                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_R07_Summary.xltx");
+                objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Thread_R07_Summary.xltx");
                 MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Thread_R07_Summary.xltx", 4, showExcel: false, showSaveMsg: false, excelApp: objApp);
             }
 
@@ -282,7 +282,7 @@ namespace Sci.Production.Thread
             worksheet.Rows.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(this.radioDetail.Checked == true ? "Thread_R07" : "Thread_R07_Summary");
+            string strExcelName = Class.MicrosoftFile.GetName(this.radioDetail.Checked == true ? "Thread_R07" : "Thread_R07_Summary");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

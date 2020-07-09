@@ -19,7 +19,7 @@ namespace Sci.Production.Packing
         {
             this.InitializeComponent();
             this.Text = type == "1" ? "P01. Packing Master List" : "P011. Packing Master List (History)";
-            this.DefaultFilter = type == "1" ? string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND GMTClose is null", Sci.Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND GMTClose is not null", Sci.Env.User.Keyword);
+            this.DefaultFilter = type == "1" ? string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND GMTClose is null", Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND GMTClose is not null", Env.User.Keyword);
             this.txtcountryDestination.TextBox1.ReadOnly = true;
             this.txtcountryDestination.TextBox1.IsSupportEditMode = false;
             this.txtuserLocalMR.TextBox1.ReadOnly = true;

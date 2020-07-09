@@ -6,12 +6,16 @@ using Sci.Data;
 
 namespace Sci.Production.Class
 {
+    /// <summary>
+    /// UserESignature
+    /// </summary>
     public class UserESignature
     {
         /// <summary>
         /// 取得電子簽章路徑
         /// </summary>
-        public static string getESignaturePath()
+        /// <returns>路徑</returns>
+        public static string GetESignaturePath()
         {
             // 取得當前Config moudle位置 Dummy or Formal
             string dbName = DBProxy.Current.DefaultModuleName;
@@ -35,15 +39,16 @@ namespace Sci.Production.Class
         /// <summary>
         /// 用於Pass1 取得原始圖檔
         /// </summary>
-        /// <param name="UserID"></param>
-        public static Image getUserESignature(string UserID)
+        /// <param name="userID">UserID</param>
+        /// <returns>Image</returns>
+        public static Image GetUserESignature2(string userID)
         {
-            string FilePath = getESignaturePath() + MyUtility.GetValue.Lookup($@"select ESignature from Pass1 where id='{UserID}'");
+            string filePath = GetESignaturePath() + MyUtility.GetValue.Lookup($@"select ESignature from Pass1 where id='{userID}'");
 
-            if (File.Exists(FilePath))
+            if (File.Exists(filePath))
             {
                 Image img = null;
-                using (FileStream stream = new FileStream(FilePath, FileMode.Open, FileAccess.Read))
+                using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                 {
                     img = new Bitmap(Image.FromStream(stream));
                 }
@@ -59,20 +64,20 @@ namespace Sci.Production.Class
         /// <summary>
         /// 將圖片依照RDLC 元件容器大小,依長寬比例調整Size
         /// </summary>
-        /// <param name="Width"></param>
-        /// <param name="Height"></param>
-        /// <param name="UserID"></param>
+        /// <param name="userID">User ID</param>
+        /// <param name="width">Width</param>
+        /// <param name="height">Height</param>
         /// <returns>byte[]</returns>
-        public static byte[] getUserESignature(string UserID, int Width, int Height)
+        public static byte[] GetUserESignature(string userID, int width, int height)
         {
             byte[] bytes;
-            Image img = getUserESignature(UserID);
+            Image img = GetUserESignature2(userID);
             if (img == null)
             {
                 return null;
             }
 
-            img = resizeImage(Width, Height, img);
+            img = ResizeImage(width, height, img);
             using (MemoryStream ms = new MemoryStream())
             {
                 img.Save(ms, ImageFormat.Png);
@@ -88,19 +93,19 @@ namespace Sci.Production.Class
         /// <summary>
         /// 將圖片依照RDLC 元件容器大小,依長寬比例調整Size
         /// </summary>
-        /// <param name="Width"></param>
-        /// <param name="Height"></param>
-        /// <param name="UserID"></param>
+        /// <param name="userID">User ID</param>
+        /// <param name="width">Width</param>
+        /// <param name="height">Height</param>
         /// <returns>Image</returns>
-        public static Image getUserESignature(int Width, int Height, string UserID)
+        public static Image GetUserESignature1(string userID, int width, int height)
         {
-            Image img = getUserESignature(UserID);
+            Image img = GetUserESignature2(userID);
             if (img == null)
             {
                 return null;
             }
 
-            img = resizeImage(Width, Height, img);
+            img = ResizeImage(width, height, img);
 
             return img;
         }
@@ -108,20 +113,20 @@ namespace Sci.Production.Class
         /// <summary>
         /// 將圖片依照RDLC 元件容器大小,依長寬比例調整Size
         /// </summary>
-        /// <param name="Width"></param>
-        /// <param name="Height"></param>
-        /// <param name="SignatureImage"></param>
+        /// <param name="width">Width</param>
+        /// <param name="height">Height</param>
+        /// <param name="signatureImage">signature Image</param>
         /// <returns>Image</returns>
-        private static Image resizeImage(int Width, int Height, Image SignatureImage)
+        private static Image ResizeImage(int width, int height, Image signatureImage)
         {
-            Image img = SignatureImage;
+            Image img = signatureImage;
             if (img == null)
             {
                 return null;
             }
 
-            int limitWidth = Width;
-            int limitHeight = Height;
+            int limitWidth = width;
+            int limitHeight = height;
 
             // 建立簽名檔圖片, 圖檔長寬依照比例調整
             int fixWidth = 0, fixHeight = 0;

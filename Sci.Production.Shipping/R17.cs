@@ -193,7 +193,7 @@ drop table #tmp,#DistinctSeq,#diffSeq,#diffSeqData
 
             this.ShowWaitMessage("Excel Processing...");
             string excelName = "Shipping_R17";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
             MyUtility.Excel.CopyToXls(this.PrintTable, string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]); // 將datatable copy to excel
             excelApp.DisplayAlerts = false;
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1]; // 取得工作表

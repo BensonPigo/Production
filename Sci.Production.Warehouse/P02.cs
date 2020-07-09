@@ -251,7 +251,7 @@ where ed.ID = '{0}'", masterID);
             {
                 ArrivePortDate = DateTime.Parse(this.CurrentMaintain["PortArrival"].ToString());
                 WhseArrival = DateTime.Parse(this.CurrentMaintain["WhseArrival"].ToString());
-                if (!(chk = Production.PublicPrg.Prgs.CheckArrivedWhseDateWithArrivedPortDate(ArrivePortDate, WhseArrival, out msg)))
+                if (!(chk = PublicPrg.Prgs.CheckArrivedWhseDateWithArrivedPortDate(ArrivePortDate, WhseArrival, out msg)))
                 {
                     MyUtility.Msg.WarningBox(msg);
                     return false;
@@ -263,7 +263,7 @@ where ed.ID = '{0}'", masterID);
 
             // 到倉日如果早於ETA 3天，則提示窗請USER再確認是否存檔。
             // 到倉日如果晚於ETA 15天，則提示窗請USER再確認是否存檔。
-            if (!(chk = Production.PublicPrg.Prgs.CheckArrivedWhseDateWithEta(ETA, WhseArrival, out msg)))
+            if (!(chk = PublicPrg.Prgs.CheckArrivedWhseDateWithEta(ETA, WhseArrival, out msg)))
             {
                 DialogResult dResult = MyUtility.Msg.QuestionBox(msg);
                 if (dResult == DialogResult.No)
@@ -293,21 +293,21 @@ where ed.ID = '{0}'", masterID);
             int index = -1;
 
             // 判斷 Poid
-            if (this.txtSeq1.checkEmpty(showErrMsg: false))
+            if (this.txtSeq1.CheckEmpty(showErrMsg: false))
             {
                 index = this.detailgridbs.Find("poid", this.txtLocateSP.Text.TrimEnd());
             }
 
             // 判斷 Poid + Seq1
-            else if (this.txtSeq1.checkSeq2Empty())
+            else if (this.txtSeq1.CheckSeq2Empty())
             {
-                index = this.detailgridbs.Find("PoidSeq1", this.txtLocateSP.Text.TrimEnd() + this.txtSeq1.seq1);
+                index = this.detailgridbs.Find("PoidSeq1", this.txtLocateSP.Text.TrimEnd() + this.txtSeq1.Seq1);
             }
 
             // 判斷 Poid + Seq1 + Seq2
             else
             {
-                index = this.detailgridbs.Find("PoidSeq", this.txtLocateSP.Text.TrimEnd() + this.txtSeq1.getSeq());
+                index = this.detailgridbs.Find("PoidSeq", this.txtLocateSP.Text.TrimEnd() + this.txtSeq1.GetSeq());
             }
 
             if (index == -1)

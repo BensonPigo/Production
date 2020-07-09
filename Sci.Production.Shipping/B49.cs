@@ -113,7 +113,7 @@ set UsageUnit = '{this.CurrentMaintain["UsageUnit"]}'
 ,PcsKg = '{pcsKG}'
 ,MiscRate = {miscRate}
 ,NLCodeEditDate = '{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")}'
-,NLCodeEditName = '{Sci.Env.User.UserID}'
+,NLCodeEditName = '{Env.User.UserID}'
 where id='{this.CurrentMaintain["ID"]}'
 ";
             DualResult result;
@@ -122,7 +122,7 @@ where id='{this.CurrentMaintain["ID"]}'
                 this.ShowErr(result);
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
     }
 }

@@ -42,7 +42,7 @@ namespace Sci.Production.Warehouse
 
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
 
             try
             {
@@ -122,7 +122,7 @@ order by Orders.MDivisionID, Orders.FtyGroup, a.issuedate, b.FromPOID, b.FromSeq
 
             try
             {
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R24.xltx"); // 預先開啟excel app
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R24.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Warehouse_R24.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
 
                 this.ShowWaitMessage("Excel Processing...");
@@ -143,7 +143,7 @@ order by Orders.MDivisionID, Orders.FtyGroup, a.issuedate, b.FromPOID, b.FromSeq
                 }
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R24");
+                string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R24");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);

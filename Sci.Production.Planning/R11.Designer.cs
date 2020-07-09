@@ -37,9 +37,9 @@
             this.labelNewStyleBaseOn = new Sci.Win.UI.Label();
             this.labelmonth = new Sci.Win.UI.Label();
             this.numNewStyleBaseOn = new Sci.Win.UI.NumericUpDown();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numNewStyleBaseOn)).BeginInit();
             this.SuspendLayout();
@@ -161,7 +161,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
@@ -246,14 +246,14 @@
         private Win.UI.Label labelSCIDelivery;
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.Label labelFactory;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
         private Win.UI.Label labelM;
-        private Class.txtMdivision txtMdivision;
+        private Class.TxtMdivision txtMdivision;
         private Win.UI.Label labelCategory;
         private Win.UI.Label labelNewStyleBaseOn;
         private Win.UI.Label labelmonth;
         private Win.UI.NumericUpDown numNewStyleBaseOn;
-        private Class.comboDropDownList comboCategory;
+        private Class.ComboDropDownList comboCategory;
         private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

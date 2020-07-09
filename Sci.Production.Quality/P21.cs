@@ -13,7 +13,7 @@ namespace Sci.Production.Quality
 {
     public partial class P21 : Win.Tems.Input6
     {
-        private string loginID = Sci.Env.User.UserID;
+        private string loginID = Env.User.UserID;
         string tmpId;
 
         private Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
@@ -169,7 +169,7 @@ where a.ID='{0}'",
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                     string item_cmd = "  select ID,Description from GarmentDefectCode WITH (NOLOCK) ";
@@ -207,7 +207,7 @@ where a.ID='{0}'",
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                     string item_cmd = "  select ID,Description from GarmentDefectCode WITH (NOLOCK) ";
@@ -245,7 +245,7 @@ where a.ID='{0}'",
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                     string item_cmd = "select id,Description from CfaArea WITH (NOLOCK) ";
@@ -282,7 +282,7 @@ where a.ID='{0}'",
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                     string item_cmd = "select id,Description from CfaArea WITH (NOLOCK) ";
@@ -595,7 +595,7 @@ where a.ID='{0}'",
             // 取單號
             if (this.IsDetailInserting)
             {
-                 this.tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "CA", "CFA", (DateTime)Convert.ToDateTime(this.dateAuditDate.Text));
+                 this.tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "CA", "CFA", (DateTime)Convert.ToDateTime(this.dateAuditDate.Text));
                  if (MyUtility.Check.Empty(this.tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -629,7 +629,7 @@ where a.ID='{0}'",
             base.ClickNewAfter();
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["cDate"] = DateTime.Now;
-            this.CurrentMaintain["MDivisionid"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionid"] = Env.User.Keyword;
             this.CurrentMaintain["Team"] = string.Empty;
         }
 

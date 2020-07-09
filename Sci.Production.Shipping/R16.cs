@@ -263,7 +263,7 @@ and f.IsProduceFty = 1
             this.SetCount(this.printData.Rows.Count);
             this.ShowWaitMessage("Starting EXCEL...");
             string reportName = "Shipping_R16.xltx";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{reportName}");
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{reportName}");
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, reportName, 1, false, null, excelApp, wSheet: excelApp.Sheets[1]);
 
             #region 釋放上面開啟過excel物件

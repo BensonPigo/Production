@@ -36,9 +36,9 @@
             this.dateRangeReadyDate = new Sci.Win.UI.DateRange();
             this.labBrand = new Sci.Win.UI.Label();
             this.chkHoliday = new Sci.Win.UI.CheckBox();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.txtTime = new Sci.Win.UI.TextBox();
             this.label6 = new Sci.Win.UI.Label();
             this.numInsGap = new Sci.Win.UI.NumericBox();
@@ -178,7 +178,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
@@ -304,8 +304,8 @@
 
         #endregion
 
-        private Class.txtMdivision txtMdivision;
-        private Class.txtfactory txtfactory;
+        private Class.TxtMdivision txtMdivision;
+        private Class.Txtfactory txtfactory;
         private Win.UI.NumericBox numDateGap;
         private Win.UI.Label labDateGap;
         private Win.UI.Label labFactory;
@@ -313,7 +313,7 @@
         private Win.UI.Label labReadyDate;
         private Win.UI.DateRange dateRangeReadyDate;
         private Win.UI.Label labBrand;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.CheckBox chkHoliday;
         private Win.UI.TextBox txtTime;
         private Win.UI.Label label6;

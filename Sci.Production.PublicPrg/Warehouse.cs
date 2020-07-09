@@ -336,7 +336,7 @@ when matched then
     update
     set inqty = isnull(inqty,0.00) + s.qty,
          Lock = iif(s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99' ,{MtlAutoLock},0),
-         LockName = iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,'{Sci.Env.User.UserID}',''),
+         LockName = iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,'{Env.User.UserID}',''),
          LockDate = iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,getdate(),null)
 when not matched then
     insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty], [Lock],[LockName],[LockDate])
@@ -344,7 +344,7 @@ when not matched then
 			 where poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
 			 ,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty,
               iif(s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99' ,{MtlAutoLock},0),
-              iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,'{Sci.Env.User.UserID}',''),
+              iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,'{Env.User.UserID}',''),
               iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,getdate(),null)
             );
 ";
@@ -572,7 +572,7 @@ where p.id ='{0}'
                 PoItemSql += string.Format(" And {0}", filters);
             }
 
-            string sqlcmd = string.Format(PoItemSql, poid, Sci.Env.User.Keyword);
+            string sqlcmd = string.Format(PoItemSql, poid, Env.User.Keyword);
             PoItemSql = string.Empty;
 
             DBProxy.Current.Select(null, sqlcmd, out dt);
@@ -804,7 +804,7 @@ where   poid = '{1}'
         and inqty - OutQty + AdjustQty > 0
         and p.SCIRefno = '{2}' 
         and p.ColorID = '{3}' 
-        and a.Seq1 BETWEEN '00' AND '99'", Sci.Env.User.Keyword, materials["poid"], materials["scirefno"], materials["colorid"], stocktype);
+        and a.Seq1 BETWEEN '00' AND '99'", Env.User.Keyword, materials["poid"], materials["scirefno"], materials["colorid"], stocktype);
             }
             else if (isIssue == false && stocktype == "B") // P28 Auto Pick
             {
@@ -859,7 +859,7 @@ where   a.lock = 0
         and Stocktype = '{4}' 
         and inqty-OutQty+AdjustQty > 0
         and p.seq1 = '{2}' 
-        and p.seq2 = '{3}'", Sci.Env.User.Keyword, materials["poid"], materials["seq1"], materials["seq2"], stocktype);
+        and p.seq2 = '{3}'", Env.User.Keyword, materials["poid"], materials["seq1"], materials["seq2"], stocktype);
             }
             else// P29,P30 Auto Pick
             {
@@ -912,7 +912,7 @@ where   poid = '{1}'
         and Stocktype = '{4}' 
         and inqty - OutQty + AdjustQty > 0
         and p.seq1 = '{2}' 
-        and p.seq2 = '{3}'", Sci.Env.User.Keyword, materials["StockPOID"], materials["StockSeq1"], materials["StockSeq2"], stocktype);
+        and p.seq2 = '{3}'", Env.User.Keyword, materials["StockPOID"], materials["StockSeq1"], materials["StockSeq2"], stocktype);
             }
 
             DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
@@ -1623,8 +1623,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                                    roll = b.Field<string>("toroll"),
                                    dyelot = b.Field<string>("todyelot"),
                                }).ToList();
-            upd_Fty_4T = Prgs.UpdateFtyInventory_IO(4, null, true);
-            upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true);
+            upd_Fty_4T = UpdateFtyInventory_IO(4, null, true);
+            upd_Fty_2T = UpdateFtyInventory_IO(2, null, true);
             #endregion 更新庫存數量 ftyinventory
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -1659,7 +1659,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     #endregion
 
                     #region MDivisionPoDetail
-                    upd_MD_8T.Append(Prgs.UpdateMPoDetail(8, data_MD_8T, true, sqlConn: sqlConn));
+                    upd_MD_8T.Append(UpdateMPoDetail(8, data_MD_8T, true, sqlConn: sqlConn));
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T, string.Empty, upd_MD_8T.ToString(), out resulttb,
                         "#TmpSource", conn: sqlConn)))
                     {
@@ -1668,7 +1668,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                         return false;
                     }
 
-                    upd_MD_0F = Prgs.UpdateMPoDetail(0, data_MD_0F, false, sqlConn: sqlConn);
+                    upd_MD_0F = UpdateMPoDetail(0, data_MD_0F, false, sqlConn: sqlConn);
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_0F, string.Empty, upd_MD_0F.ToString(), out resulttb,
                         "#TmpSource", conn: sqlConn)))
                     {
@@ -2022,8 +2022,8 @@ Where a.id = '{SubTransfer_ID}'";
                                    roll = b.Field<string>("toroll"),
                                    dyelot = b.Field<string>("todyelot"),
                                }).ToList();
-            upd_Fty_4T = Prgs.UpdateFtyInventory_IO(4, null, true);
-            upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true);
+            upd_Fty_4T = UpdateFtyInventory_IO(4, null, true);
+            upd_Fty_2T = UpdateFtyInventory_IO(2, null, true);
             #endregion 更新庫存數量 ftyinventory
 
             #region 更新 Po_Supp_Detail StockUnit
@@ -2078,9 +2078,9 @@ when matched then
                     #endregion
 
                     #region MDivisionPoDetail
-                    upd_MD_4T = Prgs.UpdateMPoDetail(4, null, true, sqlConn: sqlConn);
-                    upd_MD_8T = Prgs.UpdateMPoDetail(8, data_MD_8T, true, sqlConn: sqlConn);
-                    upd_MD_2T = Prgs.UpdateMPoDetail(2, data_MD_2T, true, sqlConn: sqlConn);
+                    upd_MD_4T = UpdateMPoDetail(4, null, true, sqlConn: sqlConn);
+                    upd_MD_8T = UpdateMPoDetail(8, data_MD_8T, true, sqlConn: sqlConn);
+                    upd_MD_2T = UpdateMPoDetail(2, data_MD_2T, true, sqlConn: sqlConn);
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_4T, string.Empty, upd_MD_4T, out resulttb,
                         "#TmpSource", conn: sqlConn)))
@@ -2374,8 +2374,8 @@ Where a.id = '{SubTransfer_ID}'";
                                    roll = m.Field<string>("toroll"),
                                    dyelot = m.Field<string>("todyelot"),
                                }).ToList();
-            upd_Fty_4T = Prgs.UpdateFtyInventory_IO(4, null, true);
-            upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true);
+            upd_Fty_4T = UpdateFtyInventory_IO(4, null, true);
+            upd_Fty_2T = UpdateFtyInventory_IO(2, null, true);
             #endregion 更新庫存數量  ftyinventory
             #region ISP20191578 ToLocation的資料一併更新回MDivisionPODetail.CLocation欄位
             string updateMDivisionPODetailCLocation = string.Empty;
@@ -2483,10 +2483,10 @@ WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
                     #endregion
 
                     #region MDivisionPoDetail
-                    upd_MD_4T = Prgs.UpdateMPoDetail(4, data_MD_4T, true, sqlConn: sqlConn);
-                    upd_MD_8T = Prgs.UpdateMPoDetail(8, null, true, sqlConn: sqlConn);
-                    upd_MD_16T = Prgs.UpdateMPoDetail(16, null, true, sqlConn: sqlConn);
-                    upd_MD_0F = Prgs.UpdateMPoDetail(0, data_MD_0F, true, sqlConn: sqlConn);
+                    upd_MD_4T = UpdateMPoDetail(4, data_MD_4T, true, sqlConn: sqlConn);
+                    upd_MD_8T = UpdateMPoDetail(8, null, true, sqlConn: sqlConn);
+                    upd_MD_16T = UpdateMPoDetail(16, null, true, sqlConn: sqlConn);
+                    upd_MD_0F = UpdateMPoDetail(0, data_MD_0F, true, sqlConn: sqlConn);
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T, string.Empty, upd_MD_8T.ToString(), out resulttb,
                         "#TmpSource", conn: sqlConn)))
@@ -2709,14 +2709,14 @@ WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
             if (sequenceMode == 1)
             {
                 // 當第一個字為字母
-                if (System.Convert.ToInt32(charValue[0]) >= 65 && System.Convert.ToInt32(charValue[0]) <= 90)
+                if (Convert.ToInt32(charValue[0]) >= 65 && Convert.ToInt32(charValue[0]) <= 90)
                 {
-                    sequenceValue = System.Convert.ToInt32(strValue.Substring(1));
+                    sequenceValue = Convert.ToInt32(strValue.Substring(1));
 
                     // 進位處理
                     if (((sequenceValue + 1).ToString().Length > sequenceValue.ToString().Length) && string.IsNullOrWhiteSpace(strValue.Substring(1).Replace("9", string.Empty)))
                     {
-                        charAscii = System.Convert.ToInt32(charValue[0]);
+                        charAscii = Convert.ToInt32(charValue[0]);
                         if (charAscii + 1 > 90)
                         {
                             return strValue;
@@ -2726,11 +2726,11 @@ WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
                             sequenceValue = 1;
                             if (charAscii == 72 || charAscii == 78) // I or O略過
                             {
-                                charValue[0] = System.Convert.ToChar(charAscii + 2);
+                                charValue[0] = Convert.ToChar(charAscii + 2);
                             }
                             else
                             {
-                                charValue[0] = System.Convert.ToChar(charAscii + 1);
+                                charValue[0] = Convert.ToChar(charAscii + 1);
                             }
                         }
                     }
@@ -2743,7 +2743,7 @@ WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
                 }
                 else
                 {
-                    sequenceValue = System.Convert.ToInt32(strValue);
+                    sequenceValue = Convert.ToInt32(strValue);
 
                     // 進位處理
                     if (((sequenceValue + 1).ToString().Length > sequenceValue.ToString().Length) && string.IsNullOrWhiteSpace(strValue.Replace("9", string.Empty)))
@@ -2763,7 +2763,7 @@ WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
             {
                 for (int i = charValue.Length - 1; i >= 0; i--)
                 {
-                    charAscii = System.Convert.ToInt32(charValue[i]);
+                    charAscii = Convert.ToInt32(charValue[i]);
 
                     if (charAscii == 57) // 遇9跳A
                     {
@@ -2773,7 +2773,7 @@ WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
 
                     if (charAscii == 72 || charAscii == 78) // I or O略過
                     {
-                        charValue[i] = System.Convert.ToChar(charAscii + 2);
+                        charValue[i] = Convert.ToChar(charAscii + 2);
                         break;
                     }
 
@@ -2790,7 +2790,7 @@ WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
                         }
                     }
 
-                    charValue[i] = System.Convert.ToChar(charAscii + 1);
+                    charValue[i] = Convert.ToChar(charAscii + 1);
                     break;
                 }
 
@@ -2983,7 +2983,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                 PoID,
                 Seq1,
                 Seq2,
-                Sci.Env.User.Keyword);
+                Env.User.Keyword);
 
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out dt)))
             {
@@ -3124,7 +3124,7 @@ AND Seq1='{Seq1}' AND Seq2='{Seq2}'
                                     dyelot = b.Field<string>("dyelot"),
                                 }).ToList();
 
-            upd_Fty_26F = Prgs.UpdateFtyInventory_IO(26, null, false);
+            upd_Fty_26F = UpdateFtyInventory_IO(26, null, false);
             #endregion 更新庫存數量 po_supp_detail & ftyinventory
 
             #region 更新庫存數量 mdivisionPoDetail
@@ -3222,7 +3222,7 @@ WHERE POID='{POID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
 
                     #region MDivisionPoDetail
 
-                    upd_MD_2T = Prgs.UpdateMPoDetail(2, data_MD_2T, true, sqlConn: sqlConn);
+                    upd_MD_2T = UpdateMPoDetail(2, data_MD_2T, true, sqlConn: sqlConn);
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2T, string.Empty, upd_MD_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {

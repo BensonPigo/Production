@@ -154,7 +154,7 @@ namespace Sci.Production.Subcon
                 this.ShowErr(res);
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(ReportDefinition report)
@@ -201,7 +201,7 @@ namespace Sci.Production.Subcon
                     break;
             }
 
-            xl.Save(Sci.Production.Class.MicrosoftFile.GetName("SubCon_R20"));
+            xl.Save(Class.MicrosoftFile.GetName("SubCon_R20"));
             this.HideWaitMessage();
             return true;
         }

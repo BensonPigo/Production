@@ -51,7 +51,7 @@ namespace Sci.Production.Tools
             btn.Click += new EventHandler(this.BtnUpdate_Click);
             this.browsetop.Controls.Add(btn);
             btn.Size = new Size(165, 30);
-            btn.Enabled = Sci.Env.User.IsAdmin;
+            btn.Enabled = Env.User.IsAdmin;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -254,7 +254,7 @@ namespace Sci.Production.Tools
             this.newRow = this.itsPassEdit.NewRow();
             this.newRow["ID"] = this.CurrentMaintain["ID"].ToString();
             this.newRow["TableName"] = "Pass0";
-            this.newRow["AddName"] = Sci.Env.User.UserID;
+            this.newRow["AddName"] = Env.User.UserID;
             this.newRow["AddDate"] = DateTime.Now;
             this.newRow["Remark"] = this.strChangeMemo;
 
@@ -650,7 +650,7 @@ order by b.pkey,a.MenuName,BarPrompt";
             MyUtility.Excel.CopyToXls(dtExcel, string.Empty, "AuthorityByPosition.xltx", 2, false, null, objApp);
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("AuthorityByPosition");
+            string strExcelName = Class.MicrosoftFile.GetName("AuthorityByPosition");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

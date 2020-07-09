@@ -39,7 +39,7 @@ namespace Sci.Production.Subcon
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     string sqlcmd = $@"select ID,Description from CutCell with(nolock)where Junk = 0 and MDivisionID = '{this.Master["MDivisionID"]}' ";
@@ -138,12 +138,12 @@ where rp.RFIDReaderID ='{this.ID}'
 
         protected override DualResult OnSave()
         {
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override DualResult OnSavePost()
         {
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override void OnSaveAfter()

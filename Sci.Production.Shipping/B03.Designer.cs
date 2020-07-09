@@ -46,10 +46,10 @@
             this.labelUnit = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.btnBatchApprove = new Sci.Win.UI.Button();
-            this.txtUnit = new Sci.Production.Class.txtunit_local();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtAccountNo = new Sci.Production.Class.txtAccountNo();
+            this.txtUnit = new Sci.Production.Class.Txtunit_local();
+            this.txtsubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtAccountNo = new Sci.Production.Class.TxtAccountNo();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -318,9 +318,9 @@
             this.txtsubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalSuppID", true));
             this.txtsubconSupplier.DisplayBox1Binding = "";
             this.txtsubconSupplier.IsIncludeJunk = false;
-            this.txtsubconSupplier.isMisc = false;
-            this.txtsubconSupplier.isShipping = false;
-            this.txtsubconSupplier.isSubcon = false;
+            this.txtsubconSupplier.IsMisc = false;
+            this.txtsubconSupplier.IsShipping = false;
+            this.txtsubconSupplier.IsSubcon = false;
             this.txtsubconSupplier.Location = new System.Drawing.Point(120, 187);
             this.txtsubconSupplier.Name = "txtsubconSupplier";
             this.txtsubconSupplier.Size = new System.Drawing.Size(159, 23);
@@ -391,8 +391,8 @@
         private Win.UI.DateBox dateCanvassDate;
         private Win.UI.NumericBox numPrice;
         private Win.UI.DisplayBox displayPrice;
-        private Class.txtsubconNoConfirm txtsubconSupplier;
-        private Class.txtbrand txtbrand;
+        private Class.TxtsubconNoConfirm txtsubconSupplier;
+        private Class.Txtbrand txtbrand;
         private Win.UI.EditBox editDescription;
         private Win.UI.TextBox txtCode;
         private Win.UI.Label labelAccountNo;
@@ -406,9 +406,9 @@
         private Win.UI.Button btnQuotationRecord;
         private Win.UI.CheckBox checkBox1;
         private Win.UI.Label labelUnit;
-        private Class.txtunit_local txtUnit;
+        private Class.Txtunit_local txtUnit;
         private Win.UI.Label label2;
         private Win.UI.Button btnBatchApprove;
-        private Class.txtAccountNo txtAccountNo;
+        private Class.TxtAccountNo txtAccountNo;
     }
 }

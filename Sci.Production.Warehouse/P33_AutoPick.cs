@@ -59,7 +59,7 @@ namespace Sci.Production.Warehouse
             {
                 foreach (DataColumn dc in this.dtIssueBreakDown.Columns)
                 {
-                    if (object.ReferenceEquals(sum.GetType(), dr[dc].GetType()))
+                    if (ReferenceEquals(sum.GetType(), dr[dc].GetType()))
                     {
                         sum += (decimal)dr[dc];
                     }

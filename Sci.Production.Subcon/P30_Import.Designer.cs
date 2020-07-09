@@ -38,10 +38,10 @@
             this.btnToExcel = new Sci.Win.UI.Button();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.chkQty = new Sci.Win.UI.CheckBox();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
             this.label1 = new Sci.Win.UI.Label();
             this.label8 = new System.Windows.Forms.Label();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelApproveDate = new Sci.Win.UI.Label();
             this.dateApproveDate = new Sci.Win.UI.DateRange();
@@ -187,7 +187,7 @@
             // txtfactory1
             // 
             this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.boolFtyGroupList = true;
+            this.txtfactory1.BoolFtyGroupList = true;
             this.txtfactory1.FilteMDivision = true;
             this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory1.IsProduceFty = false;
@@ -464,7 +464,7 @@
         private Win.UI.DateRange dateEstBookingDate;
         private Win.UI.Label labelEstArrivedDate;
         private Win.UI.DateRange dateEstArrivedDate;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.Label labelBrand;
         private Win.UI.Label labelApproveDate;
         private Win.UI.DateRange dateApproveDate;
@@ -472,7 +472,7 @@
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.Button btnToExcel;
         private System.Windows.Forms.Label label8;
-        private Class.txtfactory txtfactory1;
+        private Class.Txtfactory txtfactory1;
         private Win.UI.Label label1;
         private Win.UI.CheckBox chkQty;
     }

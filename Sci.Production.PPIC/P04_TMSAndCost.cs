@@ -139,7 +139,7 @@ where a.StyleUkey = ''", this.KeyValue1);
                 newdr["ArtworkUnit"] = dr["ArtworkUnit"];
                 newdr["TMS"] = 0;
                 newdr["Price"] = 0;
-                newdr["AddName"] = Sci.Env.User.UserID;
+                newdr["AddName"] = Env.User.UserID;
                 newdr["AddDate"] = DateTime.Now;
                 newdr["isTms"] = dr["isTms"];
                 newdr["isPrice"] = dr["isPrice"];
@@ -330,7 +330,7 @@ select * from UpdateData", this.KeyValue1);
                             dr["ArtworkUnit"].ToString(),
                             dr["TMS"].ToString(),
                             dr["Price"].ToString(),
-                            Sci.Env.User.UserID,
+                            Env.User.UserID,
                             dr["ID"].ToString(),
                             dr["ArtworkTypeID"].ToString()));
                     }
@@ -344,7 +344,7 @@ select * from UpdateData", this.KeyValue1);
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>

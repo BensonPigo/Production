@@ -179,14 +179,14 @@ where junk = 0 and (PortArrival is null or DocArrival is null)");
                 where id='{dr["ID"]}'");
             }
 
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
             using (TransactionScope transactionScope = new TransactionScope())
             {
                 try
                 {
                     if (updateCmds.Count > 0)
                     {
-                        result = Sci.Data.DBProxy.Current.Executes(null, updateCmds);
+                        result = DBProxy.Current.Executes(null, updateCmds);
                         if (result)
                         {
                             transactionScope.Complete();

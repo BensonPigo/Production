@@ -47,7 +47,7 @@ SELECT TOP 30 (case when L.Type = 'L' then @Fabric + '-Lacking'
 , L.issuedate, L.ID 
 FROM LACK  L WITH (NOLOCK) 
 WHERE L.Status = 'Confirmed' and (L.apvname != '' OR L.ApvName is NOT null) AND (L.IssueLackId = '' OR L.IssueLackId is null) AND MDivisionID = '{0}' and L.FabricType = '{1}'
-ORDER BY issuedate desc,id asc;", Sci.Env.User.Keyword, this.FabricType);
+ORDER BY issuedate desc,id asc;", Env.User.Keyword, this.FabricType);
             DataTable selectDataTable1;
             this.ShowWaitMessage("Data Loading...");
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCmd, out selectDataTable1);

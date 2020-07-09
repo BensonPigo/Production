@@ -124,7 +124,7 @@ from (
     left join Order_QtyShip oq WITH (NOLOCK) on  oq.Id = pd.OrderID 
                                                     and oq.Seq = pd.OrderShipmodeSeq
     where t.TransferSlipNo <> ''
-    and t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
+    and t.MDivisionID = '{0}'", Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {

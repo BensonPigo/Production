@@ -192,15 +192,15 @@ namespace Sci.Production.Quality
                 sqlWhere2 += $" and psd.ColorID = '{this.txtColor.Text}'" + Environment.NewLine;
             }
 
-            if (!this.txtSeq.checkSeq1Empty() && this.txtSeq.checkSeq2Empty())
+            if (!this.txtSeq.CheckSeq1Empty() && this.txtSeq.CheckSeq2Empty())
             {
-                sqlWhere += $" and rd.seq1 = '{this.txtSeq.seq1}'";
-                sqlWhere2 += $" and td.seq1 = '{this.txtSeq.seq1}'";
+                sqlWhere += $" and rd.seq1 = '{this.txtSeq.Seq1}'";
+                sqlWhere2 += $" and td.seq1 = '{this.txtSeq.Seq1}'";
             }
-            else if (!this.txtSeq.checkEmpty(showErrMsg: false))
+            else if (!this.txtSeq.CheckEmpty(showErrMsg: false))
             {
-                sqlWhere += $" and rd.seq1 = '{this.txtSeq.seq1}' and rd.seq2 = '{this.txtSeq.seq2}'";
-                sqlWhere2 += $" and td.seq1 = '{this.txtSeq.seq1}' and td.seq2 = '{this.txtSeq.seq2}'";
+                sqlWhere += $" and rd.seq1 = '{this.txtSeq.Seq1}' and rd.seq2 = '{this.txtSeq.Seq2}'";
+                sqlWhere2 += $" and td.seq1 = '{this.txtSeq.Seq1}' and td.seq2 = '{this.txtSeq.Seq2}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtSP.Text))

@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.dateETA = new Sci.Win.UI.DateRange();
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelETA = new Sci.Win.UI.Label();
@@ -188,7 +188,7 @@
         private Win.UI.Label labelETA;
         private Win.UI.RadioButton radioListReport;
         private Win.UI.RadioButton radioDetailReport;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
         private Win.UI.ComboBox comboBox1;
         private Win.UI.Label label1;
     }

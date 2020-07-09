@@ -168,7 +168,7 @@ where a.status='Approved'
 --and b.apqty < b.farmin
 and a.artworktypeid = '{this.dr_artworkAp["artworktypeid"]}' 
 and a.localsuppid = '{this.dr_artworkAp["localsuppid"]}' 
-and a.mdivisionid='{Sci.Env.User.Keyword}'
+and a.mdivisionid='{Env.User.Keyword}'
 
 ";
                 if (!MyUtility.Check.Empty(sp_b))

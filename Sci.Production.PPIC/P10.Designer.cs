@@ -54,13 +54,13 @@
             this.lbStatus = new Sci.Win.UI.Label();
             this.labelIssueLackDate = new Sci.Win.UI.Label();
             this.displayIssueLackDate = new Sci.Win.UI.DisplayBox();
-            this.txtuserApprove = new Sci.Production.Class.txtuser();
-            this.txtuserHandle = new Sci.Production.Class.txtuser();
-            this.txtsewingline = new Sci.Production.Class.txtsewingline();
+            this.txtuserApprove = new Sci.Production.Class.Txtuser();
+            this.txtuserHandle = new Sci.Production.Class.Txtuser();
+            this.txtsewingline = new Sci.Production.Class.Txtsewingline();
             this.btnImport = new Sci.Win.UI.Button();
             this.labelSubconName = new Sci.Win.UI.Label();
             this.btnAutoOutputQuery = new Sci.Win.UI.Button();
-            this.txtLocalSupp1 = new Sci.Production.Class.txtLocalSupp();
+            this.txtLocalSupp1 = new Sci.Production.Class.TxtLocalSupp();
             this.lblDept = new Sci.Win.UI.Label();
             this.txtDept = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
@@ -500,7 +500,7 @@
             // 
             this.txtsewingline.BackColor = System.Drawing.Color.White;
             this.txtsewingline.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
-            this.txtsewingline.factoryobjectName = this.displayFactory;
+            this.txtsewingline.FactoryobjectName = this.displayFactory;
             this.txtsewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtsewingline.Location = new System.Drawing.Point(323, 84);
             this.txtsewingline.Name = "txtsewingline";
@@ -613,13 +613,13 @@
 
         private Win.UI.DisplayBox displayIssueNo;
         private Win.UI.DateBox dateApvDate;
-        private Class.txtuser txtuserApprove;
-        private Class.txtuser txtuserHandle;
+        private Class.Txtuser txtuserApprove;
+        private Class.Txtuser txtuserHandle;
         private Win.UI.Label labelIssueNo;
         private Win.UI.Label labelApvDate;
         private Win.UI.Label labelApprove;
         private Win.UI.Label labelHandle;
-        private Class.txtsewingline txtsewingline;
+        private Class.Txtsewingline txtsewingline;
         private Win.UI.DisplayBox displayMasterSP;
         private Win.UI.TextBox txtSP;
         private Win.UI.DisplayBox displayFactory;
@@ -643,7 +643,7 @@
         private Win.UI.Button btnImport;
         private Win.UI.Label labelSubconName;
         private Win.UI.Button btnAutoOutputQuery;
-        private Class.txtLocalSupp txtLocalSupp1;
+        private Class.TxtLocalSupp txtLocalSupp1;
         private Win.UI.TextBox txtDept;
         private Win.UI.Label lblDept;
     }

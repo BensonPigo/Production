@@ -703,7 +703,7 @@ select DISTINCT ID,ETD from #GarmentInvoice";
                 this.DT1.Rows.Add(totalrow);
             }
             #endregion
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -768,7 +768,7 @@ select DISTINCT ID,ETD from #GarmentInvoice";
             xl.DicDatas.Add("##Parameter", parameter);
             xl.DicDatas.Add("##Data", data1);
 
-            xl.Save(Sci.Production.Class.MicrosoftFile.GetName(title2ForExcel), false);
+            xl.Save(Class.MicrosoftFile.GetName(title2ForExcel), false);
 
             // 因再次匯出資料時，會殘留上次的連線數，故先清空
             this.SetLoadingText(string.Empty);

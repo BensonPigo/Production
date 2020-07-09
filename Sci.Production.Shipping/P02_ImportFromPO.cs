@@ -235,7 +235,7 @@ where Factory.IsProduceFty=1 and psd.ID = '{0}'{1}{2}) a",
                     MyUtility.Convert.GetString(dr["BrandID"]),
                     MyUtility.Convert.GetString(dr["LeaderID"]),
                     this.txtRemark.Text.Replace("'", "''"),
-                    Sci.Env.User.UserID));
+                    Env.User.UserID));
             }
 
             // Qty不可為0
@@ -285,7 +285,7 @@ where a.TtlQty > a.POQty"),
                 try
                 {
                     result1 = DBProxy.Current.Executes(null, insertCmds);
-                    result2 = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.masterData["ID"])));
+                    result2 = DBProxy.Current.Execute(null, Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.masterData["ID"])));
                     if (result1 && result2)
                     {
                         transactionScope.Complete();

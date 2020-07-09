@@ -50,7 +50,7 @@ namespace Sci.Production.Warehouse
             }
 
             ToolStripMenuItem P04MenuItem = null;
-            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
+            foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
             {
                 if (toolMenuItem.Text.EqualString("Warehouse"))
                 {
@@ -218,14 +218,14 @@ drop table #tmp
             {
                 this.ShowWaitMessage("Excel Processing...");
 
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P04.xltx"); // 預先開啟excel app
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P04.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.dataTable, string.Empty, "Warehouse_P04.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);
                 Excel.Worksheet worksheet = objApp.Sheets[1];
                 worksheet.Rows.AutoFit();
                 worksheet.Columns.AutoFit();
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P04");
+                string strExcelName = Class.MicrosoftFile.GetName("Warehouse_P04");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);

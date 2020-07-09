@@ -1,6 +1,5 @@
 ﻿using Ict;
 using Sci.Data;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -370,7 +369,7 @@ namespace Sci.Production.Warehouse
             this.SetCount(this.dt.Rows.Count);
             if (this.radioPanel1.Value == this.radioMaterialStatus.Value)
             {
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-1.xltx"); // 預先開啟excel app
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-1.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Warehouse_P03_Print-1.xltx", 1, false, null, objApp);      // 將datatable copy to excel
                 Excel.Worksheet worksheet = objApp.Sheets[1];
 
@@ -383,7 +382,7 @@ namespace Sci.Production.Warehouse
                 }
 
                 worksheet.Columns[42].Delete();
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P03");
+                string strExcelName = Class.MicrosoftFile.GetName("Warehouse_P03");
 
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.ActiveWorkbook.Close(true);
@@ -395,7 +394,7 @@ namespace Sci.Production.Warehouse
             }
             else
             {
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-2.xltx"); // 預先開啟excel app
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-2.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Warehouse_P03_Print-2.xltx", 1, false, null, objApp);      // 將datatable copy to excel
                 Excel.Worksheet worksheet = objApp.Sheets[1];
 
@@ -408,7 +407,7 @@ namespace Sci.Production.Warehouse
                 }
 
                 worksheet.Columns[22].Delete();
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P03");
+                string strExcelName = Class.MicrosoftFile.GetName("Warehouse_P03");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.ActiveWorkbook.Close(true);
                 objApp.Quit();

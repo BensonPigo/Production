@@ -66,7 +66,7 @@ namespace Sci.Production.Logistic
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format("select ID from ClogLocation WITH (NOLOCK) where MDivisionID = '{0}' and Junk = 0", Sci.Env.User.Keyword));
+            sqlCmd.Append(string.Format("select ID from ClogLocation WITH (NOLOCK) where MDivisionID = '{0}' and Junk = 0", Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.code1))
             {
                 sqlCmd.Append(string.Format(" and ID >= '{0}'", this.code1));
@@ -85,7 +85,7 @@ namespace Sci.Production.Logistic
             }
 
             // e.Report.ReportDataSource = printData;
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace Sci.Production.Logistic
             Word._Document document;
             Word.Table tables = null;
 
-            object printFile = Sci.Env.Cfg.XltPathDir + "\\Logistic_B01_Barcode.dotx";
+            object printFile = Env.Cfg.XltPathDir + "\\Logistic_B01_Barcode.dotx";
             document = winword.Documents.Add(ref printFile);
             try
             {

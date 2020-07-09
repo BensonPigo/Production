@@ -132,7 +132,7 @@ WHERE 1=1
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(ReportDefinition report)
@@ -147,12 +147,12 @@ WHERE 1=1
 
             this.ShowWaitMessage("Excel Processing...");
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Basic_R01.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Basic_R01.xltx"); // 預先開啟excel app
 
             MyUtility.Excel.CopyToXls(this.printData, null, "Basic_R01.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Basic_R01");
+            string strExcelName = Class.MicrosoftFile.GetName("Basic_R01");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

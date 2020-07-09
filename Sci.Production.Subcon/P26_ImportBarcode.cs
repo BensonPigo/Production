@@ -199,12 +199,12 @@ drop table #tmp,#tmp2",
             string insertBundleTrack = string.Format(
                 @"insert into BundleTrack (id,IssueDate,StartProcess,EndProcess,StartSite,EndSite,AddName,AddDate) 
 values('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')",
-                getID, date, sprocess, sprocess, Sci.Env.User.Factory, Sci.Env.User.Factory, Sci.Env.User.UserID, datetime);
+                getID, date, sprocess, sprocess, Env.User.Factory, Env.User.Factory, Env.User.UserID, datetime);
 
             // Detail BundleTrack_detail用ProcessWithDatatable方法整個table新增
             string insertBundleTrackDteail = string.Format(
                 @"insert into BundleTrack_detail select '{0}',t.BundleNo,t.Orderid,'{1}','{2}',0 from #tmp t",
-                getID, datetime, Sci.Env.User.UserID);
+                getID, datetime, Env.User.UserID);
 
             // insert BundleTrack
             DualResult Result;

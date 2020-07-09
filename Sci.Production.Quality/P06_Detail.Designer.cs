@@ -32,7 +32,7 @@
             this.dateTestDate = new Sci.Win.UI.DateBox();
             this.btnEncode = new Sci.Win.UI.Button();
             this.txtRemark = new Sci.Win.UI.TextBox();
-            this.txtuserInspector = new Sci.Production.Class.txtuser();
+            this.txtuserInspector = new Sci.Production.Class.Txtuser();
             this.comboResult = new Sci.Win.UI.ComboBox();
             this.txtArticle = new Sci.Win.UI.TextBox();
             this.txtNoofTest = new Sci.Win.UI.TextBox();
@@ -445,7 +445,7 @@
         private Win.UI.DateBox dateTestDate;
         private Win.UI.Button btnEncode;
         private Win.UI.TextBox txtRemark;
-        private Class.txtuser txtuserInspector;
+        private Class.Txtuser txtuserInspector;
         private Win.UI.ComboBox comboResult;
         private Win.UI.TextBox txtArticle;
         private Win.UI.TextBox txtNoofTest;

@@ -258,7 +258,7 @@ order by ID
 INNER JOIN LocalSupp S WITH (NOLOCK) ON S.ID = A.LocalSuppId Where a.styleUkey = {0}
 ORDER BY UKEY
 ", masterID);
-            string countryID = MyUtility.GetValue.Lookup($@"select CountryID from MDivision where id = '{Sci.Env.User.Keyword}'");
+            string countryID = MyUtility.GetValue.Lookup($@"select CountryID from MDivision where id = '{Env.User.Keyword}'");
             string sqlcmd = $@"
 select
 	 sa.[StyleUkey]

@@ -277,7 +277,7 @@ OUTER APPLY(
 ) qty
 -------------
 WHERE pd.CTNStartNo<>''
-     AND p.Mdivisionid='{Sci.Env.User.Keyword}'
+     AND p.Mdivisionid='{Env.User.Keyword}'
      AND p.Type in ('B','L')
      AND pd.ReceiveDate is not null
      AND pd.DisposeFromClog= 0
@@ -389,8 +389,8 @@ WHERE id='{dr["id"]}' AND CTNStartNo ='{dr["CTNStartNo"]}' and DisposeFromClog= 
                     data_FtyReqReturnClog.Add("Reason", dr["FtyReqReturnReason"].ToString());
                     data_FtyReqReturnClog.Add("PackingListID", dr["ID"].ToString());
                     data_FtyReqReturnClog.Add("CTNStartNo", dr["CTNStartNo"].ToString());
-                    data_FtyReqReturnClog.Add("AddName", Sci.Env.User.UserID);
-                    data_FtyReqReturnClog.Add("MDivisionID", Sci.Env.User.Keyword);
+                    data_FtyReqReturnClog.Add("AddName", Env.User.UserID);
+                    data_FtyReqReturnClog.Add("MDivisionID", Env.User.Keyword);
 
                     // SP#如有多筆則寫入PackingList_Detail.CTNQty=1的那筆
                     string[] arry_Orderid = dr["OrderID"].ToString().Split(',');
@@ -428,7 +428,7 @@ WHERE id='{dr["id"]}' AND CTNStartNo ='{dr["CTNStartNo"]}' and DisposeFromClog= 
                 }
 
                 string[] keyArry = ins_FtyReqReturnClog_List.Keys.ToArray();
-                string[] requestID_List = MyUtility.GetValue.GetBatchID(Sci.Env.User.Factory + "FG", "FtyReqReturnClog", DateTime.Now, 2, "RequestID", batchNumber: orderIds.Count).ToArray();
+                string[] requestID_List = MyUtility.GetValue.GetBatchID(Env.User.Factory + "FG", "FtyReqReturnClog", DateTime.Now, 2, "RequestID", batchNumber: orderIds.Count).ToArray();
 
                 int index = 0;
                 foreach (string orderid in orderIds)
@@ -624,7 +624,7 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
                 nRow["SP"] = orderId;
                 nRow["Line"] = MyUtility.GetValue.Lookup($"SELECT SewLine FROM Orders WHERE ID='{orderId}'");
                 nRow["DeliveryDate"] = Convert.ToDateTime(sameOrderIdRow.Rows[0]["BuyerDelivery"]).ToShortDateString();
-                nRow["Name"] = MyUtility.GetValue.Lookup($"SELECT dbo.getPass1_ExtNo('{Sci.Env.User.UserID}')");
+                nRow["Name"] = MyUtility.GetValue.Lookup($"SELECT dbo.getPass1_ExtNo('{Env.User.UserID}')");
                 nRow["Date"] = DateTime.Now.ToString("yyyy/mm/dd");
                 nRow["Factory"] = MyUtility.GetValue.Lookup($"SELECT FtyGroup FROM Orders WHERE ID='{orderId}'");
                 nRow["Total"] = cntCount;
@@ -665,7 +665,7 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
                 index++;
             }
 
-            x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Packing_P23"));
+            x1.Save(Class.MicrosoftFile.GetName("Packing_P23"));
 
             this.HideWaitMessage();
             return true;

@@ -110,7 +110,7 @@ and (isnull(c.ID,'') ='' or isnull(c.DeclareNo,'') = '')
                 return new DualResult(false, "Query data fail\r\n" + result.ToString());
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -127,7 +127,7 @@ and (isnull(c.ID,'') ='' or isnull(c.DeclareNo,'') = '')
 
             this.ShowWaitMessage("Starting EXCEL...");
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R44_NonDeclarationReportImport.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_R44_NonDeclarationReportImport.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {

@@ -41,8 +41,8 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboFactory.Text = Sci.Env.User.Factory;
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboFactory.Text = Env.User.Factory;
+            this.comboM.Text = Env.User.Keyword;
         }
 
         /// <inheritdoc/>
@@ -141,7 +141,7 @@ where 1=1
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -158,7 +158,7 @@ where 1=1
 
             this.ShowWaitMessage("Starting EXCEL...");
             string excelFile = "Sewing_R11";
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\" + excelFile + ".xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\" + excelFile + ".xltx";
             Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -169,7 +169,7 @@ where 1=1
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, excelFile + ".xltx", 1, false, null, excelApp, false, null, false);
 
             #region Save Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(excelFile);
+            string strExcelName = Class.MicrosoftFile.GetName(excelFile);
             Excel.Workbook workbook = excelApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

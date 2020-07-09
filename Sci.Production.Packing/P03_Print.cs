@@ -137,7 +137,7 @@ namespace Sci.Production.Packing
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -271,7 +271,7 @@ select * from(
     outer apply	(
 		SELECT [CountryName]=c.NameEN FROM Factory f
 		INNER JOIN Country c On f.CountryID=c.ID
-		WHERE f.ID='{Sci.Env.User.Factory}'
+		WHERE f.ID='{Env.User.Factory}'
 	)c
     where pd.id = '{this.masterData["ID"]}'
 		  and pd.CTNQty > 0
@@ -292,7 +292,7 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
             Word._Document document;
             Word.Table tables = null;
 
-            printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_Shipping mark.dotx";
+            printFile = Env.Cfg.XltPathDir + "\\Packing_P03_Shipping mark.dotx";
             document = winword.Documents.Add(ref printFile);
             try
             {
@@ -415,7 +415,7 @@ select * from(
 	outer apply	(
 	SELECT [CountryName]=c.NameEN FROM Factory f
 	INNER JOIN Country c On f.CountryID=c.ID
-	WHERE f.ID='{Sci.Env.User.Factory}'
+	WHERE f.ID='{Env.User.Factory}'
 	)d
 	OUTER APPLY(
 		SELECT DISTINCT GW
@@ -440,7 +440,7 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
             Word._Document document;
             Word.Table tables = null;
 
-            printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_Shipping mark To China.dotx";
+            printFile = Env.Cfg.XltPathDir + "\\Packing_P03_Shipping mark To China.dotx";
             document = winword.Documents.Add(ref printFile);
             try
             {
@@ -556,7 +556,7 @@ select * from(
     outer apply	(
 	    SELECT [CountryName]=c.NameEN FROM Factory f
 	    INNER JOIN Country c On f.CountryID=c.ID
-	    WHERE f.ID='{Sci.Env.User.Factory}'
+	    WHERE f.ID='{Env.User.Factory}'
 	)d
 	OUTER APPLY(
 		SELECT DISTINCT GW
@@ -581,7 +581,7 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
             Word._Document document;
             Word.Table tables = null;
 
-            printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_Shipping mark To Usa Ind.dotx";
+            printFile = Env.Cfg.XltPathDir + "\\Packing_P03_Shipping mark To Usa Ind.dotx";
             document = winword.Documents.Add(ref printFile);
             try
             {

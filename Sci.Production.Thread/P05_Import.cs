@@ -15,7 +15,7 @@ namespace Sci.Production.Thread
     {
         private DataTable detTable;
         private DataTable gridTable;
-        private string keyword = Sci.Env.User.Keyword;
+        private string keyword = Env.User.Keyword;
 
         /// <summary>
         /// P05_Import

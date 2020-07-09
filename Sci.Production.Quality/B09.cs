@@ -90,7 +90,7 @@ namespace Sci.Production.Quality
         private void btnDelete_Click(object sender, EventArgs e)
         {
             DialogResult deleteResult1 = MyUtility.Msg.QuestionBox("Are you sure delete the <Signature Picture>?", buttons: MessageBoxButtons.YesNo);
-            if (deleteResult1 == System.Windows.Forms.DialogResult.Yes)
+            if (deleteResult1 == DialogResult.Yes)
             {
                 this.pictureBoxSignature.ImageLocation = string.Empty;
                 this.attach_flag = true;
@@ -108,7 +108,7 @@ namespace Sci.Production.Quality
                     // 清掉存放路徑的檔案
                     try
                     {
-                        System.IO.File.Delete(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["SignaturePic"]));
+                        File.Delete(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["SignaturePic"]));
                         this.CurrentMaintain["SignaturePic"] = string.Empty;
                     }
                     catch (IOException exception)
@@ -123,7 +123,7 @@ namespace Sci.Production.Quality
                     string destination_fileName = "QA_B09_" + MyUtility.Convert.GetString(this.CurrentMaintain["ID"]).Trim() + local_file_type;
                     try
                     {
-                        System.IO.File.Copy(local_path_file, this.destination_path + destination_fileName, true);
+                        File.Copy(local_path_file, this.destination_path + destination_fileName, true);
                         this.CurrentMaintain["SignaturePic"] = destination_fileName.Trim();
                     }
                     catch (IOException exception)

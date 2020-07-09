@@ -143,8 +143,8 @@ order by ID", this.masterData["LocalSuppID"]);
                         ID = row1["ID"].ToString(),
                     }).ToList();
 
-                data[0].MgApvName = Production.Class.UserESignature.getUserESignature(this.masterData["MgApvName"].ToString(), 207, 83);
-                data[0].DeptApvName = Production.Class.UserESignature.getUserESignature(this.masterData["DeptApvName"].ToString(), 207, 83);
+                data[0].MgApvName = Class.UserESignature.GetUserESignature(this.masterData["MgApvName"].ToString(), 207, 83);
+                data[0].DeptApvName = Class.UserESignature.GetUserESignature(this.masterData["DeptApvName"].ToString(), 207, 83);
                 report.ReportDataSource = data;
                 #endregion
 
@@ -241,8 +241,8 @@ WHERE  ART.id = @ID
                         QtyGMT = row1["Qtygarment"].ToString(),
                     }).ToList();
 
-                data[0].MgApvName = Production.Class.UserESignature.getUserESignature(this.masterData["MgApvName"].ToString(), 207, 83);
-                data[0].DeptApvName = Production.Class.UserESignature.getUserESignature(this.masterData["DeptApvName"].ToString(), 185, 83);
+                data[0].MgApvName = Class.UserESignature.GetUserESignature(this.masterData["MgApvName"].ToString(), 207, 83);
+                data[0].DeptApvName = Class.UserESignature.GetUserESignature(this.masterData["DeptApvName"].ToString(), 185, 83);
                 report.ReportDataSource = data;
                 #endregion
 

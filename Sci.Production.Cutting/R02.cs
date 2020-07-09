@@ -38,11 +38,11 @@ namespace Sci.Production.Cutting
             // Set ComboM
             DBProxy.Current.Select(null, @"Select Distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out WorkOrder);
             MyUtility.Tool.SetupCombox(this.comboM, 1, WorkOrder);
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
 
             // Set ComboFactory
             this.setComboFactory();
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
         }
 
         private void radioByOneDayDetial_CheckedChanged(object sender, EventArgs e)
@@ -162,7 +162,7 @@ namespace Sci.Production.Cutting
         // 非同步讀取資料
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            this.NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
+            this.NameEN = MyUtility.GetValue.Lookup("NameEN", Env.User.Factory, "Factory ", "id");
 
             // 準備CutCell包含非數字
             string scell;
@@ -247,7 +247,7 @@ where   Cutplan.MDivisionID ='{this.MD}'";
 
             if (SheetsCount == 0)
             {
-                return Result.F("Data not found!");
+                return Ict.Result.F("Data not found!");
             }
 
             StringBuilder sqlCmd = new StringBuilder();
@@ -938,7 +938,7 @@ drop table #tmp{i}
                 }
             }
             #endregion
-            return Result.True;
+            return Ict.Result.True;
         }
 
         bool boolsend = false;
@@ -967,7 +967,7 @@ drop table #tmp{i}
             #region radiobtn_Bydetail
             if (this.radioByDetail.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportBydetail.xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportBydetail.xltx"); // 預先開啟excel app
                 objApp.DisplayAlerts = false; // 設定Excel的警告視窗是否彈出
                 objApp.Cells[1, 1] = this.NameEN;
 
@@ -1048,7 +1048,7 @@ drop table #tmp{i}
                 }
 
                 #region Save Excel
-                this.strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R02_CuttingDailyPlanSummaryReportBydetail");
+                this.strExcelName = Class.MicrosoftFile.GetName("Cutting_R02_CuttingDailyPlanSummaryReportBydetail");
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(this.strExcelName);
                 workbook.Close();
@@ -1066,7 +1066,7 @@ drop table #tmp{i}
             #region radioBtn_Byonedaydetial
             if (this.radioByOneDayDetial.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportByonedaydetail.xltx"); // 預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportByonedaydetail.xltx"); // 預先開啟excel app
                 objApp.DisplayAlerts = false; // 設定Excel的警告視窗是否彈出
                 objApp.Cells[1, 1] = this.NameEN;
 
@@ -1141,7 +1141,7 @@ drop table #tmp{i}
                 }
 
                 #region Save Excel
-                this.strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R02_CuttingDailyPlanSummaryReportByonedaydetail");
+                this.strExcelName = Class.MicrosoftFile.GetName("Cutting_R02_CuttingDailyPlanSummaryReportByonedaydetail");
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(this.strExcelName);
                 workbook.Close();
@@ -1159,8 +1159,8 @@ drop table #tmp{i}
             #region radioBtn_BySUMMY
             if (this.radioBySummary.Checked)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx"); // 預先開啟excel app
-                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx", objApp);
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx"); // 預先開啟excel app
+                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx", objApp);
                 objApp.DisplayAlerts = false; // 設定Excel的警告視窗是否彈出
                 objApp.Cells[1, 1] = this.NameEN;
 
@@ -1210,7 +1210,7 @@ drop table #tmp{i}
                     Marshal.ReleaseComObject(objSheets);    // 釋放sheet
                 }
                 #region Save Excel
-                this.strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R02_CuttingDailyPlanSummaryReportBySummary");
+                this.strExcelName = Class.MicrosoftFile.GetName("Cutting_R02_CuttingDailyPlanSummaryReportBySummary");
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(this.strExcelName);
                 workbook.Close();
@@ -1272,7 +1272,7 @@ drop table #tmp{i}
             string CcAddress = MyUtility.Convert.GetString(maildt.Rows[0]["CcAddress"]);
             string Subject = MyUtility.Convert.GetString(maildt.Rows[0]["Subject"]) + "-" + CuttingDate;
 
-            var email = new MailTo(Sci.Env.Cfg.MailFrom, ToAddress, CcAddress,
+            var email = new MailTo(Env.Cfg.MailFrom, ToAddress, CcAddress,
                 Subject,
                 this.strExcelName,
                 "\r\nFilter as below description:\r\nCutting Date: " + CuttingDate + "\r\nCut Cell: " + cutcell + "\r\nM: " + this.MD, false, true);

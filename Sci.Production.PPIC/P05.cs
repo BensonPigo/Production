@@ -28,7 +28,7 @@ namespace Sci.Production.PPIC
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            this.EditMode = Prgs.GetAuthority(Sci.Env.User.UserID, "P05. Production Schedule", "CanEdit");
+            this.EditMode = Prgs.GetAuthority(Env.User.UserID, "P05. Production Schedule", "CanEdit");
 
             // EditMode = false;
             this.InitializeComponent();
@@ -332,7 +332,7 @@ with tempData as (
             and o.PulloutComplete = 0
             and oq.Qty > 0
             and o.FtyGroup = '{0}'
-            and o.Finished = 0 ", Sci.Env.User.Factory));
+            and o.Finished = 0 ", Env.User.Factory));
             if (!MyUtility.Check.Empty(this.dateUptoSCIDelivery.Value))
             {
                 sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.dateUptoSCIDelivery.Value).ToString("d")));
@@ -424,7 +424,7 @@ Order by tempData.Id");
                             dr["ProdRemark"].ToString(),
                             dr["OutReason"].ToString(),
                             dr["OutRemark"].ToString(),
-                            Sci.Env.User.UserID,
+                            Env.User.UserID,
                             dr["ID"].ToString(),
                             dr["Seq"].ToString()));
                         allSP.Append(string.Format("'{0}',", dr["ID"].ToString()));
@@ -434,7 +434,7 @@ Order by tempData.Id");
                         {
                             sql = string.Format(
                                 "update Order_QtyShip set OutstandingInCharge='{0}' where ID = '{1}' and Seq = '{2}' ",
-                                Sci.Env.User.UserID,
+                                Env.User.UserID,
                                 dr["ID"].ToString(),
                                 dr["Seq"].ToString());
                             updateCmds.Add(sql);
@@ -494,7 +494,7 @@ Order by tempData.Id");
                                 , EditDate = GETDATE() 
                         where ID = '{2}' and Seq = '{3}'",
                             MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'",
-                            Sci.Env.User.UserID,
+                            Env.User.UserID,
                             dr["ID"].ToString(),
                             dr["Seq"].ToString()));
                         allSP.Append(string.Format("'{0}',", dr["ID"].ToString()));
@@ -522,7 +522,7 @@ Order by tempData.Id");
                     {
                         updateCmds.Add(string.Format(
                             "update Orders set  EditName= '{0}', PulloutDate = {1} where ID = '{2}'",
-                            Sci.Env.User.UserID,
+                            Env.User.UserID,
                             MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'",
                             dr["Id"].ToString()));
                     }

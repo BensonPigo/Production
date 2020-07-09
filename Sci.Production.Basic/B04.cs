@@ -163,7 +163,7 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
         /// <param name="e">e</param>
         private void BtnBankDetail_Click(object sender, EventArgs e)
         {
-            B04_BankDetail callNextForm = new B04_BankDetail(Prgs.GetAuthority(Sci.Env.User.UserID, "B04. Supplier/Sub Con (Local)", "CanEdit"), this.CurrentMaintain["ID"].ToString(), null, null, this.Perm.Confirm, null);
+            B04_BankDetail callNextForm = new B04_BankDetail(Prgs.GetAuthority(Env.User.UserID, "B04. Supplier/Sub Con (Local)", "CanEdit"), this.CurrentMaintain["ID"].ToString(), null, null, this.Perm.Confirm, null);
 
             // Sci.Production.Basic.B04_BankDetail callNextForm = new Sci.Production.Basic.B04_BankDetail(new ToolStripMenuItem(), this.CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
@@ -213,7 +213,7 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
         protected override void ClickJunk()
         {
             base.ClickJunk();
-            DBProxy.Current.Execute(null, $"UPDATE LocalSupp SET Status = 'Junked',Junk=1,EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
+            DBProxy.Current.Execute(null, $"UPDATE LocalSupp SET Status = 'Junked',Junk=1,EditDate=GETDATE(),EditName='{Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
             MyUtility.Msg.InfoBox("Success!");
             this.RenewData();
         }
@@ -221,7 +221,7 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
         protected override void ClickUnJunk()
         {
             base.ClickUnJunk();
-            DBProxy.Current.Execute(null, $"UPDATE LocalSupp SET Status = 'New' ,Junk=0,EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
+            DBProxy.Current.Execute(null, $"UPDATE LocalSupp SET Status = 'New' ,Junk=0,EditDate=GETDATE(),EditName='{Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
             MyUtility.Msg.InfoBox("Success!");
             this.RenewData();
         }

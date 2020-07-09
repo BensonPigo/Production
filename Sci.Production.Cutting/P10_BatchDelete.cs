@@ -88,7 +88,7 @@ outer apply
 	and workorder.MDivisionID = b.MDivisionID
 ) as estdate
 where 1=1
-      and o.mDivisionid='{Sci.Env.User.Keyword}'
+      and o.mDivisionid='{Env.User.Keyword}'
       {sqlwhere}
 ";
             this.ShowWaitMessage("Data Loading....");

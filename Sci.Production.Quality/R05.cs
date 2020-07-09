@@ -472,7 +472,7 @@ and ai.Status='Confirmed'
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
+            var saveDialog = Utility.Excel.MyExcelPrg.GetSaveFileDialog(Utility.Excel.MyExcelPrg.Filter_Excel);
 
             if ("Fabric".EqualString(this.comboMaterialType.Text))
             {

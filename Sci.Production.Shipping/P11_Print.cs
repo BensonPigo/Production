@@ -225,7 +225,7 @@ drop table #tmpBIRInvoice,#tmpPackOrder,#tmpOrderStdFtyCMP,#PackCMP
                 rowNum++;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P11_BIRSalesReport.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P11_BIRSalesReport.xltx";
             Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -240,7 +240,7 @@ drop table #tmpBIRInvoice,#tmpPackOrder,#tmpOrderStdFtyCMP,#PackCMP
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P11_BIRSalesReport");
+            string strExcelName = Class.MicrosoftFile.GetName("Shipping_P11_BIRSalesReport");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
@@ -322,7 +322,7 @@ group by o.CustPONo,o.StyleID,s.Description,o.PoPrice,o.id,o.CPU,o.CurrencyID,st
             }
             #endregion
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P11.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P11.xltx";
             Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -449,7 +449,7 @@ where p.INVNo in ({string.Join(",", ids)})
             #region Save & Show Excel
             worksheet = excel.ActiveWorkbook.Worksheets[1];
             worksheet.Activate();
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P11");
+            string strExcelName = Class.MicrosoftFile.GetName("Shipping_P11");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

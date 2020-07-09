@@ -22,7 +22,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtMdivision.Text = Sci.Env.User.Keyword;
+            this.txtMdivision.Text = Env.User.Keyword;
         }
 
         // 驗證輸入條件
@@ -161,7 +161,7 @@ order by IssueDate, ID, SP, Seq, Roll, Dyelot
                 row["DescDetail"] = MyUtility.Convert.GetString(row["DescDetail"]).Trim();
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel
@@ -178,7 +178,7 @@ order by IssueDate, ID, SP, Seq, Roll, Dyelot
 
             this.ShowWaitMessage("Starting EXCEL...");
             string reportName = "Warehouse_R16.xltx";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{reportName}");
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{reportName}");
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, reportName, 1, false, null, excelApp, wSheet: excelApp.Sheets[1]);
 
             #region 釋放上面開啟過excel物件

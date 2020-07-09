@@ -37,12 +37,12 @@ SELECT [Text]=ID,[Value]=ID FROM SubProcess WITH(NOLOCK) WHERE Junk=0 AND IsRFID
             this.comboSubPorcess.SelectedIndex = 0;
             #endregion
 
-            this.txtMdivision.Text = Sci.Env.User.Keyword;
+            this.txtMdivision.Text = Env.User.Keyword;
 
             // 排除非生產工廠
             this.txtFactory.IsProduceFty = false;
             this.txtFactory.FilteMDivision = true;
-            this.txtFactory.Text = Sci.Env.User.Factory;
+            this.txtFactory.Text = Env.User.Factory;
         }
 
         protected override bool ValidateInput()
@@ -205,7 +205,7 @@ WHERE 1=1
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(ReportDefinition report)
@@ -236,7 +236,7 @@ WHERE 1=1
 
             #endregion
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R45.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subcon_R45.xltx"); // 預先開啟excel app
 
             for (int i = 0; i < DataList.Count; i++)
             {
@@ -331,7 +331,7 @@ WHERE 1=1
             }
 
             #region Save Excel
-            this.strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R45");
+            this.strExcelName = Class.MicrosoftFile.GetName("Subcon_R45");
             Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(this.strExcelName);
             workbook.Close();

@@ -154,11 +154,11 @@ insert into MDScan([ScanDate], [MDivisionID], [OrderID], [PackingListID], [CTNSt
 values(getdate(), '{1}', '{2}', '{3}', '{4}', '{5}', getdate(), '{6}', {0}, {7})
                 ",
                 this.numericBoxDiscrepancy.Text,
-                Sci.Env.User.Keyword,
+                Env.User.Keyword,
                 dr["OrderID"],
                 dr["ID"],
                 dr["CTNStartNo"],
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 dr["SCICtnNo"],
                 dr["CartonQty"]);
 

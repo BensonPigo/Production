@@ -198,7 +198,7 @@ from (
 ) Datas
 order by Datas.Poid, Datas.Refno",
                 dicSQLFilte["TopCount"],
-                Sci.Env.User.Keyword,
+                Env.User.Keyword,
                 dicSQLFilte["Category"],
                 dicSQLFilte["Location"],
                 dicSQLFilte["UnitPrice"],

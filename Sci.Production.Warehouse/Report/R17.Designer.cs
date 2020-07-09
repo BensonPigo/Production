@@ -39,10 +39,10 @@
             this.checkBalanceQty = new Sci.Win.UI.CheckBox();
             this.comboStockType = new Sci.Win.UI.ComboBox();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.txtLocationEnd = new Sci.Production.Class.txtMtlLocation(this.components);
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.txtSeq = new Sci.Production.Class.txtSeq();
-            this.txtMtlLocationStart = new Sci.Production.Class.txtMtlLocation(this.components);
+            this.txtLocationEnd = new Sci.Production.Class.TxtMtlLocation(this.components);
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtSeq = new Sci.Production.Class.TxtSeq();
+            this.txtMtlLocationStart = new Sci.Production.Class.TxtMtlLocation(this.components);
             this.label2 = new Sci.Win.UI.Label();
             this.dateETA = new Sci.Win.UI.DateRange();
             this.labelETA = new Sci.Win.UI.Label();
@@ -208,8 +208,8 @@
             this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.txtSeq.Location = new System.Drawing.Point(302, 12);
             this.txtSeq.Name = "txtSeq";
-            this.txtSeq.seq1 = "";
-            this.txtSeq.seq2 = "";
+            this.txtSeq.Seq1 = "";
+            this.txtSeq.Seq2 = "";
             this.txtSeq.Size = new System.Drawing.Size(61, 23);
             this.txtSeq.TabIndex = 1;
             // 
@@ -328,11 +328,11 @@
         private Win.UI.Label labelStockType;
         private Win.UI.CheckBox checkBalanceQty;
         private Win.UI.ComboBox comboStockType;
-        private Class.txtSeq txtSeq;
+        private Class.TxtSeq txtSeq;
         private Win.UI.Label labelFactory;
-        private Class.txtfactory txtfactory;
-        private Class.txtMtlLocation txtLocationEnd;
-        private Class.txtMtlLocation txtMtlLocationStart;
+        private Class.Txtfactory txtfactory;
+        private Class.TxtMtlLocation txtLocationEnd;
+        private Class.TxtMtlLocation txtMtlLocationStart;
         private Win.UI.Label label2;
         private Win.UI.DateRange dateETA;
         private Win.UI.Label labelETA;

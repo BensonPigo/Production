@@ -28,7 +28,7 @@ namespace Sci.Production.Warehouse
             #region set userCountry
             string sql = "select CountryID from Factory WITH (NOLOCK) where ID = @ID";
             List<SqlParameter> sqlPar = new List<SqlParameter>();
-            sqlPar.Add(new SqlParameter("@ID", Sci.Env.User.Factory));
+            sqlPar.Add(new SqlParameter("@ID", Env.User.Factory));
             DataTable dt;
             DualResult result;
 
@@ -54,7 +54,7 @@ namespace Sci.Production.Warehouse
             #region set userCountry
             string sql = "select CountryID from Factory WITH (NOLOCK) where ID = @ID";
             List<SqlParameter> sqlPar = new List<SqlParameter>();
-            sqlPar.Add(new SqlParameter("@ID", Sci.Env.User.Factory));
+            sqlPar.Add(new SqlParameter("@ID", Env.User.Factory));
             DataTable dt;
             DualResult result;
 
@@ -88,7 +88,7 @@ namespace Sci.Production.Warehouse
             }
 
             ToolStripMenuItem P03MenuItem = null;
-            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
+            foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
             {
                 if (toolMenuItem.Text.EqualString("Warehouse"))
                 {
@@ -137,7 +137,7 @@ namespace Sci.Production.Warehouse
             }
 
             ToolStripMenuItem P03MenuItem = null;
-            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
+            foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
             {
                 if (toolMenuItem.Text.EqualString("Warehouse"))
                 {

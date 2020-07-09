@@ -66,7 +66,7 @@ group by IssueDate,EditDate,id,name,inqty,outqty,adjustQty
 order by IssueDate,EditDate,name",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
-                this.dr["seq2"].ToString(), Sci.Env.User.Keyword);
+                this.dr["seq2"].ToString(), Env.User.Keyword);
 #endregion
 
             #region DetailGrid
@@ -140,7 +140,7 @@ for xml path('')),1,1,'')
 ",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
-                this.dr["seq2"].ToString(), Sci.Env.User.Keyword);
+                this.dr["seq2"].ToString(), Env.User.Keyword);
             #endregion
 
             DataTable selectDataTable1, selectDataTable2;

@@ -116,7 +116,7 @@ namespace Sci.Production.Shipping
                 return new DualResult(false, "Query data fail\r\n" + result.ToString());
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -133,7 +133,7 @@ namespace Sci.Production.Shipping
 
             this.ShowWaitMessage("Starting EXCEL...");
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R43_NonDeclarationReportExport.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_R43_NonDeclarationReportExport.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {

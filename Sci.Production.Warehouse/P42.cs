@@ -216,7 +216,7 @@ inner join dbo.cuttingtape_detail c WITH (NOLOCK) on c.mdivisionid = '{0}' and c
 outer apply( select value =  iif(b.stockunit = '',dbo.GetStockUnitBySPSeq( b.id,B.SEQ1,B.SEQ2),b.stockunit) ) stockunit
 WHERE A.IsForecast = 0 AND A.Junk = 0 AND A.LocalOrder = 0 AND a.category not in('M','T')
 AND B.SEQ1 = 'A1'
-AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.User.Keyword);
+AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Env.User.Keyword);
             if (!MyUtility.Check.Empty(sciDelivery_b))
             {
                 sqlcmd += string.Format(@" and a.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e);
@@ -346,12 +346,12 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.Use
                                                 Group by TapeFirstInline,cuttingtape.POID,cuttingtape.MDivisionID
                                             ) as b on a.MDivisionID=b.MDivisionID and a.POID=b.POID
                                             where a.poid ='{1}' and a.mdivisionid='{2}'",
-                    Sci.Env.User.UserID,
+                    Env.User.UserID,
                     item["POID"],
                     item["mdivisionid"]);
             }
 
-            if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd)))
+            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
             {
                 MyUtility.Msg.WarningBox("Save failed, Pleaes re-try");
                 return;

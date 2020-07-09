@@ -94,7 +94,7 @@ select p2.CanNew,p1.IsAdmin,p1.IsMIS
 from Pass1 p1
 left join Pass0 p on p1.FKPass0=p.PKey
 left join Pass2 p2 on p2.FKPass0=p.PKey
-where p1.ID='{Sci.Env.User.UserID}'
+where p1.ID='{Env.User.UserID}'
 and FKMenu= (select PKey from MenuDetail where FormName='Sci.Production.Shipping.P08')";
             DataRow drCopy;
             if (MyUtility.Check.Seek(sqlcmd, out drCopy))
@@ -202,7 +202,7 @@ where sd.ID = '{0}'", masterID);
                 };
 
             bool status = MyUtility.Check.Empty(this.CurrentMaintain["Accountant"]);
-            this.btnAcctApprove.Enabled = status ? !this.EditMode && Prgs.GetAuthority(Sci.Env.User.UserID, "P08. Account Payment - Shipping", "CanConfirm") : MyUtility.Check.Empty(this.CurrentMaintain["VoucherID"]) && Prgs.GetAuthority(this.CurrentMaintain["Accountant"].ToString(), "P08. Account Payment - Shipping", "CanUnConfirm");
+            this.btnAcctApprove.Enabled = status ? !this.EditMode && Prgs.GetAuthority(Env.User.UserID, "P08. Account Payment - Shipping", "CanConfirm") : MyUtility.Check.Empty(this.CurrentMaintain["VoucherID"]) && Prgs.GetAuthority(this.CurrentMaintain["Accountant"].ToString(), "P08. Account Payment - Shipping", "CanUnConfirm");
             this.btnAcctApprove.Text = status ? "Acct. Approve" : "Acct. Unapprove";
             this.btnAcctApprove.ForeColor = status ? Color.Blue : Color.Black;
             this.comboType2.SelectedValue = this.CurrentMaintain["SubType"].ToString();
@@ -255,7 +255,7 @@ where sd.ID = '{0}'", masterID);
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -393,15 +393,15 @@ where sd.ID = '{0}'", masterID);
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.CurrentMaintain["CDate"] = DateTime.Today;
-            this.CurrentMaintain["Handle"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["Handle"] = Env.User.UserID;
             this.CurrentMaintain["VATRate"] = 0;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "IMPORT";
             this.comboType2.DataSource = this.subType_1;
             this.CurrentMaintain["SubType"] = "MATERIAL";
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.numTotal.Value = 0;
             this.gridicon.Append.Enabled = true;
             this.gridicon.Insert.Enabled = true;
@@ -443,7 +443,7 @@ where sd.ID = '{0}'", masterID);
         protected override void ClickCopyAfter()
         {
             base.ClickCopyAfter();
-            this.CurrentMaintain["Handle"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["Handle"] = Env.User.UserID;
             this.CurrentMaintain["InvNo"] = string.Empty;
             this.CurrentMaintain["ID"] = string.Empty;
             this.CurrentMaintain["VoucherID"] = string.Empty;
@@ -652,7 +652,7 @@ and Junk = 0",
                     if (MyUtility.Convert.GetString(this.CurrentMaintain["Type"]) != MyUtility.Convert.GetString(seekRow["Type"]))
                     {
                         DialogResult buttonResult = MyUtility.Msg.WarningBox(string.Format("Already have expense data. Are you sure want to change the type from '{0}' to '{1}'", MyUtility.Convert.GetString(seekRow["Type"]), MyUtility.Convert.GetString(this.CurrentMaintain["Type"])), "Warning", MessageBoxButtons.YesNo);
-                        if (buttonResult == System.Windows.Forms.DialogResult.No)
+                        if (buttonResult == DialogResult.No)
                         {
                             return false;
                         }
@@ -665,7 +665,7 @@ and Junk = 0",
                     if (!this.haveEditShareFee && MyUtility.Convert.GetString(this.CurrentMaintain["SubType"]) != MyUtility.Convert.GetString(seekRow["SubType"]))
                     {
                         DialogResult buttonResult = MyUtility.Msg.WarningBox(string.Format("Already have expense data. Are you sure want to change the type from '{0}' to '{1}'", MyUtility.Convert.GetString(seekRow["SubType"]), MyUtility.Convert.GetString(this.CurrentMaintain["SubType"])), "Warning", MessageBoxButtons.YesNo);
-                        if (buttonResult == System.Windows.Forms.DialogResult.No)
+                        if (buttonResult == DialogResult.No)
                         {
                             return false;
                         }
@@ -690,7 +690,7 @@ and Junk = 0",
             // Get ID
             if (this.IsDetailInserting)
             {
-                string newID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "SA", "ShippingAP", DateTime.Today, 2, "Id", null);
+                string newID = MyUtility.GetValue.GetID(Env.User.Keyword + "SA", "ShippingAP", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(newID))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -776,7 +776,7 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
         {
             DualResult result = DBProxy.Current.Execute(
                 "Production",
-                string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Sci.Env.User.UserID));
+                string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Env.User.UserID));
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Re-calcute share expense failed!");
@@ -823,7 +823,7 @@ where ShippingAPID = '{MyUtility.Convert.GetString(this.CurrentMaintain["ID"])}'
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private string Chk_null(string str)
@@ -1042,7 +1042,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                     return;
                 }
 
-                string sqlCmd = string.Format("update ShippingAP set Accountant = '{0}', ApvDate = GETDATE(), Status = 'Approved' where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                string sqlCmd = string.Format("update ShippingAP set Accountant = '{0}', ApvDate = GETDATE(), Status = 'Approved' where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 DualResult result = DBProxy.Current.Execute(null, sqlCmd);
                 if (!result)
                 {
@@ -1057,7 +1057,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             {
                 // Unapprove
                 DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Unapprove > this data?", "Warning", MessageBoxButtons.YesNo);
-                if (buttonResult == System.Windows.Forms.DialogResult.No)
+                if (buttonResult == DialogResult.No)
                 {
                     return;
                 }

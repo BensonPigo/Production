@@ -41,7 +41,7 @@ namespace Sci.Production.Quality
             foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(w => w.RowState == DataRowState
             .Modified))
             {
-                update += $@" update GarmentDefectType set seq = '{dr["seq"]}' , editname = '{Sci.Env.User.UserID}',editDate = getdate() where id = '{dr["id"]}'; ";
+                update += $@" update GarmentDefectType set seq = '{dr["seq"]}' , editname = '{Env.User.UserID}',editDate = getdate() where id = '{dr["id"]}'; ";
             }
 
             DBProxy.Current.Execute(null, update);

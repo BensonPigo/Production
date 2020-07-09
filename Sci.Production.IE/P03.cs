@@ -36,7 +36,7 @@ namespace Sci.Production.IE
             this.gridicon.Append.Visible = false;
 
             this.splitContainer1.Panel1.Controls.Add(this.detailpanel);
-            this.detailpanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.detailpanel.Dock = DockStyle.Fill;
         }
 
         /// <summary>
@@ -174,7 +174,7 @@ order by ld.No, ld.GroupKey", masterID);
             DataGridViewGeneratorTextColumnSettings notice = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings ppa = new DataGridViewGeneratorCheckBoxColumnSettings();
 
-            celltxtMachineGroup txtSubReason = (celltxtMachineGroup)celltxtMachineGroup.GetGridCell();
+            TxtMachineGroup.CelltxtMachineGroup txtSubReason = (TxtMachineGroup.CelltxtMachineGroup)TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
 
             #region No.的Valid
             no.CellValidating += (s, e) =>
@@ -272,7 +272,7 @@ order by ld.No, ld.GroupKey", masterID);
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -341,7 +341,7 @@ order by ld.No, ld.GroupKey", masterID);
             {
                 if (this.EditMode)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -1105,7 +1105,7 @@ WHERE Ukey={item["Ukey"]}
                 @"select Target from ChgOverTarget WITH (NOLOCK) where Type = '{0}' and MDivisionID = '{1}' and EffectiveDate = (
 select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' and MDivisionID = '{1}' and EffectiveDate <= GETDATE())",
                 type,
-                Sci.Env.User.Keyword));
+                Env.User.Keyword));
         }
 
         /// <summary>
@@ -1164,7 +1164,7 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
             }
 
             DualResult result;
-            string updateCmd = string.Format("update LineMapping set Status = 'Confirmed', IEReasonID = '{0}',EditName = '{1}', EditDate = GETDATE() where ID = {2}", notHitReasonID, Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
+            string updateCmd = string.Format("update LineMapping set Status = 'Confirmed', IEReasonID = '{0}',EditName = '{1}', EditDate = GETDATE() where ID = {2}", notHitReasonID, Env.User.UserID, this.CurrentMaintain["ID"].ToString());
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -1181,7 +1181,7 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
             base.ClickUnconfirm();
 
             DualResult result;
-            string updateCmd = string.Format("update LineMapping set Status = 'New', IEReasonID = '',EditName = '{0}', EditDate = GETDATE() where ID = {1}", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
+            string updateCmd = string.Format("update LineMapping set Status = 'New', IEReasonID = '',EditName = '{0}', EditDate = GETDATE() where ID = {1}", Env.User.UserID, this.CurrentMaintain["ID"].ToString());
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -1202,7 +1202,7 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
         {
             P03_CopyFromOtherStyle callNextForm = new P03_CopyFromOtherStyle();
             DialogResult result = callNextForm.ShowDialog(this);
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (result == DialogResult.OK)
             {
                 DataTable copyLineMapDetail;
                 string sqlCmd = string.Format(

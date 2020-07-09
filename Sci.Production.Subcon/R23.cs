@@ -33,8 +33,8 @@ namespace Sci.Production.Subcon
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboFactory.Text = Sci.Env.User.Factory;
-            this.txtMdivisionM.Text = Sci.Env.User.Keyword;
+            this.comboFactory.Text = Env.User.Factory;
+            this.txtMdivisionM.Text = Env.User.Keyword;
             MyUtility.Tool.SetupCombox(this.comboOrderType, 1, 1, ",Bulk,Sample,Material,Bulk+Sample,Bulk+Sample+Forecast,Bulk+Sample+Material+Forecast");
             this.comboOrderType.SelectedIndex = 0;
             MyUtility.Tool.SetupCombox(this.comboRateType, 2, 1, "FX,Fixed Exchange Rate,KP,KPI Exchange Rate,DL,Daily Exchange Rate,3S,Custom Exchange Rate,RV,Currency Revaluation Rate,OT,One-time Exchange Rate");
@@ -361,7 +361,7 @@ group by O.FactoryID
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel

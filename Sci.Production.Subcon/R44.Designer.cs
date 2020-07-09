@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.comboDropDownList1 = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboDropDownList1 = new Sci.Production.Class.ComboDropDownList(this.components);
             this.label1 = new Sci.Win.UI.Label();
             this.txtSP = new Sci.Win.UI.TextBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
@@ -249,7 +249,7 @@
         private Win.UI.DateRange dateSewingDate;
         private Win.UI.ComboBox comboFactory;
         private Win.UI.TextBox txtSP;
-        private Class.comboDropDownList comboDropDownList1;
+        private Class.ComboDropDownList comboDropDownList1;
         private Win.UI.Label label1;
         private Win.UI.CheckBox chkIncludeCancelOrder;
     }

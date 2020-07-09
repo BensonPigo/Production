@@ -18,7 +18,7 @@ namespace Sci.Production.Shipping
             DataTable shipperID;
             DBProxy.Current.Select(null, "select '' as ShipperID union all SELECT DISTINCT [ShipperID]=Shipper FROM GMTBooking WITH (NOLOCK) ", out shipperID);
             MyUtility.Tool.SetupCombox(this.comboShipper, 1, shipperID);
-            this.comboShipper.Text = Sci.Env.User.Keyword;
+            this.comboShipper.Text = Env.User.Keyword;
         }
 
         protected override void OnFormLoaded()
@@ -180,7 +180,7 @@ VALUES (
     ,'SOCFMDate'
     ,'{(firstCFM ? string.Empty : "CFM")}'
     ,'Un CFM'
-    ,'{Sci.Env.User.UserID}'
+    ,'{Env.User.UserID}'
     ,GETDATE()
 )
 " + Environment.NewLine + Environment.NewLine);

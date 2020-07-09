@@ -115,7 +115,7 @@ namespace Sci.Production.Shipping
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -134,7 +134,7 @@ namespace Sci.Production.Shipping
         protected override void ClickConfirm()
         {
             string sqlupdate = $@"
-update BIRInvoice set Status='Approved', Approve='{Sci.Env.User.UserID}', ApproveDate=getdate(), EditName='{Sci.Env.User.UserID}', EditDate=getdate()
+update BIRInvoice set Status='Approved', Approve='{Env.User.UserID}', ApproveDate=getdate(), EditName='{Env.User.UserID}', EditDate=getdate()
 where id = '{this.CurrentMaintain["ID"]}'
 ";
             DualResult result = DBProxy.Current.Execute(null, sqlupdate);
@@ -157,7 +157,7 @@ where id = '{this.CurrentMaintain["ID"]}'
             }
 
             string sqlupdate = $@"
-update BIRInvoice set Status='New', Approve='{Sci.Env.User.UserID}', ApproveDate=getdate(), EditName='{Sci.Env.User.UserID}', EditDate=getdate()
+update BIRInvoice set Status='New', Approve='{Env.User.UserID}', ApproveDate=getdate(), EditName='{Env.User.UserID}', EditDate=getdate()
 where id = '{this.CurrentMaintain["ID"]}'
 ";
             DualResult result = DBProxy.Current.Execute(null, sqlupdate);

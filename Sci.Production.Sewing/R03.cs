@@ -47,9 +47,9 @@ namespace Sci.Production.Sewing
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FTYGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
             this.comboDropDownListCategory.SelectedIndex = 0;
-            this.comboFtyZone.setDataSource();
+            this.comboFtyZone.SetDataSource();
         }
 
         /// <inheritdoc/>
@@ -607,7 +607,7 @@ Order by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc",
                 return failResult;
             }
             #endregion
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -624,7 +624,7 @@ Order by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc",
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Sewing_R03_ProdEfficiencyAnalysisReport.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Sewing_R03_ProdEfficiencyAnalysisReport.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -884,7 +884,7 @@ Order by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc",
             worksheet.Select();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Sewing_R03_ProdEfficiencyAnalysisReport");
+            string strExcelName = Class.MicrosoftFile.GetName("Sewing_R03_ProdEfficiencyAnalysisReport");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

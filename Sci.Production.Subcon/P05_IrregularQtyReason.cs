@@ -31,7 +31,7 @@ namespace Sci.Production.Subcon
 
         protected override void OnFormLoaded()
         {
-            cellSubconReason txtSubReason = (cellSubconReason)cellSubconReason.GetGridtxtCell("SQ");
+            TxtSubconReason.CellSubconReason txtSubReason = (TxtSubconReason.CellSubconReason)TxtSubconReason.CellSubconReason.GetGridtxtCell("SQ");
 
             // comboSubReason.EditingControlShowing += (s, e) =>
             // {
@@ -146,7 +146,7 @@ namespace Sci.Production.Subcon
                         {
                             if (dt.Rows[0]["SubconReasonID"].ToString() != SubconReasonID && !string.IsNullOrEmpty(SubconReasonID))
                             {
-                                sqlcmd.Append($"UPDATE [ArtworkReq_IrregularQty] SET [SubconReasonID]='{SubconReasonID}',EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'" + Environment.NewLine);
+                                sqlcmd.Append($"UPDATE [ArtworkReq_IrregularQty] SET [SubconReasonID]='{SubconReasonID}',EditDate=GETDATE(),EditName='{Env.User.UserID}'" + Environment.NewLine);
                                 sqlcmd.Append($"                                  WHERE OrderID='{OrderID}' AND [ArtworkTypeID]='{ArtworkType}'" + Environment.NewLine);
                             }
                         }
@@ -155,7 +155,7 @@ namespace Sci.Production.Subcon
                             sqlcmd.Append(@"
 INSERT INTO [ArtworkReq_IrregularQty]([OrderID],[ArtworkTypeID],[StandardQty],[ReqQty],[SubconReasonID],[AddDate],[AddName])" + Environment.NewLine);
                             sqlcmd.Append($@"
-VALUES ('{OrderID}','{ArtworkType}',{StandardQty},{ReqQty},'{SubconReasonID}',GETDATE(),'{Sci.Env.User.UserID}')" + Environment.NewLine);
+VALUES ('{OrderID}','{ArtworkType}',{StandardQty},{ReqQty},'{SubconReasonID}',GETDATE(),'{Env.User.UserID}')" + Environment.NewLine);
                         }
                     }
                 }

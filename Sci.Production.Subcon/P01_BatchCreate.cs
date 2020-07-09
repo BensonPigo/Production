@@ -292,7 +292,7 @@ namespace Sci.Production.Subcon
                             // 取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
                             string ftyKeyWord = MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where id='{0}'", q.ftygroup));
 
-                            string id = Sci.MyUtility.GetValue.GetID(ftyKeyWord + "OS", "artworkpo", DateTime.Parse(this.dateIssueDate.Text));
+                            string id = MyUtility.GetValue.GetID(ftyKeyWord + "OS", "artworkpo", DateTime.Parse(this.dateIssueDate.Text));
                             if (MyUtility.Check.Empty(id))
                             {
                                 _transactionscope.Dispose();
@@ -422,7 +422,7 @@ namespace Sci.Production.Subcon
 
                             #endregion
 
-                            if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd)))
+                            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
                             {
                                 _transactionscope.Dispose();
                                 MyUtility.Msg.WarningBox("Create failed, Pleaes re-try");
@@ -529,7 +529,7 @@ namespace Sci.Production.Subcon
                                 }
                             }
 
-                            if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd2.ToString())))
+                            if (!(result = DBProxy.Current.Execute(null, sqlcmd2.ToString())))
                             {
                                 _transactionscope.Dispose();
                                 MyUtility.Msg.WarningBox("Create failed, Pleaes re-try");
@@ -568,7 +568,7 @@ namespace Sci.Production.Subcon
         {
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
-            sdExcel.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_P01_BatchCreate"));
+            sdExcel.Save(Class.MicrosoftFile.GetName("Subcon_P01_BatchCreate"));
         }
 
         private void txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
@@ -576,7 +576,7 @@ namespace Sci.Production.Subcon
             this.isArtwork = MyUtility.GetValue.Lookup(
                 string.Format(
                 "select isartwork from artworktype WITH (NOLOCK) where id = '{0}'",
-                ((Class.txtartworktype_fty)sender).Text), null);
+                ((Class.Txtartworktype_fty)sender).Text), null);
         }
 
         private string QuoteFromPlanningB03()
@@ -696,7 +696,7 @@ WHERE 	 orders.IsForecast = 0
 		AND factory.mdivisionid = '{0}'
 		AND factory.IsProduceFty = 1
         AND orders.Category in ('S','B')
-		", Sci.Env.User.Keyword, this.artworktype);
+		", Env.User.Keyword, this.artworktype);
 
             if (!string.IsNullOrWhiteSpace(this.apvdate_b))
             {
@@ -874,7 +874,7 @@ WHERE 	ard.ArtworkPOID = '' and
 		and (Orders.Junk=0 or Orders.Junk=1 and Orders.NeedProduction=1)
 		and Order_TmsCost.localsuppid !=''		
         --and Orders.PulloutComplete = 0
-		", this.poType, Sci.Env.User.Keyword, this.artworktype);
+		", this.poType, Env.User.Keyword, this.artworktype);
             SqlCmd += string.Format(" and Order_TmsCost.InhouseOSP = '{0}'", this.poType);
             switch (this.poType)
             {

@@ -24,7 +24,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtMdivision.Text = Sci.Env.User.Keyword;
+            this.txtMdivision.Text = Env.User.Keyword;
             MyUtility.Tool.SetupCombox(this.comboStockType, 2, 1, ",ALL,A,Bulk,B,Inventory,O,Scrap");
             this.comboStockType.SelectedIndex = 0;
             this.txtReason.SelectedIndex = 0;
@@ -148,7 +148,7 @@ Where a.Status = 'Confirmed' ");
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel
@@ -164,7 +164,7 @@ Where a.Status = 'Confirmed' ");
             }
 
             // MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R13.xltx", 1);
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R13.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R13.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Warehouse_R13.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);      // 將datatable copy to excel
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
@@ -179,7 +179,7 @@ Where a.Status = 'Confirmed' ");
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R13");
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R13");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

@@ -1,6 +1,5 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Production.Class;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -18,8 +17,8 @@ namespace Sci.Production.Quality
     public partial class P01_PhysicalInspection : Win.Subs.Input4
     {
         private DataRow maindr;
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
         string excelFile = string.Empty;
         DataTable Fir_physical_Defect;
 
@@ -322,7 +321,7 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
             DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings Ydscell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings TotalPointcell = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ResulCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
+            DataGridViewGeneratorTextColumnSettings ResulCell = PublicPrg.Prgs.cellResult.GetGridCell();
             #region TotalPoint Double Click
             TotalPointcell.EditingMouseDoubleClick += (s, e) =>
             {
@@ -853,7 +852,7 @@ and not exists
                 this.maindr["TotalInspYds"] = sumTotalYds;
                 #endregion
                 #region 判斷Result 是否要寫入
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(this.maindr);
+                string[] returnstr = PublicPrg.Prgs.GetOverallResult_Status(this.maindr);
                 #endregion
                 #region  寫入實體Table
                 updatesql = string.Format(
@@ -877,7 +876,7 @@ and not exists
                 this.maindr["PhysicalInspector"] = string.Empty;
 
                 // 判斷Result and Status 必須先確認Physical="",判斷才會正確
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(this.maindr);
+                string[] returnstr = PublicPrg.Prgs.GetOverallResult_Status(this.maindr);
                 this.maindr["Result"] = returnstr[0];
                 this.maindr["Status"] = returnstr[1];
                 #endregion
@@ -1077,7 +1076,7 @@ and not exists
 
             #endregion
             int addline = 0;
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Quality_P01_Physical_Inspection_Report.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Quality_P01_Physical_Inspection_Report.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             excel.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
@@ -1423,7 +1422,7 @@ where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", this.textID.Text, dtGrid.Row
             excel.Cells.EntireRow.AutoFit();       ////自動欄高
 
             #region Save Excel
-            this.excelFile = Sci.Production.Class.MicrosoftFile.GetName("QA_P01_PhysicalInspection");
+            this.excelFile = Class.MicrosoftFile.GetName("QA_P01_PhysicalInspection");
             excel.ActiveWorkbook.SaveAs(this.excelFile);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
@@ -1449,8 +1448,8 @@ where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", this.textID.Text, dtGrid.Row
 select ToAddress = stuff ((select concat (';', tmp.email)
 from (
 	select distinct email from pass1
-	where id in (select Supervisor from pass1 where  id='{Sci.Env.User.UserID}')
-			or id in (select Manager from Pass1 where id = '{Sci.Env.User.UserID}')
+	where id in (select Supervisor from pass1 where  id='{Env.User.UserID}')
+			or id in (select Manager from Pass1 where id = '{Env.User.UserID}')
 ) tmp
 for xml path('')
 ), 1, 1, '')";
@@ -1464,7 +1463,7 @@ for xml path('')
                                      + Environment.NewLine
                                      + "Please Approve and Check Fabric Inspection";
                     this.ToExcel(true, "Regular");
-                    var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, ccAddress, subject, this.excelFile, content, false, true);
+                    var email = new MailTo(Env.Cfg.MailFrom, mailto, ccAddress, subject, this.excelFile, content, false, true);
                     email.ShowDialog(this);
                 }
             }
@@ -1479,7 +1478,7 @@ for xml path('')
                 string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text);
 
                 this.ToExcel(true, "Regular");
-                var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailCC, subject, this.excelFile, content, false, true);
+                var email = new MailTo(Env.Cfg.MailFrom, mailto, mailCC, subject, this.excelFile, content, false, true);
                 email.ShowDialog(this);
             }
         }

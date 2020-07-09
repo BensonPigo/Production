@@ -33,8 +33,8 @@
             this.lbGroupingby = new Sci.Win.UI.Label();
             this.lbSeason = new Sci.Win.UI.Label();
             this.lbBrand = new Sci.Win.UI.Label();
-            this.txtBrand = new Sci.Production.Class.txtbrand();
-            this.txtSeason = new Sci.Production.Class.txtseason();
+            this.txtBrand = new Sci.Production.Class.Txtbrand();
+            this.txtSeason = new Sci.Production.Class.Txtseason();
             this.SuspendLayout();
             // 
             // print
@@ -167,7 +167,7 @@
         private Win.UI.Label lbGroupingby;
         private Win.UI.Label lbSeason;
         private Win.UI.Label lbBrand;
-        private Class.txtbrand txtBrand;
-        private Class.txtseason txtSeason;
+        private Class.Txtbrand txtBrand;
+        private Class.Txtseason txtSeason;
     }
 }

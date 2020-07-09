@@ -3,6 +3,9 @@ using Ict;
 
 namespace Sci.Win
 {
+    /// <summary>
+    /// SUBBASE
+    /// </summary>
     public partial class SUBBASE : Subs.Base
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
@@ -42,7 +45,7 @@ namespace Sci.Win
             DualResult result;
 
             DataTable datas;
-            if (!(result = Sci.Data.DBProxy.Current.Select(null, "SELECT * FROM accno", out datas)))
+            if (!(result = Data.DBProxy.Current.Select(null, "SELECT * FROM accno", out datas)))
             {
                 this.ShowErr(result);
             }

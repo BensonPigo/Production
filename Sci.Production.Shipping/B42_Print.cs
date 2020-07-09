@@ -237,7 +237,7 @@ and 1=1"));
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -265,7 +265,7 @@ and 1=1"));
             }
             else if (this.reportType == "2")
             {
-                string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_B42_EachConsumption.xltx";
+                string strXltName = Env.Cfg.XltPathDir + "\\Shipping_B42_EachConsumption.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
                 if (excel == null)
                 {
@@ -403,7 +403,7 @@ and 1=1"));
                 worksheet.Select();
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_B42_EachConsumption");
+                string strExcelName = Class.MicrosoftFile.GetName("Shipping_B42_EachConsumption");
                 excel.ActiveWorkbook.SaveAs(strExcelName);
                 excel.Quit();
                 Marshal.ReleaseComObject(excel);

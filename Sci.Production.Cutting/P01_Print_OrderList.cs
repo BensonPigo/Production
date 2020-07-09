@@ -112,7 +112,7 @@ namespace Sci.Production.Cutting
                 wks.get_Range("A5").RowHeight = 16.5;
                 wks.get_Range("A6").RowHeight = 16.5;
                 sxr.BoOpenFile = true;
-                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_CuttingWorkOrder"));
+                sxr.Save(Class.MicrosoftFile.GetName("Cutting_P01_CuttingWorkOrder"));
                 #endregion
             }
 
@@ -191,7 +191,7 @@ select [SP] =
                 dt.ShowHeader = false;
                 sxr.ActionAfterFillData = this.SetPageAutoFit;
                 sxr.DicDatas.Add(sxr.VPrefix + "tbl1", dt);
-                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_CuttingTape"));
+                sxr.Save(Class.MicrosoftFile.GetName("Cutting_P01_CuttingTape"));
 
                 int row = dt0.Rows.Count + 4;
 
@@ -224,7 +224,7 @@ select [SP] =
                 #region rdCheck_CuttingSchedule
                 DataTable[] dts;
                 List<SqlParameter> lsp = new List<SqlParameter>();
-                lsp.Add(new SqlParameter("@M", Sci.Env.User.Keyword));
+                lsp.Add(new SqlParameter("@M", Env.User.Keyword));
                 lsp.Add(new SqlParameter("@Finished", this._finished));
                 DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01_print_cuttingschedule", lsp, out dts);
 
@@ -270,7 +270,7 @@ select [SP] =
                 sxr.DicDatas.Add(sxr.VPrefix + "tbl1", dt);
 
                 sxr.BoOpenFile = true;
-                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_CuttingSchedule"));
+                sxr.Save(Class.MicrosoftFile.GetName("Cutting_P01_CuttingSchedule"));
                 #endregion
             }
 
@@ -357,7 +357,7 @@ select [SP] =
                 sxr.VarToSheetName = sxr.VPrefix + "SizeGroup";
 
                 sxr.BoOpenFile = true;
-                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_EachConsumptionCuttingCombo"));
+                sxr.Save(Class.MicrosoftFile.GetName("Cutting_P01_EachConsumptionCuttingCombo"));
                 #endregion
             }
 
@@ -487,7 +487,7 @@ select [SP] =
                 sxr.DicDatas.Add(sxr.VPrefix + "tbl3", tbl3);
 
                 sxr.BoOpenFile = true;
-                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_ColorCombo_SizeBreakdown"));
+                sxr.Save(Class.MicrosoftFile.GetName("Cutting_P01_ColorCombo_SizeBreakdown"));
                 #endregion
             }
 
@@ -620,7 +620,7 @@ select [SP] =
                 #endregion
 
                 // sxr.BoOpenFile = false;
-                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_QtyBreakdown_PoCombbySPList"));
+                sxr.Save(Class.MicrosoftFile.GetName("Cutting_P01_QtyBreakdown_PoCombbySPList"));
 
                 // 不同的Article 需要合併以及變色次數
                 DataTable dtArticle;
@@ -1010,7 +1010,7 @@ select distinct sizecode,Seq
                 DataRow dr = dts[0].Rows[0];
                 this.extra_P01_EachconsVSOrderQTYBDownPOCombo(dts[1]);
 
-                string xltPath = Sci.Env.Cfg.XltPathDir + "\\Cutting_P01_EachconsVSOrderQTYBDownPOCombo.xltx";
+                string xltPath = Env.Cfg.XltPathDir + "\\Cutting_P01_EachconsVSOrderQTYBDownPOCombo.xltx";
 
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(xltPath);
                 excel.Visible = false;
@@ -1297,7 +1297,7 @@ select distinct sizecode,Seq
                 sxr.VarToSheetName = sxr.VPrefix + "SizeGroup";
 
                 sxr.BoOpenFile = true;
-                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("cutting_P01_MarkerList"));
+                sxr.Save(Class.MicrosoftFile.GetName("cutting_P01_MarkerList"));
                 #endregion
             }
 

@@ -38,7 +38,7 @@ namespace Sci.Production.IE
                 out factory);
 
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
             this.dateTPmonth.Value = DateTime.Now;
         }
 
@@ -103,7 +103,7 @@ namespace Sci.Production.IE
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private DualResult GetSummary()
@@ -297,7 +297,7 @@ and a.Inline < dateadd(day, 1, '{1}')",
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\IE_R02_StyleChangeoverReport.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\IE_R02_StyleChangeoverReport.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -319,7 +319,7 @@ and a.Inline < dateadd(day, 1, '{1}')",
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("IE_R02_StyleChangeoverReport");
+            string strExcelName = Class.MicrosoftFile.GetName("IE_R02_StyleChangeoverReport");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

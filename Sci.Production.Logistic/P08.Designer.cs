@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
             this.chkUpdateOriLocation = new System.Windows.Forms.CheckBox();
-            this.txtcloglocationLocationNo = new Sci.Production.Class.txtcloglocation();
+            this.txtcloglocationLocationNo = new Sci.Production.Class.Txtcloglocation();
             this.labelLocationNo = new Sci.Win.UI.Label();
             this.panel6 = new System.Windows.Forms.Panel();
             this.dateTransferDate = new Sci.Win.UI.DateRange();
@@ -354,7 +354,7 @@
         private Win.UI.Grid grid;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private Class.txtcloglocation txtcloglocationLocationNo;
+        private Class.Txtcloglocation txtcloglocationLocationNo;
         private Win.UI.Label labelLocationNo;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer2;
         private System.Windows.Forms.CheckBox chkUpdateOriLocation;

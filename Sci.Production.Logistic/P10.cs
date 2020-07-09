@@ -129,7 +129,7 @@ from (
     left join Orders o WITH (NOLOCK) on cr.OrderID =  o.ID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
     where   cr.MDivisionID = '{0}'
-", Sci.Env.User.Keyword));
+", Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(this.dateReceiveDate.Value1))
             {

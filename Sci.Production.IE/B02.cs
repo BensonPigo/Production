@@ -51,7 +51,7 @@ namespace Sci.Production.IE
         {
             base.ClickNewAfter();
             this.CurrentMaintain["EffectiveDate"] = DateTime.Today;
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
         }
 
         /// <summary>

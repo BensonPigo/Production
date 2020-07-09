@@ -716,7 +716,7 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
+            var saveDialog = MyExcelPrg.GetSaveFileDialog(MyExcelPrg.Filter_Excel);
 
             SaveXltReportCls sxc = new SaveXltReportCls("Quality_R41.xltx");
 
@@ -942,7 +942,7 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
             SaveXltReportCls.ReplaceAction d = this.addfilter;
             sxc.DicDatas.Add("##addfilter", d);
 
-            sxc.Save(Sci.Production.Class.MicrosoftFile.GetName("Quality_R41"));
+            sxc.Save(Class.MicrosoftFile.GetName("Quality_R41"));
             #endregion
             this.clearall();
             return true;
@@ -1142,7 +1142,7 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                 {
                     if (row.Cells[2].value.ToString().Length == 2)
                     {
-                        row.Interior.Color = System.Drawing.Color.Gold;
+                        row.Interior.Color = Color.Gold;
                     }
                 }
 
@@ -1155,9 +1155,9 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
 
                 if (row.Cells[1].Value.StartsWith("GRAND TOTAL"))
                 {
-                    row.Interior.Color = System.Drawing.Color.Aquamarine;
-                    row.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
-                    row.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlVAlign.xlVAlignCenter;
+                    row.Interior.Color = Color.Aquamarine;
+                    row.Borders.LineStyle = XlLineStyle.xlContinuous;
+                    row.HorizontalAlignment = XlVAlign.xlVAlignCenter;
                 }
             }
         }

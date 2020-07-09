@@ -107,7 +107,7 @@ namespace Sci.Production.PublicForm
                 sxr.VarToSheetName = sxr.VPrefix + "SizeGroup";
 
                 sxr.BoOpenFile = true;
-                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_EachConsumptionCuttingCombo"));
+                sxr.Save(Class.MicrosoftFile.GetName("Cutting_P01_EachConsumptionCuttingCombo"));
                 #endregion
             }
 
@@ -182,7 +182,7 @@ namespace Sci.Production.PublicForm
                 sxr.DicDatas.Add(sxr.VPrefix + "tbl1", dt);
 
                 sxr.BoOpenFile = true;
-                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_TTLconsumptionPOCombo"));
+                sxr.Save(Class.MicrosoftFile.GetName("Cutting_P01_TTLconsumptionPOCombo"));
                 #endregion
             }
 

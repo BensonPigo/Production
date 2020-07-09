@@ -451,7 +451,7 @@ order by x.[Bundle]");
 
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.dtt.Rows.Count);
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); // 預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where id = '{0}'", this.CurrentDataRow["ID"].ToString().Substring(0, 3)));
             objSheets.Cells[3, 1] = "To Line: " + this.CurrentDataRow["sewinglineid"].ToString();
@@ -475,7 +475,7 @@ order by x.[Bundle]");
             objSheets.Range[string.Format("A6:L{0}", this.dtt.Rows.Count + 5)].Borders.Weight = 2; // 設定全框線
 
             #region Save & Shwo Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_P10");
+            string strExcelName = Class.MicrosoftFile.GetName("Cutting_P10");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
@@ -645,9 +645,9 @@ order by x.[Bundle]");
                 // 顯示筆數於PrintForm上Count欄位
                 this.SetCount(this.dtt.Rows.Count);
 
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); // 預先開啟excel app
-                this.pathName = Sci.Env.Cfg.ReportTempDir + "Cutting_BundleChecklist" + DateTime.Now.ToFileTime() + ".xls";
-                string tmpName = Sci.Env.Cfg.ReportTempDir + "tmp.xls";
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); // 預先開啟excel app
+                this.pathName = Env.Cfg.ReportTempDir + "Cutting_BundleChecklist" + DateTime.Now.ToFileTime() + ".xls";
+                string tmpName = Env.Cfg.ReportTempDir + "tmp.xls";
                 if (MyUtility.Excel.CopyToXls(this.dtt, string.Empty, "Cutting_P10.xltx", 5, false, null, objApp, false))
                 {
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
@@ -674,7 +674,7 @@ order by x.[Bundle]");
 
                     // Random Excle名稱
                     Random random = new Random();
-                    this.pathName = Sci.Env.Cfg.ReportTempDir + "Cutting_BundleChecklist - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) + ".xlsx";
+                    this.pathName = Env.Cfg.ReportTempDir + "Cutting_BundleChecklist - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) + ".xlsx";
                     this.pathName = Path.GetFullPath(this.pathName);
                     objBook.SaveAs(this.pathName);
                     PrintDialog pd = new PrintDialog();
@@ -706,7 +706,7 @@ order by x.[Bundle]");
                     objApp = null;
                 }
 
-                System.IO.File.Delete(this.pathName);
+                File.Delete(this.pathName);
 
                 // 刪除存檔
                 #endregion

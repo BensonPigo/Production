@@ -33,8 +33,8 @@ namespace Sci.Production.Tools
             datas.Columns.Add("Editby");
             foreach (DataRow dr in datas.Rows)
             {
-                dr["Modifier"] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(dr["AddName"], format: (int)Sci.Production.PublicPrg.Prgs.Pass1Format.NameExt);
-                dr["Editby"] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(dr["EditName"], dateColumn: dr["EditDate"], format: (int)Sci.Production.PublicPrg.Prgs.Pass1Format.IDNameExtDateTime);
+                dr["Modifier"] = PublicPrg.Prgs.GetAddOrEditBy(dr["AddName"], format: (int)PublicPrg.Prgs.Pass1Format.NameExt);
+                dr["Editby"] = PublicPrg.Prgs.GetAddOrEditBy(dr["EditName"], dateColumn: dr["EditDate"], format: (int)PublicPrg.Prgs.Pass1Format.IDNameExtDateTime);
             }
         }
 

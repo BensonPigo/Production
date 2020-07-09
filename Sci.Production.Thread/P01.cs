@@ -10,9 +10,9 @@ namespace Sci.Production.Thread
     /// </summary>
     public partial class P01 : Win.Tems.Input8
     {
-        private string factory = Sci.Env.User.Factory;
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string factory = Env.User.Factory;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
 
         /// <summary>
         /// P01
@@ -31,7 +31,7 @@ namespace Sci.Production.Thread
         {
             DataTable detTable = (DataTable)this.detailgridbs.DataSource;
 
-            P01_Detail p01_Detail = new P01_Detail(this.CurrentMaintain, this.CurrentDetailData, Sci.Production.PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit"));
+            P01_Detail p01_Detail = new P01_Detail(this.CurrentMaintain, this.CurrentDetailData, PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit"));
             p01_Detail.ShowDialog();
         }
 
@@ -59,7 +59,7 @@ where b.Id = a.OperationId and a.id='{0}'",
 
             operation.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
                     this.OpenSubDetailPage();
                 }
@@ -84,8 +84,8 @@ where b.Id = a.OperationId and a.id='{0}'",
             //    P01_Detail.ShowDialog();
             // }});
             #endregion
-            this.btnGenerate.Enabled = Sci.Production.PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit");
-            this.btnGenerate.Visible = Sci.Production.PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit");
+            this.btnGenerate.Enabled = PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit");
+            this.btnGenerate.Visible = PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit");
         }
 
         private void BtnGenerate_Click(object sender, EventArgs e)

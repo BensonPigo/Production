@@ -202,8 +202,8 @@ Where ALD.id = '{0}'", masterID);
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "A";
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
@@ -275,7 +275,7 @@ Where ALD.id = '{0}'", masterID);
             // 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "LB", "AdjustLocal", (DateTime)this.CurrentMaintain["Issuedate"], 2, "ID", null);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "LB", "AdjustLocal", (DateTime)this.CurrentMaintain["Issuedate"], 2, "ID", null);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");

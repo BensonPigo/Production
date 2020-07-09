@@ -111,7 +111,7 @@ left join ATData a2 on a2.FakeID = st.Seq+'Pri'";
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -126,7 +126,7 @@ left join ATData a2 on a2.FakeID = st.Seq+'Pri'";
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_P04_Print.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\PPIC_P04_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -225,7 +225,7 @@ left join ATData a2 on a2.FakeID = st.Seq+'Pri'";
             excel.Cells.EntireRow.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P04_Print");
+            string strExcelName = Class.MicrosoftFile.GetName("PPIC_P04_Print");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

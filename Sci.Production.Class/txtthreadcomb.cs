@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Data;
 using System.Windows.Forms;
 using Sci.Win.UI;
@@ -9,8 +8,21 @@ using Sci.Win.Tools;
 
 namespace Sci.Production.Class
 {
-    public partial class txtthreadcomb : Win.UI.TextBox
+    /// <summary>
+    /// Txtthreadcomb
+    /// </summary>
+    public partial class Txtthreadcomb : Win.UI.TextBox
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtthreadcomb"/> class.
+        /// </summary>
+        public Txtthreadcomb()
+        {
+            this.Width = 90;
+            this.IsSupportSytsemContextMenu = false;
+        }
+
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
@@ -25,6 +37,7 @@ namespace Sci.Production.Class
             this.Text = item.GetSelectedString();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -49,24 +62,49 @@ namespace Sci.Production.Class
             }
         }
 
-        public txtthreadcomb()
+        /// <inheritdoc/>
+        public class Cellthreadcomb : DataGridViewGeneratorTextColumnSettings
         {
-            this.Width = 90;
-            this.IsSupportSytsemContextMenu = false;
-        }
-    }
-
-    public class cellthreadcomb : DataGridViewGeneratorTextColumnSettings
-    {
-        public static DataGridViewGeneratorTextColumnSettings GetGridCell(bool pur)
-        {
-            // pur 為ture 表示需判斷PurchaseFrom
-            cellthreadcomb ts = new cellthreadcomb();
-
-            ts.EditingMouseDown += (s, e) =>
+            /// <summary>
+            /// GetGridCell
+            /// </summary>
+            /// <param name="pur">為ture 表示需判斷PurchaseFrom</param>
+            /// <returns>DataGridViewGeneratorTextColumnSettings</returns>
+            public static DataGridViewGeneratorTextColumnSettings GetGridCell(bool pur)
             {
-                // 右鍵彈出功能
-                if (e.Button == MouseButtons.Right)
+                // pur 為ture 表示需判斷PurchaseFrom
+                Cellthreadcomb ts = new Cellthreadcomb();
+
+                ts.EditingMouseDown += (s, e) =>
+                {
+                    // 右鍵彈出功能
+                    if (e.Button == MouseButtons.Right)
+                    {
+                        DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+
+                        // Parent form 若是非編輯狀態就 return
+                        if (!((Win.Forms.Base)grid.FindForm()).EditMode)
+                        {
+                            return;
+                        }
+
+                        DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
+                        SelectItem sele;
+
+                        sele = new SelectItem("Select id From threadcomb WITH (NOLOCK) where Junk=0", "23", row["threadcombid"].ToString(), false, ",");
+
+                        DialogResult result = sele.ShowDialog();
+                        if (result == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+
+                        e.EditingControl.Text = sele.GetSelectedString();
+                    }
+                };
+
+                // 正確性檢查
+                ts.CellValidating += (s, e) =>
                 {
                     DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
@@ -76,52 +114,27 @@ namespace Sci.Production.Class
                         return;
                     }
 
+                    // 右鍵彈出功能
                     DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
-                    SelectItem sele;
+                    string oldValue = row["threadcombid"].ToString();
+                    string newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
+                    string sql;
 
-                    sele = new SelectItem("Select id From threadcomb WITH (NOLOCK) where Junk=0", "23", row["threadcombid"].ToString(), false, ",");
-
-                    DialogResult result = sele.ShowDialog();
-                    if (result == DialogResult.Cancel)
+                    sql = string.Format("Select * from threadcomb WITH (NOLOCK) where Junk = 0 and ID = '{0}' ", newValue);
+                    if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)
                     {
-                        return;
+                        if (!MyUtility.Check.Seek(sql))
+                        {
+                            row["threadcombid"] = string.Empty;
+                            row.EndEdit();
+                            e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("<Thread Combination > : {0} not found!!!", newValue));
+                            return;
+                        }
                     }
-
-                    e.EditingControl.Text = sele.GetSelectedString();
-                }
-            };
-
-            // 正確性檢查
-            ts.CellValidating += (s, e) =>
-            {
-                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
-
-                // Parent form 若是非編輯狀態就 return
-                if (!((Win.Forms.Base)grid.FindForm()).EditMode)
-                {
-                    return;
-                }
-
-                // 右鍵彈出功能
-                DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
-                String oldValue = row["threadcombid"].ToString();
-                String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
-                string sql;
-
-                sql = string.Format("Select * from threadcomb WITH (NOLOCK) where Junk = 0 and ID = '{0}' ", newValue);
-                if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)
-                {
-                    if (!MyUtility.Check.Seek(sql))
-                    {
-                        row["threadcombid"] = string.Empty;
-                        row.EndEdit();
-                        e.Cancel = true;
-                        MyUtility.Msg.WarningBox(string.Format("<Thread Combination > : {0} not found!!!", newValue));
-                        return;
-                    }
-                }
-            };
-            return ts;
+                };
+                return ts;
+            }
         }
     }
 }

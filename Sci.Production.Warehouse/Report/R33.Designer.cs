@@ -36,8 +36,8 @@
             this.dateRangeIssueDate = new Sci.Win.UI.DateRange();
             this.txtSPFrom = new Sci.Win.UI.TextBox();
             this.txtSPTo = new Sci.Win.UI.TextBox();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.SuspendLayout();
             // 
             // print
@@ -148,7 +148,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
@@ -208,7 +208,7 @@
         private Win.UI.DateRange dateRangeIssueDate;
         private Win.UI.TextBox txtSPFrom;
         private Win.UI.TextBox txtSPTo;
-        private Class.txtMdivision txtMdivision;
-        private Class.txtfactory txtfactory;
+        private Class.TxtMdivision txtMdivision;
+        private Class.Txtfactory txtfactory;
     }
 }

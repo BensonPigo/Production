@@ -7,8 +7,8 @@ using System.Text;
 using System.Windows.Forms;
 using Sci.Win.Tools;
 using Ict;
-using Sci.Production.Class;
 using System.Transactions;
+using Sci.Production.Class;
 
 namespace Sci.Production.Thread
 {
@@ -19,7 +19,7 @@ namespace Sci.Production.Thread
     {
         private DataRow detail;
         private DataRow master;
-        private string loginID = Sci.Env.User.UserID;
+        private string loginID = Env.User.UserID;
         private string styleUkey;
         private string combdetail_id;
         private DataTable gridTable;
@@ -48,8 +48,8 @@ namespace Sci.Production.Thread
             this.combdetail_id = detailrow["id"].ToString();
             string n = MyUtility.GetValue.Lookup(string.Format(@"select name from pass1 where id ='{0}'", MyUtility.Convert.GetString(masterrow["ThreadEditname"])));
             this.displayBoxEdit.Text = MyUtility.Convert.GetString(masterrow["ThreadEditname"]) + "-" + n + " " + (MyUtility.Convert.GetString(masterrow["ThreadEditdate"]) == string.Empty ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(masterrow["ThreadEditdate"])).ToString("yyyy/MM/dd HH:mm:ss"));
-            this.btnEdit.Enabled = Sci.Production.PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit");
-            this.btnEdit.Visible = Sci.Production.PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit");
+            this.btnEdit.Enabled = PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit");
+            this.btnEdit.Visible = PublicPrg.Prgs.GetAuthority(this.loginID, "P01.Thread Color Combination", "CanEdit");
 
             // 建立Gird
             this.GenerateGrid();
@@ -123,7 +123,7 @@ namespace Sci.Production.Thread
             #endregion
 
             #region Grid header,Column  Gerenator建立 可用Setting
-            DataGridViewGeneratorTextColumnSettings refno_col = celllocalitem.GetGridCell("THREAD", null);
+            DataGridViewGeneratorTextColumnSettings refno_col = Txtlocalitem.Celllocalitem.GetGridCell("THREAD", null);
             DataGridViewGeneratorTextColumnSettings threadcolor_col = new DataGridViewGeneratorTextColumnSettings();
             threadcolor_col.EditingMouseDown += (s, e) =>
             {
@@ -337,7 +337,7 @@ where id = '{0}' and BrandID ='{1}' and SeasonID = '{2}'",
                     this.masterRow["id"].ToString(),
                     this.masterRow["BrandID"].ToString(),
                     this.masterRow["SeasonID"].ToString(),
-                    Sci.Env.User.UserID,
+                    Env.User.UserID,
                     DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
                 DualResult result;

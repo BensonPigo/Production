@@ -588,7 +588,7 @@ or
             }
 
             #endregion
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -622,7 +622,7 @@ or
                 Excel.Application objApp;
                 Excel.Worksheet tmpsheep = null;
                 Utility.Report.ExcelCOM com;
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName((this._reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary");
+                string strExcelName = Class.MicrosoftFile.GetName((this._reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary");
                 int sheet_cnt = 1;
                 int split_cnt = 500000;
                 result = DBProxy.Current.Select(null, this.sql_yyyy + this.sqlcmd, out this.printData_yyyy);
@@ -638,9 +638,9 @@ or
                 for (int i = 0; i < this.printData_yyyy.Rows.Count; i++)
                 {
                     sqlcmd_dtail = this.sqlcmd_fin.ToString() + string.Format("  and o.SciDelivery >= '{0}' and  o.SciDelivery < = '{1}' ", this.printData_yyyy.Rows[i][0].ToString() + "0101", this.printData_yyyy.Rows[i][0].ToString() + "1231");
-                    strExcelName = Sci.Production.Class.MicrosoftFile.GetName((this._reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary" + this.printData_yyyy.Rows[i][0].ToString());
+                    strExcelName = Class.MicrosoftFile.GetName((this._reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary" + this.printData_yyyy.Rows[i][0].ToString());
                     exl_name[i] = strExcelName;
-                    com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + reportname, null);
+                    com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + reportname, null);
                     objApp = com.ExcelApp;
                     com.TransferArray_Limit = 10000;
                     com.ColumnsAutoFit = false;
@@ -752,13 +752,13 @@ or
                     return result;
                 }
 
-                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + reportname, null);
+                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + reportname, null);
                 Excel.Application objApp = com.ExcelApp;
 
                 // MyUtility.Excel.CopyToXls(printData, "", reportname, 1, showExcel: false, excelApp: objApp);
                 com.WriteTable(this.printData, 2);
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName((this._reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary");
+                string strExcelName = Class.MicrosoftFile.GetName((this._reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary");
                 for (int f = 1; f <= objApp.Workbooks[1].Worksheets.Count; f++)
                 {
                     Excel.Worksheet sheet = objApp.Workbooks[1].Worksheets.Item[f];

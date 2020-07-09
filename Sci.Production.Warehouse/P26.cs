@@ -32,7 +32,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
 
             this.gridicon.Append.Enabled = false;
             this.gridicon.Append.Visible = false;
@@ -60,8 +60,8 @@ namespace Sci.Production.Warehouse
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
             this.CurrentMaintain["Status"] = "New";
         }
@@ -115,7 +115,7 @@ namespace Sci.Production.Warehouse
             // 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "LH", "LocationTrans", (DateTime)this.CurrentMaintain["Issuedate"], sequenceMode: 2);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "LH", "LocationTrans", (DateTime)this.CurrentMaintain["Issuedate"], sequenceMode: 2);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");

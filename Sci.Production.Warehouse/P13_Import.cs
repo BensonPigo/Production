@@ -88,18 +88,18 @@ inner join dbo.Factory on orders.FactoryID = factory.ID
 INNER JOIN Fabric f on a.SCIRefNo=f.SCIRefNo
 Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 AND Orders.category!='A'
     and factory.MDivisionID = '{1}'
-", sp, Sci.Env.User.Keyword));
-                if (!this.txtSeq1.checkSeq1Empty() && this.txtSeq1.checkSeq2Empty())
+", sp, Env.User.Keyword));
+                if (!this.txtSeq1.CheckSeq1Empty() && this.txtSeq1.CheckSeq2Empty())
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-    and a.seq1 = '{0}' ", this.txtSeq1.seq1));
+    and a.seq1 = '{0}' ", this.txtSeq1.Seq1));
                 }
-                else if (!this.txtSeq1.checkEmpty(showErrMsg: false))
+                else if (!this.txtSeq1.CheckEmpty(showErrMsg: false))
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-    and a.seq1 = '{0}' and a.seq2='{1}'", this.txtSeq1.seq1, this.txtSeq1.seq2));
+    and a.seq1 = '{0}' and a.seq2='{1}'", this.txtSeq1.Seq1, this.txtSeq1.Seq2));
                 }
 
                 if (this.IsReason06)

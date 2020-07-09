@@ -493,7 +493,7 @@ and exists (select 1
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -509,7 +509,7 @@ and exists (select 1
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + (this.reportType == "1" ? "\\Shipping_R01_MainList.xltx" : "\\Shipping_R01_DetailList.xltx");
+            string strXltName = Env.Cfg.XltPathDir + (this.reportType == "1" ? "\\Shipping_R01_MainList.xltx" : "\\Shipping_R01_DetailList.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -617,7 +617,7 @@ and exists (select 1
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(this.reportType == "1" ? "Shipping_R01_MainList" : "Shipping_R01_DetailList");
+            string strExcelName = Class.MicrosoftFile.GetName(this.reportType == "1" ? "Shipping_R01_MainList" : "Shipping_R01_DetailList");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

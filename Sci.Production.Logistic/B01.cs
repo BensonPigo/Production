@@ -15,7 +15,7 @@ namespace Sci.Production.Logistic
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
+            this.DefaultFilter = "MDivisionID = '" + Env.User.Keyword + "'";
         }
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace Sci.Production.Logistic
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
         }
 
         /// <summary>

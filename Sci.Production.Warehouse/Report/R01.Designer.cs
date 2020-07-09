@@ -45,22 +45,22 @@
             this.labelETA = new Sci.Win.UI.Label();
             this.labelSeason = new Sci.Win.UI.Label();
             this.labelFabricType = new Sci.Win.UI.Label();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.labelM = new Sci.Win.UI.Label();
-            this.txtseason = new Sci.Production.Class.txtseason();
+            this.txtseason = new Sci.Production.Class.Txtseason();
             this.comboFabricType = new System.Windows.Forms.ComboBox();
             this.labelCountry = new Sci.Win.UI.Label();
-            this.txtcountry = new Sci.Production.Class.txtcountry();
+            this.txtcountry = new Sci.Production.Class.Txtcountry();
             this.labelRefno = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
-            this.txtsupplier = new Sci.Production.Class.txtsupplier();
+            this.txtstyle = new Sci.Production.Class.Txtstyle();
+            this.txtsupplier = new Sci.Production.Class.Txtsupplier();
             this.labelSupplier = new Sci.Win.UI.Label();
             this.comboOrderBy = new Sci.Win.UI.ComboBox();
             this.labelOrderBy = new Sci.Win.UI.Label();
             this.checkIncludeCompleteItem = new Sci.Win.UI.CheckBox();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.SuspendLayout();
             // 
             // print
@@ -513,21 +513,21 @@
         private Win.UI.Label labelETA;
         private Win.UI.Label labelSeason;
         private Win.UI.Label labelFabricType;
-        private Class.txtMdivision txtMdivision;
+        private Class.TxtMdivision txtMdivision;
         private Win.UI.Label labelM;
-        private Class.txtseason txtseason;
+        private Class.Txtseason txtseason;
         private System.Windows.Forms.ComboBox comboFabricType;
         private Win.UI.Label labelCountry;
-        private Class.txtcountry txtcountry;
+        private Class.Txtcountry txtcountry;
         private Win.UI.Label labelRefno;
         private Win.UI.Label labelStyle;
-        private Class.txtstyle txtstyle;
-        private Class.txtsupplier txtsupplier;
+        private Class.Txtstyle txtstyle;
+        private Class.Txtsupplier txtsupplier;
         private Win.UI.Label labelSupplier;
         private Win.UI.ComboBox comboOrderBy;
         private Win.UI.Label labelOrderBy;
         private Win.UI.CheckBox checkIncludeCompleteItem;
         private Win.UI.Label labelFactory;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
     }
 }

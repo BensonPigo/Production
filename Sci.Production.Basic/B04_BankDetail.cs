@@ -593,7 +593,7 @@ order by ID
             //    MyUtility.Msg.InfoBox("Can not Confirm because of [Pay by Check] or any detail [Default] is checked.");
             //    return;
             // }
-            DBProxy.Current.Execute(null, $"UPDATE LocalSupp_Bank SET Status='Confirmed',ApproveName='{Sci.Env.User.UserID}' ,ApproveDate=GETDATE() WHERE ID='{this.CurrentMaintain["ID"]}' AND PKey = '{this.CurrentMaintain["PKey"]}' ");
+            DBProxy.Current.Execute(null, $"UPDATE LocalSupp_Bank SET Status='Confirmed',ApproveName='{Env.User.UserID}' ,ApproveDate=GETDATE() WHERE ID='{this.CurrentMaintain["ID"]}' AND PKey = '{this.CurrentMaintain["PKey"]}' ");
             base.ClickConfirm();
         }
 

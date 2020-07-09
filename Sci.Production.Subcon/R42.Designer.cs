@@ -43,9 +43,9 @@
             this.label7 = new Sci.Win.UI.Label();
             this.txtCutRefEnd = new Sci.Win.UI.TextBox();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.comboFactory = new Sci.Production.Class.comboFactory(this.components);
-            this.txtsubprocess = new Sci.Production.Class.txtsubprocess();
-            this.comboRFIDProcessLocation = new Sci.Production.Class.comboRFIDProcessLocation();
+            this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
+            this.txtsubprocess = new Sci.Production.Class.Txtsubprocess();
+            this.comboRFIDProcessLocation = new Sci.Production.Class.ComboRFIDProcessLocation();
             this.label1 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
@@ -328,9 +328,9 @@
         private Win.UI.Label label7;
         private Win.UI.TextBox txtCutRefEnd;
         private Win.UI.Label labelFactory;
-        private Class.comboFactory comboFactory;
-        private Class.txtsubprocess txtsubprocess;
-        private Class.comboRFIDProcessLocation comboRFIDProcessLocation;
+        private Class.ComboFactory comboFactory;
+        private Class.Txtsubprocess txtsubprocess;
+        private Class.ComboRFIDProcessLocation comboRFIDProcessLocation;
         private Win.UI.Label label1;
     }
 }

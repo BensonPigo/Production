@@ -166,7 +166,7 @@ and iif(PulloutDate is null,EstPulloutDate,PulloutDate) is not null ");
                 return;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P09.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P09.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -174,7 +174,7 @@ and iif(PulloutDate is null,EstPulloutDate,PulloutDate) is not null ");
             }
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            worksheet.Cells[2, 1] = "Buyer Delivery: " + Convert.ToDateTime(this.dateBuyerDelivery.Value1).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat)) + " ~ " + Convert.ToDateTime(this.dateBuyerDelivery.Value2).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
+            worksheet.Cells[2, 1] = "Buyer Delivery: " + Convert.ToDateTime(this.dateBuyerDelivery.Value1).ToString(string.Format("{0}", Env.Cfg.DateStringFormat)) + " ~ " + Convert.ToDateTime(this.dateBuyerDelivery.Value2).ToString(string.Format("{0}", Env.Cfg.DateStringFormat));
             worksheet.Cells[2, 6] = "Brand: " + (MyUtility.Check.Empty(this.txtbrand.Text) ? string.Empty : this.txtbrand.Text);
             worksheet.Cells[2, 9] = "M: " + (MyUtility.Check.Empty(this.comboM.SelectedValue) ? string.Empty : this.comboM.SelectedValue.ToString());
             worksheet.Cells[2, 12] = "Data Type: " + (MyUtility.Check.Empty(this.comboDataType.SelectedValue) ? string.Empty : this.comboDataType.SelectedValue.ToString());
@@ -203,7 +203,7 @@ and iif(PulloutDate is null,EstPulloutDate,PulloutDate) is not null ");
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P09");
+            string strExcelName = Class.MicrosoftFile.GetName("Shipping_P09");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

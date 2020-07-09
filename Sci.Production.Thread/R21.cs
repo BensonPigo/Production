@@ -141,7 +141,7 @@ namespace Sci.Production.Thread
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.dt.Rows.Count);
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_R21.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Thread_R21.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Thread_R21.xltx", 2, showExcel: false, showSaveMsg: false, excelApp: objApp);
 
             this.ShowWaitMessage("Excel Processing...");
@@ -150,7 +150,7 @@ namespace Sci.Production.Thread
             worksheet.Rows.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Thread_R21");
+            string strExcelName = Class.MicrosoftFile.GetName("Thread_R21");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

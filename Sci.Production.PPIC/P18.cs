@@ -25,7 +25,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format($"MDivisionID='{Sci.Env.User.Keyword}'");
+            this.DefaultFilter = string.Format($"MDivisionID='{Env.User.Keyword}'");
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -109,7 +109,7 @@ where a.id='{masterID}'
 select o.*,[Destination] = c.Alias from Orders o
 inner join Country c on c.ID= o.Dest
 where o.id=@id
-and o.MDivisionID='{Sci.Env.User.Keyword}'";
+and o.MDivisionID='{Env.User.Keyword}'";
                      if (!(this.result = DBProxy.Current.Select(string.Empty, sql, sqlpara, out odt)))
                      {
                          this.ShowErr(this.result);
@@ -483,15 +483,15 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
         {
             base.ClickNewAfter();
             this.CurrentMaintain["Status"] = "New";
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["Handle"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["Handle"] = Env.User.UserID;
             this.CurrentMaintain["cDate"] = DateTime.Now.ToString("yyyy/MM/dd");
         }
 
         protected override void ClickSend()
         {
             base.ClickSend();
-            string updateCmd = $@"update AVO set Status = 'Sent', PPICSupApvDate = GETDATE(), PPICSupApvName = '{Sci.Env.User.UserID}', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'Sent', PPICSupApvDate = GETDATE(), PPICSupApvName = '{Env.User.UserID}', EditDate = GETDATE(),EditName='{Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -507,7 +507,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
         protected override void ClickRecall()
         {
             base.ClickRecall();
-            string updateCmd = $@"update AVO set Status = 'New', PPICSupApvDate = null, PPICSupApvName = '', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'New', PPICSupApvDate = null, PPICSupApvName = '', EditDate = GETDATE(),EditName='{Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -522,7 +522,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
 
         protected override void ClickCheck()
         {
-            string updateCmd = $@"update AVO set Status = 'Checked', WHSupApvDate  = GetDate(), WHSupApvName = '{Sci.Env.User.UserID}', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'Checked', WHSupApvDate  = GetDate(), WHSupApvName = '{Env.User.UserID}', EditDate = GETDATE(),EditName='{Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -539,7 +539,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
 
         protected override void ClickUncheck()
         {
-            string updateCmd = $@"update AVO set Status = 'Sent', WHSupApvDate  = null, WHSupApvName  = '', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'Sent', WHSupApvDate  = null, WHSupApvName  = '', EditDate = GETDATE(),EditName='{Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -556,7 +556,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
 
         protected override void ClickReceive()
         {
-            string updateCmd = $@"update AVO set Status = 'Received', PPDApvDate  = GetDate(), PPDApvName  = '{Sci.Env.User.UserID}', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'Received', PPDApvDate  = GetDate(), PPDApvName  = '{Env.User.UserID}', EditDate = GETDATE(),EditName='{Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -573,7 +573,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
 
         protected override void ClickReturn()
         {
-            string updateCmd = $@"update AVO set Status = 'Checked', PPDApvDate  = null, PPDApvName  = '', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'Checked', PPDApvDate  = null, PPDApvName  = '', EditDate = GETDATE(),EditName='{Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -590,7 +590,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
 
         protected override void ClickConfirm()
         {
-            string updateCmd = $@"update AVO set Status = 'Confirmed', ProdApvDate = GetDate(), ProdApvName = '{Sci.Env.User.UserID}', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'Confirmed', ProdApvDate = GetDate(), ProdApvName = '{Env.User.UserID}', EditDate = GETDATE(),EditName='{Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -607,7 +607,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
 
         protected override void ClickUnconfirm()
         {
-            string updateCmd = $@"update AVO set Status = 'Received', ProdApvDate = null, ProdApvName = '', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'Received', ProdApvDate = null, ProdApvName = '', EditDate = GETDATE(),EditName='{Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -668,7 +668,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
             #region 取單號
             if (this.IsDetailInserting)
             {
-                string tmpID = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "AV", "AVO", DateTime.Now);
+                string tmpID = MyUtility.GetValue.GetID(Env.User.Keyword + "AV", "AVO", DateTime.Now);
                 if (MyUtility.Check.Empty(tmpID))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!");
@@ -874,7 +874,7 @@ where a2.id ='{this.CurrentMaintain["id"]}'
             }
 
             Excel.Application objApp = new Excel.Application();
-            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\PPIC_P18.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\PPIC_P18.xltx", objApp);
 
             Excel.Worksheet worksheet = objApp.Sheets[1];
 
@@ -896,7 +896,7 @@ where a2.id ='{this.CurrentMaintain["id"]}'
             objApp.Visible = false;
             objApp.Columns.AutoFit();
             objApp.Rows.AutoFit();
-            this.Excelfile = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P18");
+            this.Excelfile = Class.MicrosoftFile.GetName("PPIC_P18");
             objApp.ActiveWorkbook.SaveAs(this.Excelfile);
             objApp.Quit();
             Marshal.ReleaseComObject(worksheet);
@@ -910,7 +910,7 @@ where a2.id ='{this.CurrentMaintain["id"]}'
 
             if (MyUtility.Check.Seek("select * from MailTo where id='017'", out dr))
             {
-                var email = new MailTo(Sci.Env.Cfg.MailFrom, dr["ToAddress"].ToString(), dr["CCAddress"].ToString(), dr["Subject"].ToString(), this.Excelfile, dr["Content"].ToString(), false, false);
+                var email = new MailTo(Env.Cfg.MailFrom, dr["ToAddress"].ToString(), dr["CCAddress"].ToString(), dr["Subject"].ToString(), this.Excelfile, dr["Content"].ToString(), false, false);
                 email.ShowDialog(this);
             }
         }

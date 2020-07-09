@@ -87,7 +87,7 @@ Where  1=1
 {1}
         and c.InQty-c.OutQty+c.AdjustQty > 0 
         and c.stocktype = 'B'
-        and Factory.MDivisionID = '{0}'", Sci.Env.User.Keyword, where));
+        and Factory.MDivisionID = '{0}'", Env.User.Keyword, where));
                 #endregion
 
                 System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -109,17 +109,17 @@ Where  1=1
                     cmds.Add(sp1);
                 }
 
-                seq1.Value = this.txtSeq.seq1;
-                seq2.Value = this.txtSeq.seq2;
+                seq1.Value = this.txtSeq.Seq1;
+                seq2.Value = this.txtSeq.Seq2;
                 cmds.Add(seq1);
                 cmds.Add(seq2);
-                if (!this.txtSeq.checkSeq1Empty())
+                if (!this.txtSeq.CheckSeq1Empty())
                 {
                     strSQLCmd.Append(@" 
         and a.seq1 = @seq1");
                 }
 
-                if (!this.txtSeq.checkSeq2Empty())
+                if (!this.txtSeq.CheckSeq2Empty())
                 {
                     strSQLCmd.Append(@" 
         and a.seq2 = @seq2");

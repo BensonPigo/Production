@@ -89,7 +89,7 @@ namespace Sci.Production.Packing
             DataGridViewGeneratorTextColumnSettings seq = new DataGridViewGeneratorTextColumnSettings();
             seq.EditingMouseDown += (s, e) =>
             {
-                if (e.Button != System.Windows.Forms.MouseButtons.Right ||
+                if (e.Button != MouseButtons.Right ||
                     e.RowIndex == -1)
                 {
                     return;
@@ -383,7 +383,7 @@ where   oq.ID = '{0}'
         and o.MDivisionID = '{2}'",
                               orderID,
                               this.txtshipmode.Text,
-                              Sci.Env.User.Keyword);
+                              Env.User.Keyword);
             DataTable dtResult;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out dtResult);
             if (!result)
@@ -433,7 +433,7 @@ where   oq.ID = '{0}'
 
             #region 產生New表頭資料 Sql
             List<SqlParameter> listSqlPar = new List<SqlParameter>();
-            string newPackID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "PL", "PackingList", DateTime.Today, 2, "Id", null);
+            string newPackID = MyUtility.GetValue.GetID(Env.User.Keyword + "PL", "PackingList", DateTime.Today, 2, "Id", null);
             if (MyUtility.Check.Empty(newPackID))
             {
                 MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -450,8 +450,8 @@ where   oq.ID = '{0}'
             }
 
             string type = "B";
-            string M = Sci.Env.User.Keyword;
-            string factoryID = Sci.Env.User.Factory;
+            string M = Env.User.Keyword;
+            string factoryID = Env.User.Factory;
             string status = "New";
             listSqlPar.Add(new SqlParameter("@EstCTNBooking", this.drMaster["EstCTNBooking"]));
             listSqlPar.Add(new SqlParameter("@EstCTNArrive", this.drMaster["EstCTNArrive"]));

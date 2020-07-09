@@ -4,30 +4,32 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtprogram : Win.UI.TextBox
+    /// <summary>
+    /// Txtprogram
+    /// </summary>
+    public partial class Txtprogram : Win.UI.TextBox
     {
         private string brand;
-        private Control brandObject;    // 欄位.存入要取值的<控制項>
 
-        // 屬性. 利用字串來設定要存取的<控制項>
+        /// <summary>
+        /// Program.Brandid
+        /// </summary>
         [Category("Custom Properties")]
-        public Control BrandObjectName
-        {
-            get
-            {
-                return this.brandObject;
-            }
+        public Control BrandObjectName { get; set; }
 
-            set
-            {
-                this.brandObject = value;
-            }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtprogram"/> class.
+        /// </summary>
+        public Txtprogram()
+        {
+            this.Width = 95;
         }
 
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
-            this.brand = this.brandObject.Text;
+            this.brand = this.BrandObjectName.Text;
             string sql = string.Format("Select id,BrandID from Program WITH (NOLOCK) where Brandid = '{0}'", this.brand);
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "12,8", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
@@ -39,13 +41,14 @@ namespace Sci.Production.Class
             this.Text = item.GetSelectedString();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                if (this.brandObject == null)
+                if (this.BrandObjectName == null)
                 {
                     string tmp = MyUtility.GetValue.Lookup("Id", str, "Program", "Id");
                     if (string.IsNullOrWhiteSpace(tmp))
@@ -58,7 +61,7 @@ namespace Sci.Production.Class
                 }
                 else
                 {
-                    this.brand = this.brandObject.Text;
+                    this.brand = this.BrandObjectName.Text;
                     string tmp = MyUtility.GetValue.Lookup("id", str + this.brand, "Program", "Id+Brandid");
                     if (string.IsNullOrWhiteSpace(tmp))
                     {
@@ -69,11 +72,6 @@ namespace Sci.Production.Class
                     }
                 }
             }
-        }
-
-        public txtprogram()
-        {
-            this.Width = 95;
         }
     }
 }

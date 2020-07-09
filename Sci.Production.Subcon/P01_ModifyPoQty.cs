@@ -28,7 +28,7 @@ namespace Sci.Production.Subcon
             this.numPOQty.Text = this.dr["poqty"].ToString();
 
             DataTable tmpdt;
-            Sci.Data.DBProxy.Current.Select(null, string.Format("select sum(qty) from order_qty WITH (NOLOCK) where id = '{0}'", data["orderid"]), out tmpdt);
+            DBProxy.Current.Select(null, string.Format("select sum(qty) from order_qty WITH (NOLOCK) where id = '{0}'", data["orderid"]), out tmpdt);
             if (MyUtility.Check.Empty(tmpdt.Rows[0][0]))
             {
                 this.displayCurrentOrderQty.Text = string.Empty;

@@ -267,7 +267,7 @@ where   id = '{id}' and
 
                     idu.Append(string.Format(
                         @"update VNConsumption set EditName = '{0}',EditDate = '{1}' where CustomSP = '{2}' and VNContractID = '{3}' ;",
-                        Sci.Env.User.UserID,
+                        Env.User.UserID,
                         datetime,
                         customSP,
                         vnContractID));
@@ -365,7 +365,7 @@ and v.VNContractID = '{0}' and v.CustomSP = '{1}'",
 
         private void BtnDownloadExcel_Click(object sender, EventArgs e)
         {
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_B42_Batch Import.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_B42_Batch Import.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {

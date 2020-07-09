@@ -154,7 +154,7 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
             base.ClickConfirm();
             string updateCmds = string.Format(
                 "update KHContract set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}'",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmds);
@@ -172,7 +172,7 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
 
             string updateCmds = string.Format(
                 "update KHContract set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}'",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmds);

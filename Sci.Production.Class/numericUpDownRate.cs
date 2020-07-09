@@ -1,7 +1,11 @@
 ﻿namespace Sci.Production.Class
 {
-    public class numericUpDownRate : Win.UI.NumericUpDown
+    /// <summary>
+    /// Numeric UpDownRate
+    /// </summary>
+    public class NumericUpDownRate : Win.UI.NumericUpDown
     {
+        /// <inheritdoc/>
         protected override void UpdateEditText()
         {
             this.Text = this.Value.ToString() + "%";

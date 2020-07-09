@@ -22,7 +22,7 @@ namespace Sci.Production.Quality
         {
             this.InitializeComponent();
             this.GenComboBox();
-            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
+            this.DefaultFilter = "MDivisionID = '" + Env.User.Keyword + "'";
         }
 
         private void GenComboBox()
@@ -40,8 +40,8 @@ namespace Sci.Production.Quality
         {
             base.ClickNewAfter();
             this.CurrentMaintain["CDate"] = DateTime.Now;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            this.CurrentMaintain["Mdivisionid"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
+            this.CurrentMaintain["Mdivisionid"] = Env.User.Keyword;
             this.CurrentMaintain["Status"] = "New";
             this.displayCell.Text = string.Empty;
         }
@@ -73,7 +73,7 @@ select o.id,o.styleid,o.dest,o.cpu ,o.BuyerDelivery
 from Orders o WITH (NOLOCK) 
 inner join Factory f WITH (NOLOCK) on o.FactoryID=f.ID
 where o.ID='{0}' and o.FtyGroup='{1}'
-and f.IsProduceFty=1 ", textValue, Sci.Env.User.Factory);
+and f.IsProduceFty=1 ", textValue, Env.User.Factory);
 
                 if (result = DBProxy.Current.Select(null, cmd, out dt))
                 {
@@ -95,7 +95,7 @@ and f.IsProduceFty=1 ", textValue, Sci.Env.User.Factory);
                     if (!MyUtility.Check.Empty(this.txtLine.Text) && !MyUtility.Check.Seek(string.Format("select 1 from Rft where orderID='{0}' and sewinglineid='{1}'", textValue, this.txtLine.Text)))
                     {
                         DialogResult buttonResult = MyUtility.Msg.WarningBox("This SP# doesn't belong to this line, please inform scheduler. Do you want to Continue?", "Warning", MessageBoxButtons.YesNo);
-                        if (buttonResult == System.Windows.Forms.DialogResult.No)
+                        if (buttonResult == DialogResult.No)
                         {
                             this.txtSP.Text = this.CurrentMaintain["OrderID"].ToString();
                             return;
@@ -211,7 +211,7 @@ select B.StyleID
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
 
@@ -253,7 +253,7 @@ select B.StyleID
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
 
@@ -388,7 +388,7 @@ select B.StyleID
             this.sql = string.Format(
                 @"update Rft set Status='Confirmed' , editName='{0}', editDate='{1}'
                                       where ID='{2}'",
-                Sci.Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), this.CurrentMaintain["ID"].ToString().Trim());
+                Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), this.CurrentMaintain["ID"].ToString().Trim());
             DBProxy.Current.Execute(null, this.sql);
         }
 
@@ -396,7 +396,7 @@ select B.StyleID
         {
             base.ClickUnconfirm();
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to <Amend> this data !?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
@@ -404,7 +404,7 @@ select B.StyleID
             this.sql = string.Format(
                 @"update Rft set Status='New' , editName='{0}', editDate='{1}'
                                       where ID='{2}'",
-                Sci.Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), this.CurrentMaintain["ID"].ToString().Trim());
+                Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), this.CurrentMaintain["ID"].ToString().Trim());
             DBProxy.Current.Execute(null, this.sql);
         }
 
@@ -564,7 +564,7 @@ select B.StyleID
 
         private void txtLine_Validated(object sender, EventArgs e)
         {
-            this.displayCell.Text = this.txtLine.cell;
+            this.displayCell.Text = this.txtLine.Cell;
         }
     }
 }

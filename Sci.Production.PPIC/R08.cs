@@ -47,11 +47,11 @@ namespace Sci.Production.PPIC
             MyUtility.Tool.SetupCombox(this.cmbReportType, 2, 1, "0,Detail List,1,Resp. Dept. List");
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
             this.comboType.SelectedIndex = 0;
             this.cmbStatus.SelectedIndex = 0;
             this.cmbReportType.SelectedIndex = 0;
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
         }
 
         /// <inheritdoc/>
@@ -385,7 +385,7 @@ where 1=1
                 return result;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -411,7 +411,7 @@ where 1=1
             }
 
             this.ShowWaitMessage("Excel Processing...");
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{filename}.xltx");
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{filename}.xltx");
             MyUtility.Excel.CopyToXls(this._printData[0], string.Empty, $"{filename}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]); // 將datatable copy to excel
             if (this._printData.Length == 2)
             {

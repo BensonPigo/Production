@@ -5,22 +5,26 @@ using Ict;
 
 namespace Sci.Production.Class
 {
-    public partial class txtcustcd : Win.UI.TextBox
+    /// <summary>
+    /// Txtcustcd
+    /// </summary>
+    public partial class Txtcustcd : Win.UI.TextBox
     {
-        public txtcustcd()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtcustcd"/> class.
+        /// </summary>
+        public Txtcustcd()
         {
             this.Size = new System.Drawing.Size(125, 23);
         }
 
-        private Control brandObject;
-
+        /// <summary>
+        /// BrandObjectName
+        /// </summary>
         [Category("Custom Properties")]
-        public Control BrandObjectName
-        {
-            get { return this.brandObject; }
-            set { this.brandObject = value; }
-        }
+        public Control BrandObjectName { get; set; }
 
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
@@ -29,9 +33,9 @@ namespace Sci.Production.Class
 
             // 20161124 如果沒選Brandid,則條件帶空值,取消帶全部資料
             string selectCommand = "select ID, CountryID, City from CustCD WITH (NOLOCK) where Junk = '0' order by ID";
-            if (this.brandObject != null) // && !string.IsNullOrWhiteSpace((string)this.brandObject.Text))
+            if (this.BrandObjectName != null)
             {
-                selectCommand = string.Format("select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = '{0}' and Junk = '0' order by ID", this.brandObject.Text);
+                selectCommand = string.Format("select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = '{0}' and Junk = '0' order by ID", this.BrandObjectName.Text);
             }
 
             item = new Win.Tools.SelectItem(selectCommand, "17,3,17", this.Text);
@@ -45,6 +49,7 @@ namespace Sci.Production.Class
             this.ValidateControl();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -61,11 +66,11 @@ namespace Sci.Production.Class
                 }
                 else
                 {
-                    if (this.brandObject != null)
+                    if (this.BrandObjectName != null)
                     {
-                        if (!string.IsNullOrWhiteSpace((string)this.brandObject.Text))
+                        if (!string.IsNullOrWhiteSpace((string)this.BrandObjectName.Text))
                         {
-                            string selectCommand = string.Format("select ID from CustCD WITH (NOLOCK) where BrandID = '{0}' and ID = '{1}'", (string)this.brandObject.Text, this.Text.ToString());
+                            string selectCommand = string.Format("select ID from CustCD WITH (NOLOCK) where BrandID = '{0}' and ID = '{1}'", (string)this.BrandObjectName.Text, this.Text.ToString());
                             if (!MyUtility.Check.Seek(selectCommand, null))
                             {
                                 this.Text = string.Empty;

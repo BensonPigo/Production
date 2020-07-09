@@ -33,7 +33,7 @@ namespace Sci.Production.Warehouse
             this.Controls.Add(this.viewer);
 
             // MDivisionID 是 P17 寫入 => Sci.Env.User.Keyword
-            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
             this.detailgrid.StatusNotification += (s, e) =>
             {
                 if (this.EditMode && e.Notification == Ict.Win.UI.DataGridViewStatusNotification.NoMoreRowOnEnterPress)
@@ -62,8 +62,8 @@ namespace Sci.Production.Warehouse
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
         }
@@ -109,7 +109,7 @@ namespace Sci.Production.Warehouse
 
             #region  抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
+            pars.Add(new SqlParameter("@MDivision", Env.User.Keyword));
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
             DualResult result = DBProxy.Current.Select(string.Empty, @"
@@ -289,7 +289,7 @@ where a.id= @ID", pars, out dd);
             // 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "RR", "IssueReturn", (DateTime)this.CurrentMaintain["Issuedate"]);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "RR", "IssueReturn", (DateTime)this.CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -324,7 +324,7 @@ where a.id= @ID", pars, out dd);
         {
             base.OnDetailGridInsert(index);
             this.CurrentDetailData["Stocktype"] = 'B';
-            this.CurrentDetailData["MdivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentDetailData["MdivisionID"] = Env.User.Keyword;
         }
 
         // Detail Grid 設定
@@ -361,7 +361,7 @@ inner join Orders on ftyinventory.poid = Orders.id
 inner join Factory on Orders.FactoryID = Factory.id
 where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.seq1='{2}' and ftyinventory.seq2='{3}' 
     and ftyinventory.stocktype='{4}' and ftyinventory.roll='{5}' ",
-                                Sci.Env.User.Keyword, this.CurrentDetailData["poid"], x[0]["seq1"], x[0]["seq2"], this.CurrentDetailData["stocktype"], string.Empty));
+                                Env.User.Keyword, this.CurrentDetailData["poid"], x[0]["seq1"], x[0]["seq2"], this.CurrentDetailData["stocktype"], string.Empty));
                     if (!MyUtility.Check.Empty(tmp))
                     {
                         this.CurrentDetailData["ftyinventoryukey"] = tmp;
@@ -408,7 +408,7 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
                         if (!MyUtility.Check.Seek(
                             string.Format(
                             Prgs.selePoItemSqlCmd(false) +
-                                    @" and f.MDivisionID = '{1}' and p.seq1 ='{2}' and p.seq2 = '{3}'", this.CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
+                                    @" and f.MDivisionID = '{1}' and p.seq1 ='{2}' and p.seq2 = '{3}'", this.CurrentDetailData["poid"], Env.User.Keyword, seq[0], seq[1]), out dr, null))
                         {
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data not found!", "Seq");
@@ -432,7 +432,7 @@ inner join Orders on ftyinventory.poid = Orders.id
 inner join Factory on Orders.FactoryID = Factory.id
 where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.seq1='{2}' and ftyinventory.seq2='{3}' 
     and ftyinventory.stocktype='{4}' and ftyinventory.roll='{5}'
-", Sci.Env.User.Keyword, this.CurrentDetailData["poid"], seq[0], seq[1], this.CurrentDetailData["stocktype"], string.Empty));
+", Env.User.Keyword, this.CurrentDetailData["poid"], seq[0], seq[1], this.CurrentDetailData["stocktype"], string.Empty));
                         if (!MyUtility.Check.Empty(tmp))
                         {
                             this.CurrentDetailData["ftyinventoryukey"] = tmp;
@@ -455,7 +455,7 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
                         return;
                     }
 
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right && e.RowIndex != -1)
+                    if (e.Button == MouseButtons.Right && e.RowIndex != -1)
                     {
                         string sqlcmd = string.Format(
                             @"SELECT  a.poid
@@ -549,7 +549,7 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
 
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), CheckMDivisionID: true) // 0
+                .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), checkMDivisionID: true) // 0
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts) // 1
             .Text("roll", header: "Roll", width: Widths.AnsiChars(6),  settings: ts4) // 2
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3

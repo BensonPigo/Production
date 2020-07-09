@@ -106,23 +106,23 @@ Where FI.lock = 0
 and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
         and FI.inqty - FI.outqty + FI.adjustqty > 0 
         and FI.Poid = @sp 
-        and FI.stocktype = '{1}'", Sci.Env.User.Keyword, stocktype));
+        and FI.stocktype = '{1}'", Env.User.Keyword, stocktype));
 
-            sp_seq1.Value = this.txtSeq1.seq1;
-            sp_seq2.Value = this.txtSeq1.seq2;
+            sp_seq1.Value = this.txtSeq1.Seq1;
+            sp_seq2.Value = this.txtSeq1.Seq2;
             cmds.Add(sp_seq1);
             cmds.Add(sp_seq2);
-            if (!this.txtSeq1.checkSeq1Empty() && this.txtSeq1.checkSeq2Empty())
+            if (!this.txtSeq1.CheckSeq1Empty() && this.txtSeq1.CheckSeq2Empty())
             {
                 sbSQLCmd.Append(@"
         and FI.seq1 = @seq1 ");
             }
-            else if (!this.txtSeq1.checkEmpty(showErrMsg: false))
+            else if (!this.txtSeq1.CheckEmpty(showErrMsg: false))
             {
                 sbSQLCmd.Append(@" 
         and FI.seq1 = @seq1 and FI.seq2 = @seq2");
-                sp_seq1.Value = this.txtSeq1.seq1;
-                sp_seq2.Value = this.txtSeq1.seq2;
+                sp_seq1.Value = this.txtSeq1.Seq1;
+                sp_seq2.Value = this.txtSeq1.Seq2;
             }
 
             if (!MyUtility.Check.Empty(this.txtWKno.Text))

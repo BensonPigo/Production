@@ -31,7 +31,7 @@ namespace Sci.Production.Warehouse
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             this.SetCount(this.dt.Rows.Count);
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
             if (this.dt.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found!!");
@@ -54,7 +54,7 @@ namespace Sci.Production.Warehouse
             string factory = this.txtfactory.Text;
             string spno = this.txtBorrowSPNo.Text.TrimEnd();
 
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
             StringBuilder sqlcmd = new StringBuilder();
             #region sql command
             sqlcmd.Append(@"
@@ -151,18 +151,18 @@ with cte as (
             And b.frompoid = '{0}'", spno));
             }
 
-            if (!this.txtSeq.checkSeq1Empty())
+            if (!this.txtSeq.CheckSeq1Empty())
             {
                 sqlcmd.Append(string.Format(
                     @"
-            and b.fromSeq1 = '{0}'", this.txtSeq.seq1));
+            and b.fromSeq1 = '{0}'", this.txtSeq.Seq1));
             }
 
-            if (!this.txtSeq.checkSeq2Empty())
+            if (!this.txtSeq.CheckSeq2Empty())
             {
                 sqlcmd.Append(string.Format(
                     @" 
-            and b.FromSeq2 = '{0}'", this.txtSeq.seq2));
+            and b.FromSeq2 = '{0}'", this.txtSeq.Seq2));
             }
 
             switch (this.selectindex)

@@ -70,12 +70,12 @@
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
             this.btnBatchApprove = new System.Windows.Forms.Button();
-            this.txtLocalPurchaseItem = new Sci.Production.Class.txtLocalPurchaseItem();
-            this.txtuserClose = new Sci.Production.Class.txtuser();
-            this.txtuserLock = new Sci.Production.Class.txtuser();
-            this.txtmfactory = new Sci.Production.Class.txtfactory();
-            this.txtuserApprove = new Sci.Production.Class.txtuser();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtLocalPurchaseItem = new Sci.Production.Class.TxtLocalPurchaseItem();
+            this.txtuserClose = new Sci.Production.Class.Txtuser();
+            this.txtuserLock = new Sci.Production.Class.Txtuser();
+            this.txtmfactory = new Sci.Production.Class.Txtfactory();
+            this.txtuserApprove = new Sci.Production.Class.Txtuser();
+            this.txtsubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -738,7 +738,7 @@
             // txtmfactory
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
-            this.txtmfactory.boolFtyGroupList = true;
+            this.txtmfactory.BoolFtyGroupList = true;
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
             this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -767,9 +767,9 @@
             this.txtsubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
             this.txtsubconSupplier.DisplayBox1Binding = "";
             this.txtsubconSupplier.IsIncludeJunk = false;
-            this.txtsubconSupplier.isMisc = false;
-            this.txtsubconSupplier.isShipping = false;
-            this.txtsubconSupplier.isSubcon = true;
+            this.txtsubconSupplier.IsMisc = false;
+            this.txtsubconSupplier.IsShipping = false;
+            this.txtsubconSupplier.IsSubcon = true;
             this.txtsubconSupplier.Location = new System.Drawing.Point(117, 39);
             this.txtsubconSupplier.Name = "txtsubconSupplier";
             this.txtsubconSupplier.Size = new System.Drawing.Size(167, 23);
@@ -849,15 +849,15 @@
         private Win.UI.DisplayBox displayApvDate;
         private Win.UI.DisplayBox displayCurrency;
         private Win.UI.DateBox dateIssueDate;
-        private Class.txtsubconNoConfirm txtsubconSupplier;
+        private Class.TxtsubconNoConfirm txtsubconSupplier;
         private Win.UI.DisplayBox displayID;
         private Win.UI.Button btnImportThread;
         private Win.UI.Label label25;
-        private Class.txtuser txtuserApprove;
+        private Class.Txtuser txtuserApprove;
         private Win.UI.NumericBox numTotal;
         private Win.UI.NumericBox numAmount;
         private Win.UI.NumericBox numVat;
-        private Class.txtfactory txtmfactory;
+        private Class.Txtfactory txtmfactory;
         private Win.UI.Button btnBatchUpdateDellivery;
         private Win.UI.Label label1;
         private Win.UI.DateBox dateDeliveryDate;
@@ -867,15 +867,15 @@
         private Win.UI.TextBox txtBuyer;
         private Win.UI.Label label3;
         private Win.UI.Button btnIrrPriceReason;
-        private Class.txtuser txtuserClose;
+        private Class.Txtuser txtuserClose;
         private Win.UI.DisplayBox displayCloseDate;
         private Win.UI.Label label6;
         private Win.UI.Label label7;
-        private Class.txtuser txtuserLock;
+        private Class.Txtuser txtuserLock;
         private Win.UI.DisplayBox displayLockDate;
         private Win.UI.Label label4;
         private Win.UI.Label label5;
         private System.Windows.Forms.Button btnBatchApprove;
-        private Class.txtLocalPurchaseItem txtLocalPurchaseItem;
+        private Class.TxtLocalPurchaseItem txtLocalPurchaseItem;
     }
 }

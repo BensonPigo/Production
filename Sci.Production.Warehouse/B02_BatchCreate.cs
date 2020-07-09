@@ -46,7 +46,7 @@ namespace Sci.Production.Warehouse
                         ID = this.txtID.Text,
                         Description = this.txtDescription.Text,
                         StockType = "B",
-                        AddName = Sci.Env.User.UserID,
+                        AddName = Env.User.UserID,
                         AddDate = DateTime.Now,
                     });
                 }
@@ -58,7 +58,7 @@ namespace Sci.Production.Warehouse
                         ID = this.txtID.Text,
                         Description = this.txtDescription.Text,
                         StockType = "I",
-                        AddName = Sci.Env.User.UserID,
+                        AddName = Env.User.UserID,
                         AddDate = DateTime.Now,
                     });
                 }
@@ -70,7 +70,7 @@ namespace Sci.Production.Warehouse
                         ID = this.txtID.Text,
                         Description = this.txtDescription.Text,
                         StockType = "O",
-                        AddName = Sci.Env.User.UserID,
+                        AddName = Env.User.UserID,
                         AddDate = DateTime.Now,
                     });
                 }

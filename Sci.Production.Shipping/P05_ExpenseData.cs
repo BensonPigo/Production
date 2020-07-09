@@ -127,7 +127,7 @@ using(select * from #tmp)s
 on s.ShippingAPID = t.ShippingAPID and s.BLNo =t.BLNo and s.WKNo =t.WKNo and s.InvNo = t.InvNo and s.AccountID = t.AccountID
 when matched then update set
 	t.DebitID = s.DebitID,
-    t.EditName='{Sci.Env.User.UserID}',
+    t.EditName='{Env.User.UserID}',
     t.EditDate=GETDATE()
 ;
 ";

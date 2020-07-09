@@ -65,7 +65,7 @@ namespace Sci.Production.Packing
             if (this.radioTransferSlip.Checked)
             {
                 #region SlipCheck
-                this.TransferSlipNo = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "TC", "TransferToClog", DateTime.Today, 2, "TransferSlipNo", null);
+                this.TransferSlipNo = MyUtility.GetValue.GetID(Env.User.Keyword + "TC", "TransferToClog", DateTime.Today, 2, "TransferSlipNo", null);
                 #region 存TransferSlipNo
                 DataTable a;
                 string update_TransferSlipNo = string.Format(
@@ -108,7 +108,7 @@ from (
 
 ",
                     this.TransferSlipNo,
-                    Sci.Env.User.Keyword);
+                    Env.User.Keyword);
                 MyUtility.Tool.ProcessWithDatatable(this.dt, "tid,TransferSlipNo", update_TransferSlipNo, out a);
                 #endregion
                 DataTable b;
@@ -171,7 +171,7 @@ outer apply(
 
         private void ToRdlc()
         {
-            string strLoginM = MyUtility.GetValue.Lookup(string.Format("select NameEN from MDivision where ID = '{0}'", Sci.Env.User.Keyword));
+            string strLoginM = MyUtility.GetValue.Lookup(string.Format("select NameEN from MDivision where ID = '{0}'", Env.User.Keyword));
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title", strLoginM));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TransferDate", this.date1 + " ~ " + this.date2));
@@ -210,7 +210,7 @@ outer apply(
             else
             {
                 #region SlipCheck
-                this.TransferSlipNo = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "TC", "TransferToClog", DateTime.Today, 2, "TransferSlipNo", null);
+                this.TransferSlipNo = MyUtility.GetValue.GetID(Env.User.Keyword + "TC", "TransferToClog", DateTime.Today, 2, "TransferSlipNo", null);
                 #region 存TransferSlipNo
                 DataTable dtTransferSlipNo, dtTransferSlipNoDetail, dtFinal;
                 string sqlcmd = string.Format(
@@ -260,7 +260,7 @@ from (
 
 ",
                     this.TransferSlipNo,
-                    Sci.Env.User.Keyword);
+                    Env.User.Keyword);
                 MyUtility.Tool.ProcessWithDatatable(this.dt, "tid,TransferSlipNo", sqlcmd, out dtTransferSlipNo);
                 #endregion
                 sqlcmd = @"
@@ -371,7 +371,7 @@ outer apply(
 
             this.ShowWaitMessage("Excel Processing...");
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + xltFile);
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + xltFile);
 
             // 預先開啟excel app
             // objApp.Visible = true;
@@ -381,7 +381,7 @@ outer apply(
 
                 #region Set Login M & Transfer Date
 
-                string strLoginM = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where ID = '{0}'", Sci.Env.User.Keyword));
+                string strLoginM = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where ID = '{0}'", Env.User.Keyword));
                 if (!strLoginM.Empty())
                 {
                     objSheets.Cells[1, 1] = strLoginM;
@@ -435,7 +435,7 @@ outer apply(
                         }
                     }
 
-                    objSheets.get_Range(string.Format("A5:I{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                    objSheets.get_Range(string.Format("A5:I{0}", r + 4)).Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
                     objSheets.Cells[r + headerRow + 1, 1] = "Sub. TTL CTN:";
                     objSheets.Cells[r + headerRow + 1, 2] = sumTTL;
@@ -448,7 +448,7 @@ outer apply(
 
                 strExcelProcessName = "Packing_P14_TransferSlip";
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(strExcelProcessName);
+                string strExcelName = Class.MicrosoftFile.GetName(strExcelProcessName);
                 Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
@@ -485,7 +485,7 @@ outer apply(
 
                 #region Set Login M & Transfer Date
 
-                string strLoginM = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where ID = '{0}'", Sci.Env.User.Keyword));
+                string strLoginM = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where ID = '{0}'", Env.User.Keyword));
                 if (!strLoginM.Empty())
                 {
                     objSheets.Cells[1, 1] = strLoginM;
@@ -498,11 +498,11 @@ outer apply(
 
                 strExcelProcessName = "Packing_P14";
                 int r = excelTable.Rows.Count;
-                objSheets.get_Range(string.Format("A5:M{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                objSheets.get_Range(string.Format("A5:M{0}", r + 4)).Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
                 objSheets.Columns.AutoFit();
                 objSheets.Rows.AutoFit();
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(strExcelProcessName);
+                string strExcelName = Class.MicrosoftFile.GetName(strExcelProcessName);
                 Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();

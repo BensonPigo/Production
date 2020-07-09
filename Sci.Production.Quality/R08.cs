@@ -206,7 +206,7 @@ order by [inspected date]
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel
@@ -225,13 +225,13 @@ order by [inspected date]
             if (this.radioDetail.Checked)
             {
                 xltx = "Quality_R08.xltx";
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + xltx); // 預先開啟excel app
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + xltx); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.printData[0], string.Empty, xltx, 1, true, null, objApp); // 將datatable copy to excel
             }
             else
             {
                 xltx = "Quality_R08_Summery.xltx";
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + xltx); // 預先開啟excel app
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + xltx); // 預先開啟excel app
                 Excel.Worksheet wksheet = objApp.Sheets[1];
 #if DEBUG
                 objApp.Visible = true;
@@ -454,7 +454,7 @@ order by [inspected date]
                 }
 
                 objApp.Columns.AutoFit();
-                this.Excelfile = Sci.Production.Class.MicrosoftFile.GetName("Quality_R08_Summery");
+                this.Excelfile = Class.MicrosoftFile.GetName("Quality_R08_Summery");
                 objApp.ActiveWorkbook.SaveAs(this.Excelfile);
                 objApp.Quit();
                 Marshal.ReleaseComObject(wksheet);

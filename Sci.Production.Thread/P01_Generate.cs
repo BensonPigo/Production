@@ -6,7 +6,6 @@ using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 using Ict;
-using Sci.Production.Class;
 using System.Linq;
 
 namespace Sci.Production.Thread
@@ -41,7 +40,7 @@ namespace Sci.Production.Thread
             this.strbrandid = str_brandid;
             this.displayBoxEdit.Text = MyUtility.GetValue.Lookup(string.Format(
                 @"
-select ThreadEditname = concat(ThreadEditname,'-',p.name ,' ',format(ThreadEditdate,'yyyy/MM/dd HH:mm:ss' ))
+select ThreadEditname = concat(ThreadEditname, '-', p.name, ' ', format(ThreadEditdate,'yyyy/MM/dd HH:mm:ss'))
 from style s ,pass1 p
 where s.ThreadEditname = p.id and
 s.id = '{0}' and BrandID ='{1}' and SeasonID = '{2}'",
@@ -49,7 +48,7 @@ s.id = '{0}' and BrandID ='{1}' and SeasonID = '{2}'",
                 this.strbrandid,
                 this.strseason));
 
-            DataGridViewGeneratorTextColumnSettings threadcombcell = cellthreadcomb.GetGridCell(true);
+            DataGridViewGeneratorTextColumnSettings threadcombcell = Class.Txtthreadcomb.Cellthreadcomb.GetGridCell(true);
             this.gridDetail.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.Helper.Controls.Grid.Generator(this.gridDetail)
             .CheckBox("Sel", header: string.Empty, width: Widths.Auto(true), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -59,7 +58,7 @@ s.id = '{0}' and BrandID ='{1}' and SeasonID = '{2}'",
             .Text("Description", header: "Operation Description", width: Widths.Auto(true), iseditingreadonly: true)
             .Text("Annotation", header: "Annotation", width: Widths.Auto(true), iseditingreadonly: true)
             .Numeric("Seamlength", header: "Seam Length", width: Widths.Auto(true), integer_places: 9, decimal_places: 2, iseditingreadonly: true)
-           .Numeric("Frequency", header: "Frequency", width: Widths.AnsiChars(6), integer_places: 4, decimal_places: 2, iseditingreadonly: true)
+            .Numeric("Frequency", header: "Frequency", width: Widths.AnsiChars(6), integer_places: 4, decimal_places: 2, iseditingreadonly: true)
             .Text("MachineTypeid", header: "Machine Type", width: Widths.Auto(true), iseditingreadonly: true)
             .Text("Threadcombid", header: "Thread Combination", width: Widths.Auto(true), settings: threadcombcell);
             this.gridDetail.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
@@ -293,7 +292,7 @@ where id = '{0}' and BrandID ='{1}' and SeasonID = '{2}'",
                 this.strstyleid,
                 this.strbrandid,
                 this.strseason,
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
             DualResult result = DBProxy.Current.Execute(null, styleEdit);

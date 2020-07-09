@@ -142,7 +142,7 @@ where a.id= @ID", pars, out da);
                 e.Report.ReportDataSource = data;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         bool isStockList = false;

@@ -143,7 +143,7 @@ where 1=1");
 
             #endregion
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(ReportDefinition report)

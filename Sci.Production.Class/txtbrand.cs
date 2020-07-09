@@ -4,10 +4,16 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtbrand : Win.UI.TextBox
+    /// <summary>
+    /// Txtbrand
+    /// </summary>
+    public partial class Txtbrand : Win.UI.TextBox
     {
         private bool multi_select = false;
 
+        /// <summary>
+        /// Multi Select
+        /// </summary>
         public bool MultiSelect
         {
             set
@@ -16,6 +22,15 @@ namespace Sci.Production.Class
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtbrand"/> class.
+        /// </summary>
+        public Txtbrand()
+        {
+            this.Size = new System.Drawing.Size(66, 23);
+        }
+
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "SELECT Id,NameCH,NameEN FROM Production.dbo.Brand WITH (NOLOCK) WHERE Junk=0  ORDER BY Id";
@@ -47,6 +62,7 @@ namespace Sci.Production.Class
             this.ValidateText();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -84,11 +100,6 @@ namespace Sci.Production.Class
                     }
                 }
             }
-        }
-
-        public txtbrand()
-        {
-            this.Size = new System.Drawing.Size(66, 23);
         }
     }
 }

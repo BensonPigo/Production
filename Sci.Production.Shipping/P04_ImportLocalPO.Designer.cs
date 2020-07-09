@@ -32,7 +32,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.txtSubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtSubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             this.txtLocalPurchase = new Sci.Win.UI.TextBox();
             this.labelLocalPurchase = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
@@ -252,6 +252,6 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.TextBox txtLocalPurchase;
         private Win.UI.Label labelLocalPurchase;
-        private Class.txtsubconNoConfirm txtSubconSupplier;
+        private Class.TxtsubconNoConfirm txtSubconSupplier;
     }
 }

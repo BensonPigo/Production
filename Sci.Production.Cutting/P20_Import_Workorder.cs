@@ -11,8 +11,8 @@ namespace Sci.Production.Cutting
 {
     public partial class P20_Import_Workorder : Win.Subs.Base
     {
-        private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
         DataTable gridTable;
         DataTable detailTable;
         DataTable currentdetailTable;

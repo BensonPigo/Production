@@ -22,7 +22,7 @@ namespace Sci.Production.Warehouse
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
         private Ict.Win.UI.DataGridViewNumericBoxColumn Col_ActualW;
 
-        string UserID = Sci.Env.User.UserID;
+        string UserID = Env.User.UserID;
 
         public P07(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -68,8 +68,8 @@ namespace Sci.Production.Warehouse
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Third"] = 1;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "A";
@@ -157,7 +157,7 @@ namespace Sci.Production.Warehouse
                 // listRowErrMsg.Add("<Roll> length can't be more than 8 Characters.");
 
                 // Dyelot varchar(8)
-                byte[] DyelotTemp = System.Text.Encoding.Default.GetBytes(row["Dyelot"].ToString());
+                byte[] DyelotTemp = Encoding.Default.GetBytes(row["Dyelot"].ToString());
                 if (DyelotTemp.Length > 8)
                 {
                     if (!errormsgDir[errorkey].Contains("<Dyelot> length can't be more than 8 Characters."))
@@ -500,7 +500,7 @@ where   #tmp.poid = dbo.po_supp.id
             // 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "PR", "Receiving", (DateTime)this.CurrentMaintain["ETA"]);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "PR", "Receiving", (DateTime)this.CurrentMaintain["ETA"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -763,7 +763,7 @@ Order By e.Seq1, e.Seq2, e.Refno", this.CurrentDetailData["poid"], this.CurrentM
                         if (!MyUtility.Check.Seek(
                             string.Format(
                             Prgs.selePoItemSqlCmd() +
-                                @"and p.seq1 ='{2}' and p.seq2 = '{3}' and left(p.seq1, 1) !='7'", this.CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
+                                @"and p.seq1 ='{2}' and p.seq2 = '{3}' and left(p.seq1, 1) !='7'", this.CurrentDetailData["poid"], Env.User.Keyword, seq[0], seq[1]), out dr, null))
                         {
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data not found!", "Seq");
@@ -1016,12 +1016,12 @@ WHERE   StockType='{0}'
                 if (dr["fabrictype"].ToString() == "F" && gw > aw)
                 {
                     e.CellStyle.ForeColor = Color.Red;
-                    e.CellStyle.Font = new Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+                    e.CellStyle.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Bold);
                 }
                 else
                 {
                     e.CellStyle.ForeColor = Color.Black;
-                    e.CellStyle.Font = new Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular);
+                    e.CellStyle.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular);
                 }
             };
         }
@@ -1842,21 +1842,21 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
             int index = -1;
 
             // 判斷 Poid
-            if (this.txtSeq1.checkEmpty(showErrMsg: false))
+            if (this.txtSeq1.CheckEmpty(showErrMsg: false))
             {
                 index = this.detailgridbs.Find("PoId", this.txtLocateForSP.Text.TrimEnd());
             }
 
             // 判斷 Poid + Seq1
-            else if (this.txtSeq1.checkSeq2Empty())
+            else if (this.txtSeq1.CheckSeq2Empty())
             {
-                index = this.detailgridbs.Find("PoIdSeq1", this.txtLocateForSP.Text.TrimEnd() + this.txtSeq1.seq1);
+                index = this.detailgridbs.Find("PoIdSeq1", this.txtLocateForSP.Text.TrimEnd() + this.txtSeq1.Seq1);
             }
 
             // 判斷 Poid + Seq1 + Seq2
             else
             {
-                index = this.detailgridbs.Find("PoIdSeq", this.txtLocateForSP.Text.TrimEnd() + this.txtSeq1.getSeq());
+                index = this.detailgridbs.Find("PoIdSeq", this.txtLocateForSP.Text.TrimEnd() + this.txtSeq1.GetSeq());
             }
 
             if (index == -1)
@@ -1885,13 +1885,13 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
         private void btDownloadSample_Click(object sender, EventArgs e)
         {
             // 呼叫執行檔絕對路徑
-            DirectoryInfo dir = new DirectoryInfo(System.Windows.Forms.Application.StartupPath);
+            DirectoryInfo dir = new DirectoryInfo(Application.StartupPath);
 
             // 執行檔上一層絕對路徑
             // string xltpath = dir.Parent.FullName.ToString();
             // Microsoft.Office.Interop.Excel._Application ObjApp = MyUtility.Excel.ConnectExcel(xltpath + "\\xlt\\Warehouse_P07_ImportExcelFormat.xltx");
             // ObjApp.Visible = true;
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Warehouse_P07_ImportExcelFormat.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\Warehouse_P07_ImportExcelFormat.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {

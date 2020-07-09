@@ -734,7 +734,7 @@ order by FactorySort
             }
             #endregion
             #endregion
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -778,13 +778,13 @@ order by FactorySort
                 SaveXltReportCls.XltRptTable xdt_detail_All = new SaveXltReportCls.XltRptTable(this.dt_detail_All);
                 xdt_detail_All.ShowHeader = false;
                 xl.DicDatas.Add("##R20UNRLDETAIL", xdt_detail_All);
-                xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Centralized_R11_Transportation_Cost_Material_Import_clearance"));
+                xl.Save(Class.MicrosoftFile.GetName("Centralized_R11_Transportation_Cost_Material_Import_clearance"));
             }
             else
             {
                 Microsoft.Office.Interop.Excel.Application excel = xl.ExcelApp;
                 excel.Worksheets[2].Delete();
-                xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Centralized_R11_Transportation_Cost_Material_Import_clearance"));
+                xl.Save(Class.MicrosoftFile.GetName("Centralized_R11_Transportation_Cost_Material_Import_clearance"));
             }
             #endregion
 

@@ -41,7 +41,7 @@ namespace Sci.Production.Shipping
             DataTable mDivision;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
 
             MyUtility.Tool.SetupCombox(this.comboOrderby, 1, 1, "M,B/L No.");
             MyUtility.Tool.SetupCombox(this.comboRateType, 2, 1, ",Original currency,FX,Fixed exchange rate,KP,KPI exchange rate");
@@ -359,7 +359,7 @@ where s.Status = 'Approved'");
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -379,19 +379,19 @@ where s.Status = 'Approved'");
 
             if (this.radioDetail.Checked)
             {
-                strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetail.xltx";
+                strXltName = Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetail.xltx";
             }
             else if (this.radioByInvWK.Checked)
             {
-                strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByInvWK.xltx";
+                strXltName = Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByInvWK.xltx";
             }
             else if (this.radioByAPP.Checked)
             {
-                strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByAPP.xltx";
+                strXltName = Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByAPP.xltx";
             }
             else
             {
-                strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentList.xltx";
+                strXltName = Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentList.xltx";
             }
 
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
@@ -404,7 +404,7 @@ where s.Status = 'Approved'");
 
             if (this.radioDetail.Checked == true)
             {
-                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetail.xltx", excel);
+                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetail.xltx", excel);
                 if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
                 {
                     excel.ActiveWorkbook.Worksheets[1].Cells[1, 10] = excel.ActiveWorkbook.Worksheets[1].Cells[1, 10].Value + "\r\n(USD)";
@@ -415,7 +415,7 @@ where s.Status = 'Approved'");
             }
             else if (this.radioByInvWK.Checked == true)
             {
-                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByInvWK.xltx", excel);
+                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByInvWK.xltx", excel);
                 if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
                 {
                     excel.ActiveWorkbook.Worksheets[1].Cells[1, 11] = excel.ActiveWorkbook.Worksheets[1].Cells[1, 11].Value + "\r\n(USD)";
@@ -426,7 +426,7 @@ where s.Status = 'Approved'");
             }
             else if (this.radioByAPP.Checked == true)
             {
-                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByAPP.xltx", excel);
+                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetailByAPP.xltx", excel);
                 if (!MyUtility.Check.Empty(this.comboRateType.SelectedValue))
                 {
                     excel.ActiveWorkbook.Worksheets[1].Cells[1, 11] = excel.ActiveWorkbook.Worksheets[1].Cells[1, 11].Value + "\r\n(USD)";
@@ -473,7 +473,7 @@ where s.Status = 'Approved'");
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(this.radioDetail.Checked == true ? "Shipping_R06_PaymentListDetail" : "Shipping_R06_PaymentList");
+            string strExcelName = Class.MicrosoftFile.GetName(this.radioDetail.Checked == true ? "Shipping_R06_PaymentListDetail" : "Shipping_R06_PaymentList");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

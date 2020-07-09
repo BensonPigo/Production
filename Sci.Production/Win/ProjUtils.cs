@@ -5,8 +5,18 @@ using Sci.Data;
 
 namespace Sci.Production.Win
 {
+    /// <summary>
+    /// ProjUtils
+    /// </summary>
     public static class ProjUtils
     {
+        /// <summary>
+        /// Get Pass
+        /// </summary>
+        /// <param name="account">Account</param>
+        /// <param name="password">PWD</param>
+        /// <param name="data">Represents strongly named DataRow class</param>
+        /// <returns>DualResult</returns>
         public static DualResult GetPass1(string account, string password, out SCHEMAS.PASS1Row data)
         {
             data = null;
@@ -39,7 +49,7 @@ namespace Sci.Production.Win
                 return new DualResult(false, "Load 'Pass1' data error.", ex);
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
     }
 }

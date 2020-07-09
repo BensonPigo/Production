@@ -37,10 +37,10 @@
             this.labT2SubconName = new Sci.Win.UI.Label();
             this.comboBoxTypeofPrint = new Sci.Win.UI.ComboBox();
             this.txtCombineStyle = new Sci.Win.UI.TextBox();
-            this.txtseason = new Sci.Production.Class.txtseason();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtLocalSupp = new Sci.Production.Class.txtLocalSuppNoConfirm();
-            this.txtLocalTPESupp = new Sci.Production.Class.txtLocalTPESuppNoConfirm();
+            this.txtseason = new Sci.Production.Class.Txtseason();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtLocalSupp = new Sci.Production.Class.TxtLocalSuppNoConfirm();
+            this.txtLocalTPESupp = new Sci.Production.Class.TxtLocalTPESuppNoConfirm();
             this.txtFabRefno = new Sci.Win.UI.TextBox();
             this.SuspendLayout();
             // 
@@ -237,10 +237,10 @@
         private Win.UI.Label labT2SubconName;
         private Win.UI.ComboBox comboBoxTypeofPrint;
         private Win.UI.TextBox txtCombineStyle;
-        private Class.txtseason txtseason;
-        private Class.txtbrand txtbrand;
-        private Class.txtLocalSuppNoConfirm txtLocalSupp;
-        private Class.txtLocalTPESuppNoConfirm txtLocalTPESupp;
+        private Class.Txtseason txtseason;
+        private Class.Txtbrand txtbrand;
+        private Class.TxtLocalSuppNoConfirm txtLocalSupp;
+        private Class.TxtLocalTPESuppNoConfirm txtLocalTPESupp;
         private Win.UI.TextBox txtFabRefno;
     }
 }

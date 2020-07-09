@@ -8,13 +8,13 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = $"MDivisionID ='{Sci.Env.User.Keyword}'";
+            this.DefaultFilter = $"MDivisionID ='{Env.User.Keyword}'";
         }
 
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.chkJunk.ReadOnly = !this.Perm.Junk;
         }
 

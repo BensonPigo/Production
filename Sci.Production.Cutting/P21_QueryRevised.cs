@@ -399,7 +399,7 @@ namespace Sci.Production.Cutting
 								SELECT TOP 1 ID,FactoryID,CutCellid FROM WorkOrder WHERE CutRef=cofr.CutRef AND MDivisionId = cofr.MDivisionId
                                                                                          {outerApplyWhere}
 							)WorkOrder
-                            WHERE cofr.MDivisionId='{Sci.Env.User.Keyword}'
+                            WHERE cofr.MDivisionId='{Env.User.Keyword}'
                             ");
             #endregion
 

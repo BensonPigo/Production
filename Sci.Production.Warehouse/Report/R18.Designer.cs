@@ -44,14 +44,14 @@
             this.labelSizeCode = new Sci.Win.UI.Label();
             this.txtColor = new Sci.Win.UI.TextBox();
             this.labelStyle = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.labelSupplier = new Sci.Win.UI.Label();
             this.labelBuyerDelivery = new Sci.Win.UI.Label();
             this.labelSciDelivery = new Sci.Win.UI.Label();
-            this.txtsupplier = new Sci.Production.Class.txtsupplier();
+            this.txtsupplier = new Sci.Production.Class.Txtsupplier();
             this.dateRangeBuyerDelivery = new Sci.Win.UI.DateRange();
             this.dateRangeSciDelivery = new Sci.Win.UI.DateRange();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -399,13 +399,13 @@
         private Win.UI.Label labelSizeCode;
         private Win.UI.TextBox txtColor;
         private Win.UI.Label labelStyle;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
         private Win.UI.Label labelSupplier;
         private Win.UI.Label labelBuyerDelivery;
         private Win.UI.Label labelSciDelivery;
-        private Class.txtsupplier txtsupplier;
+        private Class.Txtsupplier txtsupplier;
         private Win.UI.DateRange dateRangeBuyerDelivery;
         private Win.UI.DateRange dateRangeSciDelivery;
-        private Class.comboDropDownList comboCategory;
+        private Class.ComboDropDownList comboCategory;
     }
 }

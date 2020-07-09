@@ -34,8 +34,8 @@
             this.labelStatus = new Sci.Win.UI.Label();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.cb_status = new Sci.Win.UI.ComboBox();
             this.txtsp_from = new Sci.Win.UI.TextBox();
             this.txtsp_to = new Sci.Win.UI.TextBox();
@@ -234,8 +234,8 @@
         private Win.UI.Label labelStatus;
         private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.Label labelFactory;
-        private Class.txtfactory txtfactory;
-        private Class.txtbrand txtbrand;
+        private Class.Txtfactory txtfactory;
+        private Class.Txtbrand txtbrand;
         private Win.UI.ComboBox cb_status;
         private Win.UI.TextBox txtsp_from;
         private Win.UI.TextBox txtsp_to;

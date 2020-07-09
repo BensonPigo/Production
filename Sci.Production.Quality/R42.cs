@@ -494,7 +494,7 @@ from
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
+            var saveDialog = MyExcelPrg.GetSaveFileDialog(MyExcelPrg.Filter_Excel);
             SaveXltReportCls xl = new SaveXltReportCls("Quality_R42.xltx", keepApp: true);
             SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(this.dt_All);
 
@@ -560,7 +560,7 @@ from
             SaveXltReportCls.ReplaceAction d = this.addfilter;
             xl.DicDatas.Add("##addfilter", d);
 
-            xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Quality_R42"));
+            xl.Save(Class.MicrosoftFile.GetName("Quality_R42"));
             ((Worksheet)xl.ExcelApp.ActiveSheet).Columns.AutoFit();
             xl.FinishSave();
             return true;
@@ -569,7 +569,7 @@ from
         void Addcolor(Worksheet mySheet, int rowNo, int columnNo)
         {
             mySheet.get_Range("A2", "AY2").Interior.Color = Color.SkyBlue;
-            mySheet.get_Range("A2", "AY2").Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+            mySheet.get_Range("A2", "AY2").Borders.LineStyle = XlLineStyle.xlContinuous;
 
             Range usedRange = mySheet.UsedRange;
             Range rows = usedRange.Rows;
@@ -589,13 +589,13 @@ from
 
                     if (firstCellValue.StrEndsWith("GRAND TOTAL"))
                     {
-                        row.Interior.Color = System.Drawing.Color.Aquamarine;
-                        row.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                        row.Interior.Color = Color.Aquamarine;
+                        row.Borders.LineStyle = XlLineStyle.xlContinuous;
                     }
                     else if (firstCellValue.StrEndsWith("Total"))
                     {
-                        row.Interior.Color = System.Drawing.Color.Gold;
-                        row.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                        row.Interior.Color = Color.Gold;
+                        row.Borders.LineStyle = XlLineStyle.xlContinuous;
                     }
                 }
 

@@ -34,9 +34,9 @@
             this.gridBatchApprove = new Sci.Win.UI.Grid();
             this.labelFactory = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.labelArtworkType = new Sci.Win.UI.Label();
-            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
+            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.Txtartworktype_fty();
             this.checkOnlyAprrovedData = new Sci.Win.UI.CheckBox();
             this.labelApproveDate = new Sci.Win.UI.Label();
             this.dateApproveDate = new Sci.Win.UI.DateRange();
@@ -151,8 +151,8 @@
             // txtartworktype_ftyArtworkType
             // 
             this.txtartworktype_ftyArtworkType.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_ftyArtworkType.cClassify = "";
-            this.txtartworktype_ftyArtworkType.cSubprocess = "";
+            this.txtartworktype_ftyArtworkType.CClassify = "";
+            this.txtartworktype_ftyArtworkType.CSubprocess = "";
             this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(140, 115);
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
@@ -365,7 +365,7 @@
         private Win.UI.Label labelFactory;
         private Win.UI.GroupBox groupBox1;
         private Win.UI.Label labelArtworkType;
-        private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
+        private Class.Txtartworktype_fty txtartworktype_ftyArtworkType;
         private Win.UI.CheckBox checkOnlyAprrovedData;
         private Win.UI.Label labelApproveDate;
         private Win.UI.DateRange dateApproveDate;
@@ -384,6 +384,6 @@
         private Win.UI.Button btnApprove;
         private Win.UI.GroupBox groupBox2;
         private Win.UI.Button btnUnApprove;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
     }
 }

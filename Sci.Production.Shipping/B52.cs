@@ -55,7 +55,7 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            this.CurrentMaintain["NLCodeEditName"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["NLCodeEditName"] = Env.User.UserID;
             this.CurrentMaintain["NLCodeEditDate"] = DateTime.Now;
 
             return base.ClickSaveBefore();

@@ -4,13 +4,20 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtcdcode : Win.UI.TextBox
+    /// <summary>
+    /// Txtcdcode
+    /// </summary>
+    public partial class Txtcdcode : Win.UI.TextBox
     {
-        public txtcdcode()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtcdcode"/> class.
+        /// </summary>
+        public Txtcdcode()
         {
             this.Size = new System.Drawing.Size(54, 23);
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -28,6 +35,7 @@ namespace Sci.Production.Class
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);

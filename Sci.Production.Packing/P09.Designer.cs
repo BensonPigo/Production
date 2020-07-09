@@ -42,7 +42,7 @@
             this.displayM = new Sci.Win.UI.DisplayBox();
             this.labelM = new Sci.Win.UI.Label();
             this.numOrderQty = new Sci.Win.UI.NumericBox();
-            this.txtcountryDestination = new Sci.Production.Class.txtcountry();
+            this.txtcountryDestination = new Sci.Production.Class.Txtcountry();
             this.labelOrderQty = new Sci.Win.UI.Label();
             this.labelDestination = new Sci.Win.UI.Label();
             this.displayBuyer = new Sci.Win.UI.DisplayBox();
@@ -561,7 +561,7 @@
         private Win.UI.DisplayBox displayM;
         private Win.UI.Label labelM;
         private Win.UI.NumericBox numOrderQty;
-        private Class.txtcountry txtcountryDestination;
+        private Class.Txtcountry txtcountryDestination;
         private Win.UI.Label labelOrderQty;
         private Win.UI.Label labelDestination;
         private Win.UI.DisplayBox displayBuyer;

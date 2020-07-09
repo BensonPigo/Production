@@ -48,7 +48,7 @@ namespace Sci.Production.Shipping
 
             // 預設是(80,30)
             btn.Size = new Size(120, 30);
-            btn.Enabled = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "B42. Custom SP# and Consumption", "CanNew");
+            btn.Enabled = Prgs.GetAuthority(Env.User.UserID, "B42. Custom SP# and Consumption", "CanNew");
             this.grid.Columns[0].Visible = false;
 
             // 新增Import From Batch按鈕
@@ -1152,7 +1152,7 @@ select NLCode from VNConsumption_Detail WITH (NOLOCK) where ID = '{1}'",
 
             string updateCmds = string.Format(
                 "update VNConsumption set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}'",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             result = DBProxy.Current.Execute(null, updateCmds);
@@ -1170,7 +1170,7 @@ select NLCode from VNConsumption_Detail WITH (NOLOCK) where ID = '{1}'",
 
             string updateCmds = string.Format(
                 "update VNConsumption set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}'",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmds);

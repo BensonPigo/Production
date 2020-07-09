@@ -98,13 +98,13 @@ namespace Sci.Production.Class
             grid.RowTemplate.Height = 19; // 小於19 的話會導致 checkBox column 不見
 
             DataGridViewCellStyle headerStyle = new DataGridViewCellStyle();
-            headerStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            headerStyle.BackColor = System.Drawing.Color.DimGray;
-            headerStyle.Font = new Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
-            headerStyle.ForeColor = System.Drawing.Color.WhiteSmoke;
-            headerStyle.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            headerStyle.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            headerStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            headerStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            headerStyle.BackColor = Color.DimGray;
+            headerStyle.Font = new Font("Microsoft Sans Serif", 8F, FontStyle.Bold);
+            headerStyle.ForeColor = Color.WhiteSmoke;
+            headerStyle.SelectionBackColor = SystemColors.Highlight;
+            headerStyle.SelectionForeColor = SystemColors.HighlightText;
+            headerStyle.WrapMode = DataGridViewTriState.True;
 
             grid.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             grid.ColumnHeadersDefaultCellStyle = headerStyle;
@@ -334,7 +334,7 @@ namespace Sci.Production.Class
         /// <param name="splitCont">SplitContainer</param>
         public static void SetStyle_SplitContainer(SplitContainer splitCont)
         {
-            splitCont.Paint += UIClassPrg.SplitContainer_Paint;
+            splitCont.Paint += SplitContainer_Paint;
         }
 
         /// <summary>

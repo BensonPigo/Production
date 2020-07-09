@@ -6,32 +6,44 @@ using System.Configuration;
 
 namespace Sci.Production.Class
 {
-    public partial class txtCentralizedFactory : Win.UI.TextBox
+    /// <summary>
+    /// TxtCentralizedFactory
+    /// </summary>
+    public partial class TxtCentralizedFactory : Win.UI.TextBox
     {
         private string ConnServer;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TxtCentralizedFactory"/> class.
+        /// </summary>
+        public TxtCentralizedFactory()
+        {
+            this.Size = new System.Drawing.Size(66, 23);
+        }
+
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
-            DataTable FactoryData = new DataTable();
+            DataTable factoryData = new DataTable();
             DataRow row;
 
             // DataColumn column = new DataColumn("Factory", Type.GetType("System.String"));
-            FactoryData.Columns.Add("Factory", typeof(string));
+            factoryData.Columns.Add("Factory", typeof(string));
 
             string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' });
             foreach (string strSever in strSevers)
             {
-                string[] Factorys = strSever.Split(new char[] { ':', ',' });
-                for (int i = 1; i < Factorys.Length; i++)
+                string[] factorys = strSever.Split(new char[] { ':', ',' });
+                for (int i = 1; i < factorys.Length; i++)
                 {
-                    row = FactoryData.NewRow();
-                    row["Factory"] = Factorys[i];
-                    FactoryData.Rows.Add(row);
+                    row = factoryData.NewRow();
+                    row["Factory"] = factorys[i];
+                    factoryData.Rows.Add(row);
                 }
             }
 
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(FactoryData, "Factory", "5", this.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(factoryData, "Factory", "5", this.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -42,6 +54,7 @@ namespace Sci.Production.Class
             this.ValidateText();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -58,12 +71,12 @@ namespace Sci.Production.Class
                         break;
                     }
 
-                    string[] Factorys = strSever.Split(new char[] { ':', ',' });
-                    for (int i = 1; i < Factorys.Length; i++)
+                    string[] factorys = strSever.Split(new char[] { ':', ',' });
+                    for (int i = 1; i < factorys.Length; i++)
                     {
-                        if (str == Factorys[i])
+                        if (str == factorys[i])
                         {
-                            this.ConnServer = Factorys[0];
+                            this.ConnServer = factorys[0];
                             break;
                         }
                     }
@@ -77,11 +90,6 @@ namespace Sci.Production.Class
                     return;
                 }
             }
-        }
-
-        public txtCentralizedFactory()
-        {
-            this.Size = new System.Drawing.Size(66, 23);
         }
     }
 }

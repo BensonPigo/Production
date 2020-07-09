@@ -253,7 +253,7 @@ left join View_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Arti
             }
 
             // 系統會自動有回傳值
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
     }
 }

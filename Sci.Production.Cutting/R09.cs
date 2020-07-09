@@ -424,7 +424,7 @@ drop table #tmp
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(ReportDefinition report)
@@ -439,7 +439,7 @@ drop table #tmp
             }
 
             Excel.Application objApp = new Excel.Application();
-            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Cutting_R09.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Cutting_R09.xltx", objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
             com.WriteTable(this.printData, 3);
             com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
@@ -454,7 +454,7 @@ drop table #tmp
             worksheet.Columns["W:X"].ColumnWidth = 10;
             worksheet.Columns["AA:AH"].ColumnWidth = 12;
             objApp.Rows.AutoFit();
-            string Excelfile = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R09");
+            string Excelfile = Class.MicrosoftFile.GetName("Cutting_R09");
             objApp.ActiveWorkbook.SaveAs(Excelfile);
             Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(objApp);

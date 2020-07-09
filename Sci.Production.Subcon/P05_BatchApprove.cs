@@ -23,8 +23,8 @@ namespace Sci.Production.Subcon
             this.delegateAct = reload;
 
             // 檢查是否擁有Confirm or Check權限
-            this.canConfrim = Prgs.GetAuthority(Sci.Env.User.UserID, "P05. Sub-con Requisition", "CanConfirm");
-            this.canCheck = Prgs.GetAuthority(Sci.Env.User.UserID, "P05. Sub-con Requisition", "CanCheck");
+            this.canConfrim = Prgs.GetAuthority(Env.User.UserID, "P05. Sub-con Requisition", "CanConfirm");
+            this.canCheck = Prgs.GetAuthority(Env.User.UserID, "P05. Sub-con Requisition", "CanCheck");
 
             this.boolDeptApv = true;
             this.Authority();

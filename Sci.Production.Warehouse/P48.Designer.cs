@@ -32,10 +32,10 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.label2 = new Sci.Win.UI.Label();
-            this.txtdropdownlistFabricType = new Sci.Production.Class.comboDropDownList(this.components);
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.txtdropdownlistFabricType = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
             this.labCategory = new Sci.Win.UI.Label();
             this.txtSPNo2 = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
@@ -56,8 +56,8 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.lbBrand = new Sci.Win.UI.Label();
             this.lbSeason = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtseason = new Sci.Production.Class.txtseason();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtseason = new Sci.Production.Class.Txtseason();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -130,7 +130,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
@@ -434,12 +434,12 @@
         private Win.UI.Label label1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Label labCategory;
-        private Class.comboDropDownList comboCategory;
-        private Class.comboDropDownList txtdropdownlistFabricType;
-        private Class.txtfactory txtfactory;
+        private Class.ComboDropDownList comboCategory;
+        private Class.ComboDropDownList txtdropdownlistFabricType;
+        private Class.Txtfactory txtfactory;
         private Win.UI.Label label2;
-        private Class.txtseason txtseason;
-        private Class.txtbrand txtbrand;
+        private Class.Txtseason txtseason;
+        private Class.Txtbrand txtbrand;
         private Win.UI.Label lbSeason;
         private Win.UI.Label lbBrand;
     }

@@ -11,7 +11,6 @@ using Ict;
 using Ict.Win;
 using Sci.Production.Class.Commons;
 using Microsoft.Office.Interop.Excel;
-using MsExcel = Microsoft.Office.Interop.Excel;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 
 using System.Runtime.InteropServices;
@@ -41,7 +40,7 @@ namespace Sci.Production.PPIC
             this.IsSupportEdit = type == "1" ? true : false;
 
             this.Text = type == "1" ? "P01. PPIC Master List" : "P011. PPIC Master List (History)";
-            this.DefaultFilter = $@"MDivisionID = '{Sci.Env.User.Keyword}'";
+            this.DefaultFilter = $@"MDivisionID = '{Env.User.Keyword}'";
             this.DefaultFilter += type == "1" ? " AND Finished = 0" : " AND Finished = 1";
             this.DefaultFilter += " and (IsForecast = 0 or (IsForecast = 1 and (SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or BuyerDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))))";
 
@@ -110,11 +109,11 @@ namespace Sci.Production.PPIC
            var dateSCIDlv = this.dateSCIDlv.Value;
            if (dateBuyerDlv > dateSCIDlv)
            {
-              this.dateSCIDlv.TextBackColor = System.Drawing.Color.Yellow;
+              this.dateSCIDlv.TextBackColor = Color.Yellow;
            }
            else
            {
-              this.dateSCIDlv.TextBackColor = System.Drawing.Color.FromArgb(183, 227, 225);
+              this.dateSCIDlv.TextBackColor = Color.FromArgb(183, 227, 225);
            }
         }
 
@@ -315,7 +314,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
 
             this.displayOrderCombo.Value = MyUtility.GetValue.Lookup(string.Format("Select Top 1 OrderComboList from dbo.Order_OrderComboList with(nolock) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             #endregion
-            bool lConfirm = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P01. PPIC Master List", "CanConfirm");
+            bool lConfirm = PublicPrg.Prgs.GetAuthority(Env.User.UserID, "P01. PPIC Master List", "CanConfirm");
             this.btnMCHandleCFM.Enabled = this.CurrentMaintain != null && this.dataType == "1" && lConfirm && !this.EditMode;
             this.btnLocalMRCFM.Enabled = this.CurrentMaintain != null && this.dataType == "1" && lConfirm && !this.EditMode;
             this.btnbdown.Enabled = this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["CtnType"]) == "2" && !this.EditMode;
@@ -448,8 +447,8 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             // 帶入預設值
             this.CurrentMaintain["Category"] = "B";
             this.CurrentMaintain["LocalOrder"] = 1;
-            this.CurrentMaintain["MCHandle"] = Sci.Env.User.UserID;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MCHandle"] = Env.User.UserID;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["FtyGroup"] = Env.User.Factory;
             this.CurrentMaintain["CMPUnit"] = "PCS";
             this.CurrentMaintain["CFMDate"] = DateTime.Today;
@@ -641,7 +640,7 @@ where oq.Id = '{1}'", Convert.ToDateTime(this.CurrentMaintain["BuyerDelivery"]).
             // GetID
             if (this.IsDetailInserting)
             {
-                string id = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "LO", "Orders", DateTime.Today);
+                string id = MyUtility.GetValue.GetID(Env.User.Factory + "LO", "Orders", DateTime.Today);
 
                 // string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("FtyGroup", CurrentMaintain["ID"].ToString(), "Orders", "ID") + "LO", "Orders", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
@@ -696,7 +695,7 @@ from Style_Artwork where StyleUkey = '{2}'
 insert into Order_TmsCost(ID,ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,AddName,AddDate)
 select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from Style_TmsCost where StyleUkey = {2}",
                         MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                        Sci.Env.User.UserID,
+                        Env.User.UserID,
                         MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
 
                     result = DBProxy.Current.Execute(null, insertCmd);
@@ -742,7 +741,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
                 #endregion
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // Style
@@ -903,7 +902,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         // MC Handle CFM
         private void BtnMCHandleCFM_Click(object sender, EventArgs e)
         {
-            string sqlCmd = string.Format("update Orders set MCHandle = '{0}' where POID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
+            string sqlCmd = string.Format("update Orders set MCHandle = '{0}' where POID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {
@@ -911,13 +910,13 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
                 return;
             }
 
-            this.txtuser1.TextBox1.Text = Sci.Env.User.UserID;
+            this.txtuser1.TextBox1.Text = Env.User.UserID;
         }
 
         // Local MR CFM
         private void BtnLocalMRCFM_Click(object sender, EventArgs e)
         {
-            string sqlCmd = string.Format("update Orders set LocalMR = '{0}' where POID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
+            string sqlCmd = string.Format("update Orders set LocalMR = '{0}' where POID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {
@@ -925,7 +924,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
                 return;
             }
 
-            this.txtuser2.TextBox1.Text = Sci.Env.User.UserID;
+            this.txtuser2.TextBox1.Text = Env.User.UserID;
         }
 
         // Production output
@@ -1263,7 +1262,7 @@ where POID = @poid group by POID,b.spno";
 
             // Full Row Copy for row height copy purpose
             subBlockSheet.Range[subBlockSheet.Rows[rowStart], subBlockSheet.Rows[rowEnd]].Copy();
-            mainSheet.Range[mainSheet.Rows[rowPosition], mainSheet.Rows[rowPosition + thisSheetUsedRange.Rows.Count]].PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
+            mainSheet.Range[mainSheet.Rows[rowPosition], mainSheet.Rows[rowPosition + thisSheetUsedRange.Rows.Count]].PasteSpecial(XlPasteType.xlPasteAll, XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
 
             ////Range Copy for content & cell format  <-- because Range Copy ignore Row height copy, so I have to copy full rows before here
             // thisSheetUsedRange.Copy();
@@ -1365,7 +1364,7 @@ where POID = @poid group by POID,b.spno";
             }
 
             DialogResult buttonResult = MyUtility.Msg.QuestionBox("Are you sure you want to finish shipment?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
@@ -1407,7 +1406,7 @@ where POID = @poid group by POID,b.spno";
             }
 
             DialogResult buttonResult = MyUtility.Msg.QuestionBox("Are you sure you want to 'Back to P01. PPIC Master List'?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
@@ -1518,7 +1517,7 @@ where POID = @poid group by POID,b.spno";
         {
             if (this.EditMode)
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     string strSQLSelect = string.Format(
                 @"select id,countryid,city from Custcd where brandid= '{0}' and junk=0 ", this.displayBrand.Text);

@@ -47,7 +47,7 @@ namespace Sci.Production.Subcon
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid1.GetDataRow(e.RowIndex);
                     string item_cmd = $@"select id from buyer where junk = 0 ";
@@ -106,7 +106,7 @@ namespace Sci.Production.Subcon
                     return;
                 }
 
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid1.GetDataRow(e.RowIndex);
                     string item_cmd = $@"select Refno,Description from LocalItem where  Category = 'CARTON' and junk = 0 and Refno<> '{this.masterrow["Refno"]}'";
@@ -236,10 +236,10 @@ on t.Refno = s.Refno and t.Buyer = s.Buyer and t.PadRefno = s.PadRefno
 when matched and t.qty <> s.qty then update set
 	t.Qty = s.Qty,
 	EditDate = getdate(),
-	EditName = '{Sci.Env.User.UserID}'
+	EditName = '{Env.User.UserID}'
 when not matched by target then
     insert(Refno,Buyer,PadRefno,Qty,AddDate,AddName)
-    values(s.Refno,s.Buyer,s.PadRefno,s.Qty,getdate(),'{Sci.Env.User.UserID}');
+    values(s.Refno,s.Buyer,s.PadRefno,s.Qty,getdate(),'{Env.User.UserID}');
 
 delete lc
 from LocalItem_CartonCardboardPad lc

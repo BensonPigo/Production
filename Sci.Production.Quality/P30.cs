@@ -27,7 +27,7 @@ namespace Sci.Production.Quality
             this.FirstTime = false;
 
             // 設定init()
-            string MDivisionID = Sci.Env.User.Keyword;
+            string MDivisionID = Env.User.Keyword;
             if (history == "1".ToString())
             {
                 this.DefaultFilter = string.Format("MDivisionID= '{0}' and MDClose is null and orders.IsForecast<>1", MDivisionID);
@@ -64,7 +64,7 @@ namespace Sci.Production.Quality
 
         public void colorSelect_CellMouseClick(MouseButtons eButton, int eRowIndex)
         {
-            if (eButton == System.Windows.Forms.MouseButtons.Right)
+            if (eButton == MouseButtons.Right)
             {
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(eRowIndex);
                 if (dr == null)
@@ -122,7 +122,7 @@ order by RowNum", this.txtSP.Text.ToString());
                 return;
             }
 
-            if (eButton == System.Windows.Forms.MouseButtons.Right)
+            if (eButton == MouseButtons.Right)
             {
                 if (!this.EditMode)
                 {
@@ -414,7 +414,7 @@ where ColorID = '{1}'", this.txtSP.Text.ToString(), e.FormattedValue);
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 表頭combobox

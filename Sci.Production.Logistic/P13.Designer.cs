@@ -41,7 +41,7 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.txtTransportNo = new Sci.Win.UI.TextBox();
-            this.comboDropDownList1 = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboDropDownList1 = new Sci.Production.Class.ComboDropDownList(this.components);
             this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
@@ -255,7 +255,7 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private Win.UI.TextBox txtTransportNo;
-        private Class.comboDropDownList comboDropDownList1;
+        private Class.ComboDropDownList comboDropDownList1;
         private Win.UI.Label label5;
         private Win.UI.Label label6;
     }

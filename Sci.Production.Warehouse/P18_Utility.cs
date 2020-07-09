@@ -19,7 +19,7 @@ from Orders o
 inner join dbo.Factory f on o.FactoryID = f.ID
 where   o.id = '{0}'
         and f.MDivisionID = '{1}' 
-", poID, Sci.Env.User.Keyword);
+", poID, Env.User.Keyword);
 
             string strCheckInventory = string.Format(
                 @"
@@ -29,7 +29,7 @@ inner join dbo.Orders o on c.POID = o.id
 inner join dbo.Factory f on o.FactoryID = f.ID
 where   c.POID = '{0}'
         and f.MDivisionID = '{1}' 
-", poID, Sci.Env.User.Keyword);
+", poID, Env.User.Keyword);
 
             string strCheckInvtrans = string.Format(
                 @"

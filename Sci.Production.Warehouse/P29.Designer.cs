@@ -40,7 +40,7 @@
             this.lbStockSP = new Sci.Win.UI.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.txtIssueSP2 = new Sci.Win.UI.TextBox();
-            this.txtmfactory = new Sci.Production.Class.txtfactory();
+            this.txtmfactory = new Sci.Production.Class.Txtfactory();
             this.comboCategory = new Sci.Win.UI.ComboBox();
             this.labelCategory = new Sci.Win.UI.Label();
             this.comboFabricType = new Sci.Win.UI.ComboBox();
@@ -193,7 +193,7 @@
             // txtmfactory
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
-            this.txtmfactory.boolFtyGroupList = true;
+            this.txtmfactory.BoolFtyGroupList = true;
             this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtmfactory.IsProduceFty = false;
@@ -549,7 +549,7 @@
         private Win.UI.DateRange dateCuttingInline;
         private Win.UI.TextBox txtProjectID;
         private Win.UI.TextBox txtIssueSP1;
-        private Class.txtfactory txtmfactory;
+        private Class.Txtfactory txtmfactory;
         private Win.UI.ComboBox comboCategory;
         private Win.UI.Label labelCategory;
         private Win.UI.ComboBox comboFabricType;

@@ -1,11 +1,9 @@
 ﻿namespace Sci.Production
 {
+    /// <summary>
+    /// ProductionEnv
+    /// </summary>
     public static class ProductionEnv
     {
-        // public static string Keyword
-        // {
-        //    get;
-        //    set;
-        // }
     }
 }

@@ -242,14 +242,14 @@ WHERE OrderId = @Poid and Refno = @Refno and ThreadColorID = @ColorID
             {
                 this.ShowWaitMessage("Excel Processing...");
 
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P04_LocalTransaction.xltx"); // 預先開啟excel app
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P04_LocalTransaction.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.dataTable, string.Empty, "Warehouse_P04_LocalTransaction.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);
                 Excel.Worksheet worksheet = objApp.Sheets[1];
                 worksheet.Rows.AutoFit();
                 worksheet.Columns.AutoFit();
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P04_LocalTransaction");
+                string strExcelName = Class.MicrosoftFile.GetName("Warehouse_P04_LocalTransaction");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);

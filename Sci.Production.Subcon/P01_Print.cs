@@ -159,8 +159,8 @@ order by ID", this.masterData["LocalSuppID"]);
                         ID = row1["ID"].ToString(),
                     }).ToList();
 
-                data[0].ApvName = Production.Class.UserESignature.getUserESignature(this.masterData["apvname"].ToString(), 207, 83);
-                data[0].LockName = Production.Class.UserESignature.getUserESignature(this.masterData["LockName"].ToString(), 207, 83);
+                data[0].ApvName = Class.UserESignature.GetUserESignature(this.masterData["apvname"].ToString(), 207, 83);
+                data[0].LockName = Class.UserESignature.GetUserESignature(this.masterData["LockName"].ToString(), 207, 83);
                 report.ReportDataSource = data;
                 #endregion
 
@@ -242,8 +242,8 @@ order by ID", this.masterData["LocalSuppID"]);
                         Amount = row1["Amount"].ToString(),
                     }).ToList();
 
-                data[0].ApvName = Production.Class.UserESignature.getUserESignature(this.masterData["apvname"].ToString(), 207, 83);
-                data[0].LockName = Production.Class.UserESignature.getUserESignature(this.masterData["LockName"].ToString(), 185, 83);
+                data[0].ApvName = Class.UserESignature.GetUserESignature(this.masterData["apvname"].ToString(), 207, 83);
+                data[0].LockName = Class.UserESignature.GetUserESignature(this.masterData["LockName"].ToString(), 185, 83);
                 report.ReportDataSource = data;
                 #endregion
 

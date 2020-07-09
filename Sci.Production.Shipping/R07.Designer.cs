@@ -35,7 +35,7 @@
             this.dateDate = new Sci.Win.UI.DateRange();
             this.dateApvDate = new Sci.Win.UI.DateRange();
             this.comboM = new Sci.Win.UI.ComboBox();
-            this.txtSubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtSubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             this.SuspendLayout();
             // 
             // print
@@ -162,6 +162,6 @@
         private Win.UI.DateRange dateDate;
         private Win.UI.DateRange dateApvDate;
         private Win.UI.ComboBox comboM;
-        private Class.txtsubconNoConfirm txtSubconSupplier;
+        private Class.TxtsubconNoConfirm txtSubconSupplier;
     }
 }

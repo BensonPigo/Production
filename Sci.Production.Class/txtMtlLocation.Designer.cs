@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class txtMtlLocation
+    partial class TxtMtlLocation
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -32,8 +32,8 @@
             // 
             // txtLocation
             // 
-            this.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtLocation_PopUp);
-            this.Validating += new System.ComponentModel.CancelEventHandler(this.txtLocation_Validating);
+            this.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtLocation_PopUp);
+            this.Validating += new System.ComponentModel.CancelEventHandler(this.TxtLocation_Validating);
             this.ResumeLayout(false);
 
         }

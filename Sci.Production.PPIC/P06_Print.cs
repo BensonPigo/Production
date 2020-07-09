@@ -77,7 +77,7 @@ namespace Sci.Production.PPIC
             }
 
             this.printData = this.gridData.Select(string.Format("{0}", filter.ToString().Substring(0, filter.ToString().Length - 5)));
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -89,7 +89,7 @@ namespace Sci.Production.PPIC
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_P06_Print.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\PPIC_P06_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -147,7 +147,7 @@ namespace Sci.Production.PPIC
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P06_Print");
+            string strExcelName = Class.MicrosoftFile.GetName("PPIC_P06_Print");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

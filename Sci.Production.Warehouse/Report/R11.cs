@@ -53,7 +53,7 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
-            this.txtMdivision.Text = Sci.Env.User.Keyword;
+            this.txtMdivision.Text = Env.User.Keyword;
             MyUtility.Tool.SetupCombox(this.comboFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
             this.comboFabricType.SelectedIndex = 0;
             MyUtility.Tool.SetupCombox(this.comboStockType, 2, 1, ",ALL,D,Bulk,E,Inventory");
@@ -400,7 +400,7 @@ from cte t"));
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel
@@ -433,7 +433,7 @@ from cte t"));
                 DescIndex = 6;
             }
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + ExcelXltx); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + ExcelXltx); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, ExcelXltx, 2, showExcel: false, showSaveMsg: false, excelApp: objApp);      // 將datatable copy to excel
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
@@ -446,7 +446,7 @@ from cte t"));
             }
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(this.radioSummary.Checked ? "Warehouse_R11_Summary" : "Warehouse_R11_List");
+            string strExcelName = Class.MicrosoftFile.GetName(this.radioSummary.Checked ? "Warehouse_R11_Summary" : "Warehouse_R11_List");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

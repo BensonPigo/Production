@@ -59,7 +59,7 @@ INNER join (
             inner join dbo.Factory WITH (NOLOCK) on i.FactoryID = factory.ID
 	  ) on I.InventoryPOID = d.FromPOID and i.InventorySeq1 = d.FromSeq1 and i.InventorySeq2 = d.FromSeq2 and  i.Type='5'
 where factory.MDivisionID='{1}'
-group by d.FromPOID,d.fromseq1,d.fromseq2,p.StockUnit,d.scrap_qty, p.POUnit", this.dr["id"], Sci.Env.User.Keyword));
+group by d.FromPOID,d.fromseq1,d.fromseq2,p.StockUnit,d.scrap_qty, p.POUnit", this.dr["id"], Env.User.Keyword));
 
             DataTable selectDataTable1;
             this.P24.ShowWaitMessage("Data Loading...");

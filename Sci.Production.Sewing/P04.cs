@@ -521,7 +521,7 @@ DROP TABLE #Child;");
         {
             #region SQL Parameter
             List<SqlParameter> listSqlParameter = new List<SqlParameter>();
-            listSqlParameter.Add(new SqlParameter("@Factory", Sci.Env.User.Factory));
+            listSqlParameter.Add(new SqlParameter("@Factory", Env.User.Factory));
             #endregion
             #region SQL Command
             string strSqlCmd = $@"

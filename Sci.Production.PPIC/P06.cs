@@ -141,7 +141,7 @@ and o.Finished = 0
 and (o.Junk=0 or (o.Junk=1 and o.NeedProduction=1))
 and (oq.EstPulloutDate <= '{1}' or oq.EstPulloutDate is null or iif(o.PulloutDate is null, dateadd(day,4,o.SewOffLine) , o.PulloutDate) <= '{1}')
 and o.Category in ({2})",
-                Sci.Env.User.Keyword,
+                Env.User.Keyword,
                 Convert.ToDateTime(this.dateExpPoutDate.Value).ToString("d"),
                 category));
 
@@ -317,7 +317,7 @@ drop table #tmpClocationids,#tmpIDSeq,#tmp1,#tmp2,#Order_QtyShip_Detail,#MtlForm
                             @"update Order_QtyShip set SDPDate = {0}, ShipRemark = '{1}', EditName = '{2}', EditDate = GETDATE() where ID = '{3}' and Seq = '{4}'",
                             MyUtility.Check.Empty(dr["SDPDate"]) ? "null" : "'" + Convert.ToDateTime(dr["SDPDate"]).ToString("d") + "'",
                             dr["ShipRemark"].ToString(),
-                            Sci.Env.User.UserID,
+                            Env.User.UserID,
                             dr["ID"].ToString(),
                             dr["Seq"].ToString()));
 

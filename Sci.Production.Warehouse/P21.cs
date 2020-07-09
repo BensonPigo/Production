@@ -79,7 +79,7 @@ namespace Sci.Production.Warehouse
 
                 string[] locationList = e.FormattedValue.ToString().Split(',');
 
-                string notLocationExistsList = locationList.Where(a => !PublicPrg.Prgs.CheckLocationExists(curDr["StockType"].ToString(), a)).JoinToString(",");
+                string notLocationExistsList = locationList.Where(a => !Prgs.CheckLocationExists(curDr["StockType"].ToString(), a)).JoinToString(",");
 
                 if (!MyUtility.Check.Empty(notLocationExistsList))
                 {
@@ -162,7 +162,7 @@ namespace Sci.Production.Warehouse
         private void GridLocationCellPop(int rowIndex)
         {
             DataRow curDr = this.gridReceiving.GetDataRow(rowIndex);
-            SelectItem2 selectItem2 = PublicPrg.Prgs.SelectLocation(curDr["StockType"].ToString());
+            SelectItem2 selectItem2 = Prgs.SelectLocation(curDr["StockType"].ToString());
             selectItem2.ShowDialog();
             if (selectItem2.DialogResult == DialogResult.OK)
             {
@@ -178,15 +178,15 @@ namespace Sci.Production.Warehouse
             string sqlWhere = string.Empty;
             string sqlWhere2 = string.Empty;
 
-            if (!this.txtSeq.checkSeq1Empty() && this.txtSeq.checkSeq2Empty())
+            if (!this.txtSeq.CheckSeq1Empty() && this.txtSeq.CheckSeq2Empty())
             {
-                sqlWhere += $" and rd.seq1 = '{this.txtSeq.seq1}'";
-                sqlWhere2 += $" and td.seq1 = '{this.txtSeq.seq1}'";
+                sqlWhere += $" and rd.seq1 = '{this.txtSeq.Seq1}'";
+                sqlWhere2 += $" and td.seq1 = '{this.txtSeq.Seq1}'";
             }
-            else if (!this.txtSeq.checkEmpty(showErrMsg: false))
+            else if (!this.txtSeq.CheckEmpty(showErrMsg: false))
             {
-                sqlWhere += $" and rd.seq1 = '{this.txtSeq.seq1}' and rd.seq2 = '{this.txtSeq.seq2}'";
-                sqlWhere2 += $" and td.seq1 = '{this.txtSeq.seq1}' and td.seq2 = '{this.txtSeq.seq2}'";
+                sqlWhere += $" and rd.seq1 = '{this.txtSeq.Seq1}' and rd.seq2 = '{this.txtSeq.Seq2}'";
+                sqlWhere2 += $" and td.seq1 = '{this.txtSeq.Seq1}' and td.seq2 = '{this.txtSeq.Seq2}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtRef.Text))
@@ -495,7 +495,7 @@ DROP TABLE #tmpStockType
             int cntID = ((selectedReceivingSummary.Count() >= 1) ? 1 : 0) + drArryExistRemark.Length; // 產生表頭數
 
             string sqlInsertLocationTrans = string.Empty;
-            List<string> id_list = MyUtility.GetValue.GetBatchID(Sci.Env.User.Keyword + "LH", "LocationTrans", batchNumber: cntID, sequenceMode: 2); // 批次產生ID
+            List<string> id_list = MyUtility.GetValue.GetBatchID(Env.User.Keyword + "LH", "LocationTrans", batchNumber: cntID, sequenceMode: 2); // 批次產生ID
             int idcnt = 0;
 
             if (id_list.Count == 0 && drArryActualWeight.Length == 0)

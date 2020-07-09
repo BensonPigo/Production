@@ -11,21 +11,28 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Class
 {
-    public partial class txtCentralizedmulitM : Win.UI.TextBox
+    /// <summary>
+    /// TxtCentralizedmulitM
+    /// </summary>
+    public partial class TxtCentralizedmulitM : Win.UI.TextBox
     {
-        public txtCentralizedmulitM()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TxtCentralizedmulitM"/> class.
+        /// </summary>
+        public TxtCentralizedmulitM()
         {
             this.Size = new System.Drawing.Size(450, 23);
             this.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
-            DualResult result = Result.True;
-            DataTable FactoryData = new DataTable();
-            FactoryData.Columns.Add("M", typeof(string));
-            DataTable Data;
+            DualResult result = Ict.Result.True;
+            DataTable factoryData = new DataTable();
+            factoryData.Columns.Add("M", typeof(string));
+            DataTable dt;
 
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
             List<string> strSevers = ConfigurationManager.AppSettings["PMSDBServer"].Split(',').ToList();
@@ -54,20 +61,20 @@ namespace Sci.Production.Class
                 {
                     con.Open();
                     string sqlcmd = $@"select M=ID from MDivision ";
-                    result = DBProxy.Current.SelectByConn(con, sqlcmd, out Data);
+                    result = DBProxy.Current.SelectByConn(con, sqlcmd, out dt);
                     if (!result)
                     {
                         return;
                     }
 
-                    foreach (DataRow row in Data.Rows)
+                    foreach (DataRow row in dt.Rows)
                     {
-                        FactoryData.ImportRow(row);
+                        factoryData.ImportRow(row);
                     }
                 }
             }
 
-            Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(FactoryData, "M", "M", "5", this.Text);
+            Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(factoryData, "M", "M", "5", this.Text);
             DialogResult dialogResult = item.ShowDialog();
             if (dialogResult == DialogResult.Cancel)
             {

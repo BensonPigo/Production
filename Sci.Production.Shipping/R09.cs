@@ -497,7 +497,7 @@ select * from FtyExportData");
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -513,7 +513,7 @@ select * from FtyExportData");
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + (this.reportType == 1 ? "\\Shipping_R09_ShareExpenseImportByWK.xltx" : "\\Shipping_R09_ShareExpenseImportByWKByFee.xltx");
+            string strXltName = Env.Cfg.XltPathDir + (this.reportType == 1 ? "\\Shipping_R09_ShareExpenseImportByWK.xltx" : "\\Shipping_R09_ShareExpenseImportByWKByFee.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -631,7 +631,7 @@ select * from FtyExportData");
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(this.reportType == 1 ? "Shipping_R09_ShareExpenseImportByWK" : "Shipping_R09_ShareExpenseImportByWKByFee");
+            string strExcelName = Class.MicrosoftFile.GetName(this.reportType == 1 ? "Shipping_R09_ShareExpenseImportByWK" : "Shipping_R09_ShareExpenseImportByWKByFee");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

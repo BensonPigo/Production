@@ -32,7 +32,7 @@ namespace Sci.Production.Subcon
         {
             this.InitializeComponent();
             this.EditMode = true;
-            this.txtfactory.Text = Sci.Env.User.Factory;
+            this.txtfactory.Text = Env.User.Factory;
             this.displaySubProcess.Text = "Loading";
         }
 
@@ -484,7 +484,7 @@ drop table #BasBundleInfo
             }
 
             Excel.Application objApp = new Excel.Application();
-            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Subcon_P40.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Subcon_P40.xltx", objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
 
             com.WriteTable(this.dtExcel, 2);
@@ -498,7 +498,7 @@ drop table #BasBundleInfo
             }
 
             objApp.Rows.AutoFit();
-            string Excelfile = Sci.Production.Class.MicrosoftFile.GetName("Subcon_P40");
+            string Excelfile = Class.MicrosoftFile.GetName("Subcon_P40");
             objApp.ActiveWorkbook.SaveAs(Excelfile);
             Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(objApp);

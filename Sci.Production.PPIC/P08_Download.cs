@@ -96,11 +96,11 @@ where TableName = 'ReplacementReport' AND UniqueKey = '{this.Master["ID"]}'";
             saveFileDialog1.Title = "Save File";
             saveFileDialog1.FileName = dr["FileName"].ToString();
 
-            if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                    System.IO.File.Copy(filelist[0].FullName, saveFileDialog1.FileName, true);
+                    File.Copy(filelist[0].FullName, saveFileDialog1.FileName, true);
                 }
                 catch (IOException exception)
                 {

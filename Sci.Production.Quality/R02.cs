@@ -250,7 +250,7 @@ OUTER APPLY(select [OvenEncode]='Y' from dbo.AIR_Laboratory AL WITH (NOLOCK) whe
                 return false;
             }
 
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
+            var saveDialog = Utility.Excel.MyExcelPrg.GetSaveFileDialog(Utility.Excel.MyExcelPrg.Filter_Excel);
 
             // saveDialog.ShowDialog();
             // string outpath = saveDialog.FileName;
@@ -281,7 +281,7 @@ OUTER APPLY(select [OvenEncode]='Y' from dbo.AIR_Laboratory AL WITH (NOLOCK) whe
             xl.DicDatas.Add("##Over", this.Over);
             xl.DicDatas.Add("##body", this.dt);
 
-            xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Quality_R02"), false);
+            xl.Save(Class.MicrosoftFile.GetName("Quality_R02"), false);
             ((Microsoft.Office.Interop.Excel.Worksheet)xl.ExcelApp.ActiveSheet).Columns.AutoFit();
             xl.FinishSave();
             return true;

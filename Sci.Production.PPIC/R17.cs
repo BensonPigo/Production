@@ -32,8 +32,8 @@ namespace Sci.Production.PPIC
         {
             base.OnFormLoaded();
 
-            this.txtMdivision.Text = Sci.Env.User.Keyword;
-            this.txtfactory.Text = Sci.Env.User.Factory;
+            this.txtMdivision.Text = Env.User.Keyword;
+            this.txtfactory.Text = Env.User.Factory;
         }
 
         /// <inheritdoc/>
@@ -176,11 +176,11 @@ where 1=1
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application excelAPP = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R17.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application excelAPP = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_R17.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "PPIC_R17.xltx", 1, false, null, excelAPP); // 將datatable copy to excel
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R17");
+            string strExcelName = Class.MicrosoftFile.GetName("PPIC_R17");
             excelAPP.ActiveWorkbook.SaveAs(strExcelName);
             excelAPP.Visible = true;
 

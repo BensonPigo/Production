@@ -291,7 +291,7 @@ values(
                     MyUtility.Convert.GetString(dr["Receiver"]),
                     MyUtility.Convert.GetString(dr["BrandID"]),
                     MyUtility.Convert.GetString(dr["LeaderID"]),
-                    Sci.Env.User.UserID));
+                    Env.User.UserID));
             }
 
             insertCmds.Add($"update PackingList set ExpressID = '{this.masterData["ID"]}' where ID = '{dt.Rows[0]["ID"]}'");
@@ -301,7 +301,7 @@ values(
                 try
                 {
                     result1 = DBProxy.Current.Executes(null, insertCmds);
-                    result2 = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.masterData["ID"])));
+                    result2 = DBProxy.Current.Execute(null, Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.masterData["ID"])));
                     if (result1 && result2)
                     {
                         transactionScope.Complete();

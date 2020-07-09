@@ -32,7 +32,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.dateInvDate = new Sci.Win.UI.DateRange();
             this.comboShipper = new Sci.Win.UI.ComboBox();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.labBuyerDelivery = new Sci.Win.UI.Label();
@@ -219,7 +219,7 @@
         private System.Windows.Forms.Panel panel1;
         private Win.UI.DateRange dateInvDate;
         private Win.UI.ComboBox comboShipper;
-        private Class.txtbrand txtbrand;
+        private Class.Txtbrand txtbrand;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.Label labBuyerDelivery;

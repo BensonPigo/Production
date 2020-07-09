@@ -97,7 +97,7 @@ when matched then update set
 	t.DescVI = s.DescVI,
 	t.DescCHS = s.DescCHS,
 	t.EditDate = GETDATE(),
-	t.EditName = '{Sci.Env.User.UserID}'	
+	t.EditName = '{Env.User.UserID}'	
 when not matched by target then
 	insert (
 	   [ID]
@@ -112,7 +112,7 @@ when not matched by target then
       ,s.[DescVI]
       ,s.[DescCHS]
       ,GETDATE()
-      ,'{Sci.Env.User.UserID}');
+      ,'{Env.User.UserID}');
 ";
             SqlConnection sqlConn = null;
             DBProxy.Current.OpenConnection("ProductionTPE", out sqlConn);
@@ -186,15 +186,15 @@ FROM OperationDesc WITH (NOLOCK)
                 printData.Rows[i]["OperationTitle"] = MyUtility.GetValue.Lookup($"SELECT DescEN FROM Operation WITH (NOLOCK) WHERE ID='{printData.Rows[i]["ID"]}' ", "Production");
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Centralized_IE_B13.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Centralized_IE_B13.xltx"); // 預先開啟excel app
 
-            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Centralized_IE_B13.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Centralized_IE_B13.xltx", objApp);
 
             com.ColumnsAutoFit = false;
             com.WriteTable(printData, 2);
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Centralized_IE_B13");
+            string strExcelName = Class.MicrosoftFile.GetName("Centralized_IE_B13");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

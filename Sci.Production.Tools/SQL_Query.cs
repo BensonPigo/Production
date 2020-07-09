@@ -59,8 +59,8 @@ namespace Sci.Production.Tools
 
         private void btnSqlUpdate_Click(object sender, EventArgs e)
         {
-            string[] dirs = Directory.GetFiles(Sci.Env.Cfg.ReportTempDir, "*.sql");
-            string subject = string.Format("DataBase={0}, Account={1}, Factory={2} SQL Update Success !!", DBProxy.Current.DefaultModuleName, Sci.Env.User.UserName, Sci.Env.User.Factory);
+            string[] dirs = Directory.GetFiles(Env.Cfg.ReportTempDir, "*.sql");
+            string subject = string.Format("DataBase={0}, Account={1}, Factory={2} SQL Update Success !!", DBProxy.Current.DefaultModuleName, Env.User.UserName, Env.User.Factory);
             string desc = subject;
 
             if (dirs.Length == 0)
@@ -95,7 +95,7 @@ namespace Sci.Production.Tools
                     {
                         _transactionscope.Dispose();
                         this.ShowErr("Commit transaction error.", ex);
-                        subject = string.Format("DataBase={0}, Account={1}, Factory={2} SQL Update Fail !!", DBProxy.Current.DefaultModuleName, Sci.Env.User.UserName, Sci.Env.User.Factory);
+                        subject = string.Format("DataBase={0}, Account={1}, Factory={2} SQL Update Fail !!", DBProxy.Current.DefaultModuleName, Env.User.UserName, Env.User.Factory);
                         desc = subject + string.Format(
                             @"
 ------------------------------------------------------------
@@ -117,7 +117,7 @@ namespace Sci.Production.Tools
         private void sendmail(string subject, string desc)
         {
             string sql_update_receiver = ConfigurationManager.AppSettings["sql_update_receiver"];
-            Win.Tools.MailTo mail = new Win.Tools.MailTo(Sci.Env.Cfg.MailFrom, sql_update_receiver, string.Empty, subject, string.Empty, desc, true, true);
+            Win.Tools.MailTo mail = new Win.Tools.MailTo(Env.Cfg.MailFrom, sql_update_receiver, string.Empty, subject, string.Empty, desc, true, true);
             mail.ShowDialog();
         }
     }

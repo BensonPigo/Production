@@ -34,11 +34,11 @@
             this.labelSMR = new Sci.Win.UI.Label();
             this.labelSupplier = new Sci.Win.UI.Label();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtseason = new Sci.Production.Class.txtseason();
-            this.txttpeuser_caneditSMR = new Sci.Production.Class.txttpeuser_canedit();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtstyle = new Sci.Production.Class.Txtstyle();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.txtseason = new Sci.Production.Class.Txtseason();
+            this.txttpeuser_caneditSMR = new Sci.Production.Class.Txttpeuser_canedit();
+            this.txtsubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
@@ -114,8 +114,8 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 0;
-            this.txtstyle.tarBrand = null;
-            this.txtstyle.tarSeason = null;
+            this.txtstyle.TarBrand = null;
+            this.txtstyle.TarSeason = null;
             // 
             // txtbrand
             // 
@@ -149,9 +149,9 @@
             // 
             this.txtsubconSupplier.DisplayBox1Binding = "";
             this.txtsubconSupplier.IsIncludeJunk = true;
-            this.txtsubconSupplier.isMisc = false;
-            this.txtsubconSupplier.isShipping = false;
-            this.txtsubconSupplier.isSubcon = false;
+            this.txtsubconSupplier.IsMisc = false;
+            this.txtsubconSupplier.IsShipping = false;
+            this.txtsubconSupplier.IsSubcon = false;
             this.txtsubconSupplier.Location = new System.Drawing.Point(100, 157);
             this.txtsubconSupplier.Name = "txtsubconSupplier";
             this.txtsubconSupplier.Size = new System.Drawing.Size(170, 23);
@@ -231,11 +231,11 @@
         private Win.UI.Label labelSMR;
         private Win.UI.Label labelSupplier;
         private Win.UI.Label labelSCIDelivery;
-        private Class.txtstyle txtstyle;
-        private Class.txtbrand txtbrand;
-        private Class.txtseason txtseason;
-        private Class.txttpeuser_canedit txttpeuser_caneditSMR;
-        private Class.txtsubconNoConfirm txtsubconSupplier;
+        private Class.Txtstyle txtstyle;
+        private Class.Txtbrand txtbrand;
+        private Class.Txtseason txtseason;
+        private Class.Txttpeuser_canedit txttpeuser_caneditSMR;
+        private Class.TxtsubconNoConfirm txtsubconSupplier;
         private Win.UI.DateRange dateSCIDelivery;
     }
 }

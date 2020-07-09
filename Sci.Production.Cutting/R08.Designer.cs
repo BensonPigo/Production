@@ -35,12 +35,12 @@
             this.label7 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.dateActCutDate = new Sci.Win.UI.DateRange();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
-            this.txtSpreadingNo2 = new Sci.Production.Class.txtSpreadingNo();
-            this.txtSpreadingNo1 = new Sci.Production.Class.txtSpreadingNo();
-            this.txtCell2 = new Sci.Production.Class.txtCell();
-            this.txtCell1 = new Sci.Production.Class.txtCell();
+            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
+            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
+            this.txtSpreadingNo2 = new Sci.Production.Class.TxtSpreadingNo();
+            this.txtSpreadingNo1 = new Sci.Production.Class.TxtSpreadingNo();
+            this.txtCell2 = new Sci.Production.Class.TxtCell();
+            this.txtCell1 = new Sci.Production.Class.TxtCell();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.txtCuttingSp = new Sci.Win.UI.TextBox();
@@ -185,7 +185,7 @@
             // txtfactory1
             // 
             this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.boolFtyGroupList = true;
+            this.txtfactory1.BoolFtyGroupList = true;
             this.txtfactory1.FilteMDivision = false;
             this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory1.IsProduceFty = false;
@@ -376,12 +376,12 @@
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
-        private Class.txtSpreadingNo txtSpreadingNo2;
-        private Class.txtSpreadingNo txtSpreadingNo1;
-        private Class.txtCell txtCell2;
-        private Class.txtCell txtCell1;
-        private Class.txtfactory txtfactory1;
-        private Class.txtMdivision txtMdivision1;
+        private Class.TxtSpreadingNo txtSpreadingNo2;
+        private Class.TxtSpreadingNo txtSpreadingNo1;
+        private Class.TxtCell txtCell2;
+        private Class.TxtCell txtCell1;
+        private Class.Txtfactory txtfactory1;
+        private Class.TxtMdivision txtMdivision1;
         private Win.UI.Label label6;
         private Win.UI.DateRange dateActCutDate;
         private Win.UI.NumericBox numSpeed;

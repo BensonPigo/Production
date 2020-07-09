@@ -85,7 +85,7 @@ namespace Sci.Production.Planning
         /// <returns>DualResult</returns>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
             if (this.dtPrint != null)
             {
                 this.dtPrint.Rows.Clear();
@@ -144,7 +144,7 @@ from #tmpData1 tmpData1
 Left Join SewingOutput_Detail WITH (NOLOCK) on OrderID = tmpData1.ID AND SewingOutput_Detail.WorkHour > 0
 Left Join SewingOutput WITH (NOLOCK) on SewingOutput.ID = SewingOutput_Detail.ID";
 
-            this.BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – By Order, Factory Finishing details (Step 2/5)"); });
+            this.BeginInvoke(() => { MyUtility.Msg.WaitWindows("Wait – By Order, Factory Finishing details (Step 2/5)"); });
             result = DBProxy.Current.SelectByConn(con, this.SqlData2, out this.tmpData2);
             this.BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
             if (!result)
@@ -185,7 +185,7 @@ from (
                 select,
                 groupBy);
 
-            this.BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Group By Style , Country Finishing details (Step 3/5)"); });
+            this.BeginInvoke(() => { MyUtility.Msg.WaitWindows("Wait – Group By Style , Country Finishing details (Step 3/5)"); });
             result = DBProxy.Current.SelectByConn(con, this.SqlData3, out this.tmpData3);
             this.BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
             if (!result)
@@ -305,7 +305,7 @@ select  tmpData2.OrderID as SP#, tmpData2.CPU as CPU, tmpData2.SMV as SMV, tmpDa
 from #tmpData2 tmpData2
 order by tmpData2.OrderID";
 
-            this.BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Finishing Order Detail Data (Step 5/5)"); });
+            this.BeginInvoke(() => { MyUtility.Msg.WaitWindows("Wait – Finishing Order Detail Data (Step 5/5)"); });
             result = DBProxy.Current.SelectByConn(con, this.SqlOrderDetail, out this.tmpOrderDetail);
             this.BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
             if (!result)
@@ -329,7 +329,7 @@ order by tmpData2.OrderID";
         private DualResult TransferData()
         {
             string temfile = string.Empty, title = string.Empty;
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
 
             string strPath = PrivUtils.GetPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
             temfile = strPath + @"\Planning_R12.Matrix.xltx";
@@ -368,9 +368,9 @@ order by tmpData2.OrderID";
             sxrc.DicDatas.Add("##title", title);
             sxrc.DicDatas.Add("##Fty Code", this.txtSeason.Text + "_historical data");
 
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R12.Matrix");
+            string strExcelName = Class.MicrosoftFile.GetName("Planning_R12.Matrix");
             sxrc.Save(strExcelName);
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private void GetStandardTms()

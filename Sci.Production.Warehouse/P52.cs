@@ -18,7 +18,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
             #region Set ComboBox Dictionary
             Dictionary<string, string> dicForwardBack = new Dictionary<string, string>();
             dicForwardBack.Add("F", "Forward");
@@ -65,7 +65,7 @@ from LocalInventory Linv
 inner join orders o on Linv.OrderID = o.ID
 where   Linv.OrderID = '{0}'
         and o.MDivisionID = '{1}'", strNewSP,
-                    Sci.Env.User.Keyword));
+                    Env.User.Keyword));
                 if (boolCheckSPNum)
                 {
                     if (!strOldSP.EqualString(strNewSP))
@@ -87,7 +87,7 @@ where   Linv.OrderID = '{0}'
             DataGridViewGeneratorTextColumnSettings gridRefNumSetting = new DataGridViewGeneratorTextColumnSettings();
             gridRefNumSetting.EditingMouseDown += (s, e) =>
             {
-                if (e.Button != System.Windows.Forms.MouseButtons.Right || !this.EditMode)
+                if (e.Button != MouseButtons.Right || !this.EditMode)
                 {
                     return;
                 }
@@ -138,7 +138,7 @@ Where LInv.OrderID = '{1}'", this.CurrentMaintain["StockType"],
             DataGridViewGeneratorTextColumnSettings gridColorSetting = new DataGridViewGeneratorTextColumnSettings();
             gridColorSetting.EditingMouseDown += (s, e) =>
             {
-                if (e.Button != System.Windows.Forms.MouseButtons.Right || !this.EditMode)
+                if (e.Button != MouseButtons.Right || !this.EditMode)
                 {
                     return;
                 }
@@ -281,8 +281,8 @@ order by STLD.POID, STLD.Refno, STLD.Color
         {
             base.ClickNewAfter();
             this.CurrentMaintain["IssueDate"] = DateTime.Today;
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Type"] = "F";
             this.CurrentMaintain["StockType"] = "B";
             this.CurrentMaintain["Status"] = "New";
@@ -421,7 +421,7 @@ where countDuplicate.value > 1";
             #region 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "SL", "StocktakingLocal", (DateTime)this.CurrentMaintain["Issuedate"]);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "SL", "StocktakingLocal", (DateTime)this.CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -521,7 +521,7 @@ when matched then
                     #region 庫存足夠，【QtyAfter != QtyBefore】建立調整單
                     #region 取 Adjust 單號
                     string strLBLC = this.CurrentMaintain["StockType"].EqualString("O") ? "LC" : "LB";
-                    strAdjustID = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + strLBLC, "AdjustLocal", (DateTime)this.CurrentMaintain["Issuedate"], 2, "ID", null);
+                    strAdjustID = MyUtility.GetValue.GetID(Env.User.Keyword + strLBLC, "AdjustLocal", (DateTime)this.CurrentMaintain["Issuedate"], 2, "ID", null);
                     if (MyUtility.Check.Empty(strAdjustID))
                     {
                         _transactionscope.Dispose();

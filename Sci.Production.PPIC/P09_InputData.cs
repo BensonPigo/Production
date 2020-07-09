@@ -114,7 +114,7 @@ and mpd.InQty > 0",
                         MyUtility.Convert.GetString(this.masterData["POID"]),
                         seq1,
                         seq2,
-                        Sci.Env.User.Keyword);
+                        Env.User.Keyword);
 
                     if (!MyUtility.Check.Seek(sqlCmd, out poData))
                     {

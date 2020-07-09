@@ -6,8 +6,20 @@ using Sci.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class txtcurrency : Win.UI.TextBox
+    /// <summary>
+    /// Txtcurrency
+    /// </summary>
+    public partial class Txtcurrency : Win.UI.TextBox
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtcurrency"/> class.
+        /// </summary>
+        public Txtcurrency()
+        {
+            this.Size = new System.Drawing.Size(48, 23);
+        }
+
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
@@ -25,6 +37,7 @@ namespace Sci.Production.Class
             this.ValidateText();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -40,11 +53,6 @@ namespace Sci.Production.Class
                     return;
                 }
             }
-        }
-
-        public txtcurrency()
-        {
-            this.Size = new System.Drawing.Size(48, 23);
         }
     }
 }

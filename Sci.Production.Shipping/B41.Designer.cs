@@ -52,7 +52,7 @@
             this.label16 = new Sci.Win.UI.Label();
             this.label17 = new Sci.Win.UI.Label();
             this.checkNoNeedToDeclare = new Sci.Win.UI.CheckBox();
-            this.txtSubconSupplier = new Sci.Production.Class.txtsubconNoConfirm();
+            this.txtSubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             this.displayUnit = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -477,6 +477,6 @@
         private Win.UI.Label labelDescription;
         private Win.UI.Label labelRefNo;
         private Win.UI.DisplayBox displayUnit;
-        private Sci.Production.Class.txtsubconNoConfirm txtSubconSupplier;
+        private Sci.Production.Class.TxtsubconNoConfirm txtSubconSupplier;
     }
 }

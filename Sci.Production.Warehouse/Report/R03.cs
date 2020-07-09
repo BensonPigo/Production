@@ -43,7 +43,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtMdivision.Text = Sci.Env.User.Keyword;
+            this.txtMdivision.Text = Env.User.Keyword;
             MyUtility.Tool.SetupCombox(this.comboFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
             this.comboFabricType.SelectedIndex = 0;
             MyUtility.Tool.SetupCombox(this.comboOrderBy, 1, 1, "Supplier,SP#");
@@ -528,7 +528,7 @@ where 1=1
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         // 產生Excel
@@ -543,9 +543,9 @@ where 1=1
                 return false;
             }
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R03.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R03.xltx"); // 預先開啟excel app
             this.ShowWaitMessage("Excel Processing...");
-            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R03.xltx", objApp);
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Warehouse_R03.xltx", objApp);
 
             // com.TransferArray_Limit = 200000;
             com.ColumnsAutoFit = true;
@@ -569,7 +569,7 @@ where 1=1
             //        worksheet.Cells[i + 1, 12] = str.Trim();
             // }
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R03");
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R03");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

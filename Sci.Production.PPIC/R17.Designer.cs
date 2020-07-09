@@ -33,8 +33,8 @@
             this.lbMdivision = new Sci.Win.UI.Label();
             this.lbBuyerDelivery = new Sci.Win.UI.Label();
             this.dateRangeByerDev = new Sci.Win.UI.DateRange();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.dateRangeCDate = new Sci.Win.UI.DateRange();
             this.lbCreateDate = new Sci.Win.UI.Label();
             this.txtSP_S = new Sci.Win.UI.TextBox();
@@ -127,7 +127,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
@@ -254,8 +254,8 @@
         private Win.UI.Label lbFactory;
         private Win.UI.Label lbMdivision;
         private Win.UI.Label lbBuyerDelivery;
-        private Class.txtMdivision txtMdivision;
-        private Class.txtfactory txtfactory;
+        private Class.TxtMdivision txtMdivision;
+        private Class.Txtfactory txtfactory;
         private Win.UI.DateRange dateRangeByerDev;
         private Win.UI.DateRange dateRangeCDate;
         private Win.UI.Label lbCreateDate;

@@ -75,12 +75,12 @@
             this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.txttpeuserMRModifer = new Sci.Production.Class.txttpeuser();
-            this.txtuserFtyModifier = new Sci.Production.Class.txtuser();
-            this.txttpeuserPOHandle = new Sci.Production.Class.txttpeuser();
-            this.txttpeuserPOSMR = new Sci.Production.Class.txttpeuser();
-            this.txttpeuserMRHandle = new Sci.Production.Class.txttpeuser();
-            this.txttpeuserSMR = new Sci.Production.Class.txttpeuser();
+            this.txttpeuserMRModifer = new Sci.Production.Class.Txttpeuser();
+            this.txtuserFtyModifier = new Sci.Production.Class.Txtuser();
+            this.txttpeuserPOHandle = new Sci.Production.Class.Txttpeuser();
+            this.txttpeuserPOSMR = new Sci.Production.Class.Txttpeuser();
+            this.txttpeuserMRHandle = new Sci.Production.Class.Txttpeuser();
+            this.txttpeuserSMR = new Sci.Production.Class.Txttpeuser();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.SuspendLayout();
@@ -750,10 +750,10 @@
         private Win.UI.Label labelBuyerDelivery;
         private Win.UI.DateBox dateBuyerDelivery;
         private Win.UI.Label labelSMR;
-        private Class.txttpeuser txttpeuserSMR;
-        private Class.txttpeuser txttpeuserMRHandle;
-        private Class.txttpeuser txttpeuserPOSMR;
-        private Class.txttpeuser txttpeuserPOHandle;
+        private Class.Txttpeuser txttpeuserSMR;
+        private Class.Txttpeuser txttpeuserMRHandle;
+        private Class.Txttpeuser txttpeuserPOSMR;
+        private Class.Txttpeuser txttpeuserPOHandle;
         private Win.UI.Label labelMRHandle;
         private Win.UI.Label labelPOSMR;
         private Win.UI.Label labelPOHandle;
@@ -774,7 +774,7 @@
         private Win.UI.DateBox dateFtyMRRcvDate;
         private Win.UI.DateBox dateFtySendtoQA;
         private Win.UI.EditBox editFtyRemark;
-        private Class.txtuser txtuserFtyModifier;
+        private Class.Txtuser txtuserFtyModifier;
         private Win.UI.DisplayBox displayFtyLastDate;
         private Win.UI.Label labelQARcvDate;
         private Win.UI.DateBox dateQARcvDate;
@@ -785,6 +785,6 @@
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape3;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape2;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
-        private Class.txttpeuser txttpeuserMRModifer;
+        private Class.Txttpeuser txttpeuserMRModifer;
     }
 }

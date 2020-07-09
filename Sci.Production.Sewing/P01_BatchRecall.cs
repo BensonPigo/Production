@@ -89,7 +89,7 @@ outer apply (
 )sodd
 where 1=1
 and so.Status = 'Sent' 
-and so.FactoryID = '{Sci.Env.User.Factory}'
+and so.FactoryID = '{Env.User.Factory}'
 and sod.Ukey = sodd.Ukey
 {where}
 order by sod.ukey desc,so.LockDate,so.SewingLineID,so.Team,so.Shift
@@ -127,18 +127,18 @@ order by sod.ukey desc,so.LockDate,so.SewingLineID,so.Team,so.Shift
             DataTable dt = query.CopyToDataTable();
             string sqlcmd = $@"
 insert into SewingOutput_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
-select id,'Status','Sent','New',sod.ReasonID,sod.Remark,'{Sci.Env.User.UserID}',GETDATE()
+select id,'Status','Sent','New',sod.ReasonID,sod.Remark,'{Env.User.UserID}',GETDATE()
 from #tmp t
 inner join SewingOutput_DailyUnlock  sod on t.id = sod.SewingOutputID and sod.UnLockDate is null
 
 Update sod set
     UnLockDate = getdate()
-    , UnLockName= '{Sci.Env.User.UserID}'
+    , UnLockName= '{Env.User.UserID}'
 from SewingOutput_DailyUnlock sod
 where sod.SewingOutputID in (select id from #tmp) and sod.UnLockDate is null
 
 update s set Status='New', LockDate = null 
-, s.editname='{Sci.Env.User.UserID}' 
+, s.editname='{Env.User.UserID}' 
 , s.editdate=getdate()
 from SewingOutput s where id in (select id from #tmp)
 ";

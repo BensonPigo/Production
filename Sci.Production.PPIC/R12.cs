@@ -47,8 +47,8 @@ namespace Sci.Production.PPIC
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
 
-            this.comboM.Text = Sci.Env.User.Keyword;
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboM.Text = Env.User.Keyword;
+            this.comboFactory.Text = Env.User.Factory;
             this.checkBulk.Checked = true;
         }
 
@@ -275,7 +275,7 @@ drop table #tmp,#tmp2,#tmp3,#mondt
             }
 
             this.printData[0].Columns.Remove("StyleUkey");
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private int nowRow;
@@ -295,7 +295,7 @@ drop table #tmp,#tmp2,#tmp3,#mondt
             this.ShowWaitMessage("Excel Processing...");
 
             string filename = "PPIC_R12_PadPrintInkForecast.xltx";
-            Excel.Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + filename);
+            Excel.Application excel = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
             Excel.Worksheet worksheet;
             excel.DisplayAlerts = false;
 
@@ -412,9 +412,9 @@ drop table #tmp,#tmp2,#tmp3,#mondt
                 worksheet.get_Range((Excel.Range)worksheet.Cells[row3 - 1, 3], (Excel.Range)worksheet.Cells[row3 - 1, 3 + this.printData[4].Rows.Count - 1]).Interior.Color = Color.FromArgb(217, 217, 217);
                 #endregion
                 #region 隱藏列
-                worksheet.Rows[$"{row2 + colorCount}:{row2 + (colorCount * 3) - 1}", System.Type.Missing].Hidden = true;
-                worksheet.Rows[$"{row3 + colorCount}:{row3 + (colorCount * 3) - 1}", System.Type.Missing].Hidden = true;
-                worksheet.Rows[$"{row4}:{row4 + (colorCount * 3) - 1}", System.Type.Missing].Hidden = true;
+                worksheet.Rows[$"{row2 + colorCount}:{row2 + (colorCount * 3) - 1}", Type.Missing].Hidden = true;
+                worksheet.Rows[$"{row3 + colorCount}:{row3 + (colorCount * 3) - 1}", Type.Missing].Hidden = true;
+                worksheet.Rows[$"{row4}:{row4 + (colorCount * 3) - 1}", Type.Missing].Hidden = true;
                 #endregion
             }
             #region
@@ -441,7 +441,7 @@ drop table #tmp,#tmp2,#tmp3,#mondt
             worksheet.Columns.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R12_PadPrintInkForecast");
+            string strExcelName = Class.MicrosoftFile.GetName("PPIC_R12_PadPrintInkForecast");
             Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

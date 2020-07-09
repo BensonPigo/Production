@@ -70,7 +70,7 @@ namespace Sci.Production.Packing
             StringBuilder sqlCmd = new StringBuilder();
 
             #region WHERE條件
-            sqlParameters.Add(new SqlParameter("@MDivisionID", Sci.Env.User.Keyword));
+            sqlParameters.Add(new SqlParameter("@MDivisionID", Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(this.txtSP_s.Text))
             {

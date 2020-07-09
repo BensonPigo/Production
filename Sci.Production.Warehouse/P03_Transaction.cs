@@ -902,7 +902,7 @@ namespace Sci.Production.Warehouse
             worksheet.Columns.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P03_Transaction");
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_P03_Transaction");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

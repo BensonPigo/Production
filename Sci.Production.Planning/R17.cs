@@ -42,7 +42,7 @@ namespace Sci.Production.Planning
             this.InitializeComponent();
             this.EditMode = true;
             this.print.Visible = false;
-            this.txtFactory.Text = Sci.Env.User.Factory;
+            this.txtFactory.Text = Env.User.Factory;
             this.dateFactoryKPIDate.Select();
         }
 
@@ -774,16 +774,16 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
         /// <returns>DualResult</returns>
         private DualResult TransferToExcel()
         {
-            DualResult result = Result.True;
+            DualResult result = Ict.Result.True;
             string temfile = string.Empty;
 
             if (this.checkExportDetailData.Checked)
             {
-                temfile = Sci.Env.Cfg.XltPathDir + "\\Planning_R17_Detail.xltx";
+                temfile = Env.Cfg.XltPathDir + "\\Planning_R17_Detail.xltx";
             }
             else
             {
-                temfile = Sci.Env.Cfg.XltPathDir + "\\Planning_R17.xltx";
+                temfile = Env.Cfg.XltPathDir + "\\Planning_R17.xltx";
             }
 
             Excel.Application excel = MyUtility.Excel.ConnectExcel(temfile);
@@ -1198,7 +1198,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 #endregion
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R17");
+                string strExcelName = MicrosoftFile.GetName("Planning_R17");
                 Excel.Workbook workbook = excel.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
@@ -1209,7 +1209,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
 
                 strExcelName.OpenFile();
                 #endregion
-                return Result.True;
+                return Ict.Result.True;
             }
             catch (Exception ex)
             {

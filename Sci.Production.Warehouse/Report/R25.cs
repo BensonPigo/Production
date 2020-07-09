@@ -32,7 +32,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.comboMDivision1.setDefalutIndex(true);
+            this.comboMDivision1.SetDefalutIndex(true);
         }
 
         private void txtfactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -254,7 +254,7 @@ and ed.PoType = 'G'
 
             if (result)
             {
-                return Result.True;
+                return Ict.Result.True;
             }
             else
             {
@@ -269,12 +269,12 @@ and ed.PoType = 'G'
                 this.SetCount(this.dataTable.Rows.Count);
                 this.ShowWaitMessage("Excel Processing...");
 
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R25.xltx"); // 預先開啟excel app
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R25.xltx"); // 預先開啟excel app
                 MyUtility.Excel.CopyToXls(this.dataTable, null, "Warehouse_R25.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
                 Excel.Worksheet worksheet = objApp.Sheets[1];
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R25");
+                string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R25");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);

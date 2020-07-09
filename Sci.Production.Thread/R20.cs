@@ -44,10 +44,10 @@ namespace Sci.Production.Thread
             this.comboFactory.ValueMember = "FTYGroup";
             this.comboFactory.DisplayMember = "FTYGroup";
             this.comboFactory.SelectedIndex = 0;
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
             this.comboBoxStatus.SelectedIndex = 0;
 
-            this.comboMDivision.setDefalutIndex(true);
+            this.comboMDivision.SetDefalutIndex(true);
             this.print.Enabled = false;
         }
 
@@ -237,7 +237,7 @@ outer apply(
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.dt.Rows.Count);
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_R20.xltx"); // 預先開啟excel app
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Thread_R20.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Thread_R20.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
 
             this.ShowWaitMessage("Excel Processing...");
@@ -246,7 +246,7 @@ outer apply(
             worksheet.Rows.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Thread_R20");
+            string strExcelName = Class.MicrosoftFile.GetName("Thread_R20");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

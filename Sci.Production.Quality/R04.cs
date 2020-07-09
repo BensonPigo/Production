@@ -25,7 +25,7 @@ namespace Sci.Production.Quality
             DataTable M;
             DBProxy.Current.Select(null, "select '' as id union all select distinct id from MDivision WITH (NOLOCK)  ", out M);
             MyUtility.Tool.SetupCombox(this.comboM, 1, M);
-            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboM.Text = Env.User.Keyword;
 
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as FTYGroup union all select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
@@ -215,7 +215,7 @@ namespace Sci.Production.Quality
                 return false;
             }
 
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
+            var saveDialog = MyExcelPrg.GetSaveFileDialog(MyExcelPrg.Filter_Excel);
 
             SaveXltReportCls xl = new SaveXltReportCls("Quality_R04.xltx", keepApp: true);
 
@@ -234,7 +234,7 @@ namespace Sci.Production.Quality
             xlTable.ShowHeader = false;
             xl.DicDatas.Add("##body", xlTable);
 
-            xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Quality_R04"));
+            xl.Save(Class.MicrosoftFile.GetName("Quality_R04"));
             ((Microsoft.Office.Interop.Excel.Worksheet)xl.ExcelApp.ActiveSheet).Columns.AutoFit();
             xl.FinishSave();
             return true;

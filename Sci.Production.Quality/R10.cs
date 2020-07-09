@@ -258,7 +258,7 @@ where 1=1
                 return failResult;
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         protected override bool OnToExcel(ReportDefinition report)
@@ -273,7 +273,7 @@ where 1=1
             }
 
             string xltx = "Quality_R10.xltx";
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + xltx); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + xltx); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltx, 1, true, null, objApp); // 將datatable copy to excel
             return true;
         }

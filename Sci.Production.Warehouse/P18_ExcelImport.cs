@@ -404,7 +404,7 @@ namespace Sci.Production.Warehouse
                     }
 
                     newRow["OriQty"] = 0;
-                    newRow["MDivisionID"] = Sci.Env.User.Keyword;
+                    newRow["MDivisionID"] = Env.User.Keyword;
 
                     this.grid2Data.Rows.Add(newRow);
                 }
@@ -499,13 +499,13 @@ namespace Sci.Production.Warehouse
             }
 
             MyUtility.Msg.InfoBox("Write in completed!!");
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
 
         private void BtnDownloadTempExcel_Click(object sender, EventArgs e)
         {
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P18_ExcelImport.xltx"); // 預先開啟excel app
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P18_ExcelImport");
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P18_ExcelImport.xltx"); // 預先開啟excel app
+            string strExcelName = Class.MicrosoftFile.GetName("Warehouse_P18_ExcelImport");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

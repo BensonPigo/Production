@@ -296,7 +296,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
                 {
                     if (MyUtility.Convert.GetString(dr["Status"]) == "N")
                     {
-                        updateCmds.Add(string.Format("insert into Express_CTNData(ID,CTNNo,AddName, AddDate) values ('{0}','{1}','{2}',GETDATE());", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["CTNNo"]), Sci.Env.User.UserID));
+                        updateCmds.Add(string.Format("insert into Express_CTNData(ID,CTNNo,AddName, AddDate) values ('{0}','{1}','{2}',GETDATE());", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["CTNNo"]), Env.User.UserID));
                     }
                     else
                     {
@@ -412,7 +412,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
                 {
                     if (MyUtility.Convert.GetString(dr["Status"]) == "N")
                     {
-                        updateCmds.Add(string.Format("insert into Express_CTNData(ID,CTNNo,AddName, AddDate) values ('{0}','{1}','{2}',GETDATE());", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["CTNNo"]), Sci.Env.User.UserID));
+                        updateCmds.Add(string.Format("insert into Express_CTNData(ID,CTNNo,AddName, AddDate) values ('{0}','{1}','{2}',GETDATE());", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["CTNNo"]), Env.User.UserID));
                     }
                     else
                     {
@@ -523,7 +523,7 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
             }
             else
             {
-                this.displayStatupdate.Value = Convert.ToDateTime(this.CurrentMaintain["StatusUpdateDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                this.displayStatupdate.Value = Convert.ToDateTime(this.CurrentMaintain["StatusUpdateDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
             }
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["SendDate"]))
@@ -532,7 +532,7 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
             }
             else
             {
-                this.displaySendtoSCI.Value = Convert.ToDateTime(this.CurrentMaintain["SendDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                this.displaySendtoSCI.Value = Convert.ToDateTime(this.CurrentMaintain["SendDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
             }
 
             this.btnMailto.Enabled = !this.EditMode && (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Sent" || MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved") && (PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["Handle"])) || PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["Manager"])));
@@ -628,7 +628,7 @@ Order by CTNNo,Seq1,Seq2", masterID);
             DataGridViewGeneratorTextColumnSettings orderid = new DataGridViewGeneratorTextColumnSettings();
             orderid.CellMouseDoubleClick += (s, e) =>
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                    if (e.Button == MouseButtons.Left)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -733,11 +733,11 @@ Order by CTNNo,Seq1,Seq2", masterID);
         {
             base.ClickNewAfter();
             this.CurrentMaintain["Status"] = "New";
-            this.CurrentMaintain["Handle"] = Sci.Env.User.UserID;
-            this.CurrentMaintain["Manager"] = MyUtility.GetValue.Lookup("Supervisor", Sci.Env.User.UserID, "Pass1", "ID");
+            this.CurrentMaintain["Handle"] = Env.User.UserID;
+            this.CurrentMaintain["Manager"] = MyUtility.GetValue.Lookup("Supervisor", Env.User.UserID, "Pass1", "ID");
             this.CurrentMaintain["NW"] = 0;
             this.CurrentMaintain["CTNNW"] = 0;
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.txtCarrier.ReadOnly = true; // 因為Key Down事件，如果按Delete or Backspace按鍵會真的將字元給移除，如果跳出視窗後按Cancel的話，資料會不正確，所以就把此欄位設定為ReadOnly
             this.txtCarrierbyCustomer.ReadOnly = true;
             this.txtCarrierbyFty.ReadOnly = true;
@@ -1020,7 +1020,7 @@ outer apply (
             // GetID
             if (this.IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "HC", "Express", Convert.ToDateTime(this.CurrentMaintain["ShipDate"]), 2, "Id", null);
+                string id = MyUtility.GetValue.GetID(Env.User.Keyword + "HC", "Express", Convert.ToDateTime(this.CurrentMaintain["ShipDate"]), 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -1491,7 +1491,7 @@ and (ToInclude like'%{toCountry}%' or ToInclude = '')";
             {
                 for (int i = 0; i < this.txtBLNo.Text.Trim().Length; i++)
                 {
-                    var asc = ASCIIEncoding.ASCII.GetBytes(this.txtBLNo.Text.Substring(i, 1));
+                    var asc = Encoding.ASCII.GetBytes(this.txtBLNo.Text.Substring(i, 1));
                     if (!((asc[0] >= 48 && asc[0] <= 57) || (asc[0] >= 65 && asc[0] <= 90)))
                     {
                         this.CurrentMaintain["BLNo"] = string.Empty;
@@ -1546,7 +1546,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
                 {
                     if (MyUtility.Convert.GetString(dr["Status"]) == "N")
                     {
-                        updateCmds.Add(string.Format("insert into Express_CTNData(ID,CTNNo,AddName, AddDate) values ('{0}','{1}','{2}',GETDATE());", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["CTNNo"]), Sci.Env.User.UserID));
+                        updateCmds.Add(string.Format("insert into Express_CTNData(ID,CTNNo,AddName, AddDate) values ('{0}','{1}','{2}',GETDATE());", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["CTNNo"]), Env.User.UserID));
                     }
                     else
                     {
@@ -1587,7 +1587,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
             }
 
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Send > this data?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
@@ -1601,7 +1601,7 @@ from Express
 where ID = '{1}';
 
 update Express set Status = 'Sent', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
@@ -1623,7 +1623,7 @@ from Express
 where ID = '{1}';
 
 update Express set Status = 'New', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}';",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
@@ -1649,7 +1649,7 @@ update Express set Status = 'New', StatusUpdateDate = GETDATE(), EditName = '{0}
             }
 
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Junk > this data?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
@@ -1663,7 +1663,7 @@ from Express
 where ID = '{1}';
 
 update Express set Status = 'Junk', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             updateCmds.Add(string.Format("update PackingList set pulloutdate=null where ExpressID = '{0}' and Type = 'F'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             updateCmds.Add(string.Format("update PackingList set ExpressID = '' where ExpressID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
@@ -1732,7 +1732,7 @@ update Express set Status = 'Junk', StatusUpdateDate = GETDATE(), EditName = '{0
             }
 
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Approve > this data?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
@@ -1745,7 +1745,7 @@ from Express
 where ID = '{1}';
 
 update Express set Status = 'Approved', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}';",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             string shipDate = MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? "NULL" : "'" + ((DateTime)this.CurrentMaintain["ShipDate"]).ToString("d") + "'";
@@ -1798,7 +1798,7 @@ where ed.ID = '{this.CurrentMaintain["ID"]}' and p.Status in ('Confirmed','Locke
             }
 
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Unapprove > this data?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            if (buttonResult == DialogResult.No)
             {
                 return;
             }
@@ -1813,7 +1813,7 @@ from Express
 where ID = '{1}';
 
 update Express set Status = 'Sent', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'",
-                Sci.Env.User.UserID,
+                Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             updateCmds.Add(string.Format("update PackingList set pulloutdate=null where ExpressID = '{0}' and Type = 'F'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
@@ -1847,7 +1847,7 @@ update Express set Status = 'Sent', StatusUpdateDate = GETDATE(), EditName = '{0
                     MyUtility.Convert.GetString(this.CurrentMaintain["ToSite"]),
                     MyUtility.Convert.GetString(this.CurrentMaintain["FromTag"]) == "3" ? "-" + MyUtility.Convert.GetString(this.displayTO.Value) : string.Empty,
                     MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                    MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ShipDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat)),
+                    MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ShipDate"]).ToString(string.Format("{0}", Env.Cfg.DateStringFormat)),
                     MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Junk" ? " -Cancel" : string.Empty);
 
                 StringBuilder content = new StringBuilder();
@@ -1868,10 +1868,10 @@ When first applicant's team leader approval, anyone can not do any modification.
                     MyUtility.Convert.GetString(this.CurrentMaintain["FromTag"]) == "1" ? MyUtility.Convert.GetString(this.CurrentMaintain["FromSite"]) : MyUtility.Convert.GetString(this.displayFrom.Value),
                     MyUtility.Convert.GetString(this.CurrentMaintain["ToSite"]),
                     MyUtility.Convert.GetString(this.CurrentMaintain["FromTag"]) == "3" ? "-" + MyUtility.Convert.GetString(this.displayTO.Value) : string.Empty,
-                    MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ShipDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
+                    MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ShipDate"]).ToString(string.Format("{0}", Env.Cfg.DateStringFormat))));
                 #endregion
 
-                var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, cc, subject, string.Empty, content.ToString(), false, false);
+                var email = new MailTo(Env.Cfg.MailFrom, mailto, cc, subject, string.Empty, content.ToString(), false, false);
                 email.ShowDialog(this);
             }
         }

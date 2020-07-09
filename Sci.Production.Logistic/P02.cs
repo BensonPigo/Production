@@ -42,7 +42,7 @@ namespace Sci.Production.Logistic
         {
             base.OnFormLoaded();
             TextBox a = new TextBox();
-            a.Text = Sci.Env.User.Keyword;
+            a.Text = Env.User.Keyword;
             this.txtcloglocationLocationNo.MDivisionObjectName = a;
 
             DataGridViewGeneratorCheckBoxColumnSettings col_chk = new DataGridViewGeneratorCheckBoxColumnSettings();
@@ -189,7 +189,7 @@ from (
 order by rn
 
 drop table #tmp_TransferToClog
-", Sci.Env.User.Keyword,
+", Env.User.Keyword,
                 dicSqlFilte["PackingList ID"],
                 dicSqlFilte["Order ID"],
                 dicSqlFilte["Orders CustPONo"],
@@ -315,7 +315,7 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0 and pd.DisposeFr
                                     dr["TransferDate"] = seekData["TransferDate"];
 
                                     string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
-                                    if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
+                                    if (seekData["MDivisionID"].ToString().ToUpper() != Env.User.Keyword)
                                     {
                                         dr["Remark"] = "The order's M is not equal to login M.";
                                     }
@@ -327,7 +327,7 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0 and pd.DisposeFr
                                                                             left join Order_QtyShip oq WITH (NOLOCK) on oq.ID = a.ID and oq.Seq = '{2}'
                                                                             where a.ID = '{0}' and a.MDivisionID = '{1}'",
                                         dr["OrderID"].ToString(),
-                                        Sci.Env.User.Keyword,
+                                        Env.User.Keyword,
                                         seq);
                                     if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                     {
@@ -375,7 +375,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                         dr["TransferDate"] = seekData["TransferDate"];
 
                                         string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
-                                        if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
+                                        if (seekData["MDivisionID"].ToString().ToUpper() != Env.User.Keyword)
                                         {
                                             dr["Remark"] = "The order's M is not equal to login M.";
                                         }
@@ -389,7 +389,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                                                             left join Order_QtyShip oq WITH (NOLOCK) on oq.ID = a.ID and oq.Seq = '{2}'
                                                                             where a.ID = '{0}' and a.MDivisionID = '{1}'",
                                             dr["OrderID"].ToString(),
-                                            Sci.Env.User.Keyword,
+                                            Env.User.Keyword,
                                             seq);
                                         if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                         {
@@ -454,7 +454,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                     string packinglistid = seekData["id"].ToString().Trim();
                                     string CTNStartNo = seekData["CTNStartNo"].ToString().Trim();
                                     string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
-                                    if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
+                                    if (seekData["MDivisionID"].ToString().ToUpper() != Env.User.Keyword)
                                     {
                                         dr["Remark"] = "The order's M is not equal to login M.";
                                     }
@@ -466,7 +466,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                                                             left join Order_QtyShip oq WITH (NOLOCK) on oq.ID = a.ID and oq.Seq = '{2}'
                                                                             where a.ID = '{0}' and a.MDivisionID = '{1}'",
                                         dr["OrderID"].ToString(),
-                                        Sci.Env.User.Keyword,
+                                        Env.User.Keyword,
                                         seq);
                                     if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                     {
@@ -566,7 +566,7 @@ insert into ClogReceive (
                     MyUtility.Convert.GetString(dr["OrderID"]),
                     MyUtility.Convert.GetString(dr["CTNStartNo"]),
                     MyUtility.Convert.GetString(dr["ClogLocationId"]),
-                    Sci.Env.User.UserID,
+                    Env.User.UserID,
                     MyUtility.Convert.GetString(dr["SCICtnNo"])));
 
                 // 要順便更新PackingList_Detail
@@ -601,19 +601,19 @@ where   ID = '{0}'
                 MyUtility.Msg.ErrorBox("Prepare update orders data fail!\r\n" + ex.ToString());
             }
 
-            DualResult result1 = Result.True, result2 = Result.True;
+            DualResult result1 = Ict.Result.True, result2 = Ict.Result.True;
             using (TransactionScope transactionScope = new TransactionScope())
             {
                 try
                 {
                     if (updateCmds.Count > 0)
                     {
-                        result1 = Sci.Data.DBProxy.Current.Executes(null, updateCmds);
+                        result1 = DBProxy.Current.Executes(null, updateCmds);
                     }
 
                     if (insertCmds.Count > 0)
                     {
-                        result2 = Sci.Data.DBProxy.Current.Executes(null, insertCmds);
+                        result2 = DBProxy.Current.Executes(null, insertCmds);
                     }
 
                     DualResult prgResult = Prgs.UpdateOrdersCTN(selectData);

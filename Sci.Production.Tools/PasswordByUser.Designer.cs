@@ -36,9 +36,9 @@
             this.labESignature = new Sci.Win.UI.Label();
             this.checkAdmin = new Sci.Win.UI.CheckBox();
             this.txtPosition = new Sci.Win.UI.TextBox();
-            this.txtUserDeputy = new Sci.Production.Class.txtuser();
-            this.txtUserSupervisor = new Sci.Production.Class.txtuser();
-            this.txtUserManager = new Sci.Production.Class.txtuser();
+            this.txtUserDeputy = new Sci.Production.Class.Txtuser();
+            this.txtUserSupervisor = new Sci.Production.Class.Txtuser();
+            this.txtUserManager = new Sci.Production.Class.Txtuser();
             this.txtIDStart = new Sci.Win.UI.TextBox();
             this.dateResign = new Sci.Win.UI.DateBox();
             this.dateDateHired = new Sci.Win.UI.DateBox();
@@ -542,9 +542,9 @@
         private Win.UI.Label labelID;
         private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Class.txtuser txtUserDeputy;
-        private Class.txtuser txtUserSupervisor;
-        private Class.txtuser txtUserManager;
+        private Class.Txtuser txtUserDeputy;
+        private Class.Txtuser txtUserSupervisor;
+        private Class.Txtuser txtUserManager;
         private Win.UI.TextBox txtPosition;
         private Win.UI.CheckBox checkAdmin;
         private Win.UI.Label labESignature;

@@ -17,7 +17,7 @@ namespace Sci.Production.Basic
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "MdivisionID = '" + Sci.Env.User.Keyword + "'";
+            this.DefaultFilter = "MdivisionID = '" + Env.User.Keyword + "'";
         }
 
         /// <inheritdoc/>
@@ -32,7 +32,7 @@ namespace Sci.Production.Basic
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
         }
 
         /// <inheritdoc/>

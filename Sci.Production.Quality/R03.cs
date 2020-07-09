@@ -26,7 +26,7 @@ namespace Sci.Production.Quality
             factory.Rows.Add(new string[] { string.Empty });
             factory.DefaultView.Sort = "FTYGroup";
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory.Text = Env.User.Factory;
             this.print.Enabled = false;
         }
 
@@ -194,7 +194,7 @@ namespace Sci.Production.Quality
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R03.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_R03.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Quality_R03.xltx", 2, true, null, objApp);      // 將datatable copy to excel
             return this.res;
         }

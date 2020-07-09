@@ -32,8 +32,8 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtfactory.Text = Sci.Env.User.Factory;
-            this.txtMdivision.Text = Sci.Env.User.Keyword;
+            this.txtfactory.Text = Env.User.Factory;
+            this.txtMdivision.Text = Env.User.Keyword;
             this.dateBoxSewingOutput.Value = DateTime.Today.AddDays(-1);
         }
 
@@ -381,7 +381,7 @@ ORDER BY O.ID", sqlFilte["DaysSinceInline_Factory"],
             #region Excel Process
             Excel.Application objApp = null;
             Excel.Worksheet worksheet = null;
-            objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R10.xltx");
+            objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_R10.xltx");
             MyUtility.Excel.CopyToXls(this.resultDt, string.Empty, "PPIC_R10.xltx", 3, showExcel: false, excelApp: objApp);
             worksheet = objApp.Sheets[1];
 
@@ -396,7 +396,7 @@ ORDER BY O.ID", sqlFilte["DaysSinceInline_Factory"],
             worksheet.Rows.AutoFit();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R10");
+            string strExcelName = Class.MicrosoftFile.GetName("PPIC_R10");
             Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();

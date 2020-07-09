@@ -238,7 +238,7 @@ end
 
             List<SqlParameter> lis = new List<SqlParameter>();
             lis.Add(new SqlParameter("@sp", this.txtFromSP.Text));
-            lis.Add(new SqlParameter("@FactoryID", Sci.Env.User.Factory));
+            lis.Add(new SqlParameter("@FactoryID", Env.User.Factory));
             string sqlcmd = $@"
 select 1 
 from SewingOutput_Detail sd with(nolock)
@@ -271,7 +271,7 @@ and s.FactoryID = @FactoryID
 
             List<SqlParameter> lis = new List<SqlParameter>();
             lis.Add(new SqlParameter("@sp", this.txtToSP.Text));
-            lis.Add(new SqlParameter("@FtyGroup", Sci.Env.User.Factory));
+            lis.Add(new SqlParameter("@FtyGroup", Env.User.Factory));
             string sqlcmd = $@"
 select 1
 from Orders o with(nolock) 

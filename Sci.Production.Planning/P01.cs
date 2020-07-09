@@ -589,7 +589,7 @@ end;",
             pass1Schema.IsSupportEditDate = false;
             pass1Schema.IsSupportEditName = false;
 
-            return Result.True;
+            return Ict.Result.True;
         }
     }
 }

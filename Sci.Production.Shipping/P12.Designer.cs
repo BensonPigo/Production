@@ -34,7 +34,7 @@
             this.txtSP2 = new Sci.Win.UI.TextBox();
             this.txtSP1 = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
+            this.txtbrand1 = new Sci.Production.Class.Txtbrand();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
@@ -43,7 +43,7 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.labFactory = new Sci.Win.UI.Label();
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
@@ -202,7 +202,7 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.boolFtyGroupList = true;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = true;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = true;
@@ -283,7 +283,7 @@
         private Win.UI.TextBox txtSP2;
         private Win.UI.TextBox txtSP1;
         private Win.UI.Label labelSPNo;
-        private Class.txtbrand txtbrand1;
+        private Class.Txtbrand txtbrand1;
         private Win.UI.Label label1;
         private Win.UI.Label label2;
         private Win.UI.DateRange dateBuyerDelivery;
@@ -292,7 +292,7 @@
         private Win.UI.Button btnClose;
         private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Class.txtfactory txtfactory;
+        private Class.Txtfactory txtfactory;
         private Win.UI.Label labFactory;
         private Win.UI.CheckBox chkIncludeCancelOrder;
     }

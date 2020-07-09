@@ -4,11 +4,23 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtCuttingMachineID : Win.UI.TextBox
+    /// <summary>
+    /// TxtCuttingMachineID
+    /// </summary>
+    public partial class TxtCuttingMachineID : Win.UI.TextBox
     {
         private string mdivision = string.Empty;
         private string where = string.Empty;   // " Where junk = 0";
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TxtCuttingMachineID"/> class.
+        /// </summary>
+        public TxtCuttingMachineID()
+        {
+            this.Width = 150;
+        }
+
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
@@ -26,6 +38,7 @@ namespace Sci.Production.Class
             this.Text = item.GetSelectedString();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -54,11 +67,6 @@ namespace Sci.Production.Class
                     }
                 }
             }
-        }
-
-        public txtCuttingMachineID()
-        {
-            this.Width = 150;
         }
     }
 }

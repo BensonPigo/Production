@@ -5,33 +5,49 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtSewingScheduleLine : Win.UI.TextBox
+    /// <summary>
+    /// TxtSewingScheduleLine
+    /// </summary>
+    public partial class TxtSewingScheduleLine : Win.UI.TextBox
     {
-        public txtSewingScheduleLine()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TxtSewingScheduleLine"/> class.
+        /// </summary>
+        public TxtSewingScheduleLine()
         {
             this.Size = new System.Drawing.Size(118, 23);
         }
 
+        /// <summary>
+        /// SewingSchedule.OrderID
+        /// </summary>
         [Browsable(true)]
         public Win.UI.TextBox SPtxt { get; set; }
 
+        /// <summary>
+        /// SewingLine.FactoryID
+        /// </summary>
         [Browsable(true)]
         public Win.UI.TextBox Factorytxt { get; set; }
 
-        public string cell { get; set; }
+        /// <summary>
+        /// SewingLine.SewingCell
+        /// </summary>
+        public string Cell { get; set; }
 
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
-            string FactoryId;
+            string factoryId;
 
             if (this.Factorytxt != null)
             {
-                FactoryId = this.Factorytxt.Text;
+                factoryId = this.Factorytxt.Text;
             }
             else
             {
-                FactoryId = Sci.Env.User.Factory;
+                factoryId = Env.User.Factory;
             }
 
             Win.Forms.Base myForm = (Win.Forms.Base)this.FindForm();
@@ -55,8 +71,9 @@ LEFT JOIN SewingLine SL WITH (NOLOCK) ON so.FactoryID=SL.FactoryID AND so.Sewing
 where sod.OrderId = '{0}' and so.FactoryID = '{1}'
 ",
                 this.SPtxt.Text,
-                FactoryId),
-                "5,20,10", this.Text);
+                factoryId),
+                "5,20,10",
+                this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
@@ -66,20 +83,19 @@ where sod.OrderId = '{0}' and so.FactoryID = '{1}'
             this.Text = item.GetSelectedString();
         }
 
-        DataRow dr;
-
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
-            string FactoryId;
-
+            string factoryId;
+            DataRow dr;
             if (this.Factorytxt != null)
             {
-                FactoryId = this.Factorytxt.Text;
+                factoryId = this.Factorytxt.Text;
             }
             else
             {
-                FactoryId = Sci.Env.User.Factory;
+                factoryId = Env.User.Factory;
             }
 
             Win.Forms.Base myForm = (Win.Forms.Base)this.FindForm();
@@ -102,9 +118,9 @@ LEFT JOIN SewingLine SL WITH (NOLOCK) ON so.FactoryID=SL.FactoryID AND so.Sewing
 where sod.OrderId = '{0}' and so.FactoryID = '{1}' and SewingLineID = '{2}'
 ",
                 this.SPtxt.Text,
-                FactoryId,
+                factoryId,
                 this.Text);
-            if (!MyUtility.Check.Seek(chkline, out this.dr))
+            if (!MyUtility.Check.Seek(chkline, out dr))
             {
                 if (this.Text != string.Empty)
                 {
@@ -112,11 +128,11 @@ where sod.OrderId = '{0}' and so.FactoryID = '{1}' and SewingLineID = '{2}'
                 }
 
                 this.Text = string.Empty;
-                this.cell = string.Empty;
+                this.Cell = string.Empty;
             }
             else
             {
-                this.cell = MyUtility.Convert.GetString(this.dr["SewingCell"]);
+                this.Cell = MyUtility.Convert.GetString(dr["SewingCell"]);
             }
         }
     }

@@ -40,7 +40,7 @@
             this.txtPO = new Sci.Win.UI.TextBox();
             this.txtPackID = new Sci.Win.UI.TextBox();
             this.dateBuyer = new Sci.Win.UI.DateRange();
-            this.comboDropDownList1 = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboDropDownList1 = new Sci.Production.Class.ComboDropDownList(this.components);
             this.txtTransportNo = new Sci.Win.UI.TextBox();
             this.btnFind = new Sci.Win.UI.Button();
             this.btnImport = new Sci.Win.UI.Button();
@@ -417,7 +417,7 @@
         private Win.UI.TextBox txtPO;
         private Win.UI.TextBox txtPackID;
         private Win.UI.DateRange dateBuyer;
-        private Class.comboDropDownList comboDropDownList1;
+        private Class.ComboDropDownList comboDropDownList1;
         private Win.UI.TextBox txtTransportNo;
         private Win.UI.Button btnFind;
         private Win.UI.Button btnImport;

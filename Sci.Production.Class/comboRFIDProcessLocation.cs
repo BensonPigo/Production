@@ -4,17 +4,20 @@ using Sci.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class comboRFIDProcessLocation : Win.UI.ComboBox
+    /// <summary>
+    /// ComboRFIDProcessLocation
+    /// </summary>
+    public partial class ComboRFIDProcessLocation : Win.UI.ComboBox
     {
-        private bool includeJunk = false;
+        /// <summary>
+        /// Include Junk
+        /// </summary>
+        public bool IncludeJunk { get; set; } = false;
 
-        public bool IncludeJunk
-        {
-            get { return this.includeJunk; }
-            set { this.includeJunk = value; }
-        }
-
-        public comboRFIDProcessLocation()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComboRFIDProcessLocation"/> class.
+        /// </summary>
+        public ComboRFIDProcessLocation()
         {
             this.InitializeComponent();
         }
@@ -22,13 +25,14 @@ namespace Sci.Production.Class
         /// <summary>
         /// Set ComboBox Data
         /// </summary>
-        public void setDataSource(bool isForReport = true)
+        /// <param name="isForReport">ALL 選項是否出現</param>
+        public void SetDataSource(bool isForReport = true)
         {
             DataTable dtRFIDProcessLocation;
             DualResult result;
             #region SQL CMD
             string whereIncludeJunk = " where Junk = 0 ";
-            if (this.includeJunk)
+            if (this.IncludeJunk)
             {
                 whereIncludeJunk = string.Empty;
             }

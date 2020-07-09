@@ -30,9 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
-            this.txtSeason = new Sci.Production.Class.txtseason();
-            this.txtBrand = new Sci.Production.Class.txtbrand();
+            this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.txtSeason = new Sci.Production.Class.Txtseason();
+            this.txtBrand = new Sci.Production.Class.Txtbrand();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelCategory = new Sci.Win.UI.Label();
@@ -318,9 +318,9 @@
         private Win.UI.Label labelFactory;
         private Win.UI.Label labelCategory;
         private Win.UI.ComboBox comboFactory;
-        private Class.txtbrand txtBrand;
-        private Class.txtseason txtSeason;
-        private Class.comboDropDownList comboCategory;
+        private Class.Txtbrand txtBrand;
+        private Class.Txtseason txtSeason;
+        private Class.ComboDropDownList comboCategory;
         private Win.UI.CheckBox chkIncludeCancelOrder;
     }
 }

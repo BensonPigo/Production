@@ -4,8 +4,20 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtshipterm : Win.UI.TextBox
+    /// <summary>
+    /// Txtshipterm
+    /// </summary>
+    public partial class Txtshipterm : Win.UI.TextBox
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Txtshipterm"/> class.
+        /// </summary>
+        public Txtshipterm()
+        {
+            this.Size = new System.Drawing.Size(50, 23);
+        }
+
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
@@ -21,6 +33,7 @@ namespace Sci.Production.Class
             this.ValidateText();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -36,11 +49,6 @@ namespace Sci.Production.Class
                     return;
                 }
             }
-        }
-
-        public txtshipterm()
-        {
-            this.Size = new System.Drawing.Size(50, 23);
         }
     }
 }

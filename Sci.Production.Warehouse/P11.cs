@@ -39,8 +39,8 @@ namespace Sci.Production.Warehouse
             this.gridicon.Location = new Point(this.btnBreakDown.Location.X + 20, 128); // 此gridcon位置會跑掉，需強制設定gridcon位置
             this.gridicon.Anchor = AnchorStyles.Right;
 
-            this.DefaultFilter = string.Format("Type='B' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
-            this.DefaultWhere = string.Format("Type='B' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("Type='B' and MDivisionID = '{0}'", Env.User.Keyword);
+            this.DefaultWhere = string.Format("Type='B' and MDivisionID = '{0}'", Env.User.Keyword);
 
             // Issue此為PMS自行建立的資料，MDivisionID皆會有寫入值
             this.WorkAlias = "Issue";                        // PK: ID
@@ -442,8 +442,8 @@ Where a.id = '{0}'", masterID);
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "B";
             this.CurrentMaintain["issuedate"] = DateTime.Now;
@@ -542,7 +542,7 @@ Where a.id = '{0}'", masterID);
             // 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IS", "Issue", (DateTime)this.CurrentMaintain["IssueDate"]);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "IS", "Issue", (DateTime)this.CurrentMaintain["IssueDate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -739,7 +739,7 @@ select Cutplan.poid
 from dbo.cutplan WITH (NOLOCK) 
 LEFT JOIN Orders o ON Cutplan.POID = o.ID
 where Cutplan.id='{0}' and Cutplan.Mdivisionid = '{1}' AND o.Category != 'A' 
-", this.CurrentMaintain["cutplanid"], Sci.Env.User.Keyword));
+", this.CurrentMaintain["cutplanid"], Env.User.Keyword));
 
             if (MyUtility.Check.Empty(this.txtRequest.Text))
             {
@@ -828,7 +828,7 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
         {
             if (this.EditMode == true && this.Ismatrix_Reload == false)
             {
-                return Result.True;
+                return Ict.Result.True;
             }
 
             this.Ismatrix_Reload = false;
@@ -845,7 +845,7 @@ where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by s
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out this.dtSizeCode)))
             {
                 this.ShowErr(sqlcmd, result);
-                return Result.True;
+                return Ict.Result.True;
             }
 
             if (this.dtSizeCode.Rows.Count == 0)
@@ -853,7 +853,7 @@ where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by s
                 // MyUtility.Msg.WarningBox(string.Format("Becuase there no sizecode data belong this OrderID {0} , can't show data!!", CurrentDataRow["orderid"]));
                 this.dtIssueBreakDown = null;
                 this.gridIssueBreakDown.DataSource = null;
-                return Result.True;
+                return Ict.Result.True;
             }
 
             this.sbSizecode = new StringBuilder();
@@ -890,7 +890,7 @@ where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by s
             if (!(result = DBProxy.Current.Select(null, sbIssueBreakDown.ToString(), out this.dtIssueBreakDown)))
             {
                 this.ShowErr(sqlcmd, result);
-                return Result.True;
+                return Ict.Result.True;
             }
 
             this.gridIssueBreakDown.AutoGenerateColumns = true;
@@ -901,16 +901,16 @@ where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by s
 
             this.checkByCombo_CheckedChanged(null, null);
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private void getpoid()
         {
             this.CurrentMaintain["cutplanid"] = this.txtRequest.Text;
-            this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.cutplan WITH (NOLOCK) where id='{0}' and mdivisionid = '{1}'", this.CurrentMaintain["cutplanid"], Sci.Env.User.Keyword));
+            this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.cutplan WITH (NOLOCK) where id='{0}' and mdivisionid = '{1}'", this.CurrentMaintain["cutplanid"], Env.User.Keyword));
             if (MyUtility.Check.Empty(this.poid))
             {
-                this.poid = MyUtility.GetValue.Lookup(string.Format("select orders.poid from dbo.orders WITH (NOLOCK) left join dbo.Factory on orders.FtyGroup=Factory.ID where orders.id='{0}' and Factory.mdivisionid = '{1}'", this.CurrentMaintain["orderid"], Sci.Env.User.Keyword));
+                this.poid = MyUtility.GetValue.Lookup(string.Format("select orders.poid from dbo.orders WITH (NOLOCK) left join dbo.Factory on orders.FtyGroup=Factory.ID where orders.id='{0}' and Factory.mdivisionid = '{1}'", this.CurrentMaintain["orderid"], Env.User.Keyword));
             }
         }
 
@@ -963,7 +963,7 @@ where a.id='{0}' order by Seq", this.poid, this.CurrentMaintain["id"]), out size
     where a.id= iif(isnull(poid1.POID,'')='',poid2.POID,poid1.poid)
     and b.id = '{1}' and b.Issue_DetailUkey = {2}
 )",
-                this.CurrentMaintain["cutplanid"].ToString(), masterID, ukey, Sci.Env.User.Keyword, this.CurrentMaintain["orderid"].ToString());
+                this.CurrentMaintain["cutplanid"].ToString(), masterID, ukey, Env.User.Keyword, this.CurrentMaintain["orderid"].ToString());
 
             // if (!MyUtility.Check.Empty(CurrentMaintain["cutplanid"]))
             // {
@@ -1413,7 +1413,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             string CellNo = this.displayCutCell.Text;
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
-            pars.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
+            pars.Add(new SqlParameter("@MDivision", Env.User.Keyword));
             pars.Add(new SqlParameter("@OrderID", OrderID));
             #region Title
             DataTable dt;
@@ -1620,7 +1620,7 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
                 xlTable.ShowHeader = false;
                 xl.DicDatas.Add("##SEQ", xlTable);
 
-                xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P11"));
+                xl.Save(Class.MicrosoftFile.GetName("Warehouse_P11"));
                 #endregion
             }
             else
@@ -1824,7 +1824,7 @@ select orders.poid
 from dbo.orders WITH (NOLOCK) 
 left join dbo.Factory on orders.FtyGroup = Factory.ID 
 where   orders.id='{0}' and Category !='A'
-        and Factory.mdivisionid = '{1}'", this.CurrentMaintain["orderid"], Sci.Env.User.Keyword));
+        and Factory.mdivisionid = '{1}'", this.CurrentMaintain["orderid"], Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtOrderID.Text))
             {
                 if (MyUtility.Check.Empty(this.poid))
@@ -1890,7 +1890,7 @@ select '' FTYGroup
 union 
 select distinct FTYGroup 
 from Factory 
-where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+where MDivisionID = '{0}'", Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;
@@ -1951,12 +1951,12 @@ where   b.ID = '{1}'
         and b.FabricType = 'A'
         and m.IssueType = 'Sewing' 
         and b.Junk != 1
-order by b.ID, b.seq1, b.seq2", Sci.Env.User.Keyword, this.poid, 0), out subData);
+order by b.ID, b.seq1, b.seq2", Env.User.Keyword, this.poid, 0), out subData);
 
             if (subData.Rows.Count == 0)
             {
                 this.txtOrderID.Text = string.Empty;
-                return Result.F("No PO Data !");
+                return Ict.Result.F("No PO Data !");
             }
 
             // 將資料塞入表身
@@ -2010,7 +2010,7 @@ order by Seq ", this.poid, this.CurrentMaintain["id"], ndr["ukey"]), out sizeRan
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         private void checkByCombo_CheckedChanged(object sender, EventArgs e)

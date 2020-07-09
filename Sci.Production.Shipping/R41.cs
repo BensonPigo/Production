@@ -138,7 +138,7 @@ namespace Sci.Production.Shipping
                 }
             }
 
-            return Result.True;
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
@@ -170,7 +170,7 @@ namespace Sci.Production.Shipping
             {
                 if (this.rdSummary.Checked)
                 {
-                    result = MyUtility.Excel.CopyToXls(this.printImport, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Import"), xltfile: "Shipping_R41_Import.xltx", headerRow: 1, showSaveMsg: false);
+                    result = MyUtility.Excel.CopyToXls(this.printImport, Class.MicrosoftFile.GetName("Shipping_R41_Import"), xltfile: "Shipping_R41_Import.xltx", headerRow: 1, showSaveMsg: false);
                     if (!result)
                     {
                         MyUtility.Msg.WarningBox(result.ToString(), "Warning");
@@ -179,7 +179,7 @@ namespace Sci.Production.Shipping
 
                 if (this.rdDetail.Checked)
                 {
-                    result = MyUtility.Excel.CopyToXls(this.printImport, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Import_Detail"), xltfile: "Shipping_R41_Import_Detail.xltx", headerRow: 1, showSaveMsg: false);
+                    result = MyUtility.Excel.CopyToXls(this.printImport, Class.MicrosoftFile.GetName("Shipping_R41_Import_Detail"), xltfile: "Shipping_R41_Import_Detail.xltx", headerRow: 1, showSaveMsg: false);
                     if (!result)
                     {
                         MyUtility.Msg.WarningBox(result.ToString(), "Warning");
@@ -193,7 +193,7 @@ namespace Sci.Production.Shipping
             {
                 if (this.rdSummary.Checked)
                 {
-                    result = MyUtility.Excel.CopyToXls(this.printExport, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Export"), xltfile: "Shipping_R41_Export.xltx", headerRow: 1, showSaveMsg: false);
+                    result = MyUtility.Excel.CopyToXls(this.printExport, Class.MicrosoftFile.GetName("Shipping_R41_Export"), xltfile: "Shipping_R41_Export.xltx", headerRow: 1, showSaveMsg: false);
                     if (!result)
                     {
                         MyUtility.Msg.WarningBox(result.ToString(), "Warning");
@@ -202,7 +202,7 @@ namespace Sci.Production.Shipping
 
                 if (this.rdDetail.Checked)
                 {
-                    result = MyUtility.Excel.CopyToXls(this.printExport, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Export_Detail"), xltfile: "Shipping_R41_Export_Detail.xltx", headerRow: 1, showSaveMsg: false);
+                    result = MyUtility.Excel.CopyToXls(this.printExport, Class.MicrosoftFile.GetName("Shipping_R41_Export_Detail"), xltfile: "Shipping_R41_Export_Detail.xltx", headerRow: 1, showSaveMsg: false);
                     if (!result)
                     {
                         MyUtility.Msg.WarningBox(result.ToString(), "Warning");
@@ -216,7 +216,7 @@ namespace Sci.Production.Shipping
             {
                 if (this.rdSummary.Checked)
                 {
-                    result = MyUtility.Excel.CopyToXls(this.printAdjust, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Adjust"), xltfile: "Shipping_R41_Adjust.xltx", headerRow: 1, showSaveMsg: false);
+                    result = MyUtility.Excel.CopyToXls(this.printAdjust, Class.MicrosoftFile.GetName("Shipping_R41_Adjust"), xltfile: "Shipping_R41_Adjust.xltx", headerRow: 1, showSaveMsg: false);
                     if (!result)
                     {
                         MyUtility.Msg.WarningBox(result.ToString(), "Warning");
@@ -225,7 +225,7 @@ namespace Sci.Production.Shipping
 
                 if (this.rdDetail.Checked)
                 {
-                    result = MyUtility.Excel.CopyToXls(this.printAdjust, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Adjust_Detail"), xltfile: "Shipping_R41_Adjust_Detail.xltx", headerRow: 1, showSaveMsg: false);
+                    result = MyUtility.Excel.CopyToXls(this.printAdjust, Class.MicrosoftFile.GetName("Shipping_R41_Adjust_Detail"), xltfile: "Shipping_R41_Adjust_Detail.xltx", headerRow: 1, showSaveMsg: false);
                     if (!result)
                     {
                         MyUtility.Msg.WarningBox(result.ToString(), "Warning");

@@ -118,7 +118,7 @@ inner join dbo.Factory f on f.ID=b.factoryID"));
 
             strSQLCmd.Append(string.Format(
                 @" where a.lock=0 and a.InQty - a.OutQty + a.AdjustQty > 0 and a.StockType ='{1}' 
-and f.MDivisionID='{0}' ", Sci.Env.User.Keyword, this.dr_master["stocktype"]));
+and f.MDivisionID='{0}' ", Env.User.Keyword, this.dr_master["stocktype"]));
 
             if (!MyUtility.Check.Empty(category))
             {

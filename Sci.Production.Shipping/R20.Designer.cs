@@ -37,10 +37,10 @@
             this.txtWKno_e = new Sci.Win.UI.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.txtConsignee = new Sci.Win.UI.TextBox();
-            this.txtshipmode = new Sci.Production.Class.txtshipmode();
+            this.txtshipmode = new Sci.Production.Class.Txtshipmode();
             this.lbShipper = new Sci.Win.UI.Label();
             this.lbCategory = new Sci.Win.UI.Label();
-            this.txtLocalSupp = new Sci.Production.Class.txtLocalSupp();
+            this.txtLocalSupp = new Sci.Production.Class.TxtLocalSupp();
             this.comboCategory = new Sci.Win.UI.ComboBox();
             this.SuspendLayout();
             // 
@@ -273,10 +273,10 @@
         private Win.UI.TextBox txtWKno_e;
         private System.Windows.Forms.Label label5;
         private Win.UI.TextBox txtConsignee;
-        private Class.txtshipmode txtshipmode;
+        private Class.Txtshipmode txtshipmode;
         private Win.UI.Label lbShipper;
         private Win.UI.Label lbCategory;
-        private Class.txtLocalSupp txtLocalSupp;
+        private Class.TxtLocalSupp txtLocalSupp;
         private Win.UI.ComboBox comboCategory;
     }
 }

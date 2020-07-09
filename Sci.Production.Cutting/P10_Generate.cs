@@ -142,7 +142,7 @@ group by sizeCode",
             }
 
             // GarmentList
-            PublicPrg.Prgs.GetGarmentListTable(maindr["cutref"].ToString(), this.maindatarow["poid"].ToString(), sizeGroup, out this.garmentTb);
+            Prgs.GetGarmentListTable(maindr["cutref"].ToString(), this.maindatarow["poid"].ToString(), sizeGroup, out this.garmentTb);
 
             // ArticleGroup
             string patidsql;
@@ -846,7 +846,7 @@ order by iif(PatternCode='AllParts','ZZZZZZZ',PatternCode)
                 double TotalCutQty = Convert.ToDouble(dr["Qty"]);
                 DataRow[] qtyarry = this.qtyTb.Select(string.Format("SizeCode='{0}'", dr["SizeCode"]), string.Empty);
                 double rowcount = qtyarry.Length;
-                PublicPrg.Prgs.AverageNumeric(qtyarry, "Qty", (int)TotalCutQty, true);
+                Prgs.AverageNumeric(qtyarry, "Qty", (int)TotalCutQty, true);
             }
 
             this.calsumQty();

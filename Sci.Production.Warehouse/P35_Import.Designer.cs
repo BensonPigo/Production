@@ -39,8 +39,8 @@
             this.labelReason = new Sci.Win.UI.Label();
             this.comboReason = new Sci.Win.UI.ComboBox();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.txtSeq = new Sci.Production.Class.txtSeq();
-            this.txtdropdownlistFabricType = new Sci.Production.Class.txtdropdownlist();
+            this.txtSeq = new Sci.Production.Class.TxtSeq();
+            this.txtdropdownlistFabricType = new Sci.Production.Class.Txtdropdownlist();
             this.txtLocation = new Sci.Win.UI.TextBox();
             this.labelLocation = new Sci.Win.UI.Label();
             this.labelFabricType = new Sci.Win.UI.Label();
@@ -188,8 +188,8 @@
             this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.txtSeq.Location = new System.Drawing.Point(210, 19);
             this.txtSeq.Name = "txtSeq";
-            this.txtSeq.seq1 = "";
-            this.txtSeq.seq2 = "";
+            this.txtSeq.Seq1 = "";
+            this.txtSeq.Seq2 = "";
             this.txtSeq.Size = new System.Drawing.Size(61, 23);
             this.txtSeq.TabIndex = 1;
             // 
@@ -323,7 +323,7 @@
         private Win.UI.Label labelReason;
         private Win.UI.ComboBox comboReason;
         private Win.UI.TextBox txtLocation;
-        private Class.txtdropdownlist txtdropdownlistFabricType;
-        private Class.txtSeq txtSeq;
+        private Class.Txtdropdownlist txtdropdownlistFabricType;
+        private Class.TxtSeq txtSeq;
     }
 }

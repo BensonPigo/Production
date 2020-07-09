@@ -187,7 +187,7 @@ values('{0}','{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}','{10}',GETDATE(
                     MyUtility.Convert.GetString(dr["Price"]),
                     MyUtility.Convert.GetString(dr["LocalPurchase"]).ToUpper() == "TRUE" ? "1" : "0",
                     MyUtility.Convert.GetString(dr["NecessaryItem"]).ToUpper() == "TRUE" ? "1" : "0",
-                    Sci.Env.User.UserID));
+                    Env.User.UserID));
 
                 if (MyUtility.Check.Seek(string.Format("select ID from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'", MyUtility.Convert.GetString(this.masterData["ID"]), MyUtility.Convert.GetString(dr["NLCode"]))))
                 {

@@ -4,29 +4,34 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtSpreadingNo : Win.UI.TextBox
+    /// <summary>
+    /// TxtSpreadingNo
+    /// </summary>
+    public partial class TxtSpreadingNo : Win.UI.TextBox
     {
-        // private string Where = "";   //" Where junk = 0";
         private string Where = "WHERE 1=1";
 
+        /// <summary>
+        /// SpreadingNo.MDivision
+        /// </summary>
         [Category("Custom Properties")]
-        private string _MDivisionID = string.Empty;
+        public string MDivision { get; set; } = string.Empty;
 
-        public string MDivision
+        /// <summary>
+        /// SpreadingNo.Junk
+        /// </summary>
+        [Category("Custom Properties")]
+        public bool IncludeJunk { get; set; } = true;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TxtSpreadingNo"/> class.
+        /// </summary>
+        public TxtSpreadingNo()
         {
-            get { return this._MDivisionID; }
-            set { this._MDivisionID = value; }
+            this.Width = 45;
         }
 
-        [Category("Custom Properties")]
-        private bool _IncludeJunk = true;
-
-        public bool IncludeJunk
-        {
-            get { return this._IncludeJunk; }
-            set { this._IncludeJunk = value; }
-        }
-
+        /// <inheritdoc/>
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
@@ -37,7 +42,7 @@ namespace Sci.Production.Class
             }
 
             // 不包含Junk，因此去除Junk = 1 的資料
-            if (!this._IncludeJunk)
+            if (!this.IncludeJunk)
             {
                 this.Where += $"AND junk = 0 ";
             }
@@ -54,6 +59,7 @@ namespace Sci.Production.Class
             this.Text = item.GetSelectedString();
         }
 
+        /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -62,19 +68,19 @@ namespace Sci.Production.Class
             if (!string.IsNullOrWhiteSpace(newValue) && newValue != this.OldValue)
             {
                 string tmp = null;
-                if (!string.IsNullOrWhiteSpace(this.MDivision) && this._IncludeJunk)
+                if (!string.IsNullOrWhiteSpace(this.MDivision) && this.IncludeJunk)
                 {
                     tmp = MyUtility.GetValue.Lookup($"SELECT ID FROM SpreadingNo WHERE ID = '{newValue}' AND MDivisionid='{this.MDivision}'");
                 }
-                else if (string.IsNullOrWhiteSpace(this.MDivision) && this._IncludeJunk)
+                else if (string.IsNullOrWhiteSpace(this.MDivision) && this.IncludeJunk)
                 {
                     tmp = MyUtility.GetValue.Lookup($"SELECT ID FROM SpreadingNo WHERE ID = '{newValue}' ");
                 }
-                else if (!string.IsNullOrWhiteSpace(this.MDivision) && !this._IncludeJunk)
+                else if (!string.IsNullOrWhiteSpace(this.MDivision) && !this.IncludeJunk)
                 {
                     tmp = MyUtility.GetValue.Lookup($"SELECT ID FROM SpreadingNo WHERE ID = '{newValue}' AND MDivisionid='{this.MDivision}' AND Junk=0");
                 }
-                else if (string.IsNullOrWhiteSpace(this.MDivision) && !this._IncludeJunk)
+                else if (string.IsNullOrWhiteSpace(this.MDivision) && !this.IncludeJunk)
                 {
                     tmp = MyUtility.GetValue.Lookup($"SELECT ID FROM SpreadingNo WHERE ID = '{newValue}' AND MDivisionid='{this.MDivision}' AND Junk=0");
                 }
@@ -105,11 +111,6 @@ namespace Sci.Production.Class
                     return;
                 }
             }
-        }
-
-        public txtSpreadingNo()
-        {
-            this.Width = 45;
         }
     }
 }
