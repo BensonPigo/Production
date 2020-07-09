@@ -790,32 +790,7 @@ where a.ID='{0}'"
         private void btnEncode_Click(object sender, EventArgs e)
         {
             string updatesql = "";
-            if (!MyUtility.Convert.GetBool(maindr["HeatEncode"]))
-            {
-                if (!MyUtility.Convert.GetBool(maindr["nonHeat"]))//判斷有勾選可Encode
-                {
-                    //至少檢驗一卷 並且出現在Fir_Continuity.Roll
-                    DataTable dyelotdt;
-                    string cmd = string.Format(
-                        @"
-Select DISTINCT Dyelot from dbo.View_AllReceivingDetail a
-where a.id='{0}' and a.poid='{1}' and a.seq1 ='{2}' and a.seq2='{3}'  
-and Dyelot not in (SELECT DISTINCT Dyelot FROM FIR_Laboratory_Heat FLH INNER JOIN FIR_Laboratory FL ON FLH.ID=FL.ID WHERE FL.POID='{1}' AND FL.SEQ1='{2}' AND FL.SEQ2='{3}')"
-                        , maindr["receivingid"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
-                    DualResult dResult;
-                    if (dResult = DBProxy.Current.Select(null, cmd, out dyelotdt))
-                    {
-                        if (dyelotdt.Rows.Count > 0)
-                        {
-                            string d = string.Join(",", dyelotdt.AsEnumerable().Select(row => row["Dyelot"].ToString()));
-                            MyUtility.Msg.WarningBox(string.Format(@"<Dyelot> {0}
-Test not found!!!
-Each Dyelot must be tested!", d));
-                            return;
-                        }
-                    }
-                }
-            }
+
             if (!MyUtility.Convert.GetBool(maindr["HeatEncode"]))
             {
                 if (!MyUtility.Convert.GetBool(maindr["nonHeat"]))//判斷有勾選可Encode
@@ -833,7 +808,7 @@ Each Dyelot must be tested!", d));
                     {
                         if (rolldt.Rows.Count < 1)
                         {
-                            MyUtility.Msg.WarningBox("Each Roll must be in Physical Contiunity");
+                            MyUtility.Msg.WarningBox("Must inspect at least 1 roll data.");
                         }
                     }
                 }
