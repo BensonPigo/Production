@@ -810,7 +810,7 @@
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>5cm</Height>
+              <Height>5.2cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -849,7 +849,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>5cm</Height>
+              <Height>5.2cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -888,7 +888,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>5cm</Height>
+              <Height>5.2cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -927,7 +927,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>5cm</Height>
+              <Height>5.2cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -989,7 +989,7 @@
         </TablixRowHierarchy>
         <Top>5.3428cm</Top>
         <Left>0.14679cm</Left>
-        <Height>20cm</Height>
+        <Height>20.8cm</Height>
         <Width>19.68595cm</Width>
         <ZIndex>3</ZIndex>
         <Style>
@@ -999,7 +999,7 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>10.08586in</Height>
+    <Height>10.29244in</Height>
     <Style />
   </Body>
   <Width>7.85695in</Width>
