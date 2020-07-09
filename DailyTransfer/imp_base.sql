@@ -3733,6 +3733,21 @@ where not exists(
 	and tar.SeasonID = S.SeasonID
 	and tar.StartRange = S.StartRange)
 
+	
+--------ClogReason---------------
+
+Merge Production.dbo.AccountNoSetting as t
+Using Trade_To_Pms.dbo.AccountNoSetting as s
+on t.ID=s.ID
+when matched then
+	update set
+	t.UnselectableShipB03= s.UnselectableShipB03
+when not matched by target then
+	insert(UnselectableShipB03)
+	values(s.UnselectableShipB03)
+when not matched by source then 
+	delete;	
+
 END
 
 
