@@ -239,7 +239,9 @@ select [sRCID], [sDELF] ,[sSONO],[sLOT],[sCRNM],[sPRIO],[sODST],[sNCTR],[sCSSE],
 ,[sPPRO],[sPRGM],UPDT = format(GETDATE(),''yyyy-MM-dd'')
 ,[sCUSY],[sCUSTOMERORDERNO]
 from #tmp2
-where C is null--目標沒有
+where C is null--目標沒有 
+		and PulloutComplete = 0 
+		and Finished = 0
 
 Update t
 set DELF=''Y'',
