@@ -34,8 +34,8 @@ namespace Sci.Production.Cutting
             if (history == "0")
                 this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=0) and mDivisionid='{0}'", keyword);
             else
-                this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=1) and mDivisionid='{0}'", keyword);    
-            
+                this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=1) and mDivisionid='{0}'", keyword);
+
             this.DefaultWhere = $@"(select O.FtyGroup from Orders O WITH (NOLOCK) Where O.ID = Bundle.Orderid)  = '{Sci.Env.User.Factory}'";
         }
 
@@ -54,7 +54,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
             // 取得當前登入工廠index
             for (int i = 0; i < queryDT.Rows.Count; i++)
-            {   
+            {
                 if (String.Compare(queryDT.Rows[i]["FTYGroup"].ToString(), Sci.Env.User.Factory) == 0)
                 {
                     queryfors.SelectedIndex = i;
@@ -345,7 +345,7 @@ order by bundlegroup"
             #region 填入Bundleno
             int drcount = DetailDatas.Count;
             IList<string> cListBundleno;
-            cListBundleno = MyUtility.GetValue.GetBatchID("", "Bundle_Detail", MyUtility.Check.Empty(CurrentMaintain["cDate"])? default(DateTime) : Convert.ToDateTime(CurrentMaintain["cDate"]), 3, "Bundleno", batchNumber: drcount, sequenceMode: 2);
+            cListBundleno = MyUtility.GetValue.GetBatchID("", "Bundle_Detail", MyUtility.Check.Empty(CurrentMaintain["cDate"]) ? default(DateTime) : Convert.ToDateTime(CurrentMaintain["cDate"]), 3, "Bundleno", batchNumber: drcount, sequenceMode: 2);
             if (cListBundleno.Count == 0)
             {
                 return new DualResult(false, "Create Bundleno error.");
@@ -424,17 +424,19 @@ order by bundlegroup"
                 }
             }
             #endregion
-            
+
             #region 處理Bundle_Detail_Art 修改版
             /*
             * 先刪除原有資料
             * 再新增更改的資料             
             */
-            Art_cmd = Art_cmd + string.Format(@"delete from bundle_Detail_Art where id='{0}'", masterID);
+            Art_cmd = Art_cmd + string.Format(@"
+select ID,Ukey into #tmpOldBundle_Detail_Art from bundle_Detail_Art with (nolock) where  id='{0}'
+delete from bundle_Detail_Art where id='{0}'", masterID);
             //將SubProcessID不是單一筆的資料拆開 
             DataTable bundle_Detail_Art_Tb_copy = bundle_Detail_Art_Tb.Copy();
             bundle_Detail_Art_Tb_copy.Clear();// 只有結構,沒有資料
-            int ukey=1;
+            int ukey = 1;
             foreach (DataRow dr1 in bundle_Detail_Art_Tb.Rows)
             {
                 string[] subprocss = dr1["subprocessid"].ToString().Split('+');
@@ -452,7 +454,7 @@ order by bundlegroup"
                     bundle_Detail_Art_Tb_copy.Rows.Add(drArt);
                     ukey++;
                 }
-               
+
             }
             //新增資料
             foreach (DataRow dr in bundle_Detail_Art_Tb_copy.Rows) //處理Bundle_Detail_Art
@@ -466,6 +468,9 @@ order by bundlegroup"
                 }
             }
 
+            Art_cmd = Art_cmd + $@"select Ukey  
+from #tmpOldBundle_Detail_Art tda
+where  not exists(select 1 from bundle_Detail_Art bda with (nolock) where tda.ID = bda.ID and tda.Ukey = bda.Ukey) ";
             #endregion
             #region 處理Bundle_Detail_Art
             //int art_old_rowCount = arttmp.Rows.Count;           
@@ -520,7 +525,7 @@ order by bundlegroup"
                     values('{0}','{1}',{2});"
                     , CurrentMaintain["ID"], dr["sizecode"], dr["Qty"]);
                 }
-                   
+
             }
 
             #endregion
@@ -565,7 +570,7 @@ order by bundlegroup"
             //    }
             //}
             #endregion
-
+            DataTable deleteBundle_Detail_Art = new DataTable();
             using (TransactionScope scope = new TransactionScope())
             {
                 DualResult upResult;
@@ -578,7 +583,7 @@ order by bundlegroup"
                 }
                 if (!MyUtility.Check.Empty(Art_cmd))
                 {
-                    if (!(upResult = DBProxy.Current.Execute(null, Art_cmd)))
+                    if (!(upResult = DBProxy.Current.Select(null, Art_cmd, out deleteBundle_Detail_Art)))
                     {
                         return upResult;
                     }
@@ -591,11 +596,12 @@ order by bundlegroup"
                     }
                 }
                 scope.Complete();
+
             }
 
             #region sent data to GZ WebAPI
             string compareCol = "CutRef,OrderID,Article,PatternPanel,FabricPanelCode,SewingLineID,AddDate";
-            string compareDetailCol = "ID,BundleNo,PatternCode,PatternDesc,BundleGroup,SizeCode,Qty";
+            string compareDetailCol = "ID,BundleNo,PatternCode,PatternDesc,BundleGroup,SizeCode,Qty,SubProcessID";
             var listChangedDetail = ((DataTable)this.detailgridbs.DataSource).AsEnumerable();
             if (this.CurrentMaintain.CompareDataRowVersionValue(compareCol))
             {
@@ -607,7 +613,7 @@ order by bundlegroup"
                 listChangedDetail = listChangedDetail
                         .Where(s => s.RowState == DataRowState.Added || (s.RowState == DataRowState.Modified && s.CompareDataRowVersionValue(compareDetailCol)));
             }
-            
+
 
             if (listChangedDetail.Any())
             {
@@ -631,7 +637,29 @@ order by bundlegroup"
                     }
                     ).ToList();
 
-                Task.Run(() => new Guozi_AGV().SentBundleToAGV(() => listBundleToAGV_PostBody));
+                Task.Run(() => new Guozi_AGV().SentBundleToAGV(() => listBundleToAGV_PostBody))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+
+            var listDeletedDetail = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(s => s.RowState == DataRowState.Deleted && s["BundleNo", DataRowVersion.Original] != DBNull.Value);
+
+            if (listDeletedDetail.Any())
+            {
+                DataTable deletedDetail = ((DataTable)this.detailgridbs.DataSource).Clone();
+
+                deletedDetail = listDeletedDetail.Select(s =>
+                {
+                    DataRow dr = deletedDetail.NewRow();
+                    dr["BundleNo"] = s["BundleNo", DataRowVersion.Original];
+                    return dr;
+                }
+                ).CopyToDataTable();
+                Task.Run(() => new Guozi_AGV().SentDeleteBundle(deletedDetail));
+            }
+
+            if (deleteBundle_Detail_Art.Rows.Count > 0)
+            {
+                Task.Run(() => new Guozi_AGV().SentDeleteBundle_SubProcess(deleteBundle_Detail_Art));
             }
             #endregion
 
@@ -756,13 +784,13 @@ Where a.cutref='{0}' and a.mDivisionid = '{1}' and a.orderid = b.id"
 
                 string item_cmd = string.Format("Select a.Name from Reason a WITH (NOLOCK) , Style b WITH (NOLOCK) where a.Reasontypeid ='Style_Apparel_Type' and b.ukey = '{0}' and b.ApparelType = a.id", cutdr["styleukey"]);
                 string item = MyUtility.GetValue.Lookup(item_cmd, null);
-                CurrentMaintain["ITEM"] = item; 
+                CurrentMaintain["ITEM"] = item;
                 CurrentMaintain["Cutref"] = newvalue;
                 /*
                  *如果相同Refno 卻有不同的workorder.ukey 
                  *就需要包含所有ukey
                  *避免一張馬克兩個Article 在Validating 時會判斷出錯
-                 */                
+                 */
                 WorkOrder_Ukey = "";
                 foreach (DataRow dr in cutdr.Table.Rows)
                 {
@@ -1075,7 +1103,7 @@ ORDER BY Seq"
 select Article 
 from Workorder_Distribute WITH (NOLOCK) 
 where Article!='' and WorkorderUkey in ({0}) and Article='{1}'"
-                    ,MyUtility.Check.Empty(WorkOrder_Ukey)?"": WorkOrder_Ukey.Trim().Substring(0, WorkOrder_Ukey.Length-1), newvalue);
+                    , MyUtility.Check.Empty(WorkOrder_Ukey) ? "" : WorkOrder_Ukey.Trim().Substring(0, WorkOrder_Ukey.Length - 1), newvalue);
                 if (DBProxy.Current.Select(null, sql, out dtTEMP))
                 {
                     if (dtTEMP.Rows.Count == 0)
@@ -1118,7 +1146,7 @@ where Article!='' and WorkorderUkey in ({0}) and Article='{1}'"
                                 return;
                             }
                         }
-                    }                    
+                    }
                 }
             }
 
@@ -1192,7 +1220,10 @@ AND DD.id = LIST.kind ";
         protected override DualResult ClickDeletePost()
         {
             string id = CurrentMaintain["ID"].ToString();
+            DataTable dtBundle_Detail_Art;
             string deleteBundleDetailQty = $@"
+select Ukey from Bundle_Detail_Art with (nolock) where id = '{id}'
+
 delete 
 from Bundle_Detail_Qty
 where id = '{id}'
@@ -1204,13 +1235,14 @@ from Bundle_Detail_Art
 where id = '{id}'
 ";
 
-            DualResult result = DBProxy.Current.Execute(null, deleteBundleDetailQty);
+            DualResult result = DBProxy.Current.Select(null, deleteBundleDetailQty, out dtBundle_Detail_Art);
 
             if (result == false)
             {
                 return result;
             }
-
+            Task.Run(() => new Guozi_AGV().SentDeleteBundle((DataTable)this.detailgridbs.DataSource));
+            Task.Run(() => new Guozi_AGV().SentDeleteBundle_SubProcess(dtBundle_Detail_Art));
             return base.ClickDeletePost();
         }
     }

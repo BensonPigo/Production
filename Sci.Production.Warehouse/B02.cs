@@ -11,6 +11,8 @@ using Sci;
 using Sci.Data;
 using System.Data.SqlClient;
 using Sci.Production.PublicPrg;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Warehouse
 {
@@ -94,6 +96,23 @@ namespace Sci.Production.Warehouse
 
             CurrentMaintain["ID"] = CurrentMaintain["ID"].ToString().Trim();
             return base.ClickSaveBefore();
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                if (string.Compare(CurrentMaintain["StockType"].ToString(), "B", true) == 0)
+                {
+                    DataTable dtMain = CurrentMaintain.Table.Clone();
+                    dtMain.ImportRow(CurrentMaintain);
+                    Task.Run(() => new Gensong_AutoWHFabric().SentMtlLocationToGensongAutoWHFabric(dtMain))
+                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
+            }
         }
 
         private bool checkCode()

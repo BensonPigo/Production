@@ -13,6 +13,8 @@ using System.Data.SqlClient;
 using Sci.Win;
 using System.Linq;
 using Sci.Production.PublicForm;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Warehouse
 {
@@ -552,6 +554,32 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
                     MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
                     return;
                 }
+
+                #region Sent W/H Fabric to Gensong
+                // WHClose
+                if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+                {
+                    DataTable dtMain = CurrentMaintain.Table.Clone();
+                    dtMain.ImportRow(CurrentMaintain);
+                    Task.Run(() => new Gensong_AutoWHFabric().SentWHCloseToGensongAutoWHFabric(dtMain))
+                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
+
+                // SubTransfer_Detail
+                if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+                {
+                    DataTable dtMain = new DataTable();
+                    dtMain.Columns.Add("ID", typeof(string));
+                    dtMain.Columns.Add("Type", typeof(string));
+                    DataRow row = dtMain.NewRow();
+                    row["ID"] = CurrentMaintain["Poid"].ToString();
+                    row["Type"] = "D";
+                    dtMain.Rows.Add(row);
+                    Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
+                #endregion
+
                 MyUtility.Msg.WarningBox("Finished!");
                 ReloadDatas();
                 RenewData();

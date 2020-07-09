@@ -15,6 +15,8 @@ using System.Reflection;
 using Microsoft.Reporting.WinForms;
 using System.Data.SqlClient;
 using Sci.Win;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Warehouse
 {
@@ -261,10 +263,13 @@ WHERE   StockType='{0}'
             base.ClickConfirm();
             var dr = this.CurrentMaintain;
             if (null == dr) return;
-            if (!Prgs.P22confirm(CurrentMaintain, (DataTable)detailgridbs.DataSource))
+            DataTable dtDetail = (DataTable)detailgridbs.DataSource;
+            if (!Prgs.P22confirm(CurrentMaintain, dtDetail))
             {
                 return;
             }
+
+            SentToGensong_AutoWHFabric();
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
@@ -481,6 +486,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     }
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
+                    SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -493,6 +499,18 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             _transactionscope.Dispose();
             _transactionscope = null;
           
+        }
+
+        private void SentToGensong_AutoWHFabric()
+        {
+            // AutoWHFabric WebAPI for Gensong       
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                DataTable dtMain = CurrentMaintain.Table.Clone();
+                dtMain.ImportRow(CurrentMaintain);
+                Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain))
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
         }
 
         //寫明細撈出的sql command

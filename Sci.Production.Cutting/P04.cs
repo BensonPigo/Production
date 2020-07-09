@@ -15,6 +15,8 @@ using System.Transactions;
 using Sci.Win.Tools;
 using System.Runtime.InteropServices;
 using System.IO;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Cutting
 {
@@ -167,7 +169,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             @"Insert into MarkerReq
             (id,estcutdate,mDivisionid,CutCellid,Status,Cutplanid,AddName,AddDate) 
             values('{0}','{1}','{2}','{3}','New','{4}','{5}',getdate());",
-            reqid,dateCuttingDate.Text, CurrentMaintain["mDivisionid"],
+            reqid, dateCuttingDate.Text, CurrentMaintain["mDivisionid"],
             CurrentMaintain["cutcellid"], CurrentMaintain["ID"], loginID);
 
             #region 表身
@@ -253,6 +255,7 @@ and o.ID=b.OrderID ", CurrentMaintain["ID"]);
                     }
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
+                    SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)//絕對進不來catch
@@ -265,9 +268,7 @@ and o.ID=b.OrderID ", CurrentMaintain["ID"]);
             _transactionscope.Dispose();
             _transactionscope = null;
 
-            
             #endregion
-
         }
         protected override void OnDetailEntered()
         {
@@ -317,6 +318,7 @@ and o.ID=b.OrderID ", CurrentMaintain["ID"]);
                     }
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
+                    SentToGensong_AutoWHFabric();
                     MyUtility.Msg.WarningBox("Successfully");
                 }
                 catch (Exception ex)
@@ -330,6 +332,17 @@ and o.ID=b.OrderID ", CurrentMaintain["ID"]);
             _transactionscope = null;
 
            
+        }
+
+        private void SentToGensong_AutoWHFabric()
+        {
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                DataTable dtDetail = ((DataTable)detailgridbs.DataSource).DefaultView.ToTable(true, "ID", "WorkorderUkey");
+                Task.Run(() => new Gensong_AutoWHFabric().SentCutplan_DetailToGensongAutoWHFabric(dtDetail))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
         }
 
         protected override bool ClickNew()

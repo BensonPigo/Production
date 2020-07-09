@@ -15,6 +15,8 @@ using System.Reflection;
 using Microsoft.Reporting.WinForms;
 using System.Data.SqlClient;
 using Sci.Win;
+using Sci.Production.Automation;
+using System.Threading.Tasks;
 
 namespace Sci.Production.Warehouse
 {
@@ -1067,6 +1069,8 @@ when matched then
             _transactionscope.Dispose();
             _transactionscope = null;
 
+            // AutoWHFabric WebAPI for Gensong
+            SentToGensong_AutoWHFabric();
         }
 
         //Unconfirm
@@ -1297,6 +1301,60 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             _transactionscope.Dispose();
             _transactionscope = null;
 
+            // AutoWHFabric WebAPI for Gensong
+            SentToGensong_AutoWHFabric();
+        }
+
+        /// <summary>
+        ///  AutoWHFabric WebAPI for Gensong
+        /// </summary>
+        private void SentToGensong_AutoWHFabric()
+        {
+            DataTable dtDetail = new DataTable();
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                string sqlGetData = string.Empty;
+                sqlGetData = $@"
+SELECT [ID] = td.id
+,[InvNo] = isnull(t.InvNo,'')
+,[PoId] = td.Poid
+,[Seq1] = td.Seq1
+,[Seq2] = td.Seq2
+,[Refno] = po3.Refno
+,[ColorID] = po3.ColorID
+,[Roll] = td.Roll
+,[Dyelot] = td.Dyelot
+,[StockUnit] = dbo.GetStockUnitBySPSeq(td.POID,td.Seq1,td.Seq2)
+,[StockQty] = td.Qty
+,[PoUnit] = po3.PoUnit
+,[ShipQty] = td.Qty
+,[Weight] = td.Weight
+,[StockType] = td.StockType
+,[Ukey] = td.Ukey
+,[IsInspection] = convert(bit, 0)
+,Junk = case when t.Status = 'Confirmed' then convert(bit, 0) else convert(bit, 1) end
+FROM Production.dbo.TransferIn_Detail td
+inner join Production.dbo.TransferIn t on td.id = t.id
+inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= td.PoId 
+	and po3.SEQ1=td.Seq1 and po3.SEQ2=td.Seq2
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = td.Poid and seq1=td.seq1 and seq2=td.seq2 
+	and FabricType='F'
+)
+
+and t.id = '{CurrentMaintain["id"]}'
+";
+
+                DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
+                if (!drResult)
+                {
+                    ShowErr(drResult);
+                }
+                Task.Run(() => new Gensong_AutoWHFabric().SentReceive_DetailToGensongAutoWHFabric(dtDetail))
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
         }
 
         //寫明細撈出的sql command

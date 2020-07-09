@@ -1,12 +1,9 @@
-﻿using Ict;
-using Newtonsoft.Json;
-using PmsWebApiUtility20;
-using Sci.Data;
+﻿using Sci.Data;
+using Sci.Production.Prg;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
-using System.Text;
+using System.Threading.Tasks;
 using static PmsWebApiUtility20.WebApiTool;
 using DualResult = Ict.DualResult;
 
@@ -17,9 +14,31 @@ namespace Sci.Production.Automation
     /// </summary>
     public static class UtilityAutomation
     {
+        public static string Sci { get { return "SCI"; } }
+
         public static bool IsAutomationEnable
         {
-            get { return MyUtility.Check.Seek("select 1 from dbo.System where Automation = 1"); }
+            get { return MyUtility.Check.Seek("select 1 from dbo.System where Automation = 1", "Production"); }
+        }
+
+        public static string ModuleType
+        {
+            get
+            {
+                if (PmsWebAPI.IsDummy)
+                {
+                    return "Dummy";
+                }
+                else
+                {
+                    return "Formal";
+                }
+            }
+        }
+
+        public static bool IsModuleAutomationEnable(string suppid, string module)
+        {
+            return IsAutomationEnable && MyUtility.Check.Seek($"select 1 from dbo.WebApiURL where SuppID = '{suppid}' and ModuleName = '{module}'  and ModuleType = '{ModuleType}' and Junk = 0 ", "Production");
         }
 
         public static dynamic AppendBaseInfo(dynamic bodyObject, string apiTag)
@@ -48,12 +67,18 @@ namespace Sci.Production.Automation
                 new SqlParameter("@AddName", Env.User.UserID)
             };
 
-            DualResult result = DBProxy.Current.Execute(null, saveSql, listPar);
+            DualResult result = DBProxy.Current.Execute("Production", saveSql, listPar);
 
             if (!result)
             {
                 throw result.GetException();
             }
+        }
+
+        public static void AutomationExceptionHandler(Task task)
+        {
+            var exception = task.Exception;
+            MyUtility.Msg.ErrorBox(exception.ToString());
         }
 
         public static void SendWebAPI(string baseUrl, string requestUri, string jsonBody, AutomationErrMsg automationErrMsg)
@@ -70,12 +95,28 @@ namespace Sci.Production.Automation
 
         public class AutomationErrMsgPMS : AutomationErrMsg
         {
+            public AutomationErrMsgPMS()
+            {
+                this.suppID = Sci;
+                this.moduleName = Sci;
+            }
+
             public void SetErrInfo(DualResult result)
             {
                 this.errorCode = string.Empty;
                 this.errorMsg = result.GetException().ToString();
                 this.json = string.Empty;
             }
+        }
+
+        public static string GetSciUrl()
+        {
+            return MyUtility.GetValue.Lookup($"select URL from WebApiURL with (nolock) where SuppID = '{Sci}' and ModuleName = '{Sci}' and ModuleType = '{ModuleType}' ", "Production");
+        }
+
+        public static string GetBaseUrl(string suppID, string moduleName)
+        {
+            return MyUtility.GetValue.Lookup($"select URL from Production.dbo.WebApiURL with (nolock) where SuppID = '{suppID}' and ModuleName = '{moduleName}' and ModuleType = '{ModuleType}' ", "Production");
         }
     }
 }

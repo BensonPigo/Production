@@ -10,6 +10,8 @@ using Ict.Win;
 using Sci.Data;
 using Sci.Win;
 using System.Transactions;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.PPIC
 {
@@ -407,6 +409,12 @@ namespace Sci.Production.PPIC
                     transactionscope.Dispose();
                     return new DualResult(false, "Commit transaction error.", ex);
                 }
+            }
+
+            if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
+            {
+                Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{this.orderID}','Orders,Order_QtyShip,Order_SizeCode'"))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 
             return Result.True;

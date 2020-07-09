@@ -4,12 +4,13 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci;
 using Sci.Data;
-
+using Sci.Production.Automation;
 
 namespace Sci.Production.Subcon
 {
@@ -185,6 +186,18 @@ WHERE Type='Pms_LocalItem_UnPack'
             }
 
             return base.ClickSaveBefore();
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+            #region ISP20200757 資料交換 - Sunrise
+            if (this.CurrentMaintain["Category"].ToString().ToUpper() == "CARTON")
+            {
+                Task.Run(() => new Sunrise_FinishingProcesses().SentLocalItemToFinishingProcesses(this.CurrentMaintain["RefNo"].ToString()))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+            #endregion
         }
 
         protected override void ClickClose()

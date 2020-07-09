@@ -11,8 +11,11 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
+using Sci.Production.Automation;
+using static Sci.Production.Automation.Gensong_AutoWHFabric;
 
 namespace Sci.Production.Warehouse
 {
@@ -948,7 +951,7 @@ WHERE   StockType='{0}'
             .Text("Location", header: "Location", settings: ts2, iseditingreadonly: false).Get(out Col_Location)    //13
             .Text("remark", header: "Remark")
             .Text("RefNo", header: "Ref#")
-            .Text("ColorID", header: "Color")    
+            .Text("ColorID", header: "Color")
             .Text("FactoryID", header: "Prod. Factory", iseditingreadonly: true)    //11
             .Text("OrderTypeID", header: "Order Type", width: Widths.AnsiChars(15), iseditingreadonly: true)    //11
             ;     //
@@ -1259,9 +1262,9 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["exportid"], CurrentMaintain
             List<SqlParameter> Fir_Air_Proce = new List<SqlParameter>();
             Fir_Air_Proce.Add(new SqlParameter("@ID", CurrentMaintain["ID"]));
             Fir_Air_Proce.Add(new SqlParameter("@LoginID", UserID));
-            
+
             if (!(result = DBProxy.Current.ExecuteSP("", "dbo.insert_Air_Fir", Fir_Air_Proce)))
-            { 
+            {
                 Exception ex = result.GetException();
                 MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
                 return;
@@ -1355,6 +1358,8 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["exportid"], CurrentMaintain
                 }
             }
 
+            // AutoWHFabric WebAPI for Gensong
+            SentToGensong_AutoWHFabric();
         }
 
         //Unconfirm
@@ -1563,7 +1568,61 @@ END", Env.User.UserID, CurrentMaintain["exportid"], CurrentMaintain["id"]);
             _transactionscope.Dispose();
             _transactionscope = null;
 
+            // AutoWHFabric WebAPI for Gensong
+            SentToGensong_AutoWHFabric();
         }
+
+        /// <summary>
+        ///  AutoWHFabric WebAPI for Gensong
+        /// </summary>
+        private void SentToGensong_AutoWHFabric()
+        {
+            DataTable dtDetail = new DataTable();
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                string sqlGetData = string.Empty;
+                sqlGetData = $@"
+SELECT [ID] = rd.id
+,[InvNo] = r.InvNo
+,[PoId] = rd.Poid
+,[Seq1] = rd.Seq1
+,[Seq2] = rd.Seq2
+,[Refno] = po3.Refno
+,[ColorID] = po3.ColorID
+,[Roll] = rd.Roll
+,[Dyelot] = rd.Dyelot
+,[StockUnit] = rd.StockUnit
+,[StockQty] = rd.StockQty
+,[PoUnit] = rd.PoUnit
+,[ShipQty] = rd.ShipQty
+,[Weight] = rd.Weight
+,[StockType] = rd.StockType
+,[Ukey] = rd.Ukey
+,[IsInspection] = convert(bit, 0)
+,Junk = case when r.Status = 'Confirmed' then convert(bit, 0) else convert(bit, 1) end
+FROM Production.dbo.Receiving_Detail rd
+inner join Production.dbo.Receiving r on rd.id = r.id
+inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
+	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = rd.Poid and seq1=rd.seq1 and seq2=rd.seq2 
+	and FabricType='F'
+)
+and r.id = '{CurrentMaintain["id"]}'
+
+";
+
+                DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
+                if (!drResult)
+                {
+                    ShowErr(drResult);
+                }
+                Task.Run(() => new Gensong_AutoWHFabric().SentReceive_DetailToGensongAutoWHFabric(dtDetail))
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+    }
 
         //寫明細撈出的sql command
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)

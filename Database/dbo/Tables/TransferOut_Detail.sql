@@ -10,6 +10,7 @@
     [StockType]        CHAR (1)        CONSTRAINT [DF_TransferOut_Detail_StockType] DEFAULT ('') NULL,
     [Qty]              NUMERIC (10, 2) CONSTRAINT [DF_TransferOut_Detail_Qty] DEFAULT ((0)) NULL,
     [Ukey]             BIGINT          IDENTITY (1, 1) NOT NULL,
+    [CompleteTime] DATETIME NULL, 
     CONSTRAINT [PK_TransferOut_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

@@ -231,6 +231,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sci.Production.Automation\Sci.Production.Automation.csproj">
+      <Project>{CB61A07F-7D72-490E-AEB6-BA5080F8D652}</Project>
+      <Name>Sci.Production.Automation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
       <Project>{0e35fd31-4a86-4d4e-a393-b6c5e3d7c956}</Project>
       <Name>Sci.Production.Class</Name>
