@@ -3734,7 +3734,7 @@ where not exists(
 	and tar.StartRange = S.StartRange)
 
 	
---------ClogReason---------------
+--------AccountNoSetting---------------
 
 Merge Production.dbo.AccountNoSetting as t
 Using Trade_To_Pms.dbo.AccountNoSetting as s
