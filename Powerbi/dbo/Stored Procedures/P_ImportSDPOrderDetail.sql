@@ -4,7 +4,7 @@
 -- =============================================
 CREATE PROCEDURE [dbo].[P_ImportSDPOrderDetail]	
 	@BuyerDelivery_s Date,
-	@BuyerDelivery_e Date,
+	@BuyerDelivery_e Date = NULL,
 	@LinkServerName varchar(50)
 AS
 BEGIN
@@ -15,6 +15,11 @@ BEGIN
 	DECLARE @SqlCmd4 nvarchar(max) ='';
 	DECLARE @SqlCmd5 nvarchar(max) ='';
 	
+	IF @BuyerDelivery_e IS NULL
+	BEGIN
+		SET @BuyerDelivery_e = '2200/01/01'
+	END
+
 	DECLARE @BuyerDelivery_s_varchar varchar(10) = cast( @BuyerDelivery_s as varchar)
 	DECLARE @BuyerDelivery_e_varchar varchar(10) = cast( @BuyerDelivery_e as varchar)
 
