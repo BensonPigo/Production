@@ -756,7 +756,7 @@ from
 (
 	select distinct a.id, a.packingid, a.CBM
 	from #temp3 a
-	where a.shipmodeID in ('SEA','S-A/P','S-A/C')
+	where exists (select 1 from ShipMode where ID = a.shipmodeID and ID not in ('A/C', 'A/P', 'A/P-C', 'E/C', 'E/P', 'E/P-C'))
 )a 
 group by a.id
 
