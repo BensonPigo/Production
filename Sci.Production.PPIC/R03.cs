@@ -201,7 +201,7 @@ with tmpOrders as (
             , o.ProgramID
             , o.CdCodeID
             , o.CPU
-            , iif ((o.junk = 0 or o.junk is null), o.Qty,0) as Qty
+            , o.Qty as Qty
             , o.FOCQty
             , o.LocalOrder
             , o.PoPrice
@@ -677,7 +677,7 @@ group by pd.OrderID, pd.OrderShipmodeSeq
             , t.ProgramID
             , t.CdCodeID
             , t.CPU
-            , iif ((t.junk = 0 or t.junk is null), oq.Qty,0) as Qty
+            , oq.Qty as Qty
             , t.FOCQty
             , t.LocalOrder
             , t.PoPrice
