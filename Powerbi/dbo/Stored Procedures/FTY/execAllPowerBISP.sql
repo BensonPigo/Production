@@ -141,8 +141,8 @@ BEGIN TRY
 	set @EndDate   = CAST(DATEADD(day,30, GETDATE()) AS date)
 	execute [dbo].[P_ImportOustandingPO_Fty] @StartDate,@EndDate
 	DECLARE @BuyerDelivery_s as Date = '2020/01/01'
-	DECLARE @BuyerDelivery_e as Date = '2020/07/31'
-	execute [dbo].[P_ImportSDPOrderDetail] @BuyerDelivery_s,@BuyerDelivery_e
+	--DECLARE @BuyerDelivery_e as Date = '2020/07/31'
+	execute [dbo].[P_ImportSDPOrderDetail] @BuyerDelivery_s--,@BuyerDelivery_e
 END TRY
 
 BEGIN CATCH

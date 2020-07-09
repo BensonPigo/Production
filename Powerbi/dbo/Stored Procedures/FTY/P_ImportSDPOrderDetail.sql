@@ -4,9 +4,15 @@
 -- =============================================
 CREATE PROCEDURE [dbo].[P_ImportSDPOrderDetail]	
 	@BuyerDelivery_s Date,
-	@BuyerDelivery_e Date
+	@BuyerDelivery_e Date  = NULL
 AS
 BEGIN
+
+	IF @BuyerDelivery_e IS NULL
+	BEGIN
+		SET @BuyerDelivery_e = '2200/01/01'
+	END
+
 	----準備基礎資料
 	SELECT
 			CountryID = F.CountryID
