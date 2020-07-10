@@ -138,6 +138,7 @@ order by rd.Seq1,rd.Seq2", masterID);
             this.displayPreparedby.Value = MyUtility.Check.Empty(this.CurrentMaintain["ApplyDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ApplyDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
             this.displayPPICFactorymgr.Value = MyUtility.Check.Empty(this.CurrentMaintain["ApvDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ApvDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
             this.displayConfirmby.Value = MyUtility.Check.Empty(this.CurrentMaintain["TPECFMDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["TPECFMDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
+            this.displayCompleteDate.Value = MyUtility.Check.Empty(this.CurrentMaintain["CompleteDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["CompleteDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
             this.displayTPELasteditDate.Value = MyUtility.Check.Empty(this.CurrentMaintain["TPEEditDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["TPEEditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             this.label8.Visible = !MyUtility.Check.Empty(this.CurrentMaintain["RespDeptConfirmDate"]);
             this.numTtlEstAmt.Value = MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("sum(EstReplacementAMT)", string.Empty));
@@ -146,6 +147,7 @@ order by rd.Seq1,rd.Seq2", masterID);
                 MyUtility.Convert.GetDecimal(this.CurrentMaintain["ActFreight"]) +
                 MyUtility.Convert.GetDecimal(this.CurrentMaintain["EstFreight"]) +
                 MyUtility.Convert.GetDecimal(this.CurrentMaintain["SurchargeAmt"]);
+            this.lbCompletedShow.Visible = MyUtility.Convert.GetBool(this.CurrentMaintain["isComplete"]);
             DataRow pOData;
             if (MyUtility.Check.Seek(string.Format("select POSMR,POHandle,PCSMR,PCHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"])), out pOData))
             {
