@@ -10,13 +10,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Sci.Production.Centralized
+namespace Sci.Production.Basic
 {
-    public partial class Basbic_B18 : Sci.Win.Tems.Input1
+    public partial class B18 : Sci.Win.Tems.Input1
     {
         private string oldID = string.Empty;
 
-        public Basbic_B18(ToolStripMenuItem menuitem)
+        public B18(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
@@ -26,8 +26,8 @@ namespace Sci.Production.Centralized
         {
             this.oldID = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
             base.OnDetailEntered();
-            string sqlCmd = $"SELECT Name FROM FinanceTW.dbo.AccountNo WHERE ID='{this.CurrentMaintain["ID"]}' ";
-            this.disAccountNoname.Text = MyUtility.GetValue.Lookup(sqlCmd, "ProductionTPE");
+            string sqlCmd = $"SELECT Name FROM SciFMS_AccountNo WHERE ID='{this.CurrentMaintain["ID"]}' ";
+            this.disAccountNoname.Text = MyUtility.GetValue.Lookup(sqlCmd);
         }
 
         private void TxtAccountNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -37,9 +37,9 @@ namespace Sci.Production.Centralized
                 return;
             }
 
-            string cmd = "SELECT ID ,Name FROM FinanceTW.dbo.AccountNo WHERE Junk = 0 ORDER BY ID";
+            string cmd = "SELECT ID ,Name FROM SciFMS_AccountNo WHERE Junk = 0 ORDER BY ID";
             DataTable dt;
-            DBProxy.Current.Select("ProductionTPE", cmd, out dt);
+            DBProxy.Current.Select(null, cmd, out dt);
 
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "ID,Name", "8,30", this.txtAccountNo.Text);
 
@@ -72,7 +72,7 @@ namespace Sci.Production.Centralized
                 }
 
                 List<SqlParameter> paras = new List<SqlParameter>() { new SqlParameter("@ID", newID) };
-                bool exists = MyUtility.Check.Seek($@"SELECT 1 FROM FinanceTW.dbo.AccountNo WHERE Junk=0 AND ID = @ID",paras, "ProductionTPE");
+                bool exists = MyUtility.Check.Seek($@"SELECT 1 FROM SciFMS_AccountNo WHERE Junk=0 AND ID = @ID",paras);
 
                 if (!exists)
                 {
@@ -84,8 +84,8 @@ namespace Sci.Production.Centralized
                 this.CurrentMaintain["ID"] = newID;
                 this.oldID = newID;
 
-                string sqlCmd = $"SELECT Name FROM FinanceTW.dbo.AccountNo WHERE ID='{this.CurrentMaintain["ID"]}' ";
-                this.disAccountNoname.Text = MyUtility.GetValue.Lookup(sqlCmd, "ProductionTPE");
+                string sqlCmd = $"SELECT Name FROM SciFMS_AccountNo WHERE ID='{this.CurrentMaintain["ID"]}' ";
+                this.disAccountNoname.Text = MyUtility.GetValue.Lookup(sqlCmd);
             }
         }
     }

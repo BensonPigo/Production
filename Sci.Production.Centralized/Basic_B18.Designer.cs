@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Centralized
 {
-    partial class Basbic_B18
+    partial class Basic_B18
     {
         /// <summary>
         /// Required designer variable.
@@ -126,7 +126,7 @@
             this.txtAccountNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtAccountNo_PopUp);
             this.txtAccountNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtAccountNo_Validating);
             // 
-            // Basbic_B18
+            // Basic_B18
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -135,9 +135,9 @@
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
-            this.Name = "Basbic_B18";
+            this.Name = "Basic_B18";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
-            this.Text = "Basbic_B18. A/C Setting";
+            this.Text = "Basic_B18. A/C Setting";
             this.WorkAlias = "AccountNoSetting";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();

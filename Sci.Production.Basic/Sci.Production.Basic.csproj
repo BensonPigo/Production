@@ -300,6 +300,12 @@
     <Compile Include="B17.Designer.cs">
       <DependentUpon>B17.cs</DependentUpon>
     </Compile>
+    <Compile Include="B18.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B18.Designer.cs">
+      <DependentUpon>B18.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -414,6 +420,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B17.resx">
       <DependentUpon>B17.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B18.resx">
+      <DependentUpon>B18.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

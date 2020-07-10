@@ -44,6 +44,7 @@ namespace Sci.Production.Class
             set { this.DisplayBox1.Text = value; }
         }
 
+        private string oldValue = string.Empty;
 
         private void TextBox1_Validating(object sender, CancelEventArgs e)
         {
@@ -139,6 +140,51 @@ ORDER BY ID
             }
 
             this.TextBox1.Text = item.GetSelectedString();
+        }
+
+        private void TextBox1_Leave(object sender, EventArgs e)
+        {
+            string newValue = this.textBox1.Text;
+            if (this.oldValue != newValue)
+            {
+                if (MyUtility.Check.Empty(newValue))
+                {
+                    this.textBox1.Text = string.Empty;
+                    this.displayBox1.Text = string.Empty;
+                    this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
+                    return;
+                }
+
+                string cmd = $@"
+SELECT ID ,Name
+FROM SciFMS_AccountNo
+WHERE Junk = 0
+AND ID NOT IN (
+		SELECT ID
+		FROM AccountNoSetting 
+		WHERE  LEN(ID) > 4 AND UnselectableShipB03 = 1
+	)
+AND SUBSTRING(ID,1,4) NOT IN (	
+	SELECT ID
+	FROM AccountNoSetting 
+	WHERE  LEN(ID)=4 AND UnselectableShipB03 = 1
+)
+AND ID = @ID
+ORDER BY ID
+";
+                List<SqlParameter> paras = new List<SqlParameter>();
+                paras.Add(new SqlParameter("@ID", newValue));
+
+                if (!MyUtility.Check.Seek(cmd, paras))
+                {
+                    this.textBox1.Text = string.Empty;
+                    this.displayBox1.Text = string.Empty;
+                    MyUtility.Msg.WarningBox(string.Format("< Account No: {0} > not found!!!", newValue));
+                    return;
+                }
+                this.oldValue = newValue;
+                this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
+            }
         }
     }
 }
