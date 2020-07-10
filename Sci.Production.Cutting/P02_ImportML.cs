@@ -360,7 +360,6 @@ namespace Sci.Production.Cutting
                         {
                             row["Ukey"] = 0;
                             row["NewKey"] = maxKey++;
-                            row["Order_EachConsUkey"] = lastVerData["Order_EachConsUkey"];
                             row["Type"] = this.WorkOrder.AsEnumerable().Select(s => s["Type"]).FirstOrDefault();
                             row["MDivisionId"] = Sci.Env.User.Keyword;
                             row["FactoryID"] = this.WorkOrder.AsEnumerable().Select(s => s["FactoryID"]).FirstOrDefault();
